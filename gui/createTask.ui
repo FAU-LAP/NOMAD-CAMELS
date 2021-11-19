@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>EnterTextDialog</class>
- <widget class="QDialog" name="EnterTextDialog">
+ <class>CreateTask</class>
+ <widget class="QDialog" name="CreateTask">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="1">
-      <widget class="QLineEdit" name="lineEdit_text"/>
+      <widget class="QLineEdit" name="lineEdit_taskName"/>
      </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
@@ -45,7 +45,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>EnterTextDialog</receiver>
+   <receiver>CreateTask</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -61,7 +61,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>EnterTextDialog</receiver>
+   <receiver>CreateTask</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
