@@ -1,7 +1,7 @@
 from sys import argv, excepthook
 
 from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QGridLayout, QPushButton, QWidget
 from PyQt5.QtGui import QIcon
 from PyQt5.uic import loadUiType
 
@@ -14,8 +14,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
-        self.setWindowTitle('CECS - Configurable Experimental Control System')
-        self.setWindowIcon(QIcon('graphics/FAIRmat_S.png'))
+        # self.setWindowTitle('CECS - Configurable Experimental Control System')
+        # self.setWindowIcon(QIcon('graphics/FAIRmat_S.png'))
+        #
+        # centralWidget = QWidget(parent=self)
+        # toolBar = self.addToolBar('toolBar')
+        # self.toolBar = toolBar
+        # toolBar.setMovable(False)
+        # toolBar.addAction('Task')
+        # toolBar.addAction('Add-Ons')
+        # toolBar.addAction('Devices')
+        # toolBar.addAction('Preferences')
+        # toolBar.addAction('Help')
+        #
+        # layout = QGridLayout(self)
+        # centralWidget.setLayout(layout)
+        # self.setCentralWidget(centralWidget)
+        # layout.addWidget(QPushButton('Add-Ons'))
+        # layout.addWidget(QPushButton('Devices'))
+
 
 
 
