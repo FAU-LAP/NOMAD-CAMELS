@@ -1,0 +1,1 @@
+rm -r /home/epics/IOCs/$1

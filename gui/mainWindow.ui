@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1229</width>
+    <width>982</width>
     <height>995</height>
    </rect>
   </property>
@@ -37,69 +37,6 @@
         <property name="horizontalSpacing">
          <number>6</number>
         </property>
-        <item row="1" column="0" colspan="2">
-         <widget class="QSplitter" name="splitter">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <widget class="QWidget" name="widget_2" native="true">
-           <layout class="QGridLayout" name="gridLayout_2">
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item row="0" column="2">
-             <widget class="QPushButton" name="pushButton_remove_device">
-              <property name="text">
-               <string>-</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QPushButton" name="pushButton_add_device">
-              <property name="text">
-               <string>+</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLineEdit" name="lineEdit_device_search">
-              <property name="placeholderText">
-               <string>Search</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" colspan="3">
-             <widget class="QTreeView" name="treeView_devices"/>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="device_config_widget" native="true">
-           <layout class="QGridLayout" name="gridLayout_7">
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-           </layout>
-          </widget>
-         </widget>
-        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label">
           <property name="sizePolicy">
@@ -121,6 +58,174 @@
         </item>
         <item row="0" column="1">
          <widget class="QComboBox" name="comboBox_device_preset"/>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QLabel" name="label_6">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Devices</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QWidget" name="widget_9" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>300</height>
+           </size>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_12">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QSplitter" name="splitter">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <widget class="QWidget" name="widget" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>200</height>
+               </size>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_11">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item row="0" column="2">
+                <widget class="QPushButton" name="pushButton_remove_device">
+                 <property name="text">
+                  <string>-</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QPushButton" name="pushButton_add_device">
+                 <property name="text">
+                  <string>+</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLineEdit" name="lineEdit_device_search">
+                 <property name="placeholderText">
+                  <string>Search</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" rowspan="2" colspan="3">
+                <widget class="QTreeView" name="treeView_devices"/>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="widget_2" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_2">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QPushButton" name="pushButton_make_EPICS_environment">
+                 <property name="text">
+                  <string>Make EPICS IOC</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QPushButton" name="pushButton_show_console_output">
+                 <property name="text">
+                  <string>Show console output</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" colspan="2">
+                <widget class="QTextEdit" name="textEdit_console_output"/>
+               </item>
+               <item row="1" column="0" colspan="2">
+                <widget class="QProgressBar" name="progressBar_devices">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="device_config_widget" native="true">
+              <layout class="QGridLayout" name="gridLayout_7">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -172,7 +277,7 @@
               <number>10</number>
              </property>
              <property name="midLineWidth">
-              <number>5</number>
+              <number>10</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -308,7 +413,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1229</width>
+     <width>982</width>
      <height>21</height>
     </rect>
    </property>
@@ -316,15 +421,16 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionSave"/>
-    <addaction name="actionSave_Measurement_Settings"/>
-    <addaction name="actionOpen_Backup_Device_Settings"/>
-    <addaction name="actionLoad_Backup_Measurement_Settings"/>
+    <addaction name="actionSave_Device_Preset"/>
+    <addaction name="actionSave_Measurement_Preset"/>
+    <addaction name="actionOpen_Backup_Device_Preset"/>
+    <addaction name="actionLoad_Backup_Measurement_Preset"/>
    </widget>
    <widget class="QMenu" name="menuPreferences">
     <property name="title">
      <string>Settings</string>
     </property>
+    <addaction name="actionAutosave_on_closing"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -346,9 +452,9 @@
     <string>Options</string>
    </property>
   </action>
-  <action name="actionSave">
+  <action name="actionSave_Device_Preset">
    <property name="text">
-    <string>Save Device Settings</string>
+    <string>Save Device Preset</string>
    </property>
   </action>
   <action name="actionLoad">
@@ -361,19 +467,27 @@
     <string>Measurement-Presets</string>
    </property>
   </action>
-  <action name="actionSave_Measurement_Settings">
+  <action name="actionSave_Measurement_Preset">
    <property name="text">
-    <string>Save Measurement Settings</string>
+    <string>Save Measurement Preset</string>
    </property>
   </action>
-  <action name="actionOpen_Backup_Device_Settings">
+  <action name="actionOpen_Backup_Device_Preset">
    <property name="text">
-    <string>Load Backup Device Settings</string>
+    <string>Load Backup Device Preset</string>
    </property>
   </action>
-  <action name="actionLoad_Backup_Measurement_Settings">
+  <action name="actionLoad_Backup_Measurement_Preset">
    <property name="text">
-    <string>Load Backup Measurement Settings</string>
+    <string>Load Backup Measurement Preset</string>
+   </property>
+  </action>
+  <action name="actionAutosave_on_closing">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Autosave on closing</string>
    </property>
   </action>
  </widget>
