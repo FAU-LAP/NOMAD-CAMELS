@@ -121,6 +121,8 @@ def get_save_str(obj):
         else:
             dictionary = obj
         for key in dictionary:
+            if key == 'py_package':
+                continue
             savedic.update({key: get_save_str(dictionary[key])})
         return savedic
     elif type(obj) in [list, int, float, bool]:

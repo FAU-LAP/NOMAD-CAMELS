@@ -3,6 +3,9 @@ import os
 
 epics_path = f"{os.getenv('LOCALAPPDATA')}/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/epics".replace('\\', '/')
 epics_path_wsl = '/home/epics'
+localappdata = os.getenv("LOCALAPPDATA").replace("\\", "/")
+localappdata_program = f'{localappdata}/CECS'
+localappdata_program_wsl = f'/mnt/{localappdata_program[0].lower()}{localappdata_program[2:]}'
 
 def clean_up_ioc(ioc='CECS'):
     info1 = subprocess.Popen(['wsl', './EPICS_handling/clean_up_ioc.cmd', ioc], stdout=subprocess.PIPE).communicate()[0]
@@ -25,8 +28,6 @@ def change_devices(device_dict:dict, ioc='CECS'):
     sup_path_wsl = f'{epics_path_wsl}/IOCs/{ioc}/{ioc}Sup'
     ioc_boot_path_wsl = f'{epics_path_wsl}/IOCs/{ioc}/iocBoot/ioc{ioc}'
     src_path_wsl = f'{epics_path_wsl}/IOCs/{ioc}/{ioc}App/src'
-    localappdata = os.getenv("LOCALAPPDATA").replace("\\", "/")
-    localappdata_wsl = f'/mnt/{localappdata[0].lower()}{localappdata[2:]}'
 
     # cleaning out the paths
     path = f'{epics_path}/IOCs/{ioc}/{ioc}App/Db'
@@ -39,9 +40,14 @@ def change_devices(device_dict:dict, ioc='CECS'):
         os.remove(f'{path}/{file}')
 
     # adding devices / files
+    st_cmd_string = f'#!../../bin/linux-x86_64/{ioc}\n< envPaths\n'
+    st_cmd_string += 'epicsEnvSet("STREAM_PROTOCOL_PATH", "$(TOP)/db")\n'
+    asyn_port_string = '# Set up ASYN port\n'
+    load_record_string = '## Load record instances\n'
+    addresses = {}
     write_string = ''
     make_db_string = 'TOP=../..\ninclude $(TOP)/configure/CONFIG\n'
-    for dev in device_dict:
+    for dev in sorted(device_dict):
         info = device_dict[dev]
         device_path_wsl = f'{driver_path_wsl}/{info["directory"]}'
         for req in info['requirements']:
@@ -50,6 +56,8 @@ def change_devices(device_dict:dict, ioc='CECS'):
         for file in info['files']:
             write_string += f'cp {device_path_wsl}/{file} {db_path_wsl}/{file}\n'
             make_db_string += f'DB += {file}\n'
+        if 'settings' in info:
+            asyn_port_string, load_record_string = update_addresses(dev, addresses, info['settings'], asyn_port_string, load_record_string)
     for req in required:
         req_path = f'{driver_path}/Support/{req}'
         req_path_wsl = f'{driver_path_wsl}/Support/{req}'
@@ -58,14 +66,12 @@ def change_devices(device_dict:dict, ioc='CECS'):
             if file.endswith('.dbd'):
                 write_string += f'cp {req_path_wsl}/{file} {src_path_wsl}/{file}\n'
     make_db_string += 'DB_INSTALLS += $(ASYN)/db/asynRecord.db\ninclude $(TOP)/configure/RULES\n'
-    with open(f'{localappdata}/CECS/Makefile_db', 'wb') as file:
+    with open(f'{localappdata_program}/Makefile_db', 'wb') as file:
         file.write(make_db_string.encode())
-    write_string += f'cp {localappdata_wsl}/CECS/Makefile_db {db_path_wsl}/Makefile.test\n'
+    write_string += f'cp {localappdata_program_wsl}/Makefile_db {db_path_wsl}/Makefile.test\n'
     write_string += f'mv {db_path_wsl}/Makefile.test {db_path_wsl}/Makefile\n'
 
     # making st.cmd
-    st_cmd_string = f'#!../../bin/linux-x86_64/{ioc}\n< envPaths\n'
-    st_cmd_string += 'epicsEnvSet("STREAM_PROTOCOL_PATH", "$(TOP)/db")\n'
     st_cmd_string += 'epicsEnvSet("PROLOGIX_ADDRESS", "$(PROLOGIX_ADDRESS=10.131.162.32)");\n'
     st_cmd_string += 'epicsEnvSet("P", "$(P=Prologix:)");\n'
     st_cmd_string += 'epicsEnvSet("R", "$(R=Test:)");\n'
@@ -75,22 +81,14 @@ def change_devices(device_dict:dict, ioc='CECS'):
     st_cmd_string += '## Register all support components\n'
     st_cmd_string += f'dbLoadDatabase "dbd/{ioc}.dbd"\n'
     st_cmd_string += f'{ioc}_registerRecordDeviceDriver pdbbase\n'
-    st_cmd_string += '# Set up ASYN port\n'
-    st_cmd_string += 'prologixGPIBConfigure("L0", "$(PROLOGIX_ADDRESS)")\n'
-    st_cmd_string += 'asynOctetSetInputEos("L0", -1, "")\n'
-    st_cmd_string += 'asynSetTraceIOMask("L0_TCP", -1, 0x2)\n'
-    st_cmd_string += 'asynSetTraceMask("L0_TCP", -1, 0x9)\n'
-    st_cmd_string += 'asynSetTraceIOMask("L0", $(A), 0x2)\n'
-    st_cmd_string += 'asynSetTraceMask("L0", $(A), 0x9)\n'
-    st_cmd_string += '## Load record instances\n'
-    st_cmd_string += f'#dbLoadRecords("db/{ioc}.db","user=epics")\n'
-    st_cmd_string += 'dbLoadRecords("db/gpib_keithley_220.db","PORT=L0,G=3")\n'
+    st_cmd_string += asyn_port_string
+    st_cmd_string += load_record_string
     st_cmd_string += 'iocInit()\n'
     st_cmd_string += '## Start any sequence programs\n'
     st_cmd_string += f'#seq snc{ioc},"user=epics"\n'
-    with open(f'{localappdata}/CECS/st.cmd', 'wb') as file:
+    with open(f'{localappdata_program}/st.cmd', 'wb') as file:
         file.write(st_cmd_string.encode())
-    write_string += f'cp {localappdata_wsl}/CECS/st.cmd {ioc_boot_path_wsl}/st.cmd\n'
+    write_string += f'cp {localappdata_program_wsl}/st.cmd {ioc_boot_path_wsl}/st.cmd\n'
     # Makefile for iocApp/src
     make_src_string = 'TOP=../..\n'
     make_src_string += 'include $(TOP)/configure/CONFIG\n'
@@ -129,17 +127,41 @@ def change_devices(device_dict:dict, ioc='CECS'):
     make_src_string += 'include $(TOP)/configure/RULES\n'
     make_src_string += '#----------------------------------------\n'
     make_src_string += '#  ADD RULES AFTER THIS LINE\n'
-    with open(f'{localappdata}/CECS/Makefile_src', 'wb') as file:
+    with open(f'{localappdata_program}/Makefile_src', 'wb') as file:
         file.write(make_src_string.encode())
-    write_string += f'cp {localappdata_wsl}/CECS/Makefile_src {src_path_wsl}/Makefile\n'
+    write_string += f'cp {localappdata_program_wsl}/Makefile_src {src_path_wsl}/Makefile\n'
 
     # copying all the files
-    with open(f'{localappdata}/CECS/copy_temp.cmd', 'wb') as file:
+    with open(f'{localappdata_program}/copy_temp.cmd', 'wb') as file:
         file.write(write_string.encode())
-    info = subprocess.Popen(['wsl', f'{localappdata_wsl}/CECS/copy_temp.cmd'], stdout=subprocess.PIPE).communicate()[0]
-    return info.decode()
+    info = subprocess.Popen(['wsl', f'{localappdata_program_wsl}/copy_temp.cmd'], stdout=subprocess.PIPE).communicate()[0]
+    if len(info.decode()) > 0:
+        return info.decode()
+    else:
+        return f'Adding devices...\n{write_string}'
     # TODO st.cmd correctly
     # TODO Makefile in iocAPP/src correctly
+
+def update_addresses(device, address_dict, device_settings, port_string, record_string):
+    conn_dict = device_settings['connection']
+    if 'connection' in device_settings:
+        conn_type = conn_dict['type']
+        if conn_type not in address_dict:
+            address_dict.update({conn_type: []})
+        if conn_type == 'prologix-GPIB':
+            if conn_dict['IP-Address'] in address_dict[conn_type]:
+                n = address_dict[conn_type].index(conn_dict['IP-Address'])
+            else:
+                n = len(address_dict[conn_type])
+                address_dict[conn_type].append(conn_dict['IP-Address'])
+                port_string += f'prologixGPIBConfigure("L{n}", "{conn_dict["IP-Address"]}")\n'
+                port_string += f'asynOctetSetInputEos("L{n}", -1, "\\n")\n'
+                port_string += f'asynSetTraceIOMask("L{n}_TCP", -1, 0x2)\n'
+                port_string += f'asynSetTraceMask("L{n}_TCP", -1, 0x9)\n'
+                port_string += f'asynSetTraceIOMask("L{n}", $(A), 0x2)\n'
+                port_string += f'asynSetTraceMask("L{n}", $(A), 0x9)\n'
+            record_string += f'dbLoadRecords("db/gpib_{device.replace(" ", "_")}.db", "PORT=L{n},G={conn_dict["GPIB-Address"]}")\n'
+    return port_string, record_string
 
 
 
@@ -149,5 +171,5 @@ if __name__ == '__main__':
     # make_ioc()
     os.chdir('..')
     print(os.getcwd())
-    check_for_ioc('tester')
+    # check_for_ioc('tester')
     # print(subprocess.run(['wsl', './test.cmd']))

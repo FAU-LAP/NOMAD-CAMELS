@@ -1,8 +1,9 @@
 import json
 import sys
+import importlib
 
 from PyQt5.QtCore import QCoreApplication, Qt
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel
 
 from utility import exception_hook, load_save_functions, treeView_functions, qthreads
@@ -12,6 +13,7 @@ from gui.mainWindow import Ui_MainWindow
 from frontpanels.device_add_dialog import AddDeviceDialog
 from EPICS_handling import make_ioc
 
+device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """Main Window for the program. Connects to all the other classes."""
@@ -30,6 +32,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.comboBox_measurement_preset.addItem(pre)
         if not premeas:
             self.comboBox_measurement_preset.addItem('Default')
+        self.setStyleSheet("QSplitter::handle{background: gray;}")
 
         # devices
         self.active_devices_dict = {}
@@ -52,10 +55,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         #connecting buttons
         self.pushButton_add_device.clicked.connect(self.add_device)
+        self.pushButton_remove_device.clicked.connect(self.remove_device)
         self.actionAutosave_on_closing.changed.connect(self.change_preferences)
         self.actionSave_Device_Preset.triggered.connect(self.save_device_preset)
         self.pushButton_make_EPICS_environment.clicked.connect(self.make_epics_environment)
         self.pushButton_show_console_output.clicked.connect(self.show_console_output)
+        self.treeView_devices.clicked.connect(self.tree_click)
 
         # saving and loading
         self.__save_dict_devices__ = {}
@@ -69,8 +74,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.meas_save_dict = {'_current_measurement_preset': self._current_measurement_preset}
         self.load_preferences()
         self.load_state()
+        self.device_config_widget = QWidget()
         self.comboBox_device_preset.currentTextChanged.connect(self.change_device_preset)
         # self.comboBox_measurement_preset.currentTextChanged.connect(self.change_measurement_preset)
+
+    def remove_device(self):
+        index = self.treeView_devices.selectedIndexes()[0]
+        dat = self.item_model_devices.itemFromIndex(index).data()
+        if dat is not None and not dat.startswith('tag:'):
+            remove_dialog = QMessageBox.question(self, 'Remove device?', f'Are you sure you want to remove the device {dat}?', QMessageBox.Yes | QMessageBox.No)
+            if remove_dialog == QMessageBox.Yes:
+                self.active_devices_dict.pop(dat)
+                self.build_devices_tree()
+
+    def tree_click(self):
+        index = self.treeView_devices.selectedIndexes()[0]
+        dat = self.item_model_devices.itemFromIndex(index).data()
+        if dat is not None and not dat.startswith('tag:'):
+            if 'py_package' in self.active_devices_dict[dat]:
+                if hasattr(self.device_config_widget, 'data'):
+                    if self.device_config_widget.data in self.active_devices_dict:
+                        self.active_devices_dict[self.device_config_widget.data].update({'settings': self.device_config_widget.get_settings()})
+                self.device_config_widget = self.active_devices_dict[dat]['py_package'].subclass_config(self, dat, self.active_devices_dict[dat]['settings'])
+                self.splitter.replaceWidget(2, self.device_config_widget)
+                # while layout.count():
+                #     child = layout.takeAt(0)
+                #     if child.widget():
+                #         child.widget().deleteLater()
+                # widget = self.active_devices_dict[dat]['py_package'].subclass_config()
+                # layout.addWidget(widget)
+
 
     def show_console_output(self):
         if self.textEdit_console_output.isHidden():
@@ -120,7 +153,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def thread_finished(self):
         self.setCursor(Qt.ArrowCursor)
-        
+
     def change_progressBar_value(self, val):
         self.progressBar_devices.setValue(val)
 
@@ -151,11 +184,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if tag not in tags:
                     tag_item = QStandardItem(tag)
                     tag_item.setEditable(False)
-                    tag_item.setData(tag)
+                    tag_item.setData(f'tag:{tag}')
                     self.item_model_devices.item(2,0).appendRow([tag_item])
                     tags.append(tag)
                 else:
-                    ind = treeView_functions.getItemIndex(self.item_model_devices, tag)
+                    ind = treeView_functions.getItemIndex(self.item_model_devices, f'tag:{tag}')
                     tag_item = self.item_model_devices.itemFromIndex(ind)
                 tag_item.appendRow([item])
 
@@ -238,6 +271,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_make_EPICS_environment.setEnabled(True)
         self.comboBox_device_preset.setCurrentText(self._current_device_preset)
         self.build_devices_tree()
+        for d in self.active_devices_dict:
+            info = self.active_devices_dict[d]
+            try:
+                package_name = info['name'].replace(' ', '_')
+                info.update({'py_package': importlib.import_module(f'{package_name}.{package_name}')})
+            except Exception as e:
+                print(e)
 
     def load_measurement_preset(self, premeas):
         """Called when the comboBox_measurement_preset is changed (or when loading the last state). Opens the given preset."""

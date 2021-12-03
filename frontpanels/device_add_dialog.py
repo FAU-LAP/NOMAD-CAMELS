@@ -1,5 +1,7 @@
 import json
 import os
+import sys
+import importlib
 
 from gui.addDeviceDialog import Ui_Dialog_Add_Device
 from PyQt5.QtWidgets import QDialog
@@ -7,12 +9,12 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent
 from PyQt5.QtCore import Qt
 
 
-import devices
 from utility import treeView_functions
+device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
 def getInstalledDevices():
-    device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
     device_list = {}
+    sys.path.append(device_path)
     for f in os.listdir(device_path):
         full_path = f'{device_path}{f}'
         if f != 'Support' and os.path.isdir(full_path):
@@ -22,15 +24,18 @@ def getInstalledDevices():
                 continue
             with open(f'{full_path}/{info_file}', 'r') as file:
                 info = json.load(file)
+            try:
+                package_name = info['name'].replace(' ', '_')
+                info.update({'py_package': importlib.import_module(f'{package_name}.{package_name}')})
+            except Exception as e:
+                print(e)
             device_list.update({info['name']: info})
-
     return device_list
 
 def getAllDevices():
     return getInstalledDevices()
 
 
-test_device_list = [devices.Test_Laser, devices.Test_SMU, devices.Test_PID]
 device_dict = getInstalledDevices()
 
 class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
@@ -110,10 +115,12 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
                 name = f'{dat}_{i}'
                 if name not in self.active_devices_dict:
                     self.active_devices_dict.update({name: device_dict[dat]})
+                    self.active_devices_dict[name].update({'settings': {}})
                     break
                 i += 1
         else:
             self.active_devices_dict.update({dat: device_dict[dat]})
+            self.active_devices_dict[dat].update({'settings': {}})
         self.build_tree()
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

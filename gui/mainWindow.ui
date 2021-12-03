@@ -61,6 +61,12 @@
         </item>
         <item row="1" column="0" colspan="2">
          <widget class="QLabel" name="label_6">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>19</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>12</pointsize>
@@ -75,6 +81,12 @@
         </item>
         <item row="2" column="0" colspan="2">
          <widget class="QWidget" name="widget_9" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -96,8 +108,23 @@
            </property>
            <item row="0" column="0">
             <widget class="QSplitter" name="splitter">
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="lineWidth">
+              <number>8</number>
+             </property>
+             <property name="midLineWidth">
+              <number>8</number>
+             </property>
              <property name="orientation">
               <enum>Qt::Vertical</enum>
+             </property>
+             <property name="opaqueResize">
+              <bool>true</bool>
+             </property>
+             <property name="handleWidth">
+              <number>5</number>
              </property>
              <widget class="QWidget" name="widget" native="true">
               <property name="minimumSize">
@@ -285,10 +312,13 @@
              <widget class="QWidget" name="widget_6" native="true">
               <layout class="QGridLayout" name="gridLayout_6">
                <property name="leftMargin">
-                <number>0</number>
+                <number>9</number>
                </property>
                <property name="topMargin">
                 <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>9</number>
                </property>
                <property name="bottomMargin">
                 <number>0</number>
@@ -325,6 +355,12 @@
                </item>
                <item row="0" column="0">
                 <widget class="QLabel" name="label_4">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>19</height>
+                  </size>
+                 </property>
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
@@ -352,7 +388,7 @@
                 <number>0</number>
                </property>
                <property name="rightMargin">
-                <number>0</number>
+                <number>9</number>
                </property>
                <property name="bottomMargin">
                 <number>0</number>
