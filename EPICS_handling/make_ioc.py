@@ -143,6 +143,13 @@ def change_devices(device_dict:dict, ioc='CECS'):
     # TODO Makefile in iocAPP/src correctly
 
 def update_addresses(device, address_dict, device_settings, port_string, record_string):
+    """Called by change_devices. Updates the two given strings with the necessary lines for the given device.
+    Arguments:
+        - device: The device name, as for the loaded database.
+        - address_dict: The dictionary with so far used addresses, needed to number the the ports, e.g. the IP-Addresses for Prologix-Adapters.
+        - device_settings: The dictionary of device-settings, specifically 'connection'.
+        - port_string: The string to be updated with additional asyn-ports.
+        - record_string: The string to be updated with additional databases."""
     conn_dict = device_settings['connection']
     if 'connection' in device_settings:
         conn_type = conn_dict['type']
@@ -160,7 +167,7 @@ def update_addresses(device, address_dict, device_settings, port_string, record_
                 port_string += f'asynSetTraceMask("L{n}_TCP", -1, 0x9)\n'
                 port_string += f'asynSetTraceIOMask("L{n}", $(A), 0x2)\n'
                 port_string += f'asynSetTraceMask("L{n}", $(A), 0x9)\n'
-            record_string += f'dbLoadRecords("db/gpib_{device.replace(" ", "_")}.db", "PORT=L{n},G={conn_dict["GPIB-Address"]}")\n'
+            record_string += f'dbLoadRecords("db/gpib_{device.replace(" ", "_")}.db", "PORT=L{n},G={conn_dict["GPIB-Address"]}")\n'  # TODO several devices of same type
     return port_string, record_string
 
 

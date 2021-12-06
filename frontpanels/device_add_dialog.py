@@ -13,6 +13,7 @@ from utility import treeView_functions
 device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
 def getInstalledDevices():
+    """Goes through the given device_path and returns a list of the available devices."""
     device_list = {}
     sys.path.append(device_path)
     for f in os.listdir(device_path):
@@ -39,7 +40,10 @@ def getAllDevices():
 device_dict = getInstalledDevices()
 
 class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
-    """Dialog that handles adding new devices in the MainApp, should also download available drivers from the repository."""
+    """Dialog that handles adding new devices in the MainApp, should also download available drivers from the repository.
+    Arguments:
+        - active_devices_dict: The dictionary with active devices. This may be changed and returned by the Dialog.
+        - parent: handed over to QDialog."""
     def __init__(self, active_devices_dict=None, parent=None):
         super(AddDeviceDialog, self).__init__(parent=parent)
         if active_devices_dict is None:
@@ -88,6 +92,7 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
         self.pushButton_activate_selected.clicked.connect(self.de_activate_device)
 
     def tree_click(self):
+        """Called when clicking the treeView_devices. Sets the add/remove button to the correct position."""
         index = self.treeView_devices.selectedIndexes()[0]
         dat = self.item_model.itemFromIndex(index).data()
         if dat is None:
@@ -103,6 +108,7 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
 
 
     def de_activate_device(self):
+        """The currently selected device in the treeView is either removed (if activated) or added. If the added device is already present, a second, numbered one is added."""
         ind = self.treeView_devices.selectedIndexes()[0]
         dat = self.item_model.itemFromIndex(ind).data()
         if dat.startswith('inst:'):

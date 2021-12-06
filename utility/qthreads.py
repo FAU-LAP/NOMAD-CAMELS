@@ -3,6 +3,12 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from EPICS_handling import make_ioc
 
 class Make_Ioc(QThread):
+    """Called from the MainApp.
+    It runs the steps from the make_ioc package to create a full-functioning IOC.
+
+    Arguments:
+        - ioc_name: The name of the IOC. When calling from the function in MainApp, it is the name of the device-preset.
+        - device-data: The data-dictionary for the devices (including settings etc.)"""
     sig_step = pyqtSignal(int)
     info_step = pyqtSignal(str)
 

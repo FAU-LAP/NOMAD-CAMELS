@@ -3,7 +3,7 @@ from os.path import isdir
 from os import makedirs, getenv, listdir
 from shutil import copyfile
 
-from PyQt5.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel, QPushButton, QTreeView, QListView, QMenuBar, QAction, QMenu, QStatusBar, QGridLayout, QFileDialog
+from PyQt5.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel, QPushButton, QTreeView, QListView, QMenuBar, QAction, QMenu, QStatusBar, QGridLayout
 
 from datetime import datetime
 import json
@@ -175,4 +175,3 @@ def save_preferences(prefs:dict):
     """Saves the given dictionary prefs as 'preferences.json' in the appdata."""
     with open(f'{appdata_path}/preferences.json', 'w') as file:
         json.dump(prefs, file)
-
