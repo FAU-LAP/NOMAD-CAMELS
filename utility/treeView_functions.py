@@ -54,3 +54,13 @@ def iterItem(item, data, startWith=False):
             if child.hasChildren():
                 found, ind = iterItem(child, data)
     return found, ind
+
+
+def get_substeps(parent):
+    """Helper function, to get the substeps of loop_step with children."""
+    steps = []
+    for i in range(parent.rowCount()):
+        item = parent.child(i, 0)
+        substeps = get_substeps(item)
+        steps.append((item.data(), substeps))
+    return steps

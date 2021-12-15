@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>982</width>
-    <height>995</height>
+    <height>818</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -148,6 +148,12 @@
                </property>
                <item row="0" column="2">
                 <widget class="QPushButton" name="pushButton_remove_device">
+                 <property name="maximumSize">
+                  <size>
+                   <width>30</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="text">
                   <string>-</string>
                  </property>
@@ -155,6 +161,12 @@
                </item>
                <item row="0" column="1">
                 <widget class="QPushButton" name="pushButton_add_device">
+                 <property name="maximumSize">
+                  <size>
+                   <width>30</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="text">
                   <string>+</string>
                  </property>
@@ -323,6 +335,126 @@
                <property name="bottomMargin">
                 <number>0</number>
                </property>
+               <item row="2" column="0">
+                <widget class="QWidget" name="widget_10" native="true">
+                 <layout class="QGridLayout" name="gridLayout_15">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                  <item row="0" column="0">
+                   <widget class="QSplitter" name="splitter_4">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <widget class="QWidget" name="widget_11" native="true">
+                     <layout class="QGridLayout" name="gridLayout_13">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item row="0" column="1">
+                       <widget class="QPushButton" name="pushButton_add_protocol">
+                        <property name="maximumSize">
+                         <size>
+                          <width>30</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>+</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="2">
+                       <widget class="QPushButton" name="pushButton_remove_protocol">
+                        <property name="maximumSize">
+                         <size>
+                          <width>30</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="0">
+                       <widget class="QLineEdit" name="lineEdit_protocol_search">
+                        <property name="placeholderText">
+                         <string>Search</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0" colspan="3">
+                       <widget class="QListView" name="listView_protocols"/>
+                      </item>
+                     </layout>
+                    </widget>
+                    <widget class="QWidget" name="widget_12" native="true">
+                     <layout class="QGridLayout" name="gridLayout_14">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item row="1" column="0" colspan="2">
+                       <widget class="QProgressBar" name="progressBar_protocols">
+                        <property name="value">
+                         <number>100</number>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="0">
+                       <widget class="QPushButton" name="pushButton_build_protocol">
+                        <property name="text">
+                         <string>Build Protocol</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QPushButton" name="pushButton_show_output_meas">
+                        <property name="text">
+                         <string>Show output</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="0" colspan="2">
+                       <widget class="QTextEdit" name="textEdit_console_output_meas"/>
+                      </item>
+                     </layout>
+                    </widget>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
                <item row="0" column="0">
                 <widget class="QLabel" name="label_3">
                  <property name="font">
@@ -338,7 +470,11 @@
                 </widget>
                </item>
                <item row="1" column="0">
-                <widget class="QListView" name="listView_protocols"/>
+                <widget class="QPushButton" name="pushButton_run_protocol">
+                 <property name="text">
+                  <string>Run selected protocol(s)</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -350,8 +486,33 @@
                <property name="bottomMargin">
                 <number>0</number>
                </property>
-               <item row="1" column="0">
-                <widget class="QTreeView" name="treeView_protocol_sequence"/>
+               <item row="4" column="1">
+                <widget class="QPushButton" name="pushButton_move_step_out">
+                 <property name="text">
+                  <string>move out</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QPushButton" name="pushButton_move_step_in">
+                 <property name="text">
+                  <string>move in</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QPushButton" name="pushButton_move_step_up">
+                 <property name="text">
+                  <string>move up</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QPushButton" name="pushButton_move_step_down">
+                 <property name="text">
+                  <string>move down</string>
+                 </property>
+                </widget>
                </item>
                <item row="0" column="0">
                 <widget class="QLabel" name="label_4">
@@ -373,10 +534,39 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
+               <item row="6" column="0" colspan="3">
+                <widget class="QTreeView" name="treeView_protocol_sequence"/>
+               </item>
+               <item row="1" column="0" colspan="3">
                 <widget class="QPushButton" name="pushButton_show_protocol_settings">
                  <property name="text">
                   <string>Show General Settings</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2">
+                <widget class="QToolButton" name="toolButton_add_step">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>23</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>+</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="2">
+                <widget class="QPushButton" name="pushButton_remove_step">
+                 <property name="text">
+                  <string>-</string>
                  </property>
                 </widget>
                </item>
@@ -473,8 +663,15 @@
      <string>Help</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionDevice_Driver_Builder"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuPreferences"/>
+   <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -524,6 +721,11 @@
    </property>
    <property name="text">
     <string>Autosave on closing</string>
+   </property>
+  </action>
+  <action name="actionDevice_Driver_Builder">
+   <property name="text">
+    <string>Device Driver Builder</string>
    </property>
   </action>
  </widget>

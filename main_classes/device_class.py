@@ -1,10 +1,31 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox
 from PyQt5.QtGui import QFont
 
+
 class Device:
     """general class for all devices"""
-    def __init__(self):
+    def __init__(self, name='', virtual=False, tags=None, files=None, directory='', requirements=''):
         self.__save_dict__ = {}
+        self.connection = Device_Connection()
+        self.name = name
+        self.virtual = virtual
+        self.tags = [] if tags is None else tags
+        self.files = [] if files is None else files
+        self.directory = directory
+        self.requirements = requirements
+
+    def set_connection(self, connection):
+        self.connection = connection
+
+
+class Device_Connection:
+    def __init__(self, connection_type, **kwargs):
+        self.__save_dict__ = {}
+        self.connection_type = connection_type
+        if connection_type == 'prologix-GPIB':
+            self.IP_address = kwargs['IP_address']
+            self.GPIB_address = kwargs['GPIB_address']
+
 
 class Device_Config(QWidget):
     """Parent class for the configuration-widgets (shown on the frontpanel) of the devices.

@@ -4,7 +4,7 @@ import sys
 import importlib
 
 from gui.addDeviceDialog import Ui_Dialog_Add_Device
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QMessageBox
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent
 from PyQt5.QtCore import Qt
 
@@ -114,7 +114,9 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
         if dat.startswith('inst:'):
             dat = dat[5:]
         if dat.startswith('act:'):
-            self.active_devices_dict.pop(dat[4:])
+            remove_dialog = QMessageBox.question(self, 'Remove device?', f'Are you sure you want to remove the device {dat}?', QMessageBox.Yes | QMessageBox.No)
+            if remove_dialog == QMessageBox.Yes:
+                self.active_devices_dict.pop(dat[4:])
         elif dat in self.active_devices_dict:
             i = 2
             while True:

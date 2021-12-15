@@ -2,15 +2,16 @@ import json
 import sys
 import importlib
 
-from PyQt5.QtCore import QCoreApplication, Qt
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget
+from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, QModelIndex
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel
 
-from utility import exception_hook, load_save_functions, treeView_functions, qthreads
+from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view
 
 from gui.mainWindow import Ui_MainWindow
 
 from frontpanels.device_add_dialog import AddDeviceDialog
+from main_classes.protocol_class import Measurement_Protocol
 
 device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
@@ -49,8 +50,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.item_model_devices.appendRow(all_devices)
         self.item_model_devices.appendRow(virtual_devices)
         self.item_model_devices.appendRow(by_tags)
-
         self.textEdit_console_output.setHidden(True)
+        self.textEdit_console_output_meas.setHidden(True)
+
+        # measurements
+        self.protocols_dict = {}
+        self.item_model_protocols = QStandardItemModel(0,1)
+        self.listView_protocols.setModel(self.item_model_protocols)
+        self.item_model_sequence = QStandardItemModel(0,1)
+        self.widget_7.layout().removeWidget(self.treeView_protocol_sequence)
+        self.treeView_protocol_sequence.deleteLater()
+        self.treeView_protocol_sequence = drag_drop_tree_view.Drag_Drop_TreeView()
+        self.widget_7.layout().addWidget(self.treeView_protocol_sequence, 5, 0, 1, 3)
+        self.treeView_protocol_sequence.setModel(self.item_model_sequence)
+        self.treeView_protocol_sequence.customContextMenuRequested.connect(self.sequence_right_click)
+        self.current_protocol = None
+
 
 
         #connecting buttons
@@ -62,6 +77,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_show_console_output.clicked.connect(self.show_console_output)
         self.treeView_devices.clicked.connect(self.tree_click)
 
+        self.pushButton_add_protocol.clicked.connect(self.add_protocol)
+        self.pushButton_remove_protocol.clicked.connect(self.remove_protocol)
+        self.item_model_protocols.itemChanged.connect(self.change_protocol_name)
+        self.pushButton_show_output_meas.clicked.connect(self.show_meas_output)
+        self.listView_protocols.clicked.connect(self.build_protocol_sequence)
+        self.pushButton_move_step_up.clicked.connect(lambda state: self.move_loop_step(-1,0))
+        self.pushButton_move_step_down.clicked.connect(lambda state: self.move_loop_step(1,0))
+        self.pushButton_move_step_in.clicked.connect(lambda state: self.move_loop_step(0,1))
+        self.pushButton_move_step_out.clicked.connect(lambda state: self.move_loop_step(0,-1))
+
+
         # saving and loading
         self.__save_dict_devices__ = {}
         self.__save_dict_meas__ = {}
@@ -71,12 +97,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.device_save_dict = {'_current_device_preset': self._current_device_preset,
                                  'active_devices_dict': self.active_devices_dict,
                                  'lineEdit_device_search': self.lineEdit_device_search}
-        self.meas_save_dict = {'_current_measurement_preset': self._current_measurement_preset}
+        self.meas_save_dict = {'_current_measurement_preset': self._current_measurement_preset,
+                               'protocols_dict': self.protocols_dict}
         self.load_preferences()
         self.load_state()
         self.device_config_widget = QWidget()
         self.comboBox_device_preset.currentTextChanged.connect(self.change_device_preset)
         # self.comboBox_measurement_preset.currentTextChanged.connect(self.change_measurement_preset)
+
+        self.inside_function = False
 
     # --------------------------------------------------
     # Overwriting parent-methods
@@ -193,10 +222,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.saving:
             return
         # self.save_measurement_state()
-        with open(f'{load_save_functions.preset_path}{premeas}.predev', 'r') as f:
+        with open(f'{load_save_functions.preset_path}{premeas}.premeas', 'r') as f:
             preset_dict = json.load(f)
         load_save_functions.load_save_dict(preset_dict, self.meas_save_dict)
         self.comboBox_measurement_preset.setCurrentText(self._current_measurement_preset)
+        self.build_protocol_list()
 
     def make_device_save_dict(self):
         """Creates / Updates the __save_dict_devices__"""
@@ -207,6 +237,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def make_measurement_save_dict(self):
         """Creates / Updates the __save_dict_meas__"""
+        self.update_loop_step_order()
         for key in self.meas_save_dict:
             add_string = load_save_functions.get_save_str(self.meas_save_dict[key])
             if add_string is not None:
@@ -250,11 +281,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         dat = self.item_model_devices.itemFromIndex(index).data()
         if dat is not None and not dat.startswith('tag:'):
             if 'py_package' in self.active_devices_dict[dat]:
-                if hasattr(self.device_config_widget, 'data'):
-                    if self.device_config_widget.data in self.active_devices_dict:
-                        self.active_devices_dict[self.device_config_widget.data].update({'settings': self.device_config_widget.get_settings()})
+                self.get_device_config()
                 self.device_config_widget = self.active_devices_dict[dat]['py_package'].subclass_config(self, dat, self.active_devices_dict[dat]['settings'])
                 self.splitter.replaceWidget(2, self.device_config_widget)
+
+    def get_device_config(self):
+        """If the currently used device_config_widget has the attribute data, the settings will be updated to the active_devices_dict."""
+        if hasattr(self.device_config_widget, 'data'):
+            if self.device_config_widget.data in self.active_devices_dict:
+                self.active_devices_dict[self.device_config_widget.data].update({'settings': self.device_config_widget.get_settings()})
 
     def build_devices_tree(self):
         """Builds the tree of devices.
@@ -295,6 +330,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def make_epics_environment(self):
         """Calls the QThread Make_Ioc, creating an IOC with the specified devices."""
         self.setCursor(Qt.WaitCursor)
+        self.get_device_config()
         self.make_thread = qthreads.Make_Ioc(self._current_device_preset, self.active_devices_dict)
         self.make_thread.sig_step.connect(self.change_progressBar_value)
         self.make_thread.info_step.connect(self.update_console_output)
@@ -313,6 +349,170 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_console_output(self, info):
         """Appends the given info to the current console output."""
         self.textEdit_console_output.append(info)
+
+    # --------------------------------------------------
+    # measurement methods
+    # --------------------------------------------------
+    def add_protocol(self):
+        """Adds a new protocol 'Unnamed_Protocol' to the list. Makes sure that it has a unique filename."""
+        protocol = {self.unique_protocol_name('Unnamed_Protocol'): Measurement_Protocol()}
+        self.protocols_dict.update(protocol)
+        self.build_protocol_list()
+
+    def remove_protocol(self):
+        """Opens a dialog to make sure, then removes the selected protocol."""
+        index = self.listView_protocols.selectedIndexes()[0]
+        dat = self.item_model_protocols.itemFromIndex(index).data()
+        if dat is not None:
+            remove_dialog = QMessageBox.question(self, 'Delete protocol?', f'Are you sure you want to delete the protocol {dat}?', QMessageBox.Yes | QMessageBox.No)
+            if remove_dialog == QMessageBox.Yes:
+                self.protocols_dict.pop(dat)
+                self.build_protocol_list()
+
+    def change_protocol_name(self, item):
+        """Changes the name of the protocol inside the protocols_dict.
+        Arguments:
+            - item: the item of the protocol, the data is used to get the old name, the new text is checked to be unique."""
+        if self.inside_function:
+            return
+        old_name = item.data()
+        protocol_data = self.protocols_dict.pop(old_name)
+        new_name = self.unique_protocol_name(item.text())
+        self.inside_function = True
+        item.setText(new_name)
+        item.setData(new_name)
+        self.inside_function = False
+        self.protocols_dict.update({new_name: protocol_data})
+        self.build_protocol_list()
+
+    def unique_protocol_name(self, name):
+        """Checks if 'name' is already inside the protocols_dict, if yes, _i is added until i is a not yet used number."""
+        if name in self.protocols_dict:
+            i = 2
+            while True:
+                if f'{name}_{i}' not in self.protocols_dict:
+                    return f'{name}_{i}'
+                i += 1
+        else:
+            return name
+
+    def build_protocol_list(self):
+        """Rebuilds the listView_protocols / the item_model_protocols."""
+        self.item_model_protocols.clear()
+        for protocol in sorted(self.protocols_dict, key=lambda x: x.lower()):
+            item = QStandardItem(protocol)
+            item.setCheckable(True)
+            item.setData(protocol)
+            self.item_model_protocols.appendRow(item)
+
+    def show_meas_output(self):
+        """Shows / hides the textEdit_console_output."""
+        if self.textEdit_console_output_meas.isHidden():
+            self.textEdit_console_output_meas.setHidden(False)
+            self.pushButton_show_output_meas.setText('Hide console output')
+        else:
+            self.textEdit_console_output_meas.setHidden(True)
+            self.pushButton_show_output_meas.setText('Show console output')
+
+    def build_protocol_sequence(self):
+        """Shows / builds the protocol sequence in the treeView dependent on the loop_steps in the current_protocol."""
+        ind = self.listView_protocols.selectedIndexes()[0]
+        prot_name = self.item_model_protocols.itemFromIndex(ind).data()
+        protocol = self.protocols_dict[prot_name]
+        self.current_protocol = protocol
+        self.item_model_sequence.clear()
+        for loop_step in protocol.loop_steps:
+            loop_step.append_to_model(self.item_model_sequence)
+        self.treeView_protocol_sequence.expandAll()
+
+    def sequence_right_click(self, pos):
+        """Opens a specific Menu on right click in the protocol-sequence.
+        If selection is not on a loop_step, it consists only of Add Step, otherwise it consists of Delete Step."""
+        # TODO other actions
+        menu = QMenu()
+        inds = self.treeView_protocol_sequence.selectedIndexes()
+        if inds:
+            del_action = QAction('Delete Step')
+            del_action.triggered.connect(self.remove_loop_step)
+            menu.addAction(del_action)
+        else:
+            addMenu = QMenu('Add Step')
+            actions = []
+            for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
+                action = QAction(stp)
+                action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+                actions.append(action)
+            addMenu.addActions(actions)
+            menu.addMenu(addMenu)
+        menu.exec_(self.treeView_protocol_sequence.viewport().mapToGlobal(pos))
+
+
+    def move_loop_step(self, up_down=0, in_out=0):
+        """Moves a loop_step up or down in the sequence. It can also moved in or out (into the loopstep above, it if accepts children).
+        Arguments:
+            - up_down: Default 0, moves up if negative (lower row-number), down if positive
+            - in_out: moves in if positive, out if negative, default 0"""
+        # TODO make function more clear and simple
+        ind = self.treeView_protocol_sequence.selectedIndexes()[0]
+        item = self.item_model_sequence.itemFromIndex(ind)
+        parent = item.parent()
+        if parent is None:
+            if up_down != 0 and (ind.row() > 0 or up_down > 0) and (ind.row() < self.item_model_sequence.rowCount()-1 or up_down < 0):
+                row = self.item_model_sequence.takeRow(ind.row())
+                self.item_model_sequence.insertRow(ind.row() + up_down, row)
+            elif in_out > 0 and ind.row() > 0:
+                above = self.item_model_sequence.item(ind.row()-1, 0)
+                if self.current_protocol.loop_step_dict[above.data()].has_children:
+                    row = self.item_model_sequence.takeRow(ind.row())
+                    above.insertRow(above.rowCount(), row)
+        else:
+            if up_down != 0 and (ind.row() > 0 or up_down > 0) and (ind.row() < parent.rowCount()-1 or up_down < 0):
+                row = parent.takeRow(ind.row())
+                parent.insertRow(ind.row() + up_down, row)
+            elif in_out > 0 and ind.row() > 0:
+                above = parent.child(ind.row()-1, 0)
+                if self.current_protocol.loop_step_dict[above.data()].has_children:
+                    row = parent.takeRow(ind.row())
+                    above.insertRow(above.rowCount(), row)
+            elif in_out < 0:
+                grandparent = parent.parent()
+                if grandparent is None:
+                    grandparent = self.item_model_sequence
+                parent_row = parent.index().row()
+                row = parent.takeRow(ind.row())
+                grandparent.insertRow(parent_row+1, row)
+        self.treeView_protocol_sequence.clearSelection()
+        new_ind = self.item_model_sequence.indexFromItem(item)
+        self.treeView_protocol_sequence.selectionModel().select(new_ind, QItemSelectionModel.Select)
+
+    def add_loop_step(self, step_type):
+        """Add a loop_step of given step_type. Updates the current sequence into the protocol, then initializes the new step."""
+        self.update_loop_step_order()
+        step = drag_drop_tree_view.get_loop_step_from_type(step_type)
+        self.current_protocol.add_loop_step(step, model=self.item_model_sequence)
+        self.build_protocol_sequence()
+
+    def remove_loop_step(self):
+        """After updating the loop_step order in the protocol, the selected loop step is deleted (if the messagebox is accepted)."""
+        self.update_loop_step_order()
+        ind = self.treeView_protocol_sequence.selectedIndexes()[0]
+        name = self.item_model_sequence.itemFromIndex(ind).data()
+        if name is not None:
+            remove_dialog = QMessageBox.question(self, 'Delete Step?', f'Are you sure you want to delete the step {name}?', QMessageBox.Yes | QMessageBox.No)
+            if remove_dialog == QMessageBox.Yes:
+                self.current_protocol.remove_loop_step(name)
+                self.build_protocol_sequence()
+
+    def update_loop_step_order(self):
+        """Goes through all the loop_steps in the sequence, then rearranges them in the protocol."""
+        if self.current_protocol is not None:
+            loopsteps = []
+            for i in range(self.item_model_sequence.rowCount()):
+                item = self.item_model_sequence.item(i, 0)
+                substeps = treeView_functions.get_substeps(item)
+                loopsteps.append((item.data(), substeps))
+            self.current_protocol.rearrange_loop_steps(loopsteps)
+
 
 
 

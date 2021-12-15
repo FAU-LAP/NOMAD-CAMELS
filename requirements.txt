@@ -93,3 +93,4 @@ super_state_machine==2.0.2
 wincertstore==0.2
 imagecodecs==2021.8.26
 sqlite==3.36.0
+PyQt5==5.9.2

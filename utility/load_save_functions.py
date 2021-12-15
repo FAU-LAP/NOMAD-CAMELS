@@ -8,6 +8,8 @@ from PyQt5.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel, QP
 from datetime import datetime
 import json
 
+from main_classes import protocol_class
+
 appdata_path = f'{getenv("LOCALAPPDATA")}/CECS'
 preset_path = f'{appdata_path}/Presets/'
 backup_path = f'{preset_path}Backup/'
@@ -45,7 +47,7 @@ def autosave_preset(preset:str, preset_data, devices=True):
     if preset_file in listdir(preset_path):
         make_backup(preset_file)
     with open(f'{preset_path}{preset_file}', 'w') as json_file:
-        json.dump(preset_data, json_file)
+        json.dump(preset_data, json_file, indent=2)
 
 def save_preset(path:str, preset_data:dict):
     """Saves the given preset_data under the specified path.
@@ -54,7 +56,7 @@ def save_preset(path:str, preset_data:dict):
     if path.endswith('.predev'):
         devs = True
     with open(path, 'w') as json_file:
-        json.dump(preset_data, json_file)
+        json.dump(preset_data, json_file, indent=2)
     preset_name = path.split('/')[-1][:-7]
     autosave_preset(preset_name, preset_data, devs)
 
@@ -83,6 +85,8 @@ def load_save_dict(string_dict:dict, object_dict:dict, update_missing_key=False,
                 obj.setCurrentText(val)
             elif issubclass(type(obj), QLineEdit):
                 obj.setText(val)
+            elif key == 'protocols_dict':
+                load_protocols_dict(val, obj)
             elif hasattr(obj, '__save_dict__') or hasattr(obj, '__dict__'):
                 load_save_dict(val, obj.__dict__)
             elif type(obj) is dict:
@@ -125,8 +129,13 @@ def get_save_str(obj):
                 continue
             savedic.update({key: get_save_str(dictionary[key])})
         return savedic
-    elif type(obj) in [list, int, float, bool]:
+    elif type(obj) in [int, float, bool]:
         return obj
+    elif type(obj) is list:
+        obj_list = []
+        for p in obj:
+            obj_list.append(get_save_str(p))
+        return obj_list
     return str(obj)
 
 def make_save_dict(obj):
@@ -139,6 +148,16 @@ def make_save_dict(obj):
         add_string = get_save_str(obj.__dict__[key])
         if add_string is not None:
             obj.__save_dict__.update({key: get_save_str(obj.__dict__[key])})
+
+def load_protocols_dict(string_dict, prot_dict):
+    for key in string_dict:
+        prot_data = string_dict[key]
+        prot = protocol_class.Measurement_Protocol()
+        if 'loop_steps' in prot_data:
+            prot.load_loop_steps(prot_data['loop_steps'])
+        if 'plots' in prot_data:
+            prot.load_plots(prot_data['plots'])
+        prot_dict.update({key: prot})
 
 def get_most_recent_presets():
     """Goes through all files in the preset_path and returns the newest device-preset and measurement-preset.
@@ -166,7 +185,7 @@ def get_preferences():
     """If a file 'preferences.json' exists in the appdata, its content will be loaded and returned, if no file exists, it will be created with an empty dictionary."""
     if 'preferences.json' not in os.listdir(appdata_path):
         with open(f'{appdata_path}/preferences.json', 'w') as file:
-            json.dump({}, file)
+            json.dump({}, file, indent=2)
     with open(f'{appdata_path}/preferences.json', 'r') as file:
         prefs = json.load(file)
     return prefs
@@ -174,4 +193,4 @@ def get_preferences():
 def save_preferences(prefs:dict):
     """Saves the given dictionary prefs as 'preferences.json' in the appdata."""
     with open(f'{appdata_path}/preferences.json', 'w') as file:
-        json.dump(prefs, file)
+        json.dump(prefs, file, indent=2)
