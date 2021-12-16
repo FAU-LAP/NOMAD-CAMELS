@@ -1,5 +1,5 @@
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit
 
 
@@ -22,6 +22,10 @@ class Loop_Step:
         self.name = name
         self.full_name = f'{self.step_type} ({name})'
         self.parent_step = parent_step
+
+    def update_full_name(self):
+        """Updates the full_name by combination of step_type and name"""
+        self.full_name = f'{self.step_type} ({self.name})'
 
     def append_to_model(self, item_model, parent=None):
         """Ensures that the (full_)name of the loop_step is unique and updates name and full_name, then appends the step to the model."""
@@ -78,10 +82,13 @@ class Loop_Step_Container(Loop_Step):
 
 class Loop_Step_Config(QWidget):
     """Parent class for the configuration Widget of the loop_step. Provides the main layout and a lineEdit for changing the loop_steps name."""
+    name_change = pyqtSignal()
+
     def __init__(self, parent=None, name=''):
         super(Loop_Step_Config, self).__init__(parent)
         layout = QGridLayout()
         name_label = QLabel('Name:')
         self.lineEdit_name = QLineEdit(name, self)
-        layout.addItem(name_label, 0, 0)
-        layout.addItem(self.lineEdit_name)
+        layout.addWidget(name_label, 0, 0)
+        layout.addWidget(self.lineEdit_name, 0, 1)
+        self.setLayout(layout)

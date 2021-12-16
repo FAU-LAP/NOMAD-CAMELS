@@ -2,6 +2,8 @@ import json
 import sys
 import importlib
 
+from copy import deepcopy
+
 from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, QModelIndex
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel
@@ -65,7 +67,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.treeView_protocol_sequence.setModel(self.item_model_sequence)
         self.treeView_protocol_sequence.customContextMenuRequested.connect(self.sequence_right_click)
         self.current_protocol = None
-
+        self.loopstep_configuration_widget = None
+        self.copied_loop_step = None
 
 
         #connecting buttons
@@ -73,6 +76,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_remove_device.clicked.connect(self.remove_device)
         self.actionAutosave_on_closing.changed.connect(self.change_preferences)
         self.actionSave_Device_Preset.triggered.connect(self.save_device_preset)
+        self.actionSave_Measurement_Preset.triggered.connect(self.save_measurement_preset)
         self.pushButton_make_EPICS_environment.clicked.connect(self.make_epics_environment)
         self.pushButton_show_console_output.clicked.connect(self.show_console_output)
         self.treeView_devices.clicked.connect(self.tree_click)
@@ -86,6 +90,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_move_step_down.clicked.connect(lambda state: self.move_loop_step(1,0))
         self.pushButton_move_step_in.clicked.connect(lambda state: self.move_loop_step(0,1))
         self.pushButton_move_step_out.clicked.connect(lambda state: self.move_loop_step(0,-1))
+        self.treeView_protocol_sequence.clicked.connect(self.tree_click_sequence)
 
 
         # saving and loading
@@ -353,6 +358,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # --------------------------------------------------
     # measurement methods
     # --------------------------------------------------
+    def tree_click_sequence(self):
+        """Called when clicking the treeView_protocol_sequence."""
+        index = self.treeView_protocol_sequence.selectedIndexes()[0]
+        dat = self.item_model_sequence.itemFromIndex(index).data()
+        if dat is not None:
+            step = self.current_protocol.loop_step_dict[dat]
+            config = drag_drop_tree_view.config_from_type(step)
+            self.get_step_config()
+            if self.loopstep_configuration_widget is not None:
+                self.widget_8.layout().removeWidget(self.loopstep_configuration_widget)
+                self.loopstep_configuration_widget.deleteLater()
+            self.loopstep_configuration_widget = config
+            self.widget_8.layout().addWidget(self.loopstep_configuration_widget, 1, 0)
+
+    def get_step_config(self):
+        # TODO this
+        pass
+
+
     def add_protocol(self):
         """Adds a new protocol 'Unnamed_Protocol' to the list. Makes sure that it has a unique filename."""
         protocol = {self.unique_protocol_name('Unnamed_Protocol'): Measurement_Protocol()}
@@ -429,22 +453,88 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Opens a specific Menu on right click in the protocol-sequence.
         If selection is not on a loop_step, it consists only of Add Step, otherwise it consists of Delete Step."""
         # TODO other actions
+        # TODO more beautiful?
         menu = QMenu()
         inds = self.treeView_protocol_sequence.selectedIndexes()
         if inds:
+            item = self.item_model_sequence.itemFromIndex(inds[0])
             del_action = QAction('Delete Step')
             del_action.triggered.connect(self.remove_loop_step)
+            below_actions = []
+            above_actions = []
+            into_actions = []
+            row = inds[0].row()
+            parent = item.parent()
+            if parent is not None:
+                parent = parent.data()
+            for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
+                action = QAction(stp)
+                action_a = QAction(stp)
+                action_in = QAction(stp)
+                action.triggered.connect(lambda state, x=stp, y=row+1, z=parent: self.add_loop_step(x, y, z))
+                action_a.triggered.connect(lambda state, x=stp, y=row, z=parent: self.add_loop_step(x, y, z))
+                action_in.triggered.connect(lambda state, x=stp, y=-1, z=item.data(): self.add_loop_step(x,y,z))
+                below_actions.append(action)
+                above_actions.append(action_a)
+                into_actions.append(action_in)
+            insert_above_menu = QMenu('Insert Above')
+            insert_above_menu.addActions(above_actions)
+            insert_below_menu = QMenu('Insert Below')
+            insert_below_menu.addActions(below_actions)
+            if self.current_protocol.loop_step_dict[item.data()].has_children:
+                add_in_menu = QMenu('Add Into')
+                add_in_menu.addActions(into_actions)
+                menu.addMenu(add_in_menu)
+            menu.addMenu(insert_above_menu)
+            menu.addMenu(insert_below_menu)
+            menu.addSeparator()
+            cut_action = QAction('Cut')
+            cut_action.triggered.connect(lambda state, x=item.data(): self.cut_loop_step(x))
+            copy_action = QAction('Copy')
+            copy_action.triggered.connect(lambda state, x=item.data(): self.copy_loop_step(x))
+            paste_menu = QMenu('Paste')
+            if self.copied_loop_step is not None:
+                paste_above = QAction('Paste Above')
+                paste_above.triggered.connect(lambda state, x=True, y=row, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
+                paste_below = QAction('Paste Below')
+                paste_below.triggered.connect(lambda state, x=True, y=row+1, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
+                if self.current_protocol.loop_step_dict[item.data()].has_children:
+                    paste_into = QAction('Paste Into')
+                    paste_into.triggered.connect(lambda state, x=True, y=-1, z=item.data(): self.add_loop_step(copied_step=x,position=y,parent=z))
+                    paste_menu.addAction(paste_into)
+                paste_menu.addActions([paste_above, paste_below])
+            else:
+                paste_menu.setEnabled(False)
+            menu.addAction(cut_action)
+            menu.addAction(copy_action)
+            menu.addMenu(paste_menu)
+            menu.addSeparator()
             menu.addAction(del_action)
         else:
-            addMenu = QMenu('Add Step')
-            actions = []
+            add_actions = []
             for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
                 action = QAction(stp)
                 action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
-                actions.append(action)
-            addMenu.addActions(actions)
-            menu.addMenu(addMenu)
+                add_actions.append(action)
+            add_menu = QMenu('Add Step')
+            add_menu.addActions(add_actions)
+            paste_action = QAction('Paste')
+            if self.copied_loop_step is not None:
+                paste_action.triggered.connect(lambda state, x=True, y=-1, z=None: self.add_loop_step(copied_step=x, position=y, parent=z))
+            else:
+                paste_action.setEnabled(False)
+            menu.addMenu(add_menu)
+            menu.addAction(paste_action)
         menu.exec_(self.treeView_protocol_sequence.viewport().mapToGlobal(pos))
+
+    def cut_loop_step(self, step_name):
+        """Copies the given step, then removes it."""
+        self.copy_loop_step(step_name)
+        self.remove_loop_step(ask=False)
+
+    def copy_loop_step(self, step_name):
+        """Makes a deepcopy of the given step and stores it in copied_loop_step."""
+        self.copied_loop_step = deepcopy(self.current_protocol.loop_step_dict[step_name])
 
 
     def move_loop_step(self, up_down=0, in_out=0):
@@ -485,21 +575,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         new_ind = self.item_model_sequence.indexFromItem(item)
         self.treeView_protocol_sequence.selectionModel().select(new_ind, QItemSelectionModel.Select)
 
-    def add_loop_step(self, step_type):
-        """Add a loop_step of given step_type. Updates the current sequence into the protocol, then initializes the new step."""
+    def add_loop_step(self, step_type='', position=-1, parent=None, copied_step=False):
+        """Add a loop_step of given step_type. Updates the current sequence into the protocol, then initializes the new step.
+        Arguments:
+            - step_type: string giving the type of step to be added
+            - position: where to add the step, default -1, append to the end
+            - parent: if None, the step is added to the outermost layer of the protocol, otherwise inside the parent
+            - copied_step: if None, a new step of type step_type will be created, otherwise copied_loop_step will be inserted"""
         self.update_loop_step_order()
-        step = drag_drop_tree_view.get_loop_step_from_type(step_type)
-        self.current_protocol.add_loop_step(step, model=self.item_model_sequence)
+        if copied_step:
+            step = self.copied_loop_step
+        else:
+            step = drag_drop_tree_view.get_loop_step_from_type(step_type)
+        self.current_protocol.add_loop_step(step, model=self.item_model_sequence, position=position, parent_step_name=parent)
         self.build_protocol_sequence()
+        if copied_step:
+            self.copy_loop_step(self.copied_loop_step.full_name)
 
-    def remove_loop_step(self):
+    def remove_loop_step(self, ask=True):
         """After updating the loop_step order in the protocol, the selected loop step is deleted (if the messagebox is accepted)."""
         self.update_loop_step_order()
         ind = self.treeView_protocol_sequence.selectedIndexes()[0]
         name = self.item_model_sequence.itemFromIndex(ind).data()
         if name is not None:
-            remove_dialog = QMessageBox.question(self, 'Delete Step?', f'Are you sure you want to delete the step {name}?', QMessageBox.Yes | QMessageBox.No)
-            if remove_dialog == QMessageBox.Yes:
+            remove_dialog = None
+            if ask:
+                remove_dialog = QMessageBox.question(self, 'Delete Step?', f'Are you sure you want to delete the step {name}?', QMessageBox.Yes | QMessageBox.No)
+            if not ask or remove_dialog == QMessageBox.Yes:
                 self.current_protocol.remove_loop_step(name)
                 self.build_protocol_sequence()
 
