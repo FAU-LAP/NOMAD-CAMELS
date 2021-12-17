@@ -657,6 +657,7 @@
      <string>Settings</string>
     </property>
     <addaction name="actionAutosave_on_closing"/>
+    <addaction name="actionDark_Mode"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -726,6 +727,14 @@
   <action name="actionDevice_Driver_Builder">
    <property name="text">
     <string>Device Driver Builder</string>
+   </property>
+  </action>
+  <action name="actionDark_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dark Mode</string>
    </property>
   </action>
  </widget>

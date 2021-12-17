@@ -4,22 +4,22 @@ import os
 epics_path = f"{os.getenv('LOCALAPPDATA')}/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/epics".replace('\\', '/')
 epics_path_wsl = '/home/epics'
 localappdata = os.getenv("LOCALAPPDATA").replace("\\", "/")
-localappdata_program = f'{localappdata}/CECS'
+localappdata_program = f'{localappdata}/CAMELS'
 localappdata_program_wsl = f'/mnt/{localappdata_program[0].lower()}{localappdata_program[2:]}'
 
-def clean_up_ioc(ioc='CECS'):
+def clean_up_ioc(ioc='CAMELS'):
     info1 = subprocess.Popen(['wsl', './EPICS_handling/clean_up_ioc.cmd', ioc], stdout=subprocess.PIPE).communicate()[0]
     info2 = subprocess.Popen(['wsl', './EPICS_handling/create_ioc.cmd', ioc], stdout=subprocess.PIPE).communicate()[0]
     return f'{info1.decode()}\n\n{info2.decode()}'
 
-def make_ioc(ioc='CECS'):
+def make_ioc(ioc='CAMELS'):
     """This function calls the make_ioc.cmd from the wsl shell.
     It goes to the given ioc, and performs one "make distclean" followed by a "make"."""
     output = subprocess.Popen(['wsl', './EPICS_handling/make_ioc.cmd', ioc], stdout=subprocess.PIPE).communicate()[0]
     return output.decode()
 
 
-def change_devices(device_dict:dict, ioc='CECS'):
+def change_devices(device_dict:dict, ioc='CAMELS'):
     """First, all the '.db' files are removed from the 'ioc'App/Db directory, also the supporting files in 'ioc'Sup are removed. Depending on the given device_dict, the necessary files of the files are added to the files that are to be copied. If there are requirements specified, they will first be collected in a list, to avoid duplicates. Then, the requirements are also added to the copying-string. The string is then written in a temporary file 'copy_temp.cmd', in binary. Subprocess is used to call the wsl to run 'copy_temp.cmd'. This workaround is necessary, as the file-protections etc. have to be correct in the wsl environment."""
     driver_path = 'C:/Users/od93yces/FAIRmat/devices_drivers'
     driver_path_wsl = f'/mnt/c/Users/od93yces/FAIRmat/devices_drivers'

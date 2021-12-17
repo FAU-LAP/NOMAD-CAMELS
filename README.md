@@ -1,1 +1,1 @@
-# CECS_FAIRmat 
+# CAMELS_FAIRmat 

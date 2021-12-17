@@ -4,7 +4,7 @@ import importlib
 
 from copy import deepcopy
 
-from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, QModelIndex
+from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, QModelIndex, QFile, QTextStream
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel
 
@@ -23,8 +23,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # basic setup
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
-        self.setWindowTitle('CECS - Configurable Experimental Control System')
-        self.setWindowIcon(QIcon('graphics/FAIRmat_L.png'))
+        self.setWindowTitle('CAMELS - Configurable Application for Measurement- and Laboritory-Systems')
+        self.setWindowIcon(QIcon('graphics/CAMELS.png'))
         predev, premeas = load_save_functions.get_preset_list()
         for pre in predev:
             self.comboBox_device_preset.addItem(pre)
@@ -75,6 +75,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_add_device.clicked.connect(self.add_device)
         self.pushButton_remove_device.clicked.connect(self.remove_device)
         self.actionAutosave_on_closing.changed.connect(self.change_preferences)
+        self.actionDark_Mode.changed.connect(self.toggle_dark_mode)
         self.actionSave_Device_Preset.triggered.connect(self.save_device_preset)
         self.actionSave_Measurement_Preset.triggered.connect(self.save_measurement_preset)
         self.pushButton_make_EPICS_environment.clicked.connect(self.make_epics_environment)
@@ -97,8 +98,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.__save_dict_devices__ = {}
         self.__save_dict_meas__ = {}
         self.saving = False
-        self._current_device_preset = 'Default'
-        self._current_measurement_preset = 'Default'
+        self._current_device_preset = ['Default']
+        self._current_measurement_preset = ['Default']
         self.device_save_dict = {'_current_device_preset': self._current_device_preset,
                                  'active_devices_dict': self.active_devices_dict,
                                  'lineEdit_device_search': self.lineEdit_device_search}
@@ -108,7 +109,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_state()
         self.device_config_widget = QWidget()
         self.comboBox_device_preset.currentTextChanged.connect(self.change_device_preset)
-        # self.comboBox_measurement_preset.currentTextChanged.connect(self.change_measurement_preset)
+        self.comboBox_measurement_preset.currentTextChanged.connect(self.change_measurement_preset)
 
         self.inside_function = False
 
@@ -136,10 +137,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         prefs = load_save_functions.get_preferences()
         if 'autosave' in prefs:
             self.actionAutosave_on_closing.setChecked(prefs['autosave'])
+        if 'dark_mode' in prefs:
+            self.actionDark_Mode.setChecked(prefs['dark_mode'])
+            self.toggle_dark_mode()
+
+    def toggle_dark_mode(self):
+        dark = self.actionDark_Mode.isChecked()
+        main_app = QApplication.instance()
+        if main_app is None:
+            raise RuntimeError("MainApp not found.")
+        if dark:
+            file = QFile('graphics/dark.qss')
+            file.open(QFile.ReadOnly | QFile.Text)
+            stream = QTextStream(file)
+            main_app.setStyleSheet(stream.readAll())
+        else:
+            main_app.setStyleSheet('')
+        self.change_preferences()
+
 
     def change_preferences(self):
         """Called when any preferences are changed. Makes the dictionary of preferences and calls save_preferences from the load_save_functions module."""
-        prefs = {'autosave': self.actionAutosave_on_closing.isChecked()}
+        prefs = {'autosave': self.actionAutosave_on_closing.isChecked(),
+                 'dark_mode': self.actionDark_Mode.isChecked()}
         load_save_functions.save_preferences(prefs)
 
     def save_state(self):
@@ -150,12 +170,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def save_device_state(self):
         """makes the __save_dict_devices__, then calls the autosave."""
         self.make_device_save_dict()
-        load_save_functions.autosave_preset(self._current_device_preset, self.__save_dict_devices__)
+        load_save_functions.autosave_preset(self._current_device_preset[0], self.__save_dict_devices__)
 
     def save_measurement_state(self):
         """makes the __save_dict_meas__, then calls the autosave."""
         self.make_measurement_save_dict()
-        load_save_functions.autosave_preset(self._current_measurement_preset, self.__save_dict_meas__, False)
+        load_save_functions.autosave_preset(self._current_measurement_preset[0], self.__save_dict_meas__, False)
 
     def save_device_preset(self):
         """Opens a QFileDialog to save the device preset. A backup / autosave of the preset is made automatically."""
@@ -164,6 +184,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.saving = True
         self.comboBox_device_preset.addItem(preset_name)
         self.comboBox_device_preset.setCurrentText(preset_name)
+        self._current_device_preset[0] = preset_name
         self.make_device_save_dict()
         load_save_functions.save_preset(file, self.__save_dict_devices__)
         self.saving = False
@@ -175,6 +196,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.saving = True
         self.comboBox_measurement_preset.addItem(preset_name)
         self.comboBox_measurement_preset.setCurrentText(preset_name)
+        self._current_measurement_preset[0] = preset_name
         self.make_measurement_save_dict()
         load_save_functions.save_preset(file, self.__save_dict_meas__)
         self.saving = False
@@ -194,13 +216,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def change_device_preset(self, preset):
         """saves the old device preset, then changes to / loads the new preset."""
         self.save_device_state()
-        self._current_device_preset = preset
+        self._current_device_preset[0] = preset
         self.load_device_preset(preset)
 
     def change_measurement_preset(self, preset):
         """saves the old measurement preset, then changes to / loads the new preset."""
         self.save_measurement_state()
-        self._current_measurement_preset = preset
+        self._current_measurement_preset[0] = preset
         self.load_measurement_preset(preset)
 
     def load_device_preset(self, preset):
@@ -212,7 +234,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             preset_dict = json.load(f)
         load_save_functions.load_save_dict(preset_dict, self.device_save_dict)
         self.pushButton_make_EPICS_environment.setEnabled(True)
-        self.comboBox_device_preset.setCurrentText(self._current_device_preset)
+        self.comboBox_device_preset.setCurrentText(self._current_device_preset[0])
         self.build_devices_tree()
         for d in self.active_devices_dict:
             info = self.active_devices_dict[d]
@@ -230,7 +252,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         with open(f'{load_save_functions.preset_path}{premeas}.premeas', 'r') as f:
             preset_dict = json.load(f)
         load_save_functions.load_save_dict(preset_dict, self.meas_save_dict)
-        self.comboBox_measurement_preset.setCurrentText(self._current_measurement_preset)
+        self.comboBox_measurement_preset.setCurrentText(self._current_measurement_preset[0])
         self.build_protocol_list()
 
     def make_device_save_dict(self):
@@ -336,7 +358,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Calls the QThread Make_Ioc, creating an IOC with the specified devices."""
         self.setCursor(Qt.WaitCursor)
         self.get_device_config()
-        self.make_thread = qthreads.Make_Ioc(self._current_device_preset, self.active_devices_dict)
+        self.make_thread = qthreads.Make_Ioc(self._current_device_preset[0], self.active_devices_dict)
         self.make_thread.sig_step.connect(self.change_progressBar_value)
         self.make_thread.info_step.connect(self.update_console_output)
         self.make_thread.finished.connect(self.thread_finished)
@@ -587,10 +609,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             step = self.copied_loop_step
         else:
             step = drag_drop_tree_view.get_loop_step_from_type(step_type)
-        self.current_protocol.add_loop_step(step, model=self.item_model_sequence, position=position, parent_step_name=parent)
+        self.current_protocol.add_loop_step_rec(step, model=self.item_model_sequence, position=position, parent_step_name=parent)
         self.build_protocol_sequence()
         if copied_step:
             self.copy_loop_step(self.copied_loop_step.full_name)
+        new_ind = treeView_functions.getItemIndex(self.item_model_sequence, step.full_name)
+        self.treeView_protocol_sequence.selectionModel().select(new_ind, QItemSelectionModel.Select)
 
     def remove_loop_step(self, ask=True):
         """After updating the loop_step order in the protocol, the selected loop step is deleted (if the messagebox is accepted)."""

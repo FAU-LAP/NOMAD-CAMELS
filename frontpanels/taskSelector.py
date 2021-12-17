@@ -12,7 +12,7 @@ class TaskSelector(QDialog, Ui_TaskSelector):
     def __init__(self, parent=None):
         super(TaskSelector, self).__init__(parent)
         self.setupUi(self)
-        self.setWindowTitle('Select Task - CECS')
+        self.setWindowTitle('Select Task - CAMELS')
         self.setWindowIcon(QIcon('graphics/FAIRmat_S.png'))
         self.cancelButton.clicked.connect(self.close)
         self.okButton.clicked.connect(self.select_task)
@@ -38,11 +38,11 @@ class TaskSelector(QDialog, Ui_TaskSelector):
 
     def create_task(self):
         """Creates a new empty task file."""
-        text_dialog = EnterTextDialog(self, 'Create Task - CECS', 'Task name:')
+        text_dialog = EnterTextDialog(self, 'Create Task - CAMELS', 'Task name:')
         text_dialog.exec_()
         name = text_dialog.value
         if name is not None:
-            task_path = f'{getenv("LOCALAPPDATA")}/CECS/Tasks/'
+            task_path = f'{getenv("LOCALAPPDATA")}/CAMELS/Tasks/'
             f = open(task_path + name + '.task', 'x')
             f.close()
         self.find_tasks()

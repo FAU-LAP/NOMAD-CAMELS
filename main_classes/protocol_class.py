@@ -37,13 +37,15 @@ class Measurement_Protocol:
             loop_step.append_to_model(model)
         self.loop_step_dict.update({loop_step.full_name: loop_step})
 
-    def add_loop_step_rec(self, loop_step, model=None, parent_step_name=None):
+    def add_loop_step_rec(self, loop_step, model=None, parent_step_name=None, position=-1):
         """Recursively adds the loop_step and all its children to the protocol. Steps are added to the list if they have no parent, otherwise to the parent. All are added to the dictionary."""
-        if model is not None:
-            loop_step.append_to_model(model, parent=parent_step_name)
         if parent_step_name is None:
-            self.add_loop_step(loop_step, model=model, parent_step_name=parent_step_name)
+            self.add_loop_step(loop_step, model=model, parent_step_name=parent_step_name, position=position)
         else:
+            if model is not None:
+                loop_step.append_to_model(model, parent=parent_step_name)
+            if loop_step not in self.loop_step_dict[parent_step_name].children:
+                self.loop_step_dict[parent_step_name].add_child(loop_step, position)
             self.loop_step_dict.update({loop_step.full_name: loop_step})
         if loop_step.has_children:
             for child in loop_step.children:

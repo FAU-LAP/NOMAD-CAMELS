@@ -31,6 +31,8 @@ class Loop_Step:
         """Ensures that the (full_)name of the loop_step is unique and updates name and full_name, then appends the step to the model."""
         if parent is None:
             parent = item_model
+        if type(parent) is str:
+            parent = item_model.itemFromIndex(treeView_functions.getItemIndex(item_model, parent))
         self.full_name = f'{self.step_type} ({self.name})'
         name = self.full_name
         if treeView_functions.getItemIndex(item_model, name) is not None:

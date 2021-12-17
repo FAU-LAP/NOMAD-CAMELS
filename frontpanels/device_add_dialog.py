@@ -52,7 +52,7 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
         self.installed_devices_list = getInstalledDevices()
 
         self.setupUi(self)
-        self.setWindowTitle('CECS - Add Device')
+        self.setWindowTitle('CAMELS - Add Device')
 
         self.item_model = QStandardItemModel(0,4)
         self.treeView_devices.setModel(self.item_model)
