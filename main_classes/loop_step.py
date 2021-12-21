@@ -84,13 +84,27 @@ class Loop_Step_Container(Loop_Step):
 
 class Loop_Step_Config(QWidget):
     """Parent class for the configuration Widget of the loop_step. Provides the main layout and a lineEdit for changing the loop_steps name."""
-    name_change = pyqtSignal()
+    name_changed = pyqtSignal()
 
-    def __init__(self, parent=None, name=''):
+    def __init__(self, parent=None, loop_step=None):
         super(Loop_Step_Config, self).__init__(parent)
         layout = QGridLayout()
         name_label = QLabel('Name:')
+        self.loop_step = loop_step
+        name = loop_step.name
         self.lineEdit_name = QLineEdit(name, self)
         layout.addWidget(name_label, 0, 0)
         layout.addWidget(self.lineEdit_name, 0, 1)
         self.setLayout(layout)
+
+        self.lineEdit_name.returnPressed.connect(self.change_name)
+
+    def change_name(self):
+        """Changes the name of the loop_step, then emits the name_changed signal."""
+        self.loop_step.name = self.lineEdit_name.text()
+        self.loop_step.update_full_name()
+        self.name_changed.emit()
+
+    def update_step_config(self):
+        """Overwrite this for specific step-configuration. It should provide the loop_step object with all necessary data."""
+        self.change_name()

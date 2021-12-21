@@ -1,6 +1,13 @@
 from traceback import print_tb
 from PyQt5.QtWidgets import QMessageBox
 
+import logging
+
+from utility.load_save_functions import appdata_path
+
+logging.basicConfig(filename=f'{appdata_path}/logging.log', level=logging.DEBUG)
+
+
 class ErrorMessage(QMessageBox):
 	def __init__(self, msg, info_text='', parent=None):
 		super().__init__(parent)
@@ -12,5 +19,6 @@ class ErrorMessage(QMessageBox):
 			self.setInformativeText(info_text)
 
 
-def exception_hook(exctype, value, tb):
-	ErrorMessage(exctype.__name__, str(value) + '\n' + str(print_tb(tb))).exec_()
+def exception_hook(*exc_info):
+	logging.exception(str(exc_info))
+	ErrorMessage(exc_info[0].__name__, str(exc_info[1]) + '\n' + str(print_tb(exc_info[2]))).exec_()

@@ -139,8 +139,7 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
         return info.decode()
     else:
         return f'Adding devices...\n{write_string}'
-    # TODO st.cmd correctly
-    # TODO Makefile in iocAPP/src correctly
+    # TODO check whether correct in all cases, more possibilities for connections
 
 def update_addresses(device, address_dict, device_settings, port_string, record_string):
     """Called by change_devices. Updates the two given strings with the necessary lines for the given device.

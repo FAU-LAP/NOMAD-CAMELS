@@ -163,6 +163,10 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.load_loop_steps(prot_data['loop_steps'])
         if 'plots' in prot_data:
             prot.load_plots(prot_data['plots'])
+        if 'filename' in prot_data:
+            prot.filename = prot_data['filename']
+        if 'variables' in prot_data:
+            prot.variables = prot_data['variables']
         prot_dict.update({key: prot})
 
 def get_most_recent_presets():

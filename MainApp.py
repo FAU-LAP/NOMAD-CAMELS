@@ -4,8 +4,8 @@ import importlib
 
 from copy import deepcopy
 
-from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, QModelIndex, QFile, QTextStream
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction
+from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, QFile, QTextStream
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction, QToolButton
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel
 
 from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view
@@ -13,7 +13,7 @@ from utility import exception_hook, load_save_functions, treeView_functions, qth
 from gui.mainWindow import Ui_MainWindow
 
 from frontpanels.device_add_dialog import AddDeviceDialog
-from main_classes.protocol_class import Measurement_Protocol
+from main_classes.protocol_class import Measurement_Protocol, General_Protocol_Settings
 
 device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
@@ -23,7 +23,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # basic setup
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
-        self.setWindowTitle('CAMELS - Configurable Application for Measurement- and Laboritory-Systems')
+        self.setWindowTitle('CAMELS - Configurable Application for Measurement- and Laboratory-Systems')
         self.setWindowIcon(QIcon('graphics/CAMELS.png'))
         predev, premeas = load_save_functions.get_preset_list()
         for pre in predev:
@@ -60,15 +60,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.item_model_protocols = QStandardItemModel(0,1)
         self.listView_protocols.setModel(self.item_model_protocols)
         self.item_model_sequence = QStandardItemModel(0,1)
-        self.widget_7.layout().removeWidget(self.treeView_protocol_sequence)
+        self.sequence_main_widget.layout().removeWidget(self.treeView_protocol_sequence)
         self.treeView_protocol_sequence.deleteLater()
         self.treeView_protocol_sequence = drag_drop_tree_view.Drag_Drop_TreeView()
-        self.widget_7.layout().addWidget(self.treeView_protocol_sequence, 5, 0, 1, 3)
+        self.sequence_main_widget.layout().addWidget(self.treeView_protocol_sequence, 5, 0, 1, 3)
         self.treeView_protocol_sequence.setModel(self.item_model_sequence)
         self.treeView_protocol_sequence.customContextMenuRequested.connect(self.sequence_right_click)
         self.current_protocol = None
-        self.loopstep_configuration_widget = None
+        self.loop_step_configuration_widget = None
         self.copied_loop_step = None
+        self.sequence_main_widget.setEnabled(False)
 
 
         #connecting buttons
@@ -91,7 +92,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_move_step_down.clicked.connect(lambda state: self.move_loop_step(1,0))
         self.pushButton_move_step_in.clicked.connect(lambda state: self.move_loop_step(0,1))
         self.pushButton_move_step_out.clicked.connect(lambda state: self.move_loop_step(0,-1))
-        self.treeView_protocol_sequence.clicked.connect(self.tree_click_sequence)
+        self.treeView_protocol_sequence.clicked.connect(lambda x: self.tree_click_sequence(False))
+        self.add_actions = []
+        for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
+            action = QAction(stp)
+            action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+            self.add_actions.append(action)
+        self.toolButton_add_step.addActions(self.add_actions)
+        self.toolButton_add_step.setPopupMode(QToolButton.InstantPopup)
+        self.pushButton_remove_step.clicked.connect(lambda x: self.remove_loop_step(True))
+        self.pushButton_show_protocol_settings.clicked.connect(lambda x: self.tree_click_sequence(True))
 
 
         # saving and loading
@@ -310,7 +320,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if 'py_package' in self.active_devices_dict[dat]:
                 self.get_device_config()
                 self.device_config_widget = self.active_devices_dict[dat]['py_package'].subclass_config(self, dat, self.active_devices_dict[dat]['settings'])
-                self.splitter.replaceWidget(2, self.device_config_widget)
+                self.devices_splitter.replaceWidget(2, self.device_config_widget)
 
     def get_device_config(self):
         """If the currently used device_config_widget has the attribute data, the settings will be updated to the active_devices_dict."""
@@ -380,23 +390,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # --------------------------------------------------
     # measurement methods
     # --------------------------------------------------
-    def tree_click_sequence(self):
+    def tree_click_sequence(self, general=False):
         """Called when clicking the treeView_protocol_sequence."""
-        index = self.treeView_protocol_sequence.selectedIndexes()[0]
-        dat = self.item_model_sequence.itemFromIndex(index).data()
-        if dat is not None:
-            step = self.current_protocol.loop_step_dict[dat]
-            config = drag_drop_tree_view.config_from_type(step)
+        config = None
+        if general:
+            config = General_Protocol_Settings(self, self.current_protocol)
+        else:
+            index = self.treeView_protocol_sequence.selectedIndexes()[0]
+            dat = self.item_model_sequence.itemFromIndex(index).data()
+            if dat is not None:
+                step = self.current_protocol.loop_step_dict[dat]
+                config = drag_drop_tree_view.config_from_type(step)
+        if config is not None:
             self.get_step_config()
-            if self.loopstep_configuration_widget is not None:
-                self.widget_8.layout().removeWidget(self.loopstep_configuration_widget)
-                self.loopstep_configuration_widget.deleteLater()
-            self.loopstep_configuration_widget = config
-            self.widget_8.layout().addWidget(self.loopstep_configuration_widget, 1, 0)
+            if self.loop_step_configuration_widget is not None:
+                self.configuration_main_widget.layout().removeWidget(self.loop_step_configuration_widget)
+                self.loop_step_configuration_widget.deleteLater()
+            self.loop_step_configuration_widget = config
+            self.configuration_main_widget.layout().addWidget(self.loop_step_configuration_widget, 1, 0)
+            if not general:
+                self.loop_step_configuration_widget.name_changed.connect(self.change_step_name)
+
+    def change_step_name(self):
+        """Called when a loop_step changes its name, then updates the shown sequence, and also the protocol-data."""
+        self.build_protocol_sequence()
+        self.update_loop_step_order()
 
     def get_step_config(self):
-        # TODO this
-        pass
+        """Updates the data in the currently-to-configure loop_step."""
+        if self.loop_step_configuration_widget is not None:
+            self.loop_step_configuration_widget.update_step_config()
 
 
     def add_protocol(self):
@@ -470,6 +493,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for loop_step in protocol.loop_steps:
             loop_step.append_to_model(self.item_model_sequence)
         self.treeView_protocol_sequence.expandAll()
+        self.sequence_main_widget.setEnabled(True)
 
     def sequence_right_click(self, pos):
         """Opens a specific Menu on right click in the protocol-sequence.
@@ -481,7 +505,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if inds:
             item = self.item_model_sequence.itemFromIndex(inds[0])
             del_action = QAction('Delete Step')
-            del_action.triggered.connect(self.remove_loop_step)
+            del_action.triggered.connect(lambda x: self.remove_loop_step(True))
             below_actions = []
             above_actions = []
             into_actions = []
@@ -560,7 +584,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
     def move_loop_step(self, up_down=0, in_out=0):
-        """Moves a loop_step up or down in the sequence. It can also moved in or out (into the loopstep above, it if accepts children).
+        """Moves a loop_step up or down in the sequence. It can also moved in or out (into the loop_step above, it if accepts children).
         Arguments:
             - up_down: Default 0, moves up if negative (lower row-number), down if positive
             - in_out: moves in if positive, out if negative, default 0"""
@@ -632,12 +656,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_loop_step_order(self):
         """Goes through all the loop_steps in the sequence, then rearranges them in the protocol."""
         if self.current_protocol is not None:
-            loopsteps = []
+            loop_steps = []
             for i in range(self.item_model_sequence.rowCount()):
                 item = self.item_model_sequence.item(i, 0)
-                substeps = treeView_functions.get_substeps(item)
-                loopsteps.append((item.data(), substeps))
-            self.current_protocol.rearrange_loop_steps(loopsteps)
+                sub_steps = treeView_functions.get_substeps(item)
+                loop_steps.append((item.data(), sub_steps))
+            self.current_protocol.rearrange_loop_steps(loop_steps)
 
 
 

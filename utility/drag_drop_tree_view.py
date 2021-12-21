@@ -17,8 +17,7 @@ def get_loop_step_from_type(step_type):
 
 def config_from_type(step):
     """Returns the Loop_Step_Config belonging to the given step."""
-    return loop_step.Loop_Step_Config(name=step.name)
-
+    return loop_step.Loop_Step_Config(loop_step=step)
 
 
 
