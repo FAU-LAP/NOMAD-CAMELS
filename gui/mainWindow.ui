@@ -738,6 +738,33 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>comboBox_device_preset</tabstop>
+  <tabstop>comboBox_measurement_preset</tabstop>
+  <tabstop>lineEdit_device_search</tabstop>
+  <tabstop>pushButton_add_device</tabstop>
+  <tabstop>pushButton_remove_device</tabstop>
+  <tabstop>treeView_devices</tabstop>
+  <tabstop>pushButton_make_EPICS_environment</tabstop>
+  <tabstop>pushButton_show_console_output</tabstop>
+  <tabstop>textEdit_console_output</tabstop>
+  <tabstop>pushButton_run_protocol</tabstop>
+  <tabstop>lineEdit_protocol_search</tabstop>
+  <tabstop>pushButton_add_protocol</tabstop>
+  <tabstop>pushButton_remove_protocol</tabstop>
+  <tabstop>listView_protocols</tabstop>
+  <tabstop>pushButton_build_protocol</tabstop>
+  <tabstop>pushButton_show_output_meas</tabstop>
+  <tabstop>textEdit_console_output_meas</tabstop>
+  <tabstop>pushButton_show_protocol_settings</tabstop>
+  <tabstop>pushButton_move_step_up</tabstop>
+  <tabstop>pushButton_move_step_in</tabstop>
+  <tabstop>pushButton_move_step_down</tabstop>
+  <tabstop>pushButton_move_step_out</tabstop>
+  <tabstop>toolButton_add_step</tabstop>
+  <tabstop>pushButton_remove_step</tabstop>
+  <tabstop>treeView_protocol_sequence</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
