@@ -10,11 +10,13 @@ from gui.general_protocol_settings import Ui_Protocol_Settings
 
 class Measurement_Protocol:
     """Class for the measurement protocols. It mainly contains loop_steps and plots."""
-    def __init__(self, loop_steps=None, plots=None):
+    def __init__(self, loop_steps=None, plots=None, channels=None):
         if plots is None:
             plots = []
         if loop_steps is None:
             loop_steps = []
+        if channels is None:
+            channels = {}
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -22,6 +24,8 @@ class Measurement_Protocol:
         self.plots = plots
         self.filename = ''
         self.variables = {}
+        self.loop_step_variables = {}
+        self.channels = channels
 
     def build(self):
         """Making the runable-protocol..."""
@@ -90,7 +94,7 @@ class Measurement_Protocol:
         elif step_info['step_type'] == 'Container':
             st = Loop_Step_Container(step_info['name'], children)
         elif step_info['step_type'] == 'For Loop':
-            st = for_while_loops.For_Loop_Step(name=step_info['name'], children=children, step_info=step_info)
+            st = for_while_loops.For_Loop_Step(name=step_info['name'], children=children)
         st.full_name = step_info['full_name']
         return st
 

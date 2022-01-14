@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QWidget, QTableWidgetItem
 from PyQt5.QtCore import Qt
 
 from main_classes.loop_step import Loop_Step_Container, Loop_Step_Config
+from utility.number_formatting import format_number
 
 from gui.for_loop import Ui_for_loop_config
 
@@ -12,18 +13,22 @@ class For_Loop_Step(Loop_Step_Container):
         self.step_type = 'For Loop'
         if step_info is None:
             step_info = {}
-        self.loop_type = step_info['loop_type'] if 'loop_type' in step_info else ''
-        self.start_val = step_info['start_val'] if 'start_val' in step_info else 0
-        self.stop_val = step_info['stop_val'] if 'stop_val' in step_info else 0
-        self.min_val = step_info['min_val'] if 'min_val' in step_info else 0
-        self.max_val = step_info['max_val'] if 'max_val' in step_info else 0
-        self.n_points = step_info['n_points'] if 'n_points' in step_info else 0
-        self.point_distance = step_info['point_distance'] if 'point_distance' in step_info else np.nan
+        self.loop_type = step_info['loop_type'] if 'loop_type' in step_info else 'start - stop'
+        self.start_val = step_info['start_val'] if 'start_val' in step_info else np.nan
+        self.stop_val = step_info['stop_val'] if 'stop_val' in step_info else np.nan
+        self.min_val = step_info['min_val'] if 'min_val' in step_info else np.nan
+        self.max_val = step_info['max_val'] if 'max_val' in step_info else np.nan
+        self.n_points = step_info['n_points'] if 'n_points' in step_info else np.nan
         self.sweep_mode = step_info['sweep_mode'] if 'sweep_mode' in step_info else 'linear'
         self.point_array = step_info['point_array'] if 'point_array' in step_info else []
         self.val_list = step_info['val_list'] if 'val_list' in step_info else []
         self.file_path = step_info['file_path'] if 'file_path' in step_info else ''
         self.include_end_points = step_info['include_end_points'] if 'include_end_points' in step_info else True
+
+    def get_protocol_string(self):
+        protocol_string = f'# {self.full_name}\n'
+        # protocol_string += f'for {self.name} in '
+        protocol_string += self.get_children_strings()
 
 
 class For_Loop_Step_Config(Loop_Step_Config):
@@ -39,27 +44,47 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
     def __init__(self, loop_step:For_Loop_Step, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        self.loop_type_change()
         self.loop_step = loop_step
+        self.load_data()
+        self.loop_type_change()
         self.build_preview_array()
 
         self.comboBox_loop_type.currentTextChanged.connect(self.loop_type_change)
-        self.lineEdit_start.textChanged.connect(self.build_preview_array)
-        self.lineEdit_stop.textChanged.connect(self.build_preview_array)
-        self.lineEdit_min.textChanged.connect(self.build_preview_array)
-        self.lineEdit_max.textChanged.connect(self.build_preview_array)
+        self.lineEdit_start.textChanged.connect(self.change_n_points)
+        self.lineEdit_stop.textChanged.connect(self.change_n_points)
+        self.lineEdit_min.textChanged.connect(self.change_n_points)
+        self.lineEdit_max.textChanged.connect(self.change_n_points)
         self.lineEdit_point_distance.textChanged.connect(self.change_point_dist)
         self.lineEdit_n_points.textChanged.connect(self.change_n_points)
-        self.checkBox_include_endpoints.clicked.connect(self.build_preview_array)
+        self.checkBox_include_endpoints.clicked.connect(self.change_n_points)
         self.comboBox_sweep_mode.currentTextChanged.connect(self.change_sweep_mode)
         self.pushButton_del_point.clicked.connect(self.del_point)
         self.pushButton_add_point.clicked.connect(self.add_point)
 
+        self.tableWidget_points.cellChanged.connect(self.value_list_changed)
+        self.path_line_button.path_changed.connect(self.build_preview_array)
 
         self.building = False
 
+    def load_data(self):
+        self.comboBox_loop_type.setCurrentText(self.loop_step.loop_type)
+        if not np.isnan(self.loop_step.start_val):
+            self.lineEdit_start.setText(str(self.loop_step.start_val))
+        if not np.isnan(self.loop_step.stop_val):
+            self.lineEdit_stop.setText(str(self.loop_step.stop_val))
+        if not np.isnan(self.loop_step.min_val):
+            self.lineEdit_min.setText(str(self.loop_step.min_val))
+        if not np.isnan(self.loop_step.max_val):
+            self.lineEdit_max.setText(str(self.loop_step.max_val))
+        if not np.isnan(self.loop_step.n_points):
+            self.lineEdit_n_points.setText(str(self.loop_step.n_points))
+        self.comboBox_sweep_mode.setCurrentText(self.loop_step.sweep_mode)
+        self.checkBox_include_endpoints.setChecked(self.loop_step.include_end_points)
+        self.path_line_button.set_path(self.loop_step.file_path)
+
 
     def loop_type_change(self):
+        combo_text = self.comboBox_loop_type.currentText()
         if self.comboBox_loop_type.currentText() == 'start - stop':
             self.path_line_button.setEnabled(False)
             self.sweep_widget.setEnabled(True)
@@ -67,14 +92,18 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
             self.lineEdit_min.setEnabled(False)
             self.pushButton_add_point.setEnabled(False)
             self.pushButton_del_point.setEnabled(False)
-        elif self.comboBox_loop_type.currentText() in ['start - min - max - stop', 'start - max - min - stop']:
+            self.label_min.setEnabled(False)
+            self.label_max.setEnabled(False)
+        elif combo_text in ['start - min - max - stop', 'start - max - min - stop']:
             self.path_line_button.setEnabled(False)
             self.sweep_widget.setEnabled(True)
             self.lineEdit_max.setEnabled(True)
             self.lineEdit_min.setEnabled(True)
             self.pushButton_add_point.setEnabled(False)
             self.pushButton_del_point.setEnabled(False)
-        elif self.comboBox_loop_type.currentText() == 'Value-List':
+            self.label_min.setEnabled(True)
+            self.label_max.setEnabled(True)
+        elif combo_text == 'Value-List':
             self.path_line_button.setEnabled(False)
             self.sweep_widget.setEnabled(False)
             self.pushButton_add_point.setEnabled(True)
@@ -85,6 +114,7 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
             self.pushButton_add_point.setEnabled(False)
             self.pushButton_del_point.setEnabled(False)
         self.build_preview_array()
+        self.loop_step.loop_type = combo_text
 
     def change_point_dist(self):
         if self.building:
@@ -93,10 +123,9 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
             start = float(self.lineEdit_start.text())
             stop = float(self.lineEdit_stop.text())
             distance = float(self.lineEdit_point_distance.text())
-            self.loop_step.point_distance = distance
-        except ValueError:
+            points = int((stop - start) / distance)
+        except (ValueError, ZeroDivisionError):
             return
-        points = int((stop - start) / distance)
         if self.checkBox_include_endpoints.isChecked():
             points += 1
         self.building = True
@@ -120,9 +149,10 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
         else:
             distance = np.nan
         self.building = True
-        self.lineEdit_point_distance.setText(f'{distance:.3f}')
+        self.lineEdit_point_distance.setText(format_number(distance))
         self.building = False
         self.build_preview_array()
+        self.loop_step.include_end_points = self.checkBox_include_endpoints.isChecked()
 
     def change_sweep_mode(self):
         if self.comboBox_sweep_mode.currentText() == 'linear':
@@ -130,17 +160,20 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
         else:
             self.lineEdit_point_distance.setEnabled(False)
         self.build_preview_array()
+        self.loop_step.sweep_mode = self.comboBox_sweep_mode.currentText()
 
     def build_preview_array(self):
+        self.tableWidget_points.clear()
+        self.tableWidget_points.setRowCount(0)
         if self.comboBox_loop_type.currentText() in ['start - stop', 'start - min - max - stop', 'start - max - min - stop']:
             try:
                 start = float(self.lineEdit_start.text())
-                self.loop_step.start = start
+                self.loop_step.start_val = start
             except ValueError:
                 start = np.nan
             try:
                 stop = float(self.lineEdit_stop.text())
-                self.loop_step.stop = stop
+                self.loop_step.stop_val = stop
             except ValueError:
                 stop = np.nan
             try:
@@ -180,29 +213,46 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
         elif self.comboBox_loop_type.currentText() == 'Value-List':
             vals = self.loop_step.val_list
         else:
-            vals = []
-        self.tableWidget_points.clear()
+            try:
+                file = self.path_line_button.get_path()
+                vals = np.loadtxt(file)
+                self.loop_step.file_path = file
+            except OSError:
+                return
         self.tableWidget_points.setRowCount(len(vals))
         self.tableWidget_points.horizontalHeader().hide()
         self.tableWidget_points.setColumnCount(1)
+        self.loop_step.point_array = vals
         for i, val in enumerate(vals):
             # TODO put value where to start scientific notation into settings
-            self.tableWidget_points.setItem(i, 0, QTableWidgetItem(f'{val:.3e}'))
+            item = QTableWidgetItem(format_number(val))
+            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+            self.tableWidget_points.setItem(i, 0, item)
         if self.comboBox_loop_type.currentText() == 'Value-List':
             for i in range(self.tableWidget_points.rowCount()):
-                item = self.tableWidget_points.item(i)
+                item = self.tableWidget_points.item(i, 0)
                 item.setFlags(item.flags() | Qt.ItemIsEditable)
 
     def add_point(self):
         rows = self.tableWidget_points.rowCount()
         self.tableWidget_points.setRowCount(rows+1)
-        self.tableWidget_points.setItem(rows, 0, QTableWidgetItem('0'))
-        self.tableWidget_points.item(rows, 0).setFlags(Qt.ItemIsEditable | Qt.ItemIsEnabled)
+        self.loop_step.val_list.append(0)
+        item = QTableWidgetItem('0')
+        self.tableWidget_points.setItem(rows, 0, item)
+        item.setFlags(Qt.ItemIsEditable | Qt.ItemIsEnabled)
 
     def del_point(self):
         indexes = self.tableWidget_points.selectedIndexes()
-        if indexes:
-            self.tableWidget_points.removeRow(indexes[0].row())
+        for index in sorted(indexes, key=lambda x: -x.row()):
+            self.tableWidget_points.removeRow(index.row())
+            self.loop_step.val_list.pop(index.row())
+
+    def value_list_changed(self, row):
+        if self.comboBox_loop_type.currentText() == 'Value-List':
+            try:
+                self.loop_step.val_list[row] = float(self.tableWidget_points.item(row, 0).text())
+            except ValueError:
+                return
 
     def get_space(self, start, stop, points):
         try:

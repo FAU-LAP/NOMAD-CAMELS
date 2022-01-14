@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtCore import Qt, QSize, pyqtSignal
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit
+from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QAction
 
 
 from utility import treeView_functions
@@ -51,6 +51,9 @@ class Loop_Step:
         self.full_name = name
         return item
 
+    def get_protocol_string(self):
+        return f'# {self.full_name}\n'
+
 
 class Loop_Step_Container(Loop_Step):
     """Parent Class for loop_steps that should contain further steps (like e.g. a for-loop)."""
@@ -80,6 +83,17 @@ class Loop_Step_Container(Loop_Step):
     def remove_child(self, child):
         """Removes the specified child from the children."""
         self.children.remove(child)
+
+    def get_protocol_string(self):
+        protocol_string = super().get_protocol_string()
+        protocol_string += self.get_children_strings()
+        return protocol_string
+
+    def get_children_strings(self):
+        child_string = ''
+        for child in self.children:
+            child_string += child.get_protocol_string()
+        return child_string
 
 
 class Loop_Step_Config(QWidget):

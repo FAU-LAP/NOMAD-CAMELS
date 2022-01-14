@@ -1,20 +1,25 @@
 import json
 import sys
+import qdarkstyle
 import importlib
+import os
 
 from copy import deepcopy
 
-from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, QFile, QTextStream
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction, QToolButton
-from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel
+from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, QFile, QTextStream, QModelIndex
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut
+from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
-from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view
+from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting
 
 from gui.mainWindow import Ui_MainWindow
 
 from frontpanels.device_add_dialog import AddDeviceDialog
+from frontpanels.settings_window import Settings_Window
 from main_classes.protocol_class import Measurement_Protocol, General_Protocol_Settings
+from commands import change_sequence
 
+os.environ['QT_API'] = 'pyqt5'
 device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -66,6 +71,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.sequence_main_widget.layout().addWidget(self.treeView_protocol_sequence, 5, 0, 1, 3)
         self.treeView_protocol_sequence.setModel(self.item_model_sequence)
         self.treeView_protocol_sequence.customContextMenuRequested.connect(self.sequence_right_click)
+        # self.treeView_protocol_sequence.dragdrop.connect(self.update_loop_step_order)
         self.current_protocol = None
         self.loop_step_configuration_widget = None
         self.copied_loop_step = None
@@ -75,8 +81,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #connecting buttons
         self.pushButton_add_device.clicked.connect(self.add_device)
         self.pushButton_remove_device.clicked.connect(self.remove_device)
-        self.actionAutosave_on_closing.changed.connect(self.change_preferences)
-        self.actionDark_Mode.changed.connect(self.toggle_dark_mode)
+        self.actionSettings.triggered.connect(self.change_preferences)
         self.actionSave_Device_Preset.triggered.connect(self.save_device_preset)
         self.actionSave_Measurement_Preset.triggered.connect(self.save_measurement_preset)
         self.pushButton_make_EPICS_environment.clicked.connect(self.make_epics_environment)
@@ -115,26 +120,55 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                  'lineEdit_device_search': self.lineEdit_device_search}
         self.meas_save_dict = {'_current_measurement_preset': self._current_measurement_preset,
                                'protocols_dict': self.protocols_dict}
+        self.preferences = {}
         self.load_preferences()
         self.load_state()
         self.device_config_widget = QWidget()
         self.comboBox_device_preset.currentTextChanged.connect(self.change_device_preset)
         self.comboBox_measurement_preset.currentTextChanged.connect(self.change_measurement_preset)
 
+        self.channels = {}
+
         self.inside_function = False
+        self.undo_stack = QUndoStack(self)
+        self.actionUndo.triggered.connect(self.undo)
+        self.actionRedo.triggered.connect(self.redo)
+        self.actionUndo.setEnabled(self.undo_stack.canUndo())
+        self.actionRedo.setEnabled(self.undo_stack.canRedo())
+        QShortcut('Ctrl+z', self).activated.connect(self.undo)
+        QShortcut('Ctrl+y', self).activated.connect(self.redo)
+
+    def mousePressEvent(self, a0: QMouseEvent) -> None:
+        but = a0.button()
+        if but == 8:
+            self.undo()
+        elif but == 16:
+            self.redo()
+        else:
+            super().mousePressEvent(a0)
+
+    def undo(self):
+        self.undo_stack.undo()
+        self.actionUndo.setEnabled(self.undo_stack.canUndo())
+        self.actionRedo.setEnabled(self.undo_stack.canRedo())
+
+    def redo(self):
+        self.undo_stack.redo()
+        self.actionUndo.setEnabled(self.undo_stack.canUndo())
+        self.actionRedo.setEnabled(self.undo_stack.canRedo())
 
     # --------------------------------------------------
     # Overwriting parent-methods
     # --------------------------------------------------
     def close(self) -> bool:
         """Calling the save_state method when closing the window."""
-        if self.actionAutosave_on_closing.isChecked():
+        if self.preferences['autosave']:
             self.save_state()
         return super().close()
 
     def closeEvent(self, a0: QCloseEvent) -> None:
         """Calling the save_state method when closing the window."""
-        if self.actionAutosave_on_closing.isChecked():
+        if self.preferences['autosave']:
             self.save_state()
         super().closeEvent(a0)
 
@@ -144,33 +178,38 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def load_preferences(self):
         """Loads the preferences.
         - autosave: turn on / off autosave on closing the program."""
-        prefs = load_save_functions.get_preferences()
-        if 'autosave' in prefs:
-            self.actionAutosave_on_closing.setChecked(prefs['autosave'])
-        if 'dark_mode' in prefs:
-            self.actionDark_Mode.setChecked(prefs['dark_mode'])
+        self.preferences = load_save_functions.get_preferences()
+        number_formatting.preferences = self.preferences
+        if 'dark_mode' in self.preferences:
             self.toggle_dark_mode()
 
     def toggle_dark_mode(self):
-        dark = self.actionDark_Mode.isChecked()
+        dark = self.preferences['dark_mode']
         main_app = QApplication.instance()
         if main_app is None:
             raise RuntimeError("MainApp not found.")
         if dark:
-            file = QFile('graphics/dark.qss')
-            file.open(QFile.ReadOnly | QFile.Text)
-            stream = QTextStream(file)
-            main_app.setStyleSheet(stream.readAll())
+            # file = QFile('graphics/dark.qss')
+            # file.open(QFile.ReadOnly | QFile.Text)
+            # stream = QTextStream(file)
+            # main_app.setStyleSheet(stream.readAll())
+            main_app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+            main_app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
         else:
             main_app.setStyleSheet('')
-        self.change_preferences()
 
 
     def change_preferences(self):
         """Called when any preferences are changed. Makes the dictionary of preferences and calls save_preferences from the load_save_functions module."""
-        prefs = {'autosave': self.actionAutosave_on_closing.isChecked(),
-                 'dark_mode': self.actionDark_Mode.isChecked()}
-        load_save_functions.save_preferences(prefs)
+        settings_dialog = Settings_Window(parent=self, settings=self.preferences)
+        if settings_dialog.exec_():
+            self.preferences = settings_dialog.get_settings()
+            number_formatting.preferences = self.preferences
+            self.toggle_dark_mode()
+            load_save_functions.save_preferences(self.preferences)
+        # prefs = {'autosave': self.actionAutosave_on_closing.isChecked(),
+        #          'dark_mode': self.actionDark_Mode.isChecked()}
+        # load_save_functions.save_preferences(prefs)
 
     def save_state(self):
         """Saves the current states of both presets."""
@@ -424,7 +463,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def add_protocol(self):
         """Adds a new protocol 'Unnamed_Protocol' to the list. Makes sure that it has a unique filename."""
-        protocol = {self.unique_protocol_name('Unnamed_Protocol'): Measurement_Protocol()}
+        protocol = {self.unique_protocol_name('Unnamed_Protocol'): Measurement_Protocol(channels=self.channels)}
         self.protocols_dict.update(protocol)
         self.build_protocol_list()
 
@@ -485,7 +524,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def build_protocol_sequence(self):
         """Shows / builds the protocol sequence in the treeView dependent on the loop_steps in the current_protocol."""
-        ind = self.listView_protocols.selectedIndexes()[0]
+        ind = self.listView_protocols.selectedIndexes()
+        if not ind:
+            return
+        ind = ind[0]
+        ind_seq = self.treeView_protocol_sequence.selectedIndexes()
+        sel_data = ''
+        if ind_seq:
+            sel_data = self.item_model_sequence.data(ind_seq[0])
         prot_name = self.item_model_protocols.itemFromIndex(ind).data()
         protocol = self.protocols_dict[prot_name]
         self.current_protocol = protocol
@@ -494,6 +540,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             loop_step.append_to_model(self.item_model_sequence)
         self.treeView_protocol_sequence.expandAll()
         self.sequence_main_widget.setEnabled(True)
+        if sel_data is not None:
+            new_index = treeView_functions.getItemIndex(self.item_model_sequence, sel_data)
+            if new_index:
+                self.treeView_protocol_sequence.selectionModel().select(new_index, QItemSelectionModel.Select)
 
     def sequence_right_click(self, pos):
         """Opens a specific Menu on right click in the protocol-sequence.
@@ -588,38 +638,42 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Arguments:
             - up_down: Default 0, moves up if negative (lower row-number), down if positive
             - in_out: moves in if positive, out if negative, default 0"""
+        move_command = change_sequence.CommandMoveStep(self.treeView_protocol_sequence, self.item_model_sequence, up_down, in_out, self.current_protocol.loop_step_dict, self.update_loop_step_order)
+        self.undo_stack.push(move_command)
+        self.actionUndo.setEnabled(self.undo_stack.canUndo())
+        self.actionRedo.setEnabled(self.undo_stack.canRedo())
         # TODO make function more clear and simple
-        ind = self.treeView_protocol_sequence.selectedIndexes()[0]
-        item = self.item_model_sequence.itemFromIndex(ind)
-        parent = item.parent()
-        if parent is None:
-            if up_down != 0 and (ind.row() > 0 or up_down > 0) and (ind.row() < self.item_model_sequence.rowCount()-1 or up_down < 0):
-                row = self.item_model_sequence.takeRow(ind.row())
-                self.item_model_sequence.insertRow(ind.row() + up_down, row)
-            elif in_out > 0 and ind.row() > 0:
-                above = self.item_model_sequence.item(ind.row()-1, 0)
-                if self.current_protocol.loop_step_dict[above.data()].has_children:
-                    row = self.item_model_sequence.takeRow(ind.row())
-                    above.insertRow(above.rowCount(), row)
-        else:
-            if up_down != 0 and (ind.row() > 0 or up_down > 0) and (ind.row() < parent.rowCount()-1 or up_down < 0):
-                row = parent.takeRow(ind.row())
-                parent.insertRow(ind.row() + up_down, row)
-            elif in_out > 0 and ind.row() > 0:
-                above = parent.child(ind.row()-1, 0)
-                if self.current_protocol.loop_step_dict[above.data()].has_children:
-                    row = parent.takeRow(ind.row())
-                    above.insertRow(above.rowCount(), row)
-            elif in_out < 0:
-                grandparent = parent.parent()
-                if grandparent is None:
-                    grandparent = self.item_model_sequence
-                parent_row = parent.index().row()
-                row = parent.takeRow(ind.row())
-                grandparent.insertRow(parent_row+1, row)
-        self.treeView_protocol_sequence.clearSelection()
-        new_ind = self.item_model_sequence.indexFromItem(item)
-        self.treeView_protocol_sequence.selectionModel().select(new_ind, QItemSelectionModel.Select)
+        # ind = self.treeView_protocol_sequence.selectedIndexes()[0]
+        # item = self.item_model_sequence.itemFromIndex(ind)
+        # parent = item.parent()
+        # if parent is None:
+        #     if up_down != 0 and (ind.row() > 0 or up_down > 0) and (ind.row() < self.item_model_sequence.rowCount()-1 or up_down < 0):
+        #         row = self.item_model_sequence.takeRow(ind.row())
+        #         self.item_model_sequence.insertRow(ind.row() + up_down, row)
+        #     elif in_out > 0 and ind.row() > 0:
+        #         above = self.item_model_sequence.item(ind.row()-1, 0)
+        #         if self.current_protocol.loop_step_dict[above.data()].has_children:
+        #             row = self.item_model_sequence.takeRow(ind.row())
+        #             above.insertRow(above.rowCount(), row)
+        # else:
+        #     if up_down != 0 and (ind.row() > 0 or up_down > 0) and (ind.row() < parent.rowCount()-1 or up_down < 0):
+        #         row = parent.takeRow(ind.row())
+        #         parent.insertRow(ind.row() + up_down, row)
+        #     elif in_out > 0 and ind.row() > 0:
+        #         above = parent.child(ind.row()-1, 0)
+        #         if self.current_protocol.loop_step_dict[above.data()].has_children:
+        #             row = parent.takeRow(ind.row())
+        #             above.insertRow(above.rowCount(), row)
+        #     elif in_out < 0:
+        #         grandparent = parent.parent()
+        #         if grandparent is None:
+        #             grandparent = self.item_model_sequence
+        #         parent_row = parent.index().row()
+        #         row = parent.takeRow(ind.row())
+        #         grandparent.insertRow(parent_row+1, row)
+        # self.treeView_protocol_sequence.clearSelection()
+        # new_ind = self.item_model_sequence.indexFromItem(item)
+        # self.treeView_protocol_sequence.selectionModel().select(new_ind, QItemSelectionModel.Select)
 
     def add_loop_step(self, step_type='', position=-1, parent=None, copied_step=False):
         """Add a loop_step of given step_type. Updates the current sequence into the protocol, then initializes the new step.

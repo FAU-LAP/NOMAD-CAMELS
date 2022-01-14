@@ -5,7 +5,7 @@ from PyQt5.QtGui import QDropEvent
 from main_classes import loop_step
 from loop_steps import for_while_loops
 
-step_types = ['Default', 'Container', 'For Loop']
+step_types = ['Default', 'Container', 'For Loop', 'Read Channels']
 container_types = ['Container', 'For Loop']
 def get_loop_step_from_type(step_type):
     """Creates a new loop_step of the given type."""

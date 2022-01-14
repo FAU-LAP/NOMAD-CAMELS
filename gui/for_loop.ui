@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>630</width>
+    <width>622</width>
     <height>476</height>
    </rect>
   </property>
@@ -28,6 +28,12 @@
    </property>
    <item row="1" column="3">
     <widget class="QPushButton" name="pushButton_add_point">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>23</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
        <width>30</width>
@@ -48,6 +54,12 @@
    </item>
    <item row="1" column="4">
     <widget class="QPushButton" name="pushButton_del_point">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>23</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
        <width>30</width>
@@ -127,7 +139,7 @@
        <number>0</number>
       </property>
       <item row="5" column="1">
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="label_max">
         <property name="text">
          <string>Max</string>
         </property>
@@ -147,10 +159,10 @@
        </spacer>
       </item>
       <item row="6" column="1">
-       <widget class="QLineEdit" name="lineEdit_max"/>
+       <widget class="Variable_Box" name="lineEdit_max"/>
       </item>
       <item row="9" column="1">
-       <widget class="QLineEdit" name="lineEdit_point_distance"/>
+       <widget class="Variable_Box" name="lineEdit_point_distance"/>
       </item>
       <item row="3" column="1">
        <widget class="QLabel" name="label_3">
@@ -160,10 +172,10 @@
        </widget>
       </item>
       <item row="4" column="1">
-       <widget class="QLineEdit" name="lineEdit_stop"/>
+       <widget class="Variable_Box" name="lineEdit_stop"/>
       </item>
       <item row="5" column="0">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="label_min">
         <property name="text">
          <string>Min</string>
         </property>
@@ -184,7 +196,7 @@
        </widget>
       </item>
       <item row="4" column="0">
-       <widget class="QLineEdit" name="lineEdit_start"/>
+       <widget class="Variable_Box" name="lineEdit_start"/>
       </item>
       <item row="7" column="1">
        <widget class="QLabel" name="label_8">
@@ -251,10 +263,10 @@
        </widget>
       </item>
       <item row="6" column="0">
-       <widget class="QLineEdit" name="lineEdit_min"/>
+       <widget class="Variable_Box" name="lineEdit_min"/>
       </item>
       <item row="9" column="0">
-       <widget class="QLineEdit" name="lineEdit_n_points"/>
+       <widget class="Variable_Box" name="lineEdit_n_points"/>
       </item>
       <item row="10" column="0" colspan="2">
        <widget class="QCheckBox" name="checkBox_include_endpoints">
@@ -293,6 +305,11 @@
    <extends>QWidget</extends>
    <header>utility.path_button_edit</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Variable_Box</class>
+   <extends>QLineEdit</extends>
+   <header>utility.variable_tool_tip_box</header>
   </customwidget>
  </customwidgets>
  <tabstops>

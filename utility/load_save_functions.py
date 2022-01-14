@@ -194,7 +194,11 @@ def get_most_recent_presets():
 def get_preferences():
     """If a file 'preferences.json' exists in the appdata, its content will be loaded and returned, if no file exists, it will be created with an empty dictionary."""
     if 'preferences.json' not in os.listdir(appdata_path):
-        standard_pref = {'autosave': True}
+        standard_pref = {'autosave': True,
+                         'dark_mode': False,
+                         'n_decimals': 3,
+                         'number_format': 'plain',
+                         'mixed_from': 3}
         with open(f'{appdata_path}/preferences.json', 'w') as file:
             json.dump(standard_pref, file, indent=2)
     with open(f'{appdata_path}/preferences.json', 'r') as file:
