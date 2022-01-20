@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 
 from EPICS_handling import make_ioc
+from utility import bluesky_handling
 
 class Make_Ioc(QThread):
     """Called from the MainApp.
@@ -30,3 +31,16 @@ class Make_Ioc(QThread):
         info = make_ioc.make_ioc(self.ioc_name)
         self.info_step.emit(info)
         self.sig_step.emit(100)
+
+
+class Run_Protocol(QThread):
+    sig_step = pyqtSignal(int)
+    info_step = pyqtSignal(str)
+
+    def __init__(self, protocol, path):
+        super().__init__()
+        self.protocol = protocol
+        self.path = path
+
+    def run(self) -> None:
+        bluesky_handling.run_protocol(self.protocol, self.path, self.sig_step, self.info_step)

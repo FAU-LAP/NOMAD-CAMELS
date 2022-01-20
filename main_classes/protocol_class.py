@@ -10,7 +10,7 @@ from gui.general_protocol_settings import Ui_Protocol_Settings
 
 class Measurement_Protocol:
     """Class for the measurement protocols. It mainly contains loop_steps and plots."""
-    def __init__(self, loop_steps=None, plots=None, channels=None):
+    def __init__(self, loop_steps=None, plots=None, channels=None, name=''):
         if plots is None:
             plots = []
         if loop_steps is None:
@@ -26,11 +26,12 @@ class Measurement_Protocol:
         self.variables = {}
         self.loop_step_variables = {}
         self.channels = channels
+        self.name = name
 
-    def build(self):
-        """Making the runable-protocol..."""
-        # TODO this function...
-        pass
+    def update_variables(self):
+        self.loop_step_variables.clear()
+        for step in self.loop_steps:
+            step.update_variables()
 
     def add_loop_step(self, loop_step, position=-1, parent_step_name=None, model=None):
         """Adds a loop_step to the protocol (or the parent_step)at the specified position. Also appends the loop_step to the given model. The loop_step is added to the list as well as the dictionary.
@@ -113,6 +114,14 @@ class Measurement_Protocol:
             self.loop_step_dict[step].children = []
             append_all_children(children, self.loop_step_dict[step], self.loop_step_dict)
             self.loop_steps.append(self.loop_step_dict[step])
+
+    def get_plan_string(self):
+        plan_string = f'def {self.name.replace(" ","_")}_plan():\n'
+        plan_string += '\tyield from bps.open_run()\n'
+        for step in self.loop_steps:
+            plan_string += step.get_protocol_string(n_tabs=1)
+        plan_string += '\tyield from bps.close_run()\n'
+        return plan_string
 
 def append_all_children(child_list, step, step_dict):
     """Takes a list of the kind specified in rearrange_loop_steps, does the same as the other function, but recursively for all the (grand-)children."""
@@ -212,6 +221,7 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
             name = self.variable_model.item(i, 0).text()
             value = get_data(self.variable_model.item(i, 1).text())
             self.protocol.variables.update({name: value})
+
 
 def get_data(s):
     """Returns the evaluated data of s."""

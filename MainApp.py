@@ -10,7 +10,7 @@ from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, QFile, QText
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
-from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting
+from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, bluesky_handling
 
 from gui.mainWindow import Ui_MainWindow
 
@@ -61,6 +61,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.textEdit_console_output_meas.setHidden(True)
 
         # measurements
+        self.run_thread = None
         self.protocols_dict = {}
         self.item_model_protocols = QStandardItemModel(0,1)
         self.listView_protocols.setModel(self.item_model_protocols)
@@ -107,6 +108,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.toolButton_add_step.setPopupMode(QToolButton.InstantPopup)
         self.pushButton_remove_step.clicked.connect(lambda x: self.remove_loop_step(True))
         self.pushButton_show_protocol_settings.clicked.connect(lambda x: self.tree_click_sequence(True))
+        self.pushButton_build_protocol.clicked.connect(self.build_current_protocol)
+        self.pushButton_run_protocol.clicked.connect(self.run_current_protocol)
 
 
         # saving and loading
@@ -126,8 +129,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.device_config_widget = QWidget()
         self.comboBox_device_preset.currentTextChanged.connect(self.change_device_preset)
         self.comboBox_measurement_preset.currentTextChanged.connect(self.change_measurement_preset)
-
-        self.channels = {}
 
         self.inside_function = False
         self.undo_stack = QUndoStack(self)
@@ -285,13 +286,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_make_EPICS_environment.setEnabled(True)
         self.comboBox_device_preset.setCurrentText(self._current_device_preset[0])
         self.build_devices_tree()
-        for d in self.active_devices_dict:
-            info = self.active_devices_dict[d]
-            try:
-                package_name = info['name'].replace(' ', '_')
-                info.update({'py_package': importlib.import_module(f'{package_name}.{package_name}')})
-            except Exception as e:
-                print(e)
+        # for d in self.active_devices_dict:
+        #     info = self.active_devices_dict[d]
+        #     try:
+        #         package_name = info['name'].replace(' ', '_')
+        #         info.update({'py_package': importlib.import_module(f'{package_name}.{package_name}')})
+        #     except Exception as e:
+        #         print(e)
 
     def load_measurement_preset(self, premeas):
         """Called when the comboBox_measurement_preset is changed (or when loading the last state). Opens the given preset."""
@@ -330,6 +331,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Sets the progressBar_devices to the given val."""
         self.progressBar_devices.setValue(val)
 
+    def change_progressBar_value_meas(self, val):
+        self.progressBar_protocols.setValue(val)
+
     # --------------------------------------------------
     # devices methods
     # --------------------------------------------------
@@ -356,16 +360,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         index = self.treeView_devices.selectedIndexes()[0]
         dat = self.item_model_devices.itemFromIndex(index).data()
         if dat is not None and not dat.startswith('tag:'):
-            if 'py_package' in self.active_devices_dict[dat]:
-                self.get_device_config()
-                self.device_config_widget = self.active_devices_dict[dat]['py_package'].subclass_config(self, dat, self.active_devices_dict[dat]['settings'])
-                self.devices_splitter.replaceWidget(2, self.device_config_widget)
+            py_package = importlib.import_module(f'{dat}.{dat}')
+            self.get_device_config()
+            self.device_config_widget = py_package.subclass_config(self, dat, self.active_devices_dict[dat].settings)
+            self.devices_splitter.replaceWidget(2, self.device_config_widget)
 
     def get_device_config(self):
         """If the currently used device_config_widget has the attribute data, the settings will be updated to the active_devices_dict."""
         if hasattr(self.device_config_widget, 'data'):
             if self.device_config_widget.data in self.active_devices_dict:
-                self.active_devices_dict[self.device_config_widget.data].update({'settings': self.device_config_widget.get_settings()})
+                self.active_devices_dict[self.device_config_widget.data].settings = self.device_config_widget.get_settings()
 
     def build_devices_tree(self):
         """Builds the tree of devices.
@@ -383,11 +387,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             item = QStandardItem(key)
             item.setEditable(False)
             item.setData(key)
-            if device['virtual']:
+            if device.virtual:
                 self.item_model_devices.item(1,0).appendRow(item)
             else:
                 self.item_model_devices.item(0,0).appendRow(item)
-            for tag in device['tags']:
+            for tag in device.tags:
                 item = QStandardItem(key)
                 item.setEditable(False)
                 item.setData(key)
@@ -429,8 +433,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # --------------------------------------------------
     # measurement methods
     # --------------------------------------------------
+    def update_protocol_output(self, info):
+        self.textEdit_console_output_meas.append(info)
+
+    def run_current_protocol(self):
+        if self.current_protocol is None:
+            raise Exception('You need to select a protocol!')
+        self.setCursor(Qt.WaitCursor)
+        path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
+        self.run_thread = qthreads.Run_Protocol(self.current_protocol, path)
+        self.run_thread.sig_step.connect(self.change_progressBar_value_meas)
+        self.run_thread.info_step.connect(self.update_protocol_output)
+        self.run_thread.finished.connect(self.thread_finished)
+        self.run_thread.start()
+
+    def build_current_protocol(self):
+        path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
+        bluesky_handling.build_protocol(self.current_protocol, path)
+
     def tree_click_sequence(self, general=False):
         """Called when clicking the treeView_protocol_sequence."""
+        self.get_step_config()
+        self.current_protocol.update_variables()
         config = None
         if general:
             config = General_Protocol_Settings(self, self.current_protocol)
@@ -441,7 +465,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 step = self.current_protocol.loop_step_dict[dat]
                 config = drag_drop_tree_view.config_from_type(step)
         if config is not None:
-            self.get_step_config()
             if self.loop_step_configuration_widget is not None:
                 self.configuration_main_widget.layout().removeWidget(self.loop_step_configuration_widget)
                 self.loop_step_configuration_widget.deleteLater()
@@ -463,7 +486,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def add_protocol(self):
         """Adds a new protocol 'Unnamed_Protocol' to the list. Makes sure that it has a unique filename."""
-        protocol = {self.unique_protocol_name('Unnamed_Protocol'): Measurement_Protocol(channels=self.channels)}
+        name = self.unique_protocol_name('Unnamed_Protocol')
+        protocol = {name: Measurement_Protocol(name=name)}
         self.protocols_dict.update(protocol)
         self.build_protocol_list()
 
@@ -491,6 +515,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         item.setData(new_name)
         self.inside_function = False
         self.protocols_dict.update({new_name: protocol_data})
+        self.protocols_dict[new_name].name = new_name
         self.build_protocol_list()
 
     def unique_protocol_name(self, name):
@@ -535,6 +560,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         prot_name = self.item_model_protocols.itemFromIndex(ind).data()
         protocol = self.protocols_dict[prot_name]
         self.current_protocol = protocol
+        variables_handling.protocol_variables = self.current_protocol.variables
+        variables_handling.loop_step_variables = self.current_protocol.loop_step_variables
         self.item_model_sequence.clear()
         for loop_step in protocol.loop_steps:
             loop_step.append_to_model(self.item_model_sequence)

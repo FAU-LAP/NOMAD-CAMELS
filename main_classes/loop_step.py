@@ -22,6 +22,7 @@ class Loop_Step:
         self.name = name
         self.full_name = f'{self.step_type} ({name})'
         self.parent_step = parent_step
+        self.time_weight = 1
 
     def update_full_name(self):
         """Updates the full_name by combination of step_type and name"""
@@ -51,8 +52,12 @@ class Loop_Step:
         self.full_name = name
         return item
 
-    def get_protocol_string(self):
-        return f'# {self.full_name}\n'
+    def get_protocol_string(self, n_tabs=1):
+        tabs = '\t'*n_tabs
+        return f'{tabs}print("starting loop_step {self.full_name}")\n'
+
+    def update_variables(self):
+        pass
 
 
 class Loop_Step_Container(Loop_Step):
@@ -84,16 +89,27 @@ class Loop_Step_Container(Loop_Step):
         """Removes the specified child from the children."""
         self.children.remove(child)
 
-    def get_protocol_string(self):
-        protocol_string = super().get_protocol_string()
-        protocol_string += self.get_children_strings()
+    def get_protocol_string(self, n_tabs=1):
+        protocol_string = super().get_protocol_string(n_tabs)
+        protocol_string += self.get_children_strings(n_tabs+1)
+        self.update_time_weight()
         return protocol_string
 
-    def get_children_strings(self):
+    def update_time_weight(self):
+        self.time_weight = 1
+        for child in self.children:
+            self.time_weight += child.time_weight
+
+
+    def get_children_strings(self, n_tabs=1):
         child_string = ''
         for child in self.children:
-            child_string += child.get_protocol_string()
+            child_string += child.get_protocol_string(n_tabs)
         return child_string
+
+    def update_variables(self):
+        for child in self.children:
+            child.update_variables()
 
 
 class Loop_Step_Config(QWidget):
@@ -117,6 +133,7 @@ class Loop_Step_Config(QWidget):
 
     def update_step_config(self):
         """Overwrite this for specific step-configuration. It should provide the loop_step object with all necessary data."""
+        # self.loop_step.update_variables()
         self.name_widget.change_name()
 
 class Loop_Step_Name_Widget(QWidget):

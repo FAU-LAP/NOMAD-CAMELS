@@ -14,7 +14,7 @@ def get_loop_step_from_type(step_type):
     elif step_type == 'Container':
         return loop_step.Loop_Step_Container('Container')
     elif step_type == 'For Loop':
-        return for_while_loops.For_Loop_Step('For Loop')
+        return for_while_loops.For_Loop_Step('For_Loop')
     else:
         return loop_step.Loop_Step('fail')
 

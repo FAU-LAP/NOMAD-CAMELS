@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_for_loop_config(object):
     def setupUi(self, for_loop_config):
         for_loop_config.setObjectName("for_loop_config")
-        for_loop_config.resize(622, 476)
+        for_loop_config.resize(380, 476)
         self.gridLayout = QtWidgets.QGridLayout(for_loop_config)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
@@ -21,6 +21,7 @@ class Ui_for_loop_config(object):
         self.pushButton_add_point.setObjectName("pushButton_add_point")
         self.gridLayout.addWidget(self.pushButton_add_point, 1, 3, 1, 1)
         self.label_9 = QtWidgets.QLabel(for_loop_config)
+        self.label_9.setMaximumSize(QtCore.QSize(80, 16777215))
         self.label_9.setObjectName("label_9")
         self.gridLayout.addWidget(self.label_9, 1, 2, 1, 1)
         self.pushButton_del_point = QtWidgets.QPushButton(for_loop_config)
@@ -109,6 +110,7 @@ class Ui_for_loop_config(object):
         spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem3, 6, 1, 1, 1)
         self.tableWidget_points = QtWidgets.QTableWidget(for_loop_config)
+        self.tableWidget_points.setMaximumSize(QtCore.QSize(150, 16777215))
         self.tableWidget_points.setObjectName("tableWidget_points")
         self.tableWidget_points.setColumnCount(0)
         self.tableWidget_points.setRowCount(0)

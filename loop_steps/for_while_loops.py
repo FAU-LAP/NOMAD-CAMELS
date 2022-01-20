@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 
 from main_classes.loop_step import Loop_Step_Container, Loop_Step_Config
 from utility.number_formatting import format_number
+from utility import variables_handling
 
 from gui.for_loop import Ui_for_loop_config
 
@@ -24,12 +25,28 @@ class For_Loop_Step(Loop_Step_Container):
         self.val_list = step_info['val_list'] if 'val_list' in step_info else []
         self.file_path = step_info['file_path'] if 'file_path' in step_info else ''
         self.include_end_points = step_info['include_end_points'] if 'include_end_points' in step_info else True
+        # self.update_variables()
 
-    def get_protocol_string(self):
-        protocol_string = f'# {self.full_name}\n'
-        # protocol_string += f'for {self.name} in '
-        protocol_string += self.get_children_strings()
+    def update_variables(self):
+        variables = {f'{self.name.replace(" ", "_")}_Count': 0,
+                     f'{self.name.replace(" ", "_")}_Value': np.nan}
+        for variable in variables:
+            if variable in variables_handling.loop_step_variables:
+                raise Exception('Variable already defined!')
+            variables_handling.loop_step_variables.update({variable: variables[variable]})
+        super().update_variables()
 
+    def get_protocol_string(self, n_tabs=1):
+        tabs = '\t'*n_tabs
+        protocol_string = f'{tabs}for {self.name.replace(" ", "_")}_Count, {self.name.replace(" ", "_")}_Value in enumerate({list(self.point_array)}):\n'
+        protocol_string += f'{tabs}\tprint("starting loop_step {self.full_name}")\n'
+        protocol_string += self.get_children_strings(n_tabs+1)
+        self.update_time_weight()
+        return protocol_string
+
+    def update_time_weight(self):
+        super().update_time_weight()
+        self.time_weight *= len(self.point_array)
 
 class For_Loop_Step_Config(Loop_Step_Config):
     def __init__(self, loop_step:For_Loop_Step, parent=None):

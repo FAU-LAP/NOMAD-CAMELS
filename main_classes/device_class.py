@@ -13,13 +13,15 @@ class Device:
         self.files = [] if files is None else files
         self.directory = directory
         self.requirements = requirements
+        self.settings = {}
+        self.channels = {}
 
     def set_connection(self, connection):
         self.connection = connection
 
 
 class Device_Connection:
-    def __init__(self, connection_type, **kwargs):
+    def __init__(self, connection_type=None, **kwargs):
         self.__save_dict__ = {}
         self.connection_type = connection_type
         if connection_type == 'prologix-GPIB':
@@ -49,7 +51,7 @@ class Device_Config(QWidget):
         label_title.setFont(title_font)
         label_connection = QLabel('Connection-type:')
         self.comboBox_connection_type = QComboBox()
-        self.connector = QWidget()
+        self.connector = Connection_Config()
         layout.addWidget(label_title, 0, 0, 1, 2)
         layout.addWidget(label_connection, 1, 0)
         layout.addWidget(self.comboBox_connection_type, 1, 1)
@@ -76,14 +78,25 @@ class Device_Config(QWidget):
             self.comboBox_connection_type.setCurrentText(self.settings_dict['connection']['type'])
             self.connector.load_settings(self.settings_dict['connection'])
 
-
-class Prologix_Config(QWidget):
-    """Widget for the settings when the connection is via a Prologix GPIB-Ethernet adapter."""
+class Connection_Config(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = QGridLayout()
         self.setLayout(layout)
 
+    def get_settings(self):
+        return {}
+
+    def load_settings(self, settings_dict):
+        pass
+
+
+
+class Prologix_Config(Connection_Config):
+    """Widget for the settings when the connection is via a Prologix GPIB-Ethernet adapter."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = self.layout()
         label_ip = QLabel('IP-Address:')
         label_GPIB = QLabel('GPIB-Address:')
         self.lineEdit_ip = QLineEdit()

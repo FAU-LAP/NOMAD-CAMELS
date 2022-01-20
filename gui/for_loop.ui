@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
+    <width>380</width>
     <height>476</height>
    </rect>
   </property>
@@ -47,6 +47,12 @@
    </item>
    <item row="1" column="2">
     <widget class="QLabel" name="label_9">
+     <property name="maximumSize">
+      <size>
+       <width>80</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="text">
       <string>Points:</string>
      </property>
@@ -295,7 +301,14 @@
     </spacer>
    </item>
    <item row="2" column="2" rowspan="5" colspan="3">
-    <widget class="QTableWidget" name="tableWidget_points"/>
+    <widget class="QTableWidget" name="tableWidget_points">
+     <property name="maximumSize">
+      <size>
+       <width>150</width>
+       <height>16777215</height>
+      </size>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

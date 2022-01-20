@@ -47,17 +47,17 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
     addresses = {}
     write_string = ''
     make_db_string = 'TOP=../..\ninclude $(TOP)/configure/CONFIG\n'
-    for dev in sorted(device_dict):
-        info = device_dict[dev]
-        device_path_wsl = f'{driver_path_wsl}/{info["directory"]}'
-        for req in info['requirements']:
+    for key in sorted(device_dict):
+        device = device_dict[key]
+        device_path_wsl = f'{driver_path_wsl}/{device.directory}'
+        for req in device.requirements:
             if req not in required:
                 required.append(req)
-        for file in info['files']:
+        for file in device.files:
             write_string += f'cp {device_path_wsl}/{file} {db_path_wsl}/{file}\n'
             make_db_string += f'DB += {file}\n'
-        if 'settings' in info:
-            asyn_port_string, load_record_string = update_addresses(dev, addresses, info['settings'], asyn_port_string, load_record_string)
+        # if 'settings' in device:
+        asyn_port_string, load_record_string = update_addresses(key, addresses, device.settings, asyn_port_string, load_record_string)
     for req in required:
         req_path = f'{driver_path}/Support/{req}'
         req_path_wsl = f'{driver_path_wsl}/Support/{req}'
