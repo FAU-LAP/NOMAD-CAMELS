@@ -19,6 +19,25 @@ class Device:
     def set_connection(self, connection):
         self.connection = connection
 
+    def read_channels(self, channels, use_set, n_tabs=1):
+        tabs = '\t' * n_tabs
+        prot_string = ''
+        for i, channel in enumerate(channels):
+            prot_string += f'{tabs}print("reading {channel} with use_set={use_set[i]}")\n'
+        return prot_string
+
+    def set_channels(self, channels, values):
+        pass
+
+    def init(self):
+        pass
+
+    def setup(self):
+        pass
+
+    def close(self):
+        pass
+
 
 class Device_Connection:
     def __init__(self, connection_type=None, **kwargs):

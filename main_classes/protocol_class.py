@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
 from main_classes.loop_step import Loop_Step, Loop_Step_Container
-from loop_steps import for_while_loops
+from loop_steps import for_while_loops, read_channels
 from gui.general_protocol_settings import Ui_Protocol_Settings
 
 
@@ -95,7 +95,9 @@ class Measurement_Protocol:
         elif step_info['step_type'] == 'Container':
             st = Loop_Step_Container(step_info['name'], children)
         elif step_info['step_type'] == 'For Loop':
-            st = for_while_loops.For_Loop_Step(name=step_info['name'], children=children)
+            st = for_while_loops.For_Loop_Step(name=step_info['name'], children=children, step_info=step_info)
+        elif step_info['step_type'] == 'Read Channels':
+            st = read_channels.Read_Channels(name=step_info['name'], step_info=step_info)
         st.full_name = step_info['full_name']
         return st
 

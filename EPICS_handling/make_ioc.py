@@ -15,6 +15,9 @@ def clean_up_ioc(ioc='CAMELS'):
 def make_ioc(ioc='CAMELS'):
     """This function calls the make_ioc.cmd from the wsl shell.
     It goes to the given ioc, and performs one "make distclean" followed by a "make"."""
+    ioc_sup_path = f'{epics_path}/IOCs/{ioc}/{ioc}Sup'
+    if os.path.isdir(ioc_sup_path) and not len(os.listdir(ioc_sup_path)) > 0:
+        os.rmdir(ioc_sup_path)
     output = subprocess.Popen(['wsl', './EPICS_handling/make_ioc.cmd', ioc], stdout=subprocess.PIPE).communicate()[0]
     return output.decode()
 
@@ -47,6 +50,8 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
     addresses = {}
     write_string = ''
     make_db_string = 'TOP=../..\ninclude $(TOP)/configure/CONFIG\n'
+    add_src_dbd_string = ''
+    add_src_libs_string = ''
     for key in sorted(device_dict):
         device = device_dict[key]
         device_path_wsl = f'{driver_path_wsl}/{device.directory}'
@@ -65,6 +70,8 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
             write_string += f'cp {req_path_wsl}/{file} {sup_path_wsl}/{file}\n'
             if file.endswith('.dbd'):
                 write_string += f'cp {req_path_wsl}/{file} {src_path_wsl}/{file}\n'
+                add_src_dbd_string += f'{ioc}_DBD += {file}\n'
+                add_src_libs_string += f'{ioc}_LIBS += {file[:-4]}\n'
     make_db_string += 'DB_INSTALLS += $(ASYN)/db/asynRecord.db\ninclude $(TOP)/configure/RULES\n'
     with open(f'{localappdata_program}/Makefile_db', 'wb') as file:
         file.write(make_db_string.encode())
@@ -105,15 +112,15 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
     make_src_string += '# Include dbd files from all support applications:\n'
     make_src_string += f'#{ioc}_DBD += xxx.dbd\n'
     make_src_string += f'{ioc}_DBD += calc.dbd\n'
-    make_src_string += f'{ioc}_DBD += drvPrologixGPIB.dbd\n'
     make_src_string += f'{ioc}_DBD += stream.dbd\n'
     make_src_string += f'{ioc}_DBD += asyn.dbd\n'
+    make_src_string += add_src_dbd_string
     make_src_string += '# Add all the support libraries needed by this IOC\n'
     make_src_string += f'#{ioc}_LIBS += xxx\n'
     make_src_string += f'{ioc}_LIBS += calc\n'
-    make_src_string += f'{ioc}_LIBS += drvPrologixGPIB\n'
     make_src_string += f'{ioc}_LIBS += stream\n'
     make_src_string += f'{ioc}_LIBS += asyn\n'
+    make_src_string += add_src_libs_string
     make_src_string += f'# {ioc}_registerRecordDeviceDriver.cpp derives from {ioc}.dbd\n'
     make_src_string += f'{ioc}_SRCS += {ioc}_registerRecordDeviceDriver.cpp\n'
     make_src_string += '# Build the main IOC entry point on workstation OSs.\n'

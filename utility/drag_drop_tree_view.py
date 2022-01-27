@@ -3,7 +3,7 @@ from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QDropEvent
 
 from main_classes import loop_step
-from loop_steps import for_while_loops
+from loop_steps import for_while_loops, read_channels
 
 step_types = ['Default', 'Container', 'For Loop', 'Read Channels']
 container_types = ['Container', 'For Loop']
@@ -15,6 +15,8 @@ def get_loop_step_from_type(step_type):
         return loop_step.Loop_Step_Container('Container')
     elif step_type == 'For Loop':
         return for_while_loops.For_Loop_Step('For_Loop')
+    elif step_type == 'Read Channels':
+        return read_channels.Read_Channels('Read_Channels')
     else:
         return loop_step.Loop_Step('fail')
 
@@ -22,6 +24,8 @@ def config_from_type(step):
     """Returns the Loop_Step_Config belonging to the given step."""
     if step.step_type == 'For Loop':
         return for_while_loops.For_Loop_Step_Config(loop_step=step)
+    elif step.step_type == 'Read Channels':
+        return read_channels.Read_Channels_Config(loop_step=step)
     return loop_step.Loop_Step_Config(loop_step=step)
 
 

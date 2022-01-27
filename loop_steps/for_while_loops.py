@@ -54,9 +54,6 @@ class For_Loop_Step_Config(Loop_Step_Config):
         self.sub_widget = For_Loop_Step_Config_Sub(parent=self, loop_step=loop_step)
         self.layout().addWidget(self.sub_widget, 1, 0)
 
-    def update_step_config(self):
-        super().update_step_config()
-
 class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
     def __init__(self, loop_step:For_Loop_Step, parent=None):
         super().__init__(parent)

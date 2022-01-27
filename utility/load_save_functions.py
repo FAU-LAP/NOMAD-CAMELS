@@ -187,9 +187,10 @@ def load_devices_dict(string_dict, devices_dict):
     for key in string_dict:
         dev_data = string_dict[key]
         try:
-            dev = importlib.import_module(f'{key}.{key}')
+            dev_lib = importlib.import_module(f'{key}.{key}')
         except Exception as e:
             raise Exception(f'Could not import device module {key}\n{e}')
+        dev = dev_lib.subclass()
         dev.name = key
         if 'connection' in dev_data:
             dev.connection = dev_data['connection']

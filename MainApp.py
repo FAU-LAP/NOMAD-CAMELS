@@ -44,6 +44,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # devices
         self.active_devices_dict = {}
+        variables_handling.devices = self.active_devices_dict
         self.lineEdit_device_search.returnPressed.connect(self.build_devices_tree)
         self.item_model_devices = QStandardItemModel(0,1)
         self.treeView_devices.setModel(self.item_model_devices)
@@ -286,6 +287,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_make_EPICS_environment.setEnabled(True)
         self.comboBox_device_preset.setCurrentText(self._current_device_preset[0])
         self.build_devices_tree()
+        self.update_channels()
         # for d in self.active_devices_dict:
         #     info = self.active_devices_dict[d]
         #     try:
@@ -293,6 +295,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #         info.update({'py_package': importlib.import_module(f'{package_name}.{package_name}')})
         #     except Exception as e:
         #         print(e)
+
+    def update_channels(self):
+        variables_handling.channels.clear()
+        for key, dev in self.active_devices_dict.items():
+            for channel in dev.channels:
+                variables_handling.channels.update({channel: dev.channels[channel]})
 
     def load_measurement_preset(self, premeas):
         """Called when the comboBox_measurement_preset is changed (or when loading the last state). Opens the given preset."""
@@ -346,6 +354,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if remove_dialog == QMessageBox.Yes:
                 self.active_devices_dict.pop(dat)
                 self.build_devices_tree()
+                self.update_channels()
 
     def add_device(self):
         """Opens the dialog to add a device. The returned values of the dialog are inserted to the available devices."""
@@ -353,6 +362,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if add_dialog.exec_():
             self.active_devices_dict = add_dialog.active_devices_dict
         self.build_devices_tree()
+        self.update_channels()
         self.pushButton_make_EPICS_environment.setEnabled(True)
 
     def tree_click(self):

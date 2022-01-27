@@ -5,6 +5,7 @@ from utility import simpleeval
 protocol_variables = {}
 channels = {}
 loop_step_variables = {}
+devices = {}
 evaluation_functions = simpleeval.DEFAULT_FUNCTIONS.copy()
 evaluation_functions.update({'exp': np.exp,
                              'ln': np.log,
