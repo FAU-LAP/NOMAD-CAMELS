@@ -714,6 +714,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionDevice_Driver_Builder"/>
+    <addaction name="actionIOC_Builder"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuPreferences"/>
@@ -795,6 +796,11 @@
   <action name="actionSettings">
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionIOC_Builder">
+   <property name="text">
+    <string>IOC-Builder</string>
    </property>
   </action>
  </widget>

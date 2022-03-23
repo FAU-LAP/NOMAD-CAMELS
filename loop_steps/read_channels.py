@@ -6,6 +6,8 @@ from gui.read_channels import Ui_read_channels_config
 
 from utility import variables_handling
 
+from ophyd import EpicsSignal, EpicsSignalRO, Device
+
 class Read_Channels(Loop_Step):
     def __init__(self, name='', parent_step=None, step_info=None):
         super().__init__(name, parent_step)
