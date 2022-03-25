@@ -1,6 +1,9 @@
 from ophyd import EpicsSignalRO, Device
 from ophyd import Component as Cpt
 
+import sys
+sys.path.append('..')
+
 from bluesky_handling import TriggerEpicsSignalRO
 
 

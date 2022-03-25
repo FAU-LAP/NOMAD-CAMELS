@@ -70,8 +70,28 @@ class PID_val_table:
             setpoints = [0.0]
         if table is None:
             table = {str(0.0): PID_vals()}
-        self.setpoints = setpoints
-        self.table = table
+            self.table = table
+        elif type(table) is str:
+            self.load_from_file(table)
+        else:
+            self.table = table
+            self.setpoints = setpoints
+
+    def load_from_file(self, file):
+        data = np.loadtxt(file)
+        self.table = {}
+        self.setpoints = []
+        for d in data:
+            vals = PID_vals()
+            vals['kp'] = d[1]
+            vals['ki'] = d[2]
+            vals['kd'] = d[3]
+            vals['min'] = d[4]
+            vals['max'] = d[5]
+            vals['bias'] = d[6]
+            self.table.update({str(d[0]): vals})
+            self.setpoints.append(d[0])
+        
 
     def add_setpoint(self, setpoint_vals, setpoint):
         self.setpoints.append(setpoint)
@@ -93,8 +113,8 @@ class PID_val_table:
         if interpolate:
             dists_neg = dists[np.where(dists < 0)]
             idx_n = np.where(dists == dists_neg.max())
-            low = setpoints[idx_p]
-            hi = setpoints[idx_n]
+            low = setpoints[idx_p][0]
+            hi = setpoints[idx_n][0]
             low_vals = self.table[str(low)]
             hi_vals = self.table[str(hi)]
             intp_vals = PID_vals()
@@ -115,9 +135,9 @@ class PID_controller(Device):
     pid_min = Cpt(Simple_Signal, read_pv_name='pid_controller.DRVL', name='pid_min', kind='config')
     pid_max = Cpt(Simple_Signal, read_pv_name='pid_controller.DRVH', name='pid_max', kind='config')
     pid_fbon = Cpt(Simple_Signal, read_pv_name='pid_controller.FBON', name='pid_fbon')
-    pid_bias = Cpt(Simple_Signal, read_pv_name=None, name='pid_bias')
+    #pid_bias = Cpt(Simple_Signal, read_pv_name=None, name='pid_bias')
 
-    def __init__(self, prefix='', *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, pid_val_table=None, read_conv_func=None, auto_pid=True, interpolate_auto=True, set_conv_func=None, **kwargs):
+    def __init__(self, prefix='', *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, pid_val_table=None, read_conv_func=None, auto_pid=True, interpolate_auto=True, set_conv_func=None, bias_signal=None, **kwargs):
         super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, **kwargs)
         self.pid_set.read_pv_name = f'{prefix}pid_controller.VAL'
         self.pid_cval.read_pv_name = f'{prefix}pid_controller.CVAL'
@@ -127,8 +147,11 @@ class PID_controller(Device):
         self.pid_min.read_pv_name = f'{prefix}pid_controller.DRVL'
         self.pid_max.read_pv_name = f'{prefix}pid_controller.DRVH'
         self.pid_fbon.read_pv_name = f'{prefix}pid_controller.FBON'
+        self.pid_bias = bias_signal
         if pid_val_table is None:
             pid_val_table = PID_val_table()
+        elif type(pid_val_table) is str:
+            pid_val_table = PID_val_table(table=pid_val_table)
         self.pid_val_table = pid_val_table
         if read_conv_func is None:
             read_conv_func = lambda x: x
@@ -148,6 +171,8 @@ class PID_controller(Device):
     def update_PID_vals(self, setpoint):
         self.pid_vals = self.pid_val_table.get_vals(setpoint, self.auto_pid)
         for key in self.pid_vals:
+            if key == 'bias' and self.pid_bias is None:
+                continue
             att = getattr(self, f'pid_{key}')
             att.put(self.pid_vals[key])
 
@@ -176,6 +201,9 @@ if __name__ == '__main__':
     from bluesky.plans import count, scan
 
     from Keysight_34401 import Keysight_34401
+    
+    import daq_signal
+
 
     # def testplan(dets, mot, start, stop, n, delay=0, md=None):
     #     yield from bps.open_run()
@@ -196,12 +224,15 @@ if __name__ == '__main__':
     # mesV.wait_for_connection()
     # # RE(scan([mesV], setV, 0, 1, 3))
     # RE(testplan([mesV], setV, 0, 1, 3))
+    valve = daq_signal.DAQ_Signal_Output(name='valve', line_name='Bruker/ao1', minV=0, maxV=10)
+    valve.put(0)
     dmm = Keysight_34401('Hall:34401:', name='dmm')
-    pid = PID_controller('Hall:', name='pid', read_conv_func=ptX, set_conv_func=ptX_inv)
+    pid = PID_controller('Hall:', name='pid', read_conv_func=ptX, set_conv_func=ptX_inv, bias_signal=valve, pid_val_table=r"C:\Users\fulapuser\Desktop\ioc_pid_vals.txt")
     pid.wait_for_connection()
     # RE(count([pid], num=3))
-    RE(scan([pid], pid, 50, 300, 3))
+    #RE(scan([pid, valve], pid, 50, 300, 3))
     header = db[-1]
+    tab = header.table()
     print(header.start)
     print(header.table())
     print(header.config_data('pid'))
