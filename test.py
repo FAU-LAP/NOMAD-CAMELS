@@ -66,7 +66,7 @@ def main():
 
     # m1 = EpicsMotor('IOCsim:m1', name='m1', labels=("motors",))
     # keithley6517 = EpicsSignal("EMILEL:test:rdCurE3", name="keithley", labels=("detectors"))
-    motor.delay = 1
+    motor.delay = 0
     def plan():
         for i in range(1, 5):
             yield from scan([det], motor, -1, 1, 1 + 2 * i)

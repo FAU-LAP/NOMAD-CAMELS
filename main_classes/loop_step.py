@@ -54,6 +54,7 @@ class Loop_Step:
         return item
 
     def get_protocol_string(self, n_tabs=1):
+        """Returns the string that is written into the protocol-file. To make use of the time_weight and status bar, it should start with printing, that the loop_step starts."""
         tabs = '\t'*n_tabs
         return f'{tabs}print("starting loop_step {self.full_name}")\n'
 

@@ -29,8 +29,6 @@ standard_save_string += '\t\tprint(header.table())\n'
 standard_save_string += '\t\tprint()\n'
 
 def build_protocol(protocol:Measurement_Protocol, file_path):
-    import datetime as dt
-    start = dt.datetime.now()
     device_import_string = '\n'
     devices_string = '\n\tdevs = {}\n'
     for dev in protocol.get_used_devices():
@@ -54,7 +52,6 @@ def build_protocol(protocol:Measurement_Protocol, file_path):
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, 'w+') as file:
         file.write(protocol_string)
-    print(dt.datetime.now() - start)
 
 def run_protocol(protocol:Measurement_Protocol, file_path, sig_step=None, info_step=None):
     build_protocol(protocol, file_path)

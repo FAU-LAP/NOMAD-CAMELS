@@ -11,7 +11,17 @@ from main_classes import measurement_channel
 
 
 class Device:
-    """general class for all devices"""
+    """general class for all devices
+    Arguments:
+        - name: represents the device, should be unique
+        - virtual: whether the device does not need any hardware
+        - tags: list of strings for the device search
+        - directory: usually the same as name, but also necessary to find the imported module
+        - ophyd_device: used for initialisation of the channels, the class used for the bluesky-integration
+
+    The subclasses of this class should all be called "subclass", they are imported via importlib in that way.
+    Any derived device should also provide the name of its ophyd-class as a string self.ophyd_class_name
+    """
     def __init__(self, name='', virtual=False, tags=None, files=None, directory='', requirements='', ophyd_device=None):
         self.__save_dict__ = {}
         self.connection = Device_Connection()
@@ -59,6 +69,7 @@ class Device:
     #     pass
 
 def get_outputs(dev:OphydDevice):
+    """walks through the components of an ophyd-device and checks whether they can be written"""
     outputs = []
     for comp in dev.walk_components():
         cls = comp.item.cls
@@ -68,6 +79,7 @@ def get_outputs(dev:OphydDevice):
     return outputs
 
 def get_channels(dev:OphydDevice):
+    """returns the components of an ophyd-device that are not listed in the configuration"""
     channels = []
     for comp in dev.walk_components():
         name = comp.item.attr

@@ -3,7 +3,13 @@ from ophyd.status import Status
 
 
 class TriggerEpicsSignalRO(EpicsSignalRO):
-
+    """Subclass that implements a simple 'timed' reading when called via bluesky's 'trigger_and_read'.
+    Note that each PV that shall be read via this class also needs a second PV with the same name+:trig. That PV should provide a FLNK to the original PV.
+    Arguments:
+        - read_pv: the name of the PV that shall be read
+        - name: name of the Signal (usually the same as the variable-name)
+        - no_mdel: set to True if the MDEL field of the corresponding record is not set to "-1". The status returned from the trigger function is directly set to finished
+    """
     def __init__(self, read_pv, *, timeout=10, string=False, name=None, no_mdel=False, **kwargs):
         super().__init__(read_pv, string=string, name=name, timeout=timeout, auto_monitor=False, **kwargs)
         self.stat = None
@@ -13,11 +19,13 @@ class TriggerEpicsSignalRO(EpicsSignalRO):
         self.no_mdel = no_mdel
 
     def callback_method(self, **kwargs):
+        """If there is a status object from the trigger-method, it will be set to finished."""
         if self.stat is not None:
             self.stat.set_finished()
             self.stat = None
 
     def trigger(self):
+        """Returns a status object that will be set to finished, when the PV-value is updated. Sets the trigger-PV to 1, thus triggering the process of the original PV."""
         self.stat = Status(self, timeout=self.timeout)
         self.trigger_pv.put(1)
         if self.no_mdel:
