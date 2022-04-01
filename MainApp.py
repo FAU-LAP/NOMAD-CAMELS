@@ -22,7 +22,7 @@ from commands import change_sequence
 from loop_steps import make_step_of_type
 
 os.environ['QT_API'] = 'pyqt5'
-device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
+# device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """Main Window for the program. Connects to all the other classes."""
@@ -342,6 +342,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def thread_finished(self):
         """When a QThread calls this, the cursor is set back to the ArrowCursor."""
         self.setCursor(Qt.ArrowCursor)
+        self.pushButton_run_protocol.setText('Run selected protocol(s)')
+        self.run_thread = None
 
     def change_progressBar_value(self, val):
         """Sets the progressBar_devices to the given val."""
@@ -455,6 +457,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.textEdit_console_output_meas.append(info)
 
     def run_current_protocol(self):
+        if self.run_thread is not None:
+            self.run_thread.terminate()
+            self.pushButton_run_protocol.setText('Run selected protocol(s)')
+            return
         if self.current_protocol is None:
             raise Exception('You need to select a protocol!')
         self.setCursor(Qt.WaitCursor)
@@ -463,9 +469,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.run_thread.sig_step.connect(self.change_progressBar_value_meas)
         self.run_thread.info_step.connect(self.update_protocol_output)
         self.run_thread.finished.connect(self.thread_finished)
+        self.pushButton_run_protocol.setText('Abort Run')
         self.run_thread.start()
 
     def build_current_protocol(self):
+        if self.current_protocol is None:
+            raise Exception('You need to select a protocol!')
         path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
         bluesky_handling.build_protocol(self.current_protocol, path)
 

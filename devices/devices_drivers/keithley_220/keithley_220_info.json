@@ -1,0 +1,8 @@
+{
+	"name": "keithley 220",
+	"directory": "keithley_220",
+	"tags": ["voltage", "resistance", "current"],
+	"requirements": ["prologixSup"],
+	"files": ["keithley_220.proto", "gpib_keithley_220.db"],
+	"virtual": false
+}

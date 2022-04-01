@@ -4,6 +4,7 @@ from os import makedirs, getenv, listdir
 from shutil import copyfile
 import importlib
 
+import numpy as np
 from PyQt5.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel, QPushButton, QTreeView, QListView, QMenuBar, QAction, QMenu, QStatusBar, QGridLayout
 
 from datetime import datetime
@@ -25,7 +26,7 @@ standard_pref = {'autosave': True,
                  'mixed_from': 3,
                  'py_files_path': f'{appdata_path}/python_files'.replace('\\','/'),
                  'meas_files_path': os.path.expanduser('~/Documents/CAMELS_data').replace('\\','/'),
-                 'device_driver_path': os.path.join(os.path.split(os.getcwd())[0], 'devices_drivers').replace('\\','/')}
+                 'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/')}
 
 def get_preset_list():
     """returns a two list of available presets, once for devices, once for measurements.
@@ -147,8 +148,10 @@ def get_save_str(obj):
                 continue
             savedic.update({key: get_save_str(dictionary[key])})
         return savedic
-    if type(obj) in [int, float, bool]:
+    if type(obj) in [int, float, bool, np.float64]:
         return obj
+    if type(obj) is np.ndarray:
+        obj = list(obj)
     if type(obj) is list:
         obj_list = []
         for p in obj:

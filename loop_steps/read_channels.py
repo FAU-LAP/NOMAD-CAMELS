@@ -53,23 +53,8 @@ class Read_Channels(Loop_Step):
                     protocol_string += ', '
                 protocol_string += f'devs["{dev}"].{chan}'
                 inserted = True
-                # device = variables_handling.channels[channel].device
-                # if device in devices_dict_channels:
-                #     devices_dict_channels[device].append(channel)
-                #     if ((self.read_all and self.use_set_val) or channel_data['use set']) and variables_handling.channels[channel].output:
-                #         devices_dict_use_set[device].append(True)
-                #     else:
-                #         devices_dict_use_set[device].append(False)
-                # else:
-                #     devices_dict_channels.update({device: [channel]})
-                #     if ((self.read_all and self.use_set_val) or channel_data['use set']) and variables_handling.channels[channel].output:
-                #         devices_dict_use_set.update({device: [True]})
-                #     else:
-                #         devices_dict_use_set.update({device: [False]})
         protocol_string += ']\n'
         protocol_string += f'{tabs}yield from bps.trigger_and_read(channels)\n'
-        # for device, channels in devices_dict_channels.items():
-            # protocol_string += variables_handling.devices[device].read_channels(channels, devices_dict_use_set[device], n_tabs)
         return protocol_string
 
 

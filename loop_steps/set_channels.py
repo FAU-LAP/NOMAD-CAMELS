@@ -12,16 +12,29 @@ class Set_Channels(Loop_Step):
         self.step_type = 'Set Channels'
         if step_info is None:
             step_info = {}
-        self.channels_values = step_info['channels_values'] if 'channels_values' in step_info else {}
+        self.channels_values = step_info['channels_values'] if 'channels_values' in step_info else {'Channels': [], 'Values': []}
         self.wait_for_set = step_info['wait_for_set'] if 'wait_for_set' in step_info else True
+        self.update_used_devices()
+
+    def update_used_devices(self):
+        self.used_devices = []
+        for channel in self.channels_values['Channels']:
+            device = variables_handling.channels[channel].device
+            if device not in self.used_devices:
+                self.used_devices.append(device)
 
     def get_protocol_string(self, n_tabs=1):
         tabs = '\t' * n_tabs
-        protocol_string = f'{tabs}print("starting loop_step {self.full_name}\n'
-        for i, channel in enumerate(self.channels_values):
+        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        for i, channel in enumerate(self.channels_values['Channels']):
             if channel not in variables_handling.channels:
                 raise Exception(f'Trying to set channel {channel} in {self.full_name}, but it does not exist!')
-
+            dev, chan = variables_handling.channels[channel].name.split('.')
+            val = self.channels_values['Values'][i]
+            protocol_string += f'{tabs}yield from bps.abs_set(devs["{dev}"].{chan}, {val}, group="A")\n'
+        if self.wait_for_set:
+            protocol_string += f'{tabs}yield from bps.wait("A")\n'
+        return protocol_string
 
 
 class Set_Channels_Config(Loop_Step_Config):
@@ -70,3 +83,4 @@ class Set_Channels_Config_Sub(AddRemoveTable):
             ind = self.table_model.index(i, 0)
             self.tableData['Channels'].append(self.table.indexWidget(ind).currentText())
         self.loop_step.channels_values = self.tableData
+        self.loop_step.update_used_devices()

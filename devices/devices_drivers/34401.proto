@@ -1,0 +1,48 @@
+ReplyTimeout = 2000;
+InTerminator = CR LF;
+
+#Measure voltage DC
+mesDCV {
+	out "MEAS:VOLT:DC?";
+	in "%f";
+    ExtraInput = Ignore;
+}
+
+#Measure current DC
+mesDCI {
+	out "MEAS:CURR:DC?";
+	in "%f";
+    ExtraInput = Ignore;
+}
+
+#Measure voltage AC
+mesACV {
+	out "MEAS:VOLT:AC?";
+	in "%f";
+    ExtraInput = Ignore;
+}
+
+#Measure current AC
+mesACI {
+	out "MEAS:CURR:AC?";
+	in "%f";
+    ExtraInput = Ignore;
+}
+
+#Measure Resistance
+
+mesR {
+	out "MEAS:RES?";
+	in "%f";
+    ExtraInput = Ignore;
+}
+
+
+
+#get Identification
+
+idn {
+	out "*IDN?";
+	in "%[^\r\n]";
+    ExtraInput = Ignore;
+}
