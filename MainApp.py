@@ -466,6 +466,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.run_thread.start()
 
     def build_current_protocol(self):
+        if self.current_protocol is None:
+            raise Exception('You need to select a protocol!')
         path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
         bluesky_handling.build_protocol(self.current_protocol, path)
 

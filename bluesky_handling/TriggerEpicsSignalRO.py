@@ -22,7 +22,7 @@ class TriggerEpicsSignalRO(EpicsSignalRO):
         """If there is a status object from the trigger-method, it will be set to finished."""
         if self.stat is not None:
             self.stat.set_finished()
-            self.stat = None
+            # self.stat = None
 
     def trigger(self):
         """Returns a status object that will be set to finished, when the PV-value is updated. Sets the trigger-PV to 1, thus triggering the process of the original PV."""
@@ -41,13 +41,24 @@ class TriggerEpicsSignalRO(EpicsSignalRO):
 
 
 # if __name__ == '__main__':
+#     import numpy as np
+#     from ophyd.signal import EpicsSignal, EpicsSignalRO
+#     from bluesky import RunEngine
+#     from bluesky.callbacks.best_effort import BestEffortCallback
+#     import bluesky.plan_stubs as bps
+#     from bluesky.utils import install_kicker
+#     from databroker import Broker
+#     import sys
+#     sys.path.append("")
+#
+#     sys.path.append("C:/Users/od93yces/FAIRmat/devices_drivers")
 #     def testplan(dets, mot, start, stop, n, delay=0, md=None):
 #         yield from bps.open_run()
 #         yield from bps.trigger_and_read(dets, name='sec')
 #         for i in np.linspace(start, stop, n):
 #             yield from bps.abs_set(mot, i, wait=True)
 #             yield from bps.sleep(delay)
-#             yield from trigger_and_read_devices(dets)
+#             yield from bps.trigger_and_read(dets)
 #         yield from bps.close_run()
 #     RE = RunEngine()
 #     db = Broker.named('temp')
@@ -60,10 +71,11 @@ class TriggerEpicsSignalRO(EpicsSignalRO):
 #     # mesV.wait_for_connection()
 #     # # RE(scan([mesV], setV, 0, 1, 3))
 #     # RE(testplan([mesV], setV, 0, 1, 3))
+#     from devices.Keysight_E5270B import Keysight_E5270B
 #     e5270 = Keysight_E5270B('Hall:e5270:', name='e5270')
 #     e5270.wait_for_connection()
 #     # e5270.apply_std_config()
-#     RE(testplan([e5270], e5270.setV1, -0.1, 0.1, 5))
+#     RE(testplan([e5270.mesI1], e5270.setV1, -0.1, 0.1, 5))
 #     header = db[-1]
 #     print(header.start)
 #     print(e5270.read_configuration())

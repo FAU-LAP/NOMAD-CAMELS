@@ -61,6 +61,9 @@ class Loop_Step:
     def update_variables(self):
         pass
 
+    def update_used_devices(self):
+        pass
+
 
 class Loop_Step_Container(Loop_Step):
     """Parent Class for loop_steps that should contain further steps (like e.g. a for-loop)."""
@@ -112,6 +115,14 @@ class Loop_Step_Container(Loop_Step):
     def update_variables(self):
         for child in self.children:
             child.update_variables()
+
+    def update_used_devices(self):
+        self.used_devices = []
+        for child in self.children:
+            child.update_used_devices()
+            self.used_devices += child.used_devices
+        self.used_devices = list(set(self.used_devices))
+
 
 
 class Loop_Step_Config(QWidget):

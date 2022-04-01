@@ -130,6 +130,7 @@ class Measurement_Protocol:
     def get_used_devices(self):
         devices = []
         for step in self.loop_steps:
+            step.update_used_devices()
             devices += step.used_devices
         return list(set(devices))
 
