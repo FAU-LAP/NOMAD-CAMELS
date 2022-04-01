@@ -26,7 +26,7 @@ standard_pref = {'autosave': True,
                  'mixed_from': 3,
                  'py_files_path': f'{appdata_path}/python_files'.replace('\\','/'),
                  'meas_files_path': os.path.expanduser('~/Documents/CAMELS_data').replace('\\','/'),
-                 'device_driver_path': os.path.join(os.path.split(os.getcwd())[0], 'devices_drivers').replace('\\','/')}
+                 'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/')}
 
 def get_preset_list():
     """returns a two list of available presets, once for devices, once for measurements.

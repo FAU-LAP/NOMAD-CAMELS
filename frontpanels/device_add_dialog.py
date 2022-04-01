@@ -8,16 +8,16 @@ from PyQt5.QtWidgets import QDialog, QMessageBox
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent
 from PyQt5.QtCore import Qt
 
-from utility import treeView_functions
-
-device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
+from utility import treeView_functions, variables_handling
+# device_driver_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
 def getInstalledDevices():
-    """Goes through the given device_path and returns a list of the available devices."""
+    """Goes through the given device_driver_path and returns a list of the available devices."""
+    device_driver_path = variables_handling.device_driver_path
     device_list = {}
-    sys.path.append(device_path)
-    for f in os.listdir(device_path):
-        full_path = f'{device_path}{f}'
+    sys.path.append(device_driver_path)
+    for f in os.listdir(device_driver_path):
+        full_path = f'{device_driver_path}/{f}'
         if f != 'Support' and os.path.isdir(full_path):
             # files = os.listdir(full_path)
             # info_file = f'{f}_info.json'
@@ -39,7 +39,6 @@ def getAllDevices():
     return getInstalledDevices()
 
 
-device_dict = getInstalledDevices()
 
 class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
     """Dialog that handles adding new devices in the MainApp, should also download available drivers from the repository.
@@ -47,6 +46,7 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
         - active_devices_dict: The dictionary with active devices. This may be changed and returned by the Dialog.
         - parent: handed over to QDialog."""
     def __init__(self, active_devices_dict=None, parent=None):
+        self.device_dict = getInstalledDevices()
         super(AddDeviceDialog, self).__init__(parent=parent)
         if active_devices_dict is None:
             active_devices_dict = {}
@@ -124,12 +124,12 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
             while True:
                 name = f'{dat}_{i}'
                 if name not in self.active_devices_dict:
-                    self.active_devices_dict.update({name: device_dict[dat]})
+                    self.active_devices_dict.update({name: self.device_dict[dat]})
                     self.active_devices_dict[name].update({'settings': {}})
                     break
                 i += 1
         else:
-            self.active_devices_dict.update({dat: device_dict[dat]})
+            self.active_devices_dict.update({dat: self.device_dict[dat]})
         self.build_tree()
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
@@ -152,7 +152,7 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
 
     def build_tree(self, search_text='', search_tag=''):
         """Builds the tree of devices.
-        First it clears the tree and then iterates through all available devices in device_dict.
+        First it clears the tree and then iterates through all available devices in self.device_dict.
         If search_text is given, only devices whose name includes the string in search_text are added to the tree.
         If search_tag is given, only devices that have the exact tag given by search_tag are added to the tree."""
         for i in range(5):
@@ -167,8 +167,8 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
             item.setEditable(False)
             item.setData(f'act:{key}')
             self.item_model.item(0,0).appendRow(item)
-        for device in sorted(device_dict):
-            if search_text.lower() not in device.lower() or (search_tag and search_tag.lower() not in device_dict[device].tags):
+        for device in sorted(self.device_dict):
+            if search_text.lower() not in device.lower() or (search_tag and search_tag.lower() not in self.device_dict[device].tags):
                 continue
             if device in self.installed_devices_list:
                 item = QStandardItem(device)
@@ -178,11 +178,11 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
             item = QStandardItem(device)
             item.setEditable(False)
             item.setData(device)
-            if device_dict[device].virtual:
+            if self.device_dict[device].virtual:
                 self.item_model.item(3,0).appendRow(item)
             else:
                 self.item_model.item(2,0).appendRow(item)
-            for tag in device_dict[device].tags:
+            for tag in self.device_dict[device].tags:
                 item = QStandardItem(device)
                 item.setEditable(False)
                 item.setData(device)

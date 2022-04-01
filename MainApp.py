@@ -22,7 +22,7 @@ from commands import change_sequence
 from loop_steps import make_step_of_type
 
 os.environ['QT_API'] = 'pyqt5'
-device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
+# device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """Main Window for the program. Connects to all the other classes."""
@@ -342,6 +342,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def thread_finished(self):
         """When a QThread calls this, the cursor is set back to the ArrowCursor."""
         self.setCursor(Qt.ArrowCursor)
+        self.pushButton_run_protocol.setText('Run selected protocol(s)')
         self.run_thread = None
 
     def change_progressBar_value(self, val):

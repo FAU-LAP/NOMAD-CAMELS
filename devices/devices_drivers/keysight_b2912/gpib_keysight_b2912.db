@@ -1,0 +1,32 @@
+record(ai, "keysight_b2912:mesDCV")
+{
+    field (DESC, "Measure Voltage")
+	field (DTYP, "stream")
+    field (INP, "@keysight_b2912.proto mesDCV $(PORT) $(G)")
+    field (PINI, "0")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+	field (MDEL, "0.01")
+}
+
+
+record(ai, "keysight_b2912:mesDCI")
+{
+    field (DESC, "Measure Voltage")
+	field (DTYP, "stream")
+    field (INP, "@keysight_b2912.proto mesDCI $(PORT) $(G)")
+    field (PINI, "0")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+}
+
+
+record (stringin, "keysight_b2912:idn")
+{
+    field (DESC, "Identification IDN")
+	field (DTYP, "stream")
+    field (INP, "@keysight_b2912.proto idn $(PORT) $(G)")
+    field (PINI, "0")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+}

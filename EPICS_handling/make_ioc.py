@@ -173,7 +173,7 @@ def update_addresses(device, address_dict, device_settings, port_string, record_
                 port_string += f'asynSetTraceMask("L{n}_TCP", -1, 0x9)\n'
                 port_string += f'asynSetTraceIOMask("L{n}", $(A), 0x2)\n'
                 port_string += f'asynSetTraceMask("L{n}", $(A), 0x9)\n'
-            record_string += f'dbLoadRecords("db/gpib_{device.replace(" ", "_")}.db", "PORT=L{n},G={conn_dict["GPIB-Address"]}")\n'  # TODO several devices of same type
+            record_string += f'dbLoadRecords("db/{device.replace(" ", "_")}.db", "PORT=L{n},G={conn_dict["GPIB-Address"]}")\n'  # TODO several devices of same type
     return port_string, record_string
 
 
