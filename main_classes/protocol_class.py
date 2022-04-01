@@ -3,8 +3,9 @@ from ast import literal_eval
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
-from main_classes.loop_step import Loop_Step, Loop_Step_Container
-from loop_steps import for_while_loops, read_channels
+# from main_classes.loop_step import Loop_Step, Loop_Step_Container
+# from loop_steps import for_while_loops, read_channels
+from loop_steps import make_step_of_type
 from gui.general_protocol_settings import Ui_Protocol_Settings
 
 
@@ -83,21 +84,22 @@ class Measurement_Protocol:
 
     def make_step(self, step_info):
         """Creates the step specified with step_info (including the children), 'step_type' gives which subclass of Loop_Step shall be created."""
-        children = []
-        st = None
+        children = None
         if step_info['has_children']:
+            children = []
             for child in step_info['children']:
                 child_step = self.make_step(child)
                 child_step.parent_step = step_info['full_name']
                 children.append(child_step)
-        if step_info['step_type'] == 'Default':
-            st = Loop_Step(step_info['name'])
-        elif step_info['step_type'] == 'Container':
-            st = Loop_Step_Container(step_info['name'], children)
-        elif step_info['step_type'] == 'For Loop':
-            st = for_while_loops.For_Loop_Step(name=step_info['name'], children=children, step_info=step_info)
-        elif step_info['step_type'] == 'Read Channels':
-            st = read_channels.Read_Channels(name=step_info['name'], step_info=step_info)
+        # if step_info['step_type'] == 'Default':
+        #     st = Loop_Step(step_info['name'])
+        # elif step_info['step_type'] == 'Container':
+        #     st = Loop_Step_Container(step_info['name'], children)
+        # elif step_info['step_type'] == 'For Loop':
+        #     st = for_while_loops.For_Loop_Step(name=step_info['name'], children=children, step_info=step_info)
+        # elif step_info['step_type'] == 'Read Channels':
+        #     st = read_channels.Read_Channels(name=step_info['name'], step_info=step_info)
+        st = make_step_of_type.make_step(step_info['step_type'], step_info, children)
         st.full_name = step_info['full_name']
         return st
 
@@ -118,12 +120,18 @@ class Measurement_Protocol:
             self.loop_steps.append(self.loop_step_dict[step])
 
     def get_plan_string(self):
-        plan_string = f'def {self.name.replace(" ","_")}_plan():\n'
+        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs):\n'
         plan_string += '\tyield from bps.open_run()\n'
         for step in self.loop_steps:
             plan_string += step.get_protocol_string(n_tabs=1)
         plan_string += '\tyield from bps.close_run()\n'
         return plan_string
+
+    def get_used_devices(self):
+        devices = []
+        for step in self.loop_steps:
+            devices += step.used_devices
+        return list(set(devices))
 
 def append_all_children(child_list, step, step_dict):
     """Takes a list of the kind specified in rearrange_loop_steps, does the same as the other function, but recursively for all the (grand-)children."""
@@ -186,7 +194,10 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
 
     def remove_variable(self):
         """Removes the selected variable."""
-        index = self.tableView_variables.selectedIndexes()[0]
+        try:
+            index = self.tableView_variables.selectedIndexes()[0]
+        except IndexError:
+            raise Exception('You need to select a row first!')
         if index.row() >= 0:
             self.variable_model.removeRow(index.row())
             self.update_variables()

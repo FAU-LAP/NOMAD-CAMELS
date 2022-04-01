@@ -9,8 +9,8 @@ from utility import variables_handling
 from gui.for_loop import Ui_for_loop_config
 
 class For_Loop_Step(Loop_Step_Container):
-    def __init__(self, name='', children=None, parent_step=None, step_info=None):
-        super().__init__(name, children, parent_step)
+    def __init__(self, name='', children=None, parent_step=None, step_info=None, **kwargs):
+        super().__init__(name, children, parent_step, **kwargs)
         self.step_type = 'For Loop'
         if step_info is None:
             step_info = {}

@@ -6,15 +6,14 @@ from gui.read_channels import Ui_read_channels_config
 
 from utility import variables_handling
 
-from ophyd import EpicsSignal, EpicsSignalRO, Device
 
 class Read_Channels(Loop_Step):
-    def __init__(self, name='', parent_step=None, step_info=None):
-        super().__init__(name, parent_step)
+    def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
+        super().__init__(name, parent_step, **kwargs)
         self.step_type = 'Read Channels'
         if step_info is None:
             step_info = {}
-        self.read_type = step_info['read_type'] if 'read_type' in step_info else 'read all'
+        self.read_all = step_info['read_all'] if 'read_all' in step_info else True
         self.plot_data = step_info['plot_data'] if 'plot_data' in step_info else True
         self.save_data = step_info['save_data'] if 'save_data' in step_info else True
         self.use_set_val = step_info['use_set_val'] if 'use_set_val' in step_info else False
@@ -25,32 +24,52 @@ class Read_Channels(Loop_Step):
             for channel in variables_handling.channels:
                 self.channel_dict.update({channel: {'read': False,
                                                     'use set': False}})
+        self.update_used_devices()
+
+    def update_used_devices(self):
+        self.used_devices = []
+        for channel_name, channel_info in self.channel_dict.items():
+            if self.read_all or channel_info['read']:
+                device = variables_handling.channels[channel_name].device
+                if device not in self.used_devices:
+                    self.used_devices.append(device)
+
+
 
     def get_protocol_string(self, n_tabs=1):
         tabs = '\t' * n_tabs
         protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
         devices_dict_channels = {}
         devices_dict_use_set = {}
-        read_all = self.read_type == 'read all'
+        protocol_string += f'{tabs}channels = ['
+        n = len(self.channel_dict)
+        inserted = False
         for channel, channel_data in self.channel_dict.items():
             if channel not in variables_handling.channels:
                 raise Exception(f'Trying to read channel {channel} in {self.full_name}, but it does not exist!')
-            if read_all or channel_data['read']:
-                device = variables_handling.channels[channel].device
-                if device in devices_dict_channels:
-                    devices_dict_channels[device].append(channel)
-                    if ((read_all and self.use_set_val) or channel_data['use set']) and variables_handling.channels[channel].output:
-                        devices_dict_use_set[device].append(True)
-                    else:
-                        devices_dict_use_set[device].append(False)
-                else:
-                    devices_dict_channels.update({device: [channel]})
-                    if ((read_all and self.use_set_val) or channel_data['use set']) and variables_handling.channels[channel].output:
-                        devices_dict_use_set.update({device: [True]})
-                    else:
-                        devices_dict_use_set.update({device: [False]})
-        for device, channels in devices_dict_channels.items():
-            protocol_string += variables_handling.devices[device].read_channels(channels, devices_dict_use_set[device], n_tabs)
+            if self.read_all or channel_data['read']:
+                dev, chan = variables_handling.channels[channel].name.split('.')
+                if inserted:
+                    protocol_string += ', '
+                protocol_string += f'devs["{dev}"].{chan}'
+                inserted = True
+                # device = variables_handling.channels[channel].device
+                # if device in devices_dict_channels:
+                #     devices_dict_channels[device].append(channel)
+                #     if ((self.read_all and self.use_set_val) or channel_data['use set']) and variables_handling.channels[channel].output:
+                #         devices_dict_use_set[device].append(True)
+                #     else:
+                #         devices_dict_use_set[device].append(False)
+                # else:
+                #     devices_dict_channels.update({device: [channel]})
+                #     if ((self.read_all and self.use_set_val) or channel_data['use set']) and variables_handling.channels[channel].output:
+                #         devices_dict_use_set.update({device: [True]})
+                #     else:
+                #         devices_dict_use_set.update({device: [False]})
+        protocol_string += ']\n'
+        protocol_string += f'{tabs}yield from bps.trigger_and_read(channels)\n'
+        # for device, channels in devices_dict_channels.items():
+            # protocol_string += variables_handling.devices[device].read_channels(channels, devices_dict_use_set[device], n_tabs)
         return protocol_string
 
 
@@ -67,8 +86,9 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
         super().__init__(parent)
         self.setupUi(self)
         self.loop_step = loop_step
-        self.comboBox_readType.addItems(['read all', 'read selected'])
-        self.comboBox_readType.currentTextChanged.connect(self.read_type_changed)
+        self.checkBox_read_all.stateChanged.connect(self.read_type_changed)
+        # self.comboBox_readType.addItems(['read all', 'read selected'])
+        # self.comboBox_readType.currentTextChanged.connect(self.read_type_changed)
         self.load_data()
         self.read_type_changed()
         self.tableWidget_channels.setHorizontalHeaderLabels(['read', 'channel name', 'use set-value'])
@@ -79,22 +99,23 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
         self.tableWidget_channels.clicked.connect(self.table_check_changed)
 
     def checkbox_toggle(self):
-        self.loop_step.use_set_val = self.checkBox_use_set.checkState()
-        self.loop_step.save_data = self.checkBox_save.checkState()
-        self.loop_step.plot_data = self.checkBox_plot.checkState()
+        self.loop_step.use_set_val = self.checkBox_use_set.isChecked()
+        self.loop_step.save_data = self.checkBox_save.isChecked()
+        self.loop_step.plot_data = self.checkBox_plot.isChecked()
 
     def read_type_changed(self):
-        text = self.comboBox_readType.currentText()
-        if text == 'read all':
+        read_all = self.checkBox_read_all.isChecked()
+        if read_all:
             self.tableWidget_channels.setEnabled(False)
             self.checkBox_use_set.setEnabled(True)
         else:
             self.tableWidget_channels.setEnabled(True)
             self.checkBox_use_set.setEnabled(False)
-        self.loop_step.read_type = text
+        self.loop_step.read_all = read_all
+        self.loop_step.update_used_devices()
 
     def load_data(self):
-        self.comboBox_readType.setCurrentText(self.loop_step.read_type)
+        self.checkBox_read_all.setChecked(self.loop_step.read_all)
         self.checkBox_save.setChecked(self.loop_step.save_data)
         self.checkBox_plot.setChecked(self.loop_step.plot_data)
         self.checkBox_use_set.setChecked(self.loop_step.use_set_val)
@@ -106,9 +127,9 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
         name = self.tableWidget_channels.item(r, 1).text()
         if c == 0:
             self.loop_step.channel_dict[name]['read'] = self.tableWidget_channels.item(r, c).checkState() > 0
+            self.loop_step.update_used_devices()
         if c == 2 and variables_handling.channels[name].output:
             self.loop_step.channel_dict[name]['use set'] = self.tableWidget_channels.item(r, c).checkState() > 0
-            print('oh')
 
 
     def build_channels_table(self):

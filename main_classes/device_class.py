@@ -1,10 +1,18 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox
 from PyQt5.QtGui import QFont
 
+from ophyd import EpicsSignalRO
+from ophyd import Device as OphydDevice
+from ophyd.signal import SignalRO
+
+from bluesky_handling import EpicsFieldSignalRO
+
+from main_classes import measurement_channel
+
 
 class Device:
     """general class for all devices"""
-    def __init__(self, name='', virtual=False, tags=None, files=None, directory='', requirements=''):
+    def __init__(self, name='', virtual=False, tags=None, files=None, directory='', requirements='', ophyd_device=None):
         self.__save_dict__ = {}
         self.connection = Device_Connection()
         self.name = name
@@ -15,28 +23,57 @@ class Device:
         self.requirements = requirements
         self.settings = {}
         self.channels = {}
+        if ophyd_device is None:
+            ophyd_device = OphydDevice
+        # self.ophyd_device = ophyd_device
+        ophyd_instance = ophyd_device(name='test')
+        outputs = get_outputs(ophyd_instance)
+        for chan in get_channels(ophyd_instance):
+            is_out = chan in outputs
+            channel = measurement_channel.Measurement_Channel(name=f'{self.name}.{chan}', output=is_out, device=self.name)
+            self.channels.update({f'{self.name}_{chan}': channel})
+        for chan in ophyd_instance.configuration_attrs:
+            self.settings.update({f'{chan}': 0})
+
 
     def set_connection(self, connection):
         self.connection = connection
 
-    def read_channels(self, channels, use_set, n_tabs=1):
-        tabs = '\t' * n_tabs
-        prot_string = ''
-        for i, channel in enumerate(channels):
-            prot_string += f'{tabs}print("reading {channel} with use_set={use_set[i]}")\n'
-        return prot_string
+    # def read_channels(self, channels, use_set, n_tabs=1):
+    #     tabs = '\t' * n_tabs
+    #     prot_string = ''
+    #     for i, channel in enumerate(channels):
+    #         prot_string += f'{tabs}print("reading {channel} with use_set={use_set[i]}")\n'
+    #     return prot_string
+    #
+    # def set_channels(self, channels, values):
+    #     pass
+    #
+    # def init(self):
+    #     pass
+    #
+    # def setup(self):
+    #     pass
+    #
+    # def close(self):
+    #     pass
 
-    def set_channels(self, channels, values):
-        pass
+def get_outputs(dev:OphydDevice):
+    outputs = []
+    for comp in dev.walk_components():
+        cls = comp.item.cls
+        name = comp.item.attr
+        if name not in dev.configuration_attrs and not issubclass(cls, EpicsSignalRO) and not issubclass(cls, EpicsFieldSignalRO) and not issubclass(cls, SignalRO):
+            outputs.append(name)
+    return outputs
 
-    def init(self):
-        pass
-
-    def setup(self):
-        pass
-
-    def close(self):
-        pass
+def get_channels(dev:OphydDevice):
+    channels = []
+    for comp in dev.walk_components():
+        name = comp.item.attr
+        if name not in dev.configuration_attrs:
+            channels.append(name)
+    return channels
 
 
 class Device_Connection:
@@ -96,6 +133,7 @@ class Device_Config(QWidget):
         if 'connection' in self.settings_dict:
             self.comboBox_connection_type.setCurrentText(self.settings_dict['connection']['type'])
             self.connector.load_settings(self.settings_dict['connection'])
+
 
 class Connection_Config(QWidget):
     def __init__(self, parent=None):

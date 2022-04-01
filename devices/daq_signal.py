@@ -8,6 +8,7 @@ This is a temporary script file.
 import nidaqmx
 
 from ophyd import Device, Signal
+from ophyd.signal import SignalRO
 from ophyd import Component as Cpt
 
 from bluesky import RunEngine
@@ -69,7 +70,7 @@ class DAQ_Signal_Output(Signal):
         
         
         
-class DAQ_Signal_Input(Signal):
+class DAQ_Signal_Input(SignalRO):
     def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', line_name='', digital=False, minV=-10, maxV=10, terminal_config='default'):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
         self.task = nidaqmx.Task()
@@ -77,6 +78,7 @@ class DAQ_Signal_Input(Signal):
             self.task.di_channels.add_di_chan(line_name)
         else:
             self.task.ai_channels.add_ai_voltage_chan(line_name, terminal_config=get_an_config(terminal_config), min_val=minV, max_val=maxV)
+
     def destroy(self):
         self.task.close()
         super().destroy()
@@ -84,9 +86,7 @@ class DAQ_Signal_Input(Signal):
     def get(self):
         self._readback = self.task.read()
         return super().get()
-    
-    def put(self, *args, **kwargs):
-        raise Exception('Cannot write to read-only DAQ_Signal')
+
     
     
 

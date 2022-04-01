@@ -43,6 +43,10 @@ class Settings_Window(QDialog, Ui_settings_window):
             self.pathButton_meas_files.set_path(settings['meas_files_path'])
         else:
             self.pathButton_meas_files.set_path(standard_pref['meas_files_path'])
+        if 'device_driver_path' in settings:
+            self.pathButton_device_path.set_path(settings['device_driver_path'])
+        else:
+            self.pathButton_device_path.set_path(standard_pref['device_driver_path'])
 
     def get_settings(self):
         if self.radioButton_plain_numbers.isChecked():
@@ -57,7 +61,8 @@ class Settings_Window(QDialog, Ui_settings_window):
                 'number_format': numbers,
                 'mixed_from': self.spinBox_scientific_from.value(),
                 'py_files_path': self.pathButton_py_files.get_path(),
-                'meas_files_path': self.pathButton_meas_files.get_path()}
+                'meas_files_path': self.pathButton_meas_files.get_path(),
+                'device_driver_path': self.pathButton_device_path.get_path()}
 
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

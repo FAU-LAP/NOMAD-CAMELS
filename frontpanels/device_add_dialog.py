@@ -8,8 +8,8 @@ from PyQt5.QtWidgets import QDialog, QMessageBox
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent
 from PyQt5.QtCore import Qt
 
-
 from utility import treeView_functions
+
 device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
 def getInstalledDevices():

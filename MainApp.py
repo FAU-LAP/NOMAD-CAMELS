@@ -19,6 +19,8 @@ from frontpanels.settings_window import Settings_Window
 from main_classes.protocol_class import Measurement_Protocol, General_Protocol_Settings
 from commands import change_sequence
 
+from loop_steps import make_step_of_type
+
 os.environ['QT_API'] = 'pyqt5'
 device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
@@ -101,7 +103,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_move_step_out.clicked.connect(lambda state: self.move_loop_step(0,-1))
         self.treeView_protocol_sequence.clicked.connect(lambda x: self.tree_click_sequence(False))
         self.add_actions = []
-        for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
+        # for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
+        for stp in sorted(make_step_of_type.step_type_config.keys(), key=lambda x: x.lower()):
             action = QAction(stp)
             action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
             self.add_actions.append(action)
@@ -184,6 +187,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         number_formatting.preferences = self.preferences
         if 'dark_mode' in self.preferences:
             self.toggle_dark_mode()
+        variables_handling.device_driver_path = self.preferences['device_driver_path']
 
     def toggle_dark_mode(self):
         dark = self.preferences['dark_mode']
@@ -209,6 +213,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             number_formatting.preferences = self.preferences
             self.toggle_dark_mode()
             load_save_functions.save_preferences(self.preferences)
+            variables_handling.device_driver_path = self.preferences['device_driver_path']
         # prefs = {'autosave': self.actionAutosave_on_closing.isChecked(),
         #          'dark_mode': self.actionDark_Mode.isChecked()}
         # load_save_functions.save_preferences(prefs)
@@ -288,6 +293,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.comboBox_device_preset.setCurrentText(self._current_device_preset[0])
         self.build_devices_tree()
         self.update_channels()
+        variables_handling.dev_preset = preset
         # for d in self.active_devices_dict:
         #     info = self.active_devices_dict[d]
         #     try:
@@ -312,9 +318,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         load_save_functions.load_save_dict(preset_dict, self.meas_save_dict)
         self.comboBox_measurement_preset.setCurrentText(self._current_measurement_preset[0])
         self.build_protocol_list()
+        variables_handling.meas_preset = premeas
 
     def make_device_save_dict(self):
         """Creates / Updates the __save_dict_devices__"""
+        self.get_device_config()
         for key in self.device_save_dict:
             add_string = load_save_functions.get_save_str(self.device_save_dict[key])
             if add_string is not None:
@@ -473,7 +481,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             dat = self.item_model_sequence.itemFromIndex(index).data()
             if dat is not None:
                 step = self.current_protocol.loop_step_dict[dat]
-                config = drag_drop_tree_view.config_from_type(step)
+                config = make_step_of_type.get_config(step)
+                # config = drag_drop_tree_view.config_from_type(step)
         if config is not None:
             if self.loop_step_configuration_widget is not None:
                 self.configuration_main_widget.layout().removeWidget(self.loop_step_configuration_widget)
@@ -600,7 +609,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             parent = item.parent()
             if parent is not None:
                 parent = parent.data()
-            for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
+            # for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
+            for stp in sorted(make_step_of_type.step_type_config.keys(), key=lambda x: x.lower()):
                 action = QAction(stp)
                 action_a = QAction(stp)
                 action_in = QAction(stp)
@@ -645,7 +655,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             menu.addAction(del_action)
         else:
             add_actions = []
-            for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
+            # for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
+            for stp in sorted(make_step_of_type.step_type_config, key=lambda x: x.lower()):
                 action = QAction(stp)
                 action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
                 add_actions.append(action)
@@ -723,7 +734,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if copied_step:
             step = self.copied_loop_step
         else:
-            step = drag_drop_tree_view.get_loop_step_from_type(step_type)
+            # step = drag_drop_tree_view.get_loop_step_from_type(step_type)
+            step = make_step_of_type.make_step(step_type)
         self.current_protocol.add_loop_step_rec(step, model=self.item_model_sequence, position=position, parent_step_name=parent)
         self.build_protocol_sequence()
         if copied_step:

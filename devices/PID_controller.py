@@ -1,11 +1,11 @@
-from ophyd import EpicsSignal, EpicsSignalRO, Device, Signal
+from ophyd import EpicsSignalRO, Device
 from ophyd import Component as Cpt
 from ophyd.status import Status
 
-from epics import caput, caget
-
 import numpy as np
 from scipy.optimize import root
+
+from bluesky_handling import EpicsFieldSignal, EpicsFieldSignalRO
 
 
 def helper(x, r, a, b, c):
@@ -26,27 +26,7 @@ def ptX_inv(T, rX=1000):
     return root(lambda r: ptX(r, rX) - T, 300).x[0]
 
 
-class Simple_Signal(Signal):
-    def __init__(self,  read_pv_name, name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', conversion_function=None, set_conversion_function=None):
-        super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
-        self.read_pv_name = read_pv_name
-        if conversion_function is None:
-            conversion_function = lambda x: x
-        self.conversion_function = conversion_function
-        if set_conversion_function is None:
-            set_conversion_function = lambda x: x
-        self.set_conversion_function = set_conversion_function
 
-    def get(self):
-        if self.read_pv_name is not None:
-            self._readback = self.conversion_function(caget(self.read_pv_name))
-        return super().get()
-
-    def put(self, value, *, timestamp=None, force=False, metadata=None, **kwargs):
-        val = self.set_conversion_function(value)
-        if self.read_pv_name is not None:
-            caput(self.read_pv_name, val, wait=True)
-        super().put(val, timestamp=timestamp, force=force, metadata=metadata, **kwargs)
 
 class PID_vals(dict):
     key_list = ['kp', 'ki', 'kd', 'min', 'max', 'bias']
@@ -127,15 +107,15 @@ class PID_val_table:
 
 
 class PID_controller(Device):
-    pid_set = Cpt(Simple_Signal, read_pv_name='pid_controller.VAL', name='pid_set')
-    pid_cval = Cpt(Simple_Signal, read_pv_name='pid_controller.CVAL', name='pid_cval')
-    pid_kp = Cpt(Simple_Signal, read_pv_name='pid_controller.KP', name='pid_kp', kind='config')
-    pid_ki = Cpt(Simple_Signal, read_pv_name='pid_controller.KI', name='pid_ki', kind='config')
-    pid_kd = Cpt(Simple_Signal, read_pv_name='pid_controller.KD', name='pid_kd', kind='config')
-    pid_min = Cpt(Simple_Signal, read_pv_name='pid_controller.DRVL', name='pid_min', kind='config')
-    pid_max = Cpt(Simple_Signal, read_pv_name='pid_controller.DRVH', name='pid_max', kind='config')
-    pid_fbon = Cpt(Simple_Signal, read_pv_name='pid_controller.FBON', name='pid_fbon')
-    #pid_bias = Cpt(Simple_Signal, read_pv_name=None, name='pid_bias')
+    pid_set = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.VAL', name='pid_set')
+    pid_cval = Cpt(EpicsFieldSignalRO, read_pv_name='pid_controller.CVAL', name='pid_cval')
+    pid_kp = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.KP', name='pid_kp', kind='config')
+    pid_ki = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.KI', name='pid_ki', kind='config')
+    pid_kd = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.KD', name='pid_kd', kind='config')
+    pid_min = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.DRVL', name='pid_min', kind='config')
+    pid_max = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.DRVH', name='pid_max', kind='config')
+    pid_fbon = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.FBON', name='pid_fbon')
+    #pid_bias = Cpt(EpicsFieldSignal, read_pv_name=None, name='pid_bias')
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, pid_val_table=None, read_conv_func=None, auto_pid=True, interpolate_auto=True, set_conv_func=None, bias_signal=None, **kwargs):
         super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, **kwargs)
@@ -164,9 +144,9 @@ class PID_controller(Device):
         self.pid_set.conversion_function = self.read_conv_func
         self.auto_pid = auto_pid
         self.interpolate_auto = interpolate_auto
-        setpoint = self.pid_set.get()
-        self.pid_vals = None
-        self.update_PID_vals(setpoint)
+        # setpoint = self.pid_set.get()
+        # self.pid_vals = None
+        # self.update_PID_vals(setpoint)
 
     def update_PID_vals(self, setpoint):
         self.pid_vals = self.pid_val_table.get_vals(setpoint, self.auto_pid)
@@ -177,8 +157,8 @@ class PID_controller(Device):
             att.put(self.pid_vals[key])
 
     def set(self, value, **kwargs):
-        self.update_PID_vals(value)
         self.pid_set.put(value, **kwargs)
+        self.update_PID_vals(value)
         st = Status(self, timeout=5, settle_time=0)
         st.set_finished()
         return st
@@ -224,11 +204,22 @@ if __name__ == '__main__':
     # mesV.wait_for_connection()
     # # RE(scan([mesV], setV, 0, 1, 3))
     # RE(testplan([mesV], setV, 0, 1, 3))
-    valve = daq_signal.DAQ_Signal_Output(name='valve', line_name='Bruker/ao1', minV=0, maxV=10)
-    valve.put(0)
-    dmm = Keysight_34401('Hall:34401:', name='dmm')
-    pid = PID_controller('Hall:', name='pid', read_conv_func=ptX, set_conv_func=ptX_inv, bias_signal=valve, pid_val_table=r"C:\Users\fulapuser\Desktop\ioc_pid_vals.txt")
-    pid.wait_for_connection()
+    # valve = daq_signal.DAQ_Signal_Output(name='valve', line_name='Bruker/ao1', minV=0, maxV=10)
+    # valve.put(0)
+    # dmm = Keysight_34401('Hall:34401:', name='dmm')
+    from main_classes.device_class import get_outputs
+    pid = PID_controller('Hall:', name='pid', read_conv_func=ptX, set_conv_func=ptX_inv)
+    # pid.wait_for_connection()
+    # outputs = []
+    # for comp in pid.walk_components():
+    #     cls = comp.item.cls
+    #     if not issubclass(cls, EpicsSignalRO) and not issubclass(cls, EpicsFieldSignalRO):
+    #         name = comp.item.attr
+    #         if name not in pid.configuration_attrs:
+    #             outputs.append(name)
+    outputs = get_outputs(pid)
+    print(outputs)
+    a = pid[outputs[0]]
     # RE(count([pid], num=3))
     #RE(scan([pid, valve], pid, 50, 300, 3))
     header = db[-1]

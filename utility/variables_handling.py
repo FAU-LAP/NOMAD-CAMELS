@@ -2,6 +2,10 @@ import numpy as np
 
 from utility import simpleeval
 
+meas_preset = ''
+dev_preset = ''
+device_driver_path = ''
+
 protocol_variables = {}
 channels = {}
 loop_step_variables = {}

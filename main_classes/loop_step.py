@@ -15,7 +15,7 @@ class Loop_Step:
         - name: specification of the loop_step (other than the type)
         - full name: consists of the type and name
         - parent_step: the loop_steps name which contains this step"""
-    def __init__(self, name='', parent_step=None):
+    def __init__(self, name='', parent_step=None, **kwargs):
         self.step_type = 'Default'
         self.__save_dict__ = {}
         self.has_children = False
@@ -23,6 +23,7 @@ class Loop_Step:
         self.full_name = f'{self.step_type} ({name})'
         self.parent_step = parent_step
         self.time_weight = 1
+        self.used_devices = []
 
     def update_full_name(self):
         """Updates the full_name by combination of step_type and name"""
@@ -62,8 +63,8 @@ class Loop_Step:
 
 class Loop_Step_Container(Loop_Step):
     """Parent Class for loop_steps that should contain further steps (like e.g. a for-loop)."""
-    def __init__(self, name='', children=None, parent_step=None):
-        super().__init__(name, parent_step=parent_step)
+    def __init__(self, name='', children=None, parent_step=None, **kwargs):
+        super().__init__(name, parent_step=parent_step, **kwargs)
         self.step_type = 'Container'
         self.has_children = True
         if children is None:
