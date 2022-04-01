@@ -8,8 +8,8 @@ from PyQt5.QtWidgets import QDialog, QMessageBox
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent
 from PyQt5.QtCore import Qt
 
-
 from utility import treeView_functions
+
 device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
 def getInstalledDevices():
@@ -19,18 +19,20 @@ def getInstalledDevices():
     for f in os.listdir(device_path):
         full_path = f'{device_path}{f}'
         if f != 'Support' and os.path.isdir(full_path):
-            files = os.listdir(full_path)
-            info_file = f'{f}_info.json'
-            if info_file not in files:
-                continue
-            with open(f'{full_path}/{info_file}', 'r') as file:
-                info = json.load(file)
+            # files = os.listdir(full_path)
+            # info_file = f'{f}_info.json'
+            # if info_file not in files:
+            #     continue
+            # with open(f'{full_path}/{info_file}', 'r') as file:
+            #     info = json.load(file)
             try:
-                package_name = info['name'].replace(' ', '_')
-                info.update({'py_package': importlib.import_module(f'{package_name}.{package_name}')})
+                # package_name = info['name'].replace(' ', '_')
+                # info.update({'py_package': importlib.import_module(f'{package_name}.{package_name}')})
+                package = importlib.import_module(f'{f}.{f}')
+                device = package.subclass()
+                device_list.update({device.name: device})
             except Exception as e:
-                print(e)
-            device_list.update({info['name']: info})
+                print(f, e)
     return device_list
 
 def getAllDevices():
@@ -128,7 +130,6 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
                 i += 1
         else:
             self.active_devices_dict.update({dat: device_dict[dat]})
-            self.active_devices_dict[dat].update({'settings': {}})
         self.build_tree()
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
@@ -177,11 +178,11 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
             item = QStandardItem(device)
             item.setEditable(False)
             item.setData(device)
-            if device_dict[device]['virtual']:
+            if device_dict[device].virtual:
                 self.item_model.item(3,0).appendRow(item)
             else:
                 self.item_model.item(2,0).appendRow(item)
-            for tag in device_dict[device]['tags']:
+            for tag in device_dict[device].tags:
                 item = QStandardItem(device)
                 item.setEditable(False)
                 item.setData(device)

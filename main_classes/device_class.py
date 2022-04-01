@@ -1,10 +1,28 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox
 from PyQt5.QtGui import QFont
 
+from ophyd import EpicsSignalRO
+from ophyd import Device as OphydDevice
+from ophyd.signal import SignalRO
+
+from bluesky_handling import EpicsFieldSignalRO
+
+from main_classes import measurement_channel
+
 
 class Device:
-    """general class for all devices"""
-    def __init__(self, name='', virtual=False, tags=None, files=None, directory='', requirements=''):
+    """general class for all devices
+    Arguments:
+        - name: represents the device, should be unique
+        - virtual: whether the device does not need any hardware
+        - tags: list of strings for the device search
+        - directory: usually the same as name, but also necessary to find the imported module
+        - ophyd_device: used for initialisation of the channels, the class used for the bluesky-integration
+
+    The subclasses of this class should all be called "subclass", they are imported via importlib in that way.
+    Any derived device should also provide the name of its ophyd-class as a string self.ophyd_class_name
+    """
+    def __init__(self, name='', virtual=False, tags=None, files=None, directory='', requirements='', ophyd_device=None):
         self.__save_dict__ = {}
         self.connection = Device_Connection()
         self.name = name
@@ -13,13 +31,65 @@ class Device:
         self.files = [] if files is None else files
         self.directory = directory
         self.requirements = requirements
+        self.settings = {}
+        self.channels = {}
+        if ophyd_device is None:
+            ophyd_device = OphydDevice
+        # self.ophyd_device = ophyd_device
+        ophyd_instance = ophyd_device(name='test')
+        outputs = get_outputs(ophyd_instance)
+        for chan in get_channels(ophyd_instance):
+            is_out = chan in outputs
+            channel = measurement_channel.Measurement_Channel(name=f'{self.name}.{chan}', output=is_out, device=self.name)
+            self.channels.update({f'{self.name}_{chan}': channel})
+        for chan in ophyd_instance.configuration_attrs:
+            self.settings.update({f'{chan}': 0})
+
 
     def set_connection(self, connection):
         self.connection = connection
 
+    # def read_channels(self, channels, use_set, n_tabs=1):
+    #     tabs = '\t' * n_tabs
+    #     prot_string = ''
+    #     for i, channel in enumerate(channels):
+    #         prot_string += f'{tabs}print("reading {channel} with use_set={use_set[i]}")\n'
+    #     return prot_string
+    #
+    # def set_channels(self, channels, values):
+    #     pass
+    #
+    # def init(self):
+    #     pass
+    #
+    # def setup(self):
+    #     pass
+    #
+    # def close(self):
+    #     pass
+
+def get_outputs(dev:OphydDevice):
+    """walks through the components of an ophyd-device and checks whether they can be written"""
+    outputs = []
+    for comp in dev.walk_components():
+        cls = comp.item.cls
+        name = comp.item.attr
+        if name not in dev.configuration_attrs and not issubclass(cls, EpicsSignalRO) and not issubclass(cls, EpicsFieldSignalRO) and not issubclass(cls, SignalRO):
+            outputs.append(name)
+    return outputs
+
+def get_channels(dev:OphydDevice):
+    """returns the components of an ophyd-device that are not listed in the configuration"""
+    channels = []
+    for comp in dev.walk_components():
+        name = comp.item.attr
+        if name not in dev.configuration_attrs:
+            channels.append(name)
+    return channels
+
 
 class Device_Connection:
-    def __init__(self, connection_type, **kwargs):
+    def __init__(self, connection_type=None, **kwargs):
         self.__save_dict__ = {}
         self.connection_type = connection_type
         if connection_type == 'prologix-GPIB':
@@ -49,7 +119,7 @@ class Device_Config(QWidget):
         label_title.setFont(title_font)
         label_connection = QLabel('Connection-type:')
         self.comboBox_connection_type = QComboBox()
-        self.connector = QWidget()
+        self.connector = Connection_Config()
         layout.addWidget(label_title, 0, 0, 1, 2)
         layout.addWidget(label_connection, 1, 0)
         layout.addWidget(self.comboBox_connection_type, 1, 1)
@@ -77,13 +147,25 @@ class Device_Config(QWidget):
             self.connector.load_settings(self.settings_dict['connection'])
 
 
-class Prologix_Config(QWidget):
-    """Widget for the settings when the connection is via a Prologix GPIB-Ethernet adapter."""
+class Connection_Config(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = QGridLayout()
         self.setLayout(layout)
 
+    def get_settings(self):
+        return {}
+
+    def load_settings(self, settings_dict):
+        pass
+
+
+
+class Prologix_Config(Connection_Config):
+    """Widget for the settings when the connection is via a Prologix GPIB-Ethernet adapter."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = self.layout()
         label_ip = QLabel('IP-Address:')
         label_GPIB = QLabel('GPIB-Address:')
         self.lineEdit_ip = QLineEdit()

@@ -2,6 +2,7 @@ import os.path
 from os.path import isdir
 from os import makedirs, getenv, listdir
 from shutil import copyfile
+import importlib
 
 from PyQt5.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel, QPushButton, QTreeView, QListView, QMenuBar, QAction, QMenu, QStatusBar, QGridLayout
 
@@ -15,6 +16,16 @@ preset_path = f'{appdata_path}/Presets/'
 backup_path = f'{preset_path}Backup/'
 save_string_list = [QComboBox, QLineEdit, QTreeView, QListView]
 save_dict_skip = [QWidget, QSplitter, QLabel, QPushButton, QMenu, QMenuBar, QAction, QStatusBar, QGridLayout]
+
+
+standard_pref = {'autosave': True,
+                 'dark_mode': False,
+                 'n_decimals': 3,
+                 'number_format': 'plain',
+                 'mixed_from': 3,
+                 'py_files_path': f'{appdata_path}/python_files'.replace('\\','/'),
+                 'meas_files_path': os.path.expanduser('~/Documents/CAMELS_data').replace('\\','/'),
+                 'device_driver_path': os.path.join(os.path.split(os.getcwd())[0], 'devices_drivers').replace('\\','/')}
 
 def get_preset_list():
     """returns a two list of available presets, once for devices, once for measurements.
@@ -88,6 +99,8 @@ def load_save_dict(string_dict:dict, object_dict:dict, update_missing_key=False,
                 obj.setText(val)
             elif key == 'protocols_dict':
                 load_protocols_dict(val, obj)
+            elif key == 'active_devices_dict':
+                load_devices_dict(val, obj)
             elif hasattr(obj, '__save_dict__') or hasattr(obj, '__dict__'):
                 load_save_dict(val, obj.__dict__)
             elif type(obj) is dict:
@@ -159,6 +172,7 @@ def load_protocols_dict(string_dict, prot_dict):
     for key in string_dict:
         prot_data = string_dict[key]
         prot = protocol_class.Measurement_Protocol()
+        prot.name = key
         if 'loop_steps' in prot_data:
             prot.load_loop_steps(prot_data['loop_steps'])
         if 'plots' in prot_data:
@@ -168,6 +182,34 @@ def load_protocols_dict(string_dict, prot_dict):
         if 'variables' in prot_data:
             prot.variables = prot_data['variables']
         prot_dict.update({key: prot})
+
+def load_devices_dict(string_dict, devices_dict):
+    devices_dict.clear()
+    for key in string_dict:
+        dev_data = string_dict[key]
+        try:
+            dev_lib = importlib.import_module(f'{key}.{key}')
+        except Exception as e:
+            raise Exception(f'Could not import device module {key}\n{e}')
+        dev = dev_lib.subclass()
+        dev.name = key
+        if 'connection' in dev_data:
+            dev.connection = dev_data['connection']
+        if 'virtual' in dev_data:
+            dev.virtual = dev_data['virtual']
+        if 'tags' in dev_data:
+            dev.tags = dev_data['tags']
+        if 'files' in dev_data:
+            dev.files = dev_data['files']
+        if 'directory' in dev_data:
+            dev.directory = dev_data['directory']
+        if 'requirements' in dev_data:
+            dev.requirements = dev_data['requirements']
+        if 'settings' in dev_data:
+            dev.settings = dev_data['settings']
+        devices_dict.update({key: dev})
+
+
 
 def get_most_recent_presets():
     """Goes through all files in the preset_path and returns the newest device-preset and measurement-preset.
@@ -194,7 +236,6 @@ def get_most_recent_presets():
 def get_preferences():
     """If a file 'preferences.json' exists in the appdata, its content will be loaded and returned, if no file exists, it will be created with an empty dictionary."""
     if 'preferences.json' not in os.listdir(appdata_path):
-        standard_pref = {'autosave': True}
         with open(f'{appdata_path}/preferences.json', 'w') as file:
             json.dump(standard_pref, file, indent=2)
     with open(f'{appdata_path}/preferences.json', 'r') as file:
