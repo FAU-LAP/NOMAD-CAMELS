@@ -12,7 +12,7 @@ class Set_Channels(Loop_Step):
         self.step_type = 'Set Channels'
         if step_info is None:
             step_info = {}
-        self.channels_values = step_info['channels_values'] if 'channels_values' in step_info else {}
+        self.channels_values = step_info['channels_values'] if 'channels_values' in step_info else {'Channels': [], 'Values': []}
         self.wait_for_set = step_info['wait_for_set'] if 'wait_for_set' in step_info else True
         self.update_used_devices()
 
