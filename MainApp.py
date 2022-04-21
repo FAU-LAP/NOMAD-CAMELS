@@ -6,7 +6,7 @@ import os
 
 from copy import deepcopy
 
-from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, QFile, QTextStream, QModelIndex
+from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
@@ -22,7 +22,7 @@ from commands import change_sequence
 from loop_steps import make_step_of_type
 
 os.environ['QT_API'] = 'pyqt5'
-# device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """Main Window for the program. Connects to all the other classes."""
@@ -203,8 +203,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # main_app.setStyleSheet(stream.readAll())
             main_app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
             main_app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
+            variables_handling.dark_mode = True
         else:
             main_app.setStyleSheet('')
+            variables_handling.dark_mode = False
 
 
     def change_preferences(self):

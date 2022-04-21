@@ -29,6 +29,11 @@ standard_run_string += '\tapp = QCoreApplication.instance()\n'
 standard_run_string += '\tif app is None:\n'
 standard_run_string += '\t\tapp = QApplication(sys.argv)\n'
 standard_run_string += '\tapp.aboutToQuit.connect(wait_for_workers_to_quit)\n'
+standard_run_string += '\tif "--darkmode" in sys.argv:\n'
+standard_run_string += '\t\tplot_widget.activate_dark_mode()\n'
+standard_run_string += '\t\timport qdarkstyle\n'
+standard_run_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())\n'
+standard_run_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet(qt_api="pyqt5"))\n'
 
 standard_save_string = '\n\n\theaders = db[uids]\n'
 standard_save_string += '\tfor header in headers:\n'
@@ -42,6 +47,11 @@ standard_save_string += '\n\tsys.exit(app.exec_())\n'
 def build_protocol(protocol:Measurement_Protocol, file_path):
     device_import_string = '\n'
     devices_string = '\n\tdevs = {}\n'
+    variable_string = ''
+    for var, val in variables_handling.protocol_variables.items():
+        if variables_handling.check_data_type(val) == 'String':
+            val = f'"{val}"'
+        variable_string += f'{var} = {val}\n'
     for dev in protocol.get_used_devices():
         classname = variables_handling.devices[dev].ophyd_class_name
         config = copy.deepcopy(variables_handling.devices[dev].settings)
@@ -67,6 +77,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path):
     protocol_string = ''
     protocol_string += standard_string
     protocol_string += f'sys.path.append("{variables_handling.device_driver_path}")\n\n'
+    protocol_string += f'{variable_string}\n\n'
     protocol_string += device_import_string
     protocol_string += protocol.get_plan_string()
     protocol_string += standard_run_string
@@ -86,7 +97,10 @@ def run_protocol(protocol:Measurement_Protocol, file_path, sig_step=None, info_s
     total_time = 1
     for step in protocol.loop_steps:
         total_time += step.time_weight
-    p = subprocess.Popen(['python', file_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1)
+    args = []
+    if variables_handling.dark_mode:
+        args.append('--darkmode')
+    p = subprocess.Popen(['python', file_path] + args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1)
     i = 1
     for line in iter(p.stdout.readline, b''):
         text = line.decode().rstrip()

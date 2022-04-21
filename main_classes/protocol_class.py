@@ -1,5 +1,3 @@
-from ast import literal_eval
-
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
@@ -9,6 +7,7 @@ from loop_steps import make_step_of_type
 from gui.general_protocol_settings import Ui_Protocol_Settings
 
 from utility.add_remove_table import AddRemoveTable
+from utility import variables_handling
 
 
 class Measurement_Protocol:
@@ -198,7 +197,7 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         """Append the variable with name and value to the item_model, also add an item that shows the datatype of the value."""
         name_item = QStandardItem(name)
         value_item = QStandardItem(value)
-        type_item = QStandardItem(check_data_type(value))
+        type_item = QStandardItem(variables_handling.check_data_type(value))
         type_item.setEditable(False)
         self.variable_model.appendRow([name_item, value_item, type_item])
 
@@ -235,7 +234,7 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
             item.setText(new_name)
             raise Exception('Variable names must be unique!')
         if ind.column() == 1:
-            d_type = check_data_type(item.text())
+            d_type = variables_handling.check_data_type(item.text())
             self.variable_model.item(ind.row(), 2).setText(d_type)
         self.update_variables()
 
@@ -244,30 +243,7 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         self.protocol.variables = {}
         for i in range(self.variable_model.rowCount()):
             name = self.variable_model.item(i, 0).text()
-            value = get_data(self.variable_model.item(i, 1).text())
+            value = variables_handling.get_data(self.variable_model.item(i, 1).text())
             self.protocol.variables.update({name: value})
 
 
-def get_data(s):
-    """Returns the evaluated data of s."""
-    if not s:
-        return ''
-    try:
-        lit = literal_eval(s)
-    except ValueError:
-        return s
-    except SyntaxError:
-        return s
-    return lit
-
-def check_data_type(s):
-    """Returns the datatype of the string-evaluation of s."""
-    if not s:
-        return ''
-    try:
-        lit = literal_eval(s)
-    except ValueError:
-        return 'String'
-    except SyntaxError:
-        return 'String'
-    return str(type(lit))

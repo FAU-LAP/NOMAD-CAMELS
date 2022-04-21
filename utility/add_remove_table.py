@@ -1,13 +1,18 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton, QTableView, QLabel, QComboBox
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont
+from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton, QTableView, QLabel, QComboBox, QMenu
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont, QBrush, QColor
+from PyQt5.QtCore import Qt
 
 import numpy as np
 import pandas as pd
+
+from utility import variables_handling
 
 
 class AddRemoveTable(QWidget):
     def __init__(self, addLabel='+', removeLabel='-', horizontal=True, editables=None, checkables=(), headerLabels=None, orderBy=None, parent=None, tableData=None, title='', comboBoxes=None, subtables=None, growsize=True):
         super().__init__(parent)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.context_menu)
         layout = QGridLayout()
         layout.setContentsMargins(0,0,0,0)
         self.setLayout(layout)
@@ -78,6 +83,7 @@ class AddRemoveTable(QWidget):
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
         self.update_max_hight()
+        self.table_model.itemChanged.connect(self.check_string)
 
     def update_max_hight(self):
         if self.growsize:
@@ -89,6 +95,30 @@ class AddRemoveTable(QWidget):
         data = np.array(self.tableData)
         for dat in data:
             self.add(dat)
+
+    def context_menu(self, pos):
+        menu = QMenu()
+        (channel_menu, variable_menu, operator_menu, function_menu), _ = variables_handling.get_menus(self.insert_variable)
+        menu.addMenu(variable_menu)
+        menu.addMenu(channel_menu)
+        menu.addMenu(function_menu)
+        menu.addMenu(operator_menu)
+        menu.exec_(self.mapToGlobal(pos))
+
+    def insert_variable(self, val):
+        ind = self.table.selectedIndexes()[0]
+        item = self.table_model.itemFromIndex(ind)
+        text = item.text()
+        item.setText(f'{text}{val}')
+
+    def check_string(self, item):
+        if item.text() == '':
+            return
+        if variables_handling.check_eval(item.text()):
+            color = QColor(153, 255, 153)
+        else:
+            color = QColor(255, 153, 153)
+        self.table_model.setData(self.table_model.indexFromItem(item), QBrush(color), Qt.BackgroundRole)
 
     def add(self, vals=None):
         if vals is None:
@@ -142,6 +172,8 @@ class AddRemoveTable(QWidget):
             for j, i in enumerate(table_indexes):
                 index = self.table_model.index(i, self.table_model.columnCount()-1)
                 self.table.setIndexWidget(index, tables[j])
+        for item in items:
+            self.check_string(item)
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
         self.update_max_hight()
