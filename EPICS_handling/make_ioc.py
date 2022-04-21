@@ -1,5 +1,6 @@
 import subprocess
 import os
+from utility import variables_handling
 
 epics_path = f"{os.getenv('LOCALAPPDATA')}/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/epics".replace('\\', '/')
 epics_path_wsl = '/home/epics'
@@ -24,8 +25,9 @@ def make_ioc(ioc='CAMELS'):
 
 def change_devices(device_dict:dict, ioc='CAMELS'):
     """First, all the '.db' files are removed from the 'ioc'App/Db directory, also the supporting files in 'ioc'Sup are removed. Depending on the given device_dict, the necessary files of the files are added to the files that are to be copied. If there are requirements specified, they will first be collected in a list, to avoid duplicates. Then, the requirements are also added to the copying-string. The string is then written in a temporary file 'copy_temp.cmd', in binary. Subprocess is used to call the wsl to run 'copy_temp.cmd'. This workaround is necessary, as the file-protections etc. have to be correct in the wsl environment."""
-    driver_path = 'C:/Users/od93yces/FAIRmat/devices_drivers'
-    driver_path_wsl = f'/mnt/c/Users/od93yces/FAIRmat/devices_drivers'
+    driver_path = variables_handling.device_driver_path
+    # driver_path = 'C:/Users/od93yces/FAIRmat/devices_drivers'
+    driver_path_wsl = f'/mnt/{driver_path[0].lower()}{driver_path[2:]}'
     required = []
     db_path_wsl = f'{epics_path_wsl}/IOCs/{ioc}/{ioc}App/Db'
     sup_path_wsl = f'{epics_path_wsl}/IOCs/{ioc}/{ioc}Sup'
@@ -62,7 +64,7 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
             write_string += f'cp {device_path_wsl}/{file} {db_path_wsl}/{file}\n'
             make_db_string += f'DB += {file}\n'
         # if 'settings' in device:
-        asyn_port_string, load_record_string = update_addresses(key, addresses, device.settings, asyn_port_string, load_record_string)
+        asyn_port_string, load_record_string = update_addresses(key, addresses, device.settings, asyn_port_string, load_record_string, ioc)
     for req in required:
         req_path = f'{driver_path}/Support/{req}'
         req_path_wsl = f'{driver_path_wsl}/Support/{req}'
@@ -148,7 +150,7 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
         return f'Adding devices...\n{write_string}'
     # TODO check whether correct in all cases, more possibilities for connections
 
-def update_addresses(device, address_dict, device_settings, port_string, record_string):
+def update_addresses(device, address_dict, device_settings, port_string, record_string, ioc):
     """Called by change_devices. Updates the two given strings with the necessary lines for the given device.
     Arguments:
         - device: The device name, as for the loaded database.
@@ -173,7 +175,7 @@ def update_addresses(device, address_dict, device_settings, port_string, record_
                 port_string += f'asynSetTraceMask("L{n}_TCP", -1, 0x9)\n'
                 port_string += f'asynSetTraceIOMask("L{n}", $(A), 0x2)\n'
                 port_string += f'asynSetTraceMask("L{n}", $(A), 0x9)\n'
-            record_string += f'dbLoadRecords("db/{device.replace(" ", "_")}.db", "PORT=L{n},G={conn_dict["GPIB-Address"]}")\n'  # TODO several devices of same type
+            record_string += f'dbLoadRecords("db/{device.replace(" ", "_")}.db", "SETUP={ioc},PORT=L{n},G={conn_dict["GPIB-Address"]}")\n'  # TODO several devices of same type
     return port_string, record_string
 
 

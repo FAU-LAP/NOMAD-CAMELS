@@ -20,7 +20,7 @@ class TriggerEpicsSignalRO(EpicsSignalRO):
 
     def callback_method(self, **kwargs):
         """If there is a status object from the trigger-method, it will be set to finished."""
-        if self.stat is not None:
+        if self.stat is not None and not self.no_mdel:
             self.stat.set_finished()
             # self.stat = None
 

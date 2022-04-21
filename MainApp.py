@@ -96,7 +96,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_remove_protocol.clicked.connect(self.remove_protocol)
         self.item_model_protocols.itemChanged.connect(self.change_protocol_name)
         self.pushButton_show_output_meas.clicked.connect(self.show_meas_output)
-        self.listView_protocols.clicked.connect(self.build_protocol_sequence)
+        self.listView_protocols.clicked.connect(self.protocol_selected)
         self.pushButton_move_step_up.clicked.connect(lambda state: self.move_loop_step(-1,0))
         self.pushButton_move_step_down.clicked.connect(lambda state: self.move_loop_step(1,0))
         self.pushButton_move_step_in.clicked.connect(lambda state: self.move_loop_step(0,1))
@@ -129,6 +129,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                'protocols_dict': self.protocols_dict}
         self.preferences = {}
         self.load_preferences()
+        sys.path.append(self.preferences['device_driver_path'])
         self.load_state()
         self.device_config_widget = QWidget()
         self.comboBox_device_preset.currentTextChanged.connect(self.change_device_preset)
@@ -142,6 +143,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionRedo.setEnabled(self.undo_stack.canRedo())
         QShortcut('Ctrl+z', self).activated.connect(self.undo)
         QShortcut('Ctrl+y', self).activated.connect(self.redo)
+        QShortcut('Ctrl+s', self).activated.connect(self.save_state)
 
     def mousePressEvent(self, a0: QMouseEvent) -> None:
         but = a0.button()
@@ -222,6 +224,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Saves the current states of both presets."""
         self.save_device_state()
         self.save_measurement_state()
+        print('current state saved!')
 
     def save_device_state(self):
         """makes the __save_dict_devices__, then calls the autosave."""
@@ -236,6 +239,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def save_device_preset(self):
         """Opens a QFileDialog to save the device preset. A backup / autosave of the preset is made automatically."""
         file = QFileDialog.getSaveFileName(self, 'Save Device Preset', load_save_functions.preset_path, '*.predev')[0]
+        if not len(file):
+            return
         preset_name = file.split('/')[-1][:-7]
         self.saving = True
         self.comboBox_device_preset.addItem(preset_name)
@@ -248,6 +253,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def save_measurement_preset(self):
         """Opens a QFileDialog to save the device preset. A backup / autosave of the preset is made automatically."""
         file = QFileDialog.getSaveFileName(self, 'Save Measurement Preset', load_save_functions.preset_path, '*.premeas')[0]
+        if not len(file):
+            return
         preset_name = file.split('/')[-1][:-8]
         self.saving = True
         self.comboBox_measurement_preset.addItem(preset_name)
@@ -330,6 +337,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def make_measurement_save_dict(self):
         """Creates / Updates the __save_dict_meas__"""
+        self.get_step_config()
         self.update_loop_step_order()
         for key in self.meas_save_dict:
             add_string = load_save_functions.get_save_str(self.meas_save_dict[key])
@@ -574,6 +582,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.textEdit_console_output_meas.setHidden(True)
             self.pushButton_show_output_meas.setText('Show console output')
+
+    def protocol_selected(self):
+        self.build_protocol_sequence()
+        self.tree_click_sequence(True)
 
     def build_protocol_sequence(self):
         """Shows / builds the protocol sequence in the treeView dependent on the loop_steps in the current_protocol."""

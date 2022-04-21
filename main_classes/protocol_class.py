@@ -8,6 +8,8 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from loop_steps import make_step_of_type
 from gui.general_protocol_settings import Ui_Protocol_Settings
 
+from utility.add_remove_table import AddRemoveTable
+
 
 class Measurement_Protocol:
     """Class for the measurement protocols. It mainly contains loop_steps and plots."""
@@ -168,6 +170,13 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         self.pushButton_remove_variable.clicked.connect(self.remove_variable)
 
         self.variable_model.itemChanged.connect(self.check_variable)
+        comboBoxes = {'plot-type': ['X-Y plot', 'Value-List', '2D plot']}
+        subtables = {'Y-axes': []}
+        cols = ['plot-type', 'X-axis', 'Y-axes', 'title']
+        self.plot_table = AddRemoveTable(headerLabels=cols, title='Plots', comboBoxes=comboBoxes, subtables=subtables, tableData=self.protocol.plots)
+        self.layout().addWidget(self.plot_table, 1, 0, 1, 4)
+
+
 
     def get_unique_name(self, name='name'):
         """Checks whether name already exists in the variables of the protocol and returns a unique name (with added _i)."""
@@ -206,6 +215,8 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
     def update_step_config(self):
         """Updates all the protocol settings."""
         self.protocol.filename = self.lineEdit_filename.text()
+        self.plot_table.update_table_data()
+        self.protocol.plots = self.plot_table.tableData
         self.update_variables()
 
     def load_variables(self):

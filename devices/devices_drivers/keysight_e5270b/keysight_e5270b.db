@@ -11,12 +11,12 @@ record(ao, "$(SETUP):keysight_e5270b:setV1")
 
 record(ao, "$(SETUP):keysight_e5270b:currComp1")
 {
-	field (FLNK, "$(SETUP):keysight_e5270b:setV1")
+	#field (FLNK, "$(SETUP):keysight_e5270b:setV1")
 }
 
 record(longout, "$(SETUP):keysight_e5270b:VoutRange1")
 {
-	field (FLNK, "$(SETUP):keysight_e5270b:setV1")
+	#field (FLNK, "$(SETUP):keysight_e5270b:setV1")
 }
 
 record(ao, "$(SETUP):keysight_e5270b:setI1")
@@ -32,17 +32,17 @@ record(ao, "$(SETUP):keysight_e5270b:setI1")
 
 record(ao, "$(SETUP):keysight_e5270b:voltComp1")
 {
-	field (FLNK, "$(SETUP):keysight_e5270b:setI1")
+	#field (FLNK, "$(SETUP):keysight_e5270b:setI1")
 }
 
 record(longout, "$(SETUP):keysight_e5270b:IoutRange1")
 {
-	field (FLNK, "$(SETUP):keysight_e5270b:setI1")
+	#field (FLNK, "$(SETUP):keysight_e5270b:setI1")
 }
 
 record(longout, "$(SETUP):keysight_e5270b:VmeasRange1")
 {
-	field(FLNK, "$(SETUP):keysight_e5270b:mesV1")
+	#field(FLNK, "$(SETUP):keysight_e5270b:mesV1")
 	field(DTYP, "stream")
 	field(OUT, "@keysight_e5270b.proto VmeasRange(1) $(PORT) $(G)")
 	field(MDEL, "-1")
@@ -50,7 +50,7 @@ record(longout, "$(SETUP):keysight_e5270b:VmeasRange1")
 
 record(longout, "$(SETUP):keysight_e5270b:ImeasRange1")
 {
-	field(FLNK, "$(SETUP):keysight_e5270b:mesI1")
+	#field(FLNK, "$(SETUP):keysight_e5270b:mesI1")
 	field(DTYP, "stream")
 	field(OUT, "@keysight_e5270b.proto ImeasRange(1) $(PORT) $(G)")
 }

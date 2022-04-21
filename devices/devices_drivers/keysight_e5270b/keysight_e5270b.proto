@@ -1,5 +1,5 @@
 ReplyTimeout = 2000;
-InTerminator = CR VT;
+InTerminator = CR LF;
 ExtraInput = Ignore;
 
 #Reset SMU
