@@ -9,7 +9,7 @@ from utility import variables_handling
 
 
 class AddRemoveTable(QWidget):
-    def __init__(self, addLabel='+', removeLabel='-', horizontal=True, editables=None, checkables=(), headerLabels=None, orderBy=None, parent=None, tableData=None, title='', comboBoxes=None, subtables=None, growsize=True):
+    def __init__(self, addLabel='+', removeLabel='-', horizontal=True, editables=None, checkables=(), headerLabels=None, orderBy=None, parent=None, tableData=None, title='', comboBoxes=None, subtables=None, growsize=True, checkstrings=None):
         super().__init__(parent)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
@@ -17,6 +17,9 @@ class AddRemoveTable(QWidget):
         layout.setContentsMargins(0,0,0,0)
         self.setLayout(layout)
         self.checkables = checkables if not type(checkables) is int else [checkables]
+        if checkstrings is None:
+            checkstrings = []
+        self.checkstrings = checkstrings if not type(checkstrings) is int else [checkstrings]
         self.horizontal = horizontal
         self.orderBy = orderBy
         self.comboBoxes = {} if comboBoxes is None else comboBoxes
@@ -28,12 +31,13 @@ class AddRemoveTable(QWidget):
             headerLabels = tableData.keys()
         elif tableData is None and headerLabels is not None:
             tableData = {}
-            for label in headerLabels:
-                tableData.update({label: []})
         elif tableData is None and headerLabels is None:
             raise Exception('Cannot create a table without Data Format (AddRemoveTable)')
         if type(tableData) is dict:
             tableData = pd.DataFrame(tableData)
+        for label in headerLabels:
+            if label not in tableData:
+                tableData.insert(headerLabels.index(label), label, ['']*len(tableData))
         self.tableData = tableData
         if editables is None:
             editables = range(len(headerLabels))
@@ -112,12 +116,14 @@ class AddRemoveTable(QWidget):
         item.setText(f'{text}{val}')
 
     def check_string(self, item):
-        if item.text() == '':
-            return
-        if variables_handling.check_eval(item.text()):
-            color = QColor(153, 255, 153)
+        ind = item.index()
+        pos = ind.column() if self.horizontal else ind.row()
+        if pos not in self.checkstrings or item.text() == '':
+            color = variables_handling.get_color('white')
+        elif variables_handling.check_eval(item.text()):
+            color = variables_handling.get_color('green')
         else:
-            color = QColor(255, 153, 153)
+            color = variables_handling.get_color('red')
         self.table_model.setData(self.table_model.indexFromItem(item), QBrush(color), Qt.BackgroundRole)
 
     def add(self, vals=None):
@@ -142,7 +148,8 @@ class AddRemoveTable(QWidget):
             elif name in self.subtables:
                 if type(vals[i]) is not list:
                     vals[i] = []
-                table = AddRemoveTable(horizontal=self.horizontal, headerLabels=[], tableData=vals[i], growsize=False)
+                checksting = 0 if i in self.checkstrings else None
+                table = AddRemoveTable(horizontal=self.horizontal, headerLabels=[], tableData=vals[i], growsize=False, checkstrings=checksting)
                 self.tables.append(table)
                 table_indexes.append(i)
                 tables.append(table)

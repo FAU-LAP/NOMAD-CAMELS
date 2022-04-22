@@ -1,8 +1,11 @@
 import numpy as np
 from ast import literal_eval
 from PyQt5.QtWidgets import QMenu, QAction
+from PyQt5.QtGui import QColor
 
 from utility import simpleeval
+
+from bluesky_widgets.models import utils
 
 meas_preset = ''
 dev_preset = ''
@@ -15,8 +18,7 @@ devices = {}
 dark_mode = False
 evaluation_functions = simpleeval.DEFAULT_FUNCTIONS.copy()
 evaluation_functions.update({'exp': np.exp,
-                             'ln': np.log,
-                             'log': lambda x, y: np.log(x) / np.log(y),
+                             'log': np.log,
                              'sqrt': np.sqrt,
                              'round': round,
                              'sin': np.sin,
@@ -38,8 +40,7 @@ evaluation_functions_names = {
     'round()': 'round(x) - round number to nearest integer',
     'exp()': 'exp(x) - exponential function of x',
     'sqrt()': 'sqrt(x) - square root of x',
-    'log(,)': 'log(x,y) - logarithm of x with base y',
-    'ln()': 'ln(x) - natural logarithm of x',
+    'log()': 'ln(x) - natural logarithm of x',
     'sin()': 'sin(x) - sine of x',
     'cos()': 'cos(x) - cosine of x',
     'tan()': 'tan(x) - tangent of x',
@@ -68,6 +69,23 @@ operator_names = {
     '<=': 'less or equal',
     '>=': 'greater or equal',
 }
+
+def get_color(color, string=False):
+    if color == 'red' or color == 'r':
+        rgb = (255, 153, 153)
+        if dark_mode:
+            rgb = (153, 0, 0)
+    elif color == 'green' or color == 'g':
+        rgb = (153, 255, 153)
+        if dark_mode:
+            rgb = (0, 153, 0)
+    else:
+        rgb = (255, 255, 255)
+        if dark_mode:
+            rgb = (0, 0, 0)
+    if string:
+        return str(rgb)
+    return QColor(*rgb)
 
 def get_menus(connect_function):
     variable_menu = QMenu('Insert Variable')
@@ -117,7 +135,13 @@ def string_eval(s):
 
 def check_eval(s):
     try:
-        string_eval(s)
+        namespace = dict(utils._base_namespace)
+        namespace.update(protocol_variables)
+        namespace.update(loop_step_variables)
+        for channel in channels:
+            namespace.update({channel: 1})
+        utils.call_or_eval_one(s, namespace)
+        # string_eval(s)
         return True
     except Exception as e:
         print(e)

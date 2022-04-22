@@ -69,7 +69,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path):
     devices_string += '\tprint("devices connected")'
     plot_string = '\n'
     for i, plot in pd.DataFrame(protocol.plots).iterrows():
-        plot_string += f'\tplot_{i} = plot_widget.PlotWidget(run_engine=RE, x_name="{plot["X-axis"]}", y_names={plot["Y-axes"]})\n'
+        plot_string += f'\tplot_{i} = plot_widget.PlotWidget(run_engine=RE, x_name="{plot["X-axis"]}", y_names={plot["Y-axes"]}, ylabel="{plot["y-label"]}", xlabel="{plot["x-label"]}", title="{plot["title"]}")\n'
         plot_string += f'\tplot_{i}.show()\n'
     plot_string += '\n'
     # for device in protocol.get_used_devices():

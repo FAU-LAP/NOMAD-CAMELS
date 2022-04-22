@@ -28,10 +28,12 @@ class Variable_Box(QLineEdit):
         super().setEnabled(a0)
 
     def check_string(self):
+        if not self.text():
+            self.setStyleSheet(f'background-color: rgb{variables_handling.get_color("white", True)}')
         if variables_handling.check_eval(self.text()):
-            self.setStyleSheet('background-color: rgb(153, 255, 153)')
+            self.setStyleSheet(f'background-color: rgb{variables_handling.get_color("green", True)}')
         else:
-            self.setStyleSheet('background-color: rgb(255, 153, 153)')
+            self.setStyleSheet(f'background-color: rgb{variables_handling.get_color("red", True)}')
 
 
     def context_menu(self, pos):

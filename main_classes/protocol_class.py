@@ -171,8 +171,8 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         self.variable_model.itemChanged.connect(self.check_variable)
         comboBoxes = {'plot-type': ['X-Y plot', 'Value-List', '2D plot']}
         subtables = {'Y-axes': []}
-        cols = ['plot-type', 'X-axis', 'Y-axes', 'title']
-        self.plot_table = AddRemoveTable(headerLabels=cols, title='Plots', comboBoxes=comboBoxes, subtables=subtables, tableData=self.protocol.plots)
+        cols = ['plot-type', 'X-axis', 'Y-axes', 'title', 'x-label', 'y-label']
+        self.plot_table = AddRemoveTable(headerLabels=cols, title='Plots', comboBoxes=comboBoxes, subtables=subtables, tableData=self.protocol.plots, checkstrings=[1,2])
         self.layout().addWidget(self.plot_table, 1, 0, 1, 4)
 
 

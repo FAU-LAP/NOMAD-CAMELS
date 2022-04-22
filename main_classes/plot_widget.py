@@ -23,6 +23,8 @@ class PlotWidget(QWidget):
             y_names = [y_names]
         elif y_names is None:
             y_names = ['']
+        if x_name == "":
+            x_name = 'time'
         self.plot_model = My_Lines(x_name, y_names, max_runs=max_runs)
         layout = QGridLayout()
         self.setLayout(layout)
@@ -32,12 +34,12 @@ class PlotWidget(QWidget):
             run_engine.subscribe(stream_documents_into_runs(self.plot_model.add_run))
         axes = self.plot_model.axes
         plot.figure.tight_layout()
-        if title is not None:
+        if title is not None and title != "":
             self.plot_model.title = title
             self.setWindowTitle(title)
-        if xlabel is not None:
+        if xlabel is not None and xlabel != "":
             axes.x_label = xlabel
-        if ylabel is not None:
+        if ylabel is not None and ylabel != "":
             self.plot_model.y_label = ylabel
 
 

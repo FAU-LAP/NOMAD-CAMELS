@@ -697,9 +697,14 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew_Device_Preset"/>
     <addaction name="actionSave_Device_Preset"/>
-    <addaction name="actionSave_Measurement_Preset"/>
+    <addaction name="actionSave_Device_Preset_As"/>
     <addaction name="actionOpen_Backup_Device_Preset"/>
+    <addaction name="separator"/>
+    <addaction name="actionNew_Measurement_Preset"/>
+    <addaction name="actionSave_Measurement_Preset"/>
+    <addaction name="actionSave_Measurement_Preset_As"/>
     <addaction name="actionLoad_Backup_Measurement_Preset"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
@@ -740,9 +745,9 @@
     <string>Options</string>
    </property>
   </action>
-  <action name="actionSave_Device_Preset">
+  <action name="actionSave_Device_Preset_As">
    <property name="text">
-    <string>Save Device Preset</string>
+    <string>Save Device Preset As</string>
    </property>
   </action>
   <action name="actionLoad">
@@ -809,6 +814,31 @@
   <action name="actionIOC_Builder">
    <property name="text">
     <string>IOC-Builder</string>
+   </property>
+  </action>
+  <action name="actionNew_Device_Preset_2">
+   <property name="text">
+    <string>New Device Preset</string>
+   </property>
+  </action>
+  <action name="actionSave_Device_Preset">
+   <property name="text">
+    <string>Save Device Preset</string>
+   </property>
+  </action>
+  <action name="actionSave_Measurement_Preset_As">
+   <property name="text">
+    <string>Save Measurement Preset As</string>
+   </property>
+  </action>
+  <action name="actionNew_Measurement_Preset">
+   <property name="text">
+    <string>New Measurement Preset</string>
+   </property>
+  </action>
+  <action name="actionNew_Device_Preset">
+   <property name="text">
+    <string>New Device Preset</string>
    </property>
   </action>
  </widget>
