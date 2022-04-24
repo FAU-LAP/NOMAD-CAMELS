@@ -141,10 +141,8 @@ def check_eval(s):
         for channel in channels:
             namespace.update({channel: 1})
         utils.call_or_eval_one(s, namespace)
-        # string_eval(s)
         return True
     except Exception as e:
-        print(e)
         return False
 
 def get_data(s):

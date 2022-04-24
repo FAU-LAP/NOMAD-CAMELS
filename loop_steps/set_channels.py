@@ -40,7 +40,7 @@ class Set_Channels(Loop_Step):
 class Set_Channels_Config(Loop_Step_Config):
     def __init__(self, loop_step:Set_Channels, parent=None):
         super().__init__(parent, loop_step)
-        self.sub_widget = Set_Channels_Config_Sub(parent=self, loop_step=loop_step)
+        # self.sub_widget = Set_Channels_Config_Sub(parent=self, loop_step=loop_step)
         box = []
         for channel in variables_handling.channels:
             if variables_handling.channels[channel].output:
