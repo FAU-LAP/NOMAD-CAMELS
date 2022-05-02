@@ -21,15 +21,16 @@ class Read_Channels(Loop_Step):
             self.channel_dict = step_info['channel_dict']
         else:
             self.channel_dict = {}
-            for channel in variables_handling.channels:
+        for channel in variables_handling.channels:
+            if channel not in self.channel_dict:
                 self.channel_dict.update({channel: {'read': False,
-                                                    'use set': False}})
+                                                'use set': False}})
         self.update_used_devices()
 
     def update_used_devices(self):
         self.used_devices = []
         for channel_name, channel_info in self.channel_dict.items():
-            if self.read_all or channel_info['read']:
+            if (self.read_all or channel_info['read']) and channel_name in variables_handling.channels:
                 device = variables_handling.channels[channel_name].device
                 if device not in self.used_devices:
                     self.used_devices.append(device)
@@ -48,10 +49,14 @@ class Read_Channels(Loop_Step):
             if channel not in variables_handling.channels:
                 raise Exception(f'Trying to read channel {channel} in {self.full_name}, but it does not exist!')
             if self.read_all or channel_data['read']:
-                dev, chan = variables_handling.channels[channel].name.split('.')
                 if inserted:
                     protocol_string += ', '
-                protocol_string += f'devs["{dev}"].{chan}'
+                name = variables_handling.channels[channel].name
+                if '.' in name:
+                    dev, chan = name.split('.')
+                    protocol_string += f'devs["{dev}"].{chan}'
+                else:
+                    protocol_string += f'devs["{name}"]'
                 inserted = True
         protocol_string += ']\n'
         protocol_string += f'{tabs}yield from bps.trigger_and_read(channels)\n'

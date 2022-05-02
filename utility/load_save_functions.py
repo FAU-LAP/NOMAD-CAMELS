@@ -5,6 +5,7 @@ from shutil import copyfile
 import importlib
 
 import numpy as np
+import pandas as pd
 from PyQt5.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel, QPushButton, QTreeView, QListView, QMenuBar, QAction, QMenu, QStatusBar, QGridLayout
 
 from datetime import datetime
@@ -137,6 +138,8 @@ def get_save_str(obj):
         if issubclass(type(obj), QLineEdit):
             return obj.text()
         return None
+    if type(obj) is pd.DataFrame:
+        obj.to_dict('list')
     if hasattr(obj, '__dict__') or type(obj) is dict:
         savedic = {}
         if hasattr(obj, '__dict__'):
@@ -210,6 +213,8 @@ def load_devices_dict(string_dict, devices_dict):
             dev.requirements = dev_data['requirements']
         if 'settings' in dev_data:
             dev.settings = dev_data['settings']
+        if 'config' in dev_data:
+            dev.config = dev_data['config']
         devices_dict.update({key: dev})
 
 

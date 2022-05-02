@@ -16,6 +16,7 @@ class EpicsFieldSignal(Signal):
 
     def get(self):
         if self.read_pv_name is not None:
+            print(self.read_pv_name)
             self._readback = self.conversion_function(caget(self.read_pv_name))
         return super().get()
 

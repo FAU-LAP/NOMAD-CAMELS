@@ -16,19 +16,18 @@ class subclass(device_class.Device):
         # ophyd_device = package.Keysight_E5270B
         files = ['keysight_e5270b.db', 'keysight_e5270b.proto']
         req = ['prologixSup']
-        super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'], directory='keysight_e5270b', ophyd_device=Keysight_E5270B, requirements=req, files=files)
-        self.ophyd_class_name = 'Keysight_E5270B'
+        super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'], directory='keysight_e5270b', ophyd_device=Keysight_E5270B, requirements=req, files=files, ophyd_class_name='Keysight_E5270B')
 
 class subclass_config(device_class.Device_Config):
-    def __init__(self, parent=None, data='', settings_dict=None):
-        super().__init__(parent, 'Keysight E5270B', data, settings_dict)
+    def __init__(self, parent=None, data='', settings_dict=None, config_dict=None):
+        super().__init__(parent, 'Keysight E5270B', data, settings_dict, config_dict)
         self.comboBox_connection_type.addItem('prologix-GPIB')
-        self.sub_widget = subclass_config_sub(settings_dict=settings_dict, parent=self)
+        self.sub_widget = subclass_config_sub(settings_dict=self.config_dict, parent=self)
         self.layout().addWidget(self.sub_widget, 3, 0, 1, 2)
         self.load_settings()
 
-    def get_settings(self):
-        super().get_settings()
+    def get_config(self):
+        super().get_config()
         return self.sub_widget.get_settings()
 
 class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
@@ -36,18 +35,22 @@ class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
         super().__init__(parent)
         self.setupUi(self)
         self.settings_dict = settings_dict
+
         if 'setADC1' in settings_dict:
             self.radioButton_highResADC.setChecked(True)
             if settings_dict['setADC1'] == 0:
                 self.radioButton_highSpeedADC.setChecked(True)
+
         if 'currComp1' in settings_dict:
             self.lineEdit_currComp.setText(format_number(settings_dict['currComp1']))
         else:
             self.lineEdit_currComp.setText('0')
+
         if 'voltComp1' in settings_dict:
             self.lineEdit_voltComp.setText(format_number(settings_dict['voltComp1']))
         else:
             self.lineEdit_voltComp.setText('0')
+
         voltage_ranges = {'Auto Range': 0,
                           '0.5 V auto lim': 5,
                           '2 V auto lim': 20,
@@ -66,6 +69,7 @@ class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
         for v_range in voltage_ranges:
             if 'fixed' not in v_range:
                 voltage_out_ranges.update({v_range: voltage_ranges[v_range]})
+
         current_ranges = {'Auto Range': 0,
                           '1 pA auto lim': 8,
                           '10 pA auto lim': 9,
@@ -96,10 +100,12 @@ class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
         for c_range in current_ranges:
             if 'fixed' not in c_range:
                 current_out_ranges.update({c_range: current_ranges[c_range]})
+
         self.comboBox_voltRange.addItems(voltage_out_ranges.keys())
         self.comboBox_currRange.addItems(current_out_ranges.keys())
         self.comboBox_voltMeasRange.addItems(voltage_ranges.keys())
         self.comboBox_currMeasRange.addItems(current_ranges.keys())
+
         current_ranges_names = list(current_ranges.keys())
         current_ranges_values = list(current_ranges.values())
         voltage_ranges_names = list(voltage_ranges.keys())
@@ -124,6 +130,7 @@ class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
             self.comboBox_currMeasRange.setCurrentText(current_ranges_names[i])
         else:
             self.comboBox_currMeasRange.setCurrentIndex(0)
+
         self.checkBox_outputFilter.setChecked(settings_dict['outputFilter1'] if 'outputFilter1' in settings_dict else False)
 
         self.adc_modes = {'Auto Mode': 0,
@@ -136,18 +143,22 @@ class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
         if 'speedADCmode' in settings_dict and settings_dict['speedADCmode'] in adc_mode_values:
             i = adc_mode_values.index(settings_dict['speedADCmode'])
             self.comboBox_highSpeedMode.setCurrentText(adc_mode_keys[i])
+        else:
+            self.comboBox_highSpeedMode.setCurrentText(adc_mode_keys[2])
         if 'resADCmode' in settings_dict and settings_dict['resADCmode'] in adc_mode_values:
             i = adc_mode_values.index(settings_dict['resADCmode'])
-            self.comboBox_highSpeedMode.setCurrentText(adc_mode_keys[i])
+            self.comboBox_highResMode.setCurrentText(adc_mode_keys[i])
+        else:
+            self.comboBox_highResMode.setCurrentText(adc_mode_keys[2])
 
         if 'speedADCPLC' in settings_dict:
             self.lineEdit_highSpeedPLC.setText(str(settings_dict['speedADCPLC']))
         else:
-            self.lineEdit_highSpeedPLC.setText('0')
+            self.lineEdit_highSpeedPLC.setText('5')
         if 'resADCPLC' in settings_dict:
             self.lineEdit_highResPLC.setText(str(settings_dict['resADCPLC']))
         else:
-            self.lineEdit_highResPLC.setText('0')
+            self.lineEdit_highResPLC.setText('5')
 
         self.radioButton_highResADC.clicked.connect(self.adc_switch)
         self.radioButton_highSpeedADC.clicked.connect(self.adc_switch)
@@ -156,14 +167,12 @@ class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
 
     def adc_switch(self):
         check_val = self.radioButton_highResADC.isChecked()
-        self.label_resPLC.setEnabled(check_val)
-        self.label_resMode.setEnabled(check_val)
-        self.comboBox_highResMode.setEnabled(check_val)
-        self.lineEdit_highResPLC.setEnabled(check_val)
-        self.label_speedPLC.setEnabled(not check_val)
-        self.label_speedMode.setEnabled(not check_val)
-        self.comboBox_highSpeedMode.setEnabled(not check_val)
-        self.lineEdit_highSpeedPLC.setEnabled(not check_val)
+        res = [self.label_resPLC, self.label_resMode, self.comboBox_highResMode, self.lineEdit_highResPLC]
+        speed = [self.label_speedPLC, self.label_speedMode, self.comboBox_highSpeedMode, self.lineEdit_highSpeedPLC]
+        for r in res:
+            r.setEnabled(check_val)
+        for s in speed:
+            s.setEnabled(not check_val)
 
     def get_settings(self):
         self.settings_dict['currComp1'] = float(self.lineEdit_currComp.text())

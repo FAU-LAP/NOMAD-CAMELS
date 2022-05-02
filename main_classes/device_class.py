@@ -22,7 +22,7 @@ class Device:
     The subclasses of this class should all be called "subclass", they are imported via importlib in that way.
     Any derived device should also provide the name of its ophyd-class as a string self.ophyd_class_name
     """
-    def __init__(self, name='', virtual=False, tags=None, files=None, directory='', requirements='', ophyd_device=None):
+    def __init__(self, name='', virtual=False, tags=None, files=None, directory='', requirements='', ophyd_device=None, ophyd_class_name=''):
         self.__save_dict__ = {}
         self.connection = Device_Connection()
         self.name = name
@@ -32,23 +32,34 @@ class Device:
         self.directory = directory
         self.requirements = requirements
         self.settings = {}
+        self.config = {}
         self.channels = {}
+        self.ophyd_class_name = ophyd_class_name
         if ophyd_device is None:
             ophyd_device = OphydDevice
         # self.ophyd_device = ophyd_device
         ophyd_instance = ophyd_device(name='test')
         outputs = get_outputs(ophyd_instance)
-        for chan in get_channels(ophyd_instance):
-            is_out = chan in outputs
-            channel = measurement_channel.Measurement_Channel(name=f'{self.name}.{chan}', output=is_out, device=self.name)
-            self.channels.update({f'{self.name}_{chan}': channel})
-        for chan in ophyd_instance.configuration_attrs:
-            self.settings.update({f'{chan}': 0})
+        channels = self.get_channels()
+        if not channels:
+            for chan in get_channels(ophyd_instance):
+                is_out = chan in outputs
+                channel = measurement_channel.Measurement_Channel(name=f'{self.name}.{chan}', output=is_out, device=self.name)
+                self.channels.update({f'{self.name}_{chan}': channel})
+        else:
+            self.channels = channels
+        for comp in ophyd_instance.walk_components():
+            name = comp.item.attr
+            cls = comp.item.cls
+            if name in ophyd_instance.configuration_attrs and check_output(cls):
+                self.config.update({f'{name}': 0})
 
 
     def set_connection(self, connection):
         self.connection = connection
 
+    def get_channels(self):
+        return {}
     # def read_channels(self, channels, use_set, n_tabs=1):
     #     tabs = '\t' * n_tabs
     #     prot_string = ''
@@ -68,13 +79,19 @@ class Device:
     # def close(self):
     #     pass
 
+def check_output(cls):
+    output = not issubclass(cls, EpicsSignalRO)
+    output = output and not issubclass(cls, EpicsFieldSignalRO)
+    output = output and not issubclass(cls, SignalRO)
+    return output
+
 def get_outputs(dev:OphydDevice):
     """walks through the components of an ophyd-device and checks whether they can be written"""
     outputs = []
     for comp in dev.walk_components():
         cls = comp.item.cls
         name = comp.item.attr
-        if name not in dev.configuration_attrs and not issubclass(cls, EpicsSignalRO) and not issubclass(cls, EpicsFieldSignalRO) and not issubclass(cls, SignalRO):
+        if check_output(cls):
             outputs.append(name)
     return outputs
 
@@ -104,10 +121,12 @@ class Device_Config(QWidget):
         - device_name: name of the device for the title of the widget.
         - data: data from the treeView_devices. It is needed to connect the settings to the correct device.
         - settings_dict: all the current settings of the device."""
-    def __init__(self, parent=None, device_name='', data='', settings_dict=None):
+    def __init__(self, parent=None, device_name='', data='', settings_dict=None, config_dict=None):
         super().__init__(parent)
         if settings_dict is None:
             settings_dict = {}
+        if config_dict is None:
+            config_dict = {}
         self.data = data
 
         layout = QGridLayout()
@@ -117,13 +136,14 @@ class Device_Config(QWidget):
         title_font = QFont('MS Shell Dlg 2', 10)
         title_font.setWeight(QFont.Bold)
         label_title.setFont(title_font)
-        label_connection = QLabel('Connection-type:')
+        self.label_connection = QLabel('Connection-type:')
         self.comboBox_connection_type = QComboBox()
         self.connector = Connection_Config()
         layout.addWidget(label_title, 0, 0, 1, 2)
-        layout.addWidget(label_connection, 1, 0)
+        layout.addWidget(self.label_connection, 1, 0)
         layout.addWidget(self.comboBox_connection_type, 1, 1)
         self.settings_dict = settings_dict
+        self.config_dict = config_dict
         self.comboBox_connection_type.currentTextChanged.connect(self.connection_type_changed)
 
     def connection_type_changed(self):
@@ -145,6 +165,9 @@ class Device_Config(QWidget):
         if 'connection' in self.settings_dict:
             self.comboBox_connection_type.setCurrentText(self.settings_dict['connection']['type'])
             self.connector.load_settings(self.settings_dict['connection'])
+
+    def get_config(self):
+        return self.config_dict
 
 
 class Connection_Config(QWidget):

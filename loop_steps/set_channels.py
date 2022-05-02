@@ -19,9 +19,10 @@ class Set_Channels(Loop_Step):
     def update_used_devices(self):
         self.used_devices = []
         for channel in self.channels_values['Channels']:
-            device = variables_handling.channels[channel].device
-            if device not in self.used_devices:
-                self.used_devices.append(device)
+            if channel in variables_handling.channels:
+                device = variables_handling.channels[channel].device
+                if device not in self.used_devices:
+                    self.used_devices.append(device)
 
     def get_protocol_string(self, n_tabs=1):
         tabs = '\t' * n_tabs
@@ -40,7 +41,14 @@ class Set_Channels(Loop_Step):
 class Set_Channels_Config(Loop_Step_Config):
     def __init__(self, loop_step:Set_Channels, parent=None):
         super().__init__(parent, loop_step)
-        self.sub_widget = Set_Channels_Config_Sub(parent=self, loop_step=loop_step)
+        # self.sub_widget = Set_Channels_Config_Sub(parent=self, loop_step=loop_step)
+        box = []
+        for channel in variables_handling.channels:
+            if variables_handling.channels[channel].output:
+                box.append(channel)
+        self.sub_widget = AddRemoveTable(headerLabels=['Channels', 'Values'],
+                                         comboBoxes={'Channels': box},
+                                         tableData=loop_step.channels_values, checkstrings=1)
         self.checkBox_wait_for_set = QCheckBox('Wait for set')
         self.checkBox_wait_for_set.setChecked(True)
         self.checkBox_wait_for_set.stateChanged.connect(self.check_change)
@@ -53,6 +61,7 @@ class Set_Channels_Config(Loop_Step_Config):
     def update_step_config(self):
         super().update_step_config()
         self.sub_widget.update_table_data()
+        self.loop_step.channels_values = self.sub_widget.tableData
 
 class Set_Channels_Config_Sub(AddRemoveTable):
     def __init__(self, loop_step:Set_Channels, parent=None):

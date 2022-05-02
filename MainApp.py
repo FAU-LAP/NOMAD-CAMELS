@@ -6,7 +6,7 @@ import os
 
 from copy import deepcopy
 
-from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, QFile, QTextStream, QModelIndex
+from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
@@ -22,7 +22,7 @@ from commands import change_sequence
 from loop_steps import make_step_of_type
 
 os.environ['QT_API'] = 'pyqt5'
-# device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """Main Window for the program. Connects to all the other classes."""
@@ -75,7 +75,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.sequence_main_widget.layout().addWidget(self.treeView_protocol_sequence, 5, 0, 1, 3)
         self.treeView_protocol_sequence.setModel(self.item_model_sequence)
         self.treeView_protocol_sequence.customContextMenuRequested.connect(self.sequence_right_click)
-        # self.treeView_protocol_sequence.dragdrop.connect(self.update_loop_step_order)
+        self.treeView_protocol_sequence.dragdrop.connect(self.update_loop_step_order)
         self.current_protocol = None
         self.loop_step_configuration_widget = None
         self.copied_loop_step = None
@@ -86,8 +86,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_add_device.clicked.connect(self.add_device)
         self.pushButton_remove_device.clicked.connect(self.remove_device)
         self.actionSettings.triggered.connect(self.change_preferences)
-        self.actionSave_Device_Preset.triggered.connect(self.save_device_preset)
-        self.actionSave_Measurement_Preset.triggered.connect(self.save_measurement_preset)
+        self.actionNew_Device_Preset.triggered.connect(self.new_device_preset)
+        self.actionSave_Device_Preset.triggered.connect(self.save_device_state)
+        self.actionSave_Measurement_Preset.triggered.connect(self.save_measurement_state)
+        self.actionSave_Device_Preset_As.triggered.connect(self.save_device_preset_as)
+        self.actionSave_Measurement_Preset_As.triggered.connect(self.save_measurement_preset_as)
         self.pushButton_make_EPICS_environment.clicked.connect(self.make_epics_environment)
         self.pushButton_show_console_output.clicked.connect(self.show_console_output)
         self.treeView_devices.clicked.connect(self.tree_click)
@@ -96,7 +99,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_remove_protocol.clicked.connect(self.remove_protocol)
         self.item_model_protocols.itemChanged.connect(self.change_protocol_name)
         self.pushButton_show_output_meas.clicked.connect(self.show_meas_output)
-        self.listView_protocols.clicked.connect(self.build_protocol_sequence)
+        self.listView_protocols.clicked.connect(self.protocol_selected)
         self.pushButton_move_step_up.clicked.connect(lambda state: self.move_loop_step(-1,0))
         self.pushButton_move_step_down.clicked.connect(lambda state: self.move_loop_step(1,0))
         self.pushButton_move_step_in.clicked.connect(lambda state: self.move_loop_step(0,1))
@@ -129,6 +132,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                'protocols_dict': self.protocols_dict}
         self.preferences = {}
         self.load_preferences()
+        sys.path.append(self.preferences['device_driver_path'])
         self.load_state()
         self.device_config_widget = QWidget()
         self.comboBox_device_preset.currentTextChanged.connect(self.change_device_preset)
@@ -142,6 +146,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionRedo.setEnabled(self.undo_stack.canRedo())
         QShortcut('Ctrl+z', self).activated.connect(self.undo)
         QShortcut('Ctrl+y', self).activated.connect(self.redo)
+        QShortcut('Ctrl+s', self).activated.connect(self.save_state)
 
     def mousePressEvent(self, a0: QMouseEvent) -> None:
         but = a0.button()
@@ -201,8 +206,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # main_app.setStyleSheet(stream.readAll())
             main_app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
             main_app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
+            variables_handling.dark_mode = True
         else:
             main_app.setStyleSheet('')
+            variables_handling.dark_mode = False
 
 
     def change_preferences(self):
@@ -222,6 +229,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Saves the current states of both presets."""
         self.save_device_state()
         self.save_measurement_state()
+        print('current state saved!')
 
     def save_device_state(self):
         """makes the __save_dict_devices__, then calls the autosave."""
@@ -233,9 +241,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.make_measurement_save_dict()
         load_save_functions.autosave_preset(self._current_measurement_preset[0], self.__save_dict_meas__, False)
 
-    def save_device_preset(self):
+    def new_device_preset(self):
+        file = QFileDialog.getSaveFileName(self, 'Save Device Preset', load_save_functions.preset_path, '*.predev')[0]
+        if not len(file):
+            return
+        load_save_functions.save_preset(file, {})
+        preset_name = file.split('/')[-1][:-7]
+        self.comboBox_device_preset.addItem(preset_name)
+        self.comboBox_device_preset.setCurrentText(preset_name)
+        self._current_device_preset[0] = preset_name
+
+    def save_device_preset_as(self):
         """Opens a QFileDialog to save the device preset. A backup / autosave of the preset is made automatically."""
         file = QFileDialog.getSaveFileName(self, 'Save Device Preset', load_save_functions.preset_path, '*.predev')[0]
+        if not len(file):
+            return
         preset_name = file.split('/')[-1][:-7]
         self.saving = True
         self.comboBox_device_preset.addItem(preset_name)
@@ -245,9 +265,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         load_save_functions.save_preset(file, self.__save_dict_devices__)
         self.saving = False
 
-    def save_measurement_preset(self):
+    def save_measurement_preset_as(self):
         """Opens a QFileDialog to save the device preset. A backup / autosave of the preset is made automatically."""
         file = QFileDialog.getSaveFileName(self, 'Save Measurement Preset', load_save_functions.preset_path, '*.premeas')[0]
+        if not len(file):
+            return
         preset_name = file.split('/')[-1][:-8]
         self.saving = True
         self.comboBox_measurement_preset.addItem(preset_name)
@@ -330,6 +352,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def make_measurement_save_dict(self):
         """Creates / Updates the __save_dict_meas__"""
+        self.get_step_config()
         self.update_loop_step_order()
         for key in self.meas_save_dict:
             add_string = load_save_functions.get_save_str(self.meas_save_dict[key])
@@ -382,7 +405,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if dat is not None and not dat.startswith('tag:'):
             py_package = importlib.import_module(f'{dat}.{dat}')
             self.get_device_config()
-            self.device_config_widget = py_package.subclass_config(self, dat, self.active_devices_dict[dat].settings)
+            self.device_config_widget = py_package.subclass_config(self, dat, self.active_devices_dict[dat].settings, self.active_devices_dict[dat].config)
             self.devices_splitter.replaceWidget(2, self.device_config_widget)
 
     def get_device_config(self):
@@ -390,6 +413,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if hasattr(self.device_config_widget, 'data'):
             if self.device_config_widget.data in self.active_devices_dict:
                 self.active_devices_dict[self.device_config_widget.data].settings = self.device_config_widget.get_settings()
+                self.active_devices_dict[self.device_config_widget.data].config = self.device_config_widget.get_config()
 
     def build_devices_tree(self):
         """Builds the tree of devices.
@@ -457,6 +481,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.textEdit_console_output_meas.append(info)
 
     def run_current_protocol(self):
+        self.update_loop_step_order()
+        self.get_device_config()
         if self.run_thread is not None:
             self.run_thread.terminate()
             self.pushButton_run_protocol.setText('Run selected protocol(s)')
@@ -473,6 +499,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.run_thread.start()
 
     def build_current_protocol(self):
+        self.update_loop_step_order()
+        self.get_device_config()
         if self.current_protocol is None:
             raise Exception('You need to select a protocol!')
         path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
@@ -480,6 +508,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def tree_click_sequence(self, general=False):
         """Called when clicking the treeView_protocol_sequence."""
+        self.update_loop_step_order()
         self.get_step_config()
         self.current_protocol.update_variables()
         config = None
@@ -574,6 +603,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.textEdit_console_output_meas.setHidden(True)
             self.pushButton_show_output_meas.setText('Show console output')
+
+    def protocol_selected(self):
+        self.update_loop_step_order()
+        self.build_protocol_sequence()
+        self.tree_click_sequence(True)
 
     def build_protocol_sequence(self):
         """Shows / builds the protocol sequence in the treeView dependent on the loop_steps in the current_protocol."""

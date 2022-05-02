@@ -1,4 +1,5 @@
 import numpy as np
+from utility import variables_handling
 
 class Measurement_Channel:
     def __init__(self, name='', unit='', output=False, min_val=-np.inf, max_val=np.inf, last_val=0, device=None):
@@ -16,3 +17,11 @@ class Measurement_Channel:
         elif val < self.min_val:
             return self.min_val
         return val
+
+    def get_pv_name(self):
+        name = f'{variables_handling.dev_preset}:{self.device}:{self.name.split(".")[-1]}'
+        return name
+
+
+def from_pv_name(pv_name):
+    pass

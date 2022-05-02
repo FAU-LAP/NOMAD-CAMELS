@@ -12,6 +12,7 @@ class Keysight_E5270B(Device):
     mesV1 = Cpt(TriggerEpicsSignalRO, 'mesV1')
     enable1 = Cpt(EpicsSignal, 'enable1')
     err = Cpt(TriggerEpicsSignalRO, 'err', no_mdel=True)
+    measMode1 = Cpt(EpicsSignal, 'measMode1', kind='config')
     currComp1 = Cpt(EpicsSignal, 'currComp1', kind='config')
     voltComp1 = Cpt(EpicsSignal, 'voltComp1', kind='config')
     VoutRange1 = Cpt(EpicsSignal, 'VoutRange1', kind='config')
@@ -27,6 +28,9 @@ class Keysight_E5270B(Device):
     idn = Cpt(EpicsSignalRO, 'idn', kind='config')
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
-                 configuration_attrs=None, parent=None, configuration=None, **kwargs):
+                 configuration_attrs=None, parent=None, **kwargs):
         super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, **kwargs)
 
+    def wait_for_connection(self, all_signals=False, timeout=2.0):
+        super().wait_for_connection(all_signals=all_signals, timeout=timeout)
+        self.measMode1.put(1)
