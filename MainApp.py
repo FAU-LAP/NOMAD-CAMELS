@@ -75,7 +75,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.sequence_main_widget.layout().addWidget(self.treeView_protocol_sequence, 5, 0, 1, 3)
         self.treeView_protocol_sequence.setModel(self.item_model_sequence)
         self.treeView_protocol_sequence.customContextMenuRequested.connect(self.sequence_right_click)
-        # self.treeView_protocol_sequence.dragdrop.connect(self.update_loop_step_order)
+        self.treeView_protocol_sequence.dragdrop.connect(self.update_loop_step_order)
         self.current_protocol = None
         self.loop_step_configuration_widget = None
         self.copied_loop_step = None
@@ -405,7 +405,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if dat is not None and not dat.startswith('tag:'):
             py_package = importlib.import_module(f'{dat}.{dat}')
             self.get_device_config()
-            self.device_config_widget = py_package.subclass_config(self, dat, self.active_devices_dict[dat].settings)
+            self.device_config_widget = py_package.subclass_config(self, dat, self.active_devices_dict[dat].settings, self.active_devices_dict[dat].config)
             self.devices_splitter.replaceWidget(2, self.device_config_widget)
 
     def get_device_config(self):
@@ -413,6 +413,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if hasattr(self.device_config_widget, 'data'):
             if self.device_config_widget.data in self.active_devices_dict:
                 self.active_devices_dict[self.device_config_widget.data].settings = self.device_config_widget.get_settings()
+                self.active_devices_dict[self.device_config_widget.data].config = self.device_config_widget.get_config()
 
     def build_devices_tree(self):
         """Builds the tree of devices.
@@ -480,6 +481,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.textEdit_console_output_meas.append(info)
 
     def run_current_protocol(self):
+        self.update_loop_step_order()
+        self.get_device_config()
         if self.run_thread is not None:
             self.run_thread.terminate()
             self.pushButton_run_protocol.setText('Run selected protocol(s)')
@@ -496,6 +499,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.run_thread.start()
 
     def build_current_protocol(self):
+        self.update_loop_step_order()
+        self.get_device_config()
         if self.current_protocol is None:
             raise Exception('You need to select a protocol!')
         path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
@@ -503,6 +508,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def tree_click_sequence(self, general=False):
         """Called when clicking the treeView_protocol_sequence."""
+        self.update_loop_step_order()
         self.get_step_config()
         self.current_protocol.update_variables()
         config = None
@@ -599,6 +605,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pushButton_show_output_meas.setText('Show console output')
 
     def protocol_selected(self):
+        self.update_loop_step_order()
         self.build_protocol_sequence()
         self.tree_click_sequence(True)
 

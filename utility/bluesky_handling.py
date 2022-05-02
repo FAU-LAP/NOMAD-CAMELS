@@ -53,13 +53,16 @@ def build_protocol(protocol:Measurement_Protocol, file_path):
             val = f'"{val}"'
         variable_string += f'{var} = {val}\n'
     for dev in protocol.get_used_devices():
+        print(variables_handling.devices)
         classname = variables_handling.devices[dev].ophyd_class_name
-        config = copy.deepcopy(variables_handling.devices[dev].settings)
-        if 'connection' in config:
-            config.pop('connection')
-        if 'idn' in config:
-            config.pop('idn')
-        devices_string += f'\t{dev} = {classname}("{variables_handling.dev_preset}:{dev}:", name="{dev}")\n'
+        config = copy.deepcopy(variables_handling.devices[dev].config)
+        settings = copy.deepcopy(variables_handling.devices[dev].settings)
+        if 'connection' in settings:
+            settings.pop('connection')
+        if 'idn' in settings:
+            settings.pop('idn')
+        devices_string += f'\tsettings = {settings}\n'
+        devices_string += f'\t{dev} = {classname}("{variables_handling.dev_preset}:{dev}:", name="{dev}", **settings)\n'
         devices_string += f'\tprint("connecting {dev}")\n'
         devices_string += f'\t{dev}.wait_for_connection()\n'
         devices_string += f'\tconfig = {config}\n'

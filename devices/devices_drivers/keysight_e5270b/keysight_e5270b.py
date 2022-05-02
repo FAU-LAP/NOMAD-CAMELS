@@ -16,19 +16,18 @@ class subclass(device_class.Device):
         # ophyd_device = package.Keysight_E5270B
         files = ['keysight_e5270b.db', 'keysight_e5270b.proto']
         req = ['prologixSup']
-        super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'], directory='keysight_e5270b', ophyd_device=Keysight_E5270B, requirements=req, files=files)
-        self.ophyd_class_name = 'Keysight_E5270B'
+        super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'], directory='keysight_e5270b', ophyd_device=Keysight_E5270B, requirements=req, files=files, ophyd_class_name='Keysight_E5270B')
 
 class subclass_config(device_class.Device_Config):
-    def __init__(self, parent=None, data='', settings_dict=None):
-        super().__init__(parent, 'Keysight E5270B', data, settings_dict)
+    def __init__(self, parent=None, data='', settings_dict=None, config_dict=None):
+        super().__init__(parent, 'Keysight E5270B', data, settings_dict, config_dict)
         self.comboBox_connection_type.addItem('prologix-GPIB')
-        self.sub_widget = subclass_config_sub(settings_dict=settings_dict, parent=self)
+        self.sub_widget = subclass_config_sub(settings_dict=self.config_dict, parent=self)
         self.layout().addWidget(self.sub_widget, 3, 0, 1, 2)
         self.load_settings()
 
-    def get_settings(self):
-        super().get_settings()
+    def get_config(self):
+        super().get_config()
         return self.sub_widget.get_settings()
 
 class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):

@@ -96,6 +96,12 @@ class AddRemoveTable(QWidget):
             self.setMaximumHeight(100)
 
     def load_table_data(self):
+        if self.horizontal:
+            while self.table_model.rowCount():
+                self.table_model.removeRow(0)
+        else:
+            while self.table_model.columnCount():
+                self.table_model.removeColumn(0)
         data = np.array(self.tableData)
         for dat in data:
             self.add(dat)
@@ -156,7 +162,7 @@ class AddRemoveTable(QWidget):
                 if vals[i] in self.subtables[name]:
                     table.setCurrentText(vals[i])
             else:
-                item = QStandardItem(vals[i])
+                item = QStandardItem(str(vals[i]))
             item.setEditable(i in self.editables)
             item.setCheckable(i in self.checkables)
             items.append(item)
@@ -214,7 +220,10 @@ class AddRemoveTable(QWidget):
                         tab.update_table_data()
                         vals.append(tab.tableData)
                     else:
-                        vals.append(self.table_model.item(j, i).text())
+                        try:
+                            vals.append(float(self.table_model.item(j, i).text()))
+                        except:
+                            vals.append(self.table_model.item(j, i).text())
             else:
                 for j in range(self.table_model.columnCount()):
                     ind = self.table_model.index(i, j)
@@ -225,15 +234,24 @@ class AddRemoveTable(QWidget):
                         tab.update_table_data()
                         vals.append(tab.tableData)
                     else:
-                        vals.append(self.table_model.item(i, j).text())
+                        try:
+                            vals.append(float(self.table_model.item(i, j).text()))
+                        except:
+                            vals.append(self.table_model.item(i, j).text())
         if len(self.headerLabels) == 0:
             self.tableData = []
             if self.horizontal:
                 for j in range(self.table_model.rowCount()):
-                    self.tableData.append(self.table_model.item(j, 0).text())
+                    try:
+                        self.tableData.append(float(self.table_model.item(j, 0).text()))
+                    except:
+                        self.tableData.append(self.table_model.item(j, 0).text())
             else:
                 for j in range(self.table_model.columnCount()):
-                    self.tableData.append(self.table_model.item(0,j).text())
+                    try:
+                        self.tableData.append(float(self.table_model.item(0,j).text()))
+                    except:
+                        self.tableData.append(self.table_model.item(0,j).text())
 
 
 

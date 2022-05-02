@@ -19,9 +19,10 @@ class Set_Channels(Loop_Step):
     def update_used_devices(self):
         self.used_devices = []
         for channel in self.channels_values['Channels']:
-            device = variables_handling.channels[channel].device
-            if device not in self.used_devices:
-                self.used_devices.append(device)
+            if channel in variables_handling.channels:
+                device = variables_handling.channels[channel].device
+                if device not in self.used_devices:
+                    self.used_devices.append(device)
 
     def get_protocol_string(self, n_tabs=1):
         tabs = '\t' * n_tabs
