@@ -1,8 +1,0 @@
-{
-	"name": "keysight b2912",
-	"directory": "keysight_b2912",
-	"tags": ["voltage", "current", "SMU", "Agilent"],
-	"requirements": ["prologixSup"],
-	"files": ["keysight_b2912.proto", "gpib_keysight_b2912.db"],
-	"virtual": false
-}

@@ -28,7 +28,7 @@ class Keysight_E5270B(Device):
     idn = Cpt(EpicsSignalRO, 'idn', kind='config')
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
-                 configuration_attrs=None, parent=None, configuration=None, **kwargs):
+                 configuration_attrs=None, parent=None, **kwargs):
         super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, **kwargs)
 
     def wait_for_connection(self, all_signals=False, timeout=2.0):
