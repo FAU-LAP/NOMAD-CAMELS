@@ -221,9 +221,12 @@ class AddRemoveTable(QWidget):
                         vals.append(tab.tableData)
                     else:
                         try:
-                            vals.append(float(self.table_model.item(j, i).text()))
+                            vals.append(int(self.table_model.item(j, i).text()))
                         except:
-                            vals.append(self.table_model.item(j, i).text())
+                            try:
+                                vals.append(float(self.table_model.item(j, i).text()))
+                            except:
+                                vals.append(self.table_model.item(j, i).text())
             else:
                 for j in range(self.table_model.columnCount()):
                     ind = self.table_model.index(i, j)
