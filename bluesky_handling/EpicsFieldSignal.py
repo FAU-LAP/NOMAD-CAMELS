@@ -1,5 +1,7 @@
 from ophyd import Signal
 
+import numpy as np
+
 from epics import caput, caget
 
 
@@ -13,17 +15,22 @@ class EpicsFieldSignal(Signal):
         if set_conversion_function is None:
             set_conversion_function = lambda x: x
         self.set_conversion_function = set_conversion_function
+        self.put_values = None
 
     def get(self):
         if self.read_pv_name is not None:
-            print(self.read_pv_name)
-            self._readback = self.conversion_function(caget(self.read_pv_name))
+            getval = caget(self.read_pv_name)
+            if self.put_values is not None and type(getval) in [int, float, np.float64] and np.abs(getval - self.put_values[1]) <= 1e-3 * getval:
+                self._readback = self.put_values[0]
+            else:
+                self._readback = self.conversion_function(getval)
         return super().get()
 
     def put(self, value, *, timestamp=None, force=False, metadata=None, **kwargs):
         val = self.set_conversion_function(value)
         if self.read_pv_name is not None:
             caput(self.read_pv_name, val, wait=True)
+            self.put_values = (value, val)
         super().put(val, timestamp=timestamp, force=force, metadata=metadata, **kwargs)
 
 class EpicsFieldSignalRO(EpicsFieldSignal):

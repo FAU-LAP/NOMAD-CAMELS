@@ -84,7 +84,16 @@ class subclass_config_sub(QWidget):
             if variables_handling.channels[chan].output:
                 self.comboBox_output.addItem(chan)
                 self.comboBox_bias.addItem(chan)
-
+        if 'pid_inp' in config_dict and type(config_dict['pid_inp']) is str:
+            pv = config_dict['pid_inp'].split(' ')[0]
+            channel = measurement_channel.from_pv_name(pv)
+            if channel in variables_handling.channels:
+                self.comboBox_input.setCurrentText(channel)
+        if 'pid_outl' in config_dict and type(config_dict['pid_outl']) is str:
+            pv = config_dict['pid_outl'].split(' ')[0]
+            channel = measurement_channel.from_pv_name(pv)
+            if channel in variables_handling.channels:
+                self.comboBox_output.setCurrentText(channel)
         # if 'pid_inp' in config_dict and config_dict['pid_inp']:
         #     self.comboBox_input.setCurrentText()
 
@@ -134,5 +143,7 @@ class subclass_config_sub(QWidget):
 
     def get_config(self):
         inp_chan = variables_handling.channels[self.comboBox_input.currentText()]
-        self.config_dict['pid_inp'] = inp_chan.get_pv_name()
+        self.config_dict['pid_inp'] = f'{inp_chan.get_pv_name()} CPP NMS'
+        out_chan = variables_handling.channels[self.comboBox_output.currentText()]
+        self.config_dict['pid_outl'] = f'{out_chan.get_pv_name()} CP NMS'
         return self.config_dict

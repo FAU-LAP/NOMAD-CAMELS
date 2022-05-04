@@ -20,7 +20,7 @@ standard_string += 'from main_classes import plot_widget\n'
 standard_string += 'import sys\n'
 
 standard_run_string = '\n\n\nif __name__ == "__main__":\n'
-standard_run_string += '\tRE = RunEngine({})\n'
+standard_run_string += '\tRE = RunEngine()\n'
 standard_run_string += '\tbec = BestEffortCallback()\n'
 standard_run_string += '\tRE.subscribe(bec)\n'
 standard_run_string += '\tdb = Broker.named("temp")\n'

@@ -66,6 +66,10 @@ class PID_Controller(Device):
         self.pid_scan.read_pv_name = f'{prefix}pid_controller.SCAN'
         self.pid_inp.read_pv_name = f'{prefix}pid_controller.INP'
         self.pid_outl.read_pv_name = f'{prefix}pid_controller.OUTL'
+        self.pid_pval.read_pv_name = f'{prefix}pid_controller.P'
+        self.pid_dval.read_pv_name = f'{prefix}pid_controller.D'
+        self.pid_ival.read_pv_name = f'{prefix}pid_controller.I'
+        self.pid_oval.read_pv_name = f'{prefix}pid_controller.OVAL'
         self.pid_bias = bias_signal
         if read_conv_func is not None:
             self.pid_val.conversion_function = read_conv_func

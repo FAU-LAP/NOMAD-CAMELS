@@ -31,4 +31,4 @@ class Measurement_Channel:
 
 def from_pv_name(pv_name):
     split_name = pv_name.split(':')
-    return f'{split_name[1]}.{split_name[2]}'
+    return f'{split_name[1]}_{split_name[2]}'
