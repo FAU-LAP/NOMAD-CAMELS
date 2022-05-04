@@ -19,6 +19,12 @@ class subclass(device_class.Device):
         req = ['std']
         super().__init__(name='PID_controller', virtual=True, tags=['PID', 'control'], files=files, directory='PID_controller', ophyd_device=PID_Controller, ophyd_class_name='PID_Controller', requirements=req)
 
+    def get_additional_string(self):
+        inp_pv = self.config['pid_inp'].split(' ')[0]
+        input_chan = measurement_channel.from_pv_name(inp_pv)
+        add_string = f'{input_chan}.triggering = False\n'
+        add_string += f'caput({inp_pv}.SCAN, {self.config["pid_scan"]})\n'
+        return add_string
     # def get_channels(self):
     #     channel = Measurement_Channel(self.name, output=True, device=self.name)
     #     return {self.name: channel}

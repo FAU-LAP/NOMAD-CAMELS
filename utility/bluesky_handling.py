@@ -16,6 +16,7 @@ standard_string += 'from databroker import Broker\n'
 standard_string += 'from bluesky_widgets.qt.threading import wait_for_workers_to_quit\n'
 standard_string += 'from PyQt5.QtWidgets import QWidget, QGridLayout, QApplication\n'
 standard_string += 'from PyQt5.QtCore import QCoreApplication\n'
+standard_string += 'from epics import caput\n'
 standard_string += 'from main_classes import plot_widget\n'
 standard_string += 'import sys\n'
 
@@ -48,15 +49,17 @@ def build_protocol(protocol:Measurement_Protocol, file_path):
     device_import_string = '\n'
     devices_string = '\n\tdevs = {}\n'
     variable_string = ''
+    additional_string_devices = ''
     for var, val in variables_handling.protocol_variables.items():
         if variables_handling.check_data_type(val) == 'String':
             val = f'"{val}"'
         variable_string += f'{var} = {val}\n'
     for dev in protocol.get_used_devices():
         print(variables_handling.devices)
-        classname = variables_handling.devices[dev].ophyd_class_name
-        config = copy.deepcopy(variables_handling.devices[dev].config)
-        settings = copy.deepcopy(variables_handling.devices[dev].settings)
+        device = variables_handling.devices[dev]
+        classname = device.ophyd_class_name
+        config = copy.deepcopy(device.config)
+        settings = copy.deepcopy(device.settings)
         if 'connection' in settings:
             settings.pop('connection')
         if 'idn' in settings:
@@ -69,6 +72,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path):
         devices_string += f'\t{dev}.configure(config)\n'
         devices_string += f'\tdevs.update({{"{dev}": {dev}}})\n'
         device_import_string += f'from {dev}.{dev}_ophyd import {classname}\n'
+        additional_string_devices += device.get_additional_string()
     devices_string += '\tprint("devices connected")'
     plot_string = '\n'
     for i, plot in pd.DataFrame(protocol.plots).iterrows():

@@ -38,7 +38,10 @@ class For_Loop_Step(Loop_Step_Container):
 
     def get_protocol_string(self, n_tabs=1):
         tabs = '\t'*n_tabs
-        protocol_string = f'{tabs}for {self.name.replace(" ", "_")}_Count, {self.name.replace(" ", "_")}_Value in enumerate({list(self.point_array)}):\n'
+        enumerator = list(self.point_array)
+        if self.loop_type in ['start - stop', 'start - min - max - stop', 'start - max - min - stop']:
+            enumerator = get_space_string(self.start_val, self.stop_val, self.n_points, self.min_val, self.max_val, self.loop_type, self.sweep_mode, self.include_end_points)
+        protocol_string = f'{tabs}for {self.name.replace(" ", "_")}_Count, {self.name.replace(" ", "_")}_Value in enumerate({enumerator}):\n'
         protocol_string += f'{tabs}\tprint("starting loop_step {self.full_name}")\n'
         protocol_string += self.get_children_strings(n_tabs+1)
         self.update_time_weight()
@@ -290,3 +293,44 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
         except ValueError:
             vals = [np.nan]
         return vals
+
+def get_space_string(start, stop, points, min_val=np.nan, max_val=np.nan, loop_type='start - stop',  sweep_mode='linear', endpoint=True):
+    if loop_type == 'start - stop':
+        return get_inner_space_string(start, stop, points, sweep_mode, endpoint)
+    elif loop_type == 'start - min - max - stop':
+        part_points1 = round(points * np.abs(start-min_val)/np.abs(max_val-min_val))
+        part_points2 = round(points * np.abs(stop-max_val)/np.abs(max_val-min_val))
+        vals1 = get_inner_space_string(start, min_val, part_points1, sweep_mode, endpoint)
+        vals2 = get_inner_space_string(min_val, max_val, points, sweep_mode, endpoint)
+        vals3 = get_inner_space_string(max_val, stop, part_points2, sweep_mode, endpoint)
+    else:
+        part_points1 = round(points * np.abs(start-max_val)/np.abs(max_val-min_val))
+        part_points2 = round(points * np.abs(stop-min_val)/np.abs(max_val-min_val))
+        vals1 = get_inner_space_string(start, max_val, part_points1, sweep_mode, endpoint)
+        vals2 = get_inner_space_string(max_val, min_val, points, sweep_mode, endpoint)
+        vals3 = get_inner_space_string(min_val, stop, part_points2, sweep_mode, endpoint)
+    return f'np.concatenate([{vals1}, {vals2}, {vals3}])'
+
+
+def get_inner_space_string(start, stop, points, sweep_mode, endpoint):
+    try:
+        if sweep_mode == 'linear':
+            valstring = f'np.linspace({start}, {stop}, {points}, endpoint={endpoint})'
+        elif sweep_mode == 'logarithmic':
+            start = np.log(start)
+            stop = np.log(stop)
+            valstring = f'np.exp(np.linspace({start}, {stop}, {points}, endpoint={endpoint}))'
+        elif sweep_mode == 'exponential':
+            start = np.exp(start)
+            stop = np.exp(stop)
+            valstring = f'np.log(np.linspace({start}, {stop}, {points}, endpoint={endpoint}))'
+        else:
+            start = 1/start
+            stop = 1/stop
+            valstring = f'1/np.linspace({start}, {stop}, {points}, endpoint={endpoint})'
+    except ValueError:
+        valstring = '[np.nan]'
+    return valstring
+
+
+
