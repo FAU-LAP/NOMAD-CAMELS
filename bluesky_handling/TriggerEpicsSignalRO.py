@@ -17,18 +17,20 @@ class TriggerEpicsSignalRO(EpicsSignalRO):
         self.subscribe(self.callback_method)
         self.last_time = self.timestamp
         self.no_mdel = no_mdel
+        self.triggering = True
 
     def callback_method(self, **kwargs):
         """If there is a status object from the trigger-method, it will be set to finished."""
-        if self.stat is not None and not self.no_mdel:
+        if self.stat is not None and not self.no_mdel and self.triggering:
             self.stat.set_finished()
             # self.stat = None
 
     def trigger(self):
         """Returns a status object that will be set to finished, when the PV-value is updated. Sets the trigger-PV to 1, thus triggering the process of the original PV."""
         self.stat = Status(self, timeout=self.timeout)
-        self.trigger_pv.put(1)
-        if self.no_mdel:
+        if self.triggering:
+            self.trigger_pv.put(1)
+        if self.no_mdel or not self.triggering:
             self.stat.set_finished()
         return self.stat
 

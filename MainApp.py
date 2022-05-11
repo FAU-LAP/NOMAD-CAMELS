@@ -111,7 +111,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             action = QAction(stp)
             action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
             self.add_actions.append(action)
+        device_actions = []
+        for stp in make_step_of_type.get_device_steps():
+            action = QAction(stp)
+            action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+            device_actions.append(action)
         self.toolButton_add_step.addActions(self.add_actions)
+        if device_actions:
+            self.toolButton_add_step.addActions(device_actions)
         self.toolButton_add_step.setPopupMode(QToolButton.InstantPopup)
         self.pushButton_remove_step.clicked.connect(lambda x: self.remove_loop_step(True))
         self.pushButton_show_protocol_settings.clicked.connect(lambda x: self.tree_click_sequence(True))
@@ -245,8 +252,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         file = QFileDialog.getSaveFileName(self, 'Save Device Preset', load_save_functions.preset_path, '*.predev')[0]
         if not len(file):
             return
-        load_save_functions.save_preset(file, {})
         preset_name = file.split('/')[-1][:-7]
+        load_save_functions.save_preset(file, {'_current_device_preset': [preset_name], 'active_devices_dict': {}, 'lineEdit_device_search': ''})
         self.comboBox_device_preset.addItem(preset_name)
         self.comboBox_device_preset.setCurrentText(preset_name)
         self._current_device_preset[0] = preset_name
@@ -653,6 +660,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if parent is not None:
                 parent = parent.data()
             # for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
+            device_steps = make_step_of_type.get_device_steps()
             for stp in sorted(make_step_of_type.step_type_config.keys(), key=lambda x: x.lower()):
                 action = QAction(stp)
                 action_a = QAction(stp)
@@ -663,14 +671,35 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 below_actions.append(action)
                 above_actions.append(action_a)
                 into_actions.append(action_in)
+            device_actions = []
+            device_actions_a = []
+            device_actions_in = []
+            for stp in make_step_of_type.get_device_steps():
+                action = QAction(stp)
+                action_a = QAction(stp)
+                action_in = QAction(stp)
+                action.triggered.connect(lambda state, x=stp, y=row+1, z=parent: self.add_loop_step(x, y, z))
+                action_a.triggered.connect(lambda state, x=stp, y=row, z=parent: self.add_loop_step(x, y, z))
+                action_in.triggered.connect(lambda state, x=stp, y=-1, z=item.data(): self.add_loop_step(x,y,z))
+                device_actions.append(action)
+                device_actions_a.append(action_a)
+                device_actions_in.append(action_in)
             insert_above_menu = QMenu('Insert Above')
             insert_above_menu.addActions(above_actions)
             insert_below_menu = QMenu('Insert Below')
             insert_below_menu.addActions(below_actions)
+            if device_actions:
+                insert_above_menu.addSeparator()
+                insert_above_menu.addActions(device_actions_a)
+                insert_below_menu.addSeparator()
+                insert_below_menu.addActions(device_actions)
             if self.current_protocol.loop_step_dict[item.data()].has_children:
                 add_in_menu = QMenu('Add Into')
                 add_in_menu.addActions(into_actions)
                 menu.addMenu(add_in_menu)
+                if device_actions:
+                    add_in_menu.addSeparator()
+                    add_in_menu.addActions(device_actions_in)
             menu.addMenu(insert_above_menu)
             menu.addMenu(insert_below_menu)
             menu.addSeparator()
@@ -703,8 +732,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 action = QAction(stp)
                 action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
                 add_actions.append(action)
+            device_actions = []
+            for stp in make_step_of_type.get_device_steps():
+                action = QAction(stp)
+                action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+                device_actions.append(action)
             add_menu = QMenu('Add Step')
             add_menu.addActions(add_actions)
+            if device_actions:
+                add_menu.addSeparator()
+                add_menu.addActions(device_actions)
             paste_action = QAction('Paste')
             if self.copied_loop_step is not None:
                 paste_action.triggered.connect(lambda state, x=True, y=-1, z=None: self.add_loop_step(copied_step=x, position=y, parent=z))

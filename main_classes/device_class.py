@@ -63,6 +63,9 @@ class Device:
 
     def get_additional_string(self):
         return ''
+
+    def get_special_steps(self):
+        return {}
     # def read_channels(self, channels, use_set, n_tabs=1):
     #     tabs = '\t' * n_tabs
     #     prot_string = ''

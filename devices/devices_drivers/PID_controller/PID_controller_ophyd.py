@@ -77,13 +77,13 @@ class PID_Controller(Device):
         if set_conv_func is not None:
             self.pid_val.set_conversion_function = set_conv_func
             self.pid_cval.set_conversion_function = set_conv_func
-
+        self.pid_val.putFunc = self.update_PID_vals
         # if pid_val_table is None:
         #     pid_val_table = PID_val_table()
         # elif type(pid_val_table) is str:
         #     pid_val_table = PID_val_table(table=pid_val_table)
         if pid_val_table is None:
-            pid_val_table = pd.DataFrame({'setpoint': [0], 'kp': [0], 'ki': [0], 'kd': [0], 'maxval': [np.inf], 'minval': [-np.inf], 'bias': [0]})
+            pid_val_table = pd.DataFrame({'setpoint': [0], 'kp': [0], 'ki': [0], 'kd': [0], 'maxval': [np.inf], 'minval': [-np.inf], 'bias': [0], 'stability-delta': [0], 'stability-time': [0]})
         elif type(pid_val_table) is str:
             pid_val_table = pd.read_csv(pid_val_table, delimiter='\t')
         self.pid_val_table = pid_val_table
@@ -100,6 +100,8 @@ class PID_Controller(Device):
         self.interpolate_auto = interpolate_auto
         # setpoint = self.pid_val.get()
         self.pid_vals = None
+        self.stability_time = 0
+        self.stability_delta = 0
         # self.update_PID_vals(setpoint)
 
     def update_PID_vals(self, setpoint):
@@ -107,28 +109,31 @@ class PID_Controller(Device):
         if not self.auto_pid:
             return
         old_vals = copy.deepcopy(self.pid_vals)
-        setpoints = self.pid_val_table['setpoint']
+        pid_val_table = pd.DataFrame(self.pid_val_table)
+        setpoints = pid_val_table['setpoint']
         if setpoint >= max(setpoints):
-            self.pid_vals = self.pid_val_table[setpoints == max(setpoints)].to_dict(orient='list')
+            self.pid_vals = pid_val_table[setpoints == max(setpoints)].to_dict(orient='list')
         elif setpoint <= min(setpoints):
-            self.pid_vals = self.pid_val_table[setpoints == min(setpoints)].to_dict(orient='list')
+            self.pid_vals = pid_val_table[setpoints == min(setpoints)].to_dict(orient='list')
         elif self.interpolate_auto:
             next_lo = max(setpoints[setpoints <= setpoint])
             next_hi = min(setpoints[setpoints >= setpoint])
-            lo_vals = self.pid_val_table[setpoints == next_lo].to_dict(orient='list')
-            hi_vals = self.pid_val_table[setpoints == next_hi].to_dict(orient='list')
+            lo_vals = pid_val_table[setpoints == next_lo].to_dict(orient='list')
+            hi_vals = pid_val_table[setpoints == next_hi].to_dict(orient='list')
             self.pid_vals = {}
             for key, lo_val in lo_vals.items():
                 self.pid_vals[key] = [lo_val[0] + (hi_vals[key][0] - lo_val[0]) * (setpoint - next_lo)/(next_hi - next_lo)]
         else:
             next_lo = max(setpoints[setpoints <= setpoint])
-            self.pid_vals = self.pid_val_table[setpoints == next_lo].to_dict(orient='list')
+            self.pid_vals = pid_val_table[setpoints == next_lo].to_dict(orient='list')
         if old_vals != self.pid_vals:
             for key in self.pid_vals:
-                if key == 'setpoint' or (key == 'bias' and self.pid_bias is None):
+                if key in ['setpoint', 'stability-time', 'stability-delta'] or (key == 'bias' and self.pid_bias is None):
                     continue
                 att = getattr(self, f'pid_{key}')
                 att.put(self.pid_vals[key][0])
+        self.stability_time = self.pid_vals['stability-time'][0]
+        self.stability_delta = self.pid_vals['stability-delta'][0]
 
     def wait_for_connection(self, all_signals=False, timeout=2.0):
         if timeout is None:

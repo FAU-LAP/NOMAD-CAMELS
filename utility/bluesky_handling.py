@@ -12,20 +12,22 @@ standard_string += 'from bluesky import RunEngine\n'
 standard_string += 'from bluesky.callbacks.best_effort import BestEffortCallback\n'
 standard_string += 'import bluesky.plan_stubs as bps\n'
 standard_string += 'from bluesky.utils import install_kicker\n'
-standard_string += 'from databroker import Broker\n'
+standard_string += 'import databroker\n'
 standard_string += 'from bluesky_widgets.qt.threading import wait_for_workers_to_quit\n'
 standard_string += 'from PyQt5.QtWidgets import QWidget, QGridLayout, QApplication\n'
 standard_string += 'from PyQt5.QtCore import QCoreApplication\n'
 standard_string += 'from epics import caput\n'
+standard_string += 'import datetime\n'
 standard_string += 'from main_classes import plot_widget\n'
+standard_string += 'from utility.databroker_export import broker_to_hdf5\n'
 standard_string += 'import sys\n'
 
 standard_run_string = '\n\n\nif __name__ == "__main__":\n'
 standard_run_string += '\tRE = RunEngine()\n'
 standard_run_string += '\tbec = BestEffortCallback()\n'
 standard_run_string += '\tRE.subscribe(bec)\n'
-standard_run_string += '\tdb = Broker.named("temp")\n'
-standard_run_string += '\tRE.subscribe(db.insert)\n\n'
+standard_run_string += '\tcatalog = databroker.catalog["CATALOG_NAME"]\n'
+standard_run_string += '\tRE.subscribe(catalog.v1.insert)\n\n'
 standard_run_string += '\tapp = QCoreApplication.instance()\n'
 standard_run_string += '\tif app is None:\n'
 standard_run_string += '\t\tapp = QApplication(sys.argv)\n'
@@ -36,18 +38,13 @@ standard_run_string += '\t\timport qdarkstyle\n'
 standard_run_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())\n'
 standard_run_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet(qt_api="pyqt5"))\n'
 
-standard_save_string = '\n\n\theaders = db[uids]\n'
-standard_save_string += '\tfor header in headers:\n'
-standard_save_string += '\t\tprint(header.start)\n'
-standard_save_string += '\t\tprint(header.table())\n'
-standard_save_string += '\t\tprint()\n'
-standard_save_string += '\t\tprint("protocol finished!")\n'
-standard_save_string += '\t\tprint()\n'
-standard_save_string += '\n\tsys.exit(app.exec_())\n'
+standard_save_string = '\n\n\truns = catalog[uids]\n'
+standard_save_string += '\tbroker_to_hdf5(runs, "C:/Users/od93yces/AppData/Local/CAMELS/python_files/tester.h5")\n\n\n'
+standard_save_string += '\tsys.exit(app.exec_())\n'
 
 def build_protocol(protocol:Measurement_Protocol, file_path):
     device_import_string = '\n'
-    devices_string = '\n\tdevs = {}\n'
+    devices_string = '\n\tdevs = {}\n\tdevice_config = {}\n'
     variable_string = ''
     additional_string_devices = ''
     for var, val in variables_handling.protocol_variables.items():
@@ -69,11 +66,15 @@ def build_protocol(protocol:Measurement_Protocol, file_path):
         devices_string += f'\tprint("connecting {dev}")\n'
         devices_string += f'\t{dev}.wait_for_connection()\n'
         devices_string += f'\tconfig = {config}\n'
-        devices_string += f'\t{dev}.configure(config)\n'
+        devices_string += f'\tconfigs = {dev}.configure(config)[1]\n'
+        devices_string += f'\tdevice_config["{dev}"] = {{}}\n'
+        devices_string += f'\tdevice_config["{dev}"].update(configs)\n'
+        devices_string += f'\tdevice_config["{dev}"]["settings"] = settings\n'
         devices_string += f'\tdevs.update({{"{dev}": {dev}}})\n'
         device_import_string += f'from {dev}.{dev}_ophyd import {classname}\n'
         additional_string_devices += device.get_additional_string()
-    devices_string += '\tprint("devices connected")'
+    devices_string += '\tprint("devices connected")\n'
+    devices_string += '\tmd = {"device_config": device_config}\n'
     plot_string = '\n'
     for i, plot in pd.DataFrame(protocol.plots).iterrows():
         plot_string += f'\tplot_{i} = plot_widget.PlotWidget(run_engine=RE, x_name="{plot["X-axis"]}", y_names={plot["Y-axes"]}, ylabel="{plot["y-label"]}", xlabel="{plot["x-label"]}", title="{plot["title"]}")\n'
@@ -89,8 +90,9 @@ def build_protocol(protocol:Measurement_Protocol, file_path):
     protocol_string += protocol.get_plan_string()
     protocol_string += standard_run_string
     protocol_string += devices_string
+    protocol_string += additional_string_devices
     protocol_string += plot_string
-    protocol_string += f'\tuids = RE({protocol.name}_plan(devs))\n'
+    protocol_string += f'\tuids = RE({protocol.name}_plan(devs), md=md)\n'
     protocol_string += standard_save_string
     if not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))

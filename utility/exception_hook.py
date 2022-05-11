@@ -1,3 +1,4 @@
+import os.path
 from traceback import print_tb
 from PyQt5.QtWidgets import QMessageBox
 
@@ -5,6 +6,9 @@ import logging
 
 from utility.load_save_functions import appdata_path
 
+if not os.path.isfile(f'{appdata_path}/logging.log'):
+	with open(f'{appdata_path}/logging.log', 'w'):
+		pass
 logging.basicConfig(filename=f'{appdata_path}/logging.log', level=logging.DEBUG)
 
 

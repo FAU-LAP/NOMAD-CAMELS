@@ -17,7 +17,7 @@ def activate_dark_mode():
 
 
 class PlotWidget(QWidget):
-    def __init__(self, x_name='time', y_names=None, parent=None, max_runs=10, run_engine=None, title=None, xlabel=None, ylabel=None):
+    def __init__(self, x_name='time', y_names=None, parent=None, max_runs=10, run_engine=None, title=None, xlabel=None, ylabel=None, streams=('primary',)):
         super().__init__(parent)
         if type(y_names) is str:
             y_names = [y_names]
@@ -25,7 +25,7 @@ class PlotWidget(QWidget):
             y_names = ['']
         if x_name == "":
             x_name = 'time'
-        self.plot_model = My_Lines(x_name, y_names, max_runs=max_runs)
+        self.plot_model = My_Lines(x_name, y_names, max_runs=max_runs, needs_streams=streams)
         layout = QGridLayout()
         self.setLayout(layout)
         plot = QtFigure(self.plot_model.figure, parent=parent)
@@ -44,7 +44,6 @@ class PlotWidget(QWidget):
 
 
 class My_Lines(plot_builders.Lines):
-    pass
 
     def _add_lines(self, event):
         "Add a line."

@@ -121,8 +121,13 @@ class Measurement_Protocol:
             self.loop_steps.append(self.loop_step_dict[step])
 
     def get_plan_string(self):
-        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs):\n'
-        plan_string += '\tyield from bps.open_run()\n'
+        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None):\n'
+        # plan_string += '\tdevice_config = {}\n'
+        # plan_string += '\tfor name, dev in devs.items():\n'
+        # plan_string += '\t\tdevice_config[name] = dev.configure({})[0]\n'
+        # plan_string += '\t_md = {"device_config": device_config}\n'
+        # plan_string += '\t_md.update(md or {})\n'
+        plan_string += '\tyield from bps.open_run(md=md)\n'
         for step in self.loop_steps:
             plan_string += step.get_protocol_string(n_tabs=1)
         plan_string += '\tyield from bps.close_run()\n'
