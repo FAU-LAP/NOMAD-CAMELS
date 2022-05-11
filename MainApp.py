@@ -87,10 +87,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_remove_device.clicked.connect(self.remove_device)
         self.actionSettings.triggered.connect(self.change_preferences)
         self.actionNew_Device_Preset.triggered.connect(self.new_device_preset)
+        self.actionNew_Measurement_Preset.triggered.connect(self.new_measurement_preset)
         self.actionSave_Device_Preset.triggered.connect(self.save_device_state)
         self.actionSave_Measurement_Preset.triggered.connect(self.save_measurement_state)
         self.actionSave_Device_Preset_As.triggered.connect(self.save_device_preset_as)
         self.actionSave_Measurement_Preset_As.triggered.connect(self.save_measurement_preset_as)
+        self.actionOpen_Backup_Device_Preset.triggered.connect(self.load_backup_device_preset)
+        self.actionLoad_Backup_Measurement_Preset.triggered.connect(self.load_backup_measurement_preset)
         self.pushButton_make_EPICS_environment.clicked.connect(self.make_epics_environment)
         self.pushButton_show_console_output.clicked.connect(self.show_console_output)
         self.treeView_devices.clicked.connect(self.tree_click)
@@ -258,6 +261,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.comboBox_device_preset.setCurrentText(preset_name)
         self._current_device_preset[0] = preset_name
 
+    def new_measurement_preset(self):
+        file = QFileDialog.getSaveFileName(self, 'Save Measurement Preset', load_save_functions.preset_path, '*.premeas')[0]
+        if not len(file):
+            return
+        preset_name = file.split('/')[-1][:-8]
+        load_save_functions.save_preset(file, {'_current_measurement_preset': [preset_name], 'protocols_dict': {}})
+        self.comboBox_measurement_preset.addItem(preset_name)
+        self.comboBox_measurement_preset.setCurrentText(preset_name)
+        self._current_measurement_preset[0] = preset_name
+
     def save_device_preset_as(self):
         """Opens a QFileDialog to save the device preset. A backup / autosave of the preset is made automatically."""
         file = QFileDialog.getSaveFileName(self, 'Save Device Preset', load_save_functions.preset_path, '*.predev')[0]
@@ -271,6 +284,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.make_device_save_dict()
         load_save_functions.save_preset(file, self.__save_dict_devices__)
         self.saving = False
+
+    def load_backup_device_preset(self):
+        file = QFileDialog.getOpenFileName(self, 'Open Device Preset', f'{load_save_functions.preset_path}/Backup', '*.predev')[0]
+        if not len(file):
+            return
+        preset_name = file.split('_')[-1][:-7]
+        preset = f'Backup/{file.split("/")[-2]}/{file.split("/")[-1][:-7]}'
+        self.save_device_state()
+        self._current_device_preset[0] = preset_name
+        self.load_device_preset(preset)
+
+    def load_backup_measurement_preset(self):
+        file = QFileDialog.getOpenFileName(self, 'Open Measurement Preset', f'{load_save_functions.preset_path}/Backup', '*.premeas')[0]
+        if not len(file):
+            return
+        preset_name = file.split('_')[-1][:-8]
+        preset = f'Backup/{file.split("/")[-2]}/{file.split("/")[-1][:-8]}'
+        self.save_measurement_state()
+        self._current_measurement_preset[0] = preset_name
+        self.load_measurement_preset(preset)
 
     def save_measurement_preset_as(self):
         """Opens a QFileDialog to save the device preset. A backup / autosave of the preset is made automatically."""
@@ -322,7 +355,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.comboBox_device_preset.setCurrentText(self._current_device_preset[0])
         self.build_devices_tree()
         self.update_channels()
-        variables_handling.dev_preset = preset
+        variables_handling.dev_preset = self._current_device_preset[0]
         # for d in self.active_devices_dict:
         #     info = self.active_devices_dict[d]
         #     try:

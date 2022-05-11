@@ -9,8 +9,8 @@ localappdata_program = f'{localappdata}/CAMELS'
 localappdata_program_wsl = f'/mnt/{localappdata_program[0].lower()}{localappdata_program[2:]}'
 
 def clean_up_ioc(ioc='CAMELS'):
-    info1 = subprocess.Popen(['wsl', './EPICS_handling/clean_up_ioc.cmd', ioc], stdout=subprocess.PIPE).communicate()[0]
-    info2 = subprocess.Popen(['wsl', './EPICS_handling/create_ioc.cmd', ioc], stdout=subprocess.PIPE).communicate()[0]
+    info1 = subprocess.Popen(['wsl', './EPICS_handling/clean_up_ioc.cmd', ioc], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
+    info2 = subprocess.Popen(['wsl', './EPICS_handling/create_ioc.cmd', ioc], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
     return f'{info1.decode()}\n\n{info2.decode()}'
 
 def make_ioc(ioc='CAMELS'):
@@ -19,7 +19,7 @@ def make_ioc(ioc='CAMELS'):
     ioc_sup_path = f'{epics_path}/IOCs/{ioc}/{ioc}Sup'
     if os.path.isdir(ioc_sup_path) and not len(os.listdir(ioc_sup_path)) > 0:
         os.rmdir(ioc_sup_path)
-    output = subprocess.Popen(['wsl', './EPICS_handling/make_ioc.cmd', ioc], stdout=subprocess.PIPE).communicate()[0]
+    output = subprocess.Popen(['wsl', './EPICS_handling/make_ioc.cmd', ioc], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
     return output.decode()
 
 
@@ -106,7 +106,7 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
     # copying all the files
     with open(f'{localappdata_program}/copy_temp.cmd', 'wb') as file:
         file.write(write_string.encode())
-    info = subprocess.Popen(['wsl', f'{localappdata_program_wsl}/copy_temp.cmd'], stdout=subprocess.PIPE).communicate()[0]
+    info = subprocess.Popen(['wsl', f'{localappdata_program_wsl}/copy_temp.cmd'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
     if len(info.decode()) > 0:
         return info.decode()
     else:

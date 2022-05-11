@@ -23,10 +23,10 @@ save_dict_skip = [QWidget, QSplitter, QLabel, QPushButton, QMenu, QMenuBar, QAct
 standard_pref = {'autosave': True,
                  'dark_mode': False,
                  'n_decimals': 3,
-                 'number_format': 'plain',
+                 'number_format': 'mixed',
                  'mixed_from': 3,
                  'py_files_path': f'{appdata_path}/python_files'.replace('\\','/'),
-                 'meas_files_path': os.path.expanduser('~/Documents/CAMELS_data').replace('\\','/'),
+                 'meas_files_path': os.path.expanduser('~/CAMELS_data').replace('\\','/'),
                  'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/')}
 
 def get_preset_list():
@@ -57,10 +57,9 @@ def autosave_preset(preset:str, preset_data, devices=True):
         preset_file = f'{preset}.predev'
     else:
         preset_file = f'{preset}.premeas'
-    if preset_file in listdir(preset_path):
-        make_backup(preset_file)
     with open(f'{preset_path}{preset_file}', 'w') as json_file:
         json.dump(preset_data, json_file, indent=2)
+    make_backup(preset_file)
 
 def save_preset(path:str, preset_data:dict):
     """Saves the given preset_data under the specified path.
