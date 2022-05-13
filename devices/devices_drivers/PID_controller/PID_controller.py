@@ -6,7 +6,7 @@ from main_classes import device_class
 import main_classes.loop_step as steps
 from utility.number_formatting import format_number
 
-from PyQt5.QtWidgets import QWidget, QGridLayout, QCheckBox, QComboBox, QLabel
+from PyQt5.QtWidgets import QWidget, QGridLayout, QCheckBox, QComboBox, QLabel, QLineEdit
 
 from utility.add_remove_table import AddRemoveTable
 from utility.path_button_edit import Path_Button_Edit
@@ -119,13 +119,28 @@ class subclass_config_sub(QWidget):
                     break
         # if 'pid_inp' in config_dict and config_dict['pid_inp']:
         #     self.comboBox_input.setCurrentText()
+        read_label = QLabel('Conversion function for reading:')
+        set_label = QLabel('Conversion function for setting:')
+        read_conv = ''
+        if 'read_conv_func' in settings_dict:
+            read_conv = str(settings_dict['read_conv_func']) or ''
+        set_conv = ''
+        if 'set_conv_func' in settings_dict:
+            set_conv = str(settings_dict['set_conv_func']) or ''
+        self.lineEdit_read_function = QLineEdit(read_conv)
+        self.lineEdit_set_function = QLineEdit(set_conv)
+
 
         layout.addWidget(input_label, 0, 0)
         layout.addWidget(self.comboBox_input, 0, 1)
         layout.addWidget(output_label, 1, 0)
         layout.addWidget(self.comboBox_output, 1, 1)
-        layout.addWidget(timer_label, 3, 0)
-        layout.addWidget(self.comboBox_time, 3, 1)
+        layout.addWidget(read_label, 2, 0)
+        layout.addWidget(self.lineEdit_read_function, 2, 1)
+        layout.addWidget(set_label, 3, 0)
+        layout.addWidget(self.lineEdit_set_function, 3, 1)
+        layout.addWidget(timer_label, 4, 0)
+        layout.addWidget(self.comboBox_time, 4, 1)
         layout.addWidget(self.checkBox_auto_select_values, 5, 0)
         layout.addWidget(self.checkBox_interpolate_auto, 5, 1)
         layout.addWidget(self.comboBox_pid_vals, 6, 0)
@@ -141,9 +156,10 @@ class subclass_config_sub(QWidget):
     def val_choice_switch(self):
         table = self.comboBox_pid_vals.currentText() == 'Table'
         # self.val_table.setEnabled(table)
-        self.file_box.setEnabled(not table)
         if not table:
             self.file_changed()
+        self.file_box.setEnabled(not table)
+        self.val_table.setEnabled(table)
 
     def auto_selection_switch(self):
         sel_on = self.checkBox_auto_select_values.isChecked()
@@ -164,6 +180,8 @@ class subclass_config_sub(QWidget):
         self.settings_dict['pid_val_table'] = self.val_table.tableData
         self.settings_dict['val_choice'] = self.comboBox_pid_vals.currentText()
         self.settings_dict['val_file'] = self.file_box.get_path()
+        self.settings_dict['read_conv_func'] = self.lineEdit_read_function.text()
+        self.settings_dict['set_conv_func'] = self.lineEdit_set_function.text()
         return self.settings_dict
 
     def get_config(self):
@@ -198,6 +216,7 @@ class PID_wait_for_stable(steps.Loop_Step):
         protocol_string += f'{tabs}starttime = datetime.datetime.now()\n'
         protocol_string += f'{tabs}dt = datetime.timedelta(seconds=devs["{self.pid}"].stability_time)\n'
         protocol_string += f'{tabs}while stable_time < dt:\n'
+        protocol_string += f'{tabs}\tprint(devs["{self.pid}"].pid_val.just_readback(), devs["{self.pid}"].pid_cval.just_readback())\n'
         protocol_string += f'{tabs}\tyield from bps.sleep(delta_t)\n'
         protocol_string += f'{tabs}\tif np.abs(devs["{self.pid}"].pid_val.just_readback() - devs["{self.pid}"].pid_cval.get()) > devs["{self.pid}"].stability_delta:\n'
         protocol_string += f'{tabs}\t\tstable_time = datetime.timedelta(0)\n'

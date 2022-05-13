@@ -108,7 +108,6 @@ def user_sample_string(userdata, sampledata):
     return u_s_string
 
 def run_protocol(protocol:Measurement_Protocol, file_path, sig_step=None, info_step=None):
-    build_protocol(protocol, file_path)
     if sig_step is not None:
         sig_step.emit(0)
     total_time = 1

@@ -369,7 +369,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_channels(self):
         variables_handling.channels.clear()
         for key, dev in self.active_devices_dict.items():
-            for channel in dev.channels:
+            for channel in dev.get_channels():
                 variables_handling.channels.update({channel: dev.channels[channel]})
 
     def load_measurement_preset(self, premeas):
@@ -456,6 +456,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if self.device_config_widget.data in self.active_devices_dict:
                 self.active_devices_dict[self.device_config_widget.data].settings = self.device_config_widget.get_settings()
                 self.active_devices_dict[self.device_config_widget.data].config = self.device_config_widget.get_config()
+        self.update_channels()
 
     def build_devices_tree(self):
         """Builds the tree of devices.
@@ -523,15 +524,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.textEdit_console_output_meas.append(info)
 
     def run_current_protocol(self):
-        self.update_loop_step_order()
-        self.get_device_config()
-        if self.run_thread is not None:
-            self.run_thread.terminate()
-            self.pushButton_run_protocol.setText('Run selected protocol(s)')
-            return
-        if self.current_protocol is None:
-            raise Exception('You need to select a protocol!')
-        self.setCursor(Qt.WaitCursor)
+        self.build_current_protocol()
         path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
         self.run_thread = qthreads.Run_Protocol(self.current_protocol, path)
         self.run_thread.sig_step.connect(self.change_progressBar_value_meas)

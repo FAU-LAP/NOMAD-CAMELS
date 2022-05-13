@@ -37,6 +37,19 @@ class subclass(device_class.Device):
             config_dict.pop(r)
         return config_dict
 
+    def get_channels(self):
+        channels = copy.deepcopy(self.channels)
+        removes = []
+        for i in range(1, 9):
+            if not self.config[f'active{i}']:
+                for key in self.channels:
+                    if key.endswith(str(i)):
+                        removes.append(key)
+        for r in removes:
+            channels.pop(r)
+        return channels
+
+
 class subclass_config(device_class.Device_Config):
     def __init__(self, parent=None, data='', settings_dict=None, config_dict=None):
         super().__init__(parent, 'Keysight E5270B', data, settings_dict, config_dict)

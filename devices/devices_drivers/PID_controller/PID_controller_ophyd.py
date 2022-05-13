@@ -29,7 +29,11 @@ def ptX(rMeas, rX=1000):
 def ptX_inv(T, rX=1000):
     return root(lambda r: ptX(r, rX) - T, 300).x[0]
 
+def pt1000(rMeas):
+    return ptX(rMeas)
 
+def pt1000_inv(T):
+    return ptX_inv(T)
 
 
 class PID_Controller(Device):
@@ -71,9 +75,13 @@ class PID_Controller(Device):
         self.pid_ival.read_pv_name = f'{prefix}pid_controller.I'
         self.pid_oval.read_pv_name = f'{prefix}pid_controller.OVAL'
         self.pid_bias = bias_signal
+        if isinstance(read_conv_func, str):
+            read_conv_func = globals()[read_conv_func]
         if read_conv_func is not None:
             self.pid_val.conversion_function = read_conv_func
             self.pid_cval.conversion_function = read_conv_func
+        if isinstance(set_conv_func, str):
+            set_conv_func = globals()[set_conv_func]
         if set_conv_func is not None:
             self.pid_val.set_conversion_function = set_conv_func
             self.pid_cval.set_conversion_function = set_conv_func
@@ -160,7 +168,7 @@ if __name__ == '__main__':
     pid = PID_Controller('Hall:', name='pid',
                          pid_val_table=r"C:\Users\od93yces\FAIRmat\CAMELS\devices\devices_drivers\PID_controller\test_pid_values.txt",
                          auto_pid=True, interpolate_auto=True,
-                         set_conv_func=ptX_inv, read_conv_func=ptX)
+                         set_conv_func=ptX_inv, read_conv_func='ptX')
     pid.wait_for_connection()
     pid.put(60)
     print(pid.pid_vals)

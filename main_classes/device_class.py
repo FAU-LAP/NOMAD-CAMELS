@@ -40,7 +40,7 @@ class Device:
         # self.ophyd_device = ophyd_device
         ophyd_instance = ophyd_device(name='test')
         outputs = get_outputs(ophyd_instance)
-        channels = self.get_channels()
+        channels = {}
         if not channels:
             for chan in get_channels(ophyd_instance):
                 is_out = chan in outputs
@@ -64,7 +64,7 @@ class Device:
         self.connection = connection
 
     def get_channels(self):
-        return {}
+        return self.channels
 
     def get_additional_string(self):
         return ''
