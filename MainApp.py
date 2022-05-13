@@ -203,6 +203,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if 'dark_mode' in self.preferences:
             self.toggle_dark_mode()
         variables_handling.device_driver_path = self.preferences['device_driver_path']
+        variables_handling.meas_files_path = self.preferences['meas_files_path']
 
     def toggle_dark_mode(self):
         dark = self.preferences['dark_mode']
@@ -214,7 +215,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # file.open(QFile.ReadOnly | QFile.Text)
             # stream = QTextStream(file)
             # main_app.setStyleSheet(stream.readAll())
-            main_app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+            # main_app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
             main_app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
             variables_handling.dark_mode = True
         else:
@@ -231,6 +232,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.toggle_dark_mode()
             load_save_functions.save_preferences(self.preferences)
             variables_handling.device_driver_path = self.preferences['device_driver_path']
+            variables_handling.meas_files_path = self.preferences['meas_files_path']
         # prefs = {'autosave': self.actionAutosave_on_closing.isChecked(),
         #          'dark_mode': self.actionDark_Mode.isChecked()}
         # load_save_functions.save_preferences(prefs)
@@ -544,7 +546,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.current_protocol is None:
             raise Exception('You need to select a protocol!')
         path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
-        bluesky_handling.build_protocol(self.current_protocol, path)
+        user = self.lineEdit_user.text() or 'test_user'
+        sample = self.lineEdit_sample.text() or 'test_sample'
+        userdata = {'name': user}
+        sampledata = {'name': sample}
+        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}.h5'
+        bluesky_handling.build_protocol(self.current_protocol, path, savepath, userdata=userdata, sampledata=sampledata)
 
     def tree_click_sequence(self, general=False):
         """Called when clicking the treeView_protocol_sequence."""

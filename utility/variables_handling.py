@@ -10,6 +10,7 @@ from bluesky_widgets.models import utils
 meas_preset = ''
 dev_preset = ''
 device_driver_path = ''
+meas_files_path = ''
 
 protocol_variables = {}
 channels = {}
@@ -70,7 +71,7 @@ operator_names = {
     '>=': 'greater or equal',
 }
 
-def get_color(color, string=False):
+def get_color(color='', string=False):
     if color == 'red' or color == 'r':
         rgb = (255, 153, 153)
         if dark_mode:
@@ -79,6 +80,12 @@ def get_color(color, string=False):
         rgb = (153, 255, 153)
         if dark_mode:
             rgb = (0, 153, 0)
+    elif color == 'grey' or color == 'gray':
+        rgb = (169, 169, 169)
+    elif color == 'black':
+        rgb = (0, 0, 0)
+        if dark_mode:
+            rgb = (255, 255, 255)
     else:
         rgb = (255, 255, 255)
         if dark_mode:

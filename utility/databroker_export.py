@@ -1,3 +1,5 @@
+import os.path
+
 import databroker
 import h5py
 
@@ -22,6 +24,8 @@ def recourse_entry_dict(entry, metadata):
             entry.attrs[key] = val
 
 def broker_to_hdf5(runs, filename):
+    if not os.path.isdir(os.path.dirname(filename)):
+        os.makedirs(os.path.dirname(filename))
     if not isinstance(runs, list):
         runs = [runs]
     for run in runs:

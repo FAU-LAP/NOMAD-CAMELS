@@ -54,6 +54,11 @@ class Device:
             if name in ophyd_instance.configuration_attrs and check_output(cls):
                 self.config.update({f'{name}': 0})
 
+    def get_config(self):
+        return self.config
+
+    def get_settings(self):
+        return self.settings
 
     def set_connection(self, connection):
         self.connection = connection
