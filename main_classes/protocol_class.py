@@ -14,7 +14,7 @@ class Measurement_Protocol:
     """Class for the measurement protocols. It mainly contains loop_steps and plots."""
     def __init__(self, loop_steps=None, plots=None, channels=None, name=''):
         if plots is None:
-            plots = []
+            plots = {}
         if loop_steps is None:
             loop_steps = []
         if channels is None:

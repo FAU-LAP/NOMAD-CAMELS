@@ -33,7 +33,7 @@ class AddRemoveTable(QWidget):
             tableData = {}
         elif tableData is None and headerLabels is None:
             raise Exception('Cannot create a table without Data Format (AddRemoveTable)')
-        if type(tableData) is dict:
+        if isinstance(tableData, dict):
             tableData = pd.DataFrame(tableData)
         for label in headerLabels:
             if label not in tableData:
