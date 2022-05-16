@@ -7,20 +7,19 @@ from main_classes.protocol_class import Measurement_Protocol
 from utility import variables_handling
 
 standard_string = 'import numpy as np\n'
-standard_string += 'from ophyd.signal import EpicsSignal, EpicsSignalRO\n'
+# standard_string += 'from ophyd.signal import EpicsSignal, EpicsSignalRO\n'
 standard_string += 'from bluesky import RunEngine\n'
 standard_string += 'from bluesky.callbacks.best_effort import BestEffortCallback\n'
 standard_string += 'import bluesky.plan_stubs as bps\n'
-standard_string += 'from bluesky.utils import install_kicker\n'
+# standard_string += 'from bluesky.utils import install_kicker\n'
 standard_string += 'import databroker\n'
 standard_string += 'from bluesky_widgets.qt.threading import wait_for_workers_to_quit\n'
-standard_string += 'from PyQt5.QtWidgets import QWidget, QGridLayout, QApplication\n'
+standard_string += 'from PyQt5.QtWidgets import QApplication\n'
 standard_string += 'from PyQt5.QtCore import QCoreApplication\n'
 standard_string += 'from epics import caput\n'
 standard_string += 'import datetime\n'
 standard_string += 'from main_classes import plot_widget\n'
 standard_string += 'from utility.databroker_export import broker_to_hdf5\n'
-standard_string += 'import sys\n'
 
 standard_run_string = '\n\n\nif __name__ == "__main__":\n'
 standard_run_string += '\tRE = RunEngine()\n'
@@ -77,9 +76,10 @@ def build_protocol(protocol:Measurement_Protocol, file_path, save_path='test.h5'
     plot_string += '\n'
     # for device in protocol.get_used_devices():
     #     print(device)
-    protocol_string = ''
-    protocol_string += standard_string
+    protocol_string = 'import sys\n'
+    protocol_string += f'sys.path.append(r"{variables_handling.CAMELS_path}")\n'
     protocol_string += f'sys.path.append("{variables_handling.device_driver_path}")\n\n'
+    protocol_string += standard_string
     protocol_string += f'{variable_string}\n\n'
     protocol_string += device_import_string
     protocol_string += protocol.get_plan_string()

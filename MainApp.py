@@ -158,6 +158,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QShortcut('Ctrl+y', self).activated.connect(self.redo)
         QShortcut('Ctrl+s', self).activated.connect(self.save_state)
 
+        variables_handling.CAMELS_path = os.path.dirname(__file__)
+
     def mousePressEvent(self, a0: QMouseEvent) -> None:
         but = a0.button()
         if but == 8:

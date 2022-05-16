@@ -11,6 +11,7 @@ meas_preset = ''
 dev_preset = ''
 device_driver_path = ''
 meas_files_path = ''
+CAMELS_path = ''
 
 protocol_variables = {}
 channels = {}

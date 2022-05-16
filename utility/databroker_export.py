@@ -41,3 +41,22 @@ def broker_to_hdf5(runs, filename):
                 for coord in dataset.coords:
                     group[coord] = dataset[coord]
 
+def broker_to_dict(runs):
+    dicts = []
+    if not isinstance(runs, list):
+        runs = [runs]
+    for run in runs:
+        data = {}
+        for stream in run:
+            dataset = run[stream].read()
+            for col in dataset:
+                data[col] = dataset[col]
+            for coord in dataset.coords:
+                data[coord] = dataset[coord]
+        rundict = {'metadata_start': dict(run.metadata.Start),
+                   'metadata_stop': dict(run.metadata.Stop),
+                   'data': data}
+        dicts.append(rundict)
+    return dicts
+
+
