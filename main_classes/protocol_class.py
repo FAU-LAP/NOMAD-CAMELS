@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QCheckBox
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
 # from main_classes.loop_step import Loop_Step, Loop_Step_Container
@@ -12,13 +12,17 @@ from utility import variables_handling
 
 class Measurement_Protocol:
     """Class for the measurement protocols. It mainly contains loop_steps and plots."""
-    def __init__(self, loop_steps=None, plots=None, channels=None, name=''):
+    def __init__(self, loop_steps=None, plots=None, channels=None, name='', channel_metadata=None, metadata=None, use_nexus=False):
         if plots is None:
             plots = {}
         if loop_steps is None:
             loop_steps = []
         if channels is None:
             channels = {}
+        if channel_metadata is None:
+            channel_metadata = {}
+        if metadata is None:
+            metadata = {}
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -29,11 +33,22 @@ class Measurement_Protocol:
         self.loop_step_variables = {}
         self.channels = channels
         self.name = name
+        self.channel_metadata = channel_metadata
+        self.metadata = metadata
+        self.use_nexus = use_nexus
 
     def update_variables(self):
         self.loop_step_variables.clear()
         for step in self.loop_steps:
             step.update_variables()
+
+    def get_nexus_paths(self):
+        paths = {}
+        for i, name in enumerate(self.metadata['Name']):
+            paths[name] = self.metadata['NeXus-path'][i]
+        for i, name in enumerate(self.channel_metadata['Channel']):
+            paths[f'data/{name}'] = self.channel_metadata['NeXus-path'][i]
+        return paths
 
     def add_loop_step(self, loop_step, position=-1, parent_step_name=None, model=None):
         """Adds a loop_step to the protocol (or the parent_step)at the specified position. Also appends the loop_step to the given model. The loop_step is added to the list as well as the dictionary.
@@ -180,6 +195,25 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         self.plot_table = AddRemoveTable(headerLabels=cols, title='Plots', comboBoxes=comboBoxes, subtables=subtables, tableData=self.protocol.plots, checkstrings=[1,2])
         self.layout().addWidget(self.plot_table, 1, 0, 1, 4)
 
+        cols = ['Channel', 'NeXus-path', 'Description']
+        comboBoxes = {'Channel': list(variables_handling.channels.keys())}
+        self.table_channel_NX_paths = AddRemoveTable(headerLabels=cols, title='Channel-Nexus-Path', comboBoxes=comboBoxes, tableData=self.protocol.channel_metadata)
+        self.layout().addWidget(self.table_channel_NX_paths, 6, 0, 1, 4)
+
+        cols = ['Name', 'NeXus-path', 'Description']
+        self.table_metadata = AddRemoveTable(headerLabels=cols, title='Nexus-Metadata', tableData=self.protocol.metadata)
+        self.layout().addWidget(self.table_metadata, 7, 0, 1, 4)
+
+        self.checkBox_NeXus = QCheckBox('Use NeXus-output')
+        self.checkBox_NeXus.clicked.connect(self.enable_nexus)
+        self.layout().addWidget(self.checkBox_NeXus, 5, 0, 1, 4)
+        self.checkBox_NeXus.setChecked(self.protocol.use_nexus)
+        self.enable_nexus()
+
+    def enable_nexus(self):
+        nx = self.checkBox_NeXus.isChecked()
+        self.table_channel_NX_paths.setEnabled(nx)
+        self.table_metadata.setEnabled(nx)
 
 
     def get_unique_name(self, name='name'):
@@ -221,7 +255,10 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         self.protocol.filename = self.lineEdit_filename.text()
         self.plot_table.update_table_data()
         self.protocol.plots = self.plot_table.tableData
+        self.protocol.metadata = self.table_metadata.update_table_data()
+        self.protocol.channel_metadata = self.table_channel_NX_paths.update_table_data()
         self.update_variables()
+        self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
 
     def load_variables(self):
         """Called when starting, loads the variables from the protocol into the table."""

@@ -16,40 +16,46 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
     <item row="0" column="2">
-     <widget class="QPushButton" name="pushButton_additionalUserInfo">
+     <widget class="QPushButton" name="pushButton_editUserInfo">
       <property name="text">
-       <string>Additional User-Information</string>
+       <string>Edit User-Information</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="3">
+    <item row="0" column="4">
      <widget class="QLabel" name="label_8">
+      <property name="maximumSize">
+       <size>
+        <width>50</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="text">
-       <string>Sample</string>
+       <string>Sample:</string>
       </property>
      </widget>
     </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label_7">
+      <property name="maximumSize">
+       <size>
+        <width>50</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="text">
-       <string>User</string>
+       <string>User:</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="lineEdit_user"/>
-    </item>
-    <item row="0" column="4">
-     <widget class="QLineEdit" name="lineEdit_sample"/>
-    </item>
-    <item row="0" column="5">
-     <widget class="QPushButton" name="pushButton_additionalSampleInfo">
+    <item row="0" column="6">
+     <widget class="QPushButton" name="pushButton_editSampleInfo">
       <property name="text">
-       <string>Additional Sample-Information</string>
+       <string>Edit Sample-Information</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="6">
+    <item row="1" column="0" colspan="7">
      <widget class="QSplitter" name="dev_meas_splitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -714,6 +720,19 @@
         </item>
        </layout>
       </widget>
+     </widget>
+    </item>
+    <item row="0" column="5">
+     <widget class="QComboBox" name="comboBox_sample"/>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="comboBox_user"/>
+    </item>
+    <item row="0" column="3">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
      </widget>
     </item>
    </layout>

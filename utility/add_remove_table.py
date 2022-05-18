@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton, QTableView, QLabel, QComboBox, QMenu
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont, QBrush, QColor
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton, QTableView, QLabel, QComboBox, QMenu, QDialog, QDialogButtonBox, QMessageBox
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont, QBrush, QKeyEvent
+from PyQt5.QtCore import Qt, pyqtSignal
 
 import numpy as np
 import pandas as pd
@@ -9,13 +9,16 @@ from utility import variables_handling
 
 
 class AddRemoveTable(QWidget):
-    def __init__(self, addLabel='+', removeLabel='-', horizontal=True, editables=None, checkables=(), headerLabels=None, orderBy=None, parent=None, tableData=None, title='', comboBoxes=None, subtables=None, growsize=True, checkstrings=None):
+    sizechange = pyqtSignal()
+
+    def __init__(self, addLabel='+', removeLabel='-', horizontal=True, editables=None, checkables=(), headerLabels=None, orderBy=None, parent=None, tableData=None, title='', comboBoxes=None, subtables=None, growsize=True, checkstrings=None, askdelete=False):
         super().__init__(parent)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         layout = QGridLayout()
         layout.setContentsMargins(0,0,0,0)
         self.setLayout(layout)
+        self.askdelete = askdelete
         self.checkables = checkables if not type(checkables) is int else [checkables]
         if checkstrings is None:
             checkstrings = []
@@ -92,6 +95,7 @@ class AddRemoveTable(QWidget):
     def update_max_hight(self):
         if self.growsize:
             self.setMaximumHeight(90 + self.table_model.rowCount()*100)
+            self.sizechange.emit()
         else:
             self.setMaximumHeight(100)
 
@@ -196,6 +200,11 @@ class AddRemoveTable(QWidget):
             index = self.table.selectedIndexes()[0]
         except IndexError:
             raise Exception('You need to select a row first!')
+        if self.askdelete:
+            entry = self.table_model.itemFromIndex(index).text()
+            remove_dialog = QMessageBox.question(self, 'Remove entry?', f'Are you sure you want to remove the entry {entry}?', QMessageBox.Yes | QMessageBox.No)
+            if remove_dialog != QMessageBox.Yes:
+                return
         row = index.row()
         col = index.column()
         if self.horizontal and row >= 0:
@@ -255,7 +264,36 @@ class AddRemoveTable(QWidget):
                         self.tableData.append(float(self.table_model.item(0,j).text()))
                     except:
                         self.tableData.append(self.table_model.item(0,j).text())
+        return self.tableData
 
 
+class AddRemoveDialoge(QDialog):
+    def __init__(self, addLabel='+', removeLabel='-', horizontal=True, editables=None, checkables=(), headerLabels=None, orderBy=None, parent=None, tableData=None, title='', comboBoxes=None, subtables=None, checkstrings=None, askdelete=False):
+        super().__init__(parent)
+        self.buttonBox = QDialogButtonBox(self)
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
 
+        self.buttonBox.rejected.connect(self.reject)
+        self.buttonBox.accepted.connect(self.accept)
 
+        self.table = AddRemoveTable(addLabel=addLabel, removeLabel=removeLabel, horizontal=horizontal, editables=editables, checkables=checkables, headerLabels=headerLabels, orderBy=orderBy, parent=self, tableData=tableData, title=title, comboBoxes=comboBoxes, subtables=subtables, growsize=True, checkstrings=checkstrings, askdelete=askdelete)
+
+        layout = QGridLayout()
+        self.setLayout(layout)
+        layout.addWidget(self.table, 0, 0)
+        layout.addWidget(self.buttonBox, 1, 0)
+        self.setWindowTitle(title)
+        self.table.sizechange.connect(self.adjustSize)
+        self.adjustSize()
+        self.setMinimumWidth(len(headerLabels) * 70)
+
+    def get_data(self):
+        return self.table.update_table_data()
+
+    def keyPressEvent(self, a0: QKeyEvent) -> None:
+        """Overwrites the keyPressEvent of the QDialog so that it does not close when pressing Enter/Return."""
+        if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
+            return
+        super().keyPressEvent(a0)

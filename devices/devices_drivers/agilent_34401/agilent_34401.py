@@ -16,7 +16,7 @@ class subclass_config(device_class.Device_Config):
         super().__init__(parent, 'Agilent 34401', data, settings_dict, config_dict)
         self.comboBox_connection_type.addItem('prologix-GPIB')
         self.sub_widget = subclass_config_sub(config_dict=self.config_dict, parent=self)
-        self.layout().addWidget(self.sub_widget, 3, 0, 1, 2)
+        self.layout().addWidget(self.sub_widget, 20, 0, 1, 2)
         self.load_settings()
 
     def get_config(self):

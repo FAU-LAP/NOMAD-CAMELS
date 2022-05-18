@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox
+from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox, QFrame
 from PyQt5.QtGui import QFont
 
 from ophyd import EpicsSignalRO
@@ -147,12 +147,21 @@ class Device_Config(QWidget):
         title_font = QFont('MS Shell Dlg 2', 10)
         title_font.setWeight(QFont.Bold)
         label_title.setFont(title_font)
+        self.label_custom_name = QLabel('Custom name:')
         self.label_connection = QLabel('Connection-type:')
+        self.lineEdit_custom_name = QLineEdit(device_name)
         self.comboBox_connection_type = QComboBox()
         self.connector = Connection_Config()
+        self.line_2 = QFrame(self)
+        self.line_2.setFrameShape(QFrame.HLine)
+        self.line_2.setFrameShadow(QFrame.Sunken)
+        self.line_2.setObjectName("line_2")
         layout.addWidget(label_title, 0, 0, 1, 2)
-        layout.addWidget(self.label_connection, 1, 0)
-        layout.addWidget(self.comboBox_connection_type, 1, 1)
+        layout.addWidget(self.label_custom_name, 1, 0)
+        layout.addWidget(self.lineEdit_custom_name, 1, 1)
+        layout.addWidget(self.line_2, 2, 0, 1, 2)
+        layout.addWidget(self.label_connection, 5, 0)
+        layout.addWidget(self.comboBox_connection_type, 5, 1)
         self.settings_dict = settings_dict
         self.config_dict = config_dict
         self.comboBox_connection_type.currentTextChanged.connect(self.connection_type_changed)
@@ -161,7 +170,7 @@ class Device_Config(QWidget):
         """Called when the comboBox_connection_type is changed. Switches to another connector-widget to specify things like the Address of the device."""
         if self.comboBox_connection_type.currentText() == 'prologix-GPIB':
             self.connector = Prologix_Config()
-            self.layout().addWidget(self.connector, 2, 0, 1, 2)
+            self.layout().addWidget(self.connector, 6, 0, 1, 2)
 
     def get_settings(self):
         """Updates the settings_dict with the current settings.

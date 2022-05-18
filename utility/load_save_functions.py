@@ -73,6 +73,14 @@ def save_preset(path:str, preset_data:dict):
         json.dump(preset_data, json_file, indent=2)
     autosave_preset(preset_name, preset_data, devs)
 
+def save_dictionary(path:str, dictionary:dict):
+    save_dict = {}
+    for key, val in dictionary.items():
+        add_string = get_save_str(val)
+        if add_string is not None:
+            save_dict[key] = add_string
+    with open(path, 'w') as file:
+        json.dump(save_dict, file, indent=2)
 
 def make_backup(preset_file:str):
     """Puts a copy of the given preset_file into the backup-folder of the preset. The current datetime is added to the filename."""
@@ -186,6 +194,12 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.filename = prot_data['filename']
         if 'variables' in prot_data:
             prot.variables = prot_data['variables']
+        if 'metadata' in prot_data:
+            prot.metadata = prot_data['metadata']
+        if 'channel_metadata' in prot_data:
+            prot.channel_metadata = prot_data['channel_metadata']
+        if 'use_nexus' in prot_data:
+            prot.use_nexus = prot_data['use_nexus']
         prot_dict.update({key: prot})
 
 def load_devices_dict(string_dict, devices_dict):

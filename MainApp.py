@@ -4,13 +4,15 @@ import qdarkstyle
 import importlib
 import os
 
+import pandas as pd
+
 from copy import deepcopy
 
 from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
-from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, bluesky_handling
+from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, bluesky_handling, add_remove_table
 
 from gui.mainWindow import Ui_MainWindow
 
@@ -158,6 +160,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QShortcut('Ctrl+y', self).activated.connect(self.redo)
         QShortcut('Ctrl+s', self).activated.connect(self.save_state)
 
+        self.sampledata = {}
+        self.userdata = {}
+        self.active_user = 'default_user'
+        self.active_sample = 'default_sample'
+        self.pushButton_editUserInfo.clicked.connect(self.edit_user_info)
+        self.load_user_data()
+        self.pushButton_editSampleInfo.clicked.connect(self.edit_sample_info)
+        self.load_sample_data()
         variables_handling.CAMELS_path = os.path.dirname(__file__)
 
     def mousePressEvent(self, a0: QMouseEvent) -> None:
@@ -194,6 +204,76 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.save_state()
         super().closeEvent(a0)
 
+    # --------------------------------------------------
+    # user / sample methods
+    # --------------------------------------------------
+    def edit_user_info(self):
+        self.active_user = self.comboBox_user.currentText()
+        headers = ['Name', 'E-Mail', 'Affiliation', 'Address (affiliation)', 'ORCID', 'Phone']
+        tableData = pd.DataFrame.from_dict(self.userdata, 'index')
+        dialog = add_remove_table.AddRemoveDialoge(headerLabels=headers, parent=self, title='User-Information', askdelete=True, tableData=tableData)
+        if dialog.exec_():
+            dat = dialog.get_data()
+            dat['Name2'] = dat['Name']
+            data = pd.DataFrame(dat)
+            data.set_index('Name2', inplace=True)
+            self.userdata = data.to_dict('index')
+        self.comboBox_user.clear()
+        self.comboBox_user.addItems(self.userdata.keys())
+        if self.active_user in self.userdata:
+            self.comboBox_user.setCurrentText(self.active_user)
+
+    def save_user_data(self):
+        self.active_user = self.comboBox_user.currentText()
+        userdic = {'active_user': self.active_user}
+        userdic.update(self.userdata)
+        load_save_functions.save_dictionary(f'{load_save_functions.appdata_path}/userdata.json', userdic)
+
+    def load_user_data(self):
+        userdat = {}
+        if os.path.isfile(f'{load_save_functions.appdata_path}/userdata.json'):
+            with open(f'{load_save_functions.appdata_path}/userdata.json', 'r') as f:
+                string_dict = json.load(f)
+            load_save_functions.load_save_dict(string_dict, userdat, update_missing_key=True)
+        if 'active_user' in userdat:
+            self.active_user = userdat['active_user']
+            userdat.pop('active_user')
+        self.userdata = userdat
+        self.comboBox_user.addItems(userdat.keys())
+
+    def edit_sample_info(self):
+        self.active_sample = self.comboBox_sample.currentText()
+        headers = ['Name', 'Identifier', 'Preparation-Info']
+        tableData = pd.DataFrame.from_dict(self.sampledata, 'index')
+        dialog = add_remove_table.AddRemoveDialoge(headerLabels=headers, parent=self, title='User-Information', askdelete=True, tableData=tableData)
+        if dialog.exec_():
+            dat = dialog.get_data()
+            dat['Name2'] = dat['Name']
+            data = pd.DataFrame(dat)
+            data.set_index('Name2', inplace=True)
+            self.sampledata = data.to_dict('index')
+        self.comboBox_sample.clear()
+        self.comboBox_sample.addItems(self.sampledata.keys())
+        if self.active_sample in self.sampledata.keys():
+            self.comboBox_sample.setCurrentText(self.active_sample)
+
+    def save_sample_data(self):
+        self.active_sample = self.comboBox_sample.currentText()
+        sampledic = {'active_sample': self.active_sample}
+        sampledic.update(self.sampledata)
+        load_save_functions.save_dictionary(f'{load_save_functions.appdata_path}/sampledata.json', sampledic)
+
+    def load_sample_data(self):
+        sampledat = {}
+        if os.path.isfile(f'{load_save_functions.appdata_path}/sampledata.json'):
+            with open(f'{load_save_functions.appdata_path}/sampledata.json', 'r') as f:
+                string_dict = json.load(f)
+            load_save_functions.load_save_dict(string_dict, sampledat, update_missing_key=True)
+        if 'active_sample' in sampledat:
+            self.active_sample = sampledat['active_sample']
+            sampledat.pop('active_sample')
+        self.sampledata = sampledat
+        self.comboBox_sample.addItems(sampledat.keys())
     # --------------------------------------------------
     # save / load methods
     # --------------------------------------------------
@@ -243,6 +323,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Saves the current states of both presets."""
         self.save_device_state()
         self.save_measurement_state()
+        self.save_user_data()
+        self.save_sample_data()
         print('current state saved!')
 
     def save_device_state(self):
@@ -541,11 +623,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.current_protocol is None:
             raise Exception('You need to select a protocol!')
         path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
-        user = self.lineEdit_user.text() or 'test_user'
-        sample = self.lineEdit_sample.text() or 'test_sample'
-        userdata = {'name': user}
-        sampledata = {'name': sample}
-        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}.h5'
+        user = self.comboBox_user.currentText() or 'default_user'
+        sample = self.comboBox_sample.currentText() or 'default_sample'
+        userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
+        sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
+        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{self.current_protocol.filename or "data"}.h5'
         bluesky_handling.build_protocol(self.current_protocol, path, savepath, userdata=userdata, sampledata=sampledata)
 
     def tree_click_sequence(self, general=False):

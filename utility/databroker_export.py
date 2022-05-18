@@ -48,13 +48,13 @@ def broker_to_dict(runs):
     for run in runs:
         data = {}
         for stream in run:
-            dataset = run[stream].read()
-            for col in dataset:
-                data[col] = dataset[col]
-            for coord in dataset.coords:
-                data[coord] = dataset[coord]
-        rundict = {'metadata_start': dict(run.metadata.Start),
-                   'metadata_stop': dict(run.metadata.Stop),
+            data = run[stream].read()
+            # for col in dataset:
+            #     data[col] = dataset[col]
+            # for coord in dataset.coords:
+            #     data[coord] = dataset[coord]
+        rundict = {'metadata_start': dict(run.metadata['start']),
+                   'metadata_stop': dict(run.metadata['stop']),
                    'data': data}
         dicts.append(rundict)
     return dicts

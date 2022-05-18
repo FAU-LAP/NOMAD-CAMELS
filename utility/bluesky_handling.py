@@ -19,7 +19,7 @@ standard_string += 'from PyQt5.QtCore import QCoreApplication\n'
 standard_string += 'from epics import caput\n'
 standard_string += 'import datetime\n'
 standard_string += 'from main_classes import plot_widget\n'
-standard_string += 'from utility.databroker_export import broker_to_hdf5\n'
+standard_string += 'from utility.databroker_export import broker_to_hdf5, broker_to_dict\n'
 
 standard_run_string = '\n\n\nif __name__ == "__main__":\n'
 standard_run_string += '\tRE = RunEngine()\n'
@@ -34,6 +34,10 @@ standard_run_string += '\t\tplot_widget.activate_dark_mode()\n'
 standard_run_string += '\t\timport qdarkstyle\n'
 standard_run_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())\n'
 standard_run_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet(qt_api="pyqt5"))\n'
+
+standard_nexus_dict = {'metadata_start/user': 'entry/operator',
+                       'metadata_start/time': 'entry/start_time',
+                       'metadata_start/sample': 'entry/sample'}
 
 
 def build_protocol(protocol:Measurement_Protocol, file_path, save_path='test.h5', catalog='CATALOG_NAME', userdata=None, sampledata=None):
@@ -93,7 +97,14 @@ def build_protocol(protocol:Measurement_Protocol, file_path, save_path='test.h5'
     protocol_string += f'\tuids = RE({protocol.name}_plan(devs, md=md))\n'
 
     standard_save_string = '\n\n\truns = catalog[uids]\n'
-    standard_save_string += f'\tbroker_to_hdf5(runs, "{save_path}")\n\n\n'
+    if protocol.use_nexus:
+        nexus_dict = protocol.get_nexus_paths()
+        nexus_dict.update(standard_nexus_dict)
+        standard_save_string += '\tdata = broker_to_dict(runs)\n'
+        standard_save_string += f'\tnexus_mapper = {nexus_dict}\n'
+        # standard_save_string +=
+    else:
+        standard_save_string += f'\tbroker_to_hdf5(runs, "{save_path}")\n\n\n'
     standard_save_string += '\tsys.exit(app.exec_())\n'
 
     protocol_string += standard_save_string
