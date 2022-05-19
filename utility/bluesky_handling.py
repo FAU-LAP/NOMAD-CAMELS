@@ -111,6 +111,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path, save_path='test.h5'
     else:
         standard_save_string += f'\tbroker_to_hdf5(runs, "{save_path}")\n\n\n'
     if plotting:
+        standard_save_string += '\tprint("protocol finished!")\n'
         standard_save_string += '\tsys.exit(app.exec_())\n'
 
     protocol_string += standard_save_string

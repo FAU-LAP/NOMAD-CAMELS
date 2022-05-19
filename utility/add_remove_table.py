@@ -117,13 +117,25 @@ class AddRemoveTable(QWidget):
         menu.addMenu(channel_menu)
         menu.addMenu(function_menu)
         menu.addMenu(operator_menu)
+        menu.addSeparator()
+        (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ = variables_handling.get_menus(self.append_variable, 'Append')
+        menu.addMenu(variable_menu2)
+        menu.addMenu(channel_menu2)
+        menu.addMenu(function_menu2)
+        menu.addMenu(operator_menu2)
         menu.exec_(self.mapToGlobal(pos))
+
+    def append_variable(self, val):
+        ind = self.table.selectedIndexes()[0]
+        item = self.table_model.itemFromIndex(ind)
+        text = item.text()
+        item.setText(f'{text}{val}')
 
     def insert_variable(self, val):
         ind = self.table.selectedIndexes()[0]
         item = self.table_model.itemFromIndex(ind)
         text = item.text()
-        item.setText(f'{text}{val}')
+        item.setText(f'{val}')
 
     def check_string(self, item):
         ind = item.index()

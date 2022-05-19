@@ -7,7 +7,8 @@ step_type_config = {'Default': [Loop_Step, Loop_Step_Config],
                     'Container': [Loop_Step_Container, Loop_Step_Config],
                     'For Loop': [for_while_loops.For_Loop_Step, for_while_loops.For_Loop_Step_Config],
                     'Read Channels': [read_channels.Read_Channels, read_channels.Read_Channels_Config],
-                    'Set Channels': [set_channels.Set_Channels, set_channels.Set_Channels_Config]}
+                    'Set Channels': [set_channels.Set_Channels, set_channels.Set_Channels_Config],
+                    'While Loop': [for_while_loops.While_Loop_Step, for_while_loops.While_Loop_Step_Config]}
 
 def get_device_steps():
     device_steps = {}

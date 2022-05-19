@@ -1,12 +1,63 @@
 import numpy as np
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QGridLayout
 from PyQt5.QtCore import Qt
 
 from main_classes.loop_step import Loop_Step_Container, Loop_Step_Config
 from utility.number_formatting import format_number
 from utility import variables_handling
+from utility.variable_tool_tip_box import Variable_Box
 
 from gui.for_loop import Ui_for_loop_config
+
+class While_Loop_Step(Loop_Step_Container):
+    def __init__(self, name='', children=None, parent_step=None, step_info=None, **kwargs):
+        super().__init__(name, children, parent_step, **kwargs)
+        self.step_type = 'While Loop'
+        if step_info is None:
+            step_info = {}
+        self.condition = step_info['condition'] if 'condition' in step_info else '!'
+
+    def update_variables(self):
+        variables = {f'{self.name.replace(" ", "_")}_Count': 0}
+        for variable in variables:
+            if variable in variables_handling.loop_step_variables:
+                raise Exception('Variable already defined!')
+        variables_handling.loop_step_variables.update(variables)
+        super().update_variables()
+
+    def get_protocol_string(self, n_tabs=1):
+        tabs = '\t'*n_tabs
+        protocol_string = f'{tabs}while {self.condition}:\n'
+        protocol_string += self.get_children_strings(n_tabs+1)
+        self.update_time_weight()
+        return protocol_string
+
+class While_Loop_Step_Config(Loop_Step_Config):
+    def __init__(self, loop_step:While_Loop_Step, parent=None):
+        super().__init__(parent, loop_step)
+        self.sub_widget = While_Loop_Step_Config_Sub(loop_step, self)
+        self.layout().addWidget(self.sub_widget, 1, 0)
+
+
+class While_Loop_Step_Config_Sub(QWidget):
+    def __init__(self, loop_step:While_Loop_Step, parent=None):
+        super().__init__(parent)
+        self.loop_step = loop_step
+
+        label = QLabel('Condition:')
+        self.lineEdit_condition = Variable_Box(self)
+        self.lineEdit_condition.setText(loop_step.condition)
+        self.lineEdit_condition.textChanged.connect(self.update_condition)
+
+        layout = QGridLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(label, 0, 0)
+        layout.addWidget(self.lineEdit_condition, 0, 1)
+        self.setLayout(layout)
+
+    def update_condition(self):
+        self.loop_step.condition = self.lineEdit_condition.text()
+
 
 class For_Loop_Step(Loop_Step_Container):
     def __init__(self, name='', children=None, parent_step=None, step_info=None, **kwargs):
@@ -33,7 +84,7 @@ class For_Loop_Step(Loop_Step_Container):
         for variable in variables:
             if variable in variables_handling.loop_step_variables:
                 raise Exception('Variable already defined!')
-            variables_handling.loop_step_variables.update({variable: variables[variable]})
+        variables_handling.loop_step_variables.update(variables)
         super().update_variables()
 
     def get_protocol_string(self, n_tabs=1):

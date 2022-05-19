@@ -70,6 +70,9 @@ operator_names = {
     '>': 'greater than',
     '<=': 'less or equal',
     '>=': 'greater or equal',
+    'and': 'logical AND',
+    'or': 'logical OR',
+    'not': 'logical negation'
 }
 
 def get_color(color='', string=False):
@@ -95,11 +98,11 @@ def get_color(color='', string=False):
         return str(rgb)
     return QColor(*rgb)
 
-def get_menus(connect_function):
-    variable_menu = QMenu('Insert Variable')
-    channel_menu = QMenu('Insert Channel-Value')
-    function_menu = QMenu('Insert Function')
-    operator_menu = QMenu('Insert Operator')
+def get_menus(connect_function, pretext='Insert'):
+    variable_menu = QMenu(f'{pretext} Variable')
+    channel_menu = QMenu(f'{pretext} Channel-Value')
+    function_menu = QMenu(f'{pretext} Function')
+    operator_menu = QMenu(f'{pretext} Operator')
     channel_actions = []
     operator_actions = []
     actions = []

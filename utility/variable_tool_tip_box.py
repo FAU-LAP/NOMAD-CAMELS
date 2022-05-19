@@ -45,10 +45,20 @@ class Variable_Box(QLineEdit):
         menu.insertMenu(first_act, function_menu)
         menu.insertMenu(first_act, operator_menu)
         menu.insertSeparator(first_act)
+        (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ = variables_handling.get_menus(self.append_variable, 'Append')
+        # first_act = menu.actions()[0]
+        menu.insertMenu(first_act, channel_menu2)
+        menu.insertMenu(first_act, variable_menu2)
+        menu.insertMenu(first_act, function_menu2)
+        menu.insertMenu(first_act, operator_menu2)
+        menu.insertSeparator(first_act)
         menu.exec_(self.mapToGlobal(pos))
 
-    def insert_variable(self, variable):
+    def append_variable(self, variable):
         self.setText(self.text() + f'{variable}')
+
+    def insert_variable(self, variable):
+        self.setText(f'{variable}')
 
     def get_evaluation(self):
         return variables_handling.string_eval(self.text())
