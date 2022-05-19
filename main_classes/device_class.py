@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox, QFrame
 from PyQt5.QtGui import QFont
+from PyQt5.QtCore import pyqtSignal
 
 from ophyd import EpicsSignalRO
 from ophyd import Device as OphydDevice
@@ -31,6 +32,7 @@ class Device:
         self.files = [] if files is None else files
         self.directory = directory
         self.requirements = requirements
+        self.ioc_settings = {}  # TODO usage thereof, make it distinguish more clear
         self.settings = {}
         self.config = {}
         self.channels = {}
@@ -59,6 +61,9 @@ class Device:
 
     def get_settings(self):
         return self.settings
+
+    def get_ioc_settings(self):
+        return self.ioc_settings
 
     def set_connection(self, connection):
         self.connection = connection
@@ -132,12 +137,16 @@ class Device_Config(QWidget):
         - device_name: name of the device for the title of the widget.
         - data: data from the treeView_devices. It is needed to connect the settings to the correct device.
         - settings_dict: all the current settings of the device."""
-    def __init__(self, parent=None, device_name='', data='', settings_dict=None, config_dict=None):
+    ioc_change = pyqtSignal()
+
+    def __init__(self, parent=None, device_name='', data='', settings_dict=None, config_dict=None, ioc_settings=None):
         super().__init__(parent)
         if settings_dict is None:
             settings_dict = {}
         if config_dict is None:
             config_dict = {}
+        if ioc_settings is None:
+            ioc_settings = {}
         self.data = data
 
         layout = QGridLayout()
@@ -164,6 +173,7 @@ class Device_Config(QWidget):
         layout.addWidget(self.comboBox_connection_type, 5, 1)
         self.settings_dict = settings_dict
         self.config_dict = config_dict
+        self.ioc_settings = ioc_settings
         self.comboBox_connection_type.currentTextChanged.connect(self.connection_type_changed)
 
     def connection_type_changed(self):
@@ -171,6 +181,8 @@ class Device_Config(QWidget):
         if self.comboBox_connection_type.currentText() == 'prologix-GPIB':
             self.connector = Prologix_Config()
             self.layout().addWidget(self.connector, 6, 0, 1, 2)
+        self.connector.connection_change.connect(self.ioc_change.emit)
+        self.ioc_change.emit()
 
     def get_settings(self):
         """Updates the settings_dict with the current settings.
@@ -191,6 +203,8 @@ class Device_Config(QWidget):
 
 
 class Connection_Config(QWidget):
+    connection_change = pyqtSignal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = QGridLayout()
@@ -213,6 +227,8 @@ class Prologix_Config(Connection_Config):
         label_GPIB = QLabel('GPIB-Address:')
         self.lineEdit_ip = QLineEdit()
         self.lineEdit_GPIB = QLineEdit()
+        self.lineEdit_GPIB.textChanged.connect(self.connection_change.emit)
+        self.lineEdit_ip.textChanged.connect(self.connection_change.emit)
 
         layout.addWidget(label_ip, 0, 0)
         layout.addWidget(label_GPIB, 1, 0)

@@ -45,6 +45,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.comboBox_measurement_preset.addItem('Default')
         self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.make_thread = None
+        self.ioc_thread = None
 
         # devices
         self.active_devices_dict = {}
@@ -97,6 +98,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionOpen_Backup_Device_Preset.triggered.connect(self.load_backup_device_preset)
         self.actionLoad_Backup_Measurement_Preset.triggered.connect(self.load_backup_measurement_preset)
         self.pushButton_make_EPICS_environment.clicked.connect(self.make_epics_environment)
+        self.pushButton_run_ioc.clicked.connect(self.run_stop_ioc)
         self.pushButton_show_console_output.clicked.connect(self.show_console_output)
         self.treeView_devices.clicked.connect(self.tree_click)
 
@@ -533,6 +535,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.get_device_config()
             self.device_config_widget = py_package.subclass_config(self, dat, self.active_devices_dict[dat].settings, self.active_devices_dict[dat].config)
             self.devices_splitter.replaceWidget(2, self.device_config_widget)
+            self.device_config_widget.ioc_change.connect(self.ioc_config_changed)
+
+    def ioc_config_changed(self):
+        font = self.pushButton_make_EPICS_environment.font()
+        font.setBold(True)
+        self.pushButton_make_EPICS_environment.setFont(font)
+        self.progressBar_devices.setValue(0)
 
     def get_device_config(self):
         """If the currently used device_config_widget has the attribute data, the settings will be updated to the active_devices_dict."""
@@ -581,6 +590,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def make_epics_environment(self):
         """Calls the QThread Make_Ioc, creating an IOC with the specified devices."""
         self.setCursor(Qt.WaitCursor)
+        font = self.pushButton_make_EPICS_environment.font()
+        font.setBold(False)
+        self.pushButton_make_EPICS_environment.setFont(font)
         self.get_device_config()
         self.make_thread = qthreads.Make_Ioc(self._current_device_preset[0], self.active_devices_dict)
         self.make_thread.sig_step.connect(self.change_progressBar_value)
@@ -601,6 +613,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Appends the given info to the current console output."""
         self.textEdit_console_output.append(info)
 
+    def run_stop_ioc(self):
+        if self.ioc_thread is None:
+            self.ioc_thread = qthreads.Run_IOC(self._current_device_preset[0])
+            self.ioc_thread.info_step.connect(self.update_console_output)
+            self.ioc_thread.finished.connect(self.stop_ioc)
+            self.pushButton_run_ioc.setText('Stop IOC')
+            self.ioc_thread.start()
+        else:
+            self.ioc_thread.terminate()
+            self.stop_ioc()
+
+    def stop_ioc(self):
+        self.ioc_thread = None
+        self.pushButton_run_ioc.setText('Run IOC')
+
     # --------------------------------------------------
     # measurement methods
     # --------------------------------------------------
@@ -608,16 +635,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.textEdit_console_output_meas.append(info)
 
     def run_current_protocol(self):
-        self.build_current_protocol()
-        path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
-        self.run_thread = qthreads.Run_Protocol(self.current_protocol, path)
-        self.run_thread.sig_step.connect(self.change_progressBar_value_meas)
-        self.run_thread.info_step.connect(self.update_protocol_output)
-        self.run_thread.finished.connect(self.thread_finished)
-        self.pushButton_run_protocol.setText('Abort Run')
-        self.run_thread.start()
+        if self.run_thread is None:
+            self.build_current_protocol()
+            path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
+            self.run_thread = qthreads.Run_Protocol(self.current_protocol, path)
+            self.run_thread.sig_step.connect(self.change_progressBar_value_meas)
+            self.run_thread.info_step.connect(self.update_protocol_output)
+            self.run_thread.finished.connect(self.thread_finished)
+            self.pushButton_run_protocol.setText('Abort Run')
+            self.run_thread.start()
+        else:
+            self.run_thread.terminate()
+            self.thread_finished()
 
     def build_current_protocol(self):
+        self.progressBar_protocols.setValue(0)
         self.update_loop_step_order()
         self.get_device_config()
         if self.current_protocol is None:
@@ -629,6 +661,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
         savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{self.current_protocol.filename or "data"}.h5'
         bluesky_handling.build_protocol(self.current_protocol, path, savepath, userdata=userdata, sampledata=sampledata)
+        self.textEdit_console_output_meas.append('\n\nBuild successfull!\n')
+        self.progressBar_protocols.setValue(100)
 
     def tree_click_sequence(self, general=False):
         """Called when clicking the treeView_protocol_sequence."""

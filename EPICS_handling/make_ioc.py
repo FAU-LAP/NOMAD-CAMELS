@@ -2,7 +2,10 @@ import subprocess
 import os
 from utility import variables_handling
 
-epics_path = f"{os.getenv('LOCALAPPDATA')}/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/epics".replace('\\', '/')
+cmd = ['powershell', "echo ($env:LOCALAPPDATA + '\\Packages\\' + ($(get-appxpackage).PackageFamilyName|findstr UbuntuonWindows))"]
+epics_path = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode().rstrip()
+if not os.path.isdir(epics_path):
+    epics_path = f"{os.getenv('LOCALAPPDATA')}/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/home/epics".replace('\\', '/')
 epics_path_wsl = '/home/epics'
 localappdata = os.getenv("LOCALAPPDATA").replace("\\", "/")
 localappdata_program = f'{localappdata}/CAMELS'
@@ -36,13 +39,15 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
 
     # cleaning out the paths
     path = f'{epics_path}/IOCs/{ioc}/{ioc}App/Db'
-    for file in os.listdir(path):
-        # if file == 'Makefile':
-        #     continue
-        os.remove(f'{path}/{file}')
+    if os.path.isdir(path):
+        for file in os.listdir(path):
+            # if file == 'Makefile':
+            #     continue
+            os.remove(f'{path}/{file}')
     path = f'{epics_path}/IOCs/{ioc}/{ioc}Sup'
-    for file in os.listdir(path):
-        os.remove(f'{path}/{file}')
+    if os.path.isdir(path):
+        for file in os.listdir(path):
+            os.remove(f'{path}/{file}')
 
     # adding devices / files
     st_cmd_string = f'#!../../bin/linux-x86_64/{ioc}\n< envPaths\n'

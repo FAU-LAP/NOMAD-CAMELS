@@ -275,13 +275,6 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QPushButton" name="pushButton_show_console_output">
-                 <property name="text">
-                  <string>Show console output</string>
-                 </property>
-                </widget>
-               </item>
                <item row="2" column="0" colspan="2">
                 <widget class="QTextEdit" name="textEdit_console_output">
                  <property name="textInteractionFlags">
@@ -289,13 +282,27 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0" colspan="2">
+               <item row="1" column="0">
                 <widget class="QProgressBar" name="progressBar_devices">
                  <property name="enabled">
                   <bool>true</bool>
                  </property>
                  <property name="value">
                   <number>0</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QPushButton" name="pushButton_show_console_output">
+                 <property name="text">
+                  <string>Show console output</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QPushButton" name="pushButton_run_ioc">
+                 <property name="text">
+                  <string>Run IOC</string>
                  </property>
                 </widget>
                </item>
@@ -903,7 +910,6 @@
   <tabstop>pushButton_remove_device</tabstop>
   <tabstop>treeView_devices</tabstop>
   <tabstop>pushButton_make_EPICS_environment</tabstop>
-  <tabstop>pushButton_show_console_output</tabstop>
   <tabstop>textEdit_console_output</tabstop>
   <tabstop>pushButton_run_protocol</tabstop>
   <tabstop>lineEdit_protocol_search</tabstop>
