@@ -25,15 +25,16 @@ standard_run_string = '\n\n\nif __name__ == "__main__":\n'
 standard_run_string += '\tRE = RunEngine()\n'
 standard_run_string += '\tbec = BestEffortCallback()\n'
 standard_run_string += '\tRE.subscribe(bec)\n'
-standard_run_string += '\tapp = QCoreApplication.instance()\n'
-standard_run_string += '\tif app is None:\n'
-standard_run_string += '\t\tapp = QApplication(sys.argv)\n'
-standard_run_string += '\tapp.aboutToQuit.connect(wait_for_workers_to_quit)\n'
-standard_run_string += '\tif "--darkmode" in sys.argv:\n'
-standard_run_string += '\t\tplot_widget.activate_dark_mode()\n'
-standard_run_string += '\t\timport qdarkstyle\n'
-standard_run_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())\n'
-standard_run_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet(qt_api="pyqt5"))\n'
+
+standard_plot_string = '\n\tapp = QCoreApplication.instance()\n'
+standard_plot_string += '\tif app is None:\n'
+standard_plot_string += '\t\tapp = QApplication(sys.argv)\n'
+standard_plot_string += '\tapp.aboutToQuit.connect(wait_for_workers_to_quit)\n'
+standard_plot_string += '\tif "--darkmode" in sys.argv:\n'
+standard_plot_string += '\t\tplot_widget.activate_dark_mode()\n'
+standard_plot_string += '\t\timport qdarkstyle\n'
+standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())\n'
+standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet(qt_api="pyqt5"))\n'
 
 standard_nexus_dict = {'metadata_start/user': 'entry/operator',
                        'metadata_start/time': 'entry/start_time',
@@ -74,7 +75,9 @@ def build_protocol(protocol:Measurement_Protocol, file_path, save_path='test.h5'
     devices_string += '\tprint("devices connected")\n'
     devices_string += '\tmd = {"device_config": device_config}\n'
     plot_string = '\n'
+    plotting = False
     for i, plot in pd.DataFrame(protocol.plots).iterrows():
+        plotting = True
         plot_string += f'\tplot_{i} = plot_widget.PlotWidget(run_engine=RE, x_name="{plot["X-axis"]}", y_names={plot["Y-axes"]}, ylabel="{plot["y-label"]}", xlabel="{plot["x-label"]}", title="{plot["title"]}")\n'
         plot_string += f'\tplot_{i}.show()\n'
     plot_string += '\n'
@@ -92,7 +95,9 @@ def build_protocol(protocol:Measurement_Protocol, file_path, save_path='test.h5'
     protocol_string += '\tRE.subscribe(catalog.v1.insert)\n\n'
     protocol_string += devices_string
     protocol_string += additional_string_devices
-    protocol_string += plot_string
+    if plotting:
+        protocol_string += standard_plot_string
+        protocol_string += plot_string
     protocol_string += user_sample_string(userdata, sampledata)
     protocol_string += f'\tuids = RE({protocol.name}_plan(devs, md=md))\n'
 
@@ -105,7 +110,8 @@ def build_protocol(protocol:Measurement_Protocol, file_path, save_path='test.h5'
         # standard_save_string +=
     else:
         standard_save_string += f'\tbroker_to_hdf5(runs, "{save_path}")\n\n\n'
-    standard_save_string += '\tsys.exit(app.exec_())\n'
+    if plotting:
+        standard_save_string += '\tsys.exit(app.exec_())\n'
 
     protocol_string += standard_save_string
     if not os.path.isdir(os.path.dirname(file_path)):

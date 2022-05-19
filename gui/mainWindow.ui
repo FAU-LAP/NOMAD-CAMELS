@@ -544,7 +544,7 @@
                <item row="1" column="0">
                 <widget class="QPushButton" name="pushButton_run_protocol">
                  <property name="text">
-                  <string>Run selected protocol(s)</string>
+                  <string>Build and run selected protocol</string>
                  </property>
                 </widget>
                </item>

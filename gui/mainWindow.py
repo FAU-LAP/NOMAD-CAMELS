@@ -441,7 +441,7 @@ class Ui_MainWindow(object):
         self.pushButton_build_protocol.setText(_translate("MainWindow", "Build Protocol"))
         self.pushButton_show_output_meas.setText(_translate("MainWindow", "Show output"))
         self.label_3.setText(_translate("MainWindow", "Protocols"))
-        self.pushButton_run_protocol.setText(_translate("MainWindow", "Run selected protocol(s)"))
+        self.pushButton_run_protocol.setText(_translate("MainWindow", "Build and run selected protocol"))
         self.pushButton_move_step_out.setText(_translate("MainWindow", "move out"))
         self.pushButton_move_step_in.setText(_translate("MainWindow", "move in"))
         self.pushButton_move_step_up.setText(_translate("MainWindow", "move up"))
