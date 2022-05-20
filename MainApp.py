@@ -152,6 +152,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.comboBox_device_preset.currentTextChanged.connect(self.change_device_preset)
         self.comboBox_measurement_preset.currentTextChanged.connect(self.change_measurement_preset)
 
+        # Undo / Redo
         self.inside_function = False
         self.undo_stack = QUndoStack(self)
         self.actionUndo.triggered.connect(self.undo)
@@ -162,6 +163,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QShortcut('Ctrl+y', self).activated.connect(self.redo)
         QShortcut('Ctrl+s', self).activated.connect(self.save_state)
 
+        # user and sample data
         self.sampledata = {}
         self.userdata = {}
         self.active_user = 'default_user'
@@ -173,6 +175,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         variables_handling.CAMELS_path = os.path.dirname(__file__)
 
     def mousePressEvent(self, a0: QMouseEvent) -> None:
+        """Overwrite parent method to connect to undo and redo functions."""
         but = a0.button()
         if but == 8:
             self.undo()
@@ -182,11 +185,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             super().mousePressEvent(a0)
 
     def undo(self):
+        # TODO implement actual functions
         self.undo_stack.undo()
         self.actionUndo.setEnabled(self.undo_stack.canUndo())
         self.actionRedo.setEnabled(self.undo_stack.canRedo())
 
     def redo(self):
+        # TODO implement actual functions
         self.undo_stack.redo()
         self.actionUndo.setEnabled(self.undo_stack.canUndo())
         self.actionRedo.setEnabled(self.undo_stack.canRedo())
@@ -210,11 +215,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # user / sample methods
     # --------------------------------------------------
     def edit_user_info(self):
+        """Calls dialog for user-information when
+        pushButton_editUserInfo is clicked.
+
+        The opened AddRemoveDialoge contains columns for Name, E-Mail,
+        Affiliation, Address, ORCID and Phone of the user.
+        If the dialog is canceled, nothing is changed, otherwise the new
+        data will be written into self.userdata.
+        """
+
         self.active_user = self.comboBox_user.currentText()
-        headers = ['Name', 'E-Mail', 'Affiliation', 'Address (affiliation)', 'ORCID', 'Phone']
+        headers = ['Name', 'E-Mail', 'Affiliation',
+                   'Address (affiliation)', 'ORCID', 'Phone']
         tableData = pd.DataFrame.from_dict(self.userdata, 'index')
-        dialog = add_remove_table.AddRemoveDialoge(headerLabels=headers, parent=self, title='User-Information', askdelete=True, tableData=tableData)
+        dialog = add_remove_table.AddRemoveDialoge(headerLabels=headers,
+                                                   parent=self,
+                                                   title='User-Information',
+                                                   askdelete=True,
+                                                   tableData=tableData)
         if dialog.exec_():
+            # changing the returned dict to dataframe and back to have a
+            # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
             dat['Name2'] = dat['Name']
             data = pd.DataFrame(dat)
@@ -226,12 +247,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.comboBox_user.setCurrentText(self.active_user)
 
     def save_user_data(self):
+        """Calling the save_dictionary function with the savefile as
+        %localappdata%/userdata.json and self.userdata as dictionary."""
         self.active_user = self.comboBox_user.currentText()
         userdic = {'active_user': self.active_user}
         userdic.update(self.userdata)
         load_save_functions.save_dictionary(f'{load_save_functions.appdata_path}/userdata.json', userdic)
 
     def load_user_data(self):
+        """Loading the dictionary from %localappdata%/userdata.json,
+        selecting the active user and saving the rest into self.userdata."""
         userdat = {}
         if os.path.isfile(f'{load_save_functions.appdata_path}/userdata.json'):
             with open(f'{load_save_functions.appdata_path}/userdata.json', 'r') as f:
@@ -244,11 +269,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.comboBox_user.addItems(userdat.keys())
 
     def edit_sample_info(self):
+        """Calls dialog for user-information when
+        pushButton_editSampleInfo is clicked.
+
+        The opened AddRemoveDialoge contains columns for Name,
+        Identifier, and Preparation-Info.
+        If the dialog is canceled, nothing is changed, otherwise the new
+        data will be written into self.userdata.
+        """
+
         self.active_sample = self.comboBox_sample.currentText()
         headers = ['Name', 'Identifier', 'Preparation-Info']
         tableData = pd.DataFrame.from_dict(self.sampledata, 'index')
         dialog = add_remove_table.AddRemoveDialoge(headerLabels=headers, parent=self, title='User-Information', askdelete=True, tableData=tableData)
         if dialog.exec_():
+            # changing the returned dict to dataframe and back to have a
+            # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
             dat['Name2'] = dat['Name']
             data = pd.DataFrame(dat)
@@ -260,12 +296,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.comboBox_sample.setCurrentText(self.active_sample)
 
     def save_sample_data(self):
+        """Calling the save_dictionary function with the savefile as
+        %localappdata%/sampledata.json and self.sampledata as dictionary."""
         self.active_sample = self.comboBox_sample.currentText()
         sampledic = {'active_sample': self.active_sample}
         sampledic.update(self.sampledata)
         load_save_functions.save_dictionary(f'{load_save_functions.appdata_path}/sampledata.json', sampledic)
 
     def load_sample_data(self):
+        """Loading the dictionary from %localappdata%/sampledata.json,
+        selecting the active sample and saving the rest into self.sampledata."""
         sampledat = {}
         if os.path.isfile(f'{load_save_functions.appdata_path}/sampledata.json'):
             with open(f'{load_save_functions.appdata_path}/sampledata.json', 'r') as f:
@@ -276,12 +316,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             sampledat.pop('active_sample')
         self.sampledata = sampledat
         self.comboBox_sample.addItems(sampledat.keys())
+
     # --------------------------------------------------
     # save / load methods
     # --------------------------------------------------
     def load_preferences(self):
         """Loads the preferences.
-        - autosave: turn on / off autosave on closing the program."""
+
+        Those may contain:
+        - autosave: turn on / off autosave on closing the program.
+        - dark_mode: turning dark-mode on / off.
+        - number_format: the number format for display, can be either
+            "mixed", "plain" or "scientific".
+        - mixed_from: the exponent from where to switch to
+            scientific format, if number_format is "mixed".
+        - n_decimals: the number of displayed decimals of a number.
+        - py_files_path: the path, where python files (e.g. protocols)
+            are created.
+        - meas_files_path: the path, where measurement data is stored.
+        - device_driver_path: the path, where CAMELS can find the
+            installed devices.
+        """
+
         self.preferences = load_save_functions.get_preferences()
         number_formatting.preferences = self.preferences
         if 'dark_mode' in self.preferences:
@@ -290,16 +346,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         variables_handling.meas_files_path = self.preferences['meas_files_path']
 
     def toggle_dark_mode(self):
+        """Turning dark mode on / off, called whenever the settigns are
+        changed. Using qdarkstyle to provide the stylesheets."""
         dark = self.preferences['dark_mode']
         main_app = QApplication.instance()
         if main_app is None:
             raise RuntimeError("MainApp not found.")
         if dark:
-            # file = QFile('graphics/dark.qss')
-            # file.open(QFile.ReadOnly | QFile.Text)
-            # stream = QTextStream(file)
-            # main_app.setStyleSheet(stream.readAll())
-            # main_app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
             main_app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
             variables_handling.dark_mode = True
         else:
@@ -308,7 +361,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
     def change_preferences(self):
-        """Called when any preferences are changed. Makes the dictionary of preferences and calls save_preferences from the load_save_functions module."""
+        """Called when any preferences are changed. Makes the dictionary
+         of preferences and calls save_preferences from the
+         load_save_functions module."""
         settings_dialog = Settings_Window(parent=self, settings=self.preferences)
         if settings_dialog.exec_():
             self.preferences = settings_dialog.get_settings()
@@ -340,6 +395,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         load_save_functions.autosave_preset(self._current_measurement_preset[0], self.__save_dict_meas__, False)
 
     def new_device_preset(self):
+        """Create a new, empty device-preset via a QFileDialog."""
         file = QFileDialog.getSaveFileName(self, 'Save Device Preset', load_save_functions.preset_path, '*.predev')[0]
         if not len(file):
             return
@@ -350,6 +406,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._current_device_preset[0] = preset_name
 
     def new_measurement_preset(self):
+        """Create a new, empty measurement-preset via a QFileDialog."""
         file = QFileDialog.getSaveFileName(self, 'Save Measurement Preset', load_save_functions.preset_path, '*.premeas')[0]
         if not len(file):
             return
@@ -360,7 +417,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._current_measurement_preset[0] = preset_name
 
     def save_device_preset_as(self):
-        """Opens a QFileDialog to save the device preset. A backup / autosave of the preset is made automatically."""
+        """Opens a QFileDialog to save the device preset.
+        A backup / autosave of the preset is made automatically."""
         file = QFileDialog.getSaveFileName(self, 'Save Device Preset', load_save_functions.preset_path, '*.predev')[0]
         if not len(file):
             return
@@ -374,7 +432,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.saving = False
 
     def load_backup_device_preset(self):
-        file = QFileDialog.getOpenFileName(self, 'Open Device Preset', f'{load_save_functions.preset_path}/Backup', '*.predev')[0]
+        """Opens a QFileDialog in the Backup-folder of the presets.
+        If a backup is selected, the current preset is put into backup."""
+        file = QFileDialog.getOpenFileName(self, 'Open Device Preset',
+                                           f'{load_save_functions.preset_path}/Backup',
+                                           '*.predev')[0]
         if not len(file):
             return
         preset_name = file.split('_')[-1][:-7]
@@ -384,7 +446,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_device_preset(preset)
 
     def load_backup_measurement_preset(self):
-        file = QFileDialog.getOpenFileName(self, 'Open Measurement Preset', f'{load_save_functions.preset_path}/Backup', '*.premeas')[0]
+        """Opens a QFileDialog in the Backup-folder of the presets.
+        If a backup is selected, the current preset is put into backup."""
+        file = QFileDialog.getOpenFileName(self, 'Open Measurement Preset',
+                                           f'{load_save_functions.preset_path}/Backup',
+                                           '*.premeas')[0]
         if not len(file):
             return
         preset_name = file.split('_')[-1][:-8]
@@ -394,8 +460,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_measurement_preset(preset)
 
     def save_measurement_preset_as(self):
-        """Opens a QFileDialog to save the device preset. A backup / autosave of the preset is made automatically."""
-        file = QFileDialog.getSaveFileName(self, 'Save Measurement Preset', load_save_functions.preset_path, '*.premeas')[0]
+        """Opens a QFileDialog to save the device preset.
+        A backup / autosave of the preset is made automatically."""
+        file = QFileDialog.getSaveFileName(self, 'Save Measurement Preset',
+                                           load_save_functions.preset_path,
+                                           '*.premeas')[0]
         if not len(file):
             return
         preset_name = file.split('/')[-1][:-8]
@@ -408,7 +477,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.saving = False
 
     def load_state(self):
-        """Loads a specific state of the provided task."""
+        """Loads the most recent presets."""
         predev, premeas = load_save_functions.get_most_recent_presets()
         if predev is not None:
             self.load_device_preset(predev)
@@ -420,19 +489,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.save_measurement_state()
 
     def change_device_preset(self, preset):
-        """saves the old device preset, then changes to / loads the new preset."""
+        """saves the old device preset,
+        then changes to / loads the new preset."""
         self.save_device_state()
         self._current_device_preset[0] = preset
         self.load_device_preset(preset)
 
     def change_measurement_preset(self, preset):
-        """saves the old measurement preset, then changes to / loads the new preset."""
+        """saves the old measurement preset,
+        then changes to / loads the new preset."""
         self.save_measurement_state()
         self._current_measurement_preset[0] = preset
         self.load_measurement_preset(preset)
 
     def load_device_preset(self, preset):
-        """Called when the comboBox_device_preset is changed (or when loading the last state). Opens the given preset."""
+        """Called when the comboBox_device_preset is changed
+        (or when loading the last state). Opens the given preset."""
         if self.saving:
             return
         # self.save_device_state()
@@ -444,22 +516,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.build_devices_tree()
         self.update_channels()
         variables_handling.dev_preset = self._current_device_preset[0]
-        # for d in self.active_devices_dict:
-        #     info = self.active_devices_dict[d]
-        #     try:
-        #         package_name = info['name'].replace(' ', '_')
-        #         info.update({'py_package': importlib.import_module(f'{package_name}.{package_name}')})
-        #     except Exception as e:
-        #         print(e)
 
     def update_channels(self):
+        """Called when the active devices change.
+        The channels in variables_handling are updated with the ones
+        provided by the active devices."""
         variables_handling.channels.clear()
         for key, dev in self.active_devices_dict.items():
             for channel in dev.get_channels():
                 variables_handling.channels.update({channel: dev.channels[channel]})
 
     def load_measurement_preset(self, premeas):
-        """Called when the comboBox_measurement_preset is changed (or when loading the last state). Opens the given preset."""
+        """Called when the comboBox_measurement_preset is changed
+        (or when loading the last state). Opens the given preset."""
         if self.saving:
             return
         # self.save_measurement_state()
@@ -490,44 +559,63 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # --------------------------------------------------
     # Threads - general
     # --------------------------------------------------
-    def thread_finished(self):
-        """When a QThread calls this, the cursor is set back to the ArrowCursor."""
-        self.setCursor(Qt.ArrowCursor)
+    def run_thread_finished(self):
         self.pushButton_run_protocol.setText('Build and run selected protocol')
         self.run_thread = None
+        self.thread_finished()
+
+    def make_thread_finished(self):
+        self.make_thread = None
+        self.thread_finished()
+
+    def thread_finished(self):
+        """Called, when a run_thread or make_thread is finished. If both
+         are finished, the cursor is set back to the ArrowCursor."""
+        if self.make_thread is None and self.run_thread is None:
+            self.setCursor(Qt.ArrowCursor)
 
     def change_progressBar_value(self, val):
         """Sets the progressBar_devices to the given val."""
         self.progressBar_devices.setValue(val)
 
     def change_progressBar_value_meas(self, val):
+        """Sets the progressBar_protocols to the given val."""
         self.progressBar_protocols.setValue(val)
 
     # --------------------------------------------------
     # devices methods
     # --------------------------------------------------
     def remove_device(self):
-        """Opens a dialog to confirm removing the device, then pops it from the active_devices_dict."""
+        """Opens a dialog to confirm removing the device, then pops it
+        from the active_devices_dict."""
         index = self.treeView_devices.selectedIndexes()[0]
         dat = self.item_model_devices.itemFromIndex(index).data()
         if dat is not None and not dat.startswith('tag:'):
-            remove_dialog = QMessageBox.question(self, 'Remove device?', f'Are you sure you want to remove the device {dat}?', QMessageBox.Yes | QMessageBox.No)
+            remove_dialog = QMessageBox.question(self, 'Remove device?',
+                                                 f'Are you sure you want to remove the device {dat}?',
+                                                 QMessageBox.Yes | QMessageBox.No)
             if remove_dialog == QMessageBox.Yes:
                 self.active_devices_dict.pop(dat)
                 self.build_devices_tree()
                 self.update_channels()
+                self.ioc_config_changed()
 
     def add_device(self):
-        """Opens the dialog to add a device. The returned values of the dialog are inserted to the available devices."""
-        add_dialog = AddDeviceDialog(active_devices_dict=self.active_devices_dict, parent=self)
+        """Opens the dialog to add a device. The returned values of the
+        dialog are inserted to the available devices."""
+        add_dialog = AddDeviceDialog(active_devices_dict=self.active_devices_dict,
+                                     parent=self)
         if add_dialog.exec_():
             self.active_devices_dict = add_dialog.active_devices_dict
         self.build_devices_tree()
         self.update_channels()
         self.pushButton_make_EPICS_environment.setEnabled(True)
+        self.ioc_config_changed()
 
     def tree_click(self):
-        """Called when clicking the treeView_devices. If the selected index is a device, it will call the config-Widget, and, if possible, save the settings of the last opened config-widget."""
+        """Called when clicking the treeView_devices. If the selected
+        index is a device, it will call the config-Widget, and, if
+        possible, save the settings of the last opened config-widget."""
         index = self.treeView_devices.selectedIndexes()[0]
         dat = self.item_model_devices.itemFromIndex(index).data()
         if dat is not None and not dat.startswith('tag:'):
@@ -538,13 +626,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.device_config_widget.ioc_change.connect(self.ioc_config_changed)
 
     def ioc_config_changed(self):
+        """Called when a value of device-config has changed that is part
+        of the IOC (e.g. connection), sets the Make IOC button bold and
+        the progressBar to zero."""
         font = self.pushButton_make_EPICS_environment.font()
         font.setBold(True)
         self.pushButton_make_EPICS_environment.setFont(font)
         self.progressBar_devices.setValue(0)
 
     def get_device_config(self):
-        """If the currently used device_config_widget has the attribute data, the settings will be updated to the active_devices_dict."""
+        """If the currently used device_config_widget has the attribute
+        data, the settings will be updated to the active_devices_dict."""
         if hasattr(self.device_config_widget, 'data'):
             if self.device_config_widget.data in self.active_devices_dict:
                 self.active_devices_dict[self.device_config_widget.data].settings = self.device_config_widget.get_settings()
@@ -553,8 +645,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def build_devices_tree(self):
         """Builds the tree of devices.
-        First it clears the tree and then iterates through all available devices in device_dict.
-        If a search_text is given, only devices whose name includes the string in search_text are added to the tree."""
+        First it clears the tree and then iterates through all available
+        devices in device_dict.
+        If a search_text is given, only devices whose name includes the
+        string in search_text are added to the tree."""
         for i in range(3):
             item = self.item_model_devices.item(i,0)
             while item.rowCount() > 0:
@@ -588,7 +682,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # EPICS
     def make_epics_environment(self):
-        """Calls the QThread Make_Ioc, creating an IOC with the specified devices."""
+        """Calls the QThread Make_Ioc, creating an IOC with the
+        specified devices."""
         self.setCursor(Qt.WaitCursor)
         font = self.pushButton_make_EPICS_environment.font()
         font.setBold(False)
@@ -597,7 +692,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.make_thread = qthreads.Make_Ioc(self._current_device_preset[0], self.active_devices_dict)
         self.make_thread.sig_step.connect(self.change_progressBar_value)
         self.make_thread.info_step.connect(self.update_console_output)
-        self.make_thread.finished.connect(self.thread_finished)
+        self.make_thread.finished.connect(self.make_thread_finished)
         self.make_thread.start()
 
     def show_console_output(self):
@@ -614,6 +709,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.textEdit_console_output.append(info)
 
     def run_stop_ioc(self):
+        """Calls the Run_IOC QThread. The IOC corresponding to the
+        current device preset is run in that thread, until the button is
+        pushed again, on which the thread is terminated."""
         if self.ioc_thread is None:
             self.ioc_thread = qthreads.Run_IOC(self._current_device_preset[0])
             self.ioc_thread.info_step.connect(self.update_console_output)
@@ -625,6 +723,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.stop_ioc()
 
     def stop_ioc(self):
+        """Called, when either the IOC is terminated by hand, or when it
+        is finished (e.g. because of some error). Sets the button-text
+        back to "Run IOC"."""
         self.ioc_thread = None
         self.pushButton_run_ioc.setText('Run IOC')
 
@@ -632,23 +733,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # measurement methods
     # --------------------------------------------------
     def update_protocol_output(self, info):
+        """Appens the given `info` to the console_output_meas."""
         self.textEdit_console_output_meas.append(info)
 
     def run_current_protocol(self):
+        """Calls the Run_Protocol QThread. The currently selected
+        protocol is used. If the button is clicked agian, the thread is
+        terminated."""
         if self.run_thread is None:
+            self.setCursor(Qt.WaitCursor)
             self.build_current_protocol()
             path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
             self.run_thread = qthreads.Run_Protocol(self.current_protocol, path)
             self.run_thread.sig_step.connect(self.change_progressBar_value_meas)
             self.run_thread.info_step.connect(self.update_protocol_output)
-            self.run_thread.finished.connect(self.thread_finished)
+            self.run_thread.finished.connect(self.run_thread_finished)
             self.pushButton_run_protocol.setText('Abort Run')
             self.run_thread.start()
         else:
             self.run_thread.terminate()
-            self.thread_finished()
+            self.run_thread_finished()
 
     def build_current_protocol(self):
+        """Calls the build_protocol from bluesky_handling for the
+        selected protocol and provides it with a savepath and user- and
+        sample-data."""
         self.progressBar_protocols.setValue(0)
         self.update_loop_step_order()
         self.get_device_config()
@@ -660,7 +769,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
         sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
         savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{self.current_protocol.filename or "data"}.h5'
-        bluesky_handling.build_protocol(self.current_protocol, path, savepath, userdata=userdata, sampledata=sampledata)
+        bluesky_handling.build_protocol(self.current_protocol, path, savepath,
+                                        userdata=userdata, sampledata=sampledata)
         self.textEdit_console_output_meas.append('\n\nBuild successfull!\n')
         self.progressBar_protocols.setValue(100)
 
@@ -689,7 +799,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.loop_step_configuration_widget.name_changed.connect(self.change_step_name)
 
     def change_step_name(self):
-        """Called when a loop_step changes its name, then updates the shown sequence, and also the protocol-data."""
+        """Called when a loop_step changes its name, then updates the
+        shown sequence, and also the protocol-data."""
         self.build_protocol_sequence()
         self.update_loop_step_order()
 
@@ -700,14 +811,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
     def add_protocol(self):
-        """Adds a new protocol 'Unnamed_Protocol' to the list. Makes sure that it has a unique filename."""
+        """Adds a new protocol 'Unnamed_Protocol' to the list.
+        Makes sure that it has a unique filename."""
         name = self.unique_protocol_name('Unnamed_Protocol')
         protocol = {name: Measurement_Protocol(name=name)}
         self.protocols_dict.update(protocol)
         self.build_protocol_list()
 
     def remove_protocol(self):
-        """Opens a dialog to make sure, then removes the selected protocol."""
+        """Opens a dialog to make sure, then removes the selected
+        protocol."""
         index = self.listView_protocols.selectedIndexes()[0]
         dat = self.item_model_protocols.itemFromIndex(index).data()
         if dat is not None:
@@ -718,8 +831,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def change_protocol_name(self, item):
         """Changes the name of the protocol inside the protocols_dict.
-        Arguments:
-            - item: the item of the protocol, the data is used to get the old name, the new text is checked to be unique."""
+
+        Parameters
+        ----------
+        item : QStandardItem
+            the item of the protocol, the data is used to get the old
+            name, the new text is checked to be unique.
+        """
+
         if self.inside_function:
             return
         old_name = item.data()
@@ -734,7 +853,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.build_protocol_list()
 
     def unique_protocol_name(self, name):
-        """Checks if 'name' is already inside the protocols_dict, if yes, _i is added until i is a not yet used number."""
+        """Checks if 'name' is already inside the protocols_dict,
+        if yes, _i is added until i is a not yet used number."""
         if name in self.protocols_dict:
             i = 2
             while True:
@@ -763,12 +883,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pushButton_show_output_meas.setText('Show console output')
 
     def protocol_selected(self):
+        """Called when a protocol is clicked on. Updates the
+        loop_step_order of the old protocol, the builds the sequence of
+        the new one."""
         self.update_loop_step_order()
         self.build_protocol_sequence()
         self.tree_click_sequence(True)
 
     def build_protocol_sequence(self):
-        """Shows / builds the protocol sequence in the treeView dependent on the loop_steps in the current_protocol."""
+        """Shows / builds the protocol sequence in the treeView
+        dependent on the loop_steps in the current_protocol."""
         ind = self.listView_protocols.selectedIndexes()
         if not ind:
             return
@@ -794,7 +918,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def sequence_right_click(self, pos):
         """Opens a specific Menu on right click in the protocol-sequence.
-        If selection is not on a loop_step, it consists only of Add Step, otherwise it consists of Delete Step."""
+        If selection is not on a loop_step, it consists only of Add Step,
+        otherwise it consists of Delete Step."""
         # TODO other actions
         # TODO more beautiful?
         menu = QMenu()
@@ -908,59 +1033,49 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.remove_loop_step(ask=False)
 
     def copy_loop_step(self, step_name):
-        """Makes a deepcopy of the given step and stores it in copied_loop_step."""
+        """Makes a deepcopy of the given step and stores it in
+        copied_loop_step."""
         self.copied_loop_step = deepcopy(self.current_protocol.loop_step_dict[step_name])
 
 
     def move_loop_step(self, up_down=0, in_out=0):
-        """Moves a loop_step up or down in the sequence. It can also moved in or out (into the loop_step above, it if accepts children).
-        Arguments:
-            - up_down: Default 0, moves up if negative (lower row-number), down if positive
-            - in_out: moves in if positive, out if negative, default 0"""
+        """Moves a loop_step up or down in the sequence. It can also be
+        moved in or out (into the loop_step above, it if accepts children).
+
+        Parameters
+        ----------
+        up_down : int
+            moves up if negative (lower row-number), down if positive
+            (default is 0)
+        in_out : int
+            moves in if positive, out if negative, (default 0)
+        """
+
         move_command = change_sequence.CommandMoveStep(self.treeView_protocol_sequence, self.item_model_sequence, up_down, in_out, self.current_protocol.loop_step_dict, self.update_loop_step_order)
         self.undo_stack.push(move_command)
         self.actionUndo.setEnabled(self.undo_stack.canUndo())
         self.actionRedo.setEnabled(self.undo_stack.canRedo())
-        # TODO make function more clear and simple
-        # ind = self.treeView_protocol_sequence.selectedIndexes()[0]
-        # item = self.item_model_sequence.itemFromIndex(ind)
-        # parent = item.parent()
-        # if parent is None:
-        #     if up_down != 0 and (ind.row() > 0 or up_down > 0) and (ind.row() < self.item_model_sequence.rowCount()-1 or up_down < 0):
-        #         row = self.item_model_sequence.takeRow(ind.row())
-        #         self.item_model_sequence.insertRow(ind.row() + up_down, row)
-        #     elif in_out > 0 and ind.row() > 0:
-        #         above = self.item_model_sequence.item(ind.row()-1, 0)
-        #         if self.current_protocol.loop_step_dict[above.data()].has_children:
-        #             row = self.item_model_sequence.takeRow(ind.row())
-        #             above.insertRow(above.rowCount(), row)
-        # else:
-        #     if up_down != 0 and (ind.row() > 0 or up_down > 0) and (ind.row() < parent.rowCount()-1 or up_down < 0):
-        #         row = parent.takeRow(ind.row())
-        #         parent.insertRow(ind.row() + up_down, row)
-        #     elif in_out > 0 and ind.row() > 0:
-        #         above = parent.child(ind.row()-1, 0)
-        #         if self.current_protocol.loop_step_dict[above.data()].has_children:
-        #             row = parent.takeRow(ind.row())
-        #             above.insertRow(above.rowCount(), row)
-        #     elif in_out < 0:
-        #         grandparent = parent.parent()
-        #         if grandparent is None:
-        #             grandparent = self.item_model_sequence
-        #         parent_row = parent.index().row()
-        #         row = parent.takeRow(ind.row())
-        #         grandparent.insertRow(parent_row+1, row)
-        # self.treeView_protocol_sequence.clearSelection()
-        # new_ind = self.item_model_sequence.indexFromItem(item)
-        # self.treeView_protocol_sequence.selectionModel().select(new_ind, QItemSelectionModel.Select)
 
-    def add_loop_step(self, step_type='', position=-1, parent=None, copied_step=False):
-        """Add a loop_step of given step_type. Updates the current sequence into the protocol, then initializes the new step.
-        Arguments:
-            - step_type: string giving the type of step to be added
-            - position: where to add the step, default -1, append to the end
-            - parent: if None, the step is added to the outermost layer of the protocol, otherwise inside the parent
-            - copied_step: if None, a new step of type step_type will be created, otherwise copied_loop_step will be inserted"""
+
+    def add_loop_step(self, step_type:str, position=-1, parent=None,
+                      copied_step=False):
+        """Add a loop_step of given step_type. Updates the current
+        sequence into the protocol, then initializes the new step.
+
+        Parameters
+        ----------
+        step_type : str
+            gives the type of step to be added
+        position : int, optional
+            where to add the step, (default -1, append to the end)
+        parent : Loop_Step, optional
+            parent, where to add the new step, (default None, the step
+            is added to the outermost layer of the protocol)
+        copied_step : bool, optional
+            if False, a new step of type step_type will be created,
+            otherwise copied_loop_step will be inserted
+        """
+
         self.update_loop_step_order()
         if copied_step:
             step = self.copied_loop_step
@@ -975,7 +1090,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.treeView_protocol_sequence.selectionModel().select(new_ind, QItemSelectionModel.Select)
 
     def remove_loop_step(self, ask=True):
-        """After updating the loop_step order in the protocol, the selected loop step is deleted (if the messagebox is accepted)."""
+        """After updating the loop_step order in the protocol, the
+        selected loop step is deleted (if the messagebox is accepted)."""
         self.update_loop_step_order()
         ind = self.treeView_protocol_sequence.selectedIndexes()[0]
         name = self.item_model_sequence.itemFromIndex(ind).data()
@@ -988,7 +1104,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.build_protocol_sequence()
 
     def update_loop_step_order(self):
-        """Goes through all the loop_steps in the sequence, then rearranges them in the protocol."""
+        """Goes through all the loop_steps in the sequence, then
+        rearranges them in the protocol."""
         if self.current_protocol is not None:
             loop_steps = []
             for i in range(self.item_model_sequence.rowCount()):
