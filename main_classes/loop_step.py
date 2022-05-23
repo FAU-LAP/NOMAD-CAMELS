@@ -9,12 +9,24 @@ from utility import treeView_functions
 
 class Loop_Step:
     """Main Class for all Loop_Steps.
-    Attributes:
-        - step_type: should be overwritten on inheritance, gives the type of Loop_Step
-        - has_children: set to True if a loop_step accepts children
-        - name: specification of the loop_step (other than the type)
-        - full name: consists of the type and name
-        - parent_step: the loop_steps name which contains this step"""
+
+    Attributes
+    ----------
+    step_type : str
+        should be overwritten on inheritance, gives the type of Loop_Step
+    has_children : bool
+        set to True if a loop_step accepts children
+    name : str
+        specification of the loop_step (other than the type)
+    full name : str
+        consists of the type and name
+    parent_step : str
+        the loop_steps name which contains this step
+    time_weight : int
+        used for updating the progressBar for a running protocol
+    used_devices : list
+        list of the device-names used for this loopstep\
+    """
     def __init__(self, name='', parent_step=None, **kwargs):
         self.step_type = 'Default'
         self.__save_dict__ = {}
@@ -30,7 +42,8 @@ class Loop_Step:
         self.full_name = f'{self.step_type} ({self.name})'
 
     def append_to_model(self, item_model, parent=None):
-        """Ensures that the (full_)name of the loop_step is unique and updates name and full_name, then appends the step to the model."""
+        """Ensures that the (full_)name of the loop_step is unique and
+        updates name and full_name, then appends the step to the model."""
         if parent is None:
             parent = item_model
         if type(parent) is str:
@@ -54,19 +67,25 @@ class Loop_Step:
         return item
 
     def get_protocol_string(self, n_tabs=1):
-        """Returns the string that is written into the protocol-file. To make use of the time_weight and status bar, it should start with printing, that the loop_step starts."""
+        """Returns the string that is written into the protocol-file. To
+        make use of the time_weight and status bar, it should start with
+        printing, that the loop_step starts."""
         tabs = '\t'*n_tabs
         return f'{tabs}print("starting loop_step {self.full_name}")\n'
 
     def update_variables(self):
+        """Should update the variables_handling, if the loopstep
+        provides variables."""
         pass
 
     def update_used_devices(self):
+        """Should update `used_devices` to include all necessary devices."""
         pass
 
 
 class Loop_Step_Container(Loop_Step):
-    """Parent Class for loop_steps that should contain further steps (like e.g. a for-loop)."""
+    """Parent Class for loop_steps that should contain further steps
+    (like e.g. a for-loop)."""
     def __init__(self, name='', children=None, parent_step=None, **kwargs):
         super().__init__(name, parent_step=parent_step, **kwargs)
         self.step_type = 'Container'
@@ -76,7 +95,8 @@ class Loop_Step_Container(Loop_Step):
         self.children = children
 
     def append_to_model(self, item_model:QStandardItemModel, parent=None):
-        """Overwrites this function to additionally append all children to the model."""
+        """Overwrites this function to additionally append all children
+        to the model."""
         item = super().append_to_model(item_model, parent)
         item.setDropEnabled(True)
         item.setEditable(False)
@@ -84,7 +104,8 @@ class Loop_Step_Container(Loop_Step):
             child.append_to_model(item_model, item)
 
     def add_child(self, child, position=-1):
-        """Add a child-step at the specified position, default is -1, meaning to append at the end."""
+        """Add a child-step at the specified position, default is -1,
+        meaning to append at the end."""
         if position < 0:
             self.children.append(child)
         else:
@@ -126,7 +147,9 @@ class Loop_Step_Container(Loop_Step):
 
 
 class Loop_Step_Config(QWidget):
-    """Parent class for the configuration Widget of the loop_step. Provides the main layout and a lineEdit for changing the loop_steps name."""
+    """Parent class for the configuration Widget of the loop_step.
+    Provides the main layout and a lineEdit for changing the loop_steps
+    name."""
     name_changed = pyqtSignal()
 
     def __init__(self, parent=None, loop_step=None):
@@ -139,17 +162,21 @@ class Loop_Step_Config(QWidget):
         self.setLayout(layout)
 
     def change_name(self, name):
-        """Changes the name of the loop_step, then emits the name_changed signal."""
+        """Changes the name of the loop_step, then emits the
+        name_changed signal."""
         self.loop_step.name = name
         self.loop_step.update_full_name()
         self.name_changed.emit()
 
     def update_step_config(self):
-        """Overwrite this for specific step-configuration. It should provide the loop_step object with all necessary data."""
+        """Overwrite this for specific step-configuration. It should
+        provide the loop_step object with all necessary data."""
         # self.loop_step.update_variables()
         self.name_widget.change_name()
 
 class Loop_Step_Name_Widget(QWidget):
+    """Simple class that provides the necessary widgets for the step's
+    name."""
     name_changed = pyqtSignal(str)
 
     def __init__(self, parent=None, name=''):

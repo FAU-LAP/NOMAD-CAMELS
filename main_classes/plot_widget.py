@@ -2,24 +2,52 @@ import sys
 
 import matplotlib.pyplot as plt
 from bluesky_widgets.qt.threading import wait_for_workers_to_quit
-from bluesky_widgets.models.auto_plot_builders import AutoLines
 from bluesky_widgets.models import plot_builders
 from bluesky_widgets.utils.streaming import stream_documents_into_runs
-from bluesky_widgets.qt.figures import QtFigures, QtFigure
+from bluesky_widgets.qt.figures import QtFigure
 
 from PyQt5.QtWidgets import QWidget, QGridLayout, QApplication
 
 dark_mode = False
 def activate_dark_mode():
+    """Changes the plot-style to dark-mode."""
     global dark_mode
     dark_mode = True
     plt.style.use('dark_background')
 
 
 class PlotWidget(QWidget):
-    def __init__(self, x_name='time', y_names=None, parent=None, max_runs=10, run_engine=None, title=None, xlabel=None, ylabel=None, streams=('primary',)):
+    """Pop-up Widget containing a simple Plot."""
+    def __init__(self, x_name='time', y_names=None, parent=None, max_runs=10,
+                 run_engine=None, title=None, xlabel=None, ylabel=None,
+                 streams=('primary',)):
+        """
+
+        Parameters
+        ----------
+        x_name : str, default "time"
+            name of the x-axis signal used for the plot, if "time" the
+            y-values are plotted against time
+        y_names : list or str
+            list of all values that should be plotted along the y-axis
+        parent : QWidget
+            parent-widget of the PlotWidget
+        max_runs : int, default 10
+            maximum number of runs that should be plotted at the same
+            time, older runs are then removed
+        run_engine : RunEngine
+            the RunEngine, to which the plot should be subscribed
+        title : str
+            title of the matplotlib-plot and of the Window
+        xlabel : str
+            x-label of the plot
+        ylabel : str
+            y-label of the plot
+        streams : iterable, default ("primary",)
+            the streams that should be handled by this plot
+        """
         super().__init__(parent)
-        if type(y_names) is str:
+        if isinstance(y_names, str):
             y_names = [y_names]
         elif y_names is None:
             y_names = ['']
@@ -44,9 +72,10 @@ class PlotWidget(QWidget):
 
 
 class My_Lines(plot_builders.Lines):
-
+    """Overwriting the plot_builders.Lines to not change the color for
+    the current run."""
     def _add_lines(self, event):
-        "Add a line."
+        """Add a line."""
         if self._control_y_label:
             self.y_label = self._default_y_label()
         if self._control_title:
@@ -55,16 +84,6 @@ class My_Lines(plot_builders.Lines):
         run = event.run
         for y in self.ys:
             label = self._label_maker(run, y)
-            # If run is in progress, give it a special color so it stands out.
-            # if plot_builders.run_is_live_and_not_completed(run):
-            #     color = "black"
-            #
-            #     def restyle_line_when_complete(event):
-            #         "When run is complete, update style."
-            #         line.style.update({"color": next(self._color_cycle)})
-            #
-            #     run.events.completed.connect(restyle_line_when_complete)
-            # else:
             color = next(self._color_cycle)
             style = {"color": color}
 
