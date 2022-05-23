@@ -6,7 +6,9 @@ import importlib
 
 import numpy as np
 import pandas as pd
-from PyQt5.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel, QPushButton, QTreeView, QListView, QMenuBar, QAction, QMenu, QStatusBar, QGridLayout
+from PyQt5.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel,\
+    QPushButton, QTreeView, QListView, QMenuBar, QAction, QMenu, QStatusBar,\
+    QGridLayout
 
 from datetime import datetime
 import json
@@ -17,7 +19,8 @@ appdata_path = f'{getenv("LOCALAPPDATA")}/CAMELS'
 preset_path = f'{appdata_path}/Presets/'
 backup_path = f'{preset_path}Backup/'
 save_string_list = [QComboBox, QLineEdit, QTreeView, QListView]
-save_dict_skip = [QWidget, QSplitter, QLabel, QPushButton, QMenu, QMenuBar, QAction, QStatusBar, QGridLayout]
+save_dict_skip = [QWidget, QSplitter, QLabel, QPushButton, QMenu, QMenuBar,
+                  QAction, QStatusBar, QGridLayout]
 
 
 standard_pref = {'autosave': True,
@@ -30,8 +33,9 @@ standard_pref = {'autosave': True,
                  'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/')}
 
 def get_preset_list():
-    """returns a two list of available presets, once for devices, once for measurements.
-    (files with ".predev" or ".premeas" in appdata_path. If the directory does not exist, it is created."""
+    """returns a two list of available presets, once for devices, once
+    for measurements. (files with ".predev" or ".premeas" in
+    appdata_path. If the directory does not exist, it is created."""
     if isdir(preset_path):
         names = listdir(preset_path)
         if 'Backup' not in names:
@@ -49,10 +53,19 @@ def get_preset_list():
         return get_preset_list()
 
 def autosave_preset(preset:str, preset_data, devices=True):
-    """Saves the given preset and makes a backup of the former one in the backup-folder.
-    - preset: name of the preset to save
-    - preset_data: all the data contained in the preset (usually the __save_dict__ of the MainApp)
-    - devices: bool, whether to save it as .predev (if true) or .premeas (if false)"""
+    """Saves the given preset and makes a backup of the former one in
+    the backup-folder.
+
+    Parameters
+    ----------
+    preset : str
+        name of the preset to save
+    preset_data : dict
+        all the data contained in the preset
+        (usually the __save_dict__ of the MainApp)
+    devices : bool
+        whether to save it as .predev (if true) or .premeas (if false)
+    """
     if devices:
         preset_file = f'{preset}.predev'
     else:
@@ -63,7 +76,9 @@ def autosave_preset(preset:str, preset_data, devices=True):
 
 def save_preset(path:str, preset_data:dict):
     """Saves the given preset_data under the specified path.
-    If the path ends with '.predev', the following autosave_preset of the saved data will be called with devices=True, otherwise devices=False."""
+    If the path ends with '.predev', the following autosave_preset of
+    the saved data will be called with devices=True, otherwise
+    devices=False."""
     devs = False
     preset_name = path.split('/')[-1][:-8]
     if path.endswith('.predev'):
@@ -74,6 +89,7 @@ def save_preset(path:str, preset_data:dict):
     autosave_preset(preset_name, preset_data, devs)
 
 def save_dictionary(path:str, dictionary:dict):
+    """Saves the given `dictionary` as json to the given `path`."""
     save_dict = {}
     for key, val in dictionary.items():
         add_string = get_save_str(val)
@@ -83,7 +99,8 @@ def save_dictionary(path:str, dictionary:dict):
         json.dump(save_dict, file, indent=2)
 
 def make_backup(preset_file:str):
-    """Puts a copy of the given preset_file into the backup-folder of the preset. The current datetime is added to the filename."""
+    """Puts a copy of the given preset_file into the backup-folder of
+    the preset. The current datetime is added to the filename."""
     if preset_file.endswith('.predev'):
         backup_save_path = f'{backup_path}{preset_file[:-7]}_dev/'
     else:
@@ -95,9 +112,22 @@ def make_backup(preset_file:str):
     copyfile(f'{preset_path}{preset_file}', backup_name)
 
 def load_save_dict(string_dict:dict, object_dict:dict, update_missing_key=False, remove_extra_key=False):
-    """For all keys both given dictionaries have in common, the value of the object in object_dict will be updated to the corresponding value of the string in string_dict.
-    - string_dict: dictionary with strings that should become the new values.
-    - object_dict: dictionary with the objects that should be updated."""
+    """For all keys both given dictionaries have in common, the value of
+    the object in object_dict will be updated to the corresponding value
+    of the string in string_dict.
+
+    Parameters
+    ----------
+    string_dict : dict
+        dictionary with strings that should become the new values.
+    object_dict : dict
+        dictionary with the objects that should be updated.
+    update_missing_key : bool, default False
+        if True, keys that are in string_dict will be added to the
+        object_dict, even if they are not there beforehand
+    remove_extra_key : bool, default False
+        if a key is in object_dict but not in string_dict, it is removed
+    """
     for key in string_dict:
         if key in object_dict:
             obj = object_dict[key]
@@ -129,11 +159,13 @@ def load_save_dict(string_dict:dict, object_dict:dict, update_missing_key=False,
             object_dict.pop(key)
 
 def get_save_str(obj):
-    """Utility function to create the string with which to save the object-data.
+    """Utility function to create the string with which to save the
+    object-data.
     If the object has the attribute __save_dict__, it is the return value.
     Objects of the types specified in save_dict_skip return None.
     QComboBox and QLineEdit return their current text.
-    If None of the above, an object with the attribute __dict__ will return that, otherwise the string of obj is returned."""
+    If None of the above, an object with the attribute __dict__ will
+    return that, otherwise the string of obj is returned."""
     if hasattr(obj, '__save_dict__'):
         make_save_dict(obj)
         return obj.__save_dict__
@@ -171,8 +203,9 @@ def get_save_str(obj):
 
 def make_save_dict(obj):
     """Utility function to update the __save_dict__ of the given obj.
-    Goes through all the keys in __dict__ and calls get_save_str on the object.
-    Thus working recursively if an attribute of obj also has a __save_dict__"""
+    Goes through all the keys in __dict__ and calls get_save_str on the
+    object. Thus working recursively if an attribute of obj also has a
+    __save_dict__"""
     for key in obj.__dict__:
         if key == '__save_dict__':
             continue
@@ -181,6 +214,7 @@ def make_save_dict(obj):
             obj.__save_dict__.update({key: get_save_str(obj.__dict__[key])})
 
 def load_protocols_dict(string_dict, prot_dict):
+    """Specific function to load a protocol."""
     prot_dict.clear()
     for key in string_dict:
         prot_data = string_dict[key]
@@ -203,6 +237,7 @@ def load_protocols_dict(string_dict, prot_dict):
         prot_dict.update({key: prot})
 
 def load_devices_dict(string_dict, devices_dict):
+    """Specific function to load devices."""
     devices_dict.clear()
     for key in string_dict:
         dev_data = string_dict[key]
@@ -233,10 +268,16 @@ def load_devices_dict(string_dict, devices_dict):
 
 
 def get_most_recent_presets():
-    """Goes through all files in the preset_path and returns the newest device-preset and measurement-preset.
-    :returns
-        - pred: name of the newest device-preset, returns None, if none found
-        - prem: name of the neweset measurement-preset, returns None, if none found"""
+    """Goes through all files in the preset_path and returns the newest
+    device-preset and measurement-preset.
+
+    Returns
+    -------
+    pred : str
+        name of the newest device-preset, returns None, if none found
+    prem : str
+        name of the neweset measurement-preset, returns None, if none found
+    """
     predevs = []
     premeas = []
     for name in listdir(preset_path):
@@ -255,7 +296,9 @@ def get_most_recent_presets():
     return pred, prem
 
 def get_preferences():
-    """If a file 'preferences.json' exists in the appdata, its content will be loaded and returned, if no file exists, it will be created with an empty dictionary."""
+    """If a file 'preferences.json' exists in the appdata, its content
+    will be loaded and returned, if no file exists, it will be created
+    with an empty dictionary."""
     if 'preferences.json' not in os.listdir(appdata_path):
         with open(f'{appdata_path}/preferences.json', 'w') as file:
             json.dump(standard_pref, file, indent=2)
