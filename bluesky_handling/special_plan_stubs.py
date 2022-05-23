@@ -2,6 +2,9 @@ from ophyd import Device, Kind
 import bluesky.plan_stubs as bps
 
 def trigger_and_read_devices(devices, name='primary'):
+    """A wrapper for the plan stup `trigger_and_read` that implements
+    trigger/read for a device with several components by simply splitting
+    up the device and using a list of its components."""
     split_devices = []
     for dev in devices:
         if isinstance(dev, Device):
