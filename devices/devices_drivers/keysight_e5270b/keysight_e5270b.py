@@ -22,6 +22,10 @@ class subclass(device_class.Device):
         files = ['keysight_e5270b.db', 'keysight_e5270b.proto']
         req = ['prologixSup']
         super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'], directory='keysight_e5270b', ophyd_device=Keysight_E5270B, requirements=req, files=files, ophyd_class_name='Keysight_E5270B')
+        for i in range(1, 9):
+            key = f'active{i}'
+            if key not in self.config:
+                self.config[key] = False
 
     def get_config(self):
         config_dict = copy.deepcopy(self.config)
