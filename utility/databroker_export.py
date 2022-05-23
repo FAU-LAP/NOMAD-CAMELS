@@ -5,6 +5,8 @@ import h5py
 
 
 def recourse_entry_dict(entry, metadata):
+    """Recoursively makes the metadata to a dictionary."""
+    # TODO check if actually necessary
     for key, val in metadata.items():
         if isinstance(val, databroker.core.Start) or isinstance(val, databroker.core.Stop):
             val = dict(val)
@@ -24,6 +26,8 @@ def recourse_entry_dict(entry, metadata):
             entry.attrs[key] = val
 
 def broker_to_hdf5(runs, filename):
+    """Puts the given `runs` into `filename`, containing the run's
+    metadata and the dataset."""
     if not os.path.isdir(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
     if not isinstance(runs, list):
@@ -42,6 +46,7 @@ def broker_to_hdf5(runs, filename):
                     group[coord] = dataset[coord]
 
 def broker_to_dict(runs):
+    """Puts the runs into a dictionary."""
     dicts = []
     if not isinstance(runs, list):
         runs = [runs]
@@ -49,10 +54,6 @@ def broker_to_dict(runs):
         data = {}
         for stream in run:
             data = run[stream].read()
-            # for col in dataset:
-            #     data[col] = dataset[col]
-            # for coord in dataset.coords:
-            #     data[coord] = dataset[coord]
         rundict = {'metadata_start': dict(run.metadata['start']),
                    'metadata_stop': dict(run.metadata['stop']),
                    'data': data}

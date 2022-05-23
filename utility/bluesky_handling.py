@@ -7,11 +7,9 @@ from main_classes.protocol_class import Measurement_Protocol
 from utility import variables_handling
 
 standard_string = 'import numpy as np\n'
-# standard_string += 'from ophyd.signal import EpicsSignal, EpicsSignalRO\n'
 standard_string += 'from bluesky import RunEngine\n'
 standard_string += 'from bluesky.callbacks.best_effort import BestEffortCallback\n'
 standard_string += 'import bluesky.plan_stubs as bps\n'
-# standard_string += 'from bluesky.utils import install_kicker\n'
 standard_string += 'import databroker\n'
 standard_string += 'from bluesky_widgets.qt.threading import wait_for_workers_to_quit\n'
 standard_string += 'from PyQt5.QtWidgets import QApplication\n'
@@ -41,7 +39,26 @@ standard_nexus_dict = {'metadata_start/user': 'entry/operator',
                        'metadata_start/sample': 'entry/sample'}
 
 
-def build_protocol(protocol:Measurement_Protocol, file_path, save_path='test.h5', catalog='CATALOG_NAME', userdata=None, sampledata=None):
+def build_protocol(protocol:Measurement_Protocol, file_path,
+                   save_path='test.h5', catalog='CATALOG_NAME', userdata=None,
+                   sampledata=None):
+    """Creating the python file from a given `protocol`.
+
+    Parameters
+    ----------
+    protocol : Measurement_Protocol
+        The protocol that should be build
+    file_path : str, path
+        The path, where the python file should be put
+    save_path : str, default "test.h5"
+        Path, where the datafile of the protocol should be put
+    catalog : str, default "CATALOG_NAME"
+        Name of the databroker-catalog that should be used
+    userdata : dict, default None
+        Should contain information about the user
+    sampledata : dict, default None
+        Should contain information about the sample
+    """
     device_import_string = '\n'
     devices_string = '\n\tdevs = {}\n\tdevice_config = {}\n'
     variable_string = ''
@@ -107,7 +124,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path, save_path='test.h5'
         nexus_dict.update(standard_nexus_dict)
         standard_save_string += '\tdata = broker_to_dict(runs)\n'
         standard_save_string += f'\tnexus_mapper = {nexus_dict}\n'
-        # standard_save_string +=
+        # TODO finish this
     else:
         standard_save_string += f'\tbroker_to_hdf5(runs, "{save_path}")\n\n\n'
     if plotting:
@@ -121,11 +138,17 @@ def build_protocol(protocol:Measurement_Protocol, file_path, save_path='test.h5'
         file.write(protocol_string)
 
 def user_sample_string(userdata, sampledata):
+    """Returns the string adding userdata and sampledata to the md."""
     u_s_string = f'\tmd["user"] = {userdata}\n'
     u_s_string += f'\tmd["sample"] = {sampledata}\n'
     return u_s_string
 
-def run_protocol(protocol:Measurement_Protocol, file_path, sig_step=None, info_step=None):
+def run_protocol(protocol:Measurement_Protocol, file_path, sig_step=None,
+                 info_step=None):
+    """Runs the given `protocol` at `file_path`. If `sig_step` is
+    provided, the stdout will be written there. If `info_step` is
+    provided, it will update the completed-percentage with each starting
+    loopstep."""
     if sig_step is not None:
         sig_step.emit(0)
     total_time = 1
@@ -151,14 +174,6 @@ def run_protocol(protocol:Measurement_Protocol, file_path, sig_step=None, info_s
                 print(text)
             else:
                 info_step.emit(text)
-    # if info_step is not None:
-    #     info_step.emit('\n\n')
-    # for line in p.stderr.readlines():
-    #     text = line.decode().rstrip()
-    #     if info_step is None:
-    #         print(text)
-    #     else:
-    #         info_step.emit(text)
     if info_step is not None:
         info_step.emit('\n\n\n')
     if sig_step is not None:

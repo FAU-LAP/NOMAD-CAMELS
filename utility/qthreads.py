@@ -7,15 +7,22 @@ from utility import bluesky_handling
 
 class Make_Ioc(QThread):
     """Called from the MainApp.
-    It runs the steps from the make_ioc package to create a full-functioning IOC.
-
-    Arguments:
-        - ioc_name: The name of the IOC. When calling from the function in MainApp, it is the name of the device-preset.
-        - device-data: The data-dictionary for the devices (including settings etc.)"""
+    It runs the steps from the make_ioc package to create a
+    fully operational IOC."""
     sig_step = pyqtSignal(int)
     info_step = pyqtSignal(str)
 
     def __init__(self, ioc_name='Default', device_data=None):
+        """
+
+        Parameters
+        ----------
+        ioc_name : str, default "Default"
+            The name of the IOC. When calling from the function in
+            MainApp, it is the name of the device-preset.
+        device_data : dict, default None
+            The data-dictionary for the devices (including settings etc.)
+        """
         if device_data is None:
             device_data = {}
         super(Make_Ioc, self).__init__()
@@ -36,6 +43,7 @@ class Make_Ioc(QThread):
 
 
 class Run_Protocol(QThread):
+    """Runs the given protocol with a file at the given path."""
     sig_step = pyqtSignal(int)
     info_step = pyqtSignal(str)
 
@@ -45,9 +53,11 @@ class Run_Protocol(QThread):
         self.path = path
 
     def run(self) -> None:
-        bluesky_handling.run_protocol(self.protocol, self.path, self.sig_step, self.info_step)
+        bluesky_handling.run_protocol(self.protocol, self.path, self.sig_step,
+                                      self.info_step)
 
 class Run_IOC(QThread):
+    """Runs the given IOC in the background."""
     info_step = pyqtSignal(str)
 
     def __init__(self, ioc_name='Default'):
@@ -55,7 +65,9 @@ class Run_IOC(QThread):
         self.ioc_name = ioc_name
 
     def run(self):
-        p = subprocess.Popen(['wsl', './EPICS_handling/run_ioc.cmd', self.ioc_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1)
+        p = subprocess.Popen(['wsl', './EPICS_handling/run_ioc.cmd', self.ioc_name],
+                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                             bufsize=1)
         for line in iter(p.stdout.readline, b''):
             text = line.decode().rstrip()
             self.info_step.emit(text)

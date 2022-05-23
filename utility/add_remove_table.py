@@ -1,5 +1,7 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton, QTableView, QLabel, QComboBox, QMenu, QDialog, QDialogButtonBox, QMessageBox
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont, QBrush, QKeyEvent
+from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton, QTableView,\
+    QLabel, QComboBox, QMenu, QDialog, QDialogButtonBox, QMessageBox
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont, QBrush,\
+    QKeyEvent
 from PyQt5.QtCore import Qt, pyqtSignal
 
 import numpy as np
@@ -9,9 +11,65 @@ from utility import variables_handling
 
 
 class AddRemoveTable(QWidget):
+    """This widget provides a QTableView and two buttons for adding /
+    removing rows / columns. """
     sizechange = pyqtSignal()
 
-    def __init__(self, addLabel='+', removeLabel='-', horizontal=True, editables=None, checkables=(), headerLabels=None, orderBy=None, parent=None, tableData=None, title='', comboBoxes=None, subtables=None, growsize=True, checkstrings=None, askdelete=False):
+    def __init__(self, addLabel='+', removeLabel='-', horizontal=True,
+                 editables=None, checkables=(), headerLabels=None, orderBy=None,
+                 parent=None, tableData=None, title='', comboBoxes=None,
+                 subtables=None, growsize=True, checkstrings=None,
+                 askdelete=False):
+        """
+
+        Parameters
+        ----------
+        addLabel : str, default "+"
+            The label of the add-button
+        removeLabel : str, default "-"
+            The label of the remove-button
+        horizontal : bool, default True
+            True if the header is horizontal (thus the data in columns),
+            False if it is the other way round
+        editables : int, list of int, default None
+            Positions of the columns (if horizontal) that are editable,
+            If None, all are
+        checkables : int, list of int, default None
+            Positions of the columns (if horizontal) that have a
+            Checkbox, if None, none have
+        headerLabels : list of str, default None
+            The labels of the header, they are also used to provide the
+            format of the data returned by the AddRemoveTable
+        orderBy : None
+            not used (yet)
+        parent : QWidget
+            Parent of the Widget
+        tableData : dict, pd.DataFrame, list, default None
+            The data that should be put into the table. Should have the
+            format of headerLabels. If it is a dict, the format should
+            best look like {"column1": [data1, data2, ...], ...}
+            A list should be used, if the table is a subtable inside
+            another one
+        title : str, default ""
+            adds a QLabel on the top-right with `title`. If an empty
+            string, no label is added
+        comboBoxes : dict of lists of str
+            the keys of the dict specify in which columns (same name), a
+            comboBox should be used, the corresponding value gives the
+            possible choices of the comboBox
+        subtables : dict of lists
+            the keys of the dict specify in which columns (same name),
+            an additional AddRemoveTable should be contained
+        growsize : bool, default True
+            Whether to increase the MaximumSize of the Widget when more
+            data is contained
+        checkstrings : int, list of int, default None
+            Positions of the columns (if horizontal) that are to be
+            checked for validity, if None, none are
+        askdelete : bool, default False
+            Whether to have a PopUp make sure, that the user wants to
+            delete the selected column
+        """
         super().__init__(parent)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
@@ -44,7 +102,7 @@ class AddRemoveTable(QWidget):
         self.tableData = tableData
         if editables is None:
             editables = range(len(headerLabels))
-        self.editables = editables if not type(editables) is int else [editables]
+        self.editables = editables if not isinstance(editables, int) else [editables]
 
         self.addButton = QPushButton(addLabel)
         self.removeButton = QPushButton(removeLabel)
@@ -100,6 +158,7 @@ class AddRemoveTable(QWidget):
             self.setMaximumHeight(100)
 
     def load_table_data(self):
+        """Putting the `tableData` into the table."""
         if self.horizontal:
             while self.table_model.rowCount():
                 self.table_model.removeRow(0)
@@ -111,14 +170,21 @@ class AddRemoveTable(QWidget):
             self.add(dat)
 
     def context_menu(self, pos):
+        """Generates the right-click-menu.
+        There are entries for inserting (replace) and appending the
+        variables, channels, functions and operators."""
         menu = QMenu()
-        (channel_menu, variable_menu, operator_menu, function_menu), _ = variables_handling.get_menus(self.insert_variable)
+        # putting the returned actions somewhere is necessary, otherwise
+        # there will be none inside the single menus
+        (channel_menu, variable_menu, operator_menu, function_menu), _ =\
+            variables_handling.get_menus(self.insert_variable)
         menu.addMenu(variable_menu)
         menu.addMenu(channel_menu)
         menu.addMenu(function_menu)
         menu.addMenu(operator_menu)
         menu.addSeparator()
-        (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ = variables_handling.get_menus(self.append_variable, 'Append')
+        (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ =\
+            variables_handling.get_menus(self.append_variable, 'Append')
         menu.addMenu(variable_menu2)
         menu.addMenu(channel_menu2)
         menu.addMenu(function_menu2)
@@ -126,18 +192,22 @@ class AddRemoveTable(QWidget):
         menu.exec_(self.mapToGlobal(pos))
 
     def append_variable(self, val):
+        """Used for the single actions of the context menu."""
         ind = self.table.selectedIndexes()[0]
         item = self.table_model.itemFromIndex(ind)
         text = item.text()
         item.setText(f'{text}{val}')
 
     def insert_variable(self, val):
+        """Used for the single actions of the context menu."""
         ind = self.table.selectedIndexes()[0]
         item = self.table_model.itemFromIndex(ind)
         text = item.text()
         item.setText(f'{val}')
 
     def check_string(self, item):
+        """If an element is part of the checkstrings, the item becomes
+        green if valid, red otherwise and white if empty."""
         ind = item.index()
         pos = ind.column() if self.horizontal else ind.row()
         if pos not in self.checkstrings or item.text() == '':
@@ -149,6 +219,8 @@ class AddRemoveTable(QWidget):
         self.table_model.setData(self.table_model.indexFromItem(item), QBrush(color), Qt.BackgroundRole)
 
     def add(self, vals=None):
+        """Add the `vals` to the table as a new line. Checks are done
+        for each part, whether there should be a comboBox etc."""
         if vals is None:
             vals = [''] * len(self.headerLabels) if len(self.headerLabels) else ''
         items = []
@@ -171,7 +243,9 @@ class AddRemoveTable(QWidget):
                 if type(vals[i]) is not list:
                     vals[i] = []
                 checksting = 0 if i in self.checkstrings else None
-                table = AddRemoveTable(horizontal=self.horizontal, headerLabels=[], tableData=vals[i], growsize=False, checkstrings=checksting)
+                table = AddRemoveTable(horizontal=self.horizontal,
+                                       headerLabels=[], tableData=vals[i],
+                                       growsize=False, checkstrings=checksting)
                 self.tables.append(table)
                 table_indexes.append(i)
                 tables.append(table)
@@ -214,7 +288,9 @@ class AddRemoveTable(QWidget):
             raise Exception('You need to select a row first!')
         if self.askdelete:
             entry = self.table_model.itemFromIndex(index).text()
-            remove_dialog = QMessageBox.question(self, 'Remove entry?', f'Are you sure you want to remove the entry {entry}?', QMessageBox.Yes | QMessageBox.No)
+            remove_dialog = QMessageBox.question(self, 'Remove entry?',
+                                                 f'Are you sure you want to remove the entry {entry}?',
+                                                 QMessageBox.Yes | QMessageBox.No)
             if remove_dialog != QMessageBox.Yes:
                 return
         row = index.row()
@@ -227,6 +303,8 @@ class AddRemoveTable(QWidget):
         self.update_max_hight()
 
     def update_table_data(self):
+        """Reading all the data of the table, putting it as dict into
+        `self.tableData` and returning it."""
         self.tableData = {}
         for i, lab in enumerate(self.headerLabels):
             vals = []
@@ -280,7 +358,12 @@ class AddRemoveTable(QWidget):
 
 
 class AddRemoveDialoge(QDialog):
-    def __init__(self, addLabel='+', removeLabel='-', horizontal=True, editables=None, checkables=(), headerLabels=None, orderBy=None, parent=None, tableData=None, title='', comboBoxes=None, subtables=None, checkstrings=None, askdelete=False):
+    """A QDialog providing an AddRemoveTable."""
+
+    def __init__(self, addLabel='+', removeLabel='-', horizontal=True,
+                 editables=None, checkables=(), headerLabels=None, orderBy=None,
+                 parent=None, tableData=None, title='', comboBoxes=None,
+                 subtables=None, checkstrings=None, askdelete=False):
         super().__init__(parent)
         self.buttonBox = QDialogButtonBox(self)
         self.buttonBox.setOrientation(Qt.Horizontal)
@@ -305,7 +388,8 @@ class AddRemoveDialoge(QDialog):
         return self.table.update_table_data()
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
-        """Overwrites the keyPressEvent of the QDialog so that it does not close when pressing Enter/Return."""
+        """Overwrites the keyPressEvent of the QDialog so that it does
+        not close when pressing Enter/Return."""
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)

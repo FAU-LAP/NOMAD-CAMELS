@@ -1,12 +1,21 @@
 def getItemIndex(item_model, data:str, starts_with=False):
-    """Iteration over the item_model to return the index of an item with given data.
+    """Iteration over the item_model to return the index of an item with
+    given data.
 
-    :argument
-        - data: String, the data which the looked-for item has
-        - starts_with: also return an item, if it only starts with the searched data
+    Parameters
+    ----------
+    item_model : QStandardItemModel
+        the searched item_model
+    data : str
+        the data which the looked-for item has
+    starts_with : bool, default False
+        also return an item, if it only starts with the searched data
 
-    :return
-        - ind: QModelIndex of the item with the corresponding data"""
+    Returns
+    -------
+    ind : QModelIndex
+        index of the item with the corresponding data
+    """
     rows = item_model.rowCount()
     cols = item_model.columnCount()
     for r in range(rows):
@@ -25,16 +34,26 @@ def getItemIndex(item_model, data:str, starts_with=False):
 
 
 def iterItem(item, data, startWith=False):
-    """Iteration over the children of the given item to return the index of an item with given data. Called by getItemIndex.
+    """Iteration over the children of the given item to return the index
+    of an item with given data. Called by getItemIndex.
     Runs recursively, if the children-items also have children.
 
-    :argument
-        - item: item whose children are iterated over
-        - data: String, the data which the looked-for item has
-        - starts_with: also return an item, if it only starts with the searched data
+    Parameters
+    ----------
+    item : QStandardItem
+        item whose children are iterated over
+    data : str
+        the data which the looked-for item has
+    startWith : bool, default False
+        also return an item, if it only starts with the searched data
 
-    :return
-        - ind: QModelIndex of the item with the corresponding data"""
+    Returns
+    -------
+    found : bool
+        whether the searched item could be found
+    ind : QModelIndex
+        index of the item with the corresponding data, None if not found
+    """
     rows = item.rowCount()
     cols = item.columnCount()
     found = False
