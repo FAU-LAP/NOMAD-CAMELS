@@ -275,14 +275,21 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0" colspan="2">
+               <item row="3" column="0" colspan="3">
                 <widget class="QTextEdit" name="textEdit_console_output">
                  <property name="textInteractionFlags">
                   <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="2" column="0">
+                <widget class="QPushButton" name="pushButton_show_console_output">
+                 <property name="text">
+                  <string>Show console output</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
                 <widget class="QProgressBar" name="progressBar_devices">
                  <property name="enabled">
                   <bool>true</bool>
@@ -292,14 +299,7 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
-                <widget class="QPushButton" name="pushButton_show_console_output">
-                 <property name="text">
-                  <string>Show console output</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
+               <item row="1" column="0">
                 <widget class="QPushButton" name="pushButton_run_ioc">
                  <property name="text">
                   <string>Run IOC</string>

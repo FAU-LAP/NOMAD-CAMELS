@@ -85,7 +85,14 @@ class Loop_Step:
 
 class Loop_Step_Container(Loop_Step):
     """Parent Class for loop_steps that should contain further steps
-    (like e.g. a for-loop)."""
+    (like e.g. a for-loop).
+
+    Attributes
+    ----------
+    children : list of Loop_Step
+        A list of the children inside this step (in the order, they are
+        to be executed)
+    """
     def __init__(self, name='', children=None, parent_step=None, **kwargs):
         super().__init__(name, parent_step=parent_step, **kwargs)
         self.step_type = 'Container'
@@ -116,28 +123,36 @@ class Loop_Step_Container(Loop_Step):
         self.children.remove(child)
 
     def get_protocol_string(self, n_tabs=1):
+        """Returns the string that is written into the protocol-file. To
+        make use of the time_weight and status bar, it should start with
+        printing, that the loop_step starts.
+        Here it is overwritten to include the strings of the children."""
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += self.get_children_strings(n_tabs+1)
         self.update_time_weight()
         return protocol_string
 
     def update_time_weight(self):
+        """The time_weight of the children is included."""
         self.time_weight = 1
         for child in self.children:
             self.time_weight += child.time_weight
 
 
     def get_children_strings(self, n_tabs=1):
+        """Returns the protocol_strings of all the children."""
         child_string = ''
         for child in self.children:
             child_string += child.get_protocol_string(n_tabs)
         return child_string
 
     def update_variables(self):
+        """Also updates the variables of the children."""
         for child in self.children:
             child.update_variables()
 
     def update_used_devices(self):
+        """Includes the used devices of the children."""
         self.used_devices = []
         for child in self.children:
             child.update_used_devices()
