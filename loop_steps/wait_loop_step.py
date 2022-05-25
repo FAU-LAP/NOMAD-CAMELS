@@ -4,14 +4,22 @@ from main_classes.loop_step import Loop_Step_Config, Loop_Step
 from utility.variable_tool_tip_box import Variable_Box
 
 class Wait_Loop_Step(Loop_Step):
+    """A loopstep to simply wait some defined time.
+
+    Attributes
+    ----------
+    wait_time : float
+        The time (in seconds) for how long to wait.
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, **kwargs)
         self.step_type = 'Wait'
         if step_info is None:
             step_info = {}
-        self.wait_time = step_info['wait_time'] if 'wait_time' in step_info else 0
+        self.wait_time = step_info['wait_time'] if 'wait_time' in step_info else 0.0
 
     def get_protocol_string(self, n_tabs=1):
+        """The protocol just calls `bps.wait(`wait_time`)`."""
         tabs = '\t' * n_tabs
         protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
         protocol_string += f'{tabs}yield from bps.sleep({self.wait_time})\n'
@@ -19,6 +27,7 @@ class Wait_Loop_Step(Loop_Step):
 
 
 class Wait_Loop_Step_Config(Loop_Step_Config):
+    """The configuration just provides a line to enter the time to wait."""
     def __init__(self, loop_step:Wait_Loop_Step, parent=None):
         super().__init__(parent, loop_step)
         self.sub_widget = Wait_Loop_Step_Config_Sub(loop_step, self)
@@ -26,6 +35,7 @@ class Wait_Loop_Step_Config(Loop_Step_Config):
 
 
 class Wait_Loop_Step_Config_Sub(QWidget):
+    """The QLineEdit and labels to make everything clear are provided."""
     def __init__(self, loop_step:Wait_Loop_Step, parent=None):
         super().__init__(parent)
         self.loop_step = loop_step

@@ -8,7 +8,18 @@ from utility import variables_handling
 
 
 class Read_Channels(Loop_Step):
-    """This step represents the bluesky plan stub `trigger_and_read`."""
+    """This step represents the bluesky plan stub `trigger_and_read`.
+
+    Attributes
+    ----------
+    read_all : bool
+        whether to simply read all available channels
+    channel_dict : dict
+        the dictionary of all channels and whether to read them. It also
+        provides "use set" for using the set-value without reading, but
+        that is not supported. The shape should look like:
+        {channel: {'read': True, 'use set': False}}
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, **kwargs)
         self.step_type = 'Read Channels'
@@ -45,10 +56,7 @@ class Read_Channels(Loop_Step):
         bps.trigger_and_read is called on these channels."""
         tabs = '\t' * n_tabs
         protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
-        devices_dict_channels = {}
-        devices_dict_use_set = {}
         protocol_string += f'{tabs}channels = ['
-        n = len(self.channel_dict)
         inserted = False
         for channel, channel_data in self.channel_dict.items():
             if channel not in variables_handling.channels:
