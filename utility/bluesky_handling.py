@@ -34,9 +34,19 @@ standard_plot_string += '\t\timport qdarkstyle\n'
 standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())\n'
 standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet(qt_api="pyqt5"))\n'
 
-standard_nexus_dict = {'metadata_start/user': 'entry/operator',
-                       'metadata_start/time': 'entry/start_time',
-                       'metadata_start/sample': 'entry/sample'}
+standard_nexus_dict = {'/ENTRY[entry]/operator/address': 'metadata_start/user/Address (affiliation)',
+                       '/ENTRY[entry]/operator/affiliation': 'metadata_start/user/Affiliation',
+                       '/ENTRY[entry]/operator/email': 'metadata_start/user/E-Mail',
+                       '/ENTRY[entry]/operator/name': 'metadata_start/user/Name',
+                       '/ENTRY[entry]/operator/orcid': 'metadata_start/user/ORCID',
+                       '/ENTRY[entry]/operator/telephone_number': 'metadata_start/user/Phone',
+                       '/ENTRY[entry]/start_time': 'metadata_start/time',
+                       '/ENTRY[entry]/SAMPLE[sample]/data_identifier': 'metadata_start/sample/Identifier',
+                       '/ENTRY[entry]/SAMPLE[sample]/sample_name': 'metadata_start/sample/Name',
+                       '/ENTRY[entry]/SAMPLE[sample]/sample_history': 'metadata_start/sample/Preparation-Info',
+                       "/ENTRY[entry]/PROCESS[process]/program": 'metadata_start/program',
+                       "/ENTRY[entry]/PROCESS[process]/version": 'metadata_start/version',
+                       "/ENTRY[entry]/SAMPLE[sample]/measured_data": 'data'}
 
 
 def build_protocol(protocol:Measurement_Protocol, file_path,
@@ -91,6 +101,12 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         additional_string_devices += device.get_additional_string()
     devices_string += '\tprint("devices connected")\n'
     devices_string += '\tmd = {"device_config": device_config}\n'
+    devices_string += '\tmd.update({"program": "CAMELS", "version": "0.1"})\n'
+    if protocol.use_nexus:
+        md_dict = {}
+        for i, name in enumerate(protocol.metadata['Name']):
+            md_dict[name] = protocol.metadata['Value'][i]
+        devices_string += f'\tmd.update({md_dict})\n'
     plot_string = '\n'
     plotting = False
     for i, plot in pd.DataFrame(protocol.plots).iterrows():
@@ -157,7 +173,8 @@ def run_protocol(protocol:Measurement_Protocol, file_path, sig_step=None,
     args = []
     if variables_handling.dark_mode:
         args.append('--darkmode')
-    p = subprocess.Popen(['python', file_path] + args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1)
+    p = subprocess.Popen(['python', file_path] + args, stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT, bufsize=1)
     i = 1
     for line in iter(p.stdout.readline, b''):
         text = line.decode().rstrip()

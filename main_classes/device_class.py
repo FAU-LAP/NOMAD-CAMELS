@@ -85,6 +85,7 @@ class Device:
         self.ioc_settings = {}  # TODO usage thereof, make it distinguish more clear
         self.settings = {}
         self.config = {}
+        self.passive_config = {}
         self.channels = {}
         self.ophyd_class_name = ophyd_class_name
         if ophyd_device is None:
@@ -104,8 +105,14 @@ class Device:
         for comp in ophyd_instance.walk_components():
             name = comp.item.attr
             cls = comp.item.cls
-            if name in ophyd_instance.configuration_attrs and check_output(cls):
-                self.config.update({f'{name}': 0})
+            if name in ophyd_instance.configuration_attrs:
+                if check_output(cls):
+                    self.config.update({f'{name}': 0})
+                else:
+                    self.passive_config.update({f'{name}': 0})
+
+    def get_passive_config(self):
+        return self.passive_config
 
     def get_config(self):
         """returns self.config, should be overwritten for special

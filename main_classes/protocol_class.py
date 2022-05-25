@@ -14,7 +14,8 @@ class Measurement_Protocol:
     """Class for the measurement protocols. It mainly contains
     loop_steps and plots."""
     def __init__(self, loop_steps=None, plots=None, channels=None, name='',
-                 channel_metadata=None, metadata=None, use_nexus=False):
+                 channel_metadata=None, metadata=None, use_nexus=False,
+                 config_metadata=None):
         if plots is None:
             plots = {}
         if loop_steps is None:
@@ -36,6 +37,7 @@ class Measurement_Protocol:
         self.channels = channels
         self.name = name
         self.channel_metadata = channel_metadata
+        self.config_metadata = config_metadata
         self.metadata = metadata
         self.use_nexus = use_nexus
 
@@ -50,9 +52,21 @@ class Measurement_Protocol:
         NeXus-file."""
         paths = {}
         for i, name in enumerate(self.metadata['Name']):
-            paths[name] = self.metadata['NeXus-path'][i]
+            paths[self.metadata['NeXus-path'][i]] = f'metadata_start/{name}'
         for i, name in enumerate(self.channel_metadata['Channel']):
-            paths[f'data/{name}'] = self.channel_metadata['NeXus-path'][i]
+            paths[self.channel_metadata['NeXus-path'][i]] = f'data/{name}'
+        for i, name in enumerate(self.config_metadata['Configuration']):
+            path = ''
+            for dev in variables_handling.devices:
+                if dev in name:
+                    rn = name.split(dev)[1][1:]
+                    device = variables_handling.devices[dev]
+                    if rn in device.get_config() or rn in device.get_settings() or rn in device.get_passive_config():
+                        path = f'metadata_start/device_config/{dev}/{name}'
+                        break
+            if not path:
+                raise Exception(f"Cannot find {name} in any configuration!")
+            paths[self.config_metadata['NeXus-path'][i]] = path
         return paths
 
     def add_loop_step(self, loop_step, position=-1, parent_step_name=None, model=None):
@@ -216,19 +230,37 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
                                          checkstrings=[1,2])
         self.layout().addWidget(self.plot_table, 1, 0, 1, 4)
 
-        cols = ['Channel', 'NeXus-path', 'Description']
+        cols = ['Channel', 'NeXus-path']
         comboBoxes = {'Channel': list(variables_handling.channels.keys())}
         self.table_channel_NX_paths = AddRemoveTable(headerLabels=cols,
-                                                     title='Channel-Nexus-Path',
+                                                     title='Channel-NeXus-Path',
                                                      comboBoxes=comboBoxes,
                                                      tableData=self.protocol.channel_metadata)
         self.layout().addWidget(self.table_channel_NX_paths, 6, 0, 1, 4)
 
-        cols = ['Name', 'NeXus-path', 'Description']
+        cols = ['Configuration', 'NeXus-path']
+        configs = []
+        for dev in variables_handling.devices:
+            device = variables_handling.devices[dev]
+            allconf = []
+            allconf += list(device.get_passive_config().keys())
+            allconf += list(device.get_config().keys())
+            allconf += list(device.get_settings().keys())
+            allconf += list(device.get_ioc_settings().keys())
+            for key in allconf:
+                configs.append(f'{device.name}_{key}')
+        comboBoxes = {'Configuration': configs}
+        self.table_config_NX_paths = AddRemoveTable(headerLabels=cols,
+                                                    title='Config-NeXus-Path',
+                                                    comboBoxes=comboBoxes,
+                                                    tableData=self.protocol.config_metadata)
+        self.layout().addWidget(self.table_config_NX_paths, 7, 0, 1, 4)
+
+        cols = ['Name', 'NeXus-path', 'Value']
         self.table_metadata = AddRemoveTable(headerLabels=cols,
-                                             title='Nexus-Metadata',
+                                             title='NeXus-Metadata',
                                              tableData=self.protocol.metadata)
-        self.layout().addWidget(self.table_metadata, 7, 0, 1, 4)
+        self.layout().addWidget(self.table_metadata, 8, 0, 1, 4)
 
         self.checkBox_NeXus = QCheckBox('Use NeXus-output')
         self.checkBox_NeXus.clicked.connect(self.enable_nexus)
@@ -288,6 +320,7 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         self.protocol.plots = self.plot_table.tableData
         self.protocol.metadata = self.table_metadata.update_table_data()
         self.protocol.channel_metadata = self.table_channel_NX_paths.update_table_data()
+        self.protocol.config_metadata = self.table_config_NX_paths.update_table_data()
         self.update_variables()
         self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
 

@@ -113,19 +113,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_move_step_out.clicked.connect(lambda state: self.move_loop_step(0,-1))
         self.treeView_protocol_sequence.clicked.connect(lambda x: self.tree_click_sequence(False))
         self.add_actions = []
-        # for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
-        for stp in sorted(make_step_of_type.step_type_config.keys(), key=lambda x: x.lower()):
-            action = QAction(stp)
-            action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
-            self.add_actions.append(action)
-        device_actions = []
-        for stp in make_step_of_type.get_device_steps():
-            action = QAction(stp)
-            action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
-            device_actions.append(action)
-        self.toolButton_add_step.addActions(self.add_actions)
-        if device_actions:
-            self.toolButton_add_step.addActions(device_actions)
+        self.device_actions = []
         self.toolButton_add_step.setPopupMode(QToolButton.InstantPopup)
         self.pushButton_remove_step.clicked.connect(lambda x: self.remove_loop_step(True))
         self.pushButton_show_protocol_settings.clicked.connect(lambda x: self.tree_click_sequence(True))
@@ -151,6 +139,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.device_config_widget = QWidget()
         self.comboBox_device_preset.currentTextChanged.connect(self.change_device_preset)
         self.comboBox_measurement_preset.currentTextChanged.connect(self.change_measurement_preset)
+        self.update_add_step_actions()
 
         # Undo / Redo
         self.inside_function = False
@@ -281,7 +270,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.active_sample = self.comboBox_sample.currentText()
         headers = ['Name', 'Identifier', 'Preparation-Info']
         tableData = pd.DataFrame.from_dict(self.sampledata, 'index')
-        dialog = add_remove_table.AddRemoveDialoge(headerLabels=headers, parent=self, title='User-Information', askdelete=True, tableData=tableData)
+        dialog = add_remove_table.AddRemoveDialoge(headerLabels=headers, parent=self, title='Sample-Information', askdelete=True, tableData=tableData)
         if dialog.exec_():
             # changing the returned dict to dataframe and back to have a
             # dictionary that is formatted as {name: {'Name': name,...}, ...}
@@ -599,6 +588,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.build_devices_tree()
                 self.update_channels()
                 self.ioc_config_changed()
+        self.update_add_step_actions()
 
     def add_device(self):
         """Opens the dialog to add a device. The returned values of the
@@ -611,6 +601,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_channels()
         self.pushButton_make_EPICS_environment.setEnabled(True)
         self.ioc_config_changed()
+        self.update_add_step_actions()
 
     def tree_click(self):
         """Called when clicking the treeView_devices. If the selected
@@ -732,6 +723,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # --------------------------------------------------
     # measurement methods
     # --------------------------------------------------
+    def update_add_step_actions(self):
+        """Called when the devices change, updating the possible
+        loopsteps to include new device steps."""
+        self.add_actions.clear()
+        self.device_actions.clear()
+        for stp in sorted(make_step_of_type.step_type_config.keys(), key=lambda x: x.lower()):
+            action = QAction(stp)
+            action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+            self.add_actions.append(action)
+        for stp in make_step_of_type.get_device_steps():
+            action = QAction(stp)
+            action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+            self.device_actions.append(action)
+        self.toolButton_add_step.addActions(self.add_actions)
+        if self.device_actions:
+            self.toolButton_add_step.addActions(self.device_actions)
+
+
     def update_protocol_output(self, info):
         """Appens the given `info` to the console_output_meas."""
         self.textEdit_console_output_meas.append(info)

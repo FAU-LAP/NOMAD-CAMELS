@@ -3,15 +3,15 @@ from loop_steps import for_while_loops, read_channels, set_channels, wait_loop_s
 
 from utility import variables_handling
 
-step_type_config = {'Default': [Loop_Step, Loop_Step_Config],
-                    'Container': [Loop_Step_Container, Loop_Step_Config],
-                    'For Loop': [for_while_loops.For_Loop_Step, for_while_loops.For_Loop_Step_Config],
+step_type_config = {'For Loop': [for_while_loops.For_Loop_Step, for_while_loops.For_Loop_Step_Config],
                     'Read Channels': [read_channels.Read_Channels, read_channels.Read_Channels_Config],
                     'Set Channels': [set_channels.Set_Channels, set_channels.Set_Channels_Config],
                     'While Loop': [for_while_loops.While_Loop_Step, for_while_loops.While_Loop_Step_Config],
                     'Wait': [wait_loop_step.Wait_Loop_Step, wait_loop_step.Wait_Loop_Step_Config]}
 
 def get_device_steps():
+    """Goes through all the devices and checks, whether they provide
+    their own types of loop-steps."""
     device_steps = {}
     for devname, device in sorted(variables_handling.devices.items(), key=lambda x: x[0].lower()):
         device_steps.update(device.get_special_steps())
@@ -19,6 +19,9 @@ def get_device_steps():
 
 
 def make_step(step_type, step_info=None, children=None):
+    """Checks whether the given `step_type` is supported, if yes, then a
+    step of that type with the given info and children will be created,
+    otherwise a new step is made."""
     dev_steps = get_device_steps()
     if step_type in step_type_config:
         if step_info is None:

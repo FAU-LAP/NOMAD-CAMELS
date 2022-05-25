@@ -232,6 +232,8 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.metadata = prot_data['metadata']
         if 'channel_metadata' in prot_data:
             prot.channel_metadata = prot_data['channel_metadata']
+        if 'config_metadata' in prot_data:
+            prot.config_metadata = prot_data['config_metadata']
         if 'use_nexus' in prot_data:
             prot.use_nexus = prot_data['use_nexus']
         prot_dict.update({key: prot})
