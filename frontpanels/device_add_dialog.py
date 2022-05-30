@@ -120,7 +120,9 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
         if dat.startswith('inst:'):
             dat = dat[5:]
         if dat.startswith('act:'):
-            remove_dialog = QMessageBox.question(self, 'Remove device?', f'Are you sure you want to remove the device {dat}?', QMessageBox.Yes | QMessageBox.No)
+            remove_dialog = QMessageBox.question(self, 'Remove device?',
+                                                 f'Are you sure you want to remove the device {dat}?',
+                                                 QMessageBox.Yes | QMessageBox.No)
             if remove_dialog == QMessageBox.Yes:
                 self.active_devices_dict.pop(dat[4:])
         elif dat in self.active_devices_dict:
@@ -129,7 +131,7 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
                 name = f'{dat}_{i}'
                 if name not in self.active_devices_dict:
                     self.active_devices_dict.update({name: self.device_dict[dat]})
-                    self.active_devices_dict[name].update({'settings': {}})
+                    self.active_devices_dict[name].custom_name = name
                     break
                 i += 1
         else:

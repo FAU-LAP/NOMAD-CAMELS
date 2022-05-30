@@ -598,9 +598,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if add_dialog.exec_():
             self.active_devices_dict = add_dialog.active_devices_dict
         self.build_devices_tree()
-        self.update_channels()
         self.pushButton_make_EPICS_environment.setEnabled(True)
         self.ioc_config_changed()
+        self.update_channels()
         self.update_add_step_actions()
 
     def tree_click(self):
@@ -610,11 +610,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         index = self.treeView_devices.selectedIndexes()[0]
         dat = self.item_model_devices.itemFromIndex(index).data()
         if dat is not None and not dat.startswith('tag:'):
-            py_package = importlib.import_module(f'{dat}.{dat}')
+            dev_type = self.active_devices_dict[dat].name
+            py_package = importlib.import_module(f'{dev_type}.{dev_type}')
             self.get_device_config()
-            self.device_config_widget = py_package.subclass_config(self, dat, self.active_devices_dict[dat].settings, self.active_devices_dict[dat].config)
+            self.device_config_widget = py_package.subclass_config(self,
+                                                                   dat,
+                                                                   self.active_devices_dict[dat].settings,
+                                                                   self.active_devices_dict[dat].config)
             self.devices_splitter.replaceWidget(2, self.device_config_widget)
             self.device_config_widget.ioc_change.connect(self.ioc_config_changed)
+            self.device_config_widget.name_change.connect(self.name_config_changed)
+
+    def name_config_changed(self, new_name):
+        if hasattr(self.device_config_widget, 'data'):
+            if self.device_config_widget.data in self.active_devices_dict:
+                if new_name not in self.active_devices_dict:
+                    old_name = self.device_config_widget.data
+                    self.active_devices_dict[new_name] = self.active_devices_dict[old_name]
+                    self.active_devices_dict.pop(old_name)
+                    self.active_devices_dict[new_name].custom_name = new_name
+                    self.update_channels()
+                    self.build_devices_tree()
+                    self.device_config_widget.data = new_name
+
+
+
 
     def ioc_config_changed(self):
         """Called when a value of device-config has changed that is part

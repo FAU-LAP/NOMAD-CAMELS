@@ -77,6 +77,7 @@ class Device:
         self.__save_dict__ = {}  # TODO use or remove
         self.connection = Device_Connection()  # TODO use or remove
         self.name = name
+        self.custom_name = name
         self.virtual = virtual
         self.tags = [] if tags is None else tags
         self.files = [] if files is None else files
@@ -91,21 +92,17 @@ class Device:
         if ophyd_device is None:
             ophyd_device = OphydDevice
         # self.ophyd_device = ophyd_device
-        ophyd_instance = ophyd_device(name='test')
-        outputs = get_outputs(ophyd_instance)
-        channels = {}
-        if not channels:
-            for chan in get_channels(ophyd_instance):
-                is_out = chan in outputs
-                channel = Measurement_Channel(name=f'{self.name}.{chan}',
-                                              output=is_out,device=self.name)
-                self.channels.update({f'{self.name}_{chan}': channel})
-        else:
-            self.channels = channels
-        for comp in ophyd_instance.walk_components():
+        self.ophyd_instance = ophyd_device(name='test')
+        outputs = get_outputs(self.ophyd_instance)
+        for chan in get_channels(self.ophyd_instance):
+            is_out = chan in outputs
+            channel = Measurement_Channel(name=f'{self.custom_name}.{chan}',
+                                          output=is_out,device=self.custom_name)
+            self.channels.update({f'{self.custom_name}_{chan}': channel})
+        for comp in self.ophyd_instance.walk_components():
             name = comp.item.attr
             cls = comp.item.cls
-            if name in ophyd_instance.configuration_attrs:
+            if name in self.ophyd_instance.configuration_attrs:
                 if check_output(cls):
                     self.config.update({f'{name}': 0})
                 else:
@@ -132,6 +129,13 @@ class Device:
     def get_channels(self):
         """returns self.channels, should be overwritten for special
         purposes (e.g. leaving out some keys of the dictionary)"""
+        self.channels = {}
+        outputs = get_outputs(self.ophyd_instance)
+        for chan in get_channels(self.ophyd_instance):
+            is_out = chan in outputs
+            channel = Measurement_Channel(name=f'{self.custom_name}.{chan}',
+                                          output=is_out,device=self.custom_name)
+            self.channels.update({f'{self.custom_name}_{chan}': channel})
         return self.channels
 
     def get_additional_string(self):
@@ -187,6 +191,7 @@ class Device_Config(QWidget):
     """Parent class for the configuration-widgets
     (shown on the frontpanel) of the devices."""
     ioc_change = pyqtSignal()
+    name_change = pyqtSignal(str)
 
     def __init__(self, parent=None, device_name='', data='', settings_dict=None, config_dict=None, ioc_settings=None):
         """
@@ -225,7 +230,7 @@ class Device_Config(QWidget):
         label_title.setFont(title_font)
         self.label_custom_name = QLabel('Custom name:')
         self.label_connection = QLabel('Connection-type:')
-        self.lineEdit_custom_name = QLineEdit(device_name)
+        self.lineEdit_custom_name = QLineEdit(data)
         self.comboBox_connection_type = QComboBox()
         self.connector = Connection_Config()
         self.line_2 = QFrame(self)
@@ -242,6 +247,7 @@ class Device_Config(QWidget):
         self.config_dict = config_dict
         self.ioc_settings = ioc_settings
         self.comboBox_connection_type.currentTextChanged.connect(self.connection_type_changed)
+        self.lineEdit_custom_name.textChanged.connect(lambda x: self.name_change.emit(x))
 
     def connection_type_changed(self):
         """Called when the comboBox_connection_type is changed. Switches

@@ -42,7 +42,7 @@ class subclass(device_class.Device):
         return config_dict
 
     def get_channels(self):
-        channels = copy.deepcopy(self.channels)
+        channels = copy.deepcopy(super().get_channels())
         removes = []
         for i in range(1, 9):
             if not self.config[f'active{i}']:

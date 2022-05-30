@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel,\
 
 from datetime import datetime
 import json
+import ophyd
 
 from main_classes import protocol_class
 
@@ -171,6 +172,8 @@ def get_save_str(obj):
         return obj.__save_dict__
     if type(obj) in save_dict_skip:
         return None
+    if isinstance(obj, ophyd.Device):
+        return None
     if type(obj) in save_string_list:
         if issubclass(type(obj), QComboBox):
             return obj.currentText()
@@ -243,12 +246,13 @@ def load_devices_dict(string_dict, devices_dict):
     devices_dict.clear()
     for key in string_dict:
         dev_data = string_dict[key]
+        name = dev_data['name']
         try:
-            dev_lib = importlib.import_module(f'{key}.{key}')
+            dev_lib = importlib.import_module(f'{name}.{name}')
         except Exception as e:
-            raise Exception(f'Could not import device module {key}\n{e}')
+            raise Exception(f'Could not import device module {name}\n{e}')
         dev = dev_lib.subclass()
-        dev.name = key
+        dev.name = name
         if 'connection' in dev_data:
             dev.connection = dev_data['connection']
         if 'virtual' in dev_data:
@@ -265,6 +269,8 @@ def load_devices_dict(string_dict, devices_dict):
             dev.settings = dev_data['settings']
         if 'config' in dev_data:
             dev.config = dev_data['config']
+        if 'custom_name' in dev_data:
+            dev.custom_name = dev_data['custom_name']
         devices_dict.update({key: dev})
 
 
