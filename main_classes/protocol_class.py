@@ -111,9 +111,9 @@ class Measurement_Protocol:
             if loop_step not in self.loop_step_dict[parent_step_name].children:
                 self.loop_step_dict[parent_step_name].add_child(loop_step, position)
             self.loop_step_dict.update({loop_step.full_name: loop_step})
-        if loop_step.has_children:
-            for child in loop_step.children:
-                self.add_loop_step_rec(child, parent_step_name=loop_step.full_name, model=model)
+        # if loop_step.has_children:
+        for child in loop_step.children:
+            self.add_loop_step_rec(child, parent_step_name=loop_step.full_name, model=model)
 
     def remove_loop_step(self, loop_step_name):
         """Removes the step with the given name from the sequence-list
@@ -137,8 +137,9 @@ class Measurement_Protocol:
         children), 'step_type' gives which subclass of Loop_Step shall
         be created."""
         children = None
-        if step_info['has_children']:
-            children = []
+        # if step_info['has_children']:
+        children = []
+        if 'children' in step_info:
             for child in step_info['children']:
                 child_step = self.make_step(child)
                 child_step.parent_step = step_info['full_name']
@@ -196,9 +197,9 @@ def update_all_children(step_dict, step):
     """Similar to append_all_children, but only updating the step_dict
     with all the children."""
     step_dict.update({step.full_name: step})
-    if step.has_children:
-        for child in step.children:
-            update_all_children(step_dict, child)
+    # if step.has_children:
+    for child in step.children:
+        update_all_children(step_dict, child)
 
 
 class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):

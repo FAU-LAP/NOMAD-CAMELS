@@ -955,8 +955,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         inds = self.treeView_protocol_sequence.selectedIndexes()
         if inds:
             item = self.item_model_sequence.itemFromIndex(inds[0])
-            del_action = QAction('Delete Step')
-            del_action.triggered.connect(lambda x: self.remove_loop_step(True))
             below_actions = []
             above_actions = []
             into_actions = []
@@ -1029,7 +1027,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             menu.addAction(copy_action)
             menu.addMenu(paste_menu)
             menu.addSeparator()
-            menu.addAction(del_action)
+            if self.current_protocol.loop_step_dict[item.data()].step_type not in make_step_of_type.non_addables:
+                del_action = QAction('Delete Step')
+                del_action.triggered.connect(lambda x: self.remove_loop_step(True))
+                menu.addAction(del_action)
         else:
             add_actions = []
             # for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
@@ -1126,6 +1127,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         name = self.item_model_sequence.itemFromIndex(ind).data()
         if name is not None:
             remove_dialog = None
+            if self.current_protocol.loop_step_dict[name].step_type in make_step_of_type.non_addables:
+                return
             if ask:
                 remove_dialog = QMessageBox.question(self, 'Delete Step?', f'Are you sure you want to delete the step {name}?', QMessageBox.Yes | QMessageBox.No)
             if not ask or remove_dialog == QMessageBox.Yes:

@@ -31,6 +31,7 @@ class Loop_Step:
         self.step_type = 'Default'
         self.__save_dict__ = {}
         self.has_children = False
+        self.children = []
         self.name = name
         self.full_name = f'{self.step_type} ({name})'
         self.parent_step = parent_step
@@ -109,6 +110,7 @@ class Loop_Step_Container(Loop_Step):
         item.setEditable(False)
         for child in self.children:
             child.append_to_model(item_model, item)
+        return item
 
     def add_child(self, child, position=-1):
         """Add a child-step at the specified position, default is -1,

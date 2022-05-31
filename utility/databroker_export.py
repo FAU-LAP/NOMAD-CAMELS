@@ -2,6 +2,9 @@ import os.path
 
 import databroker
 import h5py
+from datetime import datetime as dt
+
+import xarray
 
 
 def recourse_entry_dict(entry, metadata):
@@ -45,7 +48,7 @@ def broker_to_hdf5(runs, filename):
                 for coord in dataset.coords:
                     group[coord] = dataset[coord]
 
-def broker_to_dict(runs):
+def broker_to_dict(runs, to_iso_time=False):
     """Puts the runs into a dictionary."""
     dicts = []
     if not isinstance(runs, list):
@@ -54,10 +57,20 @@ def broker_to_dict(runs):
         data = {}
         for stream in run:
             data = run[stream].read()
+            if isinstance(data, xarray.Dataset):
+                data = data.to_array()
         rundict = {'metadata_start': dict(run.metadata['start']),
                    'metadata_stop': dict(run.metadata['stop']),
                    'data': data}
+        if to_iso_time:
+            stamp = rundict['metadata_start']['time']
+            rundict['metadata_start']['time'] = timestamp_to_ISO8601(stamp)
+            stamp = rundict['metadata_stop']['time']
+            rundict['metadata_stop']['time'] = timestamp_to_ISO8601(stamp)
         dicts.append(rundict)
     return dicts
 
 
+def timestamp_to_ISO8601(timestamp):
+    from_stamp = dt.fromtimestamp(timestamp)
+    return from_stamp.astimezone().isoformat()
