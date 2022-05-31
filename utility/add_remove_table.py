@@ -257,7 +257,7 @@ class AddRemoveTable(QWidget):
             item.setCheckable(i in self.checkables)
             items.append(item)
         if len(self.headerLabels) == 0:
-            item = QStandardItem(vals)
+            item = QStandardItem(str(vals))
             items.append(item)
         if self.horizontal:
             self.table_model.appendRow(items)

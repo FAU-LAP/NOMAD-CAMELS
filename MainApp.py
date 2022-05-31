@@ -811,13 +811,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         config = None
         if general:
             config = General_Protocol_Settings(self, self.current_protocol)
+            self.enable_step_move(False)
         else:
             index = self.treeView_protocol_sequence.selectedIndexes()[0]
             dat = self.item_model_sequence.itemFromIndex(index).data()
             if dat is not None:
                 step = self.current_protocol.loop_step_dict[dat]
                 config = make_step_of_type.get_config(step)
-                # config = drag_drop_tree_view.config_from_type(step)
+                enable = step.step_type not in make_step_of_type.non_addables
+                self.enable_step_move(enable)
         if config is not None:
             if self.loop_step_configuration_widget is not None:
                 self.configuration_main_widget.layout().removeWidget(self.loop_step_configuration_widget)
@@ -826,6 +828,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.configuration_main_widget.layout().addWidget(self.loop_step_configuration_widget, 1, 0)
             if not general:
                 self.loop_step_configuration_widget.name_changed.connect(self.change_step_name)
+
+    def enable_step_move(self, enable):
+        self.pushButton_move_step_in.setEnabled(enable)
+        self.pushButton_move_step_out.setEnabled(enable)
+        self.pushButton_move_step_up.setEnabled(enable)
+        self.pushButton_move_step_down.setEnabled(enable)
 
     def change_step_name(self):
         """Called when a loop_step changes its name, then updates the

@@ -98,14 +98,21 @@ class If_Sub_Step(Loop_Step_Container):
         super().__init__(name, children, parent_step, **kwargs)
         self.step_type = 'If_Sub'
 
-class Elif_Sub_Step(Loop_Step_Container):
+    def append_to_model(self, item_model:QStandardItemModel, parent=None):
+        """Overwritten, so that nothing can be dropped into the main step."""
+        item = super().append_to_model(item_model, parent)
+        item.setDragEnabled(False)
+        item.setEnabled(False)
+        return item
+
+class Elif_Sub_Step(If_Sub_Step):
     """Simple sub-step that represents an elif-condition."""
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
         super().__init__(name, children, parent_step, **kwargs)
         self.step_type = 'Elif_Sub'
 
-class Else_Sub_Step(Loop_Step_Container):
+class Else_Sub_Step(If_Sub_Step):
     """Simple sub-step that represents the else-condition."""
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
