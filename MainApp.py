@@ -737,6 +737,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Called, when either the IOC is terminated by hand, or when it
         is finished (e.g. because of some error). Sets the button-text
         back to "Run IOC"."""
+        del self.ioc_thread
         self.ioc_thread = None
         self.pushButton_run_ioc.setText('Run IOC')
 

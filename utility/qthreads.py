@@ -1,6 +1,8 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 
 import subprocess
+import signal
+import os
 
 from EPICS_handling import make_ioc
 from utility import bluesky_handling
@@ -63,11 +65,18 @@ class Run_IOC(QThread):
     def __init__(self, ioc_name='Default'):
         super().__init__()
         self.ioc_name = ioc_name
+        self.popen = None
 
     def run(self):
-        p = subprocess.Popen(['wsl', './EPICS_handling/run_ioc.cmd', self.ioc_name],
-                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                             bufsize=1)
-        for line in iter(p.stdout.readline, b''):
+        self.popen = subprocess.Popen(['wsl', './EPICS_handling/run_ioc.cmd', self.ioc_name],
+                                      stdout=subprocess.PIPE,
+                                      stderr=subprocess.STDOUT,
+                                      stdin=subprocess.PIPE, bufsize=1)
+        for line in iter(self.popen.stdout.readline, b''):
             text = line.decode().rstrip()
             self.info_step.emit(text)
+
+    def terminate(self) -> None:
+        if self.popen is not None:
+            test=self.popen.communicate(input=b'exit')
+        super().terminate()
