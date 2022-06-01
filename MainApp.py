@@ -1,6 +1,5 @@
 import json
 import sys
-import time
 
 import qdarkstyle
 import importlib
@@ -77,6 +76,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.sequence_main_widget.layout().removeWidget(self.treeView_protocol_sequence)
         self.treeView_protocol_sequence.deleteLater()
         self.treeView_protocol_sequence = drag_drop_tree_view.Drag_Drop_TreeView()
+        self.treeView_protocol_sequence.del_clicked.connect(self.remove_loop_step)
         self.sequence_main_widget.layout().addWidget(self.treeView_protocol_sequence, 5, 0, 1, 3)
         self.treeView_protocol_sequence.setModel(self.item_model_sequence)
         self.treeView_protocol_sequence.customContextMenuRequested.connect(self.sequence_right_click)
@@ -124,6 +124,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_remove_step.clicked.connect(lambda x: self.remove_loop_step(True))
         self.pushButton_show_protocol_settings.clicked.connect(lambda x: self.tree_click_sequence(True))
         self.pushButton_build_protocol.clicked.connect(self.build_current_protocol)
+        self.pushButton_open_protocol_external.clicked.connect(self.open_protocol)
         self.pushButton_run_protocol.clicked.connect(self.run_current_protocol)
 
 
@@ -822,6 +823,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.run_thread.terminate()
             self.run_thread_finished()
+
+    def open_protocol(self):
+        if self.current_protocol is None:
+            raise Exception('You need to select a protocol!')
+        path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
+        os.startfile(path)
+
 
     def build_current_protocol(self):
         """Calls the build_protocol from bluesky_handling for the

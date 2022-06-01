@@ -64,6 +64,8 @@ class Run_IOC(QThread):
         super().__init__()
         self.ioc_name = ioc_name
         self.popen = None
+        self.last_inputs = []
+        self.curr_last = -1
 
     def run(self):
         self.popen = subprocess.Popen(['wsl', './EPICS_handling/run_ioc.cmd', self.ioc_name],
@@ -80,11 +82,12 @@ class Run_IOC(QThread):
 
     def write_to_ioc(self, msg):
         if 'exit' in msg:
-            raise Exception('Please stop the IOC only using the button!\n'
-                            '(The command "exit" is not allowed!')
+            raise Exception('Please stop the IOC only using the button!\n(The command "exit" is not allowed!)')
+        self.last_inputs.append(msg)
         if self.popen is not None:
             self.popen.stdin.write(bytes(f'{msg}\n', 'utf-8'))
             self.popen.stdin.flush()
+
 
     def terminate(self) -> None:
         if self.popen is not None:
