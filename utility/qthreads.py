@@ -1,8 +1,6 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 
 import subprocess
-import signal
-import os
 
 from EPICS_handling import make_ioc
 from utility import bluesky_handling
@@ -72,11 +70,23 @@ class Run_IOC(QThread):
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
                                       stdin=subprocess.PIPE, bufsize=1)
-        for line in iter(self.popen.stdout.readline, b''):
+        for line in iter(self.popen.stdout.readline, ''):
             text = line.decode().rstrip()
             self.info_step.emit(text)
+        # while True:
+        #     line = self.popen.stdout.readline()
+        #     text = line.decode().rstrip()
+        #     self.info_step.emit(text)
+
+    def write_to_ioc(self, msg):
+        if 'exit' in msg:
+            raise Exception('Please stop the IOC only using the button!\n'
+                            '(The command "exit" is not allowed!')
+        if self.popen is not None:
+            self.popen.stdin.write(bytes(f'{msg}\n', 'utf-8'))
+            self.popen.stdin.flush()
 
     def terminate(self) -> None:
         if self.popen is not None:
-            test=self.popen.communicate(input=b'exit')
+            self.popen.communicate(input=b'exit')
         super().terminate()

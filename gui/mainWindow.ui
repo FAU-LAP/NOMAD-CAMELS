@@ -275,17 +275,17 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0" colspan="3">
+               <item row="5" column="0" colspan="3">
                 <widget class="QTextEdit" name="textEdit_console_output">
                  <property name="textInteractionFlags">
                   <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
-                <widget class="QPushButton" name="pushButton_show_console_output">
+               <item row="1" column="0">
+                <widget class="QPushButton" name="pushButton_run_ioc">
                  <property name="text">
-                  <string>Show console output</string>
+                  <string>Run IOC</string>
                  </property>
                 </widget>
                </item>
@@ -299,10 +299,47 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QPushButton" name="pushButton_run_ioc">
+               <item row="1" column="1">
+                <widget class="QCheckBox" name="checkBox_ioc_running">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
-                  <string>Run IOC</string>
+                  <string>not running</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLineEdit" name="lineEdit_send_to_IOC">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QPushButton" name="pushButton_write_to_console">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Write to console</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QPushButton" name="pushButton_show_console_output">
+                 <property name="text">
+                  <string>Hide output</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QPushButton" name="pushButton_clear_EPICS_output">
+                 <property name="text">
+                  <string>Clear output</string>
                  </property>
                 </widget>
                </item>
@@ -499,13 +536,6 @@
                       <property name="bottomMargin">
                        <number>0</number>
                       </property>
-                      <item row="1" column="0" colspan="2">
-                       <widget class="QProgressBar" name="progressBar_protocols">
-                        <property name="value">
-                         <number>0</number>
-                        </property>
-                       </widget>
-                      </item>
                       <item row="0" column="0">
                        <widget class="QPushButton" name="pushButton_build_protocol">
                         <property name="text">
@@ -513,17 +543,31 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="1">
-                       <widget class="QPushButton" name="pushButton_show_output_meas">
-                        <property name="text">
-                         <string>Show output</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="0" colspan="2">
+                      <item row="3" column="0" colspan="2">
                        <widget class="QTextEdit" name="textEdit_console_output_meas">
                         <property name="textInteractionFlags">
                          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="0">
+                       <widget class="QPushButton" name="pushButton_show_output_meas">
+                        <property name="text">
+                         <string>Hide output</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QProgressBar" name="progressBar_protocols">
+                        <property name="value">
+                         <number>0</number>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1">
+                       <widget class="QPushButton" name="pushButton_clear_output_meas">
+                        <property name="text">
+                         <string>Clear output</string>
                         </property>
                        </widget>
                       </item>
@@ -917,7 +961,6 @@
   <tabstop>pushButton_remove_protocol</tabstop>
   <tabstop>listView_protocols</tabstop>
   <tabstop>pushButton_build_protocol</tabstop>
-  <tabstop>pushButton_show_output_meas</tabstop>
   <tabstop>textEdit_console_output_meas</tabstop>
   <tabstop>pushButton_show_protocol_settings</tabstop>
   <tabstop>pushButton_move_step_up</tabstop>

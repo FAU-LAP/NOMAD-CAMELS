@@ -1,5 +1,7 @@
 import json
 import sys
+import time
+
 import qdarkstyle
 import importlib
 import os
@@ -63,8 +65,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.item_model_devices.appendRow(all_devices)
         self.item_model_devices.appendRow(virtual_devices)
         self.item_model_devices.appendRow(by_tags)
-        self.textEdit_console_output.setHidden(True)
-        self.textEdit_console_output_meas.setHidden(True)
+        # self.textEdit_console_output.setHidden(True)
+        # self.textEdit_console_output_meas.setHidden(True)
 
         # measurements
         self.run_thread = None
@@ -100,12 +102,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_make_EPICS_environment.clicked.connect(self.make_epics_environment)
         self.pushButton_run_ioc.clicked.connect(self.run_stop_ioc)
         self.pushButton_show_console_output.clicked.connect(self.show_console_output)
+        self.pushButton_clear_EPICS_output.clicked.connect(self.textEdit_console_output.clear)
         self.treeView_devices.clicked.connect(self.tree_click)
+        self.pushButton_write_to_console.clicked.connect(self.write_to_console)
+        self.lineEdit_send_to_IOC.returnPressed.connect(self.write_to_console)
 
         self.pushButton_add_protocol.clicked.connect(self.add_protocol)
         self.pushButton_remove_protocol.clicked.connect(self.remove_protocol)
         self.item_model_protocols.itemChanged.connect(self.change_protocol_name)
         self.pushButton_show_output_meas.clicked.connect(self.show_meas_output)
+        self.pushButton_clear_output_meas.clicked.connect(self.textEdit_console_output_meas.clear)
         self.listView_protocols.clicked.connect(self.protocol_selected)
         self.pushButton_move_step_up.clicked.connect(lambda state: self.move_loop_step(-1,0))
         self.pushButton_move_step_down.clicked.connect(lambda state: self.move_loop_step(1,0))
@@ -555,6 +561,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def make_thread_finished(self):
         self.make_thread = None
+        self.pushButton_run_ioc.setEnabled(True)
         self.thread_finished()
 
     def thread_finished(self):
@@ -705,15 +712,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.make_thread.info_step.connect(self.update_console_output)
         self.make_thread.finished.connect(self.make_thread_finished)
         self.make_thread.start()
+        self.pushButton_run_ioc.setEnabled(False)
 
     def show_console_output(self):
         """Shows / hides the textEdit_console_output."""
         if self.textEdit_console_output.isHidden():
             self.textEdit_console_output.setHidden(False)
-            self.pushButton_show_console_output.setText('Hide console output')
+            self.pushButton_write_to_console.setHidden(False)
+            self.lineEdit_send_to_IOC.setHidden(False)
+            self.pushButton_show_console_output.setText('Hide output')
         else:
             self.textEdit_console_output.setHidden(True)
-            self.pushButton_show_console_output.setText('Show console output')
+            self.pushButton_write_to_console.setHidden(True)
+            self.lineEdit_send_to_IOC.setHidden(True)
+            self.pushButton_show_console_output.setText('Show output')
 
     def update_console_output(self, info):
         """Appends the given info to the current console output."""
@@ -729,9 +741,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.ioc_thread.finished.connect(self.stop_ioc)
             self.pushButton_run_ioc.setText('Stop IOC')
             self.ioc_thread.start()
+            self.pushButton_make_EPICS_environment.setEnabled(False)
+            self.pushButton_write_to_console.setEnabled(True)
+            self.lineEdit_send_to_IOC.setEnabled(True)
+            self.running_checkbox_style(True)
         else:
             self.ioc_thread.terminate()
             self.stop_ioc()
+
+    def running_checkbox_style(self, is_running):
+        if is_running:
+            col = variables_handling.get_color('green', True)
+            self.checkBox_ioc_running.setText('is running')
+            self.checkBox_ioc_running.setChecked(True)
+        else:
+            col = variables_handling.get_color('red', True)
+            self.checkBox_ioc_running.setText('not running')
+            self.checkBox_ioc_running.setChecked(False)
+        self.checkBox_ioc_running.setStyleSheet(f"color: rgb{col}")
 
     def stop_ioc(self):
         """Called, when either the IOC is terminated by hand, or when it
@@ -740,6 +767,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         del self.ioc_thread
         self.ioc_thread = None
         self.pushButton_run_ioc.setText('Run IOC')
+        self.pushButton_make_EPICS_environment.setEnabled(True)
+        self.pushButton_write_to_console.setEnabled(False)
+        self.lineEdit_send_to_IOC.setEnabled(False)
+        self.running_checkbox_style(False)
+
+    def write_to_console(self):
+        if self.ioc_thread is not None:
+            text = self.lineEdit_send_to_IOC.text()
+            self.ioc_thread.write_to_ioc(text)
+            self.lineEdit_send_to_IOC.clear()
+        else:
+            raise Exception('Can only send to running ioc!')
 
     # --------------------------------------------------
     # measurement methods
@@ -915,10 +954,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Shows / hides the textEdit_console_output."""
         if self.textEdit_console_output_meas.isHidden():
             self.textEdit_console_output_meas.setHidden(False)
-            self.pushButton_show_output_meas.setText('Hide console output')
+            self.pushButton_show_output_meas.setText('Hide output')
         else:
             self.textEdit_console_output_meas.setHidden(True)
-            self.pushButton_show_output_meas.setText('Show console output')
+            self.pushButton_show_output_meas.setText('Show output')
 
     def protocol_selected(self):
         """Called when a protocol is clicked on. Updates the
