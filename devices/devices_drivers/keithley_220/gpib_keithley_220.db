@@ -1,0 +1,57 @@
+record (ao, "keithley_220:setI")
+{
+	field (DESC, "set I of keithley_220")
+	field (DTYP, "stream")
+    field (OUT, "@keithley_220.proto setI $(PORT) $(G)")
+    field (PINI, "0")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+	field (OMSL, "0")
+}
+
+record (ao, "keithley_220:execute")
+{
+	field (DESC, "set I of keithley_220")
+	field (DTYP, "stream")
+    field (OUT, "@keithley_220.proto execute $(PORT) $(G)")
+    field (PINI, "0")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+	field (OMSL, "0")
+}
+
+record (ai, keithley_220:readI)
+{
+    field (DESC, "Read keithley_220 as ai")
+    field (DTYP, "stream")
+    field (INP,  "@keithley_220.proto readI $(PORT) $(G)")
+    field (PINI, "NO")
+    field (TPRO, "1")	
+}
+
+record (ai, keithley_220:readV)
+{
+    field (DESC, "Read keithley_220 as ai")
+    field (DTYP, "stream")
+    field (INP,  "@keithley_220.proto readV $(PORT) $(G)")
+    field (PINI, "NO")
+    field (TPRO, "1")	
+}
+
+record (ai, keithley_220:readW)
+{
+    field (DESC, "Read keithley_220 as ai")
+    field (DTYP, "stream")
+    field (INP,  "@keithley_220.proto readW $(PORT) $(G)")
+    field (PINI, "NO")
+    field (TPRO, "1")	
+}
+
+record (ai, keithley_220:readL)
+{
+    field (DESC, "Read keithley_220 as ai")
+    field (DTYP, "stream")
+    field (INP,  "@keithley_220.proto readL $(PORT) $(G)")
+    field (PINI, "NO")
+    field (TPRO, "1")	
+}

@@ -1,1 +1,2 @@
-# CAMELS_FAIRmat 
+# CAMELS
+## Configurable Application for MEasurement- and Laboratory-Systems

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>982</width>
-    <height>818</height>
+    <height>819</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,47 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
+    <item row="0" column="2">
+     <widget class="QPushButton" name="pushButton_editUserInfo">
+      <property name="text">
+       <string>Edit User-Information</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QLabel" name="label_8">
+      <property name="maximumSize">
+       <size>
+        <width>50</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Sample:</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0">
+     <widget class="QLabel" name="label_7">
+      <property name="maximumSize">
+       <size>
+        <width>50</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>User:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="6">
+     <widget class="QPushButton" name="pushButton_editSampleInfo">
+      <property name="text">
+       <string>Edit Sample-Information</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="7">
      <widget class="QSplitter" name="dev_meas_splitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -146,21 +186,14 @@
                <property name="bottomMargin">
                 <number>0</number>
                </property>
-               <item row="0" column="2">
-                <widget class="QPushButton" name="pushButton_remove_device">
-                 <property name="maximumSize">
-                  <size>
-                   <width>30</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>-</string>
-                 </property>
-                </widget>
-               </item>
                <item row="0" column="1">
                 <widget class="QPushButton" name="pushButton_add_device">
+                 <property name="minimumSize">
+                  <size>
+                   <width>30</width>
+                   <height>23</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>30</width>
@@ -176,6 +209,25 @@
                 <widget class="QLineEdit" name="lineEdit_device_search">
                  <property name="placeholderText">
                   <string>Search</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QPushButton" name="pushButton_remove_device">
+                 <property name="minimumSize">
+                  <size>
+                   <width>30</width>
+                   <height>23</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>30</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>-</string>
                  </property>
                 </widget>
                </item>
@@ -223,23 +275,71 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QPushButton" name="pushButton_show_console_output">
-                 <property name="text">
-                  <string>Show console output</string>
+               <item row="5" column="0" colspan="3">
+                <widget class="QTextEdit" name="textEdit_console_output">
+                 <property name="textInteractionFlags">
+                  <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0" colspan="2">
-                <widget class="QTextEdit" name="textEdit_console_output"/>
+               <item row="1" column="0">
+                <widget class="QPushButton" name="pushButton_run_ioc">
+                 <property name="text">
+                  <string>Run IOC</string>
+                 </property>
+                </widget>
                </item>
-               <item row="1" column="0" colspan="2">
+               <item row="0" column="1">
                 <widget class="QProgressBar" name="progressBar_devices">
                  <property name="enabled">
                   <bool>true</bool>
                  </property>
                  <property name="value">
-                  <number>100</number>
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QCheckBox" name="checkBox_ioc_running">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>not running</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLineEdit" name="lineEdit_send_to_IOC">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QPushButton" name="pushButton_write_to_console">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Write to console</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QPushButton" name="pushButton_show_console_output">
+                 <property name="text">
+                  <string>Hide output</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QPushButton" name="pushButton_clear_EPICS_output">
+                 <property name="text">
+                  <string>Clear output</string>
                  </property>
                 </widget>
                </item>
@@ -374,6 +474,12 @@
                       </property>
                       <item row="0" column="1">
                        <widget class="QPushButton" name="pushButton_add_protocol">
+                        <property name="minimumSize">
+                         <size>
+                          <width>30</width>
+                          <height>23</height>
+                         </size>
+                        </property>
                         <property name="maximumSize">
                          <size>
                           <width>30</width>
@@ -387,6 +493,12 @@
                       </item>
                       <item row="0" column="2">
                        <widget class="QPushButton" name="pushButton_remove_protocol">
+                        <property name="minimumSize">
+                         <size>
+                          <width>30</width>
+                          <height>23</height>
+                         </size>
+                        </property>
                         <property name="maximumSize">
                          <size>
                           <width>30</width>
@@ -424,13 +536,6 @@
                       <property name="bottomMargin">
                        <number>0</number>
                       </property>
-                      <item row="1" column="0" colspan="2">
-                       <widget class="QProgressBar" name="progressBar_protocols">
-                        <property name="value">
-                         <number>100</number>
-                        </property>
-                       </widget>
-                      </item>
                       <item row="0" column="0">
                        <widget class="QPushButton" name="pushButton_build_protocol">
                         <property name="text">
@@ -438,15 +543,40 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="1">
+                      <item row="2" column="0">
                        <widget class="QPushButton" name="pushButton_show_output_meas">
                         <property name="text">
-                         <string>Show output</string>
+                         <string>Hide output</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="2" column="0" colspan="2">
-                       <widget class="QTextEdit" name="textEdit_console_output_meas"/>
+                      <item row="1" column="0" colspan="2">
+                       <widget class="QProgressBar" name="progressBar_protocols">
+                        <property name="value">
+                         <number>0</number>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QPushButton" name="pushButton_open_protocol_external">
+                        <property name="text">
+                         <string>Open Protocol externally</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1">
+                       <widget class="QPushButton" name="pushButton_clear_output_meas">
+                        <property name="text">
+                         <string>Clear output</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="0" colspan="2">
+                       <widget class="QTextEdit" name="textEdit_console_output_meas">
+                        <property name="textInteractionFlags">
+                         <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </widget>
@@ -472,7 +602,7 @@
                <item row="1" column="0">
                 <widget class="QPushButton" name="pushButton_run_protocol">
                  <property name="text">
-                  <string>Run selected protocol(s)</string>
+                  <string>Build and run selected protocol</string>
                  </property>
                 </widget>
                </item>
@@ -540,7 +670,7 @@
                <item row="1" column="0" colspan="3">
                 <widget class="QPushButton" name="pushButton_show_protocol_settings">
                  <property name="text">
-                  <string>Show General Settings</string>
+                  <string>Protocol Configuration</string>
                  </property>
                 </widget>
                </item>
@@ -554,8 +684,14 @@
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
+                   <width>30</width>
                    <height>23</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>30</width>
+                   <height>16777215</height>
                   </size>
                  </property>
                  <property name="text">
@@ -565,6 +701,18 @@
                </item>
                <item row="4" column="2">
                 <widget class="QPushButton" name="pushButton_remove_step">
+                 <property name="minimumSize">
+                  <size>
+                   <width>30</width>
+                   <height>23</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>30</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="text">
                   <string>-</string>
                  </property>
@@ -632,6 +780,19 @@
       </widget>
      </widget>
     </item>
+    <item row="0" column="5">
+     <widget class="QComboBox" name="comboBox_sample"/>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="comboBox_user"/>
+    </item>
+    <item row="0" column="3">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -647,17 +808,25 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew_Device_Preset"/>
     <addaction name="actionSave_Device_Preset"/>
-    <addaction name="actionSave_Measurement_Preset"/>
+    <addaction name="actionSave_Device_Preset_As"/>
     <addaction name="actionOpen_Backup_Device_Preset"/>
+    <addaction name="separator"/>
+    <addaction name="actionNew_Measurement_Preset"/>
+    <addaction name="actionSave_Measurement_Preset"/>
+    <addaction name="actionSave_Measurement_Preset_As"/>
     <addaction name="actionLoad_Backup_Measurement_Preset"/>
+    <addaction name="separator"/>
+    <addaction name="actionSettings"/>
    </widget>
    <widget class="QMenu" name="menuPreferences">
     <property name="title">
-     <string>Settings</string>
+     <string>Edit</string>
     </property>
-    <addaction name="actionAutosave_on_closing"/>
-    <addaction name="actionDark_Mode"/>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -669,6 +838,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionDevice_Driver_Builder"/>
+    <addaction name="actionIOC_Builder"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuPreferences"/>
@@ -686,9 +856,9 @@
     <string>Options</string>
    </property>
   </action>
-  <action name="actionSave_Device_Preset">
+  <action name="actionSave_Device_Preset_As">
    <property name="text">
-    <string>Save Device Preset</string>
+    <string>Save Device Preset As</string>
    </property>
   </action>
   <action name="actionLoad">
@@ -737,7 +907,77 @@
     <string>Dark Mode</string>
    </property>
   </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo (ctrl + z)</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>Redo (ctrl + y)</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionIOC_Builder">
+   <property name="text">
+    <string>IOC-Builder</string>
+   </property>
+  </action>
+  <action name="actionNew_Device_Preset_2">
+   <property name="text">
+    <string>New Device Preset</string>
+   </property>
+  </action>
+  <action name="actionSave_Device_Preset">
+   <property name="text">
+    <string>Save Device Preset</string>
+   </property>
+  </action>
+  <action name="actionSave_Measurement_Preset_As">
+   <property name="text">
+    <string>Save Measurement Preset As</string>
+   </property>
+  </action>
+  <action name="actionNew_Measurement_Preset">
+   <property name="text">
+    <string>New Measurement Preset</string>
+   </property>
+  </action>
+  <action name="actionNew_Device_Preset">
+   <property name="text">
+    <string>New Device Preset</string>
+   </property>
+  </action>
  </widget>
+ <tabstops>
+  <tabstop>comboBox_device_preset</tabstop>
+  <tabstop>comboBox_measurement_preset</tabstop>
+  <tabstop>lineEdit_device_search</tabstop>
+  <tabstop>pushButton_add_device</tabstop>
+  <tabstop>pushButton_remove_device</tabstop>
+  <tabstop>treeView_devices</tabstop>
+  <tabstop>pushButton_make_EPICS_environment</tabstop>
+  <tabstop>textEdit_console_output</tabstop>
+  <tabstop>pushButton_run_protocol</tabstop>
+  <tabstop>lineEdit_protocol_search</tabstop>
+  <tabstop>pushButton_add_protocol</tabstop>
+  <tabstop>pushButton_remove_protocol</tabstop>
+  <tabstop>listView_protocols</tabstop>
+  <tabstop>pushButton_build_protocol</tabstop>
+  <tabstop>textEdit_console_output_meas</tabstop>
+  <tabstop>pushButton_show_protocol_settings</tabstop>
+  <tabstop>pushButton_move_step_up</tabstop>
+  <tabstop>pushButton_move_step_in</tabstop>
+  <tabstop>pushButton_move_step_down</tabstop>
+  <tabstop>pushButton_move_step_out</tabstop>
+  <tabstop>toolButton_add_step</tabstop>
+  <tabstop>pushButton_remove_step</tabstop>
+  <tabstop>treeView_protocol_sequence</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

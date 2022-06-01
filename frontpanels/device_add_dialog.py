@@ -8,43 +8,47 @@ from PyQt5.QtWidgets import QDialog, QMessageBox
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent
 from PyQt5.QtCore import Qt
 
-
-from utility import treeView_functions
-device_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
+from utility import treeView_functions, variables_handling
+# device_driver_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
 def getInstalledDevices():
-    """Goes through the given device_path and returns a list of the available devices."""
+    """Goes through the given device_driver_path and returns a list of
+    the available devices."""
+    device_driver_path = variables_handling.device_driver_path
     device_list = {}
-    sys.path.append(device_path)
-    for f in os.listdir(device_path):
-        full_path = f'{device_path}{f}'
+    sys.path.append(device_driver_path)
+    for f in os.listdir(device_driver_path):
+        full_path = f'{device_driver_path}/{f}'
         if f != 'Support' and os.path.isdir(full_path):
-            files = os.listdir(full_path)
-            info_file = f'{f}_info.json'
-            if info_file not in files:
-                continue
-            with open(f'{full_path}/{info_file}', 'r') as file:
-                info = json.load(file)
             try:
-                package_name = info['name'].replace(' ', '_')
-                info.update({'py_package': importlib.import_module(f'{package_name}.{package_name}')})
+                package = importlib.import_module(f'{f}.{f}')
+                device = package.subclass()
+                device_list.update({device.name: device})
             except Exception as e:
-                print(e)
-            device_list.update({info['name']: info})
+                print(f, e)
     return device_list
 
 def getAllDevices():
+    """So far only returns the installed devices, should in future work
+    with the online repository of drivers."""
+    # TODO online stuff?
     return getInstalledDevices()
 
 
-device_dict = getInstalledDevices()
 
 class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
-    """Dialog that handles adding new devices in the MainApp, should also download available drivers from the repository.
-    Arguments:
-        - active_devices_dict: The dictionary with active devices. This may be changed and returned by the Dialog.
-        - parent: handed over to QDialog."""
+    """Dialog that handles adding new devices in the MainApp, should
+    also download available drivers from the repository.
+
+    Parameters
+    ----------
+    active_devices_dict : dict
+        The dictionary with active devices. This may be changed and
+        returned by the Dialog.
+    parent : QWidget
+        handed over to QDialog."""
     def __init__(self, active_devices_dict=None, parent=None):
+        self.device_dict = getInstalledDevices()
         super(AddDeviceDialog, self).__init__(parent=parent)
         if active_devices_dict is None:
             active_devices_dict = {}
@@ -81,8 +85,6 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
         self.item_model.appendRow([by_tags])
         self.build_tree()
 
-
-
         # connecting buttons
         self.lineEdit_search_tags.returnPressed.connect(self.search_by_tag)
         self.lineEdit_search_name.returnPressed.connect(self.search_by_name)
@@ -91,8 +93,10 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
 
         self.pushButton_activate_selected.clicked.connect(self.de_activate_device)
 
+
     def tree_click(self):
-        """Called when clicking the treeView_devices. Sets the add/remove button to the correct position."""
+        """Called when clicking the treeView_devices. Sets the
+        add/remove button to the correct state."""
         index = self.treeView_devices.selectedIndexes()[0]
         dat = self.item_model.itemFromIndex(index).data()
         if dat is None:
@@ -108,13 +112,17 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
 
 
     def de_activate_device(self):
-        """The currently selected device in the treeView is either removed (if activated) or added. If the added device is already present, a second, numbered one is added."""
+        """The currently selected device in the treeView is either
+        removed (if activated) or added. If the added device is already
+        present, a second, numbered one is added."""
         ind = self.treeView_devices.selectedIndexes()[0]
         dat = self.item_model.itemFromIndex(ind).data()
         if dat.startswith('inst:'):
             dat = dat[5:]
         if dat.startswith('act:'):
-            remove_dialog = QMessageBox.question(self, 'Remove device?', f'Are you sure you want to remove the device {dat}?', QMessageBox.Yes | QMessageBox.No)
+            remove_dialog = QMessageBox.question(self, 'Remove device?',
+                                                 f'Are you sure you want to remove the device {dat}?',
+                                                 QMessageBox.Yes | QMessageBox.No)
             if remove_dialog == QMessageBox.Yes:
                 self.active_devices_dict.pop(dat[4:])
         elif dat in self.active_devices_dict:
@@ -122,52 +130,59 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
             while True:
                 name = f'{dat}_{i}'
                 if name not in self.active_devices_dict:
-                    self.active_devices_dict.update({name: device_dict[dat]})
-                    self.active_devices_dict[name].update({'settings': {}})
+                    self.active_devices_dict.update({name: self.device_dict[dat]})
+                    self.active_devices_dict[name].custom_name = name
                     break
                 i += 1
         else:
-            self.active_devices_dict.update({dat: device_dict[dat]})
-            self.active_devices_dict[dat].update({'settings': {}})
+            self.active_devices_dict.update({dat: self.device_dict[dat]})
         self.build_tree()
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
-        """Overwrites the keyPressEvent of the QDialog so that it does not close when pressing Enter/Return."""
+        """Overwrites the keyPressEvent of the QDialog so that it does
+        not close when pressing Enter/Return."""
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)
 
     def search_by_name(self):
         """Called on pressing return inside the lineEdit_search_name.
-        Calls the build_tree method with the text inside the lineEdit as search_text"""
+        Calls the build_tree method with the text inside the lineEdit as
+        `search_text`."""
         text = self.lineEdit_search_name.text()
         self.build_tree(search_text=text)
 
     def search_by_tag(self):
         """Called on pressing return inside the lineEdit_search_tags.
-        Calls the build_tree method with the text inside the lineEdit as search_tag"""
+        Calls the build_tree method with the text inside the lineEdit as
+        `search_tag`."""
         tag = self.lineEdit_search_tags.text()
         self.build_tree(search_tag=tag)
 
     def build_tree(self, search_text='', search_tag=''):
         """Builds the tree of devices.
-        First it clears the tree and then iterates through all available devices in device_dict.
-        If search_text is given, only devices whose name includes the string in search_text are added to the tree.
-        If search_tag is given, only devices that have the exact tag given by search_tag are added to the tree."""
+        First it clears the tree and then iterates through all available
+        devices in self.device_dict.
+        If search_text is given, only devices whose name includes the
+        string in search_text are added to the tree.
+        If search_tag is given, only devices that have the exact tag
+        given by search_tag are added to the tree."""
         for i in range(5):
             item = self.item_model.item(i,0)
             while item.rowCount() > 0:
                 item.removeRow(0)
             self.tags = []
         for key in self.active_devices_dict:
-            if search_text.lower() not in key.lower() or (search_tag and search_tag.lower() not in self.active_devices_dict[key]['tags']):
+            if search_text.lower() not in key.lower() or\
+                    (search_tag and search_tag.lower() not in self.active_devices_dict[key]['tags']):
                 continue
             item = QStandardItem(key)
             item.setEditable(False)
             item.setData(f'act:{key}')
             self.item_model.item(0,0).appendRow(item)
-        for device in sorted(device_dict):
-            if search_text.lower() not in device.lower() or (search_tag and search_tag.lower() not in device_dict[device].tags):
+        for device in sorted(self.device_dict):
+            if search_text.lower() not in device.lower() or\
+                    (search_tag and search_tag.lower() not in self.device_dict[device].tags):
                 continue
             if device in self.installed_devices_list:
                 item = QStandardItem(device)
@@ -177,11 +192,11 @@ class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
             item = QStandardItem(device)
             item.setEditable(False)
             item.setData(device)
-            if device_dict[device]['virtual']:
+            if self.device_dict[device].virtual:
                 self.item_model.item(3,0).appendRow(item)
             else:
                 self.item_model.item(2,0).appendRow(item)
-            for tag in device_dict[device]['tags']:
+            for tag in self.device_dict[device].tags:
                 item = QStandardItem(device)
                 item.setEditable(False)
                 item.setData(device)

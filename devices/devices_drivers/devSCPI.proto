@@ -1,0 +1,58 @@
+ReplyTimeout = 2000;
+#Terminator = ; 
+
+getValue {
+        out "MEAS:RES?";
+        in "%f";
+}
+
+getC1Curr {
+        out ":MEAS:CURR?";
+        in "%f";
+}
+
+getC1Volt {
+        out ":MEAS:VOLT? (@1)";
+        in "%f";
+}
+
+getValue3 {
+        out ":MEAS:VOLT? (@1)";
+        in "%f";
+}
+
+putValue {
+	out "\$1 %f";
+}
+
+getIDN {
+    out "*IDN?";
+    in "%\$1[^\r\n]";
+    ExtraInput = Ignore;
+    @replyTimeout { disconnect; }
+}
+
+doRST {
+    out "*RST";
+}
+
+getString {
+    out "\$1";
+    in "%39[^\r\n]";
+    ExtraInput = Ignore;
+    @replyTimeout { disconnect; }
+}
+
+cmd {
+    out "\$1";
+}
+
+setD {
+    out "\$1 %d";
+}
+getD {
+    out "\$1?";
+    in "%d";
+    ExtraInput = Ignore;
+    @replyTimeout { disconnect; }
+}

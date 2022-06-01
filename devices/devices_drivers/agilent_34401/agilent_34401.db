@@ -1,0 +1,127 @@
+record(ai, "$(SETUP):agilent_34401:mesDCV")
+{
+    field (DESC, "Measure Voltage")
+	field (DTYP, "stream")
+    field (INP, "@agilent_34401.proto mesDCV $(PORT) $(G)")
+    field (PINI, "0")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+	field (MDEL, "-1")
+}
+
+record(ai, "$(SETUP):agilent_34401:mesDCV:trig")
+{
+	field (FLNK, "$(SETUP):agilent_34401:mesDCV")
+}
+
+
+record(ai, "$(SETUP):agilent_34401:mesDCI")
+{
+    field (DESC, "Measure Voltage")
+	field (DTYP, "stream")
+    field (INP, "@agilent_34401.proto mesDCI $(PORT) $(G)")
+    field (PINI, "0")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+	field (MDEL, "-1")
+}
+
+record(ai, "$(SETUP):agilent_34401:mesDCI:trig")
+{
+	field (FLNK, "$(SETUP):agilent_34401:mesDCI")
+}
+
+record(ai, "$(SETUP):agilent_34401:mesACV")
+{
+    field (DESC, "Measure Voltage")
+	field (DTYP, "stream")
+    field (INP, "@agilent_34401.proto mesACV $(PORT) $(G)")
+    field (PINI, "0")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+	field (MDEL, "-1")
+}
+
+record(ai, "$(SETUP):agilent_34401:mesACV:trig")
+{
+	field (FLNK, "$(SETUP):agilent_34401:mesACV")
+}
+
+
+record(ai, "$(SETUP):agilent_34401:mesACI")
+{
+    field (DESC, "Measure Voltage")
+	field (DTYP, "stream")
+    field (INP, "@agilent_34401.proto mesACI $(PORT) $(G)")
+    field (PINI, "0")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+	field (MDEL, "-1")
+}
+
+record(ai, "$(SETUP):agilent_34401:mesACI:trig")
+{
+	field (FLNK, "$(SETUP):agilent_34401:mesACI")
+}
+
+record(ai, "$(SETUP):agilent_34401:mesR")
+{
+    field (DESC, "Measure 2 wire resistance")
+	field (DTYP, "stream")
+    field (INP, "@agilent_34401.proto mesR $(PORT) $(G)")
+    field (PINI, "0")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+	field (MDEL, "-1")
+}
+
+record(ai, "$(SETUP):agilent_34401:mesR:trig")
+{
+	field (FLNK, "$(SETUP):agilent_34401:mesR")
+}
+
+record(ai, "$(SETUP):agilent_34401:mesR4w")
+{
+    field (DESC, "Measure 4 wire resistance")
+	field (DTYP, "stream")
+    field (INP, "@agilent_34401.proto mesR4 $(PORT) $(G)")
+    field (PINI, "0")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+	field (MDEL, "-1")
+}
+
+record(ai, "$(SETUP):agilent_34401:mesR4w:trig")
+{
+	field (FLNK, "$(SETUP):agilent_34401:mesR4w")
+}
+
+#record (ao, "$(SETUP):agilent_34401:setFMT")
+#{
+#	field (DESC, "Set format of Data")
+#	field (DTYP, "stream")
+#    field (OUT, "@e5270.proto setFMT $(PORT) $(G)")
+#    field (PINI, "0")
+#    field (TPRO, "1")
+#	field (SCAN, "Passive")
+#}
+
+record (stringin, "$(SETUP):agilent_34401:idn")
+{
+    field (DESC, "Identification IDN")
+	field (DTYP, "stream")
+    field (INP, "@agilent_34401.proto idn $(PORT) $(G)")
+    field (PINI, "1")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+}
+
+record(ao, "$(SETUP):agilent_34401:nPLC")
+{
+    field (DESC, "integration time, number of power line cycles")
+	field (DTYP, "stream")
+    field (OUT, "@agilent_34401.proto nPLC $(PORT) $(G)")
+    field (PINI, "0")
+    field (TPRO, "1")
+	field (SCAN, "Passive")
+}
