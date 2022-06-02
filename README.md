@@ -1,5 +1,5 @@
-CAMELS
-Configurable Application for MEasurement- and Laboratory-Systems
+# CAMELS
+## Configurable Application for MEasurement- and Laboratory-Systems
 
 
 Temperature dependent current-voltage (IV) sweeps
@@ -10,6 +10,7 @@ Running the measurement software:
 •	PC with Windows 10, Version 2004 or higher
 •	Install WSL 1 Ubuntu (WSL 1 is required for USB-serial connections!)
 
+### WSL
 Enable WSL on your PC: open Windows PowerShell as administrator and enter
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
 Open the now available Ubuntu WSL Terminal (should open automatically) and enter:
@@ -38,7 +39,7 @@ install FHI support modules compilation ? (y/n): y #important
 install ca-gateway to /opt/? (y/n): y”
 Restart Ubuntu Terminal
 
-•	Install CAMELS measurement software
+### Install CAMELS measurement software
 Create a Folder called CAMELS in %appdata%/local/CAMELS/ and add the empty file logging.log #this might not be necessary depending on the github version of CAMELS
 In Windows PowerShell go the Windows folder you want CAMELS to be installed in and enter: 
 git config --global core.eol lf 
@@ -66,7 +67,7 @@ sources:
         - "DESTINATION_DIRECTORY/*.msgpack"
 DESTINATION_DIRECTORY is the directory you want the data to be saved to. 
 
-Setting up CAMELS
+### Setting up CAMELS
 Enter the desired user name and sample ID at the top. Use the “+” under “Devices” to add the required devices. For our case, it is the Keithley E5270B and the Agilent 34401A, as well as the virtual PID device.
 Then add a new measurement procedure (now called protocol) using the “+” under “Protocols”. Rename the protocol as desired. When clicking on the added protocol one can see below “Sequence” the measurement sequence (setting, reading, waiting, …) that will be performed when the measurement protocol is run. Steps in the sequence can be added by right clicking or using the “+” symbol.  
 Measurement devices:
