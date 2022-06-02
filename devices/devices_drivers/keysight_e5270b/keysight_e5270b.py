@@ -20,12 +20,21 @@ class subclass(device_class.Device):
         # package = importlib.import_module('keysight_e5270b.keysight_e5270b_ophyd')
         # ophyd_device = package.Keysight_E5270B
         files = ['keysight_e5270b.db', 'keysight_e5270b.proto']
-        req = ['prologixSup']
+        req = []
         super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'], directory='keysight_e5270b', ophyd_device=Keysight_E5270B, requirements=req, files=files, ophyd_class_name='Keysight_E5270B')
         for i in range(1, 9):
             key = f'active{i}'
             if key not in self.config:
                 self.config[key] = False
+
+    def get_settings(self):
+        chans = []
+        settings = {'use_channels': chans}
+        for i in range(1, 9):
+            if self.config[f'active{i}']:
+                chans.append(i)
+        settings.update(self.settings)
+        return settings
 
     def get_config(self):
         config_dict = copy.deepcopy(self.config)
@@ -52,6 +61,15 @@ class subclass(device_class.Device):
         for r in removes:
             channels.pop(r)
         return channels
+
+    def get_substitutions_string(self, ioc_name:str, communication:str):
+        substring = f'file "db/{self.name}.db" {{\n'
+        for i in range(1, 9):
+            if self.config[f'active{i}']:
+                substring += f'    {{SETUP = "{ioc_name}", device = "{self.custom_name}", COMM = "{communication}", Channel = {i}}}\n'
+        substring += '}'
+        return substring
+
 
 
 class subclass_config(device_class.Device_Config):

@@ -72,7 +72,7 @@ class Run_IOC(QThread):
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
                                       stdin=subprocess.PIPE, bufsize=1)
-        for line in iter(self.popen.stdout.readline, ''):
+        for line in iter(self.popen.stdout.readline, b''):
             text = line.decode().rstrip()
             self.info_step.emit(text)
         # while True:

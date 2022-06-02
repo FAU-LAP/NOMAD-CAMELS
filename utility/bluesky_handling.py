@@ -97,7 +97,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         devices_string += f'\tdevice_config["{dev}"].update(configs)\n'
         devices_string += f'\tdevice_config["{dev}"]["settings"] = settings\n'
         devices_string += f'\tdevs.update({{"{dev}": {dev}}})\n'
-        device_import_string += f'from {dev}.{dev}_ophyd import {classname}\n'
+        device_import_string += f'from {device.name}.{device.name}_ophyd import {classname}\n'
         additional_string_devices += device.get_additional_string()
     devices_string += '\tprint("devices connected")\n'
     devices_string += '\tmd = {"device_config": device_config}\n'
