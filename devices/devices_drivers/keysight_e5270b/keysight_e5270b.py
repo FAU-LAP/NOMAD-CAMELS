@@ -20,7 +20,7 @@ class subclass(device_class.Device):
         # package = importlib.import_module('keysight_e5270b.keysight_e5270b_ophyd')
         # ophyd_device = package.Keysight_E5270B
         files = ['keysight_e5270b.db', 'keysight_e5270b.proto']
-        req = ['prologixSup']
+        req = []
         super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'], directory='keysight_e5270b', ophyd_device=Keysight_E5270B, requirements=req, files=files, ophyd_class_name='Keysight_E5270B')
         for i in range(1, 9):
             key = f'active{i}'

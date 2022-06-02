@@ -1,65 +1,65 @@
-record(ao, "$(SETUP):keysight_e5270b:setV1")
+record(ao, "$(SETUP):$(device):setV$(Channel)")
 {
     field (DESC, "Set Voltage")
     field (DTYP, "stream")
-    field (OUT,  "@keysight_e5270b.proto setChV(1, $(SETUP):keysight_e5270b:VoutRange1, $(SETUP):keysight_e5270b:currComp1) $(PORT) $(G)")
+    field (OUT,  "@keysight_e5270b.proto setChV($(Channel), $(SETUP):$(device):VoutRange$(Channel), $(SETUP):$(device):currComp$(Channel)) $(PORT) $(G)")
     field (PREC, "4")
     field (PINI, "NO")
 	field (TPRO, "1")
 	field (EGU, "V")
 }
 
-record(ao, "$(SETUP):keysight_e5270b:currComp1")
+record(ao, "$(SETUP):$(device):currComp$(Channel)")
 {
-	#field (FLNK, "$(SETUP):keysight_e5270b:setV1")
+	#field (FLNK, "$(SETUP):$(device):setV$(Channel)")
 }
 
-record(longout, "$(SETUP):keysight_e5270b:VoutRange1")
+record(longout, "$(SETUP):$(device):VoutRange$(Channel)")
 {
-	#field (FLNK, "$(SETUP):keysight_e5270b:setV1")
+	#field (FLNK, "$(SETUP):$(device):setV$(Channel)")
 }
 
-record(ao, "$(SETUP):keysight_e5270b:setI1")
+record(ao, "$(SETUP):$(device):setI$(Channel)")
 {
     field (DESC, "Set current")
     field (DTYP, "stream")
-    field (OUT,  "@keysight_e5270b.proto setChI(1, $(SETUP):keysight_e5270b:IoutRange1, $(SETUP):keysight_e5270b:voltComp1) $(PORT) $(G)")
+    field (OUT,  "@keysight_e5270b.proto setChI($(Channel), $(SETUP):$(device):IoutRange$(Channel), $(SETUP):$(device):voltComp$(Channel)) $(PORT) $(G)")
     field (PREC, "4")
     field (PINI, "NO")
     field (TPRO, "1")
 	field (EGU, "I")
 }
 
-record(ao, "$(SETUP):keysight_e5270b:voltComp1")
+record(ao, "$(SETUP):$(device):voltComp$(Channel)")
 {
-	#field (FLNK, "$(SETUP):keysight_e5270b:setI1")
+	#field (FLNK, "$(SETUP):$(device):setI$(Channel)")
 }
 
-record(longout, "$(SETUP):keysight_e5270b:IoutRange1")
+record(longout, "$(SETUP):$(device):IoutRange$(Channel)")
 {
-	#field (FLNK, "$(SETUP):keysight_e5270b:setI1")
+	#field (FLNK, "$(SETUP):$(device):setI$(Channel)")
 }
 
-record(longout, "$(SETUP):keysight_e5270b:VmeasRange1")
+record(longout, "$(SETUP):$(device):VmeasRange$(Channel)")
 {
-	#field(FLNK, "$(SETUP):keysight_e5270b:mesV1")
+	#field(FLNK, "$(SETUP):$(device):mesV$(Channel)")
 	field(DTYP, "stream")
-	field(OUT, "@keysight_e5270b.proto VmeasRange(1) $(PORT) $(G)")
+	field(OUT, "@keysight_e5270b.proto VmeasRange($(Channel)) $(PORT) $(G)")
 	field(MDEL, "-1")
 }
 
-record(longout, "$(SETUP):keysight_e5270b:ImeasRange1")
+record(longout, "$(SETUP):$(device):ImeasRange$(Channel)")
 {
-	#field(FLNK, "$(SETUP):keysight_e5270b:mesI1")
+	#field(FLNK, "$(SETUP):$(device):mesI$(Channel)")
 	field(DTYP, "stream")
-	field(OUT, "@keysight_e5270b.proto ImeasRange(1) $(PORT) $(G)")
+	field(OUT, "@keysight_e5270b.proto ImeasRange($(Channel)) $(PORT) $(G)")
 }
 
-record(bo, "$(SETUP):keysight_e5270b:enable1")
+record(bo, "$(SETUP):$(device):enable$(Channel)")
 {
     field (DESC, "Enable Channel")
     field (DTYP, "stream")
-    field (OUT,  "@keysight_e5270b.proto enChN(1) $(PORT) $(G)")
+    field (OUT,  "@keysight_e5270b.proto enChN($(Channel)) $(PORT) $(G)")
     field (PINI, "0")
     field (TPRO, "1")
     field (SCAN, "Passive")
@@ -67,11 +67,11 @@ record(bo, "$(SETUP):keysight_e5270b:enable1")
 	field (ZNAM, "CL")
 }
 
-record(ai, "$(SETUP):keysight_e5270b:mesV1")
+record(ai, "$(SETUP):$(device):mesV$(Channel)")
 {
     field (DESC, "Measure Voltage")
 	field (DTYP, "stream")
-    field (INP, "@keysight_e5270b.proto mesV(1) $(PORT) $(G) CCP")
+    field (INP, "@keysight_e5270b.proto mesV($(Channel)) $(PORT) $(G) CCP")
     field (PINI, "0")
     field (TPRO, "1")
 	field (SCAN, "Passive")
@@ -79,21 +79,21 @@ record(ai, "$(SETUP):keysight_e5270b:mesV1")
 	field (EGU, "V")
 }
 
-record(bo, "$(SETUP):keysight_e5270b:mesV1:trig")
+record(bo, "$(SETUP):$(device):mesV$(Channel):trig")
 {
-	field(FLNK, "$(SETUP):keysight_e5270b:mesV1")
+	field(FLNK, "$(SETUP):$(device):mesV$(Channel)")
 }
 
-record(bo, "$(SETUP):keysight_e5270b:mesI1:trig")
+record(bo, "$(SETUP):$(device):mesI$(Channel):trig")
 {
-	field(FLNK, "$(SETUP):keysight_e5270b:mesI1")
+	field(FLNK, "$(SETUP):$(device):mesI$(Channel)")
 }
 
-record(ai, "$(SETUP):keysight_e5270b:mesI1")
+record(ai, "$(SETUP):$(device):mesI$(Channel)")
 {
     field (DESC, "Measure Voltage")
 	field (DTYP, "stream")
-    field (INP, "@keysight_e5270b.proto mesI(1) $(PORT) $(G) CCP")
+    field (INP, "@keysight_e5270b.proto mesI($(Channel)) $(PORT) $(G) CCP")
     field (PINI, "0")
     field (TPRO, "1")
 	field (SCAN, "Passive")
@@ -102,181 +102,54 @@ record(ai, "$(SETUP):keysight_e5270b:mesI1")
 }
 
 # 1 for high resolution, 0 for high speed
-record(bo, "$(SETUP):keysight_e5270b:setADC1")
+record(bo, "$(SETUP):$(device):setADC$(Channel)")
 {
 	field(DTYP, "stream")
-	field(OUT, "@keysight_e5270b.proto setADC(1) $(PORT) $(G)")
+	field(OUT, "@keysight_e5270b.proto setADC($(Channel)) $(PORT) $(G)")
 }
 
-record(bo, "$(SETUP):keysight_e5270b:outputFilter1")
+record(bo, "$(SETUP):$(device):outputFilter$(Channel)")
 {
 	field(DTYP, "stream")
-	field(OUT, "@keysight_e5270b.proto outputFilter(1) $(PORT) $(G)")
+	field(OUT, "@keysight_e5270b.proto outputFilter($(Channel)) $(PORT) $(G)")
 }
 
 # 1 Spot, 2 Staircase Sweep, 3 Pulsed Spot, 4 Pulsed Sweep, 5 Staircase sweep + pulsed bias, 9 Quasi-pulsed spot, 14 Linear search, 15 binary search, 16 Multi channel sweep
-record(longout, "$(SETUP):keysight_e5270b:measMode1")
+record(longout, "$(SETUP):$(device):measMode$(Channel)")
 {
 	field (DTYP, "stream")
-	field (OUT, "@keysight_e5270b.proto setMeas(1) $(PORT) $(G)")
+	field (OUT, "@keysight_e5270b.proto setMeas($(Channel)) $(PORT) $(G)")
 	field (PINI, "1")
 	field (SCAN, "Passive")
 	field (VAL, "1")
 }
 
-
-record(ao, "$(SETUP):keysight_e5270b:setV8")
-{
-    field (DESC, "Set Voltage")
-    field (DTYP, "stream")
-    field (OUT,  "@keysight_e5270b.proto setChV(8, $(SETUP):keysight_e5270b:VoutRange8, $(SETUP):keysight_e5270b:currComp8) $(PORT) $(G)")
-    field (PREC, "4")
-    field (PINI, "NO")
-	field (TPRO, "1")
-	field (EGU, "V")
-}
-
-record(ao, "$(SETUP):keysight_e5270b:currComp8")
-{
-	#field (FLNK, "$(SETUP):keysight_e5270b:setV8")
-}
-
-record(longout, "$(SETUP):keysight_e5270b:VoutRange8")
-{
-	#field (FLNK, "$(SETUP):keysight_e5270b:setV8")
-}
-
-record(ao, "$(SETUP):keysight_e5270b:setI8")
-{
-    field (DESC, "Set current")
-    field (DTYP, "stream")
-    field (OUT,  "@keysight_e5270b.proto setChI(8, $(SETUP):keysight_e5270b:IoutRange8, $(SETUP):keysight_e5270b:voltComp8) $(PORT) $(G)")
-    field (PREC, "4")
-    field (PINI, "NO")
-    field (TPRO, "1")
-	field (EGU, "I")
-}
-
-record(ao, "$(SETUP):keysight_e5270b:voltComp8")
-{
-	#field (FLNK, "$(SETUP):keysight_e5270b:setI8")
-}
-
-record(longout, "$(SETUP):keysight_e5270b:IoutRange8")
-{
-	#field (FLNK, "$(SETUP):keysight_e5270b:setI8")
-}
-
-record(longout, "$(SETUP):keysight_e5270b:VmeasRange8")
-{
-	#field(FLNK, "$(SETUP):keysight_e5270b:mesV8")
-	field(DTYP, "stream")
-	field(OUT, "@keysight_e5270b.proto VmeasRange(8) $(PORT) $(G)")
-	field(MDEL, "-1")
-}
-
-record(longout, "$(SETUP):keysight_e5270b:ImeasRange8")
-{
-	#field(FLNK, "$(SETUP):keysight_e5270b:mesI8")
-	field(DTYP, "stream")
-	field(OUT, "@keysight_e5270b.proto ImeasRange(8) $(PORT) $(G)")
-}
-
-record(bo, "$(SETUP):keysight_e5270b:enable8")
-{
-    field (DESC, "Enable Channel")
-    field (DTYP, "stream")
-    field (OUT,  "@keysight_e5270b.proto enChN(8) $(PORT) $(G)")
-    field (PINI, "0")
-    field (TPRO, "1")
-    field (SCAN, "Passive")
-	field (ONAM, "CN")
-	field (ZNAM, "CL")
-}
-
-record(ai, "$(SETUP):keysight_e5270b:mesV8")
-{
-    field (DESC, "Measure Voltage")
-	field (DTYP, "stream")
-    field (INP, "@keysight_e5270b.proto mesV(8) $(PORT) $(G) CCP")
-    field (PINI, "0")
-    field (TPRO, "1")
-	field (SCAN, "Passive")
-	field (MDEL, "-1")
-	field (EGU, "V")
-}
-
-record(bo, "$(SETUP):keysight_e5270b:mesV8:trig")
-{
-	field(FLNK, "$(SETUP):keysight_e5270b:mesV8")
-}
-
-record(bo, "$(SETUP):keysight_e5270b:mesI8:trig")
-{
-	field(FLNK, "$(SETUP):keysight_e5270b:mesI8")
-}
-
-record(ai, "$(SETUP):keysight_e5270b:mesI8")
-{
-    field (DESC, "Measure Voltage")
-	field (DTYP, "stream")
-    field (INP, "@keysight_e5270b.proto mesI(8) $(PORT) $(G) CCP")
-    field (PINI, "0")
-    field (TPRO, "1")
-	field (SCAN, "Passive")
-	field (EGU, "I")
-	field (MDEL, "-1")
-}
-
-# 1 for high resolution, 0 for high speed
-record(bo, "$(SETUP):keysight_e5270b:setADC8")
+record(longout, "$(SETUP):$(device):speedADCPLC")
 {
 	field(DTYP, "stream")
-	field(OUT, "@keysight_e5270b.proto setADC(8) $(PORT) $(G)")
-}
-
-record(bo, "$(SETUP):keysight_e5270b:outputFilter8")
-{
-	field(DTYP, "stream")
-	field(OUT, "@keysight_e5270b.proto outputFilter(8) $(PORT) $(G)")
-}
-
-# 1 Spot, 2 Staircase Sweep, 3 Pulsed Spot, 4 Pulsed Sweep, 5 Staircase sweep + pulsed bias, 9 Quasi-pulsed spot, 14 Linear search, 15 binary search, 16 Multi channel sweep
-record(longout, "$(SETUP):keysight_e5270b:measMode8")
-{
-	field (DTYP, "stream")
-	field (OUT, "@keysight_e5270b.proto setMeas(8) $(PORT) $(G)")
-	field (PINI, "1")
-	field (SCAN, "Passive")
-	field (VAL, "1")
-}
-
-record(longout, "$(SETUP):keysight_e5270b:speedADCPLC")
-{
-	field(DTYP, "stream")
-	field(OUT, "@keysight_e5270b.proto confADC(0, $(SETUP):keysight_e5270b:speedADCmode) $(PORT) $(G)")
+	field(OUT, "@keysight_e5270b.proto confADC(0, $(SETUP):$(device):speedADCmode) $(PORT) $(G)")
 }
 
 # 0 for auto, 1 for manual, 2 for PLC
-record(longout, "$(SETUP):keysight_e5270b:speedADCmode")
+record(longout, "$(SETUP):$(device):speedADCmode")
 {
-	field(FLNK, "$(SETUP):keysight_e5270b:speedADCPLC")
+	field(FLNK, "$(SETUP):$(device):speedADCPLC")
 }
 
-record(longout, "$(SETUP):keysight_e5270b:resADCPLC")
+record(longout, "$(SETUP):$(device):resADCPLC")
 {
 	field(DTYP, "stream")
-	field(OUT, "@keysight_e5270b.proto confADC(1, $(SETUP):keysight_e5270b:resADCmode) $(PORT) $(G)")
+	field(OUT, "@keysight_e5270b.proto confADC(1, $(SETUP):$(device):resADCmode) $(PORT) $(G)")
 }
 
 # 0 for auto, 1 for manual, 2 for PLC
-record(longout, "$(SETUP):keysight_e5270b:resADCmode")
+record(longout, "$(SETUP):$(device):resADCmode")
 {
-	field(FLNK, "$(SETUP):keysight_e5270b:resADCPLC")
+	field(FLNK, "$(SETUP):$(device):resADCPLC")
 }
 
 
-record(stringin, "$(SETUP):keysight_e5270b:idn")
+record(stringin, "$(SETUP):$(device):idn")
 {
     field (DESC, "Identify SMU E5270")
     field (DTYP, "stream")
@@ -285,7 +158,7 @@ record(stringin, "$(SETUP):keysight_e5270b:idn")
     field (TPRO, "1")
 }
 
-record(stringin, "$(SETUP):keysight_e5270b:err")
+record(stringin, "$(SETUP):$(device):err")
 {
     field (DESC, "Identify SMU E5270")
     field (DTYP, "stream")
@@ -294,12 +167,12 @@ record(stringin, "$(SETUP):keysight_e5270b:err")
     field (TPRO, "1")
 }
 
-record(bo, "$(SETUP):keysight_e5270b:err:trig")
+record(bo, "$(SETUP):$(device):err:trig")
 {
-	field(FLNK, "$(SETUP):keysight_e5270b:err")
+	field(FLNK, "$(SETUP):$(device):err")
 }
 
-record (ao, "$(SETUP):keysight_e5270b:setFMT")
+record (ao, "$(SETUP):$(device):setFMT")
 {
 	field (DESC, "Set format of Data")
 	field (DTYP, "stream")
@@ -310,21 +183,21 @@ record (ao, "$(SETUP):keysight_e5270b:setFMT")
 }
 
 
-record (stringout, "$(SETUP):keysight_e5270b:wstr")
+record (stringout, "$(SETUP):$(device):wstr")
 {
 	field (DESC, "write string to SMU")
     field (PINI, "0")
     field (TPRO, "1")
 	field (SCAN, "Passive")
 	field (OMSL, "0")
-	field (FLNK, "$(SETUP):keysight_e5270b:RWstr")
+	field (FLNK, "$(SETUP):$(device):RWstr")
 }
 
-record (stringin, "$(SETUP):keysight_e5270b:RWstr")
+record (stringin, "$(SETUP):$(device):RWstr")
 {
 	field (DESC, "write string to SMU")
 	field (DTYP, "stream")
-    field (INP, "@keysight_e5270b.proto ws($(SETUP):keysight_e5270b:wstr) $(PORT) $(G)")
+    field (INP, "@keysight_e5270b.proto ws($(SETUP):$(device):wstr) $(PORT) $(G)")
     field (PINI, "0")
     field (TPRO, "1")
 	field (SCAN, "Passive")

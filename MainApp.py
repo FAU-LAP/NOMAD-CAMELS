@@ -4,6 +4,7 @@ import sys
 import qdarkstyle
 import importlib
 import os
+import socket
 
 import pandas as pd
 
@@ -39,11 +40,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for pre in predev:
             self.comboBox_device_preset.addItem(pre)
         if not predev:
-            self.comboBox_device_preset.addItem('Default')
+            self.comboBox_device_preset.addItem(f'{socket.gethostname()}')
         for pre in premeas:
             self.comboBox_measurement_preset.addItem(pre)
         if not premeas:
-            self.comboBox_measurement_preset.addItem('Default')
+            self.comboBox_measurement_preset.addItem(f'{socket.gethostname()}')
         self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.make_thread = None
         self.ioc_thread = None
@@ -132,8 +133,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.__save_dict_devices__ = {}
         self.__save_dict_meas__ = {}
         self.saving = False
-        self._current_device_preset = ['Default']
-        self._current_measurement_preset = ['Default']
+        self._current_device_preset = [f'{socket.gethostname()}']
+        self._current_measurement_preset = [f'{socket.gethostname()}']
         self.device_save_dict = {'_current_device_preset': self._current_device_preset,
                                  'active_devices_dict': self.active_devices_dict,
                                  'lineEdit_device_search': self.lineEdit_device_search}
