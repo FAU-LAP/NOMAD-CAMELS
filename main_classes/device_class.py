@@ -126,9 +126,9 @@ class Device:
         purposes (e.g. leaving out some keys of the dictionary)"""
         return self.ioc_settings
 
-    def get_substitutions_string(self, ioc_name:str):
+    def get_substitutions_string(self, ioc_name:str, communication:str):
         substring = f'file "db/{self.name}.db" {{\n'
-        substring += f'    {{SETUP = "{ioc_name}", device = "{self.custom_name}"}}\n'
+        substring += f'    {{SETUP = "{ioc_name}", device = "{self.custom_name}", COMM = "{communication}"}}\n'
         substring += '}'
         return substring
 

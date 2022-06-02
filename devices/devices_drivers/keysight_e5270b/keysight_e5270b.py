@@ -27,6 +27,15 @@ class subclass(device_class.Device):
             if key not in self.config:
                 self.config[key] = False
 
+    def get_settings(self):
+        chans = []
+        settings = {'use_channels': chans}
+        for i in range(1, 9):
+            if self.config[f'active{i}']:
+                chans.append(i)
+        settings.update(self.settings)
+        return settings
+
     def get_config(self):
         config_dict = copy.deepcopy(self.config)
         removes = []
@@ -52,6 +61,15 @@ class subclass(device_class.Device):
         for r in removes:
             channels.pop(r)
         return channels
+
+    def get_substitutions_string(self, ioc_name:str, communication:str):
+        substring = f'file "db/{self.name}.db" {{\n'
+        for i in range(1, 9):
+            if self.config[f'active{i}']:
+                substring += f'    {{SETUP = "{ioc_name}", device = "{self.custom_name}", COMM = "{communication}", Channel = {i}}}\n'
+        substring += '}'
+        return substring
+
 
 
 class subclass_config(device_class.Device_Config):

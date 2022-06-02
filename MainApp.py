@@ -607,7 +607,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if add_dialog.exec_():
             self.active_devices_dict = add_dialog.active_devices_dict
         self.build_devices_tree()
-        self.pushButton_make_EPICS_environment.setEnabled(True)
+        # self.pushButton_make_EPICS_environment.setEnabled(True)
         self.ioc_config_changed()
         self.update_channels()
         self.update_add_step_actions()
