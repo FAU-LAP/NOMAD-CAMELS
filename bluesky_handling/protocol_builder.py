@@ -18,11 +18,16 @@ standard_string += 'from epics import caput\n'
 standard_string += 'import datetime\n'
 standard_string += 'from main_classes import plot_widget\n'
 standard_string += 'from utility.databroker_export import broker_to_hdf5, broker_to_dict\n'
+standard_string += 'from bluesky_handling.evaluation_helper import Evaluator\n'
 
-standard_run_string = '\n\n\nif __name__ == "__main__":\n'
+standard_run_string = '\n\neva = Evaluator()\n\n\n'
+standard_run_string += 'def main():\n'
 standard_run_string += '\tRE = RunEngine()\n'
 standard_run_string += '\tbec = BestEffortCallback()\n'
 standard_run_string += '\tRE.subscribe(bec)\n'
+
+standard_start_string = '\n\n\nif __name__ == "__main__":\n'
+standard_start_string += '\tmain()\n'
 
 standard_plot_string = '\n\tapp = QCoreApplication.instance()\n'
 standard_plot_string += '\tif app is None:\n'
@@ -148,6 +153,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         standard_save_string += '\tsys.exit(app.exec_())\n'
 
     protocol_string += standard_save_string
+    protocol_string += standard_start_string
     if not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, 'w+') as file:

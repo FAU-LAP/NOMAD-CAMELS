@@ -3,7 +3,8 @@ from PyQt5.QtCore import QThread, pyqtSignal
 import subprocess
 
 from EPICS_handling import make_ioc
-from utility import bluesky_handling
+from bluesky_handling import protocol_builder
+
 
 class Make_Ioc(QThread):
     """Called from the MainApp.
@@ -53,7 +54,7 @@ class Run_Protocol(QThread):
         self.path = path
 
     def run(self) -> None:
-        bluesky_handling.run_protocol(self.protocol, self.path, self.sig_step,
+        protocol_builder.run_protocol(self.protocol, self.path, self.sig_step,
                                       self.info_step)
 
 class Run_IOC(QThread):

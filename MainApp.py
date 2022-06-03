@@ -14,7 +14,9 @@ from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
-from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, bluesky_handling, add_remove_table
+from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, \
+    add_remove_table
+from bluesky_handling import protocol_builder
 
 from gui.mainWindow import Ui_MainWindow
 
@@ -833,9 +835,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
     def build_current_protocol(self):
-        """Calls the build_protocol from bluesky_handling for the
-        selected protocol and provides it with a savepath and user- and
-        sample-data."""
+        """Calls the build_protocol from bluesky_handling.protocol_builder
+        for the selected protocol and provides it with a savepath and
+        user- and sample-data."""
         self.progressBar_protocols.setValue(0)
         self.update_loop_step_order()
         self.get_device_config()
@@ -847,7 +849,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
         sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
         savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{self.current_protocol.filename or "data"}.h5'
-        bluesky_handling.build_protocol(self.current_protocol, path, savepath,
+        protocol_builder.build_protocol(self.current_protocol, path, savepath,
                                         userdata=userdata, sampledata=sampledata)
         self.textEdit_console_output_meas.append('\n\nBuild successfull!\n')
         self.progressBar_protocols.setValue(100)
