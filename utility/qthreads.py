@@ -37,8 +37,8 @@ class Make_Ioc(QThread):
         info = make_ioc.change_devices(self.device_data, self.ioc_name)
         self.info_step.emit(info)
         self.sig_step.emit(10)
-        info = make_ioc.make_ioc(self.ioc_name)
-        self.info_step.emit(info)
+        info = make_ioc.make_ioc(self.ioc_name, self.info_step, self.sig_step)
+        # self.info_step.emit(info)
         self.sig_step.emit(100)
 
 
@@ -68,7 +68,8 @@ class Run_IOC(QThread):
         self.curr_last = -1
 
     def run(self):
-        self.popen = subprocess.Popen(['wsl', './EPICS_handling/run_ioc.cmd', self.ioc_name],
+        self.popen = subprocess.Popen(['wsl', './EPICS_handling/run_ioc.cmd',
+                                       self.ioc_name],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
                                       stdin=subprocess.PIPE, bufsize=1)

@@ -1,4 +1,4 @@
-grecord(epid, "$(SETUP):PID_controller:pid_controller")
+grecord(epid, "$(SETUP):$(device):pid_controller")
 {
 	field(DTYP, "Soft Channel")
 	field(MDT, "0.1")

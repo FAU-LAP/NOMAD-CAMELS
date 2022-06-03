@@ -23,15 +23,27 @@ def clean_up_ioc(ioc='CAMELS'):
                              stderr=subprocess.STDOUT).communicate()[0]
     return f'{info1.decode()}\n\n{info2.decode()}'
 
-def make_ioc(ioc='CAMELS'):
+def make_ioc(ioc='CAMELS', info_signal=None, step_signal=None):
     """This function calls the make_ioc.cmd from the wsl shell.
     It goes to the given ioc, and performs one "make distclean" followed
     by a "make"."""
     # ioc_sup_path = f'{epics_path}/IOCs/{ioc}/{ioc}Sup'
     # if os.path.isdir(ioc_sup_path) and not len(os.listdir(ioc_sup_path)) > 0:
     #     os.rmdir(ioc_sup_path)
-    output = subprocess.Popen(['wsl', './EPICS_handling/make_ioc.cmd', ioc], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
-    return output.decode()
+    cmd = ['wsl', './EPICS_handling/make_ioc.cmd', ioc]
+    if info_signal is None:
+        output = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                  stderr=subprocess.STDOUT).communicate()[0]
+        return output.decode()
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                         bufsize=1)
+    i = 0
+    for line in iter(p.stdout.readline, b''):
+        text = line.decode().rstrip()
+        info_signal.emit(text)
+        if step_signal is not None:
+            step_signal.emit(10 + 90 / 500 * i)
+        i += 1
 
 
 def change_devices(device_dict:dict, ioc='CAMELS'):
