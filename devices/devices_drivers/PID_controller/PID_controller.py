@@ -4,7 +4,6 @@ from PID_controller.PID_controller_ophyd import PID_Controller
 
 from main_classes import device_class
 import main_classes.loop_step as steps
-from utility.number_formatting import format_number
 
 from PyQt5.QtWidgets import QWidget, QGridLayout, QCheckBox, QComboBox, QLabel, QLineEdit
 
@@ -30,6 +29,13 @@ class subclass(device_class.Device):
 
     def get_special_steps(self):
         return {'PID wait for stable': [PID_wait_for_stable, PID_wait_for_stable_config]}
+
+    def get_substitutions_string(self, ioc_name:str, communication:str):
+        substring = f'file "db/{self.name}.db" {{\n'
+        substring += f'    {{SETUP = "{ioc_name}", device = "{self.custom_name}"}}\n'
+        substring += '}'
+        return substring
+
 
 
 class subclass_config(device_class.Device_Config):

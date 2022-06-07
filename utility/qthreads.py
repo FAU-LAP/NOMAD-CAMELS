@@ -3,7 +3,8 @@ from PyQt5.QtCore import QThread, pyqtSignal
 import subprocess
 
 from EPICS_handling import make_ioc
-from utility import bluesky_handling
+from bluesky_handling import protocol_builder
+
 
 class Make_Ioc(QThread):
     """Called from the MainApp.
@@ -37,8 +38,8 @@ class Make_Ioc(QThread):
         info = make_ioc.change_devices(self.device_data, self.ioc_name)
         self.info_step.emit(info)
         self.sig_step.emit(10)
-        info = make_ioc.make_ioc(self.ioc_name)
-        self.info_step.emit(info)
+        info = make_ioc.make_ioc(self.ioc_name, self.info_step, self.sig_step)
+        # self.info_step.emit(info)
         self.sig_step.emit(100)
 
 
@@ -53,7 +54,7 @@ class Run_Protocol(QThread):
         self.path = path
 
     def run(self) -> None:
-        bluesky_handling.run_protocol(self.protocol, self.path, self.sig_step,
+        protocol_builder.run_protocol(self.protocol, self.path, self.sig_step,
                                       self.info_step)
 
 class Run_IOC(QThread):
@@ -68,11 +69,12 @@ class Run_IOC(QThread):
         self.curr_last = -1
 
     def run(self):
-        self.popen = subprocess.Popen(['wsl', './EPICS_handling/run_ioc.cmd', self.ioc_name],
+        self.popen = subprocess.Popen(['wsl', './EPICS_handling/run_ioc.cmd',
+                                       self.ioc_name],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
                                       stdin=subprocess.PIPE, bufsize=1)
-        for line in iter(self.popen.stdout.readline, ''):
+        for line in iter(self.popen.stdout.readline, b''):
             text = line.decode().rstrip()
             self.info_step.emit(text)
         # while True:

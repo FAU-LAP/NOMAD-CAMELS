@@ -23,15 +23,27 @@ def clean_up_ioc(ioc='CAMELS'):
                              stderr=subprocess.STDOUT).communicate()[0]
     return f'{info1.decode()}\n\n{info2.decode()}'
 
-def make_ioc(ioc='CAMELS'):
+def make_ioc(ioc='CAMELS', info_signal=None, step_signal=None):
     """This function calls the make_ioc.cmd from the wsl shell.
     It goes to the given ioc, and performs one "make distclean" followed
     by a "make"."""
     # ioc_sup_path = f'{epics_path}/IOCs/{ioc}/{ioc}Sup'
     # if os.path.isdir(ioc_sup_path) and not len(os.listdir(ioc_sup_path)) > 0:
     #     os.rmdir(ioc_sup_path)
-    output = subprocess.Popen(['wsl', './EPICS_handling/make_ioc.cmd', ioc], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
-    return output.decode()
+    cmd = ['wsl', './EPICS_handling/make_ioc.cmd', ioc]
+    if info_signal is None:
+        output = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                  stderr=subprocess.STDOUT).communicate()[0]
+        return output.decode()
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                         bufsize=1)
+    i = 0
+    for line in iter(p.stdout.readline, b''):
+        text = line.decode().rstrip()
+        info_signal.emit(text)
+        if step_signal is not None:
+            step_signal.emit(10 + 90 / 500 * i)
+        i += 1
 
 
 def change_devices(device_dict:dict, ioc='CAMELS'):
@@ -47,7 +59,7 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
     file-protections etc. have to be correct in the wsl environment."""
     driver_path = variables_handling.device_driver_path
     driver_path_wsl = f'/mnt/{driver_path[0].lower()}{driver_path[2:]}'
-    required = []
+    supports = []
     db_path_wsl = f'{epics_path_wsl}/IOCs/{ioc}/{ioc}App/Db'
     sup_path_wsl = f'{epics_path_wsl}/IOCs/{ioc}/{ioc}Sup'
     ioc_boot_path_wsl = f'{epics_path_wsl}/IOCs/{ioc}/iocBoot/ioc{ioc}'
@@ -55,28 +67,27 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
 
     # adding devices / files
     asyn_port_string = '# Set up ASYN port\n'
-    load_record_string = '## Load record instances\n'
+    substitutions_string = ''
     addresses = {}
     write_string = ''
     make_db_string = 'TOP=../..\ninclude $(TOP)/configure/CONFIG\n'
+    make_db_string += f'DB += {ioc}.substitutions\n'
     # going over the devices, adding their files and the requirements
     for key in sorted(device_dict):
         device = device_dict[key]
         device_path_wsl = f'{driver_path_wsl}/{device.directory}'
         for req in device.requirements:
-            if req not in required:
-                required.append(req)
+            if req not in supports:
+                supports.append(req)
         for file in device.files:
             write_string += f'cp {device_path_wsl}/{file} {db_path_wsl}/{file}\n'
             make_db_string += f'DB += {file}\n'
-        asyn_port_string, load_record_string = update_addresses(key, addresses,
-                                                                device.settings,
-                                                                asyn_port_string,
-                                                                load_record_string,
-                                                                ioc)
-    includers = ['calc', 'stream', 'asyn'] + required
+        asyn_port_string, comm = update_addresses(device, addresses,
+                                                  asyn_port_string, supports)
+        substitutions_string += device.get_substitutions_string(ioc, comm)
+    includers = ['calc', 'stream', 'asyn'] + supports
     # going over the requirements, adding their files
-    for req in required:
+    for req in supports:
         req_path = f'{driver_path}/Support/{req}'
         req_path_wsl = f'{driver_path_wsl}/Support/{req}'
         if not os.path.isdir(req_path):
@@ -94,17 +105,18 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
     # making st.cmd
     st_cmd_string = f'#!../../bin/linux-x86_64/{ioc}\n< envPaths\n'
     st_cmd_string += 'epicsEnvSet("STREAM_PROTOCOL_PATH", "$(TOP)/db")\n'
-    st_cmd_string += 'epicsEnvSet("PROLOGIX_ADDRESS", "$(PROLOGIX_ADDRESS=10.131.162.32)");\n'
-    st_cmd_string += 'epicsEnvSet("P", "$(P=Prologix:)");\n'
-    st_cmd_string += 'epicsEnvSet("R", "$(R=Test:)");\n'
-    st_cmd_string += 'epicsEnvSet("A", "$(A=5)");\n'
-    st_cmd_string += 'epicsEnvSet("B", "$(B=23)");\n'
+    # st_cmd_string += 'epicsEnvSet("PROLOGIX_ADDRESS", "$(PROLOGIX_ADDRESS=10.131.162.32)");\n'
+    # st_cmd_string += 'epicsEnvSet("P", "$(P=Prologix:)");\n'
+    # st_cmd_string += 'epicsEnvSet("R", "$(R=Test:)");\n'
+    # st_cmd_string += 'epicsEnvSet("A", "$(A=5)");\n'
+    # st_cmd_string += 'epicsEnvSet("B", "$(B=23)");\n'
     st_cmd_string += 'cd "${TOP}"\n'
     st_cmd_string += '## Register all support components\n'
     st_cmd_string += f'dbLoadDatabase "dbd/{ioc}.dbd"\n'
     st_cmd_string += f'{ioc}_registerRecordDeviceDriver pdbbase\n'
     st_cmd_string += asyn_port_string
-    st_cmd_string += load_record_string
+    st_cmd_string += '## Load record instances\n'
+    st_cmd_string += f'dbLoadTemplate "db/{ioc}.substitutions"\n'
     st_cmd_string += 'iocInit()\n'
     st_cmd_string += '## Start any sequence programs\n'
     st_cmd_string += f'#seq snc{ioc},"user=epics"\n'
@@ -116,7 +128,9 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
     with open(f'{localappdata_program}/Makefile_src', 'wb') as file:
         file.write(make_src_string.encode())
     write_string += f'cp {localappdata_program_wsl}/Makefile_src {src_path_wsl}/Makefile\n'
-
+    with open(f'{localappdata_program}/{ioc}.substitutions', 'wb') as file:
+        file.write(substitutions_string.encode())
+    write_string += f'cp {localappdata_program_wsl}/{ioc}.substitutions {db_path_wsl}/{ioc}.substitutions\n'
     # copying all the files
     with open(f'{localappdata_program}/copy_temp.cmd', 'wb') as file:
         file.write(write_string.encode())
@@ -197,47 +211,45 @@ def make_src_mk_string(ioc, included):
 
 
 
-def update_addresses(device, address_dict, device_settings, port_string, record_string, ioc):
+def update_addresses(device, address_dict, port_string, supports):
     """Called by change_devices. Updates the two given strings with the
     necessary lines for the given device.
 
     Parameters
     ----------
-    device : str
-        The device name, as for the loaded database.
+    device : device_class.Device
+        The device object
     address_dict : dict
         The dictionary with so far used addresses, needed to number the
         the ports, e.g. the IP-Addresses for Prologix-Adapters.
-    device_settings : dict
-        The dictionary of device-settings, specifically 'connection'.
     port_string : str
         The string to be updated with additional asyn-ports.
-    record_string : str
-        The string to be updated with additional databases.
-    ioc : str
-        The name of the IOC.
+    supports : list
+        The list will be updated, adding further necessary
+        support-packages.
     """
-    if 'connection' in device_settings:
-        conn_dict = device_settings['connection']
+    comm = ''
+    if 'connection' in device.settings:
+        conn_dict = device.settings['connection']
         conn_type = conn_dict['type']
         if conn_type not in address_dict:
             address_dict.update({conn_type: []})
         if conn_type == 'prologix-GPIB':
+            if 'prologixSup' not in supports:
+                supports.append('prologixSup')
             if conn_dict['IP-Address'] in address_dict[conn_type]:
                 n = address_dict[conn_type].index(conn_dict['IP-Address'])
             else:
                 n = len(address_dict[conn_type])
                 address_dict[conn_type].append(conn_dict['IP-Address'])
-                port_string += f'prologixGPIBConfigure("L{n}", "{conn_dict["IP-Address"]}")\n'
-                port_string += f'asynOctetSetInputEos("L{n}", -1, "\\n")\n'
-                port_string += f'asynSetTraceIOMask("L{n}_TCP", -1, 0x2)\n'
-                port_string += f'asynSetTraceMask("L{n}_TCP", -1, 0x9)\n'
-                port_string += f'asynSetTraceIOMask("L{n}", $(A), 0x2)\n'
-                port_string += f'asynSetTraceMask("L{n}", $(A), 0x9)\n'
-            record_string += f'dbLoadRecords("db/{device.replace(" ", "_")}.db", "SETUP={ioc},PORT=L{n},G={conn_dict["GPIB-Address"]}")\n'  # TODO several devices of same type
-    else:
-        record_string += f'dbLoadRecords("db/{device.replace(" ", "_")}.db", "SETUP={ioc}")\n'
-    return port_string, record_string
+                port_string += f'prologixGPIBConfigure("prologix_{n}", "{conn_dict["IP-Address"]}")\n'
+                port_string += f'asynOctetSetInputEos("prologix_{n}", -1, "\\n")\n'
+                port_string += f'asynSetTraceIOMask("prologix_{n}_TCP", -1, 0x2)\n'
+                port_string += f'asynSetTraceMask("prologix_{n}_TCP", -1, 0x9)\n'
+                port_string += f'asynSetTraceIOMask("prologix_{n}", 5, 0x2)\n'
+                port_string += f'asynSetTraceMask("prologix_{n}", 5, 0x9)\n'
+            comm = f'prologix_{n} {conn_dict["GPIB-Address"]}'
+    return port_string, comm
 
 
 

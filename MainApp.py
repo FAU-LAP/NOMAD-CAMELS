@@ -4,6 +4,7 @@ import sys
 import qdarkstyle
 import importlib
 import os
+import socket
 
 import pandas as pd
 
@@ -13,7 +14,9 @@ from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
-from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, bluesky_handling, add_remove_table
+from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, \
+    add_remove_table
+from bluesky_handling import protocol_builder
 
 from gui.mainWindow import Ui_MainWindow
 
@@ -39,11 +42,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for pre in predev:
             self.comboBox_device_preset.addItem(pre)
         if not predev:
-            self.comboBox_device_preset.addItem('Default')
+            self.comboBox_device_preset.addItem(f'{socket.gethostname()}')
         for pre in premeas:
             self.comboBox_measurement_preset.addItem(pre)
         if not premeas:
-            self.comboBox_measurement_preset.addItem('Default')
+            self.comboBox_measurement_preset.addItem(f'{socket.gethostname()}')
         self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.make_thread = None
         self.ioc_thread = None
@@ -132,8 +135,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.__save_dict_devices__ = {}
         self.__save_dict_meas__ = {}
         self.saving = False
-        self._current_device_preset = ['Default']
-        self._current_measurement_preset = ['Default']
+        self._current_device_preset = [f'{socket.gethostname()}']
+        self._current_measurement_preset = [f'{socket.gethostname()}']
         self.device_save_dict = {'_current_device_preset': self._current_device_preset,
                                  'active_devices_dict': self.active_devices_dict,
                                  'lineEdit_device_search': self.lineEdit_device_search}
@@ -606,7 +609,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if add_dialog.exec_():
             self.active_devices_dict = add_dialog.active_devices_dict
         self.build_devices_tree()
-        self.pushButton_make_EPICS_environment.setEnabled(True)
+        # self.pushButton_make_EPICS_environment.setEnabled(True)
         self.ioc_config_changed()
         self.update_channels()
         self.update_add_step_actions()
@@ -832,9 +835,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
     def build_current_protocol(self):
-        """Calls the build_protocol from bluesky_handling for the
-        selected protocol and provides it with a savepath and user- and
-        sample-data."""
+        """Calls the build_protocol from bluesky_handling.protocol_builder
+        for the selected protocol and provides it with a savepath and
+        user- and sample-data."""
         self.progressBar_protocols.setValue(0)
         self.update_loop_step_order()
         self.get_device_config()
@@ -846,7 +849,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
         sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
         savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{self.current_protocol.filename or "data"}.h5'
-        bluesky_handling.build_protocol(self.current_protocol, path, savepath,
+        protocol_builder.build_protocol(self.current_protocol, path, savepath,
                                         userdata=userdata, sampledata=sampledata)
         self.textEdit_console_output_meas.append('\n\nBuild successfull!\n')
         self.progressBar_protocols.setValue(100)

@@ -126,6 +126,12 @@ class Device:
         purposes (e.g. leaving out some keys of the dictionary)"""
         return self.ioc_settings
 
+    def get_substitutions_string(self, ioc_name:str, communication:str):
+        substring = f'file "db/{self.name}.db" {{\n'
+        substring += f'    {{SETUP = "{ioc_name}", device = "{self.custom_name}", COMM = "{communication}"}}\n'
+        substring += '}'
+        return substring
+
     def get_channels(self):
         """returns self.channels, should be overwritten for special
         purposes (e.g. leaving out some keys of the dictionary)"""
