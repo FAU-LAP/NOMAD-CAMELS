@@ -76,11 +76,11 @@ class If_Loop_Step(Loop_Step_Container):
     def get_protocol_string(self, n_tabs=1):
         """Putting together the children of all if-substeps."""
         tabs = '\t' * n_tabs
-        protocol_string = f'{tabs}if {self.condition}:\n'
+        protocol_string = f'{tabs}if eva.eval("{self.condition}"):\n'
         protocol_string += self.children[0].get_children_strings(n_tabs+1)
         for i, el in enumerate(self.elifs):
             child = self.children[i+1]
-            protocol_string += f'{tabs}elif {el}:\n'
+            protocol_string += f'{tabs}elif eva.eval("{el}"):\n'
             protocol_string += child.get_children_strings(n_tabs+1)
         if self.use_else:
             protocol_string += f'{tabs}else:\n'

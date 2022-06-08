@@ -42,7 +42,8 @@ class While_Loop_Step(Loop_Step_Container):
         tabs = '\t'*n_tabs
         count_var = f'{self.name.replace(" ", "_")}_Count'
         protocol_string = f'{tabs}{count_var} = 0\n'
-        protocol_string += f'{tabs}while {self.condition}:\n'
+        protocol_string += f'{tabs}while eva.eval("{self.condition}"):\n'
+        protocol_string += f'{tabs}\tnamespace["{count_var}"] = {count_var}\n'
         protocol_string += self.get_children_strings(n_tabs+1)
         protocol_string += f'{tabs}\t{count_var} += 1\n'
         self.update_time_weight()
@@ -145,7 +146,7 @@ class For_Loop_Step(Loop_Step_Container):
     def update_variables(self):
         """Includes the value and iteration-count of the loop."""
         variables = {f'{self.name.replace(" ", "_")}_Count': 0,
-                     f'{self.name.replace(" ", "_")}_Value': np.nan}
+                     f'{self.name.replace(" ", "_")}_Value': 0}
         for variable in variables:
             if variable in variables_handling.loop_step_variables:
                 raise Exception('Variable already defined!')
@@ -167,6 +168,7 @@ class For_Loop_Step(Loop_Step_Container):
         else:
             enumerator = f'np.loadtxt("{self.file_path}")'
         protocol_string = f'{tabs}for {self.name.replace(" ", "_")}_Count, {self.name.replace(" ", "_")}_Value in enumerate({enumerator}):\n'
+        protocol_string += f'{tabs}\tnamespace.update({{"{self.name.replace(" ", "_")}_Count": {self.name.replace(" ", "_")}_Count, "{self.name.replace(" ", "_")}_Value": {self.name.replace(" ", "_")}_Value}})\n'
         protocol_string += f'{tabs}\tprint("starting loop_step {self.full_name}")\n'
         protocol_string += self.get_children_strings(n_tabs+1)
         self.update_time_weight()

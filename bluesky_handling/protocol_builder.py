@@ -20,7 +20,7 @@ standard_string += 'from main_classes import plot_widget\n'
 standard_string += 'from utility.databroker_export import broker_to_hdf5, broker_to_dict\n'
 standard_string += 'from bluesky_handling.evaluation_helper import Evaluator\n'
 
-standard_run_string = '\n\neva = Evaluator()\n\n\n'
+standard_run_string = '\n\neva = Evaluator(namespace=namespace)\n\n\n'
 standard_run_string += 'def main():\n'
 standard_run_string += '\tRE = RunEngine()\n'
 standard_run_string += '\tbec = BestEffortCallback()\n'
@@ -76,12 +76,18 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     """
     device_import_string = '\n'
     devices_string = '\n\tdevs = {}\n\tdevice_config = {}\n'
-    variable_string = ''
+    variable_string = '\nnamespace = {}\n'
     additional_string_devices = ''
     for var, val in variables_handling.protocol_variables.items():
         if variables_handling.check_data_type(val) == 'String':
             val = f'"{val}"'
         variable_string += f'{var} = {val}\n'
+        variable_string += f'namespace["{var}"] = {var}\n'
+    for var, val in variables_handling.loop_step_variables.items():
+        if variables_handling.check_data_type(val) == 'String':
+            val = f'"{val}"'
+        variable_string += f'{var} = {val}\n'
+        variable_string += f'namespace["{var}"] = {var}\n'
     for dev in protocol.get_used_devices():
         print(variables_handling.devices)
         device = variables_handling.devices[dev]
@@ -107,6 +113,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     devices_string += '\tprint("devices connected")\n'
     devices_string += '\tmd = {"device_config": device_config}\n'
     devices_string += '\tmd.update({"program": "CAMELS", "version": "0.1"})\n'
+    devices_string += '\tmd["variables"] = namespace\n'
     if protocol.use_nexus:
         md_dict = {}
         for i, name in enumerate(protocol.metadata['Name']):
@@ -130,7 +137,8 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     protocol_string += protocol.get_plan_string()
     protocol_string += standard_run_string
     protocol_string += f'\tcatalog = databroker.catalog["{catalog}"]\n'
-    protocol_string += '\tRE.subscribe(catalog.v1.insert)\n\n'
+    protocol_string += '\tRE.subscribe(catalog.v1.insert)\n'
+    protocol_string += '\tRE.subscribe(eva)\n\n'
     protocol_string += devices_string
     protocol_string += additional_string_devices
     if plotting:

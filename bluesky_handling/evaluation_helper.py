@@ -10,8 +10,9 @@ _base_namespace.update({name: getattr(np, name) for name in np.__all__})
 class Evaluator(CallbackBase):
     def __init__(self, *args, namespace=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.namespace = namespace or {}
-        self.namespace.update(_base_namespace)
+        self.add_namespace = namespace or {}
+        self.namespace = _base_namespace
+        self.namespace.update(self.add_namespace)
 
     def eval(self, eval_str:str):
         # If it is a key in our namespace, look it up.
