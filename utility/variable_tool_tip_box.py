@@ -1,17 +1,19 @@
-from PyQt5.QtWidgets import QLineEdit, QAction, QMenu
+from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QStandardItem
+# from PyQt5.QtGui import QStandardItem
 
 from utility import variables_handling
 
 
-class VariableItem(QStandardItem):
-    def __init__(self, value=None):
-        super().__init__(value)
-        self.setToolTip('test')
+# class VariableItem(QStandardItem):
+#     def __init__(self, value=None):
+#         super().__init__(value)
+#         self.setToolTip('test')
 
 
 class Variable_Box(QLineEdit):
+    """QLineEdit that checks its contents for validity and then color-
+    codes the background."""
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setToolTip('test')
@@ -28,6 +30,7 @@ class Variable_Box(QLineEdit):
         super().setEnabled(a0)
 
     def check_string(self):
+        """Check the string and then set the corresponding background-color."""
         if not self.text():
             self.setStyleSheet(f'background-color: rgb{variables_handling.get_color("white", True)}')
         if variables_handling.check_eval(self.text()):
@@ -37,18 +40,33 @@ class Variable_Box(QLineEdit):
 
 
     def context_menu(self, pos):
+        """Generates the right-click-menu.
+        There are entries for inserting (replace) and appending the
+        variables, channels, functions and operators."""
         menu = self.createStandardContextMenu()
-        (channel_menu, variable_menu, operator_menu, function_menu), _ = variables_handling.get_menus(self.insert_variable)
+        # putting the returned actions somewhere is necessary, otherwise
+        # there will be none inside the single menus
+        (channel_menu, variable_menu, operator_menu, function_menu), _ =\
+            variables_handling.get_menus(self.insert_variable)
         first_act = menu.actions()[0]
         menu.insertMenu(first_act, channel_menu)
         menu.insertMenu(first_act, variable_menu)
         menu.insertMenu(first_act, function_menu)
         menu.insertMenu(first_act, operator_menu)
         menu.insertSeparator(first_act)
+        (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ =\
+            variables_handling.get_menus(self.append_variable, 'Append')
+        menu.insertMenu(first_act, channel_menu2)
+        menu.insertMenu(first_act, variable_menu2)
+        menu.insertMenu(first_act, function_menu2)
+        menu.insertMenu(first_act, operator_menu2)
+        menu.insertSeparator(first_act)
         menu.exec_(self.mapToGlobal(pos))
 
-    def insert_variable(self, variable):
+    def append_variable(self, variable):
+        """Used for the single actions of the context menu."""
         self.setText(self.text() + f'{variable}')
 
-    def get_evaluation(self):
-        return variables_handling.string_eval(self.text())
+    def insert_variable(self, variable):
+        """Used for the single actions of the context menu."""
+        self.setText(f'{variable}')

@@ -6,6 +6,7 @@ from gui.settings_window import Ui_settings_window
 from utility.load_save_functions import standard_pref
 
 class Settings_Window(QDialog, Ui_settings_window):
+    """Dialog to change the settings used in CAMELS."""
     def __init__(self, parent=None, settings=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -49,6 +50,8 @@ class Settings_Window(QDialog, Ui_settings_window):
             self.pathButton_device_path.set_path(standard_pref['device_driver_path'])
 
     def get_settings(self):
+        """Reading all the UI-elements to get the selected settings,
+        then returning those as a dictionary."""
         if self.radioButton_plain_numbers.isChecked():
             numbers = 'plain'
         elif self.radioButton_scientific.isChecked():
@@ -66,7 +69,8 @@ class Settings_Window(QDialog, Ui_settings_window):
 
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
-        """Overwrites the keyPressEvent of the QDialog so that it does not close when pressing Enter/Return."""
+        """Overwrites the keyPressEvent of the QDialog so that it does
+        not close when pressing Enter/Return."""
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)

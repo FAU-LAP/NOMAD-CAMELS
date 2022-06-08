@@ -29,7 +29,11 @@ def ptX(rMeas, rX=1000):
 def ptX_inv(T, rX=1000):
     return root(lambda r: ptX(r, rX) - T, 300).x[0]
 
+def pt1000(rMeas):
+    return ptX(rMeas)
 
+def pt1000_inv(T):
+    return ptX_inv(T)
 
 
 class PID_Controller(Device):
@@ -66,20 +70,28 @@ class PID_Controller(Device):
         self.pid_scan.read_pv_name = f'{prefix}pid_controller.SCAN'
         self.pid_inp.read_pv_name = f'{prefix}pid_controller.INP'
         self.pid_outl.read_pv_name = f'{prefix}pid_controller.OUTL'
+        self.pid_pval.read_pv_name = f'{prefix}pid_controller.P'
+        self.pid_dval.read_pv_name = f'{prefix}pid_controller.D'
+        self.pid_ival.read_pv_name = f'{prefix}pid_controller.I'
+        self.pid_oval.read_pv_name = f'{prefix}pid_controller.OVAL'
         self.pid_bias = bias_signal
+        if isinstance(read_conv_func, str):
+            read_conv_func = globals()[read_conv_func]
         if read_conv_func is not None:
             self.pid_val.conversion_function = read_conv_func
             self.pid_cval.conversion_function = read_conv_func
+        if isinstance(set_conv_func, str):
+            set_conv_func = globals()[set_conv_func]
         if set_conv_func is not None:
             self.pid_val.set_conversion_function = set_conv_func
             self.pid_cval.set_conversion_function = set_conv_func
-
+        self.pid_val.putFunc = self.update_PID_vals
         # if pid_val_table is None:
         #     pid_val_table = PID_val_table()
         # elif type(pid_val_table) is str:
         #     pid_val_table = PID_val_table(table=pid_val_table)
         if pid_val_table is None:
-            pid_val_table = pd.DataFrame({'setpoint': [0], 'kp': [0], 'ki': [0], 'kd': [0], 'maxval': [np.inf], 'minval': [-np.inf], 'bias': [0]})
+            pid_val_table = pd.DataFrame({'setpoint': [0], 'kp': [0], 'ki': [0], 'kd': [0], 'maxval': [np.inf], 'minval': [-np.inf], 'bias': [0], 'stability-delta': [0], 'stability-time': [0]})
         elif type(pid_val_table) is str:
             pid_val_table = pd.read_csv(pid_val_table, delimiter='\t')
         self.pid_val_table = pid_val_table
@@ -96,6 +108,8 @@ class PID_Controller(Device):
         self.interpolate_auto = interpolate_auto
         # setpoint = self.pid_val.get()
         self.pid_vals = None
+        self.stability_time = 0
+        self.stability_delta = 0
         # self.update_PID_vals(setpoint)
 
     def update_PID_vals(self, setpoint):
@@ -103,28 +117,31 @@ class PID_Controller(Device):
         if not self.auto_pid:
             return
         old_vals = copy.deepcopy(self.pid_vals)
-        setpoints = self.pid_val_table['setpoint']
+        pid_val_table = pd.DataFrame(self.pid_val_table)
+        setpoints = pid_val_table['setpoint']
         if setpoint >= max(setpoints):
-            self.pid_vals = self.pid_val_table[setpoints == max(setpoints)].to_dict(orient='list')
+            self.pid_vals = pid_val_table[setpoints == max(setpoints)].to_dict(orient='list')
         elif setpoint <= min(setpoints):
-            self.pid_vals = self.pid_val_table[setpoints == min(setpoints)].to_dict(orient='list')
+            self.pid_vals = pid_val_table[setpoints == min(setpoints)].to_dict(orient='list')
         elif self.interpolate_auto:
             next_lo = max(setpoints[setpoints <= setpoint])
             next_hi = min(setpoints[setpoints >= setpoint])
-            lo_vals = self.pid_val_table[setpoints == next_lo].to_dict(orient='list')
-            hi_vals = self.pid_val_table[setpoints == next_hi].to_dict(orient='list')
+            lo_vals = pid_val_table[setpoints == next_lo].to_dict(orient='list')
+            hi_vals = pid_val_table[setpoints == next_hi].to_dict(orient='list')
             self.pid_vals = {}
             for key, lo_val in lo_vals.items():
                 self.pid_vals[key] = [lo_val[0] + (hi_vals[key][0] - lo_val[0]) * (setpoint - next_lo)/(next_hi - next_lo)]
         else:
             next_lo = max(setpoints[setpoints <= setpoint])
-            self.pid_vals = self.pid_val_table[setpoints == next_lo].to_dict(orient='list')
+            self.pid_vals = pid_val_table[setpoints == next_lo].to_dict(orient='list')
         if old_vals != self.pid_vals:
             for key in self.pid_vals:
-                if key == 'setpoint' or (key == 'bias' and self.pid_bias is None):
+                if key in ['setpoint', 'stability-time', 'stability-delta'] or (key == 'bias' and self.pid_bias is None):
                     continue
                 att = getattr(self, f'pid_{key}')
                 att.put(self.pid_vals[key][0])
+        self.stability_time = self.pid_vals['stability-time'][0]
+        self.stability_delta = self.pid_vals['stability-delta'][0]
 
     def wait_for_connection(self, all_signals=False, timeout=2.0):
         if timeout is None:
@@ -151,7 +168,7 @@ if __name__ == '__main__':
     pid = PID_Controller('Hall:', name='pid',
                          pid_val_table=r"C:\Users\od93yces\FAIRmat\CAMELS\devices\devices_drivers\PID_controller\test_pid_values.txt",
                          auto_pid=True, interpolate_auto=True,
-                         set_conv_func=ptX_inv, read_conv_func=ptX)
+                         set_conv_func=ptX_inv, read_conv_func='ptX')
     pid.wait_for_connection()
     pid.put(60)
     print(pid.pid_vals)

@@ -8,6 +8,18 @@ from utility import variables_handling
 
 
 class Read_Channels(Loop_Step):
+    """This step represents the bluesky plan stub `trigger_and_read`.
+
+    Attributes
+    ----------
+    read_all : bool
+        whether to simply read all available channels
+    channel_dict : dict
+        the dictionary of all channels and whether to read them. It also
+        provides "use set" for using the set-value without reading, but
+        that is not supported. The shape should look like:
+        {channel: {'read': True, 'use set': False}}
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, **kwargs)
         self.step_type = 'Read Channels'
@@ -28,6 +40,7 @@ class Read_Channels(Loop_Step):
         self.update_used_devices()
 
     def update_used_devices(self):
+        """All devices that should be read are added to the used_devices."""
         self.used_devices = []
         for channel_name, channel_info in self.channel_dict.items():
             if (self.read_all or channel_info['read']) and channel_name in variables_handling.channels:
@@ -38,12 +51,12 @@ class Read_Channels(Loop_Step):
 
 
     def get_protocol_string(self, n_tabs=1):
+        """In the protocol, at first a list `channels` is defined,
+        including all the channels, that are selected to be read. Then
+        bps.trigger_and_read is called on these channels."""
         tabs = '\t' * n_tabs
         protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
-        devices_dict_channels = {}
-        devices_dict_use_set = {}
         protocol_string += f'{tabs}channels = ['
-        n = len(self.channel_dict)
         inserted = False
         for channel, channel_data in self.channel_dict.items():
             if channel not in variables_handling.channels:
@@ -72,6 +85,9 @@ class Read_Channels_Config(Loop_Step_Config):
         self.layout().addWidget(self.sub_widget, 1, 0)
 
 class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
+    """Config for the Read_Channels it provides a table of channels with
+    a checkbox, whether to read them. Also there is a checkbox whether
+    to simply read all available channels."""
     def __init__(self, loop_step:Read_Channels, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -81,7 +97,9 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
         # self.comboBox_readType.currentTextChanged.connect(self.read_type_changed)
         self.load_data()
         self.read_type_changed()
-        self.tableWidget_channels.setHorizontalHeaderLabels(['read', 'channel name', 'use set-value'])
+        self.tableWidget_channels.setHorizontalHeaderLabels(['read',
+                                                             'channel name',
+                                                             'use set-value'])
         self.build_channels_table()
         self.checkBox_use_set.toggled.connect(self.checkbox_toggle)
         self.checkBox_plot.toggled.connect(self.checkbox_toggle)
@@ -89,11 +107,15 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
         self.tableWidget_channels.clicked.connect(self.table_check_changed)
 
     def checkbox_toggle(self):
+        """When a checkbox is (un-)checked, the new value is stored
+        inside the loop_step."""
         self.loop_step.use_set_val = self.checkBox_use_set.isChecked()
         self.loop_step.save_data = self.checkBox_save.isChecked()
         self.loop_step.plot_data = self.checkBox_plot.isChecked()
 
     def read_type_changed(self):
+        """If the read-all checkbox is checked, disables the table, if
+        not, enables it."""
         read_all = self.checkBox_read_all.isChecked()
         if read_all:
             self.tableWidget_channels.setEnabled(False)
@@ -105,6 +127,7 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
         self.loop_step.update_used_devices()
 
     def load_data(self):
+        """Putting the data from the loop_step into the widgets."""
         self.checkBox_read_all.setChecked(self.loop_step.read_all)
         self.checkBox_save.setChecked(self.loop_step.save_data)
         self.checkBox_plot.setChecked(self.loop_step.plot_data)
@@ -112,6 +135,8 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
         self.build_channels_table()
 
     def table_check_changed(self, pos):
+        """If a checkbox inside the table is clicked, the value is
+        stored into the loopstep."""
         r = pos.row()
         c = pos.column()
         name = self.tableWidget_channels.item(r, 1).text()
@@ -123,6 +148,7 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
 
 
     def build_channels_table(self):
+        """This creates the table for all channels."""
         self.tableWidget_channels.clear()
         self.tableWidget_channels.setColumnCount(3)
         self.tableWidget_channels.setRowCount(len(variables_handling.channels))

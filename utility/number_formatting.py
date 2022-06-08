@@ -3,6 +3,9 @@ import numpy as np
 preferences = {}
 
 def format_number(value):
+    """Format a number-string the way it is specified in the preferences."""
+    if isinstance(value, int):
+        return str(value)
     if 'number_format' not in preferences or 'n_decimals' not in preferences:
         return str(f'{value:.2f}')
     if preferences['number_format'] == 'plain':

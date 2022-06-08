@@ -1,5 +1,4 @@
 from main_classes import device_class
-import importlib
 from keysight_b2912.keysight_b2912_config import Ui_Form
 
 class subclass(device_class.Device):

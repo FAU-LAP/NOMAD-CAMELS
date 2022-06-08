@@ -1,10 +1,15 @@
+import copy
+
 from keysight_e5270b.keysight_e5270b_ophyd import Keysight_E5270B
 from keysight_e5270b.keysight_e5270b_config import Ui_keysight_e5270b_config
+from keysight_e5270b.keysight_e5270b_config_channel import Ui_keysight_e5270b_config_channel
 
 from main_classes import device_class
 from utility.number_formatting import format_number
+from utility.variables_handling import get_color
 
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import pyqtSignal
 
 
 
@@ -15,15 +20,64 @@ class subclass(device_class.Device):
         # package = importlib.import_module('keysight_e5270b.keysight_e5270b_ophyd')
         # ophyd_device = package.Keysight_E5270B
         files = ['keysight_e5270b.db', 'keysight_e5270b.proto']
-        req = ['prologixSup']
+        req = []
         super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'], directory='keysight_e5270b', ophyd_device=Keysight_E5270B, requirements=req, files=files, ophyd_class_name='Keysight_E5270B')
+        for i in range(1, 9):
+            key = f'active{i}'
+            if key not in self.config:
+                self.config[key] = False
+
+    def get_settings(self):
+        chans = []
+        settings = {'use_channels': chans}
+        for i in range(1, 9):
+            if self.config[f'active{i}']:
+                chans.append(i)
+        settings.update(self.settings)
+        return settings
+
+    def get_config(self):
+        config_dict = copy.deepcopy(self.config)
+        removes = []
+        for i in range(1, 9):
+            if not self.config[f'active{i}']:
+                for key in self.config:
+                    if str(i) in key:
+                        removes.append(key)
+            else:
+                removes.append(f'active{i}')
+        for r in removes:
+            config_dict.pop(r)
+        return config_dict
+
+    def get_channels(self):
+        channels = copy.deepcopy(super().get_channels())
+        removes = []
+        for i in range(1, 9):
+            if not self.config[f'active{i}']:
+                for key in self.channels:
+                    if key.endswith(str(i)):
+                        removes.append(key)
+        for r in removes:
+            channels.pop(r)
+        return channels
+
+    def get_substitutions_string(self, ioc_name:str, communication:str):
+        substring = f'file "db/{self.name}.db" {{\n'
+        for i in range(1, 9):
+            if self.config[f'active{i}']:
+                substring += f'    {{SETUP = "{ioc_name}", device = "{self.custom_name}", COMM = "{communication}", Channel = {i}}}\n'
+        substring += '}'
+        return substring
+
+
 
 class subclass_config(device_class.Device_Config):
     def __init__(self, parent=None, data='', settings_dict=None, config_dict=None):
         super().__init__(parent, 'Keysight E5270B', data, settings_dict, config_dict)
         self.comboBox_connection_type.addItem('prologix-GPIB')
         self.sub_widget = subclass_config_sub(settings_dict=self.config_dict, parent=self)
-        self.layout().addWidget(self.sub_widget, 3, 0, 1, 2)
+        self.layout().addWidget(self.sub_widget, 20, 0, 1, 2)
         self.load_settings()
 
     def get_config(self):
@@ -36,18 +90,80 @@ class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
         self.setupUi(self)
         self.settings_dict = settings_dict
 
-        if 'setADC1' in settings_dict:
+        self.adc_modes = {'Auto Mode': 0,
+                          'Manual Mode': 1,
+                          'PLC Mode': 2}
+        adc_mode_values = list(self.adc_modes.values())
+        adc_mode_keys = list(self.adc_modes.keys())
+        self.comboBox_highResMode.addItems(self.adc_modes.keys())
+        self.comboBox_highSpeedMode.addItems(self.adc_modes.keys())
+        if 'speedADCmode' in settings_dict and settings_dict['speedADCmode'] in adc_mode_values:
+            i = adc_mode_values.index(settings_dict['speedADCmode'])
+            self.comboBox_highSpeedMode.setCurrentText(adc_mode_keys[i])
+        else:
+            self.comboBox_highSpeedMode.setCurrentText(adc_mode_keys[2])
+        if 'resADCmode' in settings_dict and settings_dict['resADCmode'] in adc_mode_values:
+            i = adc_mode_values.index(settings_dict['resADCmode'])
+            self.comboBox_highResMode.setCurrentText(adc_mode_keys[i])
+        else:
+            self.comboBox_highResMode.setCurrentText(adc_mode_keys[2])
+
+        if 'speedADCPLC' in settings_dict:
+            self.lineEdit_highSpeedPLC.setText(str(settings_dict['speedADCPLC']))
+        else:
+            self.lineEdit_highSpeedPLC.setText('5')
+        if 'resADCPLC' in settings_dict:
+            self.lineEdit_highResPLC.setText(str(settings_dict['resADCPLC']))
+        else:
+            self.lineEdit_highResPLC.setText('5')
+
+        self.channel_widgets = []
+        for i, tab in enumerate([self.channel1, self.channel2, self.channel3, self.channel4, self.channel5, self.channel6, self.channel7, self.channel8]):
+            sub_widget = subclass_config_channel(settings_dict, self, i+1)
+            self.channel_widgets.append(sub_widget)
+            tab.layout().addWidget(sub_widget)
+            sub_widget.activate_sig.connect(lambda state, x=i: self.change_tab_color(state, x))
+            sub_widget.activate()
+
+
+    def change_tab_color(self, state, i):
+        if state:
+            col = get_color('black')
+        else:
+            col = get_color('grey')
+        self.tabWidget.tabBar().setTabTextColor(i, col)
+
+    def get_settings(self):
+        for channel_widget in self.channel_widgets:
+            channel_widget.get_settings()
+        self.settings_dict['speedADCPLC'] = int(float(self.lineEdit_highSpeedPLC.text()))
+        self.settings_dict['resADCPLC'] = int(float(self.lineEdit_highResPLC.text()))
+        self.settings_dict['speedADCmode'] = self.adc_modes[self.comboBox_highSpeedMode.currentText()]
+        self.settings_dict['resADCmode'] = self.adc_modes[self.comboBox_highResMode.currentText()]
+        return self.settings_dict
+
+
+class subclass_config_channel(QWidget, Ui_keysight_e5270b_config_channel):
+    activate_sig = pyqtSignal(bool)
+
+    def __init__(self, settings_dict=None, parent=None, number=1):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.settings_dict = settings_dict
+        self.number = number
+
+        if f'setADC{self.number}' in settings_dict:
             self.radioButton_highResADC.setChecked(True)
-            if settings_dict['setADC1'] == 0:
+            if settings_dict[f'setADC{self.number}'] == 0:
                 self.radioButton_highSpeedADC.setChecked(True)
 
-        if 'currComp1' in settings_dict:
-            self.lineEdit_currComp.setText(format_number(settings_dict['currComp1']))
+        if f'currComp{self.number}' in settings_dict:
+            self.lineEdit_currComp.setText(format_number(settings_dict[f'currComp{self.number}']))
         else:
             self.lineEdit_currComp.setText('0')
 
-        if 'voltComp1' in settings_dict:
-            self.lineEdit_voltComp.setText(format_number(settings_dict['voltComp1']))
+        if f'voltComp{self.number}' in settings_dict:
+            self.lineEdit_voltComp.setText(format_number(settings_dict[f'voltComp{self.number}']))
         else:
             self.lineEdit_voltComp.setText('0')
 
@@ -110,81 +226,48 @@ class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
         current_ranges_values = list(current_ranges.values())
         voltage_ranges_names = list(voltage_ranges.keys())
         voltage_ranges_values = list(voltage_ranges.values())
-        if 'VoutRange1' in settings_dict and settings_dict['VoutRange1'] in voltage_ranges_values:
-            i = voltage_ranges_values.index(settings_dict['VoutRange1'])
+        if f'VoutRange{self.number}' in settings_dict and settings_dict[f'VoutRange{self.number}'] in voltage_ranges_values:
+            i = voltage_ranges_values.index(settings_dict[f'VoutRange{self.number}'])
             self.comboBox_voltRange.setCurrentText(voltage_ranges_names[i])
         else:
             self.comboBox_voltRange.setCurrentIndex(0)
-        if 'IoutRange1' in settings_dict and settings_dict['IoutRange1'] in current_ranges_values:
-            i = current_ranges_values.index(settings_dict['IoutRange1'])
+        if f'IoutRange{self.number}' in settings_dict and settings_dict[f'IoutRange{self.number}'] in current_ranges_values:
+            i = current_ranges_values.index(settings_dict[f'IoutRange{self.number}'])
             self.comboBox_currRange.setCurrentText(current_ranges_names[i])
         else:
             self.comboBox_currRange.setCurrentIndex(0)
-        if 'VmeasRange1' in settings_dict and settings_dict['VmeasRange1'] in voltage_ranges_values:
-            i = voltage_ranges_values.index(settings_dict['VmeasRange1'])
+        if f'VmeasRange{self.number}' in settings_dict and settings_dict[f'VmeasRange{self.number}'] in voltage_ranges_values:
+            i = voltage_ranges_values.index(settings_dict[f'VmeasRange{self.number}'])
             self.comboBox_voltMeasRange.setCurrentText(voltage_ranges_names[i])
         else:
             self.comboBox_voltMeasRange.setCurrentIndex(0)
-        if 'ImeasRange1' in settings_dict and settings_dict['ImeasRange1'] in current_ranges_values:
-            i = current_ranges_values.index(settings_dict['ImeasRange1'])
+        if f'ImeasRange{self.number}' in settings_dict and settings_dict[f'ImeasRange{self.number}'] in current_ranges_values:
+            i = current_ranges_values.index(settings_dict[f'ImeasRange{self.number}'])
             self.comboBox_currMeasRange.setCurrentText(current_ranges_names[i])
         else:
             self.comboBox_currMeasRange.setCurrentIndex(0)
 
-        self.checkBox_outputFilter.setChecked(settings_dict['outputFilter1'] if 'outputFilter1' in settings_dict else False)
+        self.checkBox_outputFilter.setChecked(settings_dict[f'outputFilter{self.number}'] if f'outputFilter{self.number}' in settings_dict else False)
 
-        self.adc_modes = {'Auto Mode': 0,
-                          'Manual Mode': 1,
-                          'PLC Mode': 2}
-        adc_mode_values = list(self.adc_modes.values())
-        adc_mode_keys = list(self.adc_modes.keys())
-        self.comboBox_highResMode.addItems(self.adc_modes.keys())
-        self.comboBox_highSpeedMode.addItems(self.adc_modes.keys())
-        if 'speedADCmode' in settings_dict and settings_dict['speedADCmode'] in adc_mode_values:
-            i = adc_mode_values.index(settings_dict['speedADCmode'])
-            self.comboBox_highSpeedMode.setCurrentText(adc_mode_keys[i])
-        else:
-            self.comboBox_highSpeedMode.setCurrentText(adc_mode_keys[2])
-        if 'resADCmode' in settings_dict and settings_dict['resADCmode'] in adc_mode_values:
-            i = adc_mode_values.index(settings_dict['resADCmode'])
-            self.comboBox_highResMode.setCurrentText(adc_mode_keys[i])
-        else:
-            self.comboBox_highResMode.setCurrentText(adc_mode_keys[2])
+        if f'active{self.number}' in settings_dict:
+            self.checkBox_channel_active.setChecked(settings_dict[f'active{self.number}'])
+        self.checkBox_channel_active.clicked.connect(self.activate)
 
-        if 'speedADCPLC' in settings_dict:
-            self.lineEdit_highSpeedPLC.setText(str(settings_dict['speedADCPLC']))
-        else:
-            self.lineEdit_highSpeedPLC.setText('5')
-        if 'resADCPLC' in settings_dict:
-            self.lineEdit_highResPLC.setText(str(settings_dict['resADCPLC']))
-        else:
-            self.lineEdit_highResPLC.setText('5')
-
-        self.radioButton_highResADC.clicked.connect(self.adc_switch)
-        self.radioButton_highSpeedADC.clicked.connect(self.adc_switch)
-        self.adc_switch()
-
-
-    def adc_switch(self):
-        check_val = self.radioButton_highResADC.isChecked()
-        res = [self.label_resPLC, self.label_resMode, self.comboBox_highResMode, self.lineEdit_highResPLC]
-        speed = [self.label_speedPLC, self.label_speedMode, self.comboBox_highSpeedMode, self.lineEdit_highSpeedPLC]
-        for r in res:
-            r.setEnabled(check_val)
-        for s in speed:
-            s.setEnabled(not check_val)
+    def activate(self):
+        active = self.checkBox_channel_active.isChecked()
+        for child in self.children():
+            if child is not self.checkBox_channel_active and child is not self.layout():
+                child.setEnabled(active)
+        self.activate_sig.emit(active)
 
     def get_settings(self):
-        self.settings_dict['currComp1'] = float(self.lineEdit_currComp.text())
-        self.settings_dict['voltComp1'] = float(self.lineEdit_voltComp.text())
-        self.settings_dict['VoutRange1'] = self.voltage_ranges[self.comboBox_voltRange.currentText()]
-        self.settings_dict['IoutRange1'] = self.current_ranges[self.comboBox_currRange.currentText()]
-        self.settings_dict['VmeasRange1'] = self.voltage_ranges[self.comboBox_voltMeasRange.currentText()]
-        self.settings_dict['ImeasRange1'] = self.current_ranges[self.comboBox_currMeasRange.currentText()]
-        self.settings_dict['setADC1'] = int(self.radioButton_highResADC.isChecked())
-        self.settings_dict['outputFilter1'] = int(self.checkBox_outputFilter.isChecked())
-        self.settings_dict['speedADCPLC'] = int(float(self.lineEdit_highSpeedPLC.text()))
-        self.settings_dict['resADCPLC'] = int(float(self.lineEdit_highResPLC.text()))
-        self.settings_dict['speedADCmode'] = self.adc_modes[self.comboBox_highSpeedMode.currentText()]
-        self.settings_dict['resADCmode'] = self.adc_modes[self.comboBox_highResMode.currentText()]
+        self.settings_dict[f'active{self.number}'] = float(self.checkBox_channel_active.isChecked())
+        self.settings_dict[f'currComp{self.number}'] = float(self.lineEdit_currComp.text())
+        self.settings_dict[f'voltComp{self.number}'] = float(self.lineEdit_voltComp.text())
+        self.settings_dict[f'VoutRange{self.number}'] = self.voltage_ranges[self.comboBox_voltRange.currentText()]
+        self.settings_dict[f'IoutRange{self.number}'] = self.current_ranges[self.comboBox_currRange.currentText()]
+        self.settings_dict[f'VmeasRange{self.number}'] = self.voltage_ranges[self.comboBox_voltMeasRange.currentText()]
+        self.settings_dict[f'ImeasRange{self.number}'] = self.current_ranges[self.comboBox_currMeasRange.currentText()]
+        self.settings_dict[f'setADC{self.number}'] = int(self.radioButton_highResADC.isChecked())
+        self.settings_dict[f'outputFilter{self.number}'] = int(self.checkBox_outputFilter.isChecked())
         return self.settings_dict

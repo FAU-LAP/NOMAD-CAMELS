@@ -6,6 +6,8 @@ import os
 
 
 class Path_Button_Edit(QWidget):
+    """This class provides QLineEdit with a QPushButton, used to select
+    a file-path, that is then displayed in the LineEdit."""
     path_changed = pyqtSignal(str)
 
     def __init__(self, parent=None):

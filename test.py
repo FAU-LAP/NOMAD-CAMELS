@@ -1,86 +1,45 @@
-"""
-An example integration QtFigures into an "existing" Qt application. Run like:
-
-python -m bluesky_widgets.examples.qt_app_integration
-"""
-from qtpy.QtWidgets import QApplication, QVBoxLayout, QLabel, QMainWindow, QWidget
+import sys
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QMovie
+from PyQt5.QtCore import Qt
 
 
-def main():
-    # First, some boilerplate to make a super-minimal Qt application that we want
-    # to add some bluesky-widgets components into.
-    app = QApplication(["Some App"])
-    window = QMainWindow()
-    central_widget = QWidget(window)
-    window.setCentralWidget(central_widget)
-    central_widget.setLayout(QVBoxLayout())
-    central_widget.layout().addWidget(QLabel("This is part of the 'original' app."))
-    window.show()
+class LoadingGif(object):
 
-    # *** INTEGRATION WITH BLUESKY-WIDGETS STARTS HERE. ***
+    def mainUI(self, FrontWindow):
+        FrontWindow.setObjectName("FTwindow")
+        FrontWindow.resize(320, 300)
+        self.centralwidget = QtWidgets.QWidget(FrontWindow)
+        self.centralwidget.setObjectName("main-widget")
 
-    # Ensure that any background workers started by bluesky-widgets stop
-    # gracefully when the application closes.
-    from bluesky_widgets.qt.threading import wait_for_workers_to_quit
+        # Label Create
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(25, 25, 200, 200))
+        self.label.setMinimumSize(QtCore.QSize(250, 250))
+        self.label.setMaximumSize(QtCore.QSize(250, 250))
+        self.label.setObjectName("lb1")
+        FrontWindow.setCentralWidget(self.centralwidget)
 
-    app.aboutToQuit.connect(wait_for_workers_to_quit)
+        # Loading the GIF
+        self.movie = QMovie("graphics/loading.gif")
+        self.movie.setScaledSize(QtCore.QSize(30, 30))
+        self.label.setMovie(self.movie)
 
-    # Model a list of figures.
-    # This will generate line plot automatically based on the structure (shape)
-    # of the data and its hints. Other models could be used for more explicit
-    # control of what gets plotted. See the examples in
-    # http://blueskyproject.io/bluesky-widgets/reference.html#plot-builders
-    from bluesky_widgets.models.auto_plot_builders import AutoLines
+        self.startAnimation()
 
-    model = AutoLines(max_runs=10)
+    # Start Animation
 
-    # Feed it data from the RunEngine. In actual practice, the RunEngine should
-    # be in a separate process and we should be receiving these documents
-    # over a network via publish--subscribe. See
-    # bluesky_widgets.examples.advanced.qt_viewer_with_search for an example of
-    # that. Here, we keep it simple.
-    from bluesky_widgets.utils.streaming import stream_documents_into_runs
-    from bluesky import RunEngine
+    def startAnimation(self):
+        self.movie.start()
 
-    RE = RunEngine()
-    RE.subscribe(stream_documents_into_runs(model.add_run))
-
-    # Add a tabbed pane of figures to the app.
-    from bluesky_widgets.qt.figures import QtFigures
-
-    view = QtFigures(model.figures)  # view is a QWidget
-    central_widget.layout().addWidget(view)
-
-    # When the model receives data or is otherwise updated, any changes to
-    # model.figures will be reflected in changes to the view.
-
-    # Just for this example, generate some data before starting this app.
-    # Again, in practice, this should happen in a separate process and send
-    # the results over a network.
-
-    from bluesky.plans import scan
-    from ophyd.sim import motor, det
-    import time
-    from ophyd import EpicsMotor
-    from ophyd import Device, EpicsSignal, EpicsSignalRO
-
-    # m1 = EpicsMotor('IOCsim:m1', name='m1', labels=("motors",))
-    # keithley6517 = EpicsSignal("EMILEL:test:rdCurE3", name="keithley", labels=("detectors"))
-    motor.delay = 0
-    def plan():
-        for i in range(1, 5):
-            yield from scan([det], motor, -1, 1, 1 + 2 * i)
-
-        # yield from scan([keithley6517], m1, -1, 1, 2)
-
-    RE(plan())
+    # Stop Animation(According to need)
+    def stopAnimation(self):
+        self.movie.stop()
 
 
-    # *** INTEGRATION WITH BLUESKY-WIDGETS ENDS HERE. ***
-
-    # Run the app.
-    app.exec_()
-
-
-if __name__ == "__main__":
-    main()
+app = QtWidgets.QApplication(sys.argv)
+window = QtWidgets.QMainWindow()
+demo = LoadingGif()
+demo.mainUI(window)
+window.show()
+sys.exit(app.exec_())

@@ -14,7 +14,10 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="3">
+   <item row="1" column="0">
+    <widget class="QWidget" name="widget" native="true"/>
+   </item>
+   <item row="3" column="3">
     <widget class="QPushButton" name="pushButton_remove_variable">
      <property name="maximumSize">
       <size>
@@ -27,7 +30,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
+   <item row="3" column="2">
     <widget class="QPushButton" name="pushButton_add_variable">
      <property name="maximumSize">
       <size>
@@ -40,7 +43,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label_2">
      <property name="font">
       <font>
@@ -54,14 +57,11 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1" colspan="3">
-    <widget class="QLineEdit" name="lineEdit_filename">
-     <property name="text">
-      <string>Datafile</string>
-     </property>
-     <property name="placeholderText">
-      <string>Filename</string>
-     </property>
+   <item row="4" column="0" colspan="4">
+    <widget class="QTableView" name="tableView_variables">
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
     </widget>
    </item>
    <item row="0" column="0">
@@ -83,15 +83,18 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="4">
-    <widget class="QTableView" name="tableView_variables">
-     <attribute name="verticalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
+   <item row="0" column="1" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_filename">
+     <property name="text">
+      <string>Datafile</string>
+     </property>
+     <property name="placeholderText">
+      <string>Filename</string>
+     </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QWidget" name="widget" native="true"/>
+   <item row="2" column="0">
+    <widget class="QWidget" name="widget_2" native="true"/>
    </item>
   </layout>
  </widget>

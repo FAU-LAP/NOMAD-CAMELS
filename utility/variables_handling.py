@@ -1,38 +1,40 @@
-import numpy as np
+# import numpy as np
 from ast import literal_eval
 from PyQt5.QtWidgets import QMenu, QAction
 from PyQt5.QtGui import QColor
 
-from utility import simpleeval
+# from utility import simpleeval
 
 from bluesky_widgets.models import utils
 
 meas_preset = ''
 dev_preset = ''
 device_driver_path = ''
+meas_files_path = ''
+CAMELS_path = ''
 
 protocol_variables = {}
 channels = {}
 loop_step_variables = {}
 devices = {}
 dark_mode = False
-evaluation_functions = simpleeval.DEFAULT_FUNCTIONS.copy()
-evaluation_functions.update({'exp': np.exp,
-                             'log': np.log,
-                             'sqrt': np.sqrt,
-                             'round': round,
-                             'sin': np.sin,
-                             'cos': np.cos,
-                             'sinh': np.sinh,
-                             'cosh': np.cosh,
-                             'sinc': np.sinc,
-                             'tan': np.tan,
-                             'arctan': np.arctan,
-                             'arcsin': np.arcsin,
-                             'arccos': np.arccos,
-                             'arcsinh': np.arcsinh,
-                             'arccosh': np.arccosh,
-                             'arctanh': np.arctanh})
+# evaluation_functions = simpleeval.DEFAULT_FUNCTIONS.copy()
+# evaluation_functions.update({'exp': np.exp,
+#                              'log': np.log,
+#                              'sqrt': np.sqrt,
+#                              'round': round,
+#                              'sin': np.sin,
+#                              'cos': np.cos,
+#                              'sinh': np.sinh,
+#                              'cosh': np.cosh,
+#                              'sinc': np.sinc,
+#                              'tan': np.tan,
+#                              'arctan': np.arctan,
+#                              'arcsin': np.arcsin,
+#                              'arccos': np.arccos,
+#                              'arcsinh': np.arcsinh,
+#                              'arccosh': np.arccosh,
+#                              'arctanh': np.arctanh})
 
 evaluation_functions_names = {
     'randint()': 'randint(x) - random integer below x',
@@ -68,9 +70,14 @@ operator_names = {
     '>': 'greater than',
     '<=': 'less or equal',
     '>=': 'greater or equal',
+    'and': 'logical AND',
+    'or': 'logical OR',
+    'not': 'logical negation'
 }
 
-def get_color(color, string=False):
+def get_color(color='', string=False):
+    """Returns the respective QColor or rgb-code(if `string`) for
+    `color`, taking dark-mode into account."""
     if color == 'red' or color == 'r':
         rgb = (255, 153, 153)
         if dark_mode:
@@ -79,6 +86,12 @@ def get_color(color, string=False):
         rgb = (153, 255, 153)
         if dark_mode:
             rgb = (0, 153, 0)
+    elif color == 'grey' or color == 'gray':
+        rgb = (169, 169, 169)
+    elif color == 'black':
+        rgb = (0, 0, 0)
+        if dark_mode:
+            rgb = (255, 255, 255)
     else:
         rgb = (255, 255, 255)
         if dark_mode:
@@ -87,11 +100,13 @@ def get_color(color, string=False):
         return str(rgb)
     return QColor(*rgb)
 
-def get_menus(connect_function):
-    variable_menu = QMenu('Insert Variable')
-    channel_menu = QMenu('Insert Channel-Value')
-    function_menu = QMenu('Insert Function')
-    operator_menu = QMenu('Insert Operator')
+def get_menus(connect_function, pretext='Insert'):
+    """Providing QMenus with the `connect_function` for each action,
+    containing all the variables, channels, functions and operators."""
+    variable_menu = QMenu(f'{pretext} Variable')
+    channel_menu = QMenu(f'{pretext} Channel-Value')
+    function_menu = QMenu(f'{pretext} Function')
+    operator_menu = QMenu(f'{pretext} Operator')
     channel_actions = []
     operator_actions = []
     actions = []
@@ -125,15 +140,8 @@ def get_menus(connect_function):
     return menus, actions
 
 
-def string_eval(s):
-    names = {}
-    names.update(protocol_variables)
-    names.update(loop_step_variables)
-    for channel in channels:
-        names.update({channel: 0})
-    return simpleeval.simple_eval(s, functions=evaluation_functions, names=names)
-
 def check_eval(s):
+    """Checks, whether the string `s` can be evaluated."""
     try:
         namespace = dict(utils._base_namespace)
         namespace.update(protocol_variables)

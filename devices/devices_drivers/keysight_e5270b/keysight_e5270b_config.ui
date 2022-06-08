@@ -26,181 +26,161 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="1" column="1">
-    <widget class="QComboBox" name="comboBox_highSpeedMode"/>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Current Compliance</string>
+   <item row="1" column="2" colspan="2">
+    <widget class="QLabel" name="label_10">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>30</height>
+      </size>
      </property>
-    </widget>
-   </item>
-   <item row="5" column="3">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Voltage Compliance</string>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
      </property>
-    </widget>
-   </item>
-   <item row="6" column="3">
-    <widget class="QLabel" name="label_6">
      <property name="text">
-      <string>Current Range</string>
+      <string>High Resolution ADC</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
+    <widget class="QComboBox" name="comboBox_highSpeedMode"/>
+   </item>
+   <item row="3" column="1">
     <widget class="QLineEdit" name="lineEdit_highSpeedPLC"/>
    </item>
-   <item row="2" column="3">
-    <widget class="QLabel" name="label_resPLC">
-     <property name="text">
-      <string>PLC</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="label_speedMode">
      <property name="text">
       <string>Mode</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="3">
+    <widget class="QLineEdit" name="lineEdit_highResPLC"/>
+   </item>
+   <item row="3" column="0">
     <widget class="QLabel" name="label_speedPLC">
      <property name="text">
       <string>PLC</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="4">
-    <widget class="QLineEdit" name="lineEdit_highResPLC"/>
-   </item>
-   <item row="7" column="1">
-    <widget class="QComboBox" name="comboBox_currMeasRange"/>
-   </item>
-   <item row="6" column="4">
-    <widget class="QComboBox" name="comboBox_currRange"/>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QLabel" name="label_3">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Voltage Source</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="3">
-    <widget class="QLabel" name="label_8">
-     <property name="text">
-      <string>Voltage Measurement Range</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="QRadioButton" name="radioButton_highSpeedADC">
-     <property name="text">
-      <string>High Speed ADC</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3" colspan="2">
-    <widget class="QRadioButton" name="radioButton_highResADC">
-     <property name="text">
-      <string>High Res ADC</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="4">
-    <widget class="QLineEdit" name="lineEdit_voltComp"/>
-   </item>
-   <item row="4" column="3" colspan="2">
-    <widget class="QLabel" name="label_4">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Current Source</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Voltage Range</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="4">
-    <widget class="QComboBox" name="comboBox_voltMeasRange"/>
-   </item>
-   <item row="1" column="3">
+   <item row="2" column="2">
     <widget class="QLabel" name="label_resMode">
      <property name="text">
       <string>Mode</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="label_7">
+   <item row="3" column="2">
+    <widget class="QLabel" name="label_resPLC">
      <property name="text">
-      <string>Current Measurement Range</string>
+      <string>PLC</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="5">
-    <widget class="QCheckBox" name="checkBox_outputFilter">
-     <property name="text">
-      <string>Output Filter</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="QComboBox" name="comboBox_voltRange"/>
-   </item>
-   <item row="5" column="1">
-    <widget class="QLineEdit" name="lineEdit_currComp"/>
-   </item>
-   <item row="1" column="4">
+   <item row="2" column="3">
     <widget class="QComboBox" name="comboBox_highResMode"/>
    </item>
-   <item row="4" column="2" rowspan="4">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="1" column="0" colspan="2">
+    <widget class="QLabel" name="label_9">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>30</height>
+      </size>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>High Speed ADC</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="4">
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="4">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>250</height>
+      </size>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="channel1">
+      <attribute name="title">
+       <string>Channel 1</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2"/>
+     </widget>
+     <widget class="QWidget" name="channel2">
+      <attribute name="title">
+       <string>Channel 2</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3"/>
+     </widget>
+     <widget class="QWidget" name="channel3">
+      <attribute name="title">
+       <string>Channel 3</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4"/>
+     </widget>
+     <widget class="QWidget" name="channel4">
+      <attribute name="title">
+       <string>Channel 4</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_5"/>
+     </widget>
+     <widget class="QWidget" name="channel5">
+      <attribute name="title">
+       <string>Channel 5</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_6"/>
+     </widget>
+     <widget class="QWidget" name="channel6">
+      <attribute name="title">
+       <string>Channel 6</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_7"/>
+     </widget>
+     <widget class="QWidget" name="channel7">
+      <attribute name="title">
+       <string>Channel 7</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_8"/>
+     </widget>
+     <widget class="QWidget" name="channel8">
+      <attribute name="title">
+       <string>Channel 8</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_9"/>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>radioButton_highSpeedADC</tabstop>
-  <tabstop>radioButton_highResADC</tabstop>
   <tabstop>comboBox_highSpeedMode</tabstop>
   <tabstop>lineEdit_highSpeedPLC</tabstop>
   <tabstop>comboBox_highResMode</tabstop>
   <tabstop>lineEdit_highResPLC</tabstop>
-  <tabstop>checkBox_outputFilter</tabstop>
-  <tabstop>lineEdit_currComp</tabstop>
-  <tabstop>comboBox_voltRange</tabstop>
-  <tabstop>comboBox_currMeasRange</tabstop>
-  <tabstop>lineEdit_voltComp</tabstop>
-  <tabstop>comboBox_currRange</tabstop>
-  <tabstop>comboBox_voltMeasRange</tabstop>
  </tabstops>
  <resources/>
  <connections/>
