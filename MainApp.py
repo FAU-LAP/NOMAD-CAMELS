@@ -1146,7 +1146,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionRedo.setEnabled(self.undo_stack.canRedo())
 
 
-    def add_loop_step(self, step_type:str, position=-1, parent=None,
+    def add_loop_step(self, step_type='', position=-1, parent=None,
                       copied_step=False):
         """Add a loop_step of given step_type. Updates the current
         sequence into the protocol, then initializes the new step.
