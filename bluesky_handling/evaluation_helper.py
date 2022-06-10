@@ -13,6 +13,7 @@ class Evaluator(CallbackBase):
         self.add_namespace = namespace or {}
         self.namespace = _base_namespace
         self.namespace.update(self.add_namespace)
+        self.last_update = 0
 
     def eval(self, eval_str:str):
         # If it is a key in our namespace, look it up.
@@ -36,3 +37,7 @@ class Evaluator(CallbackBase):
     def event(self, doc):
         self.namespace['time'] = doc['time']
         self.namespace.update(doc['data'])
+        self.last_update = doc['time']
+
+    def is_to_date(self, t):
+        return self.last_update == t
