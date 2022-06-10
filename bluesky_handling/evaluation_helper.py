@@ -37,6 +37,7 @@ class Evaluator(CallbackBase):
     def event(self, doc):
         self.namespace['time'] = doc['time']
         self.namespace.update(doc['data'])
+        self.namespace.update(self.add_namespace)
         self.last_update = doc['time']
 
     def is_to_date(self, t):

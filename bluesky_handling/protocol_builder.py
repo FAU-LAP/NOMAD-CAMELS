@@ -123,8 +123,9 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     plotting = False
     for i, plot in pd.DataFrame(protocol.plots).iterrows():
         plotting = True
-        plot_string += f'\tplot_{i} = plot_widget.PlotWidget(run_engine=RE, x_name="{plot["X-axis"]}", y_names={plot["Y-axes"]}, ylabel="{plot["y-label"]}", xlabel="{plot["x-label"]}", title="{plot["title"]}")\n'
+        plot_string += f'\tplot_{i} = plot_widget.PlotWidget(x_name="{plot["X-axis"]}", y_names={plot["Y-axes"]}, ylabel="{plot["y-label"]}", xlabel="{plot["x-label"]}", title="{plot["title"]}", namespace=namespace)\n'
         plot_string += f'\tplot_{i}.show()\n'
+        plot_string += f'\tRE.subscribe(plot_{i}.livePlot)\n'
     plot_string += '\n'
     # for device in protocol.get_used_devices():
     #     print(device)
