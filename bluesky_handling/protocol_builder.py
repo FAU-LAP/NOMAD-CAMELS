@@ -188,7 +188,7 @@ def run_protocol(protocol:Measurement_Protocol, file_path, sig_step=None,
     args = []
     if variables_handling.dark_mode:
         args.append('--darkmode')
-    p = subprocess.Popen(['python', file_path] + args, stdout=subprocess.PIPE,
+    p = subprocess.Popen(['camelsEnv/Scripts/python', file_path] + args, stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT, bufsize=1)
     i = 1
     for line in iter(p.stdout.readline, b''):
