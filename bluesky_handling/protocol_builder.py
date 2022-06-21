@@ -99,7 +99,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         if 'idn' in settings:
             settings.pop('idn')
         devices_string += f'\tsettings = {settings}\n'
-        devices_string += f'\t{dev} = {classname}("{variables_handling.dev_preset}:{dev}:", name="{dev}", **settings)\n'
+        devices_string += f'\t{dev} = {classname}("{variables_handling.preset}:{dev}:", name="{dev}", **settings)\n'
         devices_string += f'\tprint("connecting {dev}")\n'
         devices_string += f'\t{dev}.wait_for_connection()\n'
         devices_string += f'\tconfig = {config}\n'

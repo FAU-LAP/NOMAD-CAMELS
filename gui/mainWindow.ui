@@ -15,14 +15,30 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
-    <item row="0" column="2">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_7">
+      <property name="maximumSize">
+       <size>
+        <width>50</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Preset:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="5">
      <widget class="QPushButton" name="pushButton_editUserInfo">
       <property name="text">
        <string>Edit User-Information</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="4">
+    <item row="0" column="7">
      <widget class="QLabel" name="label_8">
       <property name="maximumSize">
        <size>
@@ -33,29 +49,19 @@
       <property name="text">
        <string>Sample:</string>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_7">
-      <property name="maximumSize">
-       <size>
-        <width>50</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>User:</string>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
      </widget>
     </item>
-    <item row="0" column="6">
+    <item row="0" column="9">
      <widget class="QPushButton" name="pushButton_editSampleInfo">
       <property name="text">
        <string>Edit Sample-Information</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="7">
+    <item row="1" column="0" colspan="10">
      <widget class="QSplitter" name="dev_meas_splitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -77,28 +83,6 @@
         <property name="horizontalSpacing">
          <number>6</number>
         </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>80</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Device Preset:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="comboBox_device_preset"/>
-        </item>
         <item row="1" column="0" colspan="2">
          <widget class="QLabel" name="label_6">
           <property name="maximumSize">
@@ -370,29 +354,7 @@
       </widget>
       <widget class="QWidget" name="meas_main_widget" native="true">
        <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>110</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Measurement Preset:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="comboBox_measurement_preset"/>
-        </item>
-        <item row="1" column="0" colspan="2">
+        <item row="0" column="0" colspan="2">
          <widget class="QWidget" name="meas_widget" native="true">
           <layout class="QGridLayout" name="gridLayout_3">
            <property name="leftMargin">
@@ -780,14 +742,46 @@
       </widget>
      </widget>
     </item>
-    <item row="0" column="5">
+    <item row="0" column="8">
      <widget class="QComboBox" name="comboBox_sample"/>
     </item>
-    <item row="0" column="1">
+    <item row="0" column="4">
      <widget class="QComboBox" name="comboBox_user"/>
     </item>
-    <item row="0" column="3">
+    <item row="0" column="6">
      <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QLabel" name="label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>80</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>User:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="comboBox_preset"/>
+    </item>
+    <item row="0" column="2">
+     <widget class="Line" name="line_2">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
@@ -808,15 +802,10 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew_Device_Preset"/>
-    <addaction name="actionSave_Device_Preset"/>
-    <addaction name="actionSave_Device_Preset_As"/>
-    <addaction name="actionOpen_Backup_Device_Preset"/>
-    <addaction name="separator"/>
-    <addaction name="actionNew_Measurement_Preset"/>
-    <addaction name="actionSave_Measurement_Preset"/>
-    <addaction name="actionSave_Measurement_Preset_As"/>
-    <addaction name="actionLoad_Backup_Measurement_Preset"/>
+    <addaction name="actionNew_Preset"/>
+    <addaction name="actionSave_Preset"/>
+    <addaction name="actionSave_Preset_As"/>
+    <addaction name="actionLoad_Backup_Preset"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
    </widget>
@@ -871,9 +860,9 @@
     <string>Measurement-Presets</string>
    </property>
   </action>
-  <action name="actionSave_Measurement_Preset">
+  <action name="actionSave_Preset">
    <property name="text">
-    <string>Save Measurement Preset</string>
+    <string>Save Preset</string>
    </property>
   </action>
   <action name="actionOpen_Backup_Device_Preset">
@@ -881,9 +870,9 @@
     <string>Load Backup Device Preset</string>
    </property>
   </action>
-  <action name="actionLoad_Backup_Measurement_Preset">
+  <action name="actionLoad_Backup_Preset">
    <property name="text">
-    <string>Load Backup Measurement Preset</string>
+    <string>Load Backup Preset</string>
    </property>
   </action>
   <action name="actionAutosave_on_closing">
@@ -937,14 +926,14 @@
     <string>Save Device Preset</string>
    </property>
   </action>
-  <action name="actionSave_Measurement_Preset_As">
+  <action name="actionSave_Preset_As">
    <property name="text">
-    <string>Save Measurement Preset As</string>
+    <string>Save Preset As</string>
    </property>
   </action>
-  <action name="actionNew_Measurement_Preset">
+  <action name="actionNew_Preset">
    <property name="text">
-    <string>New Measurement Preset</string>
+    <string>New Preset</string>
    </property>
   </action>
   <action name="actionNew_Device_Preset">
@@ -954,8 +943,6 @@
   </action>
  </widget>
  <tabstops>
-  <tabstop>comboBox_device_preset</tabstop>
-  <tabstop>comboBox_measurement_preset</tabstop>
   <tabstop>lineEdit_device_search</tabstop>
   <tabstop>pushButton_add_device</tabstop>
   <tabstop>pushButton_remove_device</tabstop>

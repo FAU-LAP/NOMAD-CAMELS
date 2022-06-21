@@ -24,7 +24,7 @@ class Measurement_Channel:
 
     def get_pv_name(self):
         """Returns the name of the corresponding EPICS PV."""
-        name = f'{variables_handling.dev_preset}:{self.device}:{self.name.split(".")[-1]}'
+        name = f'{variables_handling.preset}:{self.device}:{self.name.split(".")[-1]}'
         return name
 
     def formatInput(self, value):  # not used

@@ -43,19 +43,16 @@ def get_preset_list():
         names = listdir(preset_path)
         if 'Backup' not in names:
             makedirs(preset_path + 'Backup')
-        predev = []
-        premeas = []
+        presets = []
         for name in names:
-            if name.endswith('.predev'):
-                predev.append(name[:-7])
-            if name.endswith('.premeas'):
-                premeas.append(name[:-8])
-        return sorted(predev, key=lambda x: x.lower()), sorted(premeas, key=lambda x: x.lower())
+            if name.endswith('.preset'):
+                presets.append(name[:-7])
+        return sorted(presets, key=lambda x: x.lower())
     else:
         makedirs(preset_path)
         return get_preset_list()
 
-def autosave_preset(preset:str, preset_data, devices=True):
+def autosave_preset(preset:str, preset_data):
     """Saves the given preset and makes a backup of the former one in
     the backup-folder.
 
@@ -66,13 +63,8 @@ def autosave_preset(preset:str, preset_data, devices=True):
     preset_data : dict
         all the data contained in the preset
         (usually the __save_dict__ of the MainApp)
-    devices : bool
-        whether to save it as .predev (if true) or .premeas (if false)
     """
-    if devices:
-        preset_file = f'{preset}.predev'
-    else:
-        preset_file = f'{preset}.premeas'
+    preset_file = f'{preset}.preset'
     with open(f'{preset_path}{preset_file}', 'w') as json_file:
         json.dump(preset_data, json_file, indent=2)
     make_backup(preset_file)
@@ -82,14 +74,10 @@ def save_preset(path:str, preset_data:dict):
     If the path ends with '.predev', the following autosave_preset of
     the saved data will be called with devices=True, otherwise
     devices=False."""
-    devs = False
-    preset_name = path.split('/')[-1][:-8]
-    if path.endswith('.predev'):
-        devs = True
-        preset_name = path.split('/')[-1][:-7]
+    preset_name = path.split('/')[-1][:-7]
     with open(path, 'w') as json_file:
         json.dump(preset_data, json_file, indent=2)
-    autosave_preset(preset_name, preset_data, devs)
+    autosave_preset(preset_name, preset_data)
 
 def save_dictionary(path:str, dictionary:dict):
     """Saves the given `dictionary` as json to the given `path`."""
@@ -104,10 +92,7 @@ def save_dictionary(path:str, dictionary:dict):
 def make_backup(preset_file:str):
     """Puts a copy of the given preset_file into the backup-folder of
     the preset. The current datetime is added to the filename."""
-    if preset_file.endswith('.predev'):
-        backup_save_path = f'{backup_path}{preset_file[:-7]}_dev/'
-    else:
-        backup_save_path = f'{backup_path}{preset_file[:-8]}_meas/'
+    backup_save_path = f'{backup_path}{preset_file[:-7]}/'
     if not isdir(backup_save_path):
         makedirs(backup_save_path)
     now = datetime.now()
@@ -288,22 +273,15 @@ def get_most_recent_presets():
     prem : str
         name of the neweset measurement-preset, returns None, if none found
     """
-    predevs = []
-    premeas = []
+    presets = []
     for name in listdir(preset_path):
-        if name.endswith('.predev'):
-            predevs.append(name)
-        elif name.endswith('.premeas'):
-            premeas.append(name)
-    if predevs:
-        pred = sorted(predevs, key=lambda x: os.path.getmtime(f'{preset_path}{x}'))[-1][:-7]
+        if name.endswith('.preset'):
+            presets.append(name)
+    if presets:
+        preset = sorted(presets, key=lambda x: os.path.getmtime(f'{preset_path}{x}'))[-1][:-7]
     else:
-        pred = None
-    if premeas:
-        prem = sorted(premeas, key=lambda x: os.path.getmtime(f'{preset_path}{x}'))[-1][:-8]
-    else:
-        prem = None
-    return pred, prem
+        preset = None
+    return preset
 
 def get_preferences():
     """If a file 'preferences.json' exists in the appdata, its content

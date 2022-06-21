@@ -7,8 +7,7 @@ from PyQt5.QtGui import QColor
 
 from bluesky_widgets.models import utils
 
-meas_preset = ''
-dev_preset = ''
+preset = ''
 device_driver_path = ''
 meas_files_path = ''
 CAMELS_path = ''
