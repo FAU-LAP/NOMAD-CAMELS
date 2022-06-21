@@ -90,3 +90,17 @@ Any voltage source can be used instead of the expensive E5270B: for example Keys
 •	Pt1000: 2€  
 •	Prologix GPIB-Ethernet (LAN) Controller: 500€  
 •	Hint: Any device that can supply +-5V can be used as a voltage sweep source. This then needs to be combined with any current measuring device.  
+
+
+
+
+### Environment
+
+download python from Web, then:  
+python-3.9.13-amd64.exe Include_tcltk=0 /passive  
+pip3.9 install virtualenv  
+
+inside CAMELS-folder:
+virtualenv -p python3 camelsEnv
+camelsEnv/Scripts/activate
+pip install -r requirements.txt

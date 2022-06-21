@@ -17,6 +17,8 @@ import ophyd
 from main_classes import protocol_class
 
 appdata_path = f'{getenv("LOCALAPPDATA")}/CAMELS'
+if not isdir(appdata_path):
+    makedirs(appdata_path)
 preset_path = f'{appdata_path}/Presets/'
 backup_path = f'{preset_path}Backup/'
 save_string_list = [QComboBox, QLineEdit, QTreeView, QListView]
