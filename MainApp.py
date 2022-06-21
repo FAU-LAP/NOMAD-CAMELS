@@ -338,6 +338,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
 
         self.preferences = load_save_functions.get_preferences()
+        variables_handling.preferences = self.preferences
         number_formatting.preferences = self.preferences
         if 'dark_mode' in self.preferences:
             self.toggle_dark_mode()

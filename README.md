@@ -103,4 +103,4 @@ pip3.9 install virtualenv
 inside CAMELS-folder:
 virtualenv -p python3 camelsEnv
 camelsEnv/Scripts/activate
-pip install -r requirements.txt
+camelsEnv/Scripts/pip install -r requirements.txt

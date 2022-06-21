@@ -13,6 +13,8 @@ device_driver_path = ''
 meas_files_path = ''
 CAMELS_path = ''
 
+preferences = {}
+
 protocol_variables = {}
 channels = {}
 loop_step_variables = {}

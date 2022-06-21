@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QGridLayout
+from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout
 
 from main_classes.loop_step import Loop_Step_Config, Loop_Step
 from utility.variable_tool_tip_box import Variable_Box
