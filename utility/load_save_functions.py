@@ -254,6 +254,8 @@ def load_devices_dict(string_dict, devices_dict):
             dev.requirements = dev_data['requirements']
         if 'settings' in dev_data:
             dev.settings = dev_data['settings']
+        if 'ioc_settings' in dev_data:
+            dev.ioc_settings = dev_data['ioc_settings']
         if 'config' in dev_data:
             dev.config = dev_data['config']
         if 'custom_name' in dev_data:

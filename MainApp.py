@@ -551,7 +551,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.device_config_widget = py_package.subclass_config(self,
                                                                    dat,
                                                                    self.active_devices_dict[dat].settings,
-                                                                   self.active_devices_dict[dat].config)
+                                                                   self.active_devices_dict[dat].config,
+                                                                   self.active_devices_dict[dat].ioc_settings)
             self.devices_splitter.replaceWidget(2, self.device_config_widget)
             self.device_config_widget.ioc_change.connect(self.ioc_config_changed)
             self.device_config_widget.name_change.connect(self.name_config_changed)
@@ -587,6 +588,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if self.device_config_widget.data in self.active_devices_dict:
                 self.active_devices_dict[self.device_config_widget.data].settings = self.device_config_widget.get_settings()
                 self.active_devices_dict[self.device_config_widget.data].config = self.device_config_widget.get_config()
+                self.active_devices_dict[self.device_config_widget.data].ioc_settings = self.device_config_widget.get_ioc_settings()
         self.update_channels()
 
     def build_devices_tree(self):
@@ -763,6 +765,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for the selected protocol and provides it with a savepath and
         user- and sample-data."""
         self.progressBar_protocols.setValue(0)
+        self.get_step_config()
         self.update_loop_step_order()
         self.get_device_config()
         if self.current_protocol is None:

@@ -39,15 +39,17 @@ class subclass(device_class.Device):
 
 
 class subclass_config(device_class.Device_Config):
-    def __init__(self, parent=None, data='', settings_dict=None, config_dict=None):
-        super().__init__(parent, 'PID_Controller', data, settings_dict, config_dict)
+    def __init__(self, parent=None, data='', settings_dict=None,
+                 config_dict=None, ioc_dict=None):
+        super().__init__(parent, 'PID_Controller', data, settings_dict,
+                         config_dict, ioc_dict)
         # self.comboBox_connection_type.addItem()
         self.layout().removeWidget(self.comboBox_connection_type)
         self.comboBox_connection_type.deleteLater()
         self.layout().removeWidget(self.label_connection)
         self.label_connection.deleteLater()
         self.sub_widget = subclass_config_sub(settings_dict=settings_dict, parent=self, config_dict=config_dict)
-        self.layout().addWidget(self.sub_widget, 3, 0, 1, 2)
+        self.layout().addWidget(self.sub_widget, 3, 0, 1, 5)
         self.load_settings()
 
     def get_settings(self):

@@ -94,12 +94,18 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         classname = device.ophyd_class_name
         config = copy.deepcopy(device.get_config())
         settings = copy.deepcopy(device.get_settings())
+        ioc_settings = copy.deepcopy(device.get_ioc_settings())
         if 'connection' in settings:
             settings.pop('connection')
         if 'idn' in settings:
             settings.pop('idn')
         devices_string += f'\tsettings = {settings}\n'
-        devices_string += f'\t{dev} = {classname}("{variables_handling.preset}:{dev}:", name="{dev}", **settings)\n'
+        devices_string += f'\tioc_settings = {ioc_settings}\n'
+        if ioc_settings['use_local_ioc']:
+            ioc_name = variables_handling.preset
+        else:
+            ioc_name = ioc_settings['ioc_name']
+        devices_string += f'\t{dev} = {classname}("{ioc_name}:{dev}:", name="{dev}", **settings)\n'
         devices_string += f'\tprint("connecting {dev}")\n'
         devices_string += f'\t{dev}.wait_for_connection()\n'
         devices_string += f'\tconfig = {config}\n'
@@ -107,6 +113,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         devices_string += f'\tdevice_config["{dev}"] = {{}}\n'
         devices_string += f'\tdevice_config["{dev}"].update(configs)\n'
         devices_string += f'\tdevice_config["{dev}"]["settings"] = settings\n'
+        devices_string += f'\tdevice_config["{dev}"]["ioc_settings"] = ioc_settings\n'
         devices_string += f'\tdevs.update({{"{dev}": {dev}}})\n'
         device_import_string += f'from {device.name}.{device.name}_ophyd import {classname}\n'
         additional_string_devices += device.get_additional_string()

@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox, QFrame
+from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox,\
+    QFrame, QCheckBox
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 
 from ophyd import EpicsSignalRO
 from ophyd import Device as OphydDevice
@@ -199,7 +200,8 @@ class Device_Config(QWidget):
     ioc_change = pyqtSignal()
     name_change = pyqtSignal(str)
 
-    def __init__(self, parent=None, device_name='', data='', settings_dict=None, config_dict=None, ioc_settings=None):
+    def __init__(self, parent=None, device_name='', data='', settings_dict=None,
+                 config_dict=None, ioc_settings=None):
         """
         Parameters
         ----------
@@ -234,26 +236,54 @@ class Device_Config(QWidget):
         title_font = QFont('MS Shell Dlg 2', 10)
         title_font.setWeight(QFont.Bold)
         label_title.setFont(title_font)
+
         self.label_custom_name = QLabel('Custom name:')
         self.label_connection = QLabel('Connection-type:')
         self.lineEdit_custom_name = QLineEdit(data)
+        self.checkBox_use_local_ioc = QCheckBox('Use local IOC')
+        self.checkBox_use_local_ioc.setChecked(True)
+        loc = True
+        if 'use_local_ioc' in ioc_settings:
+            loc = ioc_settings['use_local_ioc']
+            self.checkBox_use_local_ioc.setChecked(loc)
+        self.label_ioc_name = QLabel('IOC name:')
+        self.label_ioc_name.setAlignment(Qt.AlignRight)
+        self.lineEdit_ioc_name = QLineEdit()
+        if 'ioc_name' in ioc_settings:
+            self.lineEdit_ioc_name.setText(ioc_settings['ioc_name'])
+        self.label_ioc_name.setEnabled(not loc)
+        self.lineEdit_ioc_name.setEnabled(not loc)
         self.comboBox_connection_type = QComboBox()
         self.connector = Connection_Config()
+
         self.line_2 = QFrame(self)
         self.line_2.setFrameShape(QFrame.HLine)
         self.line_2.setFrameShadow(QFrame.Sunken)
         self.line_2.setObjectName("line_2")
-        layout.addWidget(label_title, 0, 0, 1, 2)
+
+        layout.addWidget(label_title, 0, 0, 1, 5)
         layout.addWidget(self.label_custom_name, 1, 0)
-        layout.addWidget(self.lineEdit_custom_name, 1, 1)
-        layout.addWidget(self.line_2, 2, 0, 1, 2)
+        layout.addWidget(self.lineEdit_custom_name, 1, 1, 1, 2)
+        layout.addWidget(self.checkBox_use_local_ioc, 2, 0)
+        layout.addWidget(self.label_ioc_name, 2, 1)
+        layout.addWidget(self.lineEdit_ioc_name, 2, 2)
+        layout.addWidget(self.line_2, 3, 0, 1, 5)
         layout.addWidget(self.label_connection, 5, 0)
-        layout.addWidget(self.comboBox_connection_type, 5, 1)
+        layout.addWidget(self.comboBox_connection_type, 5, 1, 1, 2)
+
         self.settings_dict = settings_dict
         self.config_dict = config_dict
         self.ioc_settings = ioc_settings
         self.comboBox_connection_type.currentTextChanged.connect(self.connection_type_changed)
         self.lineEdit_custom_name.textChanged.connect(lambda x: self.name_change.emit(x))
+        self.checkBox_use_local_ioc.clicked.connect(self.ioc_set_changed)
+
+    def ioc_set_changed(self):
+        loc = self.checkBox_use_local_ioc.isChecked()
+        self.label_ioc_name.setEnabled(not loc)
+        self.lineEdit_ioc_name.setEnabled(not loc)
+        self.ioc_change.emit()
+
 
     def connection_type_changed(self):
         """Called when the comboBox_connection_type is changed. Switches
@@ -261,9 +291,16 @@ class Device_Config(QWidget):
         of the device."""
         if self.comboBox_connection_type.currentText() == 'prologix-GPIB':
             self.connector = Prologix_Config()
-            self.layout().addWidget(self.connector, 6, 0, 1, 2)
+            self.layout().addWidget(self.connector, 6, 0, 1, 5)
         self.connector.connection_change.connect(self.ioc_change.emit)
         self.ioc_change.emit()
+
+    def get_ioc_settings(self):
+        self.ioc_settings.update({'use_local_ioc': self.checkBox_use_local_ioc.isChecked(),
+                                  'ioc_name': self.lineEdit_ioc_name.text()})
+        self.ioc_settings.update({'connection': {'type': self.comboBox_connection_type.currentText()}})
+        self.ioc_settings['connection'].update(self.connector.get_settings())
+        return self.ioc_settings
 
     def get_settings(self):
         """Updates the settings_dict with the current settings.
@@ -279,9 +316,9 @@ class Device_Config(QWidget):
         connection-type, the correct widget is set and the settings
         entered. Overwrite this function (and call it) for the specific
         settings."""
-        if 'connection' in self.settings_dict:
-            self.comboBox_connection_type.setCurrentText(self.settings_dict['connection']['type'])
-            self.connector.load_settings(self.settings_dict['connection'])
+        if 'connection' in self.ioc_settings:
+            self.comboBox_connection_type.setCurrentText(self.ioc_settings['connection']['type'])
+            self.connector.load_settings(self.ioc_settings['connection'])
 
     def get_config(self):
         """Returns the config_dict of the device. Overwrite this

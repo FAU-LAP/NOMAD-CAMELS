@@ -76,6 +76,8 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
     for key in sorted(device_dict):
         device = device_dict[key]
         device_path_wsl = f'{driver_path_wsl}/{device.directory}'
+        if not device.ioc_settings['use_local_ioc']:
+            continue
         for req in device.requirements:
             if req not in supports:
                 supports.append(req)
@@ -229,8 +231,8 @@ def update_addresses(device, address_dict, port_string, supports):
         support-packages.
     """
     comm = ''
-    if 'connection' in device.settings:
-        conn_dict = device.settings['connection']
+    if 'connection' in device.ioc_settings:
+        conn_dict = device.ioc_settings['connection']
         conn_type = conn_dict['type']
         if conn_type not in address_dict:
             address_dict.update({conn_type: []})
