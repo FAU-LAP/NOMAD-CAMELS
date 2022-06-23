@@ -37,7 +37,7 @@ class PlotWidget(QWidget):
     def __init__(self, x_name=None, y_names=(), *, legend_keys=None, xlim=None,
                  ylim=None, epoch='run', parent=None, namespace=None, ylabel='',
                  xlabel='', title='', **kwargs):
-        super().__init__(parent)
+        super().__init__(parent=parent)
         canvas = MPLwidget()
         if isinstance(y_names, str):
             y_names = [y_names]

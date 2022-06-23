@@ -74,6 +74,12 @@ class Loop_Step:
         tabs = '\t'*n_tabs
         return f'{tabs}print("starting loop_step {self.full_name}")\n'
 
+    def get_outer_string(self):
+        return ''
+
+    def get_add_main_string(self):
+        return ''
+
     def update_variables(self):
         """Should update the variables_handling, if the loopstep
         provides variables."""
@@ -134,6 +140,18 @@ class Loop_Step_Container(Loop_Step):
         self.update_time_weight()
         return protocol_string
 
+    def get_outer_string(self):
+        outer_string = ''
+        for child in self.children:
+            outer_string += child.get_outer_string()
+        return outer_string
+
+    def get_add_main_string(self):
+        add_main_string = ''
+        for child in self.children:
+            add_main_string += child.get_add_main_string()
+        return add_main_string
+
     def update_time_weight(self):
         """The time_weight of the children is included."""
         self.time_weight = 1
@@ -175,7 +193,7 @@ class Loop_Step_Config(QWidget):
         self.name_widget = Loop_Step_Name_Widget(self, loop_step.name)
         self.loop_step = loop_step
         self.name_widget.name_changed.connect(self.change_name)
-        layout.addWidget(self.name_widget, 0, 0)
+        layout.addWidget(self.name_widget, 0, 0, 1, 5)
         self.setLayout(layout)
 
     def change_name(self, name):

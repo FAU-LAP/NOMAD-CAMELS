@@ -167,12 +167,28 @@ class Measurement_Protocol:
 
     def get_plan_string(self):
         """Get the string for the protocol-plan, including the loopsteps."""
-        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None):\n'
-        plan_string += '\tyield from bps.open_run(md=md)\n'
+        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, runEngine=None, stream_name="primary"):\n'
+        plan_string += '\teva = Evaluator(namespace=namespace)\n'
+        plan_string += '\trunEngine.subscribe(eva)\n'
         for step in self.loop_steps:
             plan_string += step.get_protocol_string(n_tabs=1)
+        plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
+        plan_string += '\tyield from bps.open_run(md=md)\n'
+        plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, runEngine, stream_name)\n'
         plan_string += '\tyield from bps.close_run()\n'
         return plan_string
+
+    def get_add_main_string(self):
+        add_main_string = ''
+        for step in self.loop_steps:
+            add_main_string += step.get_add_main_string()
+        return add_main_string
+
+    def get_outer_string(self):
+        outer_string = ''
+        for step in self.loop_steps:
+            outer_string += step.get_outer_string()
+        return outer_string
 
     def get_used_devices(self):
         """Get a list of all devices needed by any loopstep."""
