@@ -26,10 +26,14 @@ class Run_Subprotocol(Loop_Step):
         tabs = '\t' * n_tabs
         prot_name = os.path.basename(self.prot_path)[:-3]
         protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        for i, var in enumerate(self.vars_in['Variable']):
+            protocol_string += f'{tabs}{prot_name}_mod.namespace["{var}"] = eva.eval("{self.vars_in["Value"][i]}")\n'
         stream = prot_name
         if self.data_output == 'main stream':
             stream = 'primary'
         protocol_string += f'{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, runEngine, "{stream}")\n'
+        for i, var in enumerate(self.vars_out['Variable']):
+            protocol_string += f'{tabs}namespace["{self.vars_out["Write to name"][i]}"] = {prot_name}_mod.namespace["{var}"]\n'
         return protocol_string
 
     def get_outer_string(self):
