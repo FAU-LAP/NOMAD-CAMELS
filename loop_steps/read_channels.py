@@ -72,7 +72,7 @@ class Read_Channels(Loop_Step):
                     protocol_string += f'devs["{name}"]'
                 inserted = True
         protocol_string += ']\n'
-        protocol_string += f'{tabs}yield from bps.trigger_and_read(channels)\n'
+        protocol_string += f'{tabs}yield from bps.trigger_and_read(channels, name=stream_name)\n'
         return protocol_string
 
 

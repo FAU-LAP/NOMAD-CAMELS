@@ -36,7 +36,7 @@ class MPLwidget(FigureCanvasQTAgg):
 class PlotWidget(QWidget):
     def __init__(self, x_name=None, y_names=(), *, legend_keys=None, xlim=None,
                  ylim=None, epoch='run', parent=None, namespace=None, ylabel='',
-                 xlabel='', title='', **kwargs):
+                 xlabel='', title='', stream_name='primary', **kwargs):
         super().__init__(parent=parent)
         canvas = MPLwidget()
         if isinstance(y_names, str):
@@ -46,7 +46,7 @@ class PlotWidget(QWidget):
                                       xlim=xlim, ylim=ylim, epoch=epoch,
                                       ax=canvas.axes, namespace=namespace,
                                       xlabel=xlabel, ylabel=ylabel, title=title,
-                                      **kwargs)
+                                      stream_name=stream_name, **kwargs)
         self.livePlot.new_data.connect(self.show)
         self.toolbar = NavigationToolbar2QT(canvas, self)
         self.pushButton_show_options = QPushButton('Show Options')
@@ -64,7 +64,7 @@ class PlotWidget(QWidget):
         self.setLayout(layout)
 
         self.setWindowTitle(title or f'{x_name} vs. {y_names[0]}')
-        self.setWindowIcon(QIcon('graphics/CAMELS.png'))
+        self.setWindowIcon(QIcon('graphics/CAMELS.svg'))
         print(os.getcwd())
 
         self.plot_options.hide()
@@ -179,7 +179,7 @@ class MultiLivePlot(LivePlot, QObject):
 
     def __init__(self, ys=(), x=None, *, legend_keys=None, xlim=None, ylim=None,
                  ax=None, epoch='run', xlabel='', ylabel='', namespace=None,
-                 title='', **kwargs):
+                 title='', stream_name='primary', **kwargs):
         LivePlot.__init__(self, y=ys[0], x=x, legend_keys=legend_keys, xlim=xlim, ylim=ylim,
                          ax=ax, epoch=epoch, **kwargs)
         QObject.__init__(self)
@@ -187,6 +187,8 @@ class MultiLivePlot(LivePlot, QObject):
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
         self.eva = Evaluator(namespace=namespace)
+        self.stream_name = stream_name
+        self.desc = ''
         if isinstance(ys, str):
             ys = [ys]
 
@@ -265,6 +267,10 @@ class MultiLivePlot(LivePlot, QObject):
             self.legend = legend.draggable(True)
         self.setup_done.emit()
 
+    def descriptor(self, doc):
+        if doc['name'] == self.stream_name:
+            self.desc = doc['uid']
+
     def event(self, doc):
         """Unpack data from the event and call self.update()."""
         # This outer try/except block is needed because multiple event
@@ -273,6 +279,8 @@ class MultiLivePlot(LivePlot, QObject):
         # This inner try/except block handles seq_num and time, which could
         # be keys in the data or accessing the standard entries in every
         # event.
+        if doc['descriptor'] != self.desc:
+            return
         try:
             new_x = doc['data'][self.x]
         except KeyError:

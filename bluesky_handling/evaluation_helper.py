@@ -16,6 +16,7 @@ class Evaluator(CallbackBase):
         self.last_update = 0
 
     def eval(self, eval_str:str):
+        self.namespace.update(self.add_namespace)
         # If it is a key in our namespace, look it up.
         try:
             # This handles field or stream names that are not valid

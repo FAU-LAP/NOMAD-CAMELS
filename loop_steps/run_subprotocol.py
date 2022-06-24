@@ -46,9 +46,14 @@ class Run_Subprotocol(Loop_Step):
 
     def get_add_main_string(self):
         prot_name = os.path.basename(self.prot_path)[:-3]
+        stream = f'"{prot_name}"'
+        if self.data_output == 'main stream':
+            stream = '"primary"'
+        prot_name = os.path.basename(self.prot_path)[:-3]
         add_main_string = ''
         if self.own_plots:
-            add_main_string += f'\t{prot_name}_app, {prot_name}_plots = {prot_name}_mod.create_plots(RE)\n'
+            add_main_string += f'\treturner["{prot_name}_plot_stuff"] = {prot_name}_mod.create_plots(RE, {stream})\n'
+        add_main_string += f'\treturner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE)\n'
         return add_main_string
 
 

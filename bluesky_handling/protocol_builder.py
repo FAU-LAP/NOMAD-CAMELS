@@ -1,10 +1,11 @@
 import os.path
 import subprocess
-import pandas as pd
 import copy
 
 from main_classes.protocol_class import Measurement_Protocol
 from utility import variables_handling
+
+from bluesky_handling.helper_functions import plot_creator
 
 standard_string = 'import numpy as np\n'
 standard_string += 'import importlib\n'
@@ -29,17 +30,6 @@ standard_run_string += '\tRE.subscribe(bec)\n'
 
 standard_start_string = '\n\n\nif __name__ == "__main__":\n'
 standard_start_string += '\tmain()\n'
-
-standard_plot_string = '\tapp = QCoreApplication.instance()\n'
-standard_plot_string += '\tif app is None:\n'
-standard_plot_string += '\t\tapp = QApplication(sys.argv)\n'
-# standard_plot_string += '\tapp.aboutToQuit.connect(wait_for_workers_to_quit)\n'
-standard_plot_string += '\tif "--darkmode" in sys.argv:\n'
-standard_plot_string += '\t\tplot_widget.activate_dark_mode()\n'
-standard_plot_string += '\t\timport qdarkstyle\n'
-standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())\n'
-standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet(qt_api="pyqt5"))\n'
-standard_plot_string += '\tplots = []\n'
 
 standard_nexus_dict = {'/ENTRY[entry]/operator/address': 'metadata_start/user/Address (affiliation)',
                        '/ENTRY[entry]/operator/affiliation': 'metadata_start/user/Affiliation',
@@ -128,16 +118,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         for i, name in enumerate(protocol.metadata['Name']):
             md_dict[name] = protocol.metadata['Value'][i]
         devices_string += f'\tmd.update({md_dict})\n'
-    plot_string = '\ndef create_plots(RE):\n'
-    plot_string += standard_plot_string
-    plotting = False
-    for i, plot in pd.DataFrame(protocol.plots).iterrows():
-        plotting = True
-        plot_string += f'\tplot_{i} = plot_widget.PlotWidget(x_name="{plot["X-axis"]}", y_names={plot["Y-axes"]}, ylabel="{plot["y-label"]}", xlabel="{plot["x-label"]}", title="{plot["title"]}", namespace=namespace)\n'
-        plot_string += f'\tplots.append(plot_{i})\n'
-        plot_string += f'\tplot_{i}.show()\n'
-        plot_string += f'\tRE.subscribe(plot_{i}.livePlot)\n'
-    plot_string += '\treturn app, plots\n\n'
+    plot_string, plotting = plot_creator(protocol.plots)
     # for device in protocol.get_used_devices():
     #     print(device)
     protocol_string = 'import sys\n'
@@ -149,6 +130,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     protocol_string += protocol.get_outer_string()
     protocol_string += protocol.get_plan_string()
     protocol_string += plot_string
+    protocol_string += protocol.get_add_main_string()
     protocol_string += standard_run_string
     protocol_string += f'\tcatalog = databroker.catalog["{catalog}"]\n'
     protocol_string += '\tRE.subscribe(catalog.v1.insert)\n'
@@ -156,9 +138,9 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     protocol_string += devices_string
     protocol_string += additional_string_devices
     if plotting:
-        protocol_string += '\tapp, plots = create_plots(RE)\n'
-    protocol_string += protocol.get_add_main_string()
+        protocol_string += '\tapp, plots, plot_subs = create_plots(RE)\n'
     protocol_string += user_sample_string(userdata, sampledata)
+    protocol_string += '\tadditional_step_data = steps_add_main(RE)\n'
     protocol_string += f'\tuids = RE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
 
     standard_save_string = '\n\n\truns = catalog[uids]\n'

@@ -179,9 +179,11 @@ class Measurement_Protocol:
         return plan_string
 
     def get_add_main_string(self):
-        add_main_string = ''
+        add_main_string = 'def steps_add_main(RE):\n'
+        add_main_string += '\treturner = {}\n'
         for step in self.loop_steps:
             add_main_string += step.get_add_main_string()
+        add_main_string += '\treturn returner\n\n\n'
         return add_main_string
 
     def get_outer_string(self):

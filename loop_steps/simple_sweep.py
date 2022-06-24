@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QComboBox, QLabel, QCheckBox
 from main_classes.loop_step import Loop_Step_Config
 from utility import variables_handling
 from utility.add_remove_table import AddRemoveTable
+from bluesky_handling.helper_functions import plot_creator
 
 from loop_steps.for_while_loops import For_Loop_Step_Config_Sub, For_Loop_Step,\
     get_space_string
@@ -11,6 +12,7 @@ class Simple_Sweep(For_Loop_Step):
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
         super().__init__(name, children, parent_step, step_info, **kwargs)
+        step_info = step_info or {}
         self.step_type = 'Simple Sweep'
         self.has_children = False
         self.sweep_channel = step_info['sweep_channel'] if 'sweep_channel' in step_info else ''
@@ -29,6 +31,20 @@ class Simple_Sweep(For_Loop_Step):
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
+    def get_outer_string(self):
+        if self.use_own_plots:
+            return plot_creator(self.plots, f'create_plots_{self.name}')[0]
+        return ''
+
+    def get_add_main_string(self):
+        stream = f'"{self.name}"'
+        if self.data_output == 'main stream':
+            stream = '"primary"'
+        add_main_string = ''
+        if self.use_own_plots:
+            add_main_string += f'\treturner["{self.name}_plot_stuff"] = create_plots_{self.name}(RE, {stream})\n'
+        return add_main_string
+
     def get_protocol_string(self, n_tabs=1):
         """The loop is enumerating over the selected points."""
         tabs = '\t'*n_tabs
@@ -44,8 +60,11 @@ class Simple_Sweep(For_Loop_Step):
         else:
             enumerator = f'np.loadtxt("{self.file_path}")'
 
-        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        stream = f'"{self.name}"'
+        if self.data_output == 'main stream':
+            stream = 'stream_name'
 
+        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
         protocol_string += f'{tabs}channels = ['
         for i, channel in enumerate(self.read_channels):
             if channel not in variables_handling.channels:
@@ -71,7 +90,7 @@ class Simple_Sweep(For_Loop_Step):
         protocol_string += f'{tabs}\tnamespace.update({{"{self.name.replace(" ", "_")}_Count": {self.name.replace(" ", "_")}_Count, "{self.name.replace(" ", "_")}_Value": {self.name.replace(" ", "_")}_Value}})\n'
         protocol_string += f'{tabs}\tyield from bps.abs_set({setter}, {self.name.replace(" ", "_")}_Value, group="A")\n'
         protocol_string += f'{tabs}\tyield from bps.wait("A")\n'
-        protocol_string += f'{tabs}\tyield from bps.trigger_and_read(channels)\n'
+        protocol_string += f'{tabs}\tyield from bps.trigger_and_read(channels, name={stream})\n'
         self.update_time_weight()
         return protocol_string
 
