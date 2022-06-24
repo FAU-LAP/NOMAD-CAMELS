@@ -257,6 +257,14 @@ class AddRemoveTable(QWidget):
             item.setCheckable(i in self.checkables)
             items.append(item)
         if len(self.headerLabels) == 0:
+            if self.comboBoxes:
+                box = QComboBox()
+                box.addItems(self.comboBoxes)
+                self.boxes.append(box)
+                box_indexes.append(0)
+                boxes.append(box)
+                if vals in self.comboBoxes:
+                    box.setCurrentText(vals)
             item = QStandardItem(str(vals))
             items.append(item)
         if self.horizontal:
@@ -342,7 +350,10 @@ class AddRemoveTable(QWidget):
                             vals.append(self.table_model.item(i, j).text())
         if len(self.headerLabels) == 0:
             self.tableData = []
-            if self.horizontal:
+            if self.comboBoxes:
+                for box in self.boxes:
+                    self.tableData.append(box.currentText())
+            elif self.horizontal:
                 for j in range(self.table_model.rowCount()):
                     try:
                         self.tableData.append(float(self.table_model.item(j, 0).text()))
