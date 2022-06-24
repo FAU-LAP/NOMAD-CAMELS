@@ -827,7 +827,6 @@
      <string>Tools</string>
     </property>
     <addaction name="actionDevice_Driver_Builder"/>
-    <addaction name="actionIOC_Builder"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuPreferences"/>
@@ -885,7 +884,7 @@
   </action>
   <action name="actionDevice_Driver_Builder">
    <property name="text">
-    <string>Device Driver Builder</string>
+    <string>Update CAMELS</string>
    </property>
   </action>
   <action name="actionDark_Mode">
