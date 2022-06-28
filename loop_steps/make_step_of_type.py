@@ -1,11 +1,14 @@
 from main_classes.loop_step import Loop_Step
 from loop_steps import for_while_loops, read_channels, set_channels,\
-    wait_loop_step, if_step, prompt_loop_step, run_subprotocol, simple_sweep
+    wait_loop_step, if_step, prompt_loop_step, run_subprotocol, simple_sweep,\
+    gradient_descent
 
 from utility import variables_handling
 
 step_type_config = {'For Loop': [for_while_loops.For_Loop_Step,
                                  for_while_loops.For_Loop_Step_Config],
+                    'Gradient Descent': [gradient_descent.Gradient_Descent_Step,
+                                         gradient_descent.Gradient_Descent_Config],
                     'If': [if_step.If_Loop_Step, if_step.If_Step_Config],
                     'Prompt': [prompt_loop_step.Prompt_Loop_Step,
                                prompt_loop_step.Prompt_Loop_Step_Config],

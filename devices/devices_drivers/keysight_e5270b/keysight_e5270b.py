@@ -84,7 +84,7 @@ class subclass_config(device_class.Device_Config):
 
     def get_config(self):
         super().get_config()
-        return self.sub_widget.get_settings()
+        return self.sub_widget.get_config()
 
 class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
     def __init__(self, settings_dict=None, parent=None):
@@ -135,7 +135,7 @@ class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
             col = get_color('grey')
         self.tabWidget.tabBar().setTabTextColor(i, col)
 
-    def get_settings(self):
+    def get_config(self):
         for channel_widget in self.channel_widgets:
             channel_widget.get_settings()
         self.settings_dict['speedADCPLC'] = int(float(self.lineEdit_highSpeedPLC.text()))

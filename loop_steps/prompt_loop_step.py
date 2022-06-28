@@ -28,7 +28,7 @@ class Prompt_Loop_Step_Config(Loop_Step_Config):
     def __init__(self, loop_step:Prompt_Loop_Step, parent=None):
         super().__init__(parent, loop_step)
         self.sub_widget = Prompt_Loop_Step_Config_Sub(loop_step, self)
-        self.layout().addWidget(self.sub_widget, 1, 0)
+        self.layout().addWidget(self.sub_widget, 1, 0, 1, 5)
 
 
 class Prompt_Loop_Step_Config_Sub(QWidget):

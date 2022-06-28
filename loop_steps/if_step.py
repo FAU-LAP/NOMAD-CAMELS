@@ -133,7 +133,7 @@ class If_Step_Config(Loop_Step_Config):
     def __init__(self, loop_step:If_Loop_Step, parent=None):
         super().__init__(parent, loop_step)
         self.sub_widget = If_Step_Config_Sub(loop_step, self)
-        self.layout().addWidget(self.sub_widget, 1, 0)
+        self.layout().addWidget(self.sub_widget, 1, 0, 1, 5)
         self.sub_widget.update_config.connect(self.update_step_config)
 
     def update_step_config(self):

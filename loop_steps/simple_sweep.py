@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QComboBox, QLabel, QCheckBox
 from main_classes.loop_step import Loop_Step_Config
 from utility import variables_handling
 from utility.add_remove_table import AddRemoveTable
-from bluesky_handling.helper_functions import plot_creator
+from bluesky_handling.builder_helper_functions import plot_creator
 
 from loop_steps.for_while_loops import For_Loop_Step_Config_Sub, For_Loop_Step,\
     get_space_string

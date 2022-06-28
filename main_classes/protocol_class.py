@@ -61,7 +61,7 @@ class Measurement_Protocol:
                 if dev in name:
                     rn = name.split(dev)[1][1:]
                     device = variables_handling.devices[dev]
-                    if rn in device.get_config() or rn in device.get_settings() or rn in device.get_passive_config():
+                    if rn in device.get_config() or rn in device.get_config() or rn in device.get_passive_config():
                         path = f'metadata_start/device_config/{dev}/{name}'
                         break
             if not path:
@@ -264,7 +264,7 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
             allconf = []
             allconf += list(device.get_passive_config().keys())
             allconf += list(device.get_config().keys())
-            allconf += list(device.get_settings().keys())
+            allconf += list(device.get_config().keys())
             allconf += list(device.get_ioc_settings().keys())
             for key in allconf:
                 configs.append(f'{device.name}_{key}')

@@ -54,7 +54,7 @@ class While_Loop_Step_Config(Loop_Step_Config):
     def __init__(self, loop_step:While_Loop_Step, parent=None):
         super().__init__(parent, loop_step)
         self.sub_widget = While_Loop_Step_Config_Sub(loop_step, self)
-        self.layout().addWidget(self.sub_widget, 1, 0)
+        self.layout().addWidget(self.sub_widget, 1, 0, 1, 5)
 
 
 class While_Loop_Step_Config_Sub(QWidget):
@@ -183,7 +183,7 @@ class For_Loop_Step_Config(Loop_Step_Config):
     def __init__(self, loop_step:For_Loop_Step, parent=None):
         super().__init__(parent, loop_step)
         self.sub_widget = For_Loop_Step_Config_Sub(parent=self, loop_step=loop_step)
-        self.layout().addWidget(self.sub_widget, 1, 0)
+        self.layout().addWidget(self.sub_widget, 1, 0, 1, 5)
 
 class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
     """Provides the main config for the For Loop."""

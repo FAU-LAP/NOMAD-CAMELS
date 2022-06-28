@@ -5,7 +5,7 @@ import copy
 from main_classes.protocol_class import Measurement_Protocol
 from utility import variables_handling
 
-from bluesky_handling.helper_functions import plot_creator
+from bluesky_handling.builder_helper_functions import plot_creator
 
 standard_string = 'import numpy as np\n'
 standard_string += 'import importlib\n'
@@ -21,6 +21,7 @@ standard_string += 'import datetime\n'
 standard_string += 'from CAMELS.main_classes import plot_widget\n'
 standard_string += 'from CAMELS.utility.databroker_export import broker_to_hdf5, broker_to_dict\n'
 standard_string += 'from CAMELS.bluesky_handling.evaluation_helper import Evaluator\n'
+standard_string += 'from CAMELS.bluesky_handling import helper_functions\n'
 
 # standard_run_string = '\n\neva = Evaluator(namespace=namespace)\n\n\n'
 standard_run_string = 'def main():\n'
@@ -152,9 +153,10 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         # TODO finish this
     else:
         standard_save_string += f'\tbroker_to_hdf5(runs, "{save_path}")\n\n\n'
-    if plotting:
-        standard_save_string += '\tprint("protocol finished!")\n'
-        standard_save_string += '\tsys.exit(app.exec_())\n'
+    standard_save_string += '\tapp = QCoreApplication.instance()\n'
+    standard_save_string += '\tif app is not None:\n'
+    standard_save_string += '\t\tprint("protocol finished!")\n'
+    standard_save_string += '\t\tsys.exit(app.exec_())\n'
 
     protocol_string += standard_save_string
     protocol_string += standard_start_string

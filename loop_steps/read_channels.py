@@ -82,7 +82,7 @@ class Read_Channels_Config(Loop_Step_Config):
     def __init__(self, loop_step:Read_Channels, parent=None):
         super().__init__(parent, loop_step)
         self.sub_widget = Read_Channels_Config_Sub(loop_step, self)
-        self.layout().addWidget(self.sub_widget, 1, 0)
+        self.layout().addWidget(self.sub_widget, 1, 0, 1, 5)
 
 class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
     """Config for the Read_Channels it provides a table of channels with

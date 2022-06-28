@@ -18,8 +18,8 @@ class AddRemoveTable(QWidget):
     def __init__(self, addLabel='+', removeLabel='-', horizontal=True,
                  editables=None, checkables=(), headerLabels=None, orderBy=None,
                  parent=None, tableData=None, title='', comboBoxes=None,
-                 subtables=None, growsize=True, checkstrings=None,
-                 askdelete=False):
+                 subtables=None, growsize=False, checkstrings=None,
+                 askdelete=False, fixedsize=False):
         """
 
         Parameters
@@ -86,6 +86,7 @@ class AddRemoveTable(QWidget):
         self.comboBoxes = {} if comboBoxes is None else comboBoxes
         self.subtables = {} if subtables is None else subtables
         self.growsize = growsize
+        self.fixedsize = fixedsize
         self.boxes = []
         self.tables = []
         if headerLabels is None and tableData is not None:
@@ -154,7 +155,7 @@ class AddRemoveTable(QWidget):
         if self.growsize:
             self.setMaximumHeight(90 + self.table_model.rowCount()*100)
             self.sizechange.emit()
-        else:
+        elif self.fixedsize:
             self.setMaximumHeight(100)
 
     def load_table_data(self):
@@ -245,7 +246,8 @@ class AddRemoveTable(QWidget):
                 checksting = 0 if i in self.checkstrings else None
                 table = AddRemoveTable(horizontal=self.horizontal,
                                        headerLabels=[], tableData=vals[i],
-                                       growsize=False, checkstrings=checksting)
+                                       growsize=False, checkstrings=checksting,
+                                       fixedsize=True)
                 self.tables.append(table)
                 table_indexes.append(i)
                 tables.append(table)
@@ -305,8 +307,12 @@ class AddRemoveTable(QWidget):
         col = index.column()
         if self.horizontal and row >= 0:
             self.table_model.removeRow(row)
+            if not self.headerLabels and self.comboBoxes:
+                self.boxes.pop(row)
         elif not self.horizontal and col >= 0:
             self.table_model.removeColumn(col)
+            if not self.headerLabels and self.comboBoxes:
+                self.boxes.pop(col)
         self.update_table_data()
         self.update_max_hight()
 
@@ -384,7 +390,7 @@ class AddRemoveDialoge(QDialog):
         self.buttonBox.rejected.connect(self.reject)
         self.buttonBox.accepted.connect(self.accept)
 
-        self.table = AddRemoveTable(addLabel=addLabel, removeLabel=removeLabel, horizontal=horizontal, editables=editables, checkables=checkables, headerLabels=headerLabels, orderBy=orderBy, parent=self, tableData=tableData, title=title, comboBoxes=comboBoxes, subtables=subtables, growsize=True, checkstrings=checkstrings, askdelete=askdelete)
+        self.table = AddRemoveTable(addLabel=addLabel, removeLabel=removeLabel, horizontal=horizontal, editables=editables, checkables=checkables, headerLabels=headerLabels, orderBy=orderBy, parent=self, tableData=tableData, title=title, comboBoxes=comboBoxes, subtables=subtables, growsize=False, checkstrings=checkstrings, askdelete=askdelete)
 
         layout = QGridLayout()
         self.setLayout(layout)
