@@ -548,8 +548,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             dev_type = self.active_devices_dict[dat].name
             py_package = importlib.import_module(f'{dev_type}.{dev_type}')
             self.get_device_config()
-            self.device_config_widget = py_package.subclass_config(self,
-                                                                   dat,
+            self.device_config_widget = py_package.subclass_config(self, dat,
                                                                    self.active_devices_dict[dat].settings,
                                                                    self.active_devices_dict[dat].config,
                                                                    self.active_devices_dict[dat].ioc_settings)

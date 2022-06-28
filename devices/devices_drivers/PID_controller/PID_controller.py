@@ -58,11 +58,17 @@ class subclass_config(device_class.Device_Config):
     def get_config(self):
         return self.sub_widget.get_config()
 
+    def get_ioc_settings(self):
+        self.ioc_settings.clear()
+        self.ioc_settings.update({'use_local_ioc': self.checkBox_use_local_ioc.isChecked(),
+                                  'ioc_name': self.lineEdit_ioc_name.text()})
+        return self.ioc_settings
 
 
-class subclass_config_sub(QWidget):
+class subclass_config_sub(device_class.Device_Config_Sub):
     def __init__(self, settings_dict=None, parent=None, config_dict=None):
-        super().__init__(parent)
+        super().__init__(settings_dict=settings_dict, parent=parent,
+                         config_dict=config_dict)
         self.settings_dict = settings_dict
         self.config_dict = config_dict
 

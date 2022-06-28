@@ -26,9 +26,10 @@ class subclass_config(device_class.Device_Config):
         return self.sub_widget.get_config()
 
 
-class subclass_config_sub(QWidget):
-    def __init__(self, config_dict=None, parent=None):
-        super().__init__(parent)
+class subclass_config_sub(device_class.Device_Config_Sub):
+    def __init__(self, config_dict=None, parent=None, settings_dict=None):
+        super().__init__(parent=parent, settings_dict=settings_dict,
+                         config_dict=config_dict)
         self.config_dict = config_dict
         layout = QGridLayout()
         layout.setContentsMargins(0,0,0,0)

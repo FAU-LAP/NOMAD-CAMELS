@@ -78,7 +78,7 @@ class subclass_config(device_class.Device_Config):
         super().__init__(parent, 'Keysight E5270B', data, settings_dict,
                          config_dict, ioc_dict)
         self.comboBox_connection_type.addItem('prologix-GPIB')
-        self.sub_widget = subclass_config_sub(settings_dict=self.config_dict, parent=self)
+        self.sub_widget = subclass_config_sub(config_dict=self.config_dict, parent=self)
         self.layout().addWidget(self.sub_widget, 20, 0, 1, 5)
         self.load_settings()
 
@@ -86,11 +86,12 @@ class subclass_config(device_class.Device_Config):
         super().get_config()
         return self.sub_widget.get_config()
 
-class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
-    def __init__(self, settings_dict=None, parent=None):
-        super().__init__(parent)
+class subclass_config_sub(device_class.Device_Config_Sub, Ui_keysight_e5270b_config):
+    def __init__(self, config_dict=None, parent=None, settings_dict=None):
+        super().__init__(parent=parent, config_dict=config_dict,
+                         settings_dict=settings_dict)
         self.setupUi(self)
-        self.settings_dict = settings_dict
+        self.config_dict = config_dict
 
         self.adc_modes = {'Auto Mode': 0,
                           'Manual Mode': 1,
@@ -99,29 +100,29 @@ class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
         adc_mode_keys = list(self.adc_modes.keys())
         self.comboBox_highResMode.addItems(self.adc_modes.keys())
         self.comboBox_highSpeedMode.addItems(self.adc_modes.keys())
-        if 'speedADCmode' in settings_dict and settings_dict['speedADCmode'] in adc_mode_values:
-            i = adc_mode_values.index(settings_dict['speedADCmode'])
+        if 'speedADCmode' in config_dict and config_dict['speedADCmode'] in adc_mode_values:
+            i = adc_mode_values.index(config_dict['speedADCmode'])
             self.comboBox_highSpeedMode.setCurrentText(adc_mode_keys[i])
         else:
             self.comboBox_highSpeedMode.setCurrentText(adc_mode_keys[2])
-        if 'resADCmode' in settings_dict and settings_dict['resADCmode'] in adc_mode_values:
-            i = adc_mode_values.index(settings_dict['resADCmode'])
+        if 'resADCmode' in config_dict and config_dict['resADCmode'] in adc_mode_values:
+            i = adc_mode_values.index(config_dict['resADCmode'])
             self.comboBox_highResMode.setCurrentText(adc_mode_keys[i])
         else:
             self.comboBox_highResMode.setCurrentText(adc_mode_keys[2])
 
-        if 'speedADCPLC' in settings_dict:
-            self.lineEdit_highSpeedPLC.setText(str(settings_dict['speedADCPLC']))
+        if 'speedADCPLC' in config_dict:
+            self.lineEdit_highSpeedPLC.setText(str(config_dict['speedADCPLC']))
         else:
             self.lineEdit_highSpeedPLC.setText('5')
-        if 'resADCPLC' in settings_dict:
-            self.lineEdit_highResPLC.setText(str(settings_dict['resADCPLC']))
+        if 'resADCPLC' in config_dict:
+            self.lineEdit_highResPLC.setText(str(config_dict['resADCPLC']))
         else:
             self.lineEdit_highResPLC.setText('5')
 
         self.channel_widgets = []
         for i, tab in enumerate([self.channel1, self.channel2, self.channel3, self.channel4, self.channel5, self.channel6, self.channel7, self.channel8]):
-            sub_widget = subclass_config_channel(settings_dict, self, i+1)
+            sub_widget = subclass_config_channel(config_dict, self, i+1)
             self.channel_widgets.append(sub_widget)
             tab.layout().addWidget(sub_widget)
             sub_widget.activate_sig.connect(lambda state, x=i: self.change_tab_color(state, x))
@@ -138,11 +139,11 @@ class subclass_config_sub(QWidget, Ui_keysight_e5270b_config):
     def get_config(self):
         for channel_widget in self.channel_widgets:
             channel_widget.get_settings()
-        self.settings_dict['speedADCPLC'] = int(float(self.lineEdit_highSpeedPLC.text()))
-        self.settings_dict['resADCPLC'] = int(float(self.lineEdit_highResPLC.text()))
-        self.settings_dict['speedADCmode'] = self.adc_modes[self.comboBox_highSpeedMode.currentText()]
-        self.settings_dict['resADCmode'] = self.adc_modes[self.comboBox_highResMode.currentText()]
-        return self.settings_dict
+        self.config_dict['speedADCPLC'] = int(float(self.lineEdit_highSpeedPLC.text()))
+        self.config_dict['resADCPLC'] = int(float(self.lineEdit_highResPLC.text()))
+        self.config_dict['speedADCmode'] = self.adc_modes[self.comboBox_highSpeedMode.currentText()]
+        self.config_dict['resADCmode'] = self.adc_modes[self.comboBox_highResMode.currentText()]
+        return self.config_dict
 
 
 class subclass_config_channel(QWidget, Ui_keysight_e5270b_config_channel):
