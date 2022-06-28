@@ -5,7 +5,7 @@ from ophyd import Device
 from ophyd import Component as Cpt
 from ophyd import EpicsSignal
 
-from bluesky_handling.EpicsFieldSignal import EpicsFieldSignal
+from bluesky_handling.EpicsFieldSignal import EpicsFieldSignal, EpicsFieldSignalRO
 
 import numpy as np
 from scipy.optimize import root
@@ -38,7 +38,7 @@ def pt1000_inv(T):
 
 class PID_Controller(Device):
     pid_val = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.VAL', name='pid_val')
-    pid_cval = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.CVAL', name='pid_cval')
+    pid_cval = Cpt(EpicsFieldSignalRO, read_pv_name='pid_controller.CVAL', name='pid_cval')
     pid_kp = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.KP', name='pid_kp', kind='config')
     pid_ki = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.KI', name='pid_ki', kind='config')
     pid_kd = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.KD', name='pid_kd', kind='config')
@@ -49,10 +49,10 @@ class PID_Controller(Device):
     pid_scan = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.SCAN', name='pid_scan', kind='config')
     pid_inp = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.INP', name='pid_inp', kind='config')
     pid_outl = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.OUTL', name='pid_outl', kind='config')
-    pid_pval = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.P', name='pid_pval')
-    pid_ival = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.I', name='pid_ival')
-    pid_dval = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.D', name='pid_dval')
-    pid_oval = Cpt(EpicsFieldSignal, read_pv_name='pid_controller.OVAL', name='pid_oval')
+    pid_pval = Cpt(EpicsFieldSignalRO, read_pv_name='pid_controller.P', name='pid_pval')
+    pid_ival = Cpt(EpicsFieldSignalRO, read_pv_name='pid_controller.I', name='pid_ival')
+    pid_dval = Cpt(EpicsFieldSignalRO, read_pv_name='pid_controller.D', name='pid_dval')
+    pid_oval = Cpt(EpicsFieldSignalRO, read_pv_name='pid_controller.OVAL', name='pid_oval')
 
     #pid_bias = Cpt(Simple_Signal, read_pv_name=None, name='pid_bias')
 

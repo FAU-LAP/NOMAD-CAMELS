@@ -123,7 +123,7 @@
            <widget class="Path_Button_Edit" name="pathButton_CAMELS" native="true"/>
           </item>
           <item row="4" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="checkBox_python">
             <property name="text">
              <string>Install Python Environment for CAMELS</string>
             </property>

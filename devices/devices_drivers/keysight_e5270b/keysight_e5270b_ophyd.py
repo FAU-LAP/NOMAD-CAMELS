@@ -138,13 +138,14 @@ class Keysight_E5270B(Device):
                  configuration_attrs=None, parent=None, use_channels=(), **kwargs):
         super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, **kwargs)
         self.use_channels = use_channels
-        comps = list(self.component_names)
-        for comp in self.component_names:
-            for i in range(1, 9):
-                if i not in self.use_channels and str(i) in comp:
-                    comps.remove(comp)
-                    break
-        self.component_names = tuple(comps)
+        if use_channels:
+            comps = list(self.component_names)
+            for comp in self.component_names:
+                for i in range(1, 9):
+                    if i not in self.use_channels and str(i) in comp:
+                        comps.remove(comp)
+                        break
+            self.component_names = tuple(comps)
 
     def wait_for_connection(self, all_signals=False, timeout=2.0):
         self.wait_conn_sub(all_signals, timeout)
