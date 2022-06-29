@@ -11,7 +11,8 @@ import pandas as pd
 from copy import deepcopy
 
 from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox,\
+    QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut, QStyle
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
 from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, \
@@ -67,7 +68,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.textEdit_console_output_meas.setHidden(True)
 
         # measurements
-        self.run_thread = None
+        self.run_thread = qthreads.Run_Protocol()
+        self.make_new_run_thread()
         self.protocols_dict = {}
         self.item_model_protocols = QStandardItemModel(0,1)
         self.listView_protocols.setModel(self.item_model_protocols)
@@ -121,7 +123,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_build_protocol.clicked.connect(self.build_current_protocol)
         self.pushButton_open_protocol_external.clicked.connect(self.open_protocol)
         self.pushButton_run_protocol.clicked.connect(self.run_current_protocol)
+        self.pushButton_write_to_ipython.clicked.connect(self.write_to_ipython)
+        self.lineEdit_write_to_ipython.returnPressed.connect(self.write_to_ipython)
 
+        icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
+        self.pushButton_run_protocol.setIcon(icon)
+        icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause)
+        self.pushButton_pause_protocol.setIcon(icon)
+        icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop)
+        self.pushButton_stop_protocol.setIcon(icon)
+
+        self.pushButton_pause_protocol.clicked.connect(self.pause_protocol)
+        self.pushButton_stop_protocol.clicked.connect(self.stop_protocol)
 
         # saving and loading
         self.__save_dict__ = {}
@@ -160,6 +173,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_editSampleInfo.clicked.connect(self.edit_sample_info)
         self.load_sample_data()
         variables_handling.CAMELS_path = os.path.dirname(__file__)
+
+        self.run_stop_ioc()
+
 
     def mousePressEvent(self, a0: QMouseEvent) -> None:
         """Overwrite parent method to connect to undo and redo functions."""
@@ -477,15 +493,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if add_string is not None:
                 self.__save_dict__.update({key: load_save_functions.get_save_str(self.preset_save_dict[key])})
 
-
-
     # --------------------------------------------------
     # Threads - general
     # --------------------------------------------------
-    def run_thread_finished(self):
-        self.pushButton_run_protocol.setText('Build and run selected protocol')
-        self.run_thread = None
+    def protocol_finished(self):
+        # self.pushButton_run_protocol.setText('Build and run selected protocol')
         self.thread_finished()
+        self.pushButton_stop_protocol.setEnabled(False)
+        self.pushButton_pause_protocol.setEnabled(True)
+        self.pushButton_run_protocol.setEnabled(True)
+
+    def make_new_run_thread(self):
+        self.run_thread = qthreads.Run_Protocol()
+        self.run_thread.start()
+        self.run_thread.sig_step.connect(self.change_progressBar_value_meas)
+        self.run_thread.info_step.connect(self.update_protocol_output)
+        self.run_thread.finished.connect(self.run_thread_finished)
+        self.run_thread.protocol_done.connect(self.protocol_finished)
+
+    def run_thread_finished(self):
+        # self.pushButton_run_protocol.setText('Build and run selected protocol')
+        self.run_thread = None
+        self.protocol_finished()
+        self.make_new_run_thread()
 
     def make_thread_finished(self):
         self.make_thread = None
@@ -495,7 +525,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def thread_finished(self):
         """Called, when a run_thread or make_thread is finished. If both
          are finished, the cursor is set back to the ArrowCursor."""
-        if self.make_thread is None and self.run_thread is None:
+        if self.make_thread is None:
             self.setCursor(Qt.ArrowCursor)
 
     def change_progressBar_value(self, val):
@@ -739,18 +769,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         protocol is used. If the button is clicked agian, the thread is
         terminated."""
         if self.run_thread is None:
-            self.setCursor(Qt.WaitCursor)
-            self.build_current_protocol()
-            path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
-            self.run_thread = qthreads.Run_Protocol(self.current_protocol, path)
-            self.run_thread.sig_step.connect(self.change_progressBar_value_meas)
-            self.run_thread.info_step.connect(self.update_protocol_output)
-            self.run_thread.finished.connect(self.run_thread_finished)
-            self.pushButton_run_protocol.setText('Abort Run')
-            self.run_thread.start()
+            self.make_new_run_thread()
+        elif self.run_thread.paused:
+            self.run_thread.resume()
+            self.pushButton_run_protocol.setEnabled(False)
+            self.pushButton_pause_protocol.setEnabled(True)
+            return
+        self.build_current_protocol()
+        self.setCursor(Qt.WaitCursor)
+        path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
+        # self.pushButton_run_protocol.setText('Abort Run')
+        self.run_thread.run_protocol(path, self.current_protocol.get_total_steps())
+        self.pushButton_run_protocol.setEnabled(False)
+        self.pushButton_pause_protocol.setEnabled(True)
+        self.pushButton_stop_protocol.setEnabled(True)
+        # else:
+        #     self.run_thread.terminate()
+        #     self.run_thread_finished()
+
+    def write_to_ipython(self):
+        if self.run_thread is not None:
+            text = self.lineEdit_write_to_ipython.text()
+            self.run_thread.write_to_console(text)
+            self.lineEdit_write_to_ipython.clear()
         else:
-            self.run_thread.terminate()
-            self.run_thread_finished()
+            raise Exception('No IPython shell open!')
+
+    def pause_protocol(self):
+        if self.run_thread is not None:
+            self.run_thread.pause()
+            self.pushButton_run_protocol.setText('Resume')
+            self.pushButton_run_protocol.setEnabled(True)
+            self.pushButton_pause_protocol.setEnabled(False)
+
+    def stop_protocol(self):
+        # self.run_thread.terminate()
+        self.run_thread.abort()
+        self.protocol_finished()
 
     def open_protocol(self):
         if self.current_protocol is None:
@@ -891,9 +946,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Shows / hides the textEdit_console_output."""
         if self.textEdit_console_output_meas.isHidden():
             self.textEdit_console_output_meas.setHidden(False)
+            self.lineEdit_write_to_ipython.setHidden(False)
+            self.pushButton_write_to_ipython.setHidden(False)
             self.pushButton_show_output_meas.setText('Hide output')
         else:
             self.textEdit_console_output_meas.setHidden(True)
+            self.lineEdit_write_to_ipython.setHidden(True)
+            self.pushButton_write_to_ipython.setHidden(True)
             self.pushButton_show_output_meas.setText('Show output')
 
     def protocol_selected(self):

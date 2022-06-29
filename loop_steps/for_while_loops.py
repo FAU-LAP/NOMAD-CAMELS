@@ -41,7 +41,8 @@ class While_Loop_Step(Loop_Step_Container):
         children-steps, the count-variable increased by 1."""
         tabs = '\t'*n_tabs
         count_var = f'{self.name.replace(" ", "_")}_Count'
-        protocol_string = f'{tabs}{count_var} = 0\n'
+        protocol_string = super().get_protocol_string(n_tabs)
+        protocol_string += f'{tabs}{count_var} = 0\n'
         protocol_string += f'{tabs}while eva.eval("{self.condition}"):\n'
         protocol_string += f'{tabs}\tnamespace["{count_var}"] = {count_var}\n'
         protocol_string += self.get_children_strings(n_tabs+1)
@@ -167,9 +168,9 @@ class For_Loop_Step(Loop_Step_Container):
             enumerator = self.val_list
         else:
             enumerator = f'np.loadtxt("{self.file_path}")'
-        protocol_string = f'{tabs}for {self.name.replace(" ", "_")}_Count, {self.name.replace(" ", "_")}_Value in enumerate({enumerator}):\n'
+        protocol_string = super().get_protocol_string(n_tabs)
+        protocol_string += f'{tabs}for {self.name.replace(" ", "_")}_Count, {self.name.replace(" ", "_")}_Value in enumerate({enumerator}):\n'
         protocol_string += f'{tabs}\tnamespace.update({{"{self.name.replace(" ", "_")}_Count": {self.name.replace(" ", "_")}_Count, "{self.name.replace(" ", "_")}_Value": {self.name.replace(" ", "_")}_Value}})\n'
-        protocol_string += f'{tabs}\tprint("starting loop_step {self.full_name}")\n'
         protocol_string += self.get_children_strings(n_tabs+1)
         self.update_time_weight()
         return protocol_string

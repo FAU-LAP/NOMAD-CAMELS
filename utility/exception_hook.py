@@ -27,5 +27,7 @@ class ErrorMessage(QMessageBox):
 def exception_hook(*exc_info):
 	"""Use to overwrite sys.excepthook, so that an exception does not
 	terminate the program, but simply shows a Message with the exception."""
+	if issubclass(exc_info[0], KeyboardInterrupt):
+		return
 	logging.exception(str(exc_info))
 	ErrorMessage(exc_info[0].__name__, str(exc_info[1]) + '\n' + str(print_tb(exc_info[2]))).exec_()

@@ -41,7 +41,7 @@ class Set_Channels(Loop_Step):
         """If `wait_for_set` is True, then after setting, bps.wait for
         the set group is called."""
         tabs = '\t' * n_tabs
-        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        protocol_string = super().get_protocol_string(n_tabs)
         for i, channel in enumerate(self.channels_values['Channels']):
             if channel not in variables_handling.channels:
                 raise Exception(f'Trying to set channel {channel} in {self.full_name}, but it does not exist!')

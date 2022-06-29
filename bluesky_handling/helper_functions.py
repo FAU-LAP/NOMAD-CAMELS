@@ -7,9 +7,11 @@ def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
                      momentum=0.8, max_step_for_diff=None):
 
     def obj_func(set_val):
+        yield from bps.checkpoint()
         yield from bps.abs_set(set_channel, set_val, group='A')
         yield from bps.wait('A')
         yield from bps.trigger_and_read(read_channels, name=stream_name)
+        # yield from bps.sleep(1)
 
     if max_step_for_diff is None:
         max_step_for_diff = 10 * min_step

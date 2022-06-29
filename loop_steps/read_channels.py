@@ -55,7 +55,7 @@ class Read_Channels(Loop_Step):
         including all the channels, that are selected to be read. Then
         bps.trigger_and_read is called on these channels."""
         tabs = '\t' * n_tabs
-        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}channels = ['
         inserted = False
         for channel, channel_data in self.channel_dict.items():

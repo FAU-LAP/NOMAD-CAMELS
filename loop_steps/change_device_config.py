@@ -28,7 +28,7 @@ class Change_DeviceConf(Loop_Step):
         dev_instance = py_package.subclass()
         dev_instance.config = self.config_dict
         config_dict = dev_instance.get_config()
-        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}config = {config_dict}\n'
         protocol_string += f'{tabs}devs["{self.device}"].configure(config)\n'
         return protocol_string

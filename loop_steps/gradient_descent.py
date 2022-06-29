@@ -61,7 +61,7 @@ class Gradient_Descent_Step(Loop_Step):
         if self.extremum == 'Maximum':
             func_text = f'"-({self.opt_func})"'
 
-        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}channels = ['
         for i, channel in enumerate(self.read_channels):
             if channel not in variables_handling.channels:

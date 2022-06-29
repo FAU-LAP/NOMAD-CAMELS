@@ -64,7 +64,7 @@ class Simple_Sweep(For_Loop_Step):
         if self.data_output == 'main stream':
             stream = 'stream_name'
 
-        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}channels = ['
         for i, channel in enumerate(self.read_channels):
             if channel not in variables_handling.channels:

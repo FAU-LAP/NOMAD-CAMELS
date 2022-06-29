@@ -21,7 +21,7 @@ class Wait_Loop_Step(Loop_Step):
     def get_protocol_string(self, n_tabs=1):
         """The protocol just calls `bps.wait(`wait_time`)`."""
         tabs = '\t' * n_tabs
-        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}yield from bps.sleep(eva.eval("{self.wait_time}"))\n'
         return protocol_string
 

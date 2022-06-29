@@ -72,7 +72,9 @@ class Loop_Step:
         make use of the time_weight and status bar, it should start with
         printing, that the loop_step starts."""
         tabs = '\t'*n_tabs
-        return f'{tabs}print("starting loop_step {self.full_name}")\n'
+        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        protocol_string += f'{tabs}yield from bps.checkpoint()\n'
+        return protocol_string
 
     def get_outer_string(self):
         return ''
@@ -88,6 +90,10 @@ class Loop_Step:
     def update_used_devices(self):
         """Should update `used_devices` to include all necessary devices."""
         pass
+
+    def update_time_weight(self):
+        """The time_weight of the children is included."""
+        self.time_weight = 1
 
 
 class Loop_Step_Container(Loop_Step):
@@ -136,7 +142,7 @@ class Loop_Step_Container(Loop_Step):
         printing, that the loop_step starts.
         Here it is overwritten to include the strings of the children."""
         protocol_string = super().get_protocol_string(n_tabs)
-        protocol_string += self.get_children_strings(n_tabs+1)
+        # protocol_string += self.get_children_strings(n_tabs+1)
         self.update_time_weight()
         return protocol_string
 

@@ -186,6 +186,13 @@ class Measurement_Protocol:
         add_main_string += '\treturn returner\n\n\n'
         return add_main_string
 
+    def get_total_steps(self):
+        total = 0
+        for step in self.loop_steps:
+            step.update_time_weight()
+            total += step.time_weight
+        return total
+
     def get_outer_string(self):
         outer_string = ''
         for step in self.loop_steps:

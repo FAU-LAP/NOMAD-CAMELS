@@ -25,7 +25,7 @@ class Run_Subprotocol(Loop_Step):
     def get_protocol_string(self, n_tabs=1):
         tabs = '\t' * n_tabs
         prot_name = os.path.basename(self.prot_path)[:-3]
-        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        protocol_string = super().get_protocol_string(n_tabs)
         for i, var in enumerate(self.vars_in['Variable']):
             protocol_string += f'{tabs}{prot_name}_mod.namespace["{var}"] = eva.eval("{self.vars_in["Value"][i]}")\n'
         stream = prot_name

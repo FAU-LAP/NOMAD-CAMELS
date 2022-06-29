@@ -16,7 +16,7 @@ class Prompt_Loop_Step(Loop_Step):
     def get_protocol_string(self, n_tabs=1):
         tabs = '\t' * n_tabs
         long_text = self.long_text.replace("\n", "\\n")
-        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}from tkinter import messagebox, Tk\n'
         protocol_string += f'{tabs}tk_window = Tk()\n'
         protocol_string += f'{tabs}tk_window.wm_withdraw()\n'

@@ -22,10 +22,10 @@ standard_string += 'from CAMELS.main_classes import plot_widget\n'
 standard_string += 'from CAMELS.utility.databroker_export import broker_to_hdf5, broker_to_dict\n'
 standard_string += 'from CAMELS.bluesky_handling.evaluation_helper import Evaluator\n'
 standard_string += 'from CAMELS.bluesky_handling import helper_functions\n'
+standard_string += 'RE = RunEngine()\n'
 
 # standard_run_string = '\n\neva = Evaluator(namespace=namespace)\n\n\n'
 standard_run_string = 'def main():\n'
-standard_run_string += '\tRE = RunEngine()\n'
 standard_run_string += '\tbec = BestEffortCallback()\n'
 standard_run_string += '\tRE.subscribe(bec)\n'
 
@@ -139,7 +139,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     protocol_string += devices_string
     protocol_string += additional_string_devices
     if plotting:
-        protocol_string += '\tapp, plots, plot_subs = create_plots(RE)\n'
+        protocol_string += '\tplot_dat = create_plots(RE)\n'
     protocol_string += user_sample_string(userdata, sampledata)
     protocol_string += '\tadditional_step_data = steps_add_main(RE)\n'
     protocol_string += f'\tuids = RE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
@@ -154,9 +154,10 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     else:
         standard_save_string += f'\tbroker_to_hdf5(runs, "{save_path}")\n\n\n'
     standard_save_string += '\tapp = QCoreApplication.instance()\n'
+    standard_save_string += '\tprint("protocol finished!")\n'
     standard_save_string += '\tif app is not None:\n'
-    standard_save_string += '\t\tprint("protocol finished!")\n'
     standard_save_string += '\t\tsys.exit(app.exec_())\n'
+    standard_save_string += '\treturn plot_dat, additional_step_data\n'
 
     protocol_string += standard_save_string
     protocol_string += standard_start_string
@@ -171,39 +172,3 @@ def user_sample_string(userdata, sampledata):
     u_s_string += f'\tmd["sample"] = {sampledata}\n'
     return u_s_string
 
-def run_protocol(protocol:Measurement_Protocol, file_path, sig_step=None,
-                 info_step=None):
-    """Runs the given `protocol` at `file_path`. If `sig_step` is
-    provided, the stdout will be written there. If `info_step` is
-    provided, it will update the completed-percentage with each starting
-    loopstep."""
-    if sig_step is not None:
-        sig_step.emit(0)
-    total_time = 1
-    for step in protocol.loop_steps:
-        total_time += step.time_weight
-    args = []
-    if variables_handling.dark_mode:
-        args.append('--darkmode')
-    p = subprocess.Popen(['camelsEnv/Scripts/python', file_path] + args, stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT, bufsize=1)
-    i = 1
-    for line in iter(p.stdout.readline, b''):
-        text = line.decode().rstrip()
-        if text.startswith("starting loop_step "):
-            if sig_step is not None:
-                sig_step.emit(int(i/total_time * 100))
-            i += 1
-        elif text.startswith("protocol finished!"):
-            if sig_step is not None:
-                sig_step.emit(100)
-                break
-        else:
-            if info_step is None:
-                print(text)
-            else:
-                info_step.emit(text)
-    if info_step is not None:
-        info_step.emit('\n\n\n')
-    if sig_step is not None:
-        sig_step.emit(100)

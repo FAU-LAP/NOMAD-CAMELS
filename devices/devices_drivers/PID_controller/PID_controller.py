@@ -224,7 +224,7 @@ class PID_wait_for_stable(steps.Loop_Step):
 
     def get_protocol_string(self, n_tabs=1):
         tabs = '\t' * n_tabs
-        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}stable_time = datetime.timedelta(0)\n'
         protocol_string += f'{tabs}delta_t = devs["{self.pid}"].pid_mdt.get()\n'
         protocol_string += f'{tabs}starttime = datetime.datetime.now()\n'
