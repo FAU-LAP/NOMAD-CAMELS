@@ -174,7 +174,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_sample_data()
         variables_handling.CAMELS_path = os.path.dirname(__file__)
 
-        self.run_stop_ioc()
+        if 'autostart_ioc' in self.preferences and self.preferences['autostart_ioc']:
+            self.run_stop_ioc()
 
 
     def mousePressEvent(self, a0: QMouseEvent) -> None:
@@ -500,7 +501,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.pushButton_run_protocol.setText('Build and run selected protocol')
         self.thread_finished()
         self.pushButton_stop_protocol.setEnabled(False)
-        self.pushButton_pause_protocol.setEnabled(True)
+        self.pushButton_pause_protocol.setEnabled(False)
         self.pushButton_run_protocol.setEnabled(True)
 
     def make_new_run_thread(self):
@@ -704,6 +705,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pushButton_write_to_console.setEnabled(True)
             self.lineEdit_send_to_IOC.setEnabled(True)
             self.running_checkbox_style(True)
+            icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop)
+            self.pushButton_run_ioc.setIcon(icon)
         else:
             self.ioc_thread.terminate()
             self.stop_ioc()
@@ -730,6 +733,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_write_to_console.setEnabled(False)
         self.lineEdit_send_to_IOC.setEnabled(False)
         self.running_checkbox_style(False)
+        icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
+        self.pushButton_run_ioc.setIcon(icon)
 
     def write_to_console(self):
         if self.ioc_thread is not None:
@@ -774,6 +779,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.run_thread.resume()
             self.pushButton_run_protocol.setEnabled(False)
             self.pushButton_pause_protocol.setEnabled(True)
+            self.pushButton_run_protocol.setText('Run')
             return
         self.build_current_protocol()
         self.setCursor(Qt.WaitCursor)

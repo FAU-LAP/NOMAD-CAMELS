@@ -15,6 +15,7 @@ import json
 import ophyd
 
 from main_classes import protocol_class
+from utility.load_save_helper_functions import load_plots
 
 appdata_path = f'{getenv("LOCALAPPDATA")}/CAMELS'
 if not isdir(appdata_path):
@@ -33,7 +34,8 @@ standard_pref = {'autosave': True,
                  'mixed_from': 3,
                  'py_files_path': f'{appdata_path}/python_files'.replace('\\','/'),
                  'meas_files_path': os.path.expanduser('~/CAMELS_data').replace('\\','/'),
-                 'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/')}
+                 'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/'),
+                 'autostart_ioc': True}
 
 def get_preset_list():
     """returns a two list of available presets, once for devices, once
@@ -213,7 +215,7 @@ def load_protocols_dict(string_dict, prot_dict):
         if 'loop_steps' in prot_data:
             prot.load_loop_steps(prot_data['loop_steps'])
         if 'plots' in prot_data:
-            prot.load_plots(prot_data['plots'])
+            prot.plots = load_plots([], prot_data['plots'])
         if 'filename' in prot_data:
             prot.filename = prot_data['filename']
         if 'variables' in prot_data:

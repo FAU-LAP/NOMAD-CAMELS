@@ -1,5 +1,6 @@
 import numpy as np
 from bluesky import plan_stubs as bps
+from bluesky.callbacks import LiveFit
 
 def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
                      set_channel, read_channels, min_step, max_step, min_val,

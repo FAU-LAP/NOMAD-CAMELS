@@ -14,6 +14,8 @@ class AddRemoveTable(QWidget):
     """This widget provides a QTableView and two buttons for adding /
     removing rows / columns. """
     sizechange = pyqtSignal()
+    added = pyqtSignal(int)
+    removed = pyqtSignal(int)
 
     def __init__(self, addLabel='+', removeLabel='-', horizontal=True,
                  editables=None, checkables=(), headerLabels=None, orderBy=None,
@@ -157,6 +159,15 @@ class AddRemoveTable(QWidget):
             self.sizechange.emit()
         elif self.fixedsize:
             self.setMaximumHeight(100)
+            self.setMaximumWidth(200)
+        elif not self.horizontal:
+            self.setMaximumHeight(30 * len(self.headerLabels) + 30)
+
+    def change_table_data(self, tableData):
+        if isinstance(tableData, dict):
+            tableData = pd.DataFrame(tableData)
+        self.tableData = tableData
+        self.load_table_data()
 
     def load_table_data(self):
         """Putting the `tableData` into the table."""
@@ -290,6 +301,10 @@ class AddRemoveTable(QWidget):
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
         self.update_max_hight()
+        if self.horizontal:
+            self.added.emit(items[0].row())
+        else:
+            self.added.emit(items[0].column())
 
     def remove(self):
         try:
@@ -309,10 +324,12 @@ class AddRemoveTable(QWidget):
             self.table_model.removeRow(row)
             if not self.headerLabels and self.comboBoxes:
                 self.boxes.pop(row)
+            self.removed.emit(row)
         elif not self.horizontal and col >= 0:
             self.table_model.removeColumn(col)
             if not self.headerLabels and self.comboBoxes:
                 self.boxes.pop(col)
+            self.removed.emit(col)
         self.update_table_data()
         self.update_max_hight()
 

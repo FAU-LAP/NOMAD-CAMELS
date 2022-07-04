@@ -1,0 +1,355 @@
+from PyQt5.QtWidgets import QDialog, QWidget, QDialogButtonBox, QGridLayout,\
+    QLabel, QMessageBox, QPushButton
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QKeyEvent
+
+from lmfit import models
+
+from gui.plot_definer import Ui_Plot_Definer
+from gui.fit_definer import Ui_Fit_Definer
+
+from utility.add_remove_table import AddRemoveTable
+from utility import variables_handling
+
+
+class Plot_Info:
+    def __init__(self, plt_type='X-Y plot', x_axis='', y_axes=None, title='',
+                 xlabel='', ylabel='', ylabel2='', do_plot=True,
+                 same_fit=False, fits=None, all_fit=None):
+        self.plt_type = plt_type
+        self.x_axis = x_axis
+        self.y_axes = y_axes or {'formula': [], 'axis': []}
+        self.title = title
+        self.xlabel = xlabel
+        self.ylabel = ylabel
+        self.ylabel2 = ylabel2
+        self.do_plot = do_plot
+        self.same_fit = same_fit
+        self.fits = fits or []
+        self.all_fit = all_fit or Fit_Info()
+        self.name = ''
+        self.update_name()
+
+    def update_name(self):
+        if self.title:
+            self.name = self.title
+        elif self.xlabel and self.ylabel:
+            self.name = f'{self.ylabel} vs. {self.xlabel}'
+        elif self.x_axis and self.y_axes['formula']:
+            self.name = f'{self.y_axes["formula"][0]} vs. {self.x_axis}'
+        elif self.y_axes['formula']:
+            self.name = self.y_axes['formula'][0]
+        else:
+            self.name = self.x_axis
+
+
+class Fit_Info:
+    def __init__(self, do_fit=False, predef_func='Linear', custom_func='',
+                 use_custom_func=False, guess_params=True, initial_params=None,
+                 y='', x=''):
+        self.do_fit = do_fit
+        self.predef_func = predef_func
+        self.custom_func = custom_func
+        self.use_custom_func = use_custom_func
+        self.guess_params = guess_params
+        self.initial_params = initial_params or {'name': [],
+                                                 'initial value': []}
+        self.y = y or ''
+        self.x = x or ''
+
+
+class Plot_Definer(QDialog):
+    def __init__(self, parent=None, plot_data=None):
+        self.plot_data = plot_data or []
+        super().__init__(parent)
+        self.setWindowTitle('CAMELS - define plot')
+        cols = ['plot-type', 'name']
+        comboBoxes = {'plot-type': ['X-Y plot', 'Value-List', '2D plot']}
+        tableData = {'plot-type': [], 'name': []}
+        for plt in self.plot_data:
+            tableData['plot-type'].append(plt.plt_type)
+            tableData['name'].append(plt.name)
+        self.plot_table = AddRemoveTable(headerLabels=cols, title='Plots',
+                                         editables=[], comboBoxes=comboBoxes,
+                                         tableData=tableData, askdelete=True)
+        self.plot_table.table.clicked.connect(self.change_plot_def)
+        self.plot_table.added.connect(self.plot_added)
+        self.plot_table.removed.connect(self.plot_removed)
+        self.plot_def = QLabel('Select a plot!')
+        self.dialog_buttons = QDialogButtonBox()
+        self.dialog_buttons.setOrientation(Qt.Horizontal)
+        self.dialog_buttons.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.dialog_buttons.accepted.connect(self.accept)
+        self.dialog_buttons.rejected.connect(self.reject)
+
+
+        layout = QGridLayout()
+        layout.addWidget(self.plot_table, 0, 0)
+        layout.addWidget(self.plot_def, 0, 1)
+        layout.addWidget(self.dialog_buttons, 1, 0, 1, 2)
+        self.setLayout(layout)
+
+    def accept(self) -> None:
+        if not isinstance(self.plot_def, QLabel):
+            self.plot_def.get_data()
+        super().accept()
+
+    def reject(self):
+        discard_dialog = QMessageBox.question(self, 'Discard Changes?',
+                                             f'All changes to the defined plots / fits will be lost!',
+                                             QMessageBox.Yes | QMessageBox.No)
+        if discard_dialog != QMessageBox.Yes:
+            return
+        super().reject()
+
+
+    def change_plot_def(self, a0):
+        if not isinstance(self.plot_def, QLabel):
+            self.plot_def.get_data()
+        tableData = {'plot-type': [], 'name': []}
+        for plt in self.plot_data:
+            tableData['plot-type'].append(plt.plt_type)
+            tableData['name'].append(plt.name)
+        self.plot_table.change_table_data(tableData)
+        plot_dat = self.plot_data[a0.row()]
+        ind = self.plot_table.table_model.index(a0.row(), 0)
+        plot_dat.plt_type = self.plot_table.table.indexWidget(ind).currentText()
+        if plot_dat.plt_type == 'X-Y plot':
+            plot_def = Single_Plot_Definer_XY(plot_dat, self)
+        else:
+            plot_def = QLabel('Not implemented yet!')
+        self.layout().replaceWidget(self.plot_def, plot_def)
+        self.plot_def.deleteLater()
+        self.plot_def = plot_def
+        flag = self.plot_table.table.selectionModel().SelectionFlag.Select
+        self.plot_table.table.selectionModel().select(a0, flag)
+
+    def plot_added(self, n):
+        if n >= len(self.plot_data):
+            self.plot_data.append(Plot_Info())
+
+    def plot_removed(self, n):
+        self.plot_data.pop(n)
+
+
+class Single_Plot_Definer_XY(QWidget, Ui_Plot_Definer):
+    def __init__(self, plot_data:Plot_Info, parent=None):
+        super().__init__(parent)
+        self.fit_definer = None
+        self.setupUi(self)
+        self.plot_data = plot_data
+
+        cols = ['formula', 'axis']
+        comboBoxes = {'axis': ['left', 'right']}
+        self.y_table = AddRemoveTable(headerLabels=cols, title='y-axes',
+                                      comboBoxes=comboBoxes,
+                                      tableData=plot_data.y_axes,
+                                      checkstrings=[0])
+        self.y_table.added.connect(self.add_y)
+        self.y_table.removed.connect(self.remove_y)
+        self.y_table.table.clicked.connect(self.fit_change)
+        self.checkBox_same_fit.clicked.connect(self.fit_change)
+        self.layout().replaceWidget(self.y_axes, self.y_table)
+
+        self.checkBox_plot.clicked.connect(self.plot_change)
+        self.load_data()
+        self.plot_change()
+        self.fit_change()
+
+    def add_y(self, n):
+        if n >= len(self.plot_data.fits):
+            self.plot_data.fits.append(Fit_Info())
+
+    def remove_y(self, n):
+        self.plot_data.fits.pop(n)
+
+    def plot_change(self):
+        self.plotting_group.setEnabled(self.checkBox_plot.isChecked())
+
+    def load_data(self):
+        self.lineEdit_x_axis.setText(self.plot_data.x_axis)
+        self.lineEdit_title.setText(self.plot_data.title)
+        self.lineEdit_xlabel.setText(self.plot_data.xlabel)
+        self.lineEdit_ylabel.setText(self.plot_data.ylabel)
+        self.lineEdit_ylabel2.setText(self.plot_data.ylabel2)
+        self.checkBox_plot.setChecked(self.plot_data.do_plot)
+        self.checkBox_same_fit.setChecked(self.plot_data.same_fit)
+        self.plot_data.update_name()
+
+    def get_data(self):
+        self.plot_data.y_axes = self.y_table.update_table_data()
+        self.plot_data.x_axis = self.lineEdit_x_axis.text()
+        self.plot_data.title = self.lineEdit_title.text()
+        self.plot_data.xlabel = self.lineEdit_xlabel.text()
+        self.plot_data.ylabel = self.lineEdit_ylabel.text()
+        self.plot_data.ylabel2 = self.lineEdit_ylabel2.text()
+        self.plot_data.do_plot = self.checkBox_plot.isChecked()
+        self.plot_data.same_fit = self.checkBox_same_fit.isChecked()
+        if not isinstance(self.fit_definer, QLabel):
+            self.fit_definer.get_data()
+        self.plot_data.update_name()
+
+    def fit_change(self):
+        if not isinstance(self.fit_definer, QLabel):
+            self.fit_definer.get_data()
+        if self.checkBox_same_fit.isChecked():
+            fit_dat = self.plot_data.all_fit
+            fit_to = 'all y-axes'
+        else:
+            ind = self.y_table.table.selectedIndexes()
+            if ind:
+                n = ind[0].row()
+                fit_to = self.y_table.table_model.item(n, 0).text()
+                fit_dat = self.plot_data.fits[n]
+            else:
+                fit_dat = None
+        if fit_dat is None:
+            fit_definer = QLabel('No y-axis selected')
+        else:
+            fit_definer = Fit_Definer(fit_dat, self, fit_to)
+        self.layout().replaceWidget(self.fit_definer, fit_definer)
+        self.fit_definer.deleteLater()
+        self.fit_definer = fit_definer
+
+
+
+class Fit_Definer(QWidget, Ui_Fit_Definer):
+    def __init__(self, fit_info:Fit_Info, parent=None, fit_to=''):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.fit_info = fit_info
+        self.label.setText(f'Fit to: {fit_to}')
+        self.comboBox_predef_func.addItems(sorted(models_names.keys()))
+        cols = ['name', 'initial value']
+        self.start_params = AddRemoveTable(headerLabels=cols,
+                                           title='Fit Parameters',
+                                           editables=[1],
+                                           tableData=fit_info.initial_params)
+        self.start_params.addButton.setHidden(True)
+        self.start_params.removeButton.setHidden(True)
+        self.load_data()
+
+        self.checkBox_fit.clicked.connect(self.change_func)
+        self.radioButton_custom_func.clicked.connect(self.change_func)
+        self.radioButton_predef_func.clicked.connect(self.change_func)
+        self.checkBox_guess.clicked.connect(self.change_func)
+        self.comboBox_predef_func.currentTextChanged.connect(self.change_func)
+        self.lineEdit_custom_func.textChanged.connect(self.change_func)
+        self.change_func()
+        self.layout().addWidget(self.start_params, 10, 0, 1, 2)
+
+    def change_func(self):
+        fit = self.checkBox_fit.isChecked()
+        custom = self.radioButton_custom_func.isChecked()
+        guess = self.checkBox_guess.isChecked()
+        self.radioButton_custom_func.setEnabled(fit)
+        self.radioButton_predef_func.setEnabled(fit)
+        self.checkBox_guess.setEnabled(fit)
+        self.comboBox_predef_func.setEnabled(fit and not custom)
+        self.lineEdit_custom_func.setEnabled(fit and custom)
+        self.start_params.setEnabled(fit and not guess)
+        func = self.comboBox_predef_func.currentText()
+        if func != self.fit_info.predef_func:
+            if custom:
+                try:
+                    mod = models.ExpressionModel(self.lineEdit_custom_func.text())
+                except (ValueError, SyntaxError):
+                    self.lineEdit_custom_func.setStyleSheet(f'background-color: rgb{variables_handling.get_color("red", True)}')
+                    return
+                self.lineEdit_custom_func.setStyleSheet(f'background-color: rgb{variables_handling.get_color("green", True)}')
+            else:
+                mod = models_names[func]()
+            params = mod.param_names
+            par_vals = {'name': [], 'initial value': []}
+            for param in params:
+                par_vals['name'].append(param)
+                par_vals['initial value'].append(1)
+            self.start_params.change_table_data(par_vals)
+
+    def load_data(self):
+        self.checkBox_fit.setChecked(self.fit_info.do_fit)
+        self.comboBox_predef_func.setCurrentText(self.fit_info.predef_func)
+        self.lineEdit_custom_func.setText(self.fit_info.custom_func)
+        self.radioButton_custom_func.setChecked(self.fit_info.use_custom_func)
+        self.checkBox_guess.setChecked(self.fit_info.guess_params)
+
+    def get_data(self):
+        self.fit_info.initial_params = self.start_params.update_table_data()
+        self.fit_info.do_fit = self.checkBox_fit.isChecked()
+        self.fit_info.predef_func = self.comboBox_predef_func.currentText()
+        self.fit_info.custom_func = self.lineEdit_custom_func.text()
+        self.fit_info.use_custom_func = self.radioButton_custom_func.isChecked()
+        self.fit_info.guess_params = self.checkBox_guess.isChecked()
+
+
+def add_fit(tableData, fit):
+    custom = fit.use_custom_func
+    if custom:
+        tableData['fit'].append(fit.custom_func)
+    else:
+        tableData['fit'].append(fit.predef_func)
+
+def make_table_data(plot_data):
+    tableData = {'plot-type': [], 'name': [], 'fit': []}
+    for plt in plot_data:
+        tableData['plot-type'].append(plt.plt_type)
+        tableData['name'].append(plt.name)
+        if plt.all_fit and plt.all_fit.do_fit and plt.same_fit:
+            add_fit(tableData, plt.all_fit)
+        elif plt.fits:
+            added = False
+            for fit in plt.fits:
+                if not fit.do_fit:
+                    continue
+                add_fit(tableData, fit)
+                added = True
+                break
+            if not added:
+                tableData['fit'].append('None')
+        else:
+            tableData['fit'].append('None')
+    return tableData
+
+
+class Plot_Button_Overview(QWidget):
+    def __init__(self, parent, plot_data=None):
+        self.plot_data = plot_data
+        super().__init__(parent)
+        tableData = make_table_data(plot_data)
+        cols = ['plot-type', 'name', 'fit']
+        self.plot_table = AddRemoveTable(headerLabels=cols,
+                                         title='plot-overview', editables=[],
+                                         tableData=tableData, askdelete=True,
+                                         horizontal=False)
+        self.plot_table.addButton.setHidden(True)
+        self.plot_table.removeButton.setHidden(True)
+        self.plot_button = QPushButton('Define Plots / Fits')
+        font = QFont()
+        font.setBold(True)
+        self.plot_button.setStyleSheet('font-size: 9pt')
+        self.plot_button.setFont(font)
+        self.plot_button.clicked.connect(self.define_plots)
+
+        layout = QGridLayout()
+        layout.addWidget(self.plot_button, 0, 0)
+        layout.addWidget(self.plot_table, 1, 0)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout)
+
+    def define_plots(self):
+        plot_definer = Plot_Definer(self, self.plot_data)
+        if plot_definer.exec_():
+            self.plot_data = plot_definer.plot_data
+            tableData = make_table_data(self.plot_data)
+            self.plot_table.change_table_data(tableData)
+
+    def keyPressEvent(self, a0: QKeyEvent) -> None:
+        """Overwrites the keyPressEvent of the QDialog so that it does
+        not close when pressing Enter/Return."""
+        if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
+            return
+        super().keyPressEvent(a0)
+
+
+models_names = dict(models.lmfit_models)
+models_names.pop('Expression')

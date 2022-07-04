@@ -1,4 +1,4 @@
-import pandas as pd
+import copy
 
 standard_plot_string = '\tapp = QCoreApplication.instance()\n'
 standard_plot_string += '\tif app is None:\n'
@@ -16,11 +16,30 @@ def plot_creator(plot_data, func_name='create_plots'):
     plot_string += standard_plot_string
     plot_string += '\tsubs = []\n'
     plotting = False
-    for i, plot in pd.DataFrame(plot_data).iterrows():
+    for i, plot in enumerate(plot_data):
         plotting = True
-        plot_string += f'\tplot_{i} = plot_widget.PlotWidget(x_name="{plot["X-axis"] or "time"}", y_names={plot["Y-axes"]}, ylabel="{plot["y-label"]}", xlabel="{plot["x-label"]}", title="{plot["title"]}", stream_name=stream, namespace=namespace)\n'
+        fits = []
+        if plot.same_fit:
+            if plot.all_fit and plot.all_fit.do_fit:
+                for y in plot.y_axes['formula']:
+                    fit = copy.deepcopy(plot.all_fit)
+                    fit.y = y
+                    fit.x = plot.x_axis
+                    fits.append(fit)
+        else:
+            for j, fit in enumerate(plot.fits):
+                if fit.do_fit:
+                    fit.y = plot.y_axes['formula'][j]
+                    fit.x = plot.x_axis
+                    fits.append(fit)
+        plot_string += '\tfits = []\n'
+        for fit in fits:
+            plot_string += f'\tfits.append({fit.__dict__})\n'
+        plot_string += f'\tplot_{i} = plot_widget.PlotWidget(x_name="{plot.x_axis or "time"}", y_names={plot.y_axes["formula"]}, ylabel="{plot.ylabel}", xlabel="{plot.xlabel}", title="{plot.title}", stream_name=stream, namespace=namespace, fits=fits)\n'
         plot_string += f'\tplots.append(plot_{i})\n'
         plot_string += f'\tplot_{i}.show()\n'
         plot_string += f'\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n'
+        plot_string += f'\tfor lfp in plot_{i}.liveFitPlots:\n'
+        plot_string += f'\t\tsubs.append(RE.subscribe(lfp))\n'
     plot_string += '\treturn app, plots, subs\n\n'
     return plot_string, plotting

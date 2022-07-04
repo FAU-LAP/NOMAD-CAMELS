@@ -8,7 +8,6 @@ from PyQt5.QtCore import QThread, pyqtSignal
 import subprocess
 
 from EPICS_handling import make_ioc
-from bluesky_handling import protocol_builder
 from utility import variables_handling
 
 
@@ -73,7 +72,7 @@ class Run_Protocol(QThread):
         args = []
         if variables_handling.dark_mode:
             args.append('--darkmode')
-        cmd = ['camelsEnv/Scripts/python', '-c', "from IPython import embed; embed()"]
+        cmd = ['.desertenv/Scripts/python', '-c', "from IPython import embed; embed()"]
         self.popen = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
                                       stdin=subprocess.PIPE, bufsize=1)
@@ -85,7 +84,6 @@ class Run_Protocol(QThread):
         self.write_to_console('import bluesky_handling.standard_imports')
         for line in iter(self.popen.stdout.readline, b''):
             text = line.decode().rstrip()
-            print(text)
             if text.startswith("starting loop_step "):
                 self.sig_step.emit(int(self.counter/self.total_time * 100))
                 self.counter += 1

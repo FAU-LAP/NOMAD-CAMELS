@@ -6,6 +6,7 @@ from gui.gradient_descent_step import Ui_Grad_Desc
 from utility.add_remove_table import AddRemoveTable
 from utility import variables_handling
 from bluesky_handling.builder_helper_functions import plot_creator
+from frontpanels.plot_definer import Plot_Info
 
 class Gradient_Descent_Step(Loop_Step):
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
@@ -39,13 +40,11 @@ class Gradient_Descent_Step(Loop_Step):
 
     def get_outer_string(self):
         if self.plot_steps:
-            plots = {'plot-type': ['X-Y plot'],
-                     'X-axis': [self.out_channel],
-                     'Y-axes': [[self.opt_func]],
-                     'title': ['gradient-descent'],
-                     'x-label': [''],
-                     'y-label': ['']}
-            return plot_creator(plots, f'create_plots_{self.name}')[0]
+            plot = Plot_Info(x_axis=self.out_channel,
+                              y_axes={'formula': [self.opt_func],
+                                      'axis':['left']},
+                              title='gradient-descent')
+            return plot_creator([plot], f'create_plots_{self.name}')[0]
         return ''
 
     def get_add_main_string(self):

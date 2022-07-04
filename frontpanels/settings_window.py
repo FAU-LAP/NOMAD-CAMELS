@@ -48,6 +48,10 @@ class Settings_Window(QDialog, Ui_settings_window):
             self.pathButton_device_path.set_path(settings['device_driver_path'])
         else:
             self.pathButton_device_path.set_path(standard_pref['device_driver_path'])
+        if 'autostart_ioc' in settings:
+            self.checkBox_autostart_ioc.setChecked(settings['autostart_ioc'])
+        else:
+            self.checkBox_autostart_ioc.setChecked(standard_pref['autostart_ioc'])
 
     def get_settings(self):
         """Reading all the UI-elements to get the selected settings,
@@ -58,14 +62,15 @@ class Settings_Window(QDialog, Ui_settings_window):
             numbers = 'scientific'
         else:
             numbers = 'mixed'
-        return {'dark_mode': self.checkBox_dark_mode.checkState(),
-                'autosave': self.checkBox_autosave.checkState(),
+        return {'dark_mode': self.checkBox_dark_mode.isChecked(),
+                'autosave': self.checkBox_autosave.isChecked(),
                 'n_decimals': self.spinBox_n_decimals.value(),
                 'number_format': numbers,
                 'mixed_from': self.spinBox_scientific_from.value(),
                 'py_files_path': self.pathButton_py_files.get_path(),
                 'meas_files_path': self.pathButton_meas_files.get_path(),
-                'device_driver_path': self.pathButton_device_path.get_path()}
+                'device_driver_path': self.pathButton_device_path.get_path(),
+                'autostart_ioc': self.checkBox_autostart_ioc.isChecked()}
 
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

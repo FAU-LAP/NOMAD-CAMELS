@@ -3,9 +3,11 @@ import sys
 from collections import ChainMap
 import threading
 import numpy as np
+import lmfit
 
 import matplotlib.pyplot as plt
-from bluesky.callbacks.mpl_plotting import LivePlot
+from bluesky.callbacks.mpl_plotting import LivePlot, LiveFitPlot
+from bluesky.callbacks import LiveFit
 from bluesky.callbacks.core import get_obj_fields
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg,\
     NavigationToolbar2QT
@@ -36,7 +38,7 @@ class MPLwidget(FigureCanvasQTAgg):
 class PlotWidget(QWidget):
     def __init__(self, x_name=None, y_names=(), *, legend_keys=None, xlim=None,
                  ylim=None, epoch='run', parent=None, namespace=None, ylabel='',
-                 xlabel='', title='', stream_name='primary', **kwargs):
+                 xlabel='', title='', stream_name='primary', fits=None, **kwargs):
         super().__init__(parent=parent)
         canvas = MPLwidget()
         if isinstance(y_names, str):
@@ -49,6 +51,25 @@ class PlotWidget(QWidget):
                                       stream_name=stream_name, **kwargs)
         self.livePlot.new_data.connect(self.show)
         self.toolbar = NavigationToolbar2QT(canvas, self)
+        self.fits = fits or []
+        self.liveFits = []
+        self.liveFitPlots = []
+        for fit in fits:
+            if fit["use_custom_func"]:
+                model = lmfit.models.ExpressionModel(fit["custom_func"])
+            else:
+                model = lmfit.models.lmfit_models[fit["predef_func"]]()
+            if fit["guess_params"]:
+                init_guess = None
+            else:
+                init_guess = {}
+                for i, param in enumerate(fit["initial_params"]['name']):
+                    init_guess[param] = fit["initial_params"]['initial value'][i]
+            fit = LiveFit(model, fit["y"], {'x': fit["x"]}, init_guess)
+            self.liveFits.append(fit)
+            self.liveFitPlots.append(Fit_Plot_No_Init_Guess(fit, ax=self.ax))
+
+
         self.pushButton_show_options = QPushButton('Show Options')
         self.pushButton_show_options.clicked.connect(self.show_options)
         self.pushButton_autoscale = QPushButton('Autoscale')
@@ -85,6 +106,51 @@ class PlotWidget(QWidget):
             self.options_open = True
             self.plot_options.show()
         self.adjustSize()
+
+
+class Fit_Plot_No_Init_Guess(LiveFitPlot):
+    def __init__(self, livefit, *, num_points=100, legend_keys=None, xlim=None,
+                 ylim=None, ax=None, **kwargs):
+        super().__init__(livefit, num_points=num_points, legend_keys=legend_keys,
+                         xlim=xlim, ylim=ylim, ax=ax, **kwargs)
+        if len(livefit.independent_vars) != 1:
+            raise NotImplementedError("LiveFitPlot supports models with one "
+                                      "independent variable only.")
+        self.__x_key, = livefit.independent_vars.keys()  # this never changes
+        x, = livefit.independent_vars.values()  # this may change
+        self.num_points = num_points
+        self._livefit = livefit
+        self._xlim = xlim
+        self._has_been_run = False
+
+    def event(self, doc):
+        self.livefit.event(doc)
+        if self.livefit.result is not None:
+            # Evaluate the model function at equally-spaced points.
+            # To determine the domain of x, use xlim if availabe. Otherwise,
+            # use the range of x points measured up to this point.
+            if self._xlim is None:
+                x_data = self.livefit.independent_vars_data[self.__x_key]
+                xmin, xmax = np.min(x_data), np.max(x_data)
+            else:
+                xmin, xmax = self._xlim
+            x_points = np.linspace(xmin, xmax, self.num_points)
+            kwargs = {self.__x_key: x_points}
+            kwargs.update(self.livefit.result.values)
+            self.y_data = self.livefit.result.model.eval(**kwargs)
+            self.x_data = x_points
+            # update kwargs to inital guess
+            kwargs.update(self.livefit.result.init_values)
+            self.update_plot()
+        # Intentionally override LivePlot.event. Do not call super().
+
+    def update_plot(self):
+        self.current_line.set_data(self.x_data, self.y_data)
+        # Rescale and redraw.
+        self.ax.relim(visible_only=True)
+        self.ax.autoscale_view(tight=True)
+        self.ax.figure.canvas.draw_idle()
+
 
 
 class Plot_Options(QWidget, Ui_Plot_Options):

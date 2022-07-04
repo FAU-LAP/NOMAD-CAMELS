@@ -1,8 +1,10 @@
-from PyQt5.QtWidgets import QWidget, QCheckBox
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
+from PyQt5.QtWidgets import QWidget, QCheckBox, QPushButton
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont
 
 # from main_classes.loop_step import Loop_Step, Loop_Step_Container
 # from loop_steps import for_while_loops, read_channels
+from frontpanels.plot_definer import Plot_Button_Overview, Plot_Info,\
+    Fit_Info
 from loop_steps import make_step_of_type
 from gui.general_protocol_settings import Ui_Protocol_Settings
 
@@ -17,7 +19,7 @@ class Measurement_Protocol:
                  channel_metadata=None, metadata=None, use_nexus=False,
                  config_metadata=None):
         if plots is None:
-            plots = {}
+            plots = []
         if loop_steps is None:
             loop_steps = []
         if channels is None:
@@ -148,9 +150,6 @@ class Measurement_Protocol:
         st.full_name = step_info['full_name']
         return st
 
-    def load_plots(self, plots):  # Not needed?
-        self.plots = plots
-
     def rearrange_loop_steps(self, step_list):
         """Takes a list of loopsteps, each entry consisting of a tuple
         of the loopstep name and its children, which is recursively the
@@ -246,15 +245,8 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         self.pushButton_remove_variable.clicked.connect(self.remove_variable)
 
         self.variable_model.itemChanged.connect(self.check_variable)
-        comboBoxes = {'plot-type': ['X-Y plot', 'Value-List', '2D plot']}
-        subtables = {'Y-axes': []}
-        cols = ['plot-type', 'X-axis', 'Y-axes', 'title', 'x-label', 'y-label']
-        self.plot_table = AddRemoveTable(headerLabels=cols, title='Plots',
-                                         comboBoxes=comboBoxes,
-                                         subtables=subtables,
-                                         tableData=self.protocol.plots,
-                                         checkstrings=[1,2])
-        self.layout().addWidget(self.plot_table, 1, 0, 1, 4)
+
+        self.plot_widge = Plot_Button_Overview(self, self.protocol.plots)
 
         cols = ['Channel', 'NeXus-path']
         comboBoxes = {'Channel': list(variables_handling.channels.keys())}
@@ -262,7 +254,6 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
                                                      title='Channel-NeXus-Path',
                                                      comboBoxes=comboBoxes,
                                                      tableData=self.protocol.channel_metadata)
-        self.layout().addWidget(self.table_channel_NX_paths, 6, 0, 1, 4)
 
         cols = ['Configuration', 'NeXus-path']
         configs = []
@@ -280,19 +271,23 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
                                                     title='Config-NeXus-Path',
                                                     comboBoxes=comboBoxes,
                                                     tableData=self.protocol.config_metadata)
-        self.layout().addWidget(self.table_config_NX_paths, 7, 0, 1, 4)
 
         cols = ['Name', 'NeXus-path', 'Value']
         self.table_metadata = AddRemoveTable(headerLabels=cols,
                                              title='NeXus-Metadata',
                                              tableData=self.protocol.metadata)
-        self.layout().addWidget(self.table_metadata, 8, 0, 1, 4)
 
         self.checkBox_NeXus = QCheckBox('Use NeXus-output')
         self.checkBox_NeXus.clicked.connect(self.enable_nexus)
-        self.layout().addWidget(self.checkBox_NeXus, 5, 0, 1, 4)
         self.checkBox_NeXus.setChecked(self.protocol.use_nexus)
         self.enable_nexus()
+
+        self.layout().addWidget(self.plot_widge, 1, 0, 1, 4)
+        self.layout().addWidget(self.checkBox_NeXus, 5, 0, 1, 4)
+        self.layout().addWidget(self.table_channel_NX_paths, 6, 0, 1, 4)
+        self.layout().addWidget(self.table_config_NX_paths, 7, 0, 1, 4)
+        self.layout().addWidget(self.table_metadata, 8, 0, 1, 4)
+
 
     def enable_nexus(self):
         """When the checkBox_NeXus is clicked, enables / disables the
@@ -342,8 +337,9 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
     def update_step_config(self):
         """Updates all the protocol settings."""
         self.protocol.filename = self.lineEdit_filename.text()
-        self.plot_table.update_table_data()
-        self.protocol.plots = self.plot_table.tableData
+        # self.plot_table.update_table_data()
+        # self.protocol.plots = self.plot_table.tableData
+        self.protocol.plots = self.plot_widge.plot_data
         self.protocol.metadata = self.table_metadata.update_table_data()
         self.protocol.channel_metadata = self.table_channel_NX_paths.update_table_data()
         self.protocol.config_metadata = self.table_config_NX_paths.update_table_data()
