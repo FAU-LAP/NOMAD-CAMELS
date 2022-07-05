@@ -38,7 +38,8 @@ class MPLwidget(FigureCanvasQTAgg):
 class PlotWidget(QWidget):
     def __init__(self, x_name=None, y_names=(), *, legend_keys=None, xlim=None,
                  ylim=None, epoch='run', parent=None, namespace=None, ylabel='',
-                 xlabel='', title='', stream_name='primary', fits=None, **kwargs):
+                 xlabel='', title='', stream_name='primary', fits=None,
+                 do_plot=True, **kwargs):
         super().__init__(parent=parent)
         canvas = MPLwidget()
         if isinstance(y_names, str):
@@ -48,7 +49,8 @@ class PlotWidget(QWidget):
                                       xlim=xlim, ylim=ylim, epoch=epoch,
                                       ax=canvas.axes, namespace=namespace,
                                       xlabel=xlabel, ylabel=ylabel, title=title,
-                                      stream_name=stream_name, **kwargs)
+                                      stream_name=stream_name, do_plot=do_plot,
+                                      **kwargs)
         self.livePlot.new_data.connect(self.show)
         self.toolbar = NavigationToolbar2QT(canvas, self)
         self.fits = fits or []
@@ -90,7 +92,8 @@ class PlotWidget(QWidget):
 
         self.plot_options.hide()
         self.options_open = False
-        self.show()
+        if do_plot:
+            self.show()
 
     def autoscale(self):
         self.ax.autoscale()
@@ -245,7 +248,7 @@ class MultiLivePlot(LivePlot, QObject):
 
     def __init__(self, ys=(), x=None, *, legend_keys=None, xlim=None, ylim=None,
                  ax=None, epoch='run', xlabel='', ylabel='', namespace=None,
-                 title='', stream_name='primary', **kwargs):
+                 title='', stream_name='primary', do_plot=True, **kwargs):
         LivePlot.__init__(self, y=ys[0], x=x, legend_keys=legend_keys, xlim=xlim, ylim=ylim,
                          ax=ax, epoch=epoch, **kwargs)
         QObject.__init__(self)
@@ -255,6 +258,7 @@ class MultiLivePlot(LivePlot, QObject):
         self.eva = Evaluator(namespace=namespace)
         self.stream_name = stream_name
         self.desc = ''
+        self.do_plot = do_plot
         if isinstance(ys, str):
             ys = [ys]
 

@@ -188,6 +188,11 @@ class Single_Plot_Definer_XY(QWidget, Ui_Plot_Definer):
         if not isinstance(self.fit_definer, QLabel):
             self.fit_definer.get_data()
         self.plot_data.update_name()
+        if self.plot_data.all_fit:
+            self.plot_data.all_fit.x = self.plot_data.x_axis
+        for i, fit in enumerate(self.plot_data.fits):
+            fit.y = self.plot_data.y_axes['formula'][i]
+            fit.x = self.plot_data.x_axis
 
     def fit_change(self):
         if not isinstance(self.fit_definer, QLabel):

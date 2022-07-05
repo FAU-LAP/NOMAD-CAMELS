@@ -15,3 +15,4 @@ matplotlib~=3.5.2
 bluesky-widgets~=0.0.12
 pyepics~=3.5.1
 scipy~=1.8.1
+ipython~=8.4.0

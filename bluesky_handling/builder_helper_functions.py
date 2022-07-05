@@ -24,13 +24,10 @@ def plot_creator(plot_data, func_name='create_plots'):
                 for y in plot.y_axes['formula']:
                     fit = copy.deepcopy(plot.all_fit)
                     fit.y = y
-                    fit.x = plot.x_axis
                     fits.append(fit)
         else:
-            for j, fit in enumerate(plot.fits):
+            for fit in plot.fits:
                 if fit.do_fit:
-                    fit.y = plot.y_axes['formula'][j]
-                    fit.x = plot.x_axis
                     fits.append(fit)
         plot_string += '\tfits = []\n'
         for fit in fits:
