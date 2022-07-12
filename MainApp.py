@@ -205,12 +205,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # --------------------------------------------------
     def close(self) -> bool:
         """Calling the save_state method when closing the window."""
+        if self.ioc_thread:
+            self.ioc_thread.terminate()
+        if self.run_thread:
+            self.run_thread.terminate()
+        if self.make_thread:
+            self.make_thread.terminate()
         if self.preferences['autosave']:
             self.save_state()
         return super().close()
 
     def closeEvent(self, a0: QCloseEvent) -> None:
         """Calling the save_state method when closing the window."""
+        if self.preferences['autosave']:
+            self.save_state()
+        if self.ioc_thread:
+            self.ioc_thread.terminate()
+        if self.run_thread:
+            self.run_thread.terminate()
+        if self.make_thread:
+            self.make_thread.terminate()
         if self.preferences['autosave']:
             self.save_state()
         super().closeEvent(a0)

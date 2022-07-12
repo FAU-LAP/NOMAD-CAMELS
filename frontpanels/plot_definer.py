@@ -53,7 +53,9 @@ class Fit_Info:
         self.use_custom_func = use_custom_func
         self.guess_params = guess_params
         self.initial_params = initial_params or {'name': [],
-                                                 'initial value': []}
+                                                 'initial value': [],
+                                                 'lower bound': [],
+                                                 'upper bound': []}
         self.y = y or ''
         self.x = x or ''
 
@@ -225,10 +227,10 @@ class Fit_Definer(QWidget, Ui_Fit_Definer):
         self.fit_info = fit_info
         self.label.setText(f'Fit to: {fit_to}')
         self.comboBox_predef_func.addItems(sorted(models_names.keys()))
-        cols = ['name', 'initial value']
+        cols = ['name', 'initial value', 'lower bound', 'upper bound']
         self.start_params = AddRemoveTable(headerLabels=cols,
                                            title='Fit Parameters',
-                                           editables=[1],
+                                           editables=[1, 2, 3],
                                            tableData=fit_info.initial_params)
         self.start_params.addButton.setHidden(True)
         self.start_params.removeButton.setHidden(True)
@@ -252,7 +254,16 @@ class Fit_Definer(QWidget, Ui_Fit_Definer):
         self.checkBox_guess.setEnabled(fit)
         self.comboBox_predef_func.setEnabled(fit and not custom)
         self.lineEdit_custom_func.setEnabled(fit and custom)
-        self.start_params.setEnabled(fit and not guess)
+        # self.start_params.setEnabled(fit and not guess)
+        if guess:
+            self.start_params.editables = [2, 3]
+            self.start_params.enableds = [0, 2, 3]
+        else:
+            self.start_params.editables = [1, 2, 3]
+            self.start_params.enableds = [0, 1, 2, 3]
+        par_vals = self.start_params.update_table_data()
+        self.start_params.change_table_data(par_vals)
+
         func = self.comboBox_predef_func.currentText()
         if func != self.fit_info.predef_func:
             if custom:
@@ -265,10 +276,13 @@ class Fit_Definer(QWidget, Ui_Fit_Definer):
             else:
                 mod = models_names[func]()
             params = mod.param_names
-            par_vals = {'name': [], 'initial value': []}
+            par_vals = {'name': [], 'initial value': [], 'lower bound': [],
+                        'upper bound': []}
             for param in params:
                 par_vals['name'].append(param)
                 par_vals['initial value'].append(1)
+                par_vals['lower bound'].append('')
+                par_vals['upper bound'].append('')
             self.start_params.change_table_data(par_vals)
 
     def load_data(self):

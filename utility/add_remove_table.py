@@ -21,7 +21,7 @@ class AddRemoveTable(QWidget):
                  editables=None, checkables=(), headerLabels=None, orderBy=None,
                  parent=None, tableData=None, title='', comboBoxes=None,
                  subtables=None, growsize=False, checkstrings=None,
-                 askdelete=False, fixedsize=False):
+                 askdelete=False, fixedsize=False, enableds=None):
         """
 
         Parameters
@@ -106,6 +106,9 @@ class AddRemoveTable(QWidget):
         if editables is None:
             editables = range(len(headerLabels))
         self.editables = editables if not isinstance(editables, int) else [editables]
+        if enableds is None:
+            enableds = range(len(headerLabels))
+        self.enableds = enableds if not isinstance(enableds, int) else [enableds]
 
         self.addButton = QPushButton(addLabel)
         self.removeButton = QPushButton(removeLabel)
@@ -267,6 +270,7 @@ class AddRemoveTable(QWidget):
             else:
                 item = QStandardItem(str(vals[i]))
             item.setEditable(i in self.editables)
+            item.setEnabled(i in self.enableds)
             item.setCheckable(i in self.checkables)
             items.append(item)
         if len(self.headerLabels) == 0:

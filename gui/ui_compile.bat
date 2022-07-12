@@ -11,3 +11,8 @@ for /f "delims==" %%d in ('dir /b') do (
         cd ..
     )
 )
+cd ../..
+cd ..\..\PycharmProjects\CAMELS_installer\gui\
+FOR /f "delims=" %%f IN ('dir *.ui /b') DO (
+call pyuic5 -o %%~nf.py %%f
+)

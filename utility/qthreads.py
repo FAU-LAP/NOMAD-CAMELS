@@ -63,6 +63,7 @@ class Run_Protocol(QThread):
         self.total_time = np.inf
         self.counter = 0
         self.paused = False
+        self.already_run = False
 
     def run(self) -> None:
         """Runs the given `protocol` at `file_path`. If `sig_step` is

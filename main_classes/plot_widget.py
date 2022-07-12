@@ -45,31 +45,41 @@ class PlotWidget(QWidget):
         if isinstance(y_names, str):
             y_names = [y_names]
         self.ax = canvas.axes
-        self.livePlot = MultiLivePlot(y_names, x_name, legend_keys=legend_keys,
-                                      xlim=xlim, ylim=ylim, epoch=epoch,
-                                      ax=canvas.axes, namespace=namespace,
-                                      xlabel=xlabel, ylabel=ylabel, title=title,
-                                      stream_name=stream_name, do_plot=do_plot,
-                                      **kwargs)
-        self.livePlot.new_data.connect(self.show)
-        self.toolbar = NavigationToolbar2QT(canvas, self)
         self.fits = fits or []
         self.liveFits = []
         self.liveFitPlots = []
+        eva = Evaluator(namespace=namespace)
         for fit in fits:
             if fit["use_custom_func"]:
                 model = lmfit.models.ExpressionModel(fit["custom_func"])
+                label = f'custom fit: {fit["y"]}'
             else:
                 model = lmfit.models.lmfit_models[fit["predef_func"]]()
+                label = f'{fit["predef_func"]} fit: {fit["y"]}'
             if fit["guess_params"]:
                 init_guess = None
             else:
                 init_guess = {}
                 for i, param in enumerate(fit["initial_params"]['name']):
                     init_guess[param] = fit["initial_params"]['initial value'][i]
-            fit = LiveFit(model, fit["y"], {'x': fit["x"]}, init_guess)
+            upper = {}
+            lower = {}
+            for i, param in enumerate(fit['initial_params']['name']):
+                upper[param] = fit['initial_params']['upper bound'][i]
+                lower[param] = fit['initial_params']['lower bound'][i]
+            fit = LiveFit_Eva(model, fit["y"], {'x': fit["x"]}, init_guess,
+                              evaluator=eva)
             self.liveFits.append(fit)
-            self.liveFitPlots.append(Fit_Plot_No_Init_Guess(fit, ax=self.ax))
+            self.liveFitPlots.append(Fit_Plot_No_Init_Guess(fit, ax=self.ax,
+                                                            legend_keys=[label]))
+        self.livePlot = MultiLivePlot(y_names, x_name, legend_keys=legend_keys,
+                                      xlim=xlim, ylim=ylim, epoch=epoch,
+                                      ax=canvas.axes, evaluator=eva,
+                                      xlabel=xlabel, ylabel=ylabel, title=title,
+                                      stream_name=stream_name, do_plot=do_plot,
+                                      fitPlots=self.liveFitPlots, **kwargs)
+        self.livePlot.new_data.connect(self.show)
+        self.toolbar = NavigationToolbar2QT(canvas, self)
 
 
         self.pushButton_show_options = QPushButton('Show Options')
@@ -111,6 +121,52 @@ class PlotWidget(QWidget):
         self.adjustSize()
 
 
+class LiveFit_Eva(LiveFit):
+    def __init__(self, model, y, independent_vars, init_guess=None, *,
+                 update_every=1, evaluator=None):
+        super().__init__(model=model, y=y, independent_vars=independent_vars,
+                         init_guess=init_guess, update_every=update_every)
+        self.eva = evaluator
+
+
+    def event(self, doc):
+        idv = {}
+        for k, v in self.independent_vars.items():
+            try:
+                new_x = doc['data'][v]
+            except KeyError:
+                if v in ('time', 'seq_num'):
+                    new_x = doc[v]
+                else:
+                    if not self.eva.is_to_date(doc['time']):
+                        self.eva.event(doc)
+                    new_x = self.eva.eval(v)
+            idv[k] = new_x
+
+        try:
+            y = doc['data'][self.y]
+        except KeyError:
+            if not self.eva.is_to_date(doc['time']):
+                self.eva.event(doc)
+            y = self.eva.eval(self.y)
+        # Always stash the data for the next time the fit is updated.
+        self.update_caches(y, idv)
+        self.__stale = True
+
+        # Maybe update the fit or maybe wait.
+        if self.update_every is not None:
+            i = len(self.ydata)
+            N = len(self.model.param_names)
+            if i < N:
+                # not enough points to fit yet
+                pass
+            elif (i == N) or ((i - 1) % self.update_every == 0):
+                self.update_fit()
+        super().event(doc)
+
+
+
+
 class Fit_Plot_No_Init_Guess(LiveFitPlot):
     def __init__(self, livefit, *, num_points=100, legend_keys=None, xlim=None,
                  ylim=None, ax=None, **kwargs):
@@ -125,6 +181,17 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         self._livefit = livefit
         self._xlim = xlim
         self._has_been_run = False
+
+    def start(self, doc):
+        LivePlot.start(self, doc)
+        self.livefit.start(doc)
+        self.x, = self.livefit.independent_vars.keys()  # in case it changed
+        # Put fit above other lines (default 2) but below text (default 3).
+        [line.set_zorder(2.5) for line in self.lines]
+        if self.legend_keys:
+            self.current_line.set_label(self.legend_keys[-1])
+        self.ax.legend(loc=0, title='')
+
 
     def event(self, doc):
         self.livefit.event(doc)
@@ -150,9 +217,9 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
     def update_plot(self):
         self.current_line.set_data(self.x_data, self.y_data)
         # Rescale and redraw.
-        self.ax.relim(visible_only=True)
-        self.ax.autoscale_view(tight=True)
-        self.ax.figure.canvas.draw_idle()
+        # self.ax.relim(visible_only=True)
+        # self.ax.autoscale_view(tight=True)
+        # self.ax.figure.canvas.draw_idle()
 
 
 
@@ -247,18 +314,20 @@ class MultiLivePlot(LivePlot, QObject):
     setup_done = pyqtSignal()
 
     def __init__(self, ys=(), x=None, *, legend_keys=None, xlim=None, ylim=None,
-                 ax=None, epoch='run', xlabel='', ylabel='', namespace=None,
-                 title='', stream_name='primary', do_plot=True, **kwargs):
-        LivePlot.__init__(self, y=ys[0], x=x, legend_keys=legend_keys, xlim=xlim, ylim=ylim,
-                         ax=ax, epoch=epoch, **kwargs)
+                 ax=None, epoch='run', xlabel='', ylabel='', evaluator=None,
+                 title='', stream_name='primary', do_plot=True, fitPlots=None,
+                 **kwargs):
+        LivePlot.__init__(self, y=ys[0], x=x, legend_keys=legend_keys,
+                          xlim=xlim, ylim=ylim, ax=ax, epoch=epoch, **kwargs)
         QObject.__init__(self)
         self.use_abs = {'x': False, 'y': False, 'y2': False}
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
-        self.eva = Evaluator(namespace=namespace)
+        self.eva = evaluator
         self.stream_name = stream_name
         self.desc = ''
         self.do_plot = do_plot
+        self.fitPlots = fitPlots or []
         if isinstance(ys, str):
             ys = [ys]
 
@@ -335,6 +404,8 @@ class MultiLivePlot(LivePlot, QObject):
         except AttributeError:
             # matplotlib v2.x (warns in 3.x)
             self.legend = legend.draggable(True)
+        for fit in self.fitPlots:
+            fit.start(doc)
         self.setup_done.emit()
 
     def descriptor(self, doc):
@@ -377,6 +448,8 @@ class MultiLivePlot(LivePlot, QObject):
             new_x -= self._epoch_offset
 
         self.update_caches(new_x, new_y)
+        for fit in self.fitPlots:
+            fit.event(doc)
         self.update_plot()
         # super().event(doc)
 
@@ -407,6 +480,8 @@ class MultiLivePlot(LivePlot, QObject):
             if len(self.y_data[y]) != len(self.x_data):
                 print('MultiLivePlot has a different number of elements for x ({}) and'
                       'y ({}, {})'.format(len(self.x_data), len(self.y_data), y))
+        for fit in self.fitPlots:
+            fit.stop(doc)
 
 
 if __name__ == '__main__':
