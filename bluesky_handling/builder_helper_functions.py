@@ -36,6 +36,8 @@ def plot_creator(plot_data, func_name='create_plots'):
         plot_string += f'\tplots.append(plot_{i})\n'
         plot_string += f'\tplot_{i}.show()\n'
         plot_string += f'\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n'
+        plot_string += f'\tfor fit in plot_{i}.liveFits:\n'
+        plot_string += '\t\tall_fits[f"{fit.name}_{stream}"] = fit\n'
         # plot_string += f'\tfor lfp in plot_{i}.liveFitPlots:\n'
         # plot_string += f'\t\tsubs.append(RE.subscribe(lfp))\n'
     plot_string += '\treturn app, plots, subs\n\n'

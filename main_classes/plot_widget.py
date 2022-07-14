@@ -19,6 +19,7 @@ from PyQt5.QtGui import QIcon
 
 from gui.plot_options import Ui_Plot_Options
 from bluesky_handling.evaluation_helper import Evaluator
+from ophyd.signal import SignalRO
 
 dark_mode = False
 def activate_dark_mode():
@@ -65,12 +66,22 @@ class PlotWidget(QWidget):
             upper = {}
             lower = {}
             for i, param in enumerate(fit['initial_params']['name']):
-                upper[param] = fit['initial_params']['upper bound'][i]
-                lower[param] = fit['initial_params']['lower bound'][i]
-            fit = LiveFit_Eva(model, fit["y"], {'x': fit["x"]}, init_guess,
-                              evaluator=eva)
-            self.liveFits.append(fit)
-            self.liveFitPlots.append(Fit_Plot_No_Init_Guess(fit, ax=self.ax,
+                upper[param] = fit['initial_params']['upper bound'][i] or np.inf
+                lower[param] = fit['initial_params']['lower bound'][i] or -np.inf
+            params = model.make_params()
+            if init_guess:
+                for i, param in enumerate(fit['initial_params']['name']):
+                    params[param].set(init_guess[param], min=lower[param],
+                                      max=upper[param])
+            else:
+                for i, param in enumerate(fit['initial_params']['name']):
+                    params[param].set(min=lower[param], max=upper[param])
+
+            livefit = LiveFit_Eva(model, fit["y"], {'x': fit["x"]}, init_guess,
+                                  evaluator=eva, name=f'{label} vs. {fit["x"]}',
+                                  params=params)
+            self.liveFits.append(livefit)
+            self.liveFitPlots.append(Fit_Plot_No_Init_Guess(livefit, ax=self.ax,
                                                             legend_keys=[label]))
         self.livePlot = MultiLivePlot(y_names, x_name, legend_keys=legend_keys,
                                       xlim=xlim, ylim=ylim, epoch=epoch,
@@ -123,10 +134,13 @@ class PlotWidget(QWidget):
 
 class LiveFit_Eva(LiveFit):
     def __init__(self, model, y, independent_vars, init_guess=None, *,
-                 update_every=1, evaluator=None):
+                 update_every=1, evaluator=None, name='', params=None):
         super().__init__(model=model, y=y, independent_vars=independent_vars,
                          init_guess=init_guess, update_every=update_every)
+        # change_name = name.replace(' ', '_').replace(':', '_').replace('.', '_')
         self.eva = evaluator
+        self.name = name
+        self.params = params
 
 
     def event(self, doc):
@@ -164,6 +178,20 @@ class LiveFit_Eva(LiveFit):
                 self.update_fit()
         super().event(doc)
 
+    def update_fit(self):
+        N = len(self.model.param_names)
+        if len(self.ydata) < N:
+            return
+        else:
+            kwargs = {}
+            kwargs.update(self.independent_vars_data)
+            kwargs.update(self.init_guess)
+            if self.params:
+                self.result = self.model.fit(self.ydata, params=self.params,
+                                             **kwargs)
+            else:
+                self.result = self.model.fit(self.ydata, **kwargs)
+            self.__stale = False
 
 
 

@@ -1,6 +1,20 @@
 import numpy as np
 from bluesky import plan_stubs as bps
-from bluesky.callbacks import LiveFit
+
+
+def get_fit_results(fits, namespace):
+    if 'fits' not in namespace:
+        namespace['fits'] = {}
+    for name, fit in fits.items():
+        entry = name
+        i = 0
+        while entry in namespace['fits']:
+            entry = f'{entry}_{i}'
+        namespace['fits'][entry] = {}
+        namespace['fits'][entry]['result'] = fit.result.best_values
+        namespace['fits'][entry]['covariance'] = fit.result.covar
+    # TODO yield from read for fits!
+
 
 def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
                      set_channel, read_channels, min_step, max_step, min_val,

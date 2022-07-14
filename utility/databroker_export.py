@@ -28,7 +28,7 @@ def recourse_entry_dict(entry, metadata):
         else:
             entry.attrs[key] = val
 
-def broker_to_hdf5(runs, filename):
+def broker_to_hdf5(runs, filename, additional_data=None):
     """Puts the given `runs` into `filename`, containing the run's
     metadata and the dataset."""
     if not os.path.isdir(os.path.dirname(filename)):
@@ -39,7 +39,6 @@ def broker_to_hdf5(runs, filename):
         metadata = run.metadata
         with h5py.File(filename, 'a') as file:
             entry = file.create_group(run.name)
-            recourse_entry_dict(entry, metadata)
             for stream in run:
                 dataset = run[stream].read()
                 group = entry.create_group(stream)
@@ -47,6 +46,11 @@ def broker_to_hdf5(runs, filename):
                     group[col] = dataset[col]
                 for coord in dataset.coords:
                     group[coord] = dataset[coord]
+            recourse_entry_dict(entry, metadata)
+            additional_data = additional_data or {}
+            recourse_entry_dict(entry, additional_data)
+
+
 
 def broker_to_dict(runs, to_iso_time=False):
     """Puts the runs into a dictionary."""

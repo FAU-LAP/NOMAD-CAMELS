@@ -284,6 +284,7 @@ class Fit_Definer(QWidget, Ui_Fit_Definer):
                 par_vals['lower bound'].append('')
                 par_vals['upper bound'].append('')
             self.start_params.change_table_data(par_vals)
+            self.fit_info.predef_func = func
 
     def load_data(self):
         self.checkBox_fit.setChecked(self.fit_info.do_fit)
