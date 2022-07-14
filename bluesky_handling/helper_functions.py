@@ -6,6 +6,8 @@ def get_fit_results(fits, namespace):
     if 'fits' not in namespace:
         namespace['fits'] = {}
     for name, fit in fits.items():
+        if not fit.result:
+            continue
         entry = name
         i = 0
         while entry in namespace['fits']:

@@ -103,6 +103,7 @@ class Simple_Sweep(For_Loop_Step):
         protocol_string += f'{tabs}\tyield from bps.abs_set({setter}, {self.name.replace(" ", "_")}_Value, group="A")\n'
         protocol_string += f'{tabs}\tyield from bps.wait("A")\n'
         protocol_string += f'{tabs}\tyield from bps.trigger_and_read(channels, name={stream})\n'
+        protocol_string += f'{tabs}helper_functions.get_fit_results(all_fits, namespace)\n'
         self.update_time_weight()
         return protocol_string
 
