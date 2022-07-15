@@ -2,7 +2,7 @@ import numpy as np
 from bluesky import plan_stubs as bps
 
 
-def get_fit_results(fits, namespace):
+def get_fit_results(fits, namespace, add_flat=False):
     if 'fits' not in namespace:
         namespace['fits'] = {}
     for name, fit in fits.items():
@@ -15,6 +15,10 @@ def get_fit_results(fits, namespace):
         namespace['fits'][entry] = {}
         namespace['fits'][entry]['result'] = fit.result.best_values
         namespace['fits'][entry]['covariance'] = fit.result.covar
+        if add_flat:
+            for k, v in fit.result.best_values:
+                flatname = f'{name}:{k}'
+                namespace[flatname] = v
     # TODO yield from read for fits!
 
 

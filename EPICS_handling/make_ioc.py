@@ -17,10 +17,12 @@ def clean_up_ioc(ioc='CAMELS'):
     fresh and empty IOC."""
     info1 = subprocess.Popen(['wsl', './EPICS_handling/clean_up_ioc.cmd', ioc],
                              stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT).communicate()[0]
+                             stderr=subprocess.STDOUT,
+                             creationflags=subprocess.CREATE_NO_WINDOW).communicate()[0]
     info2 = subprocess.Popen(['wsl', './EPICS_handling/create_ioc.cmd', ioc],
                              stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT).communicate()[0]
+                             stderr=subprocess.STDOUT,
+                             creationflags=subprocess.CREATE_NO_WINDOW).communicate()[0]
     return f'{info1.decode()}\n\n{info2.decode()}'
 
 def make_ioc(ioc='CAMELS', info_signal=None, step_signal=None):
@@ -33,9 +35,11 @@ def make_ioc(ioc='CAMELS', info_signal=None, step_signal=None):
     cmd = ['wsl', './EPICS_handling/make_ioc.cmd', ioc]
     if info_signal is None:
         output = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                                  stderr=subprocess.STDOUT).communicate()[0]
+                                  stderr=subprocess.STDOUT,
+                                  creationflags=subprocess.CREATE_NO_WINDOW).communicate()[0]
         return output.decode()
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                         creationflags=subprocess.CREATE_NO_WINDOW,
                          bufsize=1)
     i = 0
     for line in iter(p.stdout.readline, b''):
@@ -138,7 +142,8 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
         file.write(write_string.encode())
     info = subprocess.Popen(['wsl', f'{localappdata_program_wsl}/copy_temp.cmd'],
                             stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT).communicate()[0]
+                            stderr=subprocess.STDOUT,
+                            creationflags=subprocess.CREATE_NO_WINDOW).communicate()[0]
     if len(info.decode()) > 0:
         return info.decode()
     else:

@@ -43,6 +43,7 @@ class Simple_Sweep(For_Loop_Step):
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
+
     def get_outer_string(self):
         if self.use_own_plots:
             return plot_creator(self.plots, f'create_plots_{self.name}')[0]

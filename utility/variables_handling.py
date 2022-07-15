@@ -112,26 +112,32 @@ def get_menus(connect_function, pretext='Insert'):
     operator_actions = []
     actions = []
     function_actions = []
-    for channel in sorted(channels, key=lambda x: x.lower()):
-        action = QAction(channel)
-        action.triggered.connect(lambda state, x=channel: connect_function(x))
-        channel_actions.append(action)
-    for variable in sorted(protocol_variables, key=lambda x: x.lower()):
-        action = QAction(variable)
-        action.triggered.connect(lambda state, x=variable: connect_function(x))
-        actions.append(action)
-    for variable in sorted(loop_step_variables, key=lambda x: x.lower()):
-        action = QAction(variable)
-        action.triggered.connect(lambda state, x=variable: connect_function(x))
-        actions.append(action)
-    for op in operator_names:
-        action = QAction(f'{op}\t{operator_names[op]}')
-        action.triggered.connect(lambda state, x=op: connect_function(x))
-        operator_actions.append(action)
-    for foo in sorted(evaluation_functions_names, key=lambda x: x.lower()):
-        action = QAction(evaluation_functions_names[foo])
-        action.triggered.connect(lambda state, x=foo: connect_function(x))
-        function_actions.append(action)
+    add_actions_from_dict(channels, channel_actions, connect_function)
+    # for channel in sorted(channels, key=lambda x: x.lower()):
+    #     action = QAction(channel)
+    #     action.triggered.connect(lambda state, x=channel: connect_function(x))
+    #     channel_actions.append(action)
+    add_actions_from_dict(protocol_variables, actions, connect_function)
+    # for variable in sorted(protocol_variables, key=lambda x: x.lower()):
+    #     action = QAction(variable)
+    #     action.triggered.connect(lambda state, x=variable: connect_function(x))
+    #     actions.append(action)
+    add_actions_from_dict(loop_step_variables, actions, connect_function)
+    # for variable in sorted(loop_step_variables, key=lambda x: x.lower()):
+    #     action = QAction(variable)
+    #     action.triggered.connect(lambda state, x=variable: connect_function(x))
+    #     actions.append(action)
+    add_actions_from_dict(operator_names, operator_actions, connect_function)
+    # for op in operator_names:
+    #     action = QAction(f'{op}\t{operator_names[op]}')
+    #     action.triggered.connect(lambda state, x=op: connect_function(x))
+    #     operator_actions.append(action)
+    add_actions_from_dict(evaluation_functions_names, function_actions,
+                          connect_function)
+    # for foo in sorted(evaluation_functions_names, key=lambda x: x.lower()):
+    #     action = QAction(evaluation_functions_names[foo])
+    #     action.triggered.connect(lambda state, x=foo: connect_function(x))
+    #     function_actions.append(action)
     channel_menu.addActions(channel_actions)
     variable_menu.addActions(actions)
     operator_menu.addActions(operator_actions)
@@ -140,6 +146,16 @@ def get_menus(connect_function, pretext='Insert'):
     actions = [channel_actions, actions, operator_actions, function_actions]
     return menus, actions
 
+def add_actions_from_dict(dictionary, actions, connect_function, add_string=''):
+    for var in sorted(dictionary, key=lambda x: x.lower()):
+        if isinstance(dictionary[var], dict):
+            add_actions_from_dict(dictionary[var], actions, connect_function,
+                                  f'{var}:')
+        else:
+            addvar = f'{add_string}{var}'
+            action = QAction(addvar)
+            action.triggered.connect(lambda state, x=addvar: connect_function(x))
+            actions.append(action)
 
 def check_eval(s):
     """Checks, whether the string `s` can be evaluated."""

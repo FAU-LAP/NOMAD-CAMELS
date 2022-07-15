@@ -73,10 +73,11 @@ class Run_Protocol(QThread):
         args = []
         if variables_handling.dark_mode:
             args.append('--darkmode')
-        cmd = ['.desertenv/Scripts/python', '-c', "from IPython import embed; embed()"]
+        cmd = ['.desertenv/Scripts/pythonw', '-c', "from IPython import embed; embed()"]
         self.popen = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
-                                      stdin=subprocess.PIPE, bufsize=1)
+                                      stdin=subprocess.PIPE, bufsize=1,
+                                      creationflags=subprocess.CREATE_NO_WINDOW)
         self.write_to_console('%gui qt5')
         self.write_to_console('import sys')
         self.write_to_console('import importlib')
@@ -152,7 +153,8 @@ class Run_IOC(QThread):
                                        self.ioc_name],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
-                                      stdin=subprocess.PIPE, bufsize=1)
+                                      stdin=subprocess.PIPE, bufsize=1,
+                                      creationflags=subprocess.CREATE_NO_WINDOW)
         for line in iter(self.popen.stdout.readline, b''):
             text = line.decode().rstrip()
             self.info_step.emit(text)
