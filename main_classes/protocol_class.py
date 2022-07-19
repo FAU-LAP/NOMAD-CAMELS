@@ -174,7 +174,7 @@ class Measurement_Protocol:
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
         plan_string += '\tyield from bps.open_run(md=md)\n'
         plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, runEngine, stream_name)\n'
-        plan_string += '\thelper_functions.get_fit_results(all_fits, namespace)\n'
+        plan_string += '\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n'
         plan_string += '\tyield from bps.close_run()\n'
         return plan_string
 

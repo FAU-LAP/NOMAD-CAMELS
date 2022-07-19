@@ -1,3 +1,5 @@
+import copy
+
 from PyQt5.QtWidgets import QDialog, QWidget, QDialogButtonBox, QGridLayout,\
     QLabel, QMessageBox, QPushButton
 from PyQt5.QtCore import Qt
@@ -42,6 +44,22 @@ class Plot_Info:
         else:
             self.name = self.x_axis
 
+    def get_fit_vars(self, stream=''):
+        variables = {}
+        if self.same_fit:
+            if self.all_fit.do_fit:
+                self.all_fit.x = self.x_axis
+                for y in self.y_axes:
+                    fit = copy.deepcopy(self.all_fit)
+                    fit.y = y
+                    variables.update(fit.get_variables(stream))
+        else:
+            for fit in self.fits:
+                if fit.do_fit:
+                    variables.update(fit.get_variables(stream))
+        return variables
+
+
 
 class Fit_Info:
     def __init__(self, do_fit=False, predef_func='Linear', custom_func='',
@@ -52,12 +70,29 @@ class Fit_Info:
         self.custom_func = custom_func
         self.use_custom_func = use_custom_func
         self.guess_params = guess_params
+        self.name = ''
         self.initial_params = initial_params or {'name': [],
                                                  'initial value': [],
                                                  'lower bound': [],
                                                  'upper bound': []}
         self.y = y or ''
         self.x = x or ''
+
+    def get_name(self, stream=''):
+        if self.use_custom_func:
+            label = 'custom'
+        else:
+            label = self.predef_func
+        self.name = f'{label}_{self.y}_v_{self.x}_{stream}'.replace(' ', '_')
+        return self.name
+
+    def get_variables(self, stream=''):
+        variables = {}
+        name = self.get_name(stream)
+        for var in self.initial_params['name']:
+            variables[f'{name}_{var}'] = 1
+        return variables
+
 
 
 class Plot_Definer(QDialog):

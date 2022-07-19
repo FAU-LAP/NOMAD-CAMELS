@@ -9,7 +9,6 @@ standard_plot_string += '\t\tplot_widget.activate_dark_mode()\n'
 standard_plot_string += '\t\timport qdarkstyle\n'
 standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())\n'
 standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet(qt_api="pyqt5"))\n'
-standard_plot_string += '\tplots = []\n'
 
 def plot_creator(plot_data, func_name='create_plots'):
     plot_string = f'\ndef {func_name}(RE, stream="primary"):\n'
@@ -37,7 +36,7 @@ def plot_creator(plot_data, func_name='create_plots'):
         plot_string += f'\tplot_{i}.show()\n'
         plot_string += f'\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n'
         plot_string += f'\tfor fit in plot_{i}.liveFits:\n'
-        plot_string += '\t\tall_fits[f"{fit.name}_{stream}"] = fit\n'
+        plot_string += '\t\tall_fits[fit.name] = fit\n'
         # plot_string += f'\tfor lfp in plot_{i}.liveFitPlots:\n'
         # plot_string += f'\t\tsubs.append(RE.subscribe(lfp))\n'
     plot_string += '\treturn app, plots, subs\n\n'

@@ -43,6 +43,15 @@ class Simple_Sweep(For_Loop_Step):
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
+    def update_variables(self):
+        variables = {}
+        stream = f'{self.name}'
+        for plot in self.plots:
+            variables.update(plot.get_fit_vars(stream))
+        variables_handling.loop_step_variables.update(variables)
+        super().update_variables()
+
+
 
     def get_outer_string(self):
         if self.use_own_plots:
@@ -104,7 +113,7 @@ class Simple_Sweep(For_Loop_Step):
         protocol_string += f'{tabs}\tyield from bps.abs_set({setter}, {self.name.replace(" ", "_")}_Value, group="A")\n'
         protocol_string += f'{tabs}\tyield from bps.wait("A")\n'
         protocol_string += f'{tabs}\tyield from bps.trigger_and_read(channels, name={stream})\n'
-        protocol_string += f'{tabs}helper_functions.get_fit_results(all_fits, namespace)\n'
+        protocol_string += f'{tabs}yield from helper_functions.get_fit_results(all_fits, namespace, True, {stream}, True, plots)\n'
         self.update_time_weight()
         return protocol_string
 

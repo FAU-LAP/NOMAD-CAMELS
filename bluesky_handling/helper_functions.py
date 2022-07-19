@@ -2,24 +2,22 @@ import numpy as np
 from bluesky import plan_stubs as bps
 
 
-def get_fit_results(fits, namespace, add_flat=False):
-    if 'fits' not in namespace:
-        namespace['fits'] = {}
+def get_fit_results(fits, namespace, yielding=False, stream='primary',
+                    clearing=False, plots=None):
     for name, fit in fits.items():
         if not fit.result:
             continue
-        entry = name
-        i = 0
-        while entry in namespace['fits']:
-            entry = f'{entry}_{i}'
-        namespace['fits'][entry] = {}
-        namespace['fits'][entry]['result'] = fit.result.best_values
-        namespace['fits'][entry]['covariance'] = fit.result.covar
-        if add_flat:
-            for k, v in fit.result.best_values:
-                flatname = f'{name}:{k}'
-                namespace[flatname] = v
-    # TODO yield from read for fits!
+        for param in fit.params:
+            namespace[f'{name}_{param}'] = fit.result.best_values[param]
+        namespace[f'{name}_covar'] = fit.result.covar
+        if yielding and fit.stream_name == stream:
+            yield from bps.trigger_and_read(fit.ophyd_fit.used_comps,
+                                            name=f'{stream}_fits')
+            fit._reset()
+    if clearing and plots:
+        for plot in plots:
+            if plot.stream_name == stream:
+                plot.clear_plot()
 
 
 def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,

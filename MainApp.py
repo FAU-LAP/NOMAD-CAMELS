@@ -853,7 +853,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         protocol_builder.build_protocol(self.current_protocol, path, savepath,
                                         userdata=userdata, sampledata=sampledata)
         self.textEdit_console_output_meas.append('\n\nBuild successfull!\n')
-        self.progressBar_protocols.setValue(100)
+        self.progressBar_protocols.setValue(1)
 
     def tree_click_sequence(self, general=False):
         """Called when clicking the treeView_protocol_sequence."""

@@ -71,15 +71,20 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     devices_string = '\n\tdevs = {}\n\tdevice_config = {}\n'
     variable_string = '\nnamespace = {}\n'
     variable_string += 'all_fits = {}\n'
+    variable_string += 'plots = []\n'
     additional_string_devices = ''
     for var, val in variables_handling.protocol_variables.items():
         if variables_handling.check_data_type(val) == 'String':
             val = f'"{val}"'
+        if '(' in var or ')' in var:
+            continue
         variable_string += f'{var} = {val}\n'
         variable_string += f'namespace["{var}"] = {var}\n'
     for var, val in variables_handling.loop_step_variables.items():
         if variables_handling.check_data_type(val) == 'String':
             val = f'"{val}"'
+        if '(' in var or ')' in var:
+            continue
         variable_string += f'{var} = {val}\n'
         variable_string += f'namespace["{var}"] = {var}\n'
     for dev in protocol.get_used_devices():
@@ -153,7 +158,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         standard_save_string += f'\tnexus_mapper = {nexus_dict}\n'
         # TODO finish this
     else:
-        standard_save_string += f'\tbroker_to_hdf5(runs, "{save_path}", {{"fits": namespace["fits"]}})\n\n\n'
+        standard_save_string += f'\tbroker_to_hdf5(runs, "{save_path}")\n\n\n'
     standard_save_string += '\tapp = QCoreApplication.instance()\n'
     standard_save_string += '\tprint("protocol finished!")\n'
     standard_save_string += '\tif app is not None:\n'

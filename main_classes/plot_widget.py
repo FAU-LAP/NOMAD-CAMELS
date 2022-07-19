@@ -19,7 +19,7 @@ from PyQt5.QtGui import QIcon
 
 from gui.plot_options import Ui_Plot_Options
 from bluesky_handling.evaluation_helper import Evaluator
-from ophyd.signal import SignalRO
+from ophyd import SignalRO, Device, Component, BlueskyInterface, Kind
 
 dark_mode = False
 def activate_dark_mode():
@@ -46,6 +46,7 @@ class PlotWidget(QWidget):
         if isinstance(y_names, str):
             y_names = [y_names]
         self.ax = canvas.axes
+        self.stream_name = stream_name
         self.fits = fits or []
         self.liveFits = []
         self.liveFitPlots = []
@@ -53,10 +54,10 @@ class PlotWidget(QWidget):
         for fit in fits:
             if fit["use_custom_func"]:
                 model = lmfit.models.ExpressionModel(fit["custom_func"])
-                label = f'custom fit: {fit["y"]}'
+                label = 'custom'
             else:
                 model = lmfit.models.lmfit_models[fit["predef_func"]]()
-                label = f'{fit["predef_func"]} fit: {fit["y"]}'
+                label = fit["predef_func"]
             if fit["guess_params"]:
                 init_guess = None
             else:
@@ -77,12 +78,13 @@ class PlotWidget(QWidget):
                 for i, param in enumerate(fit['initial_params']['name']):
                     params[param].set(min=lower[param], max=upper[param])
 
+            name = f'{label}_{fit["y"]}_v_{fit["x"]}'
             livefit = LiveFit_Eva(model, fit["y"], {'x': fit["x"]}, init_guess,
-                                  evaluator=eva, name=f'{label} vs. {fit["x"]}',
-                                  params=params)
+                                  evaluator=eva, name=name.replace(' ', '_'),
+                                  params=params, stream_name=stream_name)
             self.liveFits.append(livefit)
             self.liveFitPlots.append(Fit_Plot_No_Init_Guess(livefit, ax=self.ax,
-                                                            legend_keys=[label]))
+                                                            legend_keys=[name]))
         self.livePlot = MultiLivePlot(y_names, x_name, legend_keys=legend_keys,
                                       xlim=xlim, ylim=ylim, epoch=epoch,
                                       ax=canvas.axes, evaluator=eva,
@@ -116,6 +118,9 @@ class PlotWidget(QWidget):
         if do_plot:
             self.show()
 
+    def clear_plot(self):
+        self.livePlot.clear_plot()
+
     def autoscale(self):
         self.ax.autoscale()
         self.ax.figure.canvas.draw_idle()
@@ -134,13 +139,17 @@ class PlotWidget(QWidget):
 
 class LiveFit_Eva(LiveFit):
     def __init__(self, model, y, independent_vars, init_guess=None, *,
-                 update_every=1, evaluator=None, name='', params=None):
+                 update_every=1, evaluator=None, name='', params=None,
+                 stream_name='primary'):
         super().__init__(model=model, y=y, independent_vars=independent_vars,
                          init_guess=init_guess, update_every=update_every)
         # change_name = name.replace(' ', '_').replace(':', '_').replace('.', '_')
         self.eva = evaluator
-        self.name = name
+        self.name = f'{name}_{stream_name}'
         self.params = params
+        name = name.replace('(', '').replace(')', '').replace('.', '')
+        self.ophyd_fit = Fit_Ophyd(name, name=name, params=params)
+        self.stream_name = stream_name
 
 
     def event(self, doc):
@@ -176,6 +185,9 @@ class LiveFit_Eva(LiveFit):
                 pass
             elif (i == N) or ((i - 1) % self.update_every == 0):
                 self.update_fit()
+                self.ophyd_fit.update_data(self.result, doc['time'])
+                # self.ophyd_fit.result = self.result.best_values
+                # self.ophyd_fit.timestamp = doc['time']
         super().event(doc)
 
     def update_fit(self):
@@ -192,6 +204,70 @@ class LiveFit_Eva(LiveFit):
             else:
                 self.result = self.model.fit(self.ydata, **kwargs)
             self.__stale = False
+
+class Fit_Signal(SignalRO):
+    # def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name=''):
+    #     super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
+
+    def update_data(self, result, timestamp):
+        self._readback = result
+        self._metadata['timestamp'] = timestamp
+
+class Fit_Ophyd(Device):
+    a = Component(Fit_Signal, name='a')
+    b = Component(Fit_Signal, name='b')
+    c = Component(Fit_Signal, name='c')
+    d = Component(Fit_Signal, name='d')
+    e = Component(Fit_Signal, name='e')
+    f = Component(Fit_Signal, name='f')
+    g = Component(Fit_Signal, name='g')
+    h = Component(Fit_Signal, name='h')
+    i = Component(Fit_Signal, name='i')
+    j = Component(Fit_Signal, name='j')
+    k = Component(Fit_Signal, name='k')
+    l = Component(Fit_Signal, name='l')
+    m = Component(Fit_Signal, name='m')
+    n = Component(Fit_Signal, name='n')
+    o = Component(Fit_Signal, name='o')
+    p = Component(Fit_Signal, name='p')
+    q = Component(Fit_Signal, name='q')
+    r = Component(Fit_Signal, name='r')
+    covar = Component(Fit_Signal, name='covar')
+
+    def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
+                 configuration_attrs=None, parent=None, params=None, **kwargs):
+        super().__init__(prefix=prefix, name=name, kind=kind,
+                         read_attrs=read_attrs,
+                         configuration_attrs=configuration_attrs, parent=parent,
+                         **kwargs)
+        self.params = params.keys()
+        order = [self.a, self.b, self.c, self.d, self.e, self.f, self.g, self.h,
+                 self.i, self.j, self.k, self.l, self.m, self.n, self.o, self.p,
+                 self.q, self.r]
+        self.used_comps = [self.covar]
+        for i, comp in enumerate(self.params):
+            order[i].name = f'{name}_{comp}'
+            self.used_comps.append(order[i])
+
+    def update_data(self, result, timestamp):
+        order = [self.a, self.b, self.c, self.d, self.e, self.f, self.g, self.h,
+                 self.i, self.j, self.k, self.l, self.m, self.n, self.o, self.p,
+                 self.q, self.r]
+        for i, comp in enumerate(self.params):
+            order[i].update_data(result.best_values[comp], timestamp)
+        self.covar.update_data(result.covar, timestamp)
+
+
+
+    def read(self):
+        res = BlueskyInterface.read(self)
+        i = 1
+        for _, component in self._get_components_of_kind(Kind.normal):
+            res.update(component.read())
+            i += 1
+            if i > len(self.params):
+                break
+        return res
 
 
 
@@ -439,6 +515,11 @@ class MultiLivePlot(LivePlot, QObject):
     def descriptor(self, doc):
         if doc['name'] == self.stream_name:
             self.desc = doc['uid']
+
+    def clear_plot(self):
+        self.x_data.clear()
+        for y in self.y_data:
+            self.y_data[y].clear()
 
     def event(self, doc):
         """Unpack data from the event and call self.update()."""
