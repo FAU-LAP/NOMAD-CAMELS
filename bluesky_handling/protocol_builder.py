@@ -48,7 +48,7 @@ standard_nexus_dict = {'/ENTRY[entry]/operator/address': 'metadata_start/user/Ad
 
 
 def build_protocol(protocol:Measurement_Protocol, file_path,
-                   save_path='test.h5', catalog='CATALOG_NAME', userdata=None,
+                   save_path='test.h5', catalog='CAMELS_CATALOG', userdata=None,
                    sampledata=None):
     """Creating the python file from a given `protocol`.
 
@@ -60,7 +60,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         The path, where the python file should be put
     save_path : str, default "test.h5"
         Path, where the datafile of the protocol should be put
-    catalog : str, default "CATALOG_NAME"
+    catalog : str, default "CAMELS_CATALOG"
         Name of the databroker-catalog that should be used
     userdata : dict, default None
         Should contain information about the user

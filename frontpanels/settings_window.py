@@ -52,6 +52,10 @@ class Settings_Window(QDialog, Ui_settings_window):
             self.checkBox_autostart_ioc.setChecked(settings['autostart_ioc'])
         else:
             self.checkBox_autostart_ioc.setChecked(standard_pref['autostart_ioc'])
+        if 'databroker_catalog_name' in settings:
+            self.lineEdit_catalog_name.setText(settings['databroker_catalog_name'])
+        else:
+            self.lineEdit_catalog_name.setText(standard_pref['databroker_catalog_name'])
 
     def get_settings(self):
         """Reading all the UI-elements to get the selected settings,
@@ -70,7 +74,8 @@ class Settings_Window(QDialog, Ui_settings_window):
                 'py_files_path': self.pathButton_py_files.get_path(),
                 'meas_files_path': self.pathButton_meas_files.get_path(),
                 'device_driver_path': self.pathButton_device_path.get_path(),
-                'autostart_ioc': self.checkBox_autostart_ioc.isChecked()}
+                'autostart_ioc': self.checkBox_autostart_ioc.isChecked(),
+                'databroker_catalog_name': self.lineEdit_catalog_name.text()}
 
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

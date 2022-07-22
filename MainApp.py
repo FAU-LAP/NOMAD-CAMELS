@@ -17,7 +17,7 @@ from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, Q
 
 from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, \
     add_remove_table
-from bluesky_handling import protocol_builder
+from bluesky_handling import protocol_builder, make_catalog
 
 from gui.mainWindow import Ui_MainWindow
 
@@ -354,6 +354,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         - meas_files_path: the path, where measurement data is stored.
         - device_driver_path: the path, where CAMELS can find the
             installed devices.
+        - databroker_catalog_name: the name of the databroker catalog
         """
 
         self.preferences = load_save_functions.get_preferences()
@@ -361,6 +362,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         number_formatting.preferences = self.preferences
         if 'dark_mode' in self.preferences:
             self.toggle_dark_mode()
+        self.change_catalog_name()
         variables_handling.device_driver_path = self.preferences['device_driver_path']
         variables_handling.meas_files_path = self.preferences['meas_files_path']
 
@@ -378,6 +380,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             main_app.setStyleSheet('')
             variables_handling.dark_mode = False
 
+    def change_catalog_name(self):
+        if 'meas_files_path' in self.preferences:
+            catalog_name = 'CATALOG_NAME'
+            if 'databroker_catalog_name' in self.preferences:
+                catalog_name = self.preferences['databroker_catalog_name']
+            make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name)
 
     def change_preferences(self):
         """Called when any preferences are changed. Makes the dictionary
@@ -388,6 +396,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.preferences = settings_dialog.get_settings()
             number_formatting.preferences = self.preferences
             self.toggle_dark_mode()
+            self.change_catalog_name()
             load_save_functions.save_preferences(self.preferences)
             variables_handling.device_driver_path = self.preferences['device_driver_path']
             variables_handling.meas_files_path = self.preferences['meas_files_path']
