@@ -68,11 +68,12 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         Should contain information about the sample
     """
     device_import_string = '\n'
-    devices_string = '\n\tdevs = {}\n\tdevice_config = {}\n'
+    devices_string = '\n\t\tdevs = {}\n\t\tdevice_config = {}\n'
     variable_string = '\nnamespace = {}\n'
     variable_string += 'all_fits = {}\n'
     variable_string += 'plots = []\n'
     additional_string_devices = ''
+    final_string = ''
     for var, val in variables_handling.protocol_variables.items():
         if variables_handling.check_data_type(val) == 'String':
             val = f'"{val}"'
@@ -98,33 +99,34 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
             settings.pop('connection')
         if 'idn' in settings:
             settings.pop('idn')
-        devices_string += f'\tsettings = {settings}\n'
-        devices_string += f'\tioc_settings = {ioc_settings}\n'
-        if ioc_settings['use_local_ioc']:
+        devices_string += f'\t\tsettings = {settings}\n'
+        devices_string += f'\t\tioc_settings = {ioc_settings}\n'
+        if not ioc_settings or ioc_settings['use_local_ioc']:
             ioc_name = variables_handling.preset
         else:
             ioc_name = ioc_settings['ioc_name']
-        devices_string += f'\t{dev} = {classname}("{ioc_name}:{dev}:", name="{dev}", **settings)\n'
-        devices_string += f'\tprint("connecting {dev}")\n'
-        devices_string += f'\t{dev}.wait_for_connection()\n'
-        devices_string += f'\tconfig = {config}\n'
-        devices_string += f'\tconfigs = {dev}.configure(config)[1]\n'
-        devices_string += f'\tdevice_config["{dev}"] = {{}}\n'
-        devices_string += f'\tdevice_config["{dev}"].update(configs)\n'
-        devices_string += f'\tdevice_config["{dev}"]["settings"] = settings\n'
-        devices_string += f'\tdevice_config["{dev}"]["ioc_settings"] = ioc_settings\n'
-        devices_string += f'\tdevs.update({{"{dev}": {dev}}})\n'
+        devices_string += f'\t\t{dev} = {classname}("{ioc_name}:{dev}:", name="{dev}", **settings)\n'
+        devices_string += f'\t\tprint("connecting {dev}")\n'
+        devices_string += f'\t\t{dev}.wait_for_connection()\n'
+        devices_string += f'\t\tconfig = {config}\n'
+        devices_string += f'\t\tconfigs = {dev}.configure(config)[1]\n'
+        devices_string += f'\t\tdevice_config["{dev}"] = {{}}\n'
+        devices_string += f'\t\tdevice_config["{dev}"].update(configs)\n'
+        devices_string += f'\t\tdevice_config["{dev}"]["settings"] = settings\n'
+        devices_string += f'\t\tdevice_config["{dev}"]["ioc_settings"] = ioc_settings\n'
+        devices_string += f'\t\tdevs.update({{"{dev}": {dev}}})\n'
         device_import_string += f'from {device.name}.{device.name}_ophyd import {classname}\n'
         additional_string_devices += device.get_additional_string()
-    devices_string += '\tprint("devices connected")\n'
-    devices_string += '\tmd = {"device_config": device_config}\n'
-    devices_string += '\tmd.update({"program": "CAMELS", "version": "0.1"})\n'
-    devices_string += '\tmd["variables"] = namespace\n'
+        final_string += device.get_finalize_steps()
+    devices_string += '\t\tprint("devices connected")\n'
+    devices_string += '\t\tmd = {"device_config": device_config}\n'
+    devices_string += '\t\tmd.update({"program": "CAMELS", "version": "0.1"})\n'
+    devices_string += '\t\tmd["variables"] = namespace\n'
     if protocol.use_nexus:
         md_dict = {}
         for i, name in enumerate(protocol.metadata['Name']):
             md_dict[name] = protocol.metadata['Value'][i]
-        devices_string += f'\tmd.update({md_dict})\n'
+        devices_string += f'\t\tmd.update({md_dict})\n'
     plot_string, plotting = plot_creator(protocol.plots)
     # for device in protocol.get_used_devices():
     #     print(device)
@@ -141,14 +143,17 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     protocol_string += standard_run_string
     protocol_string += f'\tcatalog = databroker.catalog["{catalog}"]\n'
     protocol_string += '\tRE.subscribe(catalog.v1.insert)\n'
+    protocol_string += '\ttry:\n'
     # protocol_string += '\tRE.subscribe(eva)\n\n'
     protocol_string += devices_string
     protocol_string += additional_string_devices
     if plotting:
-        protocol_string += '\tplot_dat = create_plots(RE)\n'
+        protocol_string += '\t\tplot_dat = create_plots(RE)\n'
     protocol_string += user_sample_string(userdata, sampledata)
-    protocol_string += '\tadditional_step_data = steps_add_main(RE)\n'
-    protocol_string += f'\tuids = RE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
+    protocol_string += '\t\tadditional_step_data = steps_add_main(RE)\n'
+    protocol_string += f'\t\tuids = RE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
+    protocol_string += '\tfinally:\n'
+    protocol_string += final_string or '\t\tpass\n'
 
     standard_save_string = '\n\n\truns = catalog[uids]\n'
     if protocol.use_nexus:
@@ -174,7 +179,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
 
 def user_sample_string(userdata, sampledata):
     """Returns the string adding userdata and sampledata to the md."""
-    u_s_string = f'\tmd["user"] = {userdata}\n'
-    u_s_string += f'\tmd["sample"] = {sampledata}\n'
+    u_s_string = f'\t\tmd["user"] = {userdata}\n'
+    u_s_string += f'\t\tmd["sample"] = {sampledata}\n'
     return u_s_string
 

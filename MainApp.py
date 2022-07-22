@@ -795,7 +795,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pushButton_pause_protocol.setEnabled(True)
             self.pushButton_run_protocol.setText('Run')
             return
-        self.build_current_protocol()
+        self.build_current_protocol(put100=False)
         self.setCursor(Qt.WaitCursor)
         path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
         # self.pushButton_run_protocol.setText('Abort Run')
@@ -834,7 +834,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         os.startfile(path)
 
 
-    def build_current_protocol(self):
+    def build_current_protocol(self, put100=True):
         """Calls the build_protocol from bluesky_handling.protocol_builder
         for the selected protocol and provides it with a savepath and
         user- and sample-data."""
@@ -853,7 +853,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         protocol_builder.build_protocol(self.current_protocol, path, savepath,
                                         userdata=userdata, sampledata=sampledata)
         self.textEdit_console_output_meas.append('\n\nBuild successfull!\n')
-        self.progressBar_protocols.setValue(1)
+        self.progressBar_protocols.setValue(100 if put100 else 1)
 
     def tree_click_sequence(self, general=False):
         """Called when clicking the treeView_protocol_sequence."""

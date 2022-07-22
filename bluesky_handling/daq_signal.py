@@ -18,6 +18,13 @@ from databroker.databroker import Broker
 
 import time
 
+tasks = []
+
+def close_tasks():
+    for task in tasks:
+        task.close()
+    tasks.clear()
+
 #with nidaqmx.Task() as task:
 #    task.di_channels.add_di_chan('Bruker/port0/line0')
 #    print(task.read())
@@ -43,17 +50,25 @@ class DAQ_Signal_Output(Signal):
     def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', line_name='', digital=False, minV=-10, maxV=10, output_config='default', wait_time=0):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
         self.task = nidaqmx.Task()
+        tasks.append(self.task)
         self.digital = digital
-        if digital:
-            if output_config != 'default':
+        self.output_config = output_config
+        self.minV = minV
+        self.maxV = maxV
+        if line_name:
+            self.setup_line(line_name)
+        self.wait_time = wait_time
+
+    def setup_line(self, line_name):
+        if self.digital:
+            if self.output_config != 'default':
                 self.task.do_channels.add_do_chan(line_name)
-                #do_channel.
             else:
                 self.task.do_channels.add_do_chan(line_name)
         else:
-            self.task.ao_channels.add_ao_voltage_chan(line_name, min_val=minV, max_val=maxV)
-        self.wait_time = wait_time
-    
+            self.task.ao_channels.add_ao_voltage_chan(line_name,
+                                                      min_val=self.minV,
+                                                      max_val=self.maxV)
     #def get(self):
         #self._readback = self.task.read()
         #return super().get()
@@ -74,10 +89,23 @@ class DAQ_Signal_Input(SignalRO):
     def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', line_name='', digital=False, minV=-10, maxV=10, terminal_config='default'):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
         self.task = nidaqmx.Task()
-        if digital:
+        tasks.append(self.task)
+        self.digital = digital
+        self.minV = minV
+        self.maxV = maxV
+        self.terminal_config = terminal_config
+        if line_name:
+            self.setup_line(line_name)
+
+    def setup_line(self, line_name):
+        if self.digital:
             self.task.di_channels.add_di_chan(line_name)
         else:
-            self.task.ai_channels.add_ai_voltage_chan(line_name, terminal_config=get_an_config(terminal_config), min_val=minV, max_val=maxV)
+            self.task.ai_channels.add_ai_voltage_chan(line_name,
+                                                      terminal_config=get_an_config(self.terminal_config),
+                                                      min_val=self.minV,
+                                                      max_val=self.maxV)
+
 
     def destroy(self):
         self.task.close()
@@ -88,20 +116,7 @@ class DAQ_Signal_Input(SignalRO):
         return super().get()
 
     
-    
 
-class Bruker_Magnet(Device):
-    power_read = Cpt(DAQ_Signal_Input, name='power_read', digital=True, line_name='Bruker/port0/line0')
-    polung = Cpt(DAQ_Signal_Input, name='polung', digital=True, line_name='Bruker/port0/line1')
-    over_curr = Cpt(DAQ_Signal_Input, name='over_curr', digital=True, line_name='Bruker/port0/line2')
-    ext = Cpt(DAQ_Signal_Input, name='ext', digital=True, line_name='Bruker/port0/line3')
-    over_temp = Cpt(DAQ_Signal_Input, name='over_temp', digital=True, line_name='Bruker/port0/line4')
-    rst = Cpt(DAQ_Signal_Input, name='rst', digital=True, line_name='Bruker/port0/line5')
-    over_power = Cpt(DAQ_Signal_Input, name='over_power', digital=True, line_name='Bruker/port0/line6')
-    local = Cpt(DAQ_Signal_Input, name='local', digital=True, line_name='Bruker/port0/line7')
-    power_on = Cpt(DAQ_Signal_Output, name='power_on', digital=True, output_config='open_collector', line_name='Bruker/port1/line0', wait_time=5)
-    power_off = Cpt(DAQ_Signal_Output, name='power_off', digital=True, output_config='open_collector', line_name='Bruker/port1/line1', wait_time=5)
-    reverse = Cpt(DAQ_Signal_Output, name='reverse', digital=True, output_config='open_collector', line_name='Bruker/port1/line2', wait_time=25)
     
 
 

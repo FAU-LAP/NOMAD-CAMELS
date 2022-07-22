@@ -1,4 +1,4 @@
-from ophyd import EpicsSignalRO, Device
+from ophyd import Device
 from ophyd import Component as Cpt
 from ophyd.status import Status
 
@@ -177,13 +177,6 @@ class PID_controller(Device):
 if __name__ == '__main__':
     from bluesky.run_engine import RunEngine
     from databroker.databroker import Broker
-    import bluesky.plan_stubs as bps
-    from bluesky.plans import count, scan
-
-    from Keysight_34401 import Keysight_34401
-    
-    import daq_signal
-
 
     # def testplan(dets, mot, start, stop, n, delay=0, md=None):
     #     yield from bps.open_run()

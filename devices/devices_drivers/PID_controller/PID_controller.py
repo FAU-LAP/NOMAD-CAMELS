@@ -23,8 +23,8 @@ class subclass(device_class.Device):
         inp_pv = self.config['pid_inp'].split(' ')[0]
         input_chan = measurement_channel.from_pv_name(inp_pv)
         input_chan = variables_handling.channels[input_chan].name
-        add_string = f'\t{input_chan}.triggering = False\n'
-        add_string += f'\tcaput("{inp_pv}.SCAN", {self.config["pid_scan"]})\n'
+        add_string = f'\t\t{input_chan}.triggering = False\n'
+        add_string += f'\t\tcaput("{inp_pv}.SCAN", {self.config["pid_scan"]})\n'
         return add_string
 
     def get_special_steps(self):

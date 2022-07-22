@@ -109,6 +109,9 @@ class Device:
                 else:
                     self.passive_config.update({f'{name}': 0})
 
+    def get_finalize_steps(self):
+        return ''
+
     def get_passive_config(self):
         return self.passive_config
 
