@@ -843,7 +843,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         os.startfile(path)
 
 
-    def build_current_protocol(self, put100=True):
+    def build_current_protocol(self, *, put100=True):
         """Calls the build_protocol from bluesky_handling.protocol_builder
         for the selected protocol and provides it with a savepath and
         user- and sample-data."""
