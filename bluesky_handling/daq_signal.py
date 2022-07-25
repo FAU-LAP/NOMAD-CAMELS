@@ -29,39 +29,48 @@ def close_tasks():
 #    task.di_channels.add_di_chan('Bruker/port0/line0')
 #    print(task.read())
     
-def get_dig_config(output_config='default'):
-    if output_config.lower() == 'open_collector':
+def get_dig_config(terminal_config='default'):
+    if terminal_config.lower() == 'open_collector':
         return nidaqmx.constants.DigitalDriveType.OPEN_COLLECTOR
     return nidaqmx.constants.DigitalDriveType.ACTIVE_DRIVE
 
-def get_an_config(output_config='default'):
-    if output_config.lower() == 'bal_diff':
+def get_an_config(terminal_config='default'):
+    if terminal_config.lower() == 'bal_diff':
         return nidaqmx.constants.TerminalConfiguration.BAL_DIFF
-    if output_config.lower() == 'nrse':
+    if terminal_config.lower() == 'nrse':
         return nidaqmx.constants.TerminalConfiguration.NRSE
-    if output_config.lower() == 'pseudodifferential':
+    if terminal_config.lower() == 'pseudodifferential':
         return nidaqmx.constants.TerminalConfiguration.PSEUDODIFFERENTIAL
-    if output_config.lower() == 'rse':
+    if terminal_config.lower() == 'rse':
         return nidaqmx.constants.TerminalConfiguration.RSE
     return nidaqmx.constants.TerminalConfiguration.DEFAULT
     
 
 class DAQ_Signal_Output(Signal):
-    def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', line_name='', digital=False, minV=-10, maxV=10, output_config='default', wait_time=0):
+    def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', line_name='', digital=False, minV=-10, maxV=10, terminal_config='default', wait_time=0):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
         self.task = nidaqmx.Task()
         tasks.append(self.task)
         self.digital = digital
-        self.output_config = output_config
+        self.terminal_config = terminal_config
         self.minV = minV
         self.maxV = maxV
         if line_name:
             self.setup_line(line_name)
         self.wait_time = wait_time
 
-    def setup_line(self, line_name):
+    def setup_line(self, line_name, digital=None, terminal_config=None, minV=None,
+                   maxV=None):
+        if minV is not None:
+            self.minV = minV
+        if maxV is not None:
+            self.maxV = maxV
+        if terminal_config is not None:
+            self.terminal_config = terminal_config
+        if digital is not None:
+            self.digital = digital
         if self.digital:
-            if self.output_config != 'default':
+            if self.terminal_config != 'default':
                 self.task.do_channels.add_do_chan(line_name)
             else:
                 self.task.do_channels.add_do_chan(line_name)
@@ -97,7 +106,16 @@ class DAQ_Signal_Input(SignalRO):
         if line_name:
             self.setup_line(line_name)
 
-    def setup_line(self, line_name):
+    def setup_line(self, line_name, digital=None, terminal_config=None, minV=None,
+                   maxV=None):
+        if minV is not None:
+            self.minV = minV
+        if maxV is not None:
+            self.maxV = maxV
+        if terminal_config is not None:
+            self.terminal_config = terminal_config
+        if digital is not None:
+            self.digital = digital
         if self.digital:
             self.task.di_channels.add_di_chan(line_name)
         else:

@@ -1,6 +1,3 @@
-import sys
-sys.path.append(r'C:\Users\fulapuser\CAMELS')
-
 from bluesky_handling.daq_signal import DAQ_Signal_Input, DAQ_Signal_Output, \
     Device, close_tasks
 from ophyd import Component as Cpt
@@ -111,11 +108,11 @@ class Bruker_Magnet_NI_DAQ(Device):
     polarity = Cpt(DAQ_Signal_Input, name='polarity', digital=True,
                    kind='config')
     power_on = Cpt(DAQ_Signal_Output, name='power_on', digital=True,
-                   output_config='open_collector', kind='config')
+                   terminal_config='open_collector', kind='config')
     power_off = Cpt(DAQ_Signal_Output, name='power_off', digital=True,
-                    output_config='open_collector', kind='config')
+                    terminal_config='open_collector', kind='config')
     reverse = Cpt(DAQ_Signal_Output, name='reverse', digital=True,
-                  output_config='open_collector', kind='config')
+                  terminal_config='open_collector', kind='config')
 
     enable = Cpt(B_field_enable, name='enable', kind='normal')
     sign = Cpt(B_field_sign, name='sign', kind='normal')

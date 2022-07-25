@@ -202,6 +202,7 @@ class Keysight_E5270B(Device):
             reasons.append(f'Pending operations: {pending}')
         raise TimeoutError('; '.join(reasons))
 
+
 if __name__ == '__main__':
     e5270b = Keysight_E5270B('Default:', name='e5270b', channels=[1,8])
     comps = e5270b.walk_components()

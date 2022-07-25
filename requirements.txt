@@ -81,3 +81,4 @@ cachetools>=5.2.0
 mongoquery>=1.4.2
 pyrsistent>=0.18.1
 kiwisolver>=1.4.2
+nidaqmx>=0.6.3
