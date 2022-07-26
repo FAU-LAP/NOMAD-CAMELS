@@ -71,7 +71,7 @@ class Custom_DAQ_Device(Device):
         for walk in self.walk_signals(include_lazy=all_signals):
             name = walk.item.attr_name
             use = True
-            if name not in self.use_channels:
+            if name not in self.component_setups.keys():
                 use = False
             if use:
                 signals.append(walk.item)

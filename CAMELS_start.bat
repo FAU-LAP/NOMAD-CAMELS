@@ -1,0 +1,1 @@
+start .desertenv\Scripts\pythonw.exe MainApp.py

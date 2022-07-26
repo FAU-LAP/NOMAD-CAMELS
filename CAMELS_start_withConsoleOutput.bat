@@ -1,0 +1,1 @@
+.desertenv\Scripts\python.exe MainApp.py
