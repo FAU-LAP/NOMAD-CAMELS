@@ -1,3 +1,5 @@
+import serial.tools.list_ports
+
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox,\
     QFrame, QCheckBox
 from PyQt5.QtGui import QFont
@@ -294,7 +296,9 @@ class Device_Config(QWidget):
         of the device."""
         if self.comboBox_connection_type.currentText() == 'prologix-GPIB':
             self.connector = Prologix_Config()
-            self.layout().addWidget(self.connector, 6, 0, 1, 5)
+        elif self.comboBox_connection_type.currentText() == 'USB-serial':
+            self.connector = USB_Serial_Config()
+        self.layout().addWidget(self.connector, 6, 0, 1, 5)
         self.connector.connection_change.connect(self.ioc_change.emit)
         self.ioc_change.emit()
 
@@ -353,6 +357,7 @@ class Connection_Config(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = QGridLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
     def get_settings(self):
@@ -396,3 +401,48 @@ class Prologix_Config(Connection_Config):
             self.lineEdit_ip.setText(settings_dict['IP-Address'])
         if 'GPIB-Address' in settings_dict:
             self.lineEdit_GPIB.setText(settings_dict['GPIB-Address'])
+
+
+class USB_Serial_Config(Connection_Config):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        label_port = QLabel('COM-Port:')
+        self.comboBox_port = QComboBox()
+        self.ports = get_ports()
+        self.comboBox_port.addItems(self.ports.keys())
+        self.comboBox_port.currentTextChanged.connect(self.change_desc)
+
+        self.label_desc = QLabel()
+        self.label_desc.setEnabled(False)
+        self.label_hwid = QLabel()
+        self.label_hwid.setEnabled(False)
+
+        self.layout().addWidget(label_port, 0, 0)
+        self.layout().addWidget(self.comboBox_port, 0, 1, 1, 4)
+        self.layout().addWidget(self.label_desc, 1, 0, 1, 2)
+        self.layout().addWidget(self.label_hwid, 1, 2, 1, 3)
+        self.change_desc()
+
+    def change_desc(self):
+        port = self.comboBox_port.currentText()
+        desc = self.ports[port]['description']
+        hwid = self.ports[port]['hardware']
+        self.label_desc.setText(desc)
+        self.label_hwid.setText(hwid)
+
+    def get_settings(self):
+        return {'Port': self.comboBox_port.currentText()}
+
+    def load_settings(self, settings_dict):
+        if 'Port' in settings_dict and settings_dict['Port'] in self.ports:
+            self.comboBox_port.setCurrentText(settings_dict['Port'])
+
+
+
+def get_ports():
+    ports = serial.tools.list_ports.comports()
+    port_dict = {}
+    for port, desc, hwid in sorted(ports):
+        port_dict[port] = {'description': desc, 'hardware': hwid}
+    return port_dict
+

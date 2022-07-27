@@ -80,7 +80,7 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
     for key in sorted(device_dict):
         device = device_dict[key]
         device_path_wsl = f'{driver_path_wsl}/{device.directory}'
-        if not device.ioc_settings['use_local_ioc']:
+        if not device.ioc_settings or not device.ioc_settings['use_local_ioc']:
             continue
         for req in device.requirements:
             if req not in supports:
@@ -256,6 +256,18 @@ def update_addresses(device, address_dict, port_string, supports):
                 port_string += f'asynSetTraceIOMask("prologix_{n}", 5, 0x2)\n'
                 port_string += f'asynSetTraceMask("prologix_{n}", 5, 0x9)\n'
             comm = f'prologix_{n} {conn_dict["GPIB-Address"]}'
+        elif conn_type == 'USB-serial':
+            address_dict[conn_type].append(conn_dict['Port'])
+            tty = f'/dev/ttyS{conn_dict["Port"][3:]}'
+            port_string += f'drvAsynSerialPortConfigure({conn_dict["Port"]}, "{tty}")\n'
+            port_string += f'asynSetOption({conn_dict["Port"]}, 1, "baud", "9600")\n'
+            port_string += f'asynSetOption({conn_dict["Port"]}, 1, "bits", "8")\n'
+            port_string += f'asynSetOption({conn_dict["Port"]}, 1, "parity", "none")\n'
+            port_string += f'asynSetOption({conn_dict["Port"]}, 1, "stop", "1")\n'
+            port_string += f'asynSetTraceIOMask({conn_dict["Port"]}, -1, 0x2)\n'
+            port_string += f'asynSetTraceMask({conn_dict["Port"]}, -1, 0x9)\n'
+            port_string += f'asynSetTraceIOMask({conn_dict["Port"]}, 5, 0x2)\n'
+            comm = f'{conn_dict["Port"]} {tty}'
     return port_string, comm
 
 

@@ -1,0 +1,10 @@
+#set Voltage
+setV {
+	out "VOLT%03d";
+	# in "%s";
+}
+
+setI {
+	out "CURR%03d";
+	# in "%s";
+}
