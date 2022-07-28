@@ -271,7 +271,8 @@ def update_addresses(device, address_dict, port_string, supports):
         elif conn_type == 'USB-serial':
             address_dict[conn_type].append(conn_dict['Port'])
             tty = f'/dev/ttyS{conn_dict["Port"][3:]}'
-            info = subprocess.Popen(['wsl', f'echo {sudo_pwd} | sudo -S chmod a+rwx {tty}'],
+            info = subprocess.Popen(['wsl', './EPICS_handling/chmod_maker.cmd',
+                                     sudo_pwd, tty],
                                     stderr=subprocess.STDOUT,
                                     creationflags=subprocess.CREATE_NO_WINDOW,
                                     stdout=subprocess.PIPE).communicate()
