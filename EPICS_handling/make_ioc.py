@@ -271,7 +271,11 @@ def update_addresses(device, address_dict, port_string, supports):
         elif conn_type == 'USB-serial':
             address_dict[conn_type].append(conn_dict['Port'])
             tty = f'/dev/ttyS{conn_dict["Port"][3:]}'
-            subprocess.call(f'echo {sudo_pwd} | sudo -S chmod a+rwx {tty}')
+            info = subprocess.Popen(['wsl', f'echo {sudo_pwd} | sudo -S chmod a+rwx {tty}'],
+                                    stderr=subprocess.STDOUT,
+                                    creationflags=subprocess.CREATE_NO_WINDOW,
+                                    stdout=subprocess.PIPE).communicate()
+            print(info)
             port_string += f'drvAsynSerialPortConfigure({conn_dict["Port"]}, "{tty}")\n'
             port_string += f'asynSetOption({conn_dict["Port"]}, 1, "baud", "9600")\n'
             port_string += f'asynSetOption({conn_dict["Port"]}, 1, "bits", "8")\n'
