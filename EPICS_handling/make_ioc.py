@@ -19,10 +19,16 @@ def clean_up_ioc(ioc='CAMELS'):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT,
                              creationflags=subprocess.CREATE_NO_WINDOW).communicate()[0]
-    info2 = subprocess.Popen(['wsl', './EPICS_handling/create_ioc.cmd', ioc],
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT,
-                             creationflags=subprocess.CREATE_NO_WINDOW).communicate()[0]
+    info2, err = subprocess.Popen(['wsl', './EPICS_handling/create_ioc.cmd', ioc],
+                                  stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE,
+                                  creationflags=subprocess.CREATE_NO_WINDOW).communicate()
+    if err and not info2:
+        info2 = subprocess.Popen(['wsl', './EPICS_handling/create_ioc_abspath.cmd', ioc],
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT,
+                                 creationflags=subprocess.CREATE_NO_WINDOW).communicate()[0]
+        return f'{info1.decode()}\n\n!!!!!using abspath!!!!!\n\n{info2.decode()}'
     return f'{info1.decode()}\n\n{info2.decode()}'
 
 def make_ioc(ioc='CAMELS', info_signal=None, step_signal=None):
@@ -93,12 +99,16 @@ def change_devices(device_dict:dict, ioc='CAMELS'):
         substitutions_string += device.get_substitutions_string(ioc, comm)
     includers = ['calc', 'stream', 'asyn'] + supports
     # going over the requirements, adding their files
+    first_sup = True
     for req in supports:
         req_path = f'{driver_path}/Support/{req}'
         req_path_wsl = f'{driver_path_wsl}/Support/{req}'
         if not os.path.isdir(req_path):
             continue
         for file in os.listdir(req_path):
+            if first_sup:
+                write_string += f'mkdir {sup_path_wsl}\n'
+                first_sup = False
             write_string += f'cp {req_path_wsl}/{file} {sup_path_wsl}/{file}\n'
             if file.endswith('.dbd'):
                 write_string += f'cp {req_path_wsl}/{file} {src_path_wsl}/{file}\n'
