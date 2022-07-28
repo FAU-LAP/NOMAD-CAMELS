@@ -434,7 +434,7 @@ class USB_Serial_Config(Connection_Config):
         return {'Port': self.comboBox_port.currentText()}
 
     def load_settings(self, settings_dict):
-        if 'Port' in settings_dict and settings_dict['Port'] in self.ports:
+        if 'Port' in settings_dict and settings_dict['Port'] in self.ports.keys():
             self.comboBox_port.setCurrentText(settings_dict['Port'])
 
 

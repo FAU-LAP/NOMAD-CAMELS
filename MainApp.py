@@ -18,6 +18,9 @@ from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, Q
 from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, \
     add_remove_table
 from bluesky_handling import protocol_builder, make_catalog
+from EPICS_handling import make_ioc
+
+from frontpanels.helper_panels import pass_ask
 
 from gui.mainWindow import Ui_MainWindow
 
@@ -690,6 +693,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         font.setBold(False)
         self.pushButton_make_EPICS_environment.setFont(font)
         self.get_device_config()
+        if not make_ioc.sudo_pwd:
+            pwd_dialog = pass_ask.Pass_Ask(self)
+            if pwd_dialog.exec_():
+                make_ioc.sudo_pwd = pwd_dialog.lineEdit_password_1.text()
         self.make_thread = qthreads.Make_Ioc(self._current_preset[0], self.active_devices_dict)
         self.make_thread.sig_step.connect(self.change_progressBar_value)
         self.make_thread.info_step.connect(self.update_console_output)

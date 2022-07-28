@@ -227,6 +227,8 @@ def make_src_mk_string(ioc, included):
     return make_src_string
 
 
+sudo_pwd = ''
+
 
 def update_addresses(device, address_dict, port_string, supports):
     """Called by change_devices. Updates the two given strings with the
@@ -269,6 +271,7 @@ def update_addresses(device, address_dict, port_string, supports):
         elif conn_type == 'USB-serial':
             address_dict[conn_type].append(conn_dict['Port'])
             tty = f'/dev/ttyS{conn_dict["Port"][3:]}'
+            subprocess.call(f'echo {sudo_pwd} | sudo -S chmod a+rwx {tty}')
             port_string += f'drvAsynSerialPortConfigure({conn_dict["Port"]}, "{tty}")\n'
             port_string += f'asynSetOption({conn_dict["Port"]}, 1, "baud", "9600")\n'
             port_string += f'asynSetOption({conn_dict["Port"]}, 1, "bits", "8")\n'
