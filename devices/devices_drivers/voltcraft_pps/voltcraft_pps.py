@@ -57,6 +57,7 @@ class subclass_config(device_class.Device_Config):
         self.layout().addWidget(self.lineEdit_R, 20, 3, 1, 2)
 
         self.mode_change()
+        self.load_settings()
 
 
     def mode_change(self):

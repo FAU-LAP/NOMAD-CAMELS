@@ -282,6 +282,7 @@ class Device_Config(QWidget):
         self.comboBox_connection_type.currentTextChanged.connect(self.connection_type_changed)
         self.lineEdit_custom_name.textChanged.connect(lambda x: self.name_change.emit(x))
         self.checkBox_use_local_ioc.clicked.connect(self.ioc_set_changed)
+        self.load_settings()
 
     def ioc_set_changed(self):
         loc = self.checkBox_use_local_ioc.isChecked()
