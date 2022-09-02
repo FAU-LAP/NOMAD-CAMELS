@@ -12,7 +12,8 @@ from copy import deepcopy
 
 from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox,\
-    QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut, QStyle
+    QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut, QStyle,\
+    QPushButton
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
 from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, \
@@ -30,6 +31,8 @@ from main_classes.protocol_class import Measurement_Protocol, General_Protocol_S
 from commands import change_sequence
 
 from loop_steps import make_step_of_type
+
+from main_classes.add_on import AddOn
 
 os.environ['QT_API'] = 'pyqt5'
 
@@ -50,6 +53,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.make_thread = None
         self.ioc_thread = None
+
+        self.active_add_ons = {}
+        self.add_ons = {}
+        self.add_on_widget.setHidden(True)
+        self.closing = False
 
         # devices
         self.active_devices_dict = {}
@@ -216,10 +224,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.make_thread.terminate()
         if self.preferences['autosave']:
             self.save_state()
+        for add_on in self.active_add_ons:
+            self.active_add_ons[add_on].close()
+        self.closing = True
         return super().close()
 
     def closeEvent(self, a0: QCloseEvent) -> None:
         """Calling the save_state method when closing the window."""
+        self.closing = True
         if self.preferences['autosave']:
             self.save_state()
         if self.ioc_thread:
@@ -230,6 +242,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.make_thread.terminate()
         if self.preferences['autosave']:
             self.save_state()
+        for add_on in self.active_add_ons:
+            self.active_add_ons[add_on].close()
         super().closeEvent(a0)
 
     # --------------------------------------------------
@@ -509,7 +523,38 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for key, dev in self.active_devices_dict.items():
             for channel in dev.get_channels():
                 variables_handling.channels.update({channel: dev.channels[channel]})
+        self.update_device_add_ons()
 
+    def update_device_add_ons(self):
+        layout = self.add_on_buttons.layout()
+        for i in reversed(range(layout.count())):
+            layout.itemAt(i).widget().deleteLater()
+        self.add_ons.clear()
+        for key, dev in self.active_devices_dict.items():
+            add_ons = dev.get_add_ons()
+            for add_on in add_ons:
+                self.add_ons[f'{key}\n{add_on}'] = add_ons[add_on]
+        if self.add_ons:
+            self.add_on_widget.setHidden(False)
+        else:
+            self.add_on_widget.setHidden(True)
+        for add_on in sorted(self.add_ons):
+            button = QPushButton(add_on)
+            self.add_on_buttons.layout().addWidget(button)
+            button.clicked.connect(lambda state, x=add_on, y=button, z=self.add_ons[add_on][1]: self.start_addon(x, y, z))
+
+    def start_addon(self, addon, button, device=None):
+        self.get_device_config(False)
+        add_on = self.add_ons[addon][0](device=device)
+        self.active_add_ons[addon] = add_on
+        add_on.closing.connect(lambda x=addon, y=button: self.stopped_addon(x, y))
+        button.setEnabled(False)
+
+    def stopped_addon(self, addon, button):
+        if self.closing:
+            return
+        self.active_add_ons.pop(addon)
+        button.setEnabled(True)
 
     def make_save_dict(self):
         self.get_device_config()
@@ -637,7 +682,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_make_EPICS_environment.setFont(font)
         self.progressBar_devices.setValue(0)
 
-    def get_device_config(self):
+    def get_device_config(self, update=True):
         """If the currently used device_config_widget has the attribute
         data, the settings will be updated to the active_devices_dict."""
         if hasattr(self.device_config_widget, 'data'):
@@ -645,7 +690,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.active_devices_dict[self.device_config_widget.data].settings = self.device_config_widget.get_settings()
                 self.active_devices_dict[self.device_config_widget.data].config = self.device_config_widget.get_config()
                 self.active_devices_dict[self.device_config_widget.data].ioc_settings = self.device_config_widget.get_ioc_settings()
-        self.update_channels()
+        if update:
+            self.update_channels()
 
     def build_devices_tree(self):
         """Builds the tree of devices.

@@ -75,12 +75,16 @@ class PID_Controller(Device):
         self.pid_ival.read_pv_name = f'{prefix}pid_controller.I'
         self.pid_oval.read_pv_name = f'{prefix}pid_controller.OVAL'
         self.pid_bias = bias_signal
-        if isinstance(read_conv_func, str):
+        if not read_conv_func:
+            read_conv_func = lambda x: x
+        elif isinstance(read_conv_func, str):
             read_conv_func = globals()[read_conv_func]
         if read_conv_func is not None:
             self.pid_val.conversion_function = read_conv_func
             self.pid_cval.conversion_function = read_conv_func
-        if isinstance(set_conv_func, str):
+        if not set_conv_func:
+            set_conv_func = lambda x: x
+        elif isinstance(set_conv_func, str):
             set_conv_func = globals()[set_conv_func]
         if set_conv_func is not None:
             self.pid_val.set_conversion_function = set_conv_func

@@ -12,6 +12,7 @@ from ophyd.signal import SignalRO
 from bluesky_handling import EpicsFieldSignalRO
 
 from main_classes.measurement_channel import Measurement_Channel
+from main_classes.add_on import AddOn
 
 
 class Device:
@@ -110,6 +111,10 @@ class Device:
                     self.config.update({f'{name}': 0})
                 else:
                     self.passive_config.update({f'{name}': 0})
+        self.add_ons = {}
+
+    def get_add_ons(self):
+        return self.add_ons
 
     def get_finalize_steps(self):
         return ''

@@ -51,7 +51,7 @@ class PlotWidget(QWidget):
         self.liveFits = []
         self.liveFitPlots = []
         eva = Evaluator(namespace=namespace)
-        for fit in fits:
+        for fit in self.fits:
             if fit["use_custom_func"]:
                 model = lmfit.models.ExpressionModel(fit["custom_func"])
                 label = 'custom'
@@ -343,14 +343,16 @@ class Plot_Options(QWidget, Ui_Plot_Options):
         self.color_widges = []
         self.marker_widges = []
         self.linestyle_widges = []
+        self.axis_widges = []
         self.marker_dict = {}
         self.linestyle_dict = {}
 
     def setup_table(self):
-        self.tableWidget.setColumnCount(4)
+        self.tableWidget.setColumnCount(5)
         self.tableWidget.setMinimumWidth(400)
         self.tableWidget.setHorizontalHeaderLabels(['Name', 'marker',
-                                                    'color', 'linestyle'])
+                                                    'color', 'linestyle',
+                                                    'y-axis'])
         self.tableWidget.verticalHeader().setHidden(True)
         for i, line in enumerate(self.ax.lines):
             if not self.marker_dict:
@@ -360,16 +362,19 @@ class Plot_Options(QWidget, Ui_Plot_Options):
             item = QTableWidgetItem(line.get_label())
             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
             self.tableWidget.setItem(i, 0, item)
+
             markerwidge = QComboBox()
             markerwidge.addItems(self.marker_dict.keys())
             markerwidge.setCurrentText(line.markers[line.get_marker()])
             markerwidge.currentTextChanged.connect(lambda x, n=i: self.change_marker(n))
             self.marker_widges.append(markerwidge)
             self.tableWidget.setCellWidget(i, 1, markerwidge)
+
             colorwidge = QPushButton(line.get_color())
             colorwidge.clicked.connect(lambda x, n=i: self.change_color(n))
             self.color_widges.append(colorwidge)
             self.tableWidget.setCellWidget(i, 2, colorwidge)
+
             linestylewidge = QComboBox()
             linestylewidge.addItems(self.linestyle_dict.keys())
             print(line.get_linestyle)
@@ -377,15 +382,26 @@ class Plot_Options(QWidget, Ui_Plot_Options):
             linestylewidge.currentTextChanged.connect(lambda x, n=i: self.change_linestyle(n))
             self.linestyle_widges.append(linestylewidge)
             self.tableWidget.setCellWidget(i, 3, linestylewidge)
+
+            # axiswidge = QComboBox()
+            # axiswidge.addItems(['1', '2'])
+            # axiswidge.setCurrentText('1')
+            # axiswidge.currentTextChanged.connect(lambda x, n=i: self.change_axis(n))
+            # self.axis_widges.append(axiswidge)
+            # self.tableWidget.setCellWidget(i, 4, axiswidge)
         self.tableWidget.resizeColumnsToContents()
 
     def change_linestyle(self, row):
         linestyle = self.linestyle_widges[row].currentText()
+        name = self.ax.lines[row].get_label()
+        self.livePlot.current_lines[name].set_linestyle(self.linestyle_dict[linestyle])
         self.ax.lines[row].set_linestyle(self.linestyle_dict[linestyle])
         self.ax.figure.canvas.draw_idle()
 
     def change_marker(self, row):
         marker = self.marker_widges[row].currentText()
+        name = self.ax.lines[row].get_label()
+        self.livePlot.current_lines[name].set_marker(self.marker_dict[marker])
         self.ax.lines[row].set_marker(self.marker_dict[marker])
         self.ax.figure.canvas.draw_idle()
 
@@ -395,6 +411,8 @@ class Plot_Options(QWidget, Ui_Plot_Options):
             self.color_widges[row].setText(color.name())
             line = self.ax.lines[row]
             line.set_color(color.name())
+            name = self.ax.lines[row].get_label()
+            self.livePlot.current_lines[name].set_color(color.name())
             self.ax.figure.canvas.draw_idle()
 
     def set_log(self):
@@ -591,6 +609,117 @@ class MultiLivePlot(LivePlot, QObject):
                       'y ({}, {})'.format(len(self.x_data), len(self.y_data), y))
         for fit in self.fitPlots:
             fit.stop(doc)
+
+
+
+class PlotWidget_NoBluesky(QWidget):
+    def __init__(self, xlabel='', ylabel='', parent=None, title='', ylabel2='',
+                 y_axes=None, labels=()):
+        super().__init__(parent=parent)
+        canvas = MPLwidget()
+        self.ax = canvas.axes
+        self.plot = MultiPlot_NoBluesky(self.ax, xlabel, ylabel, ylabel2,
+                                        y_axes, labels)
+        self.toolbar = NavigationToolbar2QT(canvas, self)
+
+        self.pushButton_show_options = QPushButton('Show Options')
+        self.pushButton_show_options.clicked.connect(self.show_options)
+        self.pushButton_autoscale = QPushButton('Autoscale')
+        self.pushButton_autoscale.clicked.connect(self.autoscale)
+        self.plot_options = Plot_Options(self, self.ax, self.plot)
+
+        self.setWindowTitle(title or f'{xlabel} vs. {ylabel}')
+        self.setWindowIcon(QIcon('graphics/CAMELS.svg'))
+
+        layout = QGridLayout()
+        layout.addWidget(canvas, 0, 1, 1, 3)
+        layout.addWidget(self.toolbar, 1, 3)
+        layout.addWidget(self.pushButton_show_options, 1, 1)
+        layout.addWidget(self.pushButton_autoscale, 1, 2)
+        layout.addWidget(self.plot_options, 0, 0, 2, 1)
+        self.setLayout(layout)
+
+        self.plot_options.hide()
+        self.options_open = False
+        self.show()
+
+    def autoscale(self):
+        self.ax.autoscale()
+        self.ax.figure.canvas.draw_idle()
+
+    def show_options(self):
+        if self.options_open:
+            self.pushButton_show_options.setText('Show Options')
+            self.options_open = False
+            self.plot_options.hide()
+        else:
+            self.pushButton_show_options.setText('Hide Options')
+            self.options_open = True
+            self.plot_options.show()
+        self.adjustSize()
+
+
+
+class MultiPlot_NoBluesky(QObject):
+    new_data = pyqtSignal()
+    setup_done = pyqtSignal()
+
+    def __init__(self, ax, xlabel='', ylabel='', ylabel2='', y_axes=None,
+                 labels=()):
+        super().__init__()
+        self.ax = ax
+        self.ax.set_xlabel(xlabel)
+        self.ax.set_ylabel(ylabel)
+        self.ax2 = self.ax.twinx()
+        self.ax2.set_ylabel(ylabel2)
+        self.labels = labels
+        self.xdata = []
+        self.ydata = {}
+        self.current_lines = {}
+        self.y_axes = y_axes or {}
+        self.use_abs = {'x': False, 'y': False, 'y2': False}
+
+    def add_data(self, x, ys, add=True):
+        if not self.current_lines:
+            if len(self.labels) != len(ys):
+                self.labels = list(ys.keys())
+            for i, y in enumerate(ys):
+                try:
+                    if y in self.y_axes and self.y_axes[y] == 2:
+                        self.current_lines[y], = self.ax2.plot([], [],
+                                                              label=self.labels[i])
+                        self.ax.plot([], [], label=self.labels[i])
+                    else:
+                        self.current_lines[y], = self.ax.plot([], [],
+                                                          label=self.labels[i])
+                    self.ydata[y] = []
+                except Exception as e:
+                    print(e)
+            self.setup_done.emit()
+        if add:
+            self.xdata.append(x)
+            for y in ys:
+                if y in self.ydata:
+                    self.ydata[y].append(ys[y])
+        else:
+            self.xdata = [x]
+            self.ydata.clear()
+            for y in ys:
+                self.ydata[y] = [ys[y]]
+        self.update_plot()
+
+
+    def update_plot(self):
+        for y, line in self.current_lines.items():
+            xdat = np.abs(self.xdata) if self.use_abs['x'] else self.xdata
+            ydat = np.abs(self.ydata[y]) if self.use_abs['y'] else self.ydata[y]
+            line.set_data(xdat, ydat)
+        # Rescale and redraw.
+        self.ax.relim(visible_only=True)
+        self.ax.autoscale_view(tight=True)
+        self.ax.legend()
+        self.ax.figure.canvas.draw_idle()
+        self.new_data.emit()
 
 
 if __name__ == '__main__':

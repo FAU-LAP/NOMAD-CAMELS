@@ -1,8 +1,8 @@
 #set Voltage
 setV {
-	out "VOLT%03d";
+	out "VOLT%03d\r\n";
 }
 
 setI {
-	out "CURR%03d";
+	out "CURR%03d\r\n";
 }

@@ -14,7 +14,7 @@ from datetime import datetime
 import json
 import ophyd
 
-from main_classes import protocol_class
+from main_classes import protocol_class, device_class
 from utility.load_save_helper_functions import load_plots
 
 appdata_path = f'{getenv("LOCALAPPDATA")}/CAMELS'
@@ -200,7 +200,7 @@ def make_save_dict(obj):
     object. Thus working recursively if an attribute of obj also has a
     __save_dict__"""
     for key in obj.__dict__:
-        if key == '__save_dict__':
+        if key == '__save_dict__' or (isinstance(obj, device_class.Device) and key == 'add_ons'):
             continue
         add_string = get_save_str(obj.__dict__[key])
         if add_string is not None:

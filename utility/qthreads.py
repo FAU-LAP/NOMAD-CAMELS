@@ -176,3 +176,17 @@ class Run_IOC(QThread):
         if self.popen is not None:
             self.popen.communicate(input=b'exit')
         super().terminate()
+
+
+class Manual_Device_Thread(QThread):
+    def __init__(self, device, ophyd_class):
+        super().__init__()
+        if device.ioc_settings['use_local_ioc']:
+            ioc = variables_handling.preset
+        else:
+            ioc = device.ioc_settings['ioc_name']
+        self.device = ophyd_class(f'{ioc}:{device.custom_name}:',
+                                  name=f'manual_{device.custom_name}',
+                                  **device.get_settings())
+        self.device.wait_for_connection()
+        self.device.configure(device.get_config())
