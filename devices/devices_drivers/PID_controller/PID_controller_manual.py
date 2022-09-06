@@ -4,7 +4,7 @@ from main_classes.add_on import AddOn
 from PID_controller.PID_controller_config_sub import subclass_config_sub
 from PID_controller.PID_controller_ophyd import PID_Controller
 
-from PyQt5.QtWidgets import QCheckBox, QLineEdit, QPushButton, QLabel, QSpacerItem, QSizePolicy
+from PyQt5.QtWidgets import QCheckBox, QLineEdit, QPushButton, QLabel, QSpacerItem, QSizePolicy, QFrame
 from PyQt5.QtCore import pyqtSignal
 
 from utility import variables_handling
@@ -14,7 +14,12 @@ from utility.qthreads import Manual_Device_Thread
 class PID_manual_control(AddOn):
     def __init__(self, device=None):
         super().__init__(title='PID-controller: manual control', device=device)
+
         self.settings_widge = subclass_config_sub(settings_dict=self.device.settings, config_dict=self.device.config, parent=self)
+        self.settings_widge.input_label.setHidden(True)
+        self.settings_widge.comboBox_input.setHidden(True)
+        self.settings_widge.output_label.setHidden(True)
+        self.settings_widge.comboBox_output.setHidden(True)
 
         label_state = QLabel('current state:')
         self.on_off_box = QCheckBox('Off')
@@ -34,6 +39,11 @@ class PID_manual_control(AddOn):
 
         self.pushButton_plot = QPushButton('Show Plot')
         self.pushButton_settings = QPushButton('Show Settings')
+        self.pushButton_update_settings = QPushButton('Update Settings')
+
+        line = QFrame(self)
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
 
         spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -50,14 +60,19 @@ class PID_manual_control(AddOn):
         self.layout().addWidget(self.lineEdit_update, 1, 4, 2, 1)
         self.layout().addWidget(self.pushButton_plot, 3, 0, 1, 2)
         self.layout().addWidget(self.pushButton_settings, 3, 2, 1, 3)
-        self.layout().addWidget(self.settings_widge, 4, 0, 1, 5)
-        self.layout().addItem(spacer, 5, 0)
+
+        self.layout().addWidget(line, 5, 0, 1, 5)
+
+        self.layout().addWidget(self.settings_widge, 10, 0, 1, 5)
+        self.layout().addWidget(self.pushButton_update_settings, 11, 3, 1, 2)
+        self.layout().addItem(spacer, 20, 0)
 
         self.settings_widge.setHidden(True)
         # self.change_state()
 
         self.on_off_box.clicked.connect(self.change_state)
         self.pushButton_settings.clicked.connect(self.show_settings)
+        self.pushButton_update_settings.clicked.connect(self.update_settings)
         self.lineEdit_update.returnPressed.connect(self.change_update_time)
         self.lineEdit_setpoint.returnPressed.connect(self.change_setpoint)
 
@@ -73,6 +88,12 @@ class PID_manual_control(AddOn):
         self.run_thread = PID_thread(self.device, 1)
         self.run_thread.data_sig.connect(self.data_update)
         self.run_thread.start()
+
+    def update_settings(self):
+        settings = self.settings_widge.get_settings()
+        config = self.settings_widge.get_config()
+        self.run_thread.update_config_settings(config, settings)
+
 
     def data_update(self, setp, pid_val, output, on, timestamp, p_i_d):
         self.lineEdit_setpoint_show.setText(f'{setp:.3e}')

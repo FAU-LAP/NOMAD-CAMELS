@@ -114,7 +114,41 @@ class PID_Controller(Device):
         self.pid_vals = None
         self.stability_time = 0
         self.stability_delta = 0
+        self.setpoint = 0
         # self.update_PID_vals(setpoint)
+
+    def update_settings(self, **settings):
+        if 'read_conv_func' in settings:
+            read_conv_func = settings['read_conv_func']
+            if not read_conv_func:
+                read_conv_func = lambda x: x
+            elif isinstance(read_conv_func, str):
+                read_conv_func = globals()[read_conv_func]
+            if read_conv_func is not None:
+                self.pid_val.conversion_function = read_conv_func
+                self.pid_cval.conversion_function = read_conv_func
+        if 'set_conv_func' in settings:
+            set_conv_func = settings['set_conv_func']
+            if not set_conv_func:
+                set_conv_func = lambda x: x
+            elif isinstance(set_conv_func, str):
+                set_conv_func = globals()[set_conv_func]
+            if set_conv_func is not None:
+                self.pid_val.set_conversion_function = set_conv_func
+                self.pid_cval.set_conversion_function = set_conv_func
+        if 'pid_val_table' in settings:
+            pid_val_table = settings['pid_val_table']
+            if pid_val_table is None:
+                pid_val_table = pd.DataFrame({'setpoint': [0], 'kp': [0], 'ki': [0], 'kd': [0], 'maxval': [np.inf], 'minval': [-np.inf], 'bias': [0], 'stability-delta': [0], 'stability-time': [0]})
+            elif type(pid_val_table) is str:
+                pid_val_table = pd.read_csv(pid_val_table, delimiter='\t')
+            self.pid_val_table = pid_val_table
+        if 'auto_pid' in settings:
+            self.auto_pid = settings['auto_pid']
+        if 'interpolate_auto' in settings:
+            self.interpolate_auto = settings['interpolate_auto']
+        self.update_PID_vals(self.setpoint)
+
 
     def update_PID_vals(self, setpoint):
         # self.pid_vals = self.pid_val_table.get_vals(setpoint, self.auto_pid)
@@ -146,6 +180,7 @@ class PID_Controller(Device):
                 att.put(self.pid_vals[key][0])
         self.stability_time = self.pid_vals['stability-time'][0]
         self.stability_delta = self.pid_vals['stability-delta'][0]
+        self.setpoint = setpoint
 
     def wait_for_connection(self, all_signals=False, timeout=2.0):
         if timeout is None:

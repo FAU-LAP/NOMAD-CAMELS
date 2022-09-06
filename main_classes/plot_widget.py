@@ -21,6 +21,8 @@ from gui.plot_options import Ui_Plot_Options
 from bluesky_handling.evaluation_helper import Evaluator
 from ophyd import SignalRO, Device, Component, BlueskyInterface, Kind
 
+stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']
+
 dark_mode = False
 def activate_dark_mode():
     """Changes the plot-style to dark-mode."""
@@ -687,11 +689,14 @@ class MultiPlot_NoBluesky(QObject):
                 try:
                     if y in self.y_axes and self.y_axes[y] == 2:
                         self.current_lines[y], = self.ax2.plot([], [],
-                                                              label=self.labels[i])
-                        self.ax.plot([], [], label=self.labels[i])
+                                                              label=self.labels[i],
+                                                               color=stdCols[i])
+                        self.ax.plot([], [], label=self.labels[i],
+                                     color=stdCols[i])
                     else:
                         self.current_lines[y], = self.ax.plot([], [],
-                                                          label=self.labels[i])
+                                                          label=self.labels[i],
+                                                              color=stdCols[i])
                     self.ydata[y] = []
                 except Exception as e:
                     print(e)

@@ -190,3 +190,10 @@ class Manual_Device_Thread(QThread):
                                   **device.get_settings())
         self.device.wait_for_connection()
         self.device.configure(device.get_config())
+
+    def update_config_settings(self, config=None, settings=None):
+        config = config or {}
+        settings = settings or {}
+        self.device.configure(config)
+        self.device.update_settings(**settings)
+

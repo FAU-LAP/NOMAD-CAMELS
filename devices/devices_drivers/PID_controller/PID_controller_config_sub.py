@@ -42,8 +42,8 @@ class subclass_config_sub(device_class.Device_Config_Sub):
             tableData = settings_dict['pid_val_table']
         self.val_table = AddRemoveTable(editables=range(len(headerlabels)), headerLabels=headerlabels, parent=self, tableData=tableData)
 
-        input_label = QLabel('Input Channel:')
-        output_label = QLabel('Output Channel:')
+        self.input_label = QLabel('Input Channel:')
+        self.output_label = QLabel('Output Channel:')
         bias_label = QLabel('Bias Channel:')
         timer_label = QLabel('Time Delta:')
         self.comboBox_input = QComboBox()
@@ -92,9 +92,9 @@ class subclass_config_sub(device_class.Device_Config_Sub):
         self.lineEdit_set_function = QLineEdit(set_conv)
 
 
-        layout.addWidget(input_label, 0, 0)
+        layout.addWidget(self.input_label, 0, 0)
         layout.addWidget(self.comboBox_input, 0, 1)
-        layout.addWidget(output_label, 1, 0)
+        layout.addWidget(self.output_label, 1, 0)
         layout.addWidget(self.comboBox_output, 1, 1)
         layout.addWidget(read_label, 2, 0)
         layout.addWidget(self.lineEdit_read_function, 2, 1)
