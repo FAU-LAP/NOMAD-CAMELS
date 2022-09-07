@@ -72,7 +72,7 @@ class Loop_Step:
         make use of the time_weight and status bar, it should start with
         printing, that the loop_step starts."""
         tabs = '\t'*n_tabs
-        protocol_string = f'{tabs}print("starting loop_step {self.full_name}")\n'
+        protocol_string = f'\n{tabs}print("starting loop_step {self.full_name}")\n'
         protocol_string += f'{tabs}yield from bps.checkpoint()\n'
         return protocol_string
 

@@ -2,8 +2,7 @@ import numpy as np
 from bluesky import plan_stubs as bps
 
 
-def get_fit_results(fits, namespace, yielding=False, stream='primary',
-                    clearing=False, plots=None):
+def get_fit_results(fits, namespace, yielding=False, stream='primary'):
     for name, fit in fits.items():
         if not fit.result:
             continue
@@ -14,10 +13,11 @@ def get_fit_results(fits, namespace, yielding=False, stream='primary',
             yield from bps.trigger_and_read(fit.ophyd_fit.used_comps,
                                             name=f'{stream}_fits')
             fit._reset()
-    if clearing and plots:
-        for plot in plots:
-            if plot.stream_name == stream:
-                plot.clear_plot()
+
+def clear_plots(plots, stream='primary'):
+    for plot in plots:
+        if plot.stream_name == stream:
+            plot.clear_plot()
 
 
 def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
