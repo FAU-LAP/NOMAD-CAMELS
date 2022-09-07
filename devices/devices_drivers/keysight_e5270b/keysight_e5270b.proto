@@ -75,16 +75,16 @@ setChI {
 #Measure Voltage single shot, channel number %i
 
 mesV {
-	out "CMM \$1,2;XE";
-	in "%f";
+	out "MM 1,\$1;CMM \$1,2;XE";
+	in "%#/\///%f";
 	ExtraInput = Ignore;
 }
 
 #Measure Current single shot, channel number %i
 
 mesI {
-	out "CMM \$1,1;XE";
-	in "%f";
+	out "MM 1,\$1;CMM \$1,1;XE";
+	in "%#/\///%f";
 	ExtraInput = Ignore;
 }
 
