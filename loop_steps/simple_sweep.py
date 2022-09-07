@@ -99,7 +99,7 @@ class Simple_Sweep(For_Loop_Step):
             else:
                 protocol_string += f'devs["{name}"]'
         protocol_string += ']\n'
-        protocol_string += f'helper_functions.clear_plots(plots, {stream})'
+        protocol_string += f'{tabs}helper_functions.clear_plots(plots, {stream})'
         protocol_string += super().get_protocol_string(n_tabs)
         name = variables_handling.channels[self.sweep_channel].name
         if '.' in name:
