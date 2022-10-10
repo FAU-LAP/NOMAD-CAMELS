@@ -14,17 +14,22 @@ from utility.add_remove_table import AddRemoveTable
 from utility import variables_handling
 
 
+plot_types = ['X-Y plot', 'Value-List', '2D plot']
+
+
 class Plot_Info:
     def __init__(self, plt_type='X-Y plot', x_axis='', y_axes=None, title='',
-                 xlabel='', ylabel='', ylabel2='', do_plot=True,
-                 same_fit=False, fits=None, all_fit=None):
+                 xlabel='', ylabel='', ylabel2='', do_plot=True, zlabel='',
+                 same_fit=False, fits=None, all_fit=None, z_axis=''):
         self.plt_type = plt_type
         self.x_axis = x_axis
         self.y_axes = y_axes or {'formula': [], 'axis': []}
+        self.z_axis = z_axis
         self.title = title
         self.xlabel = xlabel
         self.ylabel = ylabel
         self.ylabel2 = ylabel2
+        self.zlabel = zlabel
         self.do_plot = do_plot
         self.same_fit = same_fit
         self.fits = fits or []
@@ -35,14 +40,27 @@ class Plot_Info:
     def update_name(self):
         if self.title:
             self.name = self.title
-        elif self.xlabel and self.ylabel:
-            self.name = f'{self.ylabel} vs. {self.xlabel}'
-        elif self.x_axis and self.y_axes['formula']:
-            self.name = f'{self.y_axes["formula"][0]} vs. {self.x_axis}'
-        elif self.y_axes['formula']:
-            self.name = self.y_axes['formula'][0]
-        else:
-            self.name = self.x_axis
+        elif self.plt_type == 'X-Y plot':
+            if self.xlabel and self.ylabel:
+                self.name = f'{self.ylabel} vs. {self.xlabel}'
+            elif self.x_axis and self.y_axes['formula']:
+                self.name = f'{self.y_axes["formula"][0]} vs. {self.x_axis}'
+            elif self.y_axes['formula']:
+                self.name = self.y_axes['formula'][0]
+            else:
+                self.name = self.x_axis
+        elif self.plt_type == 'Value-List':
+            self.name = 'Current Values'
+        elif self.plt_type == '2D plot':
+            if self.zlabel and self.xlabel and self.ylabel:
+                self.name = f'{self.zlabel} vs. ({self.xlabel}; {self.ylabel})'
+            elif self.zlabel:
+                self.name = f'{self.zlabel} 2D'
+            if self.z_axis and self.x_axis and self.y_axes['formula']:
+                self.name = f'{self.z_axis} vs. ({self.x_axis}; {self.y_axes["formula"][0]})'
+            elif self.z_axis:
+                self.name = f'{self.z_axis} 2D'
+
 
     def get_fit_vars(self, stream=''):
         variables = {}
@@ -101,7 +119,7 @@ class Plot_Definer(QDialog):
         super().__init__(parent)
         self.setWindowTitle('CAMELS - define plot')
         cols = ['plot-type', 'name']
-        comboBoxes = {'plot-type': ['X-Y plot', 'Value-List', '2D plot']}
+        comboBoxes = {'plot-type': plot_types}
         tableData = {'plot-type': [], 'name': []}
         for plt in self.plot_data:
             tableData['plot-type'].append(plt.plt_type)
@@ -143,16 +161,18 @@ class Plot_Definer(QDialog):
     def change_plot_def(self, a0):
         if not isinstance(self.plot_def, QLabel):
             self.plot_def.get_data()
+        plot_dat = self.plot_data[a0.row()]
+        ind = self.plot_table.table_model.index(a0.row(), 0)
+        plot_dat.plt_type = self.plot_table.table.indexWidget(ind).currentText()
         tableData = {'plot-type': [], 'name': []}
         for plt in self.plot_data:
             tableData['plot-type'].append(plt.plt_type)
             tableData['name'].append(plt.name)
         self.plot_table.change_table_data(tableData)
-        plot_dat = self.plot_data[a0.row()]
-        ind = self.plot_table.table_model.index(a0.row(), 0)
-        plot_dat.plt_type = self.plot_table.table.indexWidget(ind).currentText()
         if plot_dat.plt_type == 'X-Y plot':
             plot_def = Single_Plot_Definer_XY(plot_dat, self)
+        elif plot_dat.plt_type == 'Value-List':
+            plot_def = Single_Plot_Definer_List(plot_dat, self)
         else:
             plot_def = QLabel('Not implemented yet!')
         self.layout().replaceWidget(self.plot_def, plot_def)
@@ -169,12 +189,46 @@ class Plot_Definer(QDialog):
         self.plot_data.pop(n)
 
 
-class Single_Plot_Definer_XY(QWidget, Ui_Plot_Definer):
+class Single_Plot_Definer(QWidget):
     def __init__(self, plot_data:Plot_Info, parent=None):
         super().__init__(parent)
+        self.plot_data = plot_data
+
+    def get_data(self):
+        return self.plot_data
+
+    def add_y(self, n):
+        if n >= len(self.plot_data.fits):
+            self.plot_data.fits.append(Fit_Info())
+
+    def remove_y(self, n):
+        self.plot_data.fits.pop(n)
+
+
+class Single_Plot_Definer_List(Single_Plot_Definer):
+    def __init__(self, plot_data:Plot_Info, parent=None):
+        super().__init__(plot_data, parent)
+        self.plot_data = plot_data
+        self.table = AddRemoveTable(title='Values', headerLabels=[],
+                                    tableData=plot_data.y_axes['formula'],
+                                    checkstrings=[0])
+        self.table.added.connect(self.add_y)
+        self.table.removed.connect(self.remove_y)
+        self.layout = QGridLayout()
+        self.layout.addWidget(self.table)
+        self.setLayout(self.layout)
+
+    def get_data(self):
+        self.plot_data.y_axes['formula'] = self.table.update_table_data()
+        self.plot_data.y_axes['axis'] = [1] * len(self.plot_data.y_axes['formula'])
+
+
+
+class Single_Plot_Definer_XY(Single_Plot_Definer, Ui_Plot_Definer):
+    def __init__(self, plot_data:Plot_Info, parent=None):
+        super().__init__(plot_data, parent)
         self.fit_definer = None
         self.setupUi(self)
-        self.plot_data = plot_data
 
         cols = ['formula', 'axis']
         comboBoxes = {'axis': ['left', 'right']}
@@ -192,13 +246,6 @@ class Single_Plot_Definer_XY(QWidget, Ui_Plot_Definer):
         self.load_data()
         self.plot_change()
         self.fit_change()
-
-    def add_y(self, n):
-        if n >= len(self.plot_data.fits):
-            self.plot_data.fits.append(Fit_Info())
-
-    def remove_y(self, n):
-        self.plot_data.fits.pop(n)
 
     def plot_change(self):
         self.plotting_group.setEnabled(self.checkBox_plot.isChecked())
@@ -230,6 +277,7 @@ class Single_Plot_Definer_XY(QWidget, Ui_Plot_Definer):
         for i, fit in enumerate(self.plot_data.fits):
             fit.y = self.plot_data.y_axes['formula'][i]
             fit.x = self.plot_data.x_axis
+        return super().get_data()
 
     def fit_change(self):
         if not isinstance(self.fit_definer, QLabel):
@@ -245,6 +293,7 @@ class Single_Plot_Definer_XY(QWidget, Ui_Plot_Definer):
                 fit_dat = self.plot_data.fits[n]
             else:
                 fit_dat = None
+                fit_to = None
         if fit_dat is None:
             fit_definer = QLabel('No y-axis selected')
         else:

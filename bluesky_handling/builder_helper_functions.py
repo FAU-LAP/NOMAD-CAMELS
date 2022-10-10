@@ -16,28 +16,37 @@ def plot_creator(plot_data, func_name='create_plots'):
     plot_string += '\tsubs = []\n'
     plotting = False
     for i, plot in enumerate(plot_data):
-        plotting = True
-        fits = []
-        if plot.same_fit:
-            if plot.all_fit and plot.all_fit.do_fit:
-                for y in plot.y_axes['formula']:
-                    fit = copy.deepcopy(plot.all_fit)
-                    fit.y = y
-                    fits.append(fit)
-        else:
-            for fit in plot.fits:
-                if fit.do_fit:
-                    fits.append(fit)
-        plot_string += '\tfits = []\n'
-        for fit in fits:
-            plot_string += f'\tfits.append({fit.__dict__})\n'
-        plot_string += f'\tplot_{i} = plot_widget.PlotWidget(x_name="{plot.x_axis or "time"}", y_names={plot.y_axes["formula"]}, ylabel="{plot.ylabel}", xlabel="{plot.xlabel}", title="{plot.title}", stream_name=stream, namespace=namespace, fits=fits)\n'
-        plot_string += f'\tplots.append(plot_{i})\n'
-        plot_string += f'\tplot_{i}.show()\n'
-        plot_string += f'\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n'
-        plot_string += f'\tfor fit in plot_{i}.liveFits:\n'
-        plot_string += '\t\tall_fits[fit.name] = fit\n'
-        # plot_string += f'\tfor lfp in plot_{i}.liveFitPlots:\n'
-        # plot_string += f'\t\tsubs.append(RE.subscribe(lfp))\n'
+        if plot.plt_type == 'X-Y plot':
+            plotting = True
+            fits = []
+            if plot.same_fit:
+                if plot.all_fit and plot.all_fit.do_fit:
+                    for y in plot.y_axes['formula']:
+                        fit = copy.deepcopy(plot.all_fit)
+                        fit.y = y
+                        fits.append(fit)
+            else:
+                for fit in plot.fits:
+                    if fit.do_fit:
+                        fits.append(fit)
+            plot_string += '\tfits = []\n'
+            for fit in fits:
+                plot_string += f'\tfits.append({fit.__dict__})\n'
+            plot_string += f'\tplot_{i} = plot_widget.PlotWidget(x_name="{plot.x_axis or "time"}", y_names={plot.y_axes["formula"]}, ylabel="{plot.ylabel}", xlabel="{plot.xlabel}", title="{plot.title}", stream_name=stream, namespace=namespace, fits=fits)\n'
+            plot_string += f'\tplots.append(plot_{i})\n'
+            plot_string += f'\tplot_{i}.show()\n'
+            plot_string += f'\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n'
+            plot_string += f'\tfor fit in plot_{i}.liveFits:\n'
+            plot_string += '\t\tall_fits[fit.name] = fit\n'
+            # plot_string += f'\tfor lfp in plot_{i}.liveFitPlots:\n'
+            # plot_string += f'\t\tsubs.append(RE.subscribe(lfp))\n'
+        elif plot.plt_type == 'Value-List':
+            plotting = True
+            plot_string += f'\tplot_{i} = list_plot.Values_List_Plot({plot.y_axes["formula"]}, title="{plot.title}", stream_name=stream, namespace=namespace)\n'
+            plot_string += f'\tplots.append(plot_{i})\n'
+            plot_string += f'\tplot_{i}.show()\n'
+            plot_string += f'\tsubs.append(RE.subscribe(plot_{i}))\n'
+        elif plot.plt_type == '2D plot':
+            pass
     plot_string += '\treturn app, plots, subs\n\n'
     return plot_string, plotting
