@@ -8,6 +8,7 @@ from PyQt5.QtGui import QFont, QKeyEvent
 from lmfit import models
 
 from gui.plot_definer import Ui_Plot_Definer
+from gui.plot_definer_2d import Ui_Plot_Definer_2D
 from gui.fit_definer import Ui_Fit_Definer
 
 from utility.add_remove_table import AddRemoveTable
@@ -173,6 +174,8 @@ class Plot_Definer(QDialog):
             plot_def = Single_Plot_Definer_XY(plot_dat, self)
         elif plot_dat.plt_type == 'Value-List':
             plot_def = Single_Plot_Definer_List(plot_dat, self)
+        elif plot_dat.plt_type == '2D plot':
+            plot_def = Single_Plot_Definer_2D(plot_dat, self)
         else:
             plot_def = QLabel('Not implemented yet!')
         self.layout().replaceWidget(self.plot_def, plot_def)
@@ -221,7 +224,33 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
     def get_data(self):
         self.plot_data.y_axes['formula'] = self.table.update_table_data()
         self.plot_data.y_axes['axis'] = [1] * len(self.plot_data.y_axes['formula'])
+        return super().get_data()
 
+
+class Single_Plot_Definer_2D(Single_Plot_Definer, Ui_Plot_Definer_2D):
+    def __init__(self, plot_data:Plot_Info, parent=None):
+        super().__init__(plot_data, parent)
+        self.setupUi(self)
+        self.lineEdit_x_axis.setText(self.plot_data.x_axis)
+        if not self.plot_data.y_axes['formula']:
+            self.plot_data.y_axes['formula'].append('')
+            self.plot_data.y_axes['axis'].append(1)
+        self.lineEdit_y_axis.setText(self.plot_data.y_axes['formula'][0])
+        self.lineEdit_z_axis.setText(self.plot_data.z_axis)
+        self.lineEdit_xlabel.setText(self.plot_data.xlabel)
+        self.lineEdit_ylabel.setText(self.plot_data.ylabel)
+        self.lineEdit_zlabel.setText(self.plot_data.zlabel)
+        self.lineEdit_title.setText(self.plot_data.title)
+
+    def get_data(self):
+        self.plot_data.xlabel = self.lineEdit_xlabel.text()
+        self.plot_data.ylabel = self.lineEdit_ylabel.text()
+        self.plot_data.zlabel = self.lineEdit_zlabel.text()
+        self.plot_data.x_axis = self.lineEdit_x_axis.text()
+        self.plot_data.y_axes['formula'][0] = self.lineEdit_y_axis.text()
+        self.plot_data.z_axis = self.lineEdit_z_axis.text()
+        self.plot_data.title = self.lineEdit_title.text()
+        return super().get_data()
 
 
 class Single_Plot_Definer_XY(Single_Plot_Definer, Ui_Plot_Definer):

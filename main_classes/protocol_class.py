@@ -296,6 +296,7 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         nx = self.checkBox_NeXus.isChecked()
         self.table_channel_NX_paths.setEnabled(nx)
         self.table_metadata.setEnabled(nx)
+        self.table_config_NX_paths.setEnabled(nx)
 
 
     def get_unique_name(self, name='name'):

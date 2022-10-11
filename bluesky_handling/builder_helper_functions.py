@@ -47,6 +47,10 @@ def plot_creator(plot_data, func_name='create_plots'):
             plot_string += f'\tplot_{i}.show()\n'
             plot_string += f'\tsubs.append(RE.subscribe(plot_{i}))\n'
         elif plot.plt_type == '2D plot':
-            pass
+            plotting = True
+            plot_string += f'\tplot_{i} = plot_2D.PlotWidget_2D("{plot.x_axis}", "{plot.y_axes["formula"][0]}", "{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", title="{plot.title}", stream_name=stream, namespace=namespace)\n'
+            plot_string += f'\tplots.append(plot_{i})\n'
+            plot_string += f'\tplot_{i}.show()\n'
+            plot_string += f'\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n'
     plot_string += '\treturn app, plots, subs\n\n'
     return plot_string, plotting

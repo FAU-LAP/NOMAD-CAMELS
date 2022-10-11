@@ -72,3 +72,4 @@ class Values_List_Plot(QtAwareCallback, QWidget):
                     new_val = self.eva.eval(val)
             self.val_items[i].setText(f'{new_val:7e}')
         self.table.resizeColumnsToContents()
+        self.show()
