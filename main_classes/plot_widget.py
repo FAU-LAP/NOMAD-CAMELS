@@ -475,6 +475,8 @@ class MultiLivePlot(LivePlot, QObject):
             else:
                 self.x = 'seq_num'
             self.ys = get_obj_fields(ys)
+            a = ylabel or ys[0]
+            print(a)
             self.ax.set_ylabel(ylabel or ys[0])
             self.ax.set_xlabel(xlabel or x or 'sequence #')
             if title:
@@ -491,6 +493,8 @@ class MultiLivePlot(LivePlot, QObject):
             self._epoch_offset = None  # used if x == 'time'
             self._epoch = epoch
 
+        self.xlabel = xlabel
+        self.ylabel = ylabel
         self.__setup = setup
         self._epoch_offset = 0
         self.x_data = []
@@ -530,6 +534,8 @@ class MultiLivePlot(LivePlot, QObject):
             self.legend = legend.draggable(True)
         for fit in self.fitPlots:
             fit.start(doc)
+        self.ax.set_xlabel(self.xlabel)
+        self.ax.set_ylabel(self.ylabel)
         self.setup_done.emit()
 
     def descriptor(self, doc):
