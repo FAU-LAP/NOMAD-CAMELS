@@ -576,8 +576,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_run_protocol.setEnabled(True)
 
     def make_new_run_thread(self):
+        print(1)
         self.run_thread = qthreads.Run_Protocol()
+        print(2)
         self.run_thread.start()
+        print(3)
         self.run_thread.sig_step.connect(self.change_progressBar_value_meas)
         self.run_thread.info_step.connect(self.update_protocol_output)
         self.run_thread.finished.connect(self.run_thread_finished)
@@ -857,6 +860,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pushButton_pause_protocol.setEnabled(True)
             self.pushButton_run_protocol.setText('Run')
             return
+        elif self.run_thread.already_run:
+            self.stop_protocol()
+            # self.make_new_run_thread()
+            # print(3)
         self.build_current_protocol(put100=False)
         self.setCursor(Qt.WaitCursor)
         path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"

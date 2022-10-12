@@ -107,6 +107,7 @@ class Run_Protocol(QThread):
         self.counter = 0
         self.total_time = prot_time
         self.write_to_console(f'dat_{name} = {name}_mod.main()')
+        self.already_run = True
         # self.write_to_console(f'print(dat_{name})')
 
     def pause(self):
