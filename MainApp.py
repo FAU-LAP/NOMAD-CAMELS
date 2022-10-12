@@ -35,6 +35,7 @@ from loop_steps import make_step_of_type
 from main_classes.add_on import AddOn
 
 os.environ['QT_API'] = 'pyqt5'
+camels_web = 'https://github.com/FAU-LAP/CAMELS'
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -147,6 +148,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_pause_protocol.clicked.connect(self.pause_protocol)
         self.pushButton_stop_protocol.clicked.connect(self.stop_protocol)
 
+        # help
+        self.actionReport_Bug.triggered.connect(lambda x: os.startfile(f'{camels_web}/issues'))
+        self.actionDocumentation.triggered.connect(lambda x: os.startfile(camels_web))
+
         # saving and loading
         self.__save_dict__ = {}
         self.saving = False
@@ -187,6 +192,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if 'autostart_ioc' in self.preferences and self.preferences['autostart_ioc']:
             self.run_stop_ioc()
+
+
+    def report_bug(self):
+        path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
+        os.startfile(path)
+
 
 
     def mousePressEvent(self, a0: QMouseEvent) -> None:
@@ -576,11 +587,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_run_protocol.setEnabled(True)
 
     def make_new_run_thread(self):
-        print(1)
         self.run_thread = qthreads.Run_Protocol()
-        print(2)
         self.run_thread.start()
-        print(3)
         self.run_thread.sig_step.connect(self.change_progressBar_value_meas)
         self.run_thread.info_step.connect(self.update_protocol_output)
         self.run_thread.finished.connect(self.run_thread_finished)

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>982</width>
+    <width>994</width>
     <height>819</height>
    </rect>
   </property>
@@ -939,7 +939,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>982</width>
+     <width>994</width>
      <height>21</height>
     </rect>
    </property>
@@ -966,6 +966,8 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionDocumentation"/>
+    <addaction name="actionReport_Bug"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -1083,6 +1085,16 @@
   <action name="actionNew_Device_Preset">
    <property name="text">
     <string>New Device Preset</string>
+   </property>
+  </action>
+  <action name="actionDocumentation">
+   <property name="text">
+    <string>Documentation</string>
+   </property>
+  </action>
+  <action name="actionReport_Bug">
+   <property name="text">
+    <string>Report Bug</string>
    </property>
   </action>
  </widget>
