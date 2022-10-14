@@ -16,12 +16,12 @@ from PyQt5.QtCore import pyqtSignal
 
 
 class subclass(device_class.Device):
-    def __init__(self):
+    def __init__(self, **kwargs):
         # package = importlib.import_module('keysight_e5270b.keysight_e5270b_ophyd')
         # ophyd_device = package.Keysight_E5270B
         files = ['keysight_e5270b.db', 'keysight_e5270b.proto']
         req = []
-        super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'], directory='keysight_e5270b', ophyd_device=Keysight_E5270B, requirements=req, files=files, ophyd_class_name='Keysight_E5270B')
+        super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'], directory='keysight_e5270b', ophyd_device=Keysight_E5270B, requirements=req, files=files, ophyd_class_name='Keysight_E5270B', **kwargs)
         for i in range(1, 9):
             key = f'active{i}'
             if key not in self.config:
@@ -74,9 +74,9 @@ class subclass(device_class.Device):
 
 class subclass_config(device_class.Device_Config):
     def __init__(self, parent=None, data='', settings_dict=None,
-                 config_dict=None, ioc_dict=None):
+                 config_dict=None, ioc_dict=None, additional_info=None):
         super().__init__(parent, 'Keysight E5270B', data, settings_dict,
-                         config_dict, ioc_dict)
+                         config_dict, ioc_dict, additional_info)
         self.comboBox_connection_type.addItem('prologix-GPIB')
         self.sub_widget = subclass_config_sub(config_dict=self.config_dict, parent=self)
         self.layout().addWidget(self.sub_widget, 20, 0, 1, 5)

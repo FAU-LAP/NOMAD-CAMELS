@@ -20,7 +20,7 @@ class Set_Channels(Loop_Step):
         channels and values at the same position in their lists
     """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
-        super().__init__(name, parent_step, **kwargs)
+        super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Set Channels'
         if step_info is None:
             step_info = {}

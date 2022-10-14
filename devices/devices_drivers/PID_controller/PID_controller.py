@@ -13,10 +13,10 @@ from main_classes import measurement_channel
 
 
 class subclass(device_class.Device):
-    def __init__(self):
+    def __init__(self, **kwargs):
         files = ['PID_controller.db']
         req = ['std']
-        super().__init__(name='PID_controller', virtual=True, tags=['PID', 'control'], files=files, directory='PID_controller', ophyd_device=PID_Controller, ophyd_class_name='PID_Controller', requirements=req)
+        super().__init__(name='PID_controller', virtual=True, tags=['PID', 'control'], files=files, directory='PID_controller', ophyd_device=PID_Controller, ophyd_class_name='PID_Controller', requirements=req, **kwargs)
         self.add_ons = {'manual control': [PID_manual_control, self]}
 
     def get_additional_string(self):
@@ -40,9 +40,9 @@ class subclass(device_class.Device):
 
 class subclass_config(device_class.Device_Config):
     def __init__(self, parent=None, data='', settings_dict=None,
-                 config_dict=None, ioc_dict=None):
+                 config_dict=None, ioc_dict=None, additional_info=None):
         super().__init__(parent, 'PID_Controller', data, settings_dict,
-                         config_dict, ioc_dict)
+                         config_dict, ioc_dict, additional_info)
         # self.comboBox_connection_type.addItem()
         self.layout().removeWidget(self.comboBox_connection_type)
         self.comboBox_connection_type.deleteLater()
@@ -69,7 +69,7 @@ class subclass_config(device_class.Device_Config):
 
 class PID_wait_for_stable(steps.Loop_Step):
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
-        super().__init__(name, parent_step, **kwargs)
+        super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'PID wait for stable'
         if step_info is None:
             step_info = {}

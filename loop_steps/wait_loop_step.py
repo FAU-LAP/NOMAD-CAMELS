@@ -12,7 +12,7 @@ class Wait_Loop_Step(Loop_Step):
         The time (in seconds) for how long to wait.
     """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
-        super().__init__(name, parent_step, **kwargs)
+        super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Wait'
         if step_info is None:
             step_info = {}

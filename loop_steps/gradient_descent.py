@@ -10,7 +10,7 @@ from frontpanels.plot_definer import Plot_Info
 
 class Gradient_Descent_Step(Loop_Step):
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
-        super().__init__(name, parent_step, **kwargs)
+        super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Gradient Descent'
         step_info = step_info or {}
         self.read_channels = step_info['read_channels'] if 'read_channels' in step_info else []

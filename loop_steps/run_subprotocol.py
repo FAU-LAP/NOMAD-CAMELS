@@ -11,7 +11,7 @@ from utility.add_remove_table import AddRemoveTable
 
 class Run_Subprotocol(Loop_Step):
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
-        super().__init__(name, parent_step, **kwargs)
+        super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Run Subprotocol'
         if step_info is None:
             step_info = {}

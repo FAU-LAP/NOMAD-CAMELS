@@ -1,17 +1,17 @@
 from main_classes import device_class, measurement_channel
 
 class subclass(device_class.Device):
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__(name='demo_detector',
                          virtual=True,
                          tags=['virtual', 'demo', 'ophyd', 'detector'],
-                         directory='demo_detector')
+                         directory='demo_detector', **kwargs)
         self.channels = {'demo_detector_read_val': measurement_channel.Measurement_Channel(name='demo_detector_read_val', device=self.name)}
 
 
 class subclass_config(device_class.Device_Config):
-    def __init__(self, parent=None, data='', settings_dict=None):
-        super().__init__(parent, self.name, data, settings_dict)
+    def __init__(self, parent=None, data='', settings_dict=None, additional_info=None):
+        super().__init__(parent, self.name, data, settings_dict, additional_info)
         self.load_settings()
 
     def read_channels(self, channels, use_set, n_tabs=1):

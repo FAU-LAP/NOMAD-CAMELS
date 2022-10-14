@@ -1,7 +1,7 @@
 import serial.tools.list_ports
 
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox,\
-    QFrame, QCheckBox
+    QFrame, QCheckBox, QTextEdit
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import pyqtSignal, Qt
 
@@ -53,7 +53,7 @@ class Device:
 
     def __init__(self, name='', virtual=False, tags=None, files=None,
                  directory='', requirements=None, ophyd_device=None,
-                 ophyd_class_name=''):
+                 ophyd_class_name='', additional_info=None, **kwargs):
         """
         Parameters
         ----------
@@ -87,6 +87,7 @@ class Device:
         self.files = [] if files is None else files
         self.directory = directory
         self.requirements = requirements
+        self.additional_info = additional_info or {}
         self.ioc_settings = {}  # TODO usage thereof, make it distinguish more clear
         self.settings = {}
         self.config = {}
@@ -136,6 +137,9 @@ class Device:
         """returns self.ioc_settings, should be overwritten for special
         purposes (e.g. leaving out some keys of the dictionary)"""
         return self.ioc_settings
+
+    def get_additional_info(self):
+        return self.additional_info
 
     def get_substitutions_string(self, ioc_name:str, communication:str):
         substring = f'file "db/{self.name}.db" {{\n'
@@ -211,7 +215,7 @@ class Device_Config(QWidget):
     name_change = pyqtSignal(str)
 
     def __init__(self, parent=None, device_name='', data='', settings_dict=None,
-                 config_dict=None, ioc_settings=None):
+                 config_dict=None, ioc_settings=None, additional_info=None):
         """
         Parameters
         ----------
@@ -271,19 +275,26 @@ class Device_Config(QWidget):
         self.line_2.setFrameShadow(QFrame.Sunken)
         self.line_2.setObjectName("line_2")
 
+        self.textEdit_desc = QTextEdit(parent=self)
+        self.textEdit_desc.setPlaceholderText('Enter your description here.')
+        if additional_info and 'description' in additional_info:
+            self.textEdit_desc.setText(additional_info['description'])
+
         layout.addWidget(label_title, 0, 0, 1, 5)
         layout.addWidget(self.label_custom_name, 1, 0)
         layout.addWidget(self.lineEdit_custom_name, 1, 1, 1, 2)
-        layout.addWidget(self.checkBox_use_local_ioc, 2, 0)
-        layout.addWidget(self.label_ioc_name, 2, 1)
-        layout.addWidget(self.lineEdit_ioc_name, 2, 2)
-        layout.addWidget(self.line_2, 3, 0, 1, 5)
+        layout.addWidget(self.textEdit_desc, 2, 0, 1, 5)
+        layout.addWidget(self.checkBox_use_local_ioc, 3, 0)
+        layout.addWidget(self.label_ioc_name, 3, 1)
+        layout.addWidget(self.lineEdit_ioc_name, 3, 2)
+        layout.addWidget(self.line_2, 4, 0, 1, 5)
         layout.addWidget(self.label_connection, 5, 0)
-        layout.addWidget(self.comboBox_connection_type, 5, 1, 1, 2)
+        layout.addWidget(self.comboBox_connection_type, 6, 1, 1, 2)
 
         self.settings_dict = settings_dict
         self.config_dict = config_dict
         self.ioc_settings = ioc_settings
+        self.additional_info = additional_info or {}
         self.comboBox_connection_type.currentTextChanged.connect(self.connection_type_changed)
         self.lineEdit_custom_name.textChanged.connect(lambda x: self.name_change.emit(x))
         self.checkBox_use_local_ioc.clicked.connect(self.ioc_set_changed)
@@ -337,6 +348,10 @@ class Device_Config(QWidget):
         """Returns the config_dict of the device. Overwrite this
         function for each device to specify the config."""
         return self.config_dict
+
+    def get_info(self):
+        self.additional_info['description'] = self.textEdit_desc.toPlainText()
+        return self.additional_info
 
 
 class Device_Config_Sub(QWidget):

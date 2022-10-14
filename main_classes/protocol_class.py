@@ -263,7 +263,7 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
             allconf = []
             allconf += list(device.get_passive_config().keys())
             allconf += list(device.get_config().keys())
-            allconf += list(device.get_config().keys())
+            # allconf += list(device.get_config().keys())
             allconf += list(device.get_ioc_settings().keys())
             for key in allconf:
                 configs.append(f'{device.name}_{key}')

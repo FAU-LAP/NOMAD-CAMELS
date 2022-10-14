@@ -21,7 +21,7 @@ class Read_Channels(Loop_Step):
         {channel: {'read': True, 'use set': False}}
     """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
-        super().__init__(name, parent_step, **kwargs)
+        super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Read Channels'
         if step_info is None:
             step_info = {}

@@ -664,7 +664,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.device_config_widget = py_package.subclass_config(self, dat,
                                                                    self.active_devices_dict[dat].settings,
                                                                    self.active_devices_dict[dat].config,
-                                                                   self.active_devices_dict[dat].ioc_settings)
+                                                                   self.active_devices_dict[dat].ioc_settings,
+                                                                   additional_info=self.active_devices_dict[dat].additional_info)
             self.devices_splitter.replaceWidget(2, self.device_config_widget)
             self.device_config_widget.ioc_change.connect(self.ioc_config_changed)
             self.device_config_widget.name_change.connect(self.name_config_changed)
@@ -701,6 +702,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.active_devices_dict[self.device_config_widget.data].settings = self.device_config_widget.get_settings()
                 self.active_devices_dict[self.device_config_widget.data].config = self.device_config_widget.get_config()
                 self.active_devices_dict[self.device_config_widget.data].ioc_settings = self.device_config_widget.get_ioc_settings()
+                self.active_devices_dict[self.device_config_widget.data].additional_info = self.device_config_widget.get_info()
         if update:
             self.update_channels()
 

@@ -6,16 +6,16 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit
 
 
 class subclass(device_class.Device):
-    def __init__(self):
+    def __init__(self, **kwargs):
         files = ['agilent_34401.db', 'agilent_34401.proto']
         req = ['prologixSup']
-        super().__init__(name='agilent_34401', virtual=False, tags=['DMM', 'voltage', 'current'], directory='agilent_34401', ophyd_device=Agilent_34401, requirements=req, files=files, ophyd_class_name='Agilent_34401')
+        super().__init__(name='agilent_34401', virtual=False, tags=['DMM', 'voltage', 'current'], directory='agilent_34401', ophyd_device=Agilent_34401, requirements=req, files=files, ophyd_class_name='Agilent_34401', **kwargs)
 
 class subclass_config(device_class.Device_Config):
     def __init__(self, parent=None, data='', settings_dict=None,
-                 config_dict=None, ioc_dict=None):
+                 config_dict=None, ioc_dict=None, additional_info=None):
         super().__init__(parent, 'Agilent 34401', data, settings_dict,
-                         config_dict, ioc_dict)
+                         config_dict, ioc_dict, additional_info)
         self.comboBox_connection_type.addItem('prologix-GPIB')
         self.sub_widget = subclass_config_sub(config_dict=self.config_dict, parent=self)
         self.layout().addWidget(self.sub_widget, 20, 0, 1, 5)

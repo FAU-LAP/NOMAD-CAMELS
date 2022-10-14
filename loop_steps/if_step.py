@@ -23,7 +23,7 @@ class If_Loop_Step(Loop_Step_Container):
     """
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
-        super().__init__(name, children, parent_step, **kwargs)
+        super().__init__(name, children, parent_step, step_info, **kwargs)
         self.step_type = 'If'
         self.has_children = False
         if step_info is None:
@@ -96,7 +96,7 @@ class If_Sub_Step(Loop_Step_Container):
     """Simple sub-step that represents the if-condition."""
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
-        super().__init__(name, children, parent_step, **kwargs)
+        super().__init__(name, children, parent_step, step_info, **kwargs)
         self.step_type = 'If_Sub'
 
     def append_to_model(self, item_model:QStandardItemModel, parent=None):
@@ -110,14 +110,14 @@ class Elif_Sub_Step(If_Sub_Step):
     """Simple sub-step that represents an elif-condition."""
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
-        super().__init__(name, children, parent_step, **kwargs)
+        super().__init__(name, children, parent_step, step_info, **kwargs)
         self.step_type = 'Elif_Sub'
 
 class Else_Sub_Step(If_Sub_Step):
     """Simple sub-step that represents the else-condition."""
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
-        super().__init__(name, children, parent_step, **kwargs)
+        super().__init__(name, children, parent_step, step_info, **kwargs)
         self.step_type = 'Else_Sub'
 
 

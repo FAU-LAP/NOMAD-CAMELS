@@ -5,11 +5,11 @@ from bruker_magnet_ni_daq.bruker_magnet_ni_daq_config import Ui_bruker_magnet_co
 
 
 class subclass(device_class.Device):
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__(name='bruker_magnet_ni_daq',
                          tags=['magnet'], directory='bruker_magnet_ni_daq',
                          ophyd_device=Bruker_Magnet_NI_DAQ,
-                         ophyd_class_name='Bruker_Magnet_NI_DAQ')
+                         ophyd_class_name='Bruker_Magnet_NI_DAQ', **kwargs)
 
     def get_config(self):
         return {}
@@ -22,9 +22,9 @@ class subclass(device_class.Device):
 
 class subclass_config(device_class.Device_Config):
     def __init__(self, parent=None, data='', settings_dict=None,
-                 config_dict=None, ioc_dict=None):
+                 config_dict=None, ioc_dict=None, additional_info=None):
         super().__init__(parent, 'Bruker Magnet (DAQ)', data, settings_dict,
-                         config_dict, ioc_dict)
+                         config_dict, ioc_dict, additional_info)
         self.layout().removeWidget(self.comboBox_connection_type)
         self.comboBox_connection_type.deleteLater()
         self.layout().removeWidget(self.label_connection)

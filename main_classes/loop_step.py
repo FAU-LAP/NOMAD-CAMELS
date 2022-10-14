@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtCore import Qt, QSize, pyqtSignal
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QAction
+from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QTextEdit
 
 
 from utility import treeView_functions
@@ -27,7 +27,7 @@ class Loop_Step:
     used_devices : list
         list of the device-names used for this loopstep\
     """
-    def __init__(self, name='', parent_step=None, **kwargs):
+    def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         self.step_type = 'Default'
         self.__save_dict__ = {}
         self.has_children = False
@@ -37,6 +37,10 @@ class Loop_Step:
         self.parent_step = parent_step
         self.time_weight = 1
         self.used_devices = []
+        if step_info and 'description' in step_info:
+            self.description = step_info['description']
+        else:
+            self.description = ''
 
     def update_full_name(self):
         """Updates the full_name by combination of step_type and name"""
@@ -72,7 +76,9 @@ class Loop_Step:
         make use of the time_weight and status bar, it should start with
         printing, that the loop_step starts."""
         tabs = '\t'*n_tabs
-        protocol_string = f'\n{tabs}print("starting loop_step {self.full_name}")\n'
+        desc = self.description.replace("\n", f"\n{tabs}")
+        protocol_string = f'\n{tabs}"""{desc}"""\n'
+        protocol_string += f'{tabs}print("starting loop_step {self.full_name}")\n'
         protocol_string += f'{tabs}yield from bps.checkpoint()\n'
         return protocol_string
 
@@ -106,8 +112,8 @@ class Loop_Step_Container(Loop_Step):
         A list of the children inside this step (in the order, they are
         to be executed)
     """
-    def __init__(self, name='', children=None, parent_step=None, **kwargs):
-        super().__init__(name, parent_step=parent_step, **kwargs)
+    def __init__(self, name='', children=None, parent_step=None, step_info=None, **kwargs):
+        super().__init__(name, parent_step=parent_step, step_info=step_info, **kwargs)
         self.step_type = 'Container'
         self.has_children = True
         if children is None:
@@ -196,7 +202,7 @@ class Loop_Step_Config(QWidget):
     def __init__(self, parent=None, loop_step=None):
         super(Loop_Step_Config, self).__init__(parent)
         layout = QGridLayout()
-        self.name_widget = Loop_Step_Name_Widget(self, loop_step.name)
+        self.name_widget = Loop_Step_Name_Widget(self, loop_step.name, loop_step.description)
         self.loop_step = loop_step
         self.name_widget.name_changed.connect(self.change_name)
         layout.addWidget(self.name_widget, 0, 0, 1, 5)
@@ -214,19 +220,25 @@ class Loop_Step_Config(QWidget):
         provide the loop_step object with all necessary data."""
         # self.loop_step.update_variables()
         self.name_widget.change_name()
+        self.loop_step.description = self.name_widget.textEdit_desc.toPlainText()
 
 class Loop_Step_Name_Widget(QWidget):
     """Simple class that provides the necessary widgets for the step's
     name."""
     name_changed = pyqtSignal(str)
 
-    def __init__(self, parent=None, name=''):
+    def __init__(self, parent=None, name='', description=''):
         super().__init__(parent)
         label = QLabel('Name:')
         self.lineEdit_name = QLineEdit(name, self)
+        self.textEdit_desc = QTextEdit(description, self)
+        self.textEdit_desc.setText(description)
+        self.textEdit_desc.setPlaceholderText('Enter step description here.')
+
         layout = QGridLayout()
         layout.addWidget(label, 0, 0)
         layout.addWidget(self.lineEdit_name, 0, 1)
+        layout.addWidget(self.textEdit_desc, 1, 0, 1, 2)
         self.setLayout(layout)
         layout.setContentsMargins(0, 0, 0, 0)
 

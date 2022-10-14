@@ -20,7 +20,7 @@ class While_Loop_Step(Loop_Step_Container):
     """
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
-        super().__init__(name, children, parent_step, **kwargs)
+        super().__init__(name, children, parent_step, step_info, **kwargs)
         self.step_type = 'While Loop'
         if step_info is None:
             step_info = {}
@@ -126,7 +126,7 @@ class For_Loop_Step(Loop_Step_Container):
     """
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
-        super().__init__(name, children, parent_step, **kwargs)
+        super().__init__(name, children, parent_step, step_info, **kwargs)
         self.step_type = 'For Loop'
         if step_info is None:
             step_info = {}

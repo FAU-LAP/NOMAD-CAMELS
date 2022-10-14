@@ -95,10 +95,14 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         config = copy.deepcopy(device.get_config())
         settings = copy.deepcopy(device.get_settings())
         ioc_settings = copy.deepcopy(device.get_ioc_settings())
+        additional_info = copy.deepcopy(device.get_additional_info())
         if 'connection' in settings:
             settings.pop('connection')
         if 'idn' in settings:
             settings.pop('idn')
+        if 'description' in additional_info:
+            desc = additional_info['description'].replace('\n', '\n\t\t')
+            devices_string += f'\t\t"""{dev} ({classname}):\n\t\t{desc}"""\n'
         devices_string += f'\t\tsettings = {settings}\n'
         devices_string += f'\t\tioc_settings = {ioc_settings}\n'
         if not ioc_settings or ioc_settings['use_local_ioc']:

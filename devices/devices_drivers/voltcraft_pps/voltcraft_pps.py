@@ -8,13 +8,13 @@ from voltcraft_pps.voltcraft_pps_ophyd import Voltcraft_PPS
 
 
 class subclass(device_class.Device):
-    def __init__(self):
+    def __init__(self, **kwargs):
         files = ['voltcraft_pps.db', 'voltcraft_pps.proto']
         req = ['drvAsynSerialPort']
         super().__init__(name='voltcraft_pps', tags=['power supply', 'voltage'],
                          directory='voltcraft_pps', ophyd_device=Voltcraft_PPS,
                          ophyd_class_name='Voltcraft_PPS', files=files,
-                         requirements=req)
+                         requirements=req, **kwargs)
 
     def get_channels(self):
         channels = copy.deepcopy(super().get_channels())
@@ -35,9 +35,9 @@ class subclass(device_class.Device):
 
 class subclass_config(device_class.Device_Config):
     def __init__(self, parent=None, data='', settings_dict=None,
-                 config_dict=None, ioc_dict=None):
+                 config_dict=None, ioc_dict=None, additional_info=None):
         super().__init__(parent, 'Voltcraft PPS', data, settings_dict,
-                         config_dict, ioc_dict)
+                         config_dict, ioc_dict, additional_info)
         self.comboBox_connection_type.addItem('USB-serial')
         self.lineEdit_R = QLineEdit()
         self.lineEdit_R.setText(str(config_dict['setR']))

@@ -9,10 +9,11 @@ from DAQ_custom_device.DAQ_custom_device_ophyd import Custom_DAQ_Device
 
 
 class subclass(device_class.Device):
-    def __init__(self):
+    def __init__(self, **kwargs):
         files = []
         req = []
-        super().__init__(name='DAQ_custom_device', virtual=False, tags=['DAQ'], directory='DAQ_custom_device', ophyd_device=Custom_DAQ_Device, requirements=req, files=files, ophyd_class_name='Custom_DAQ_Device')
+        super().__init__(name='DAQ_custom_device', virtual=False, tags=['DAQ'], directory='DAQ_custom_device', ophyd_device=Custom_DAQ_Device, requirements=req, files=files, ophyd_class_name='Custom_DAQ_Device',
+                         **kwargs)
 
     def get_finalize_steps(self):
         s = '\t\tfrom bluesky_handling import daq_signal\n'
@@ -37,9 +38,9 @@ class subclass(device_class.Device):
 
 class subclass_config(device_class.Device_Config):
     def __init__(self, parent=None, data='', settings_dict=None,
-                 config_dict=None, ioc_dict=None):
+                 config_dict=None, ioc_dict=None, additional_info=None):
         super().__init__(parent, 'Custom DAQ device', data, settings_dict,
-                         config_dict, ioc_dict)
+                         config_dict, ioc_dict, additional_info)
         self.layout().removeWidget(self.comboBox_connection_type)
         self.comboBox_connection_type.deleteLater()
         self.layout().removeWidget(self.label_connection)

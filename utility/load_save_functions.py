@@ -263,6 +263,8 @@ def load_devices_dict(string_dict, devices_dict):
             dev.config = dev_data['config']
         if 'custom_name' in dev_data:
             dev.custom_name = dev_data['custom_name']
+        if 'additional_info' in dev_data:
+            dev.additional_info = dev_data['additional_info']
         devices_dict.update({key: dev})
 
 
