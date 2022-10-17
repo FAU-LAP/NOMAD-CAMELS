@@ -1,22 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-Spyder Editor
-
-This is a temporary script file.
-"""
-
 import nidaqmx
 
-from ophyd import Device, Signal
+from ophyd import Signal
 from ophyd.signal import SignalRO
-from ophyd import Component as Cpt
 
-from bluesky import RunEngine
-from bluesky.plans import count, scan
-import bluesky.plan_stubs as bps
-from databroker.databroker import Broker
-
-import time
+# from bluesky import RunEngine
+# from bluesky.plans import scan
+# import bluesky.plan_stubs as bps
+# from databroker.databroker import Broker
 
 tasks = []
 
@@ -25,9 +15,6 @@ def close_tasks():
         task.close()
     tasks.clear()
 
-#with nidaqmx.Task() as task:
-#    task.di_channels.add_di_chan('Bruker/port0/line0')
-#    print(task.read())
     
 def get_dig_config(terminal_config='default'):
     if terminal_config.lower() == 'open_collector':
@@ -78,9 +65,6 @@ class DAQ_Signal_Output(Signal):
             self.task.ao_channels.add_ao_voltage_chan(line_name,
                                                       min_val=self.minV,
                                                       max_val=self.maxV)
-    #def get(self):
-        #self._readback = self.task.read()
-        #return super().get()
     
     def put(self, value, *, timestamp=None, force=False, metadata=None, **kwargs):
         if self.digital and (type(value) is not bool):
@@ -89,7 +73,6 @@ class DAQ_Signal_Output(Signal):
             else:
                 value = False
         self.task.write(value)
-        #time.sleep(self.wait_time)
         super().put(value, timestamp=timestamp, force=force, metadata=metadata, **kwargs)
         
         
@@ -140,43 +123,43 @@ class DAQ_Signal_Input(SignalRO):
 
 
 
-def testplan(dets, on, off, rev):
-    yield from bps.open_run()
-    yield from bps.trigger_and_read(dets)
-    yield from bps.abs_set(on, 0)
-    yield from bps.sleep(0.3)
-    yield from bps.abs_set(on, 1)
-    yield from bps.sleep(5)
-    yield from bps.trigger_and_read(dets)
-    yield from bps.abs_set(rev, 0)
-    yield from bps.sleep(0.3)
-    yield from bps.abs_set(rev, 1)
-    yield from bps.sleep(25)
-    yield from bps.trigger_and_read(dets)
-    yield from bps.abs_set(rev, 0)
-    yield from bps.sleep(0.3)
-    yield from bps.abs_set(rev, 1)
-    yield from bps.sleep(25)
-    yield from bps.trigger_and_read(dets)
-    yield from bps.abs_set(off, 0)
-    yield from bps.sleep(0.3)
-    yield from bps.abs_set(off, 1)
-    yield from bps.sleep(5)
-    yield from bps.trigger_and_read(dets)
-    
-    
-
-if __name__ == '__main__':
-    RE = RunEngine()
-    db = Broker.named('temp')
-    RE.subscribe(db.insert)
-    bruker = Bruker_Magnet(name='bruker')
-    valve = DAQ_Signal_Output(name='valve', line_name='Bruker/ao1', minV=0, maxV=10)
-    #RE(testplan([bruker], bruker.power_on, bruker.power_off, bruker.reverse))
-    #valve.put(5)
-    RE(scan([valve], valve, 5, 0, 3))
-    header = db[-1]
-    tab = header.table()
-    print(header.start)
-    print(header.table())
-    print(header.config_data('bruker'))
+# def testplan(dets, on, off, rev):
+#     yield from bps.open_run()
+#     yield from bps.trigger_and_read(dets)
+#     yield from bps.abs_set(on, 0)
+#     yield from bps.sleep(0.3)
+#     yield from bps.abs_set(on, 1)
+#     yield from bps.sleep(5)
+#     yield from bps.trigger_and_read(dets)
+#     yield from bps.abs_set(rev, 0)
+#     yield from bps.sleep(0.3)
+#     yield from bps.abs_set(rev, 1)
+#     yield from bps.sleep(25)
+#     yield from bps.trigger_and_read(dets)
+#     yield from bps.abs_set(rev, 0)
+#     yield from bps.sleep(0.3)
+#     yield from bps.abs_set(rev, 1)
+#     yield from bps.sleep(25)
+#     yield from bps.trigger_and_read(dets)
+#     yield from bps.abs_set(off, 0)
+#     yield from bps.sleep(0.3)
+#     yield from bps.abs_set(off, 1)
+#     yield from bps.sleep(5)
+#     yield from bps.trigger_and_read(dets)
+#
+#
+#
+# if __name__ == '__main__':
+#     RE = RunEngine()
+#     db = Broker.named('temp')
+#     RE.subscribe(db.insert)
+#     bruker = Bruker_Magnet(name='bruker')
+#     valve = DAQ_Signal_Output(name='valve', line_name='Bruker/ao1', minV=0, maxV=10)
+#     #RE(testplan([bruker], bruker.power_on, bruker.power_off, bruker.reverse))
+#     #valve.put(5)
+#     RE(scan([valve], valve, 5, 0, 3))
+#     header = db[-1]
+#     tab = header.table()
+#     print(header.start)
+#     print(header.table())
+#     print(header.config_data('bruker'))

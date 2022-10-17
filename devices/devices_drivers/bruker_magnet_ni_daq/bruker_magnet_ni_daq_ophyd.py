@@ -1,8 +1,8 @@
 from bluesky_handling.daq_signal import DAQ_Signal_Input, DAQ_Signal_Output, \
-    Device, close_tasks
+    close_tasks
 from ophyd import Component as Cpt
 from ophyd.status import Status
-from ophyd import Signal
+from ophyd import Signal, Device
 
 import time
 
