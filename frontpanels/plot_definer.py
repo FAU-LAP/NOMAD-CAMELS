@@ -13,6 +13,7 @@ from gui.fit_definer import Ui_Fit_Definer
 
 from utility.add_remove_table import AddRemoveTable
 from utility import variables_handling
+from utility.fit_variable_renaming import replace_name
 
 
 plot_types = ['X-Y plot', 'Value-List', '2D plot']
@@ -109,7 +110,9 @@ class Fit_Info:
         variables = {}
         name = self.get_name(stream)
         for var in self.initial_params['name']:
-            variables[f'{name}_{var}'] = 1
+            var_name = f'{name}_{var}'
+            var_name = replace_name(var_name)
+            variables[var_name] = 1
         return variables
 
 

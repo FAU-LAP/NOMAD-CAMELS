@@ -18,6 +18,7 @@ from PyQt5.QtCore import pyqtSignal, QObject, Qt
 from PyQt5.QtGui import QIcon
 
 from gui.plot_options import Ui_Plot_Options
+from utility.fit_variable_renaming import replace_name
 from bluesky_handling.evaluation_helper import Evaluator
 from ophyd import SignalRO, Device, Component, BlueskyInterface, Kind
 
@@ -81,8 +82,9 @@ class PlotWidget(QWidget):
                     params[param].set(min=lower[param], max=upper[param])
 
             name = f'{label}_{fit["y"]}_v_{fit["x"]}'
+            name = replace_name(name)
             livefit = LiveFit_Eva(model, fit["y"], {'x': fit["x"]}, init_guess,
-                                  evaluator=eva, name=name.replace(' ', '_'),
+                                  evaluator=eva, name=name,
                                   params=params, stream_name=stream_name)
             self.liveFits.append(livefit)
             self.liveFitPlots.append(Fit_Plot_No_Init_Guess(livefit, ax=self.ax,
@@ -149,7 +151,8 @@ class LiveFit_Eva(LiveFit):
         self.eva = evaluator
         self.name = f'{name}_{stream_name}'
         self.params = params
-        name = name.replace('(', '').replace(')', '').replace('.', '')
+        # name = name.replace('(', '').replace(')', '').replace('.', '')
+        name = replace_name(name)
         self.ophyd_fit = Fit_Ophyd(name, name=name, params=params)
         self.stream_name = stream_name
 
