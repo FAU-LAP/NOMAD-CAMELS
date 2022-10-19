@@ -15,16 +15,26 @@ def close_resources():
 class VISA_Signal_Write(Signal):
     def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', write_termination='\n', baud_rate=9600, resource_name='', additional_put_text='', put_conv_function=None):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
+        self.visa_instrument = None
         self.resource_name = resource_name
-        if resource_name in open_resources:
-            self.visa_instrument = open_resources[resource_name]
-        else:
-            self.visa_instrument = rm.open_resource(resource_name)
-            open_resources[resource_name] = self.visa_instrument
-        self.visa_instrument.write_termination = write_termination
-        self.visa_instrument.baud_rate = baud_rate
+        if resource_name:
+            if resource_name in open_resources:
+                self.visa_instrument = open_resources[resource_name]
+            else:
+                self.visa_instrument = rm.open_resource(resource_name)
+                open_resources[resource_name] = self.visa_instrument
+            self.visa_instrument.write_termination = write_termination
+            self.visa_instrument.baud_rate = baud_rate
         self.put_conv_function = put_conv_function or None
         self.additional_put_text = additional_put_text
+
+    def change_instrument(self, resource_name):
+        if resource_name:
+            if resource_name in open_resources:
+                self.visa_instrument = open_resources[resource_name]
+            else:
+                self.visa_instrument = rm.open_resource(resource_name)
+                open_resources[resource_name] = self.visa_instrument
 
     def put(self, value, *, timestamp=None, force=False, metadata=None,
             **kwargs):
@@ -40,15 +50,17 @@ class VISA_Signal_Write(Signal):
 class VISA_Signal_Read(SignalRO):
     def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', read_termination='\n', write_termination='\n', baud_rate=9600, resource_name='', query_text='', read_conv_function=None):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
+        self.visa_instrument = None
         self.resource_name = resource_name
-        if resource_name in open_resources:
-            self.visa_instrument = open_resources[resource_name]
-        else:
-            self.visa_instrument = rm.open_resource(resource_name)
-            open_resources[resource_name] = self.visa_instrument
-        self.visa_instrument.read_termination = read_termination
-        self.visa_instrument.write_termination = write_termination
-        self.visa_instrument.baud_rate = baud_rate
+        if resource_name:
+            if resource_name in open_resources:
+                self.visa_instrument = open_resources[resource_name]
+            else:
+                self.visa_instrument = rm.open_resource(resource_name)
+                open_resources[resource_name] = self.visa_instrument
+            self.visa_instrument.read_termination = read_termination
+            self.visa_instrument.write_termination = write_termination
+            self.visa_instrument.baud_rate = baud_rate
         self.read_conv_function = read_conv_function or None
         self.query_text = query_text
 
@@ -56,6 +68,10 @@ class VISA_Signal_Read(SignalRO):
         val = self.visa_instrument.query(self.query_text)
         if self.read_conv_function:
             val = self.read_conv_function(val)
+        try:
+            val = float(val)
+        except:
+            pass
         self._readback = val
         return super().get()
 

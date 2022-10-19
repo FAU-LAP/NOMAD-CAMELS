@@ -204,7 +204,7 @@ class Keysight_E5270B(Device):
 
 
 if __name__ == '__main__':
-    e5270b = Keysight_E5270B('Default:', name='e5270b', channels=[1,8])
+    e5270b = Keysight_E5270B('Default:', name='e5270b', use_channels=[1,8])
     comps = e5270b.walk_components()
     for comp in comps:
         print(comp)

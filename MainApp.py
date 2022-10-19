@@ -662,9 +662,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             py_package = importlib.import_module(f'{dev_type}.{dev_type}')
             self.get_device_config()
             self.device_config_widget = py_package.subclass_config(self, dat,
-                                                                   self.active_devices_dict[dat].settings,
-                                                                   self.active_devices_dict[dat].config,
-                                                                   self.active_devices_dict[dat].ioc_settings,
+                                                                   settings_dict=self.active_devices_dict[dat].settings,
+                                                                   config_dict=self.active_devices_dict[dat].config,
+                                                                   ioc_dict=self.active_devices_dict[dat].ioc_settings,
                                                                    additional_info=self.active_devices_dict[dat].additional_info)
             self.devices_splitter.replaceWidget(2, self.device_config_widget)
             self.device_config_widget.ioc_change.connect(self.ioc_config_changed)
