@@ -100,14 +100,16 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
             settings.pop('connection')
         if 'idn' in settings:
             settings.pop('idn')
-        if 'description' in additional_info:
-            desc = additional_info['description'].replace('\n', '\n\t\t')
-            devices_string += f'\t\t"""{dev} ({classname}):\n\t\t{desc}"""\n'
         if not ioc_settings or ioc_settings['use_local_ioc']:
             ioc_name = variables_handling.preset
         else:
             ioc_name = ioc_settings['ioc_name']
         connection_check(ioc_settings, settings)
+        if not ioc_settings and classname.endswith('_EPICS'):
+            classname = classname[:-6]
+        if 'description' in additional_info:
+            desc = additional_info['description'].replace('\n', '\n\t\t')
+            devices_string += f'\t\t"""{dev} ({classname}):\n\t\t{desc}"""\n'
         devices_string += f'\t\tsettings = {settings}\n'
         if ioc_settings:
             devices_string += f'\t\tioc_settings = {ioc_settings}\n'

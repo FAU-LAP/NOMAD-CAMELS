@@ -1,4 +1,4 @@
-from ophyd import Signal, SignalRO
+from ophyd import Signal, SignalRO, Device
 import pyvisa
 
 rm = pyvisa.ResourceManager()
@@ -74,6 +74,27 @@ class VISA_Signal_Read(SignalRO):
             pass
         self._readback = val
         return super().get()
+
+
+
+class VISA_Device(Device):
+    def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
+                 configuration_attrs=None, parent=None, resource_name='',
+                 read_termination='\r\n', write_termination='\r\n',
+                 baud_rate=9600,**kwargs):
+        super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
+                         configuration_attrs=configuration_attrs, parent=parent, **kwargs)
+        self.visa_instrument = None
+        if resource_name:
+            if resource_name in open_resources:
+                self.visa_instrument = open_resources[resource_name]
+            else:
+                self.visa_instrument = rm.open_resource(resource_name)
+                open_resources[resource_name] = self.visa_instrument
+            self.visa_instrument.write_termination = write_termination
+            self.visa_instrument.read_termination = read_termination
+            self.visa_instrument.baud_rate = baud_rate
+
 
 
 

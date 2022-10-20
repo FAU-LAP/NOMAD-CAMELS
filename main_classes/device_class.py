@@ -287,6 +287,7 @@ class Device_Config(QWidget):
         layout.addWidget(self.lineEdit_ioc_name, 5, 2)
         layout.addWidget(self.label_connection, 4, 0)
         layout.addWidget(self.comboBox_connection_type, 4, 1, 1, 2)
+        layout.addWidget(self.connector, 6, 0, 1, 5)
         self.comboBox_connection_type.currentTextChanged.connect(self.connection_type_changed)
         self.checkBox_use_local_ioc.clicked.connect(self.ioc_set_changed)
 
@@ -316,6 +317,7 @@ class Device_Config(QWidget):
         of the device."""
         comboText = self.comboBox_connection_type.currentText()
         ep = comboText.startswith('EPICS:')
+        conn_old = self.connector
         self.checkBox_use_local_ioc.setHidden(not ep)
         self.label_ioc_name.setHidden(not ep)
         self.lineEdit_ioc_name.setHidden(not ep)
@@ -325,7 +327,8 @@ class Device_Config(QWidget):
             self.connector = USB_Serial_Config()
         elif self.comboBox_connection_type.currentText() == 'Local VISA':
             self.connector = Local_VISA()
-        self.layout().addWidget(self.connector, 6, 0, 1, 5)
+        self.layout().replaceWidget(conn_old, self.connector)
+        conn_old.deleteLater()
         if ep:
             self.connector.connection_change.connect(self.ioc_change.emit)
             self.ioc_change.emit()
