@@ -13,6 +13,10 @@ def recourse_entry_dict(entry, metadata):
     for key, val in metadata.items():
         if isinstance(val, databroker.core.Start) or isinstance(val, databroker.core.Stop):
             val = dict(val)
+            stamp = val['time']
+            val['time'] = timestamp_to_ISO8601(stamp)
+            # stamp = rundict['metadata_stop']['time']
+            # rundict['metadata_stop']['time'] = timestamp_to_ISO8601(stamp)
         if type(val) is dict:
             sub_entry = entry.create_group(key)
             recourse_entry_dict(sub_entry, val)
@@ -37,8 +41,9 @@ def broker_to_hdf5(runs, filename, additional_data=None):
         runs = [runs]
     for run in runs:
         metadata = run.metadata
+        start_time = timestamp_to_ISO8601(metadata['start']['time'])
         with h5py.File(filename, 'a') as file:
-            entry = file.create_group(run.name)
+            entry = file.create_group(start_time)
             for stream in run:
                 dataset = run[stream].read()
                 group = entry.create_group(stream)
@@ -52,7 +57,7 @@ def broker_to_hdf5(runs, filename, additional_data=None):
 
 
 
-def broker_to_dict(runs, to_iso_time=False):
+def broker_to_dict(runs, to_iso_time=True):
     """Puts the runs into a dictionary."""
     dicts = []
     if not isinstance(runs, list):
