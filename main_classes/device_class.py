@@ -203,7 +203,7 @@ class Device_Connection:  # TODO use or remove
     def __init__(self, connection_type=None, **kwargs):
         self.__save_dict__ = {}
         self.connection_type = connection_type
-        if connection_type == 'prologix-GPIB':
+        if connection_type == 'EPICS: prologix-GPIB':
             self.IP_address = kwargs['IP_address']
             self.GPIB_address = kwargs['GPIB_address']
 
@@ -264,37 +264,37 @@ class Device_Config(QWidget):
         if additional_info and 'description' in additional_info:
             self.textEdit_desc.setText(additional_info['description'])
 
-        self.no_ioc_connection = no_ioc_connection
-        if not no_ioc_connection:
-            self.label_connection = QLabel('Connection-type:')
-            self.checkBox_use_local_ioc = QCheckBox('Use local IOC')
-            self.checkBox_use_local_ioc.setChecked(True)
-            loc = True
-            if 'use_local_ioc' in ioc_dict:
-                loc = ioc_dict['use_local_ioc']
-                self.checkBox_use_local_ioc.setChecked(loc)
-            self.label_ioc_name = QLabel('IOC name:')
-            self.label_ioc_name.setAlignment(Qt.AlignRight)
-            self.lineEdit_ioc_name = QLineEdit()
-            if 'ioc_name' in ioc_dict:
-                self.lineEdit_ioc_name.setText(ioc_dict['ioc_name'])
-            self.label_ioc_name.setEnabled(not loc)
-            self.lineEdit_ioc_name.setEnabled(not loc)
-            self.comboBox_connection_type = QComboBox()
-            self.connector = Connection_Config()
-            layout.addWidget(self.checkBox_use_local_ioc, 3, 0)
-            layout.addWidget(self.label_ioc_name, 3, 1)
-            layout.addWidget(self.lineEdit_ioc_name, 3, 2)
-            layout.addWidget(self.label_connection, 5, 0)
-            layout.addWidget(self.comboBox_connection_type, 5, 1, 1, 2)
-            self.comboBox_connection_type.currentTextChanged.connect(self.connection_type_changed)
-            self.checkBox_use_local_ioc.clicked.connect(self.ioc_set_changed)
+        # self.no_ioc_connection = no_ioc_connection
+        # if not no_ioc_connection:
+        self.label_connection = QLabel('Connection-type:')
+        self.checkBox_use_local_ioc = QCheckBox('Use local IOC')
+        self.checkBox_use_local_ioc.setChecked(True)
+        loc = True
+        if 'use_local_ioc' in ioc_dict:
+            loc = ioc_dict['use_local_ioc']
+            self.checkBox_use_local_ioc.setChecked(loc)
+        self.label_ioc_name = QLabel('IOC name:')
+        self.label_ioc_name.setAlignment(Qt.AlignRight)
+        self.lineEdit_ioc_name = QLineEdit()
+        if 'ioc_name' in ioc_dict:
+            self.lineEdit_ioc_name.setText(ioc_dict['ioc_name'])
+        self.label_ioc_name.setEnabled(not loc)
+        self.lineEdit_ioc_name.setEnabled(not loc)
+        self.comboBox_connection_type = QComboBox()
+        self.connector = Connection_Config()
+        layout.addWidget(self.checkBox_use_local_ioc, 5, 0)
+        layout.addWidget(self.label_ioc_name, 5, 1)
+        layout.addWidget(self.lineEdit_ioc_name, 5, 2)
+        layout.addWidget(self.label_connection, 4, 0)
+        layout.addWidget(self.comboBox_connection_type, 4, 1, 1, 2)
+        self.comboBox_connection_type.currentTextChanged.connect(self.connection_type_changed)
+        self.checkBox_use_local_ioc.clicked.connect(self.ioc_set_changed)
 
         layout.addWidget(label_title, 0, 0, 1, 5)
         layout.addWidget(self.label_custom_name, 1, 0)
         layout.addWidget(self.lineEdit_custom_name, 1, 1, 1, 2)
         layout.addWidget(self.textEdit_desc, 2, 0, 1, 5)
-        layout.addWidget(self.line_2, 4, 0, 1, 5)
+        layout.addWidget(self.line_2, 3, 0, 1, 5)
 
         self.settings_dict = settings_dict
         self.config_dict = config_dict
@@ -314,20 +314,28 @@ class Device_Config(QWidget):
         """Called when the comboBox_connection_type is changed. Switches
         to another connector-widget to specify things like the Address
         of the device."""
-        if self.comboBox_connection_type.currentText() == 'prologix-GPIB':
+        comboText = self.comboBox_connection_type.currentText()
+        ep = comboText.startswith('EPICS:')
+        self.checkBox_use_local_ioc.setHidden(not ep)
+        self.label_ioc_name.setHidden(not ep)
+        self.lineEdit_ioc_name.setHidden(not ep)
+        if self.comboBox_connection_type.currentText() == 'EPICS: prologix-GPIB':
             self.connector = Prologix_Config()
-        elif self.comboBox_connection_type.currentText() == 'USB-serial':
+        elif self.comboBox_connection_type.currentText() == 'EPICS: USB-serial':
             self.connector = USB_Serial_Config()
+        elif self.comboBox_connection_type.currentText() == 'Local VISA':
+            self.connector = Local_VISA()
         self.layout().addWidget(self.connector, 6, 0, 1, 5)
-        self.connector.connection_change.connect(self.ioc_change.emit)
-        self.ioc_change.emit()
+        if ep:
+            self.connector.connection_change.connect(self.ioc_change.emit)
+            self.ioc_change.emit()
 
     def get_ioc_settings(self):
-        if not self.no_ioc_connection:
-            self.ioc_settings.update({'use_local_ioc': self.checkBox_use_local_ioc.isChecked(),
-                                      'ioc_name': self.lineEdit_ioc_name.text()})
-            self.ioc_settings.update({'connection': {'type': self.comboBox_connection_type.currentText()}})
-            self.ioc_settings['connection'].update(self.connector.get_settings())
+        # if not self.no_ioc_connection:
+        self.ioc_settings.update({'use_local_ioc': self.checkBox_use_local_ioc.isChecked(),
+                                  'ioc_name': self.lineEdit_ioc_name.text()})
+        self.ioc_settings.update({'connection': {'type': self.comboBox_connection_type.currentText()}})
+        self.ioc_settings['connection'].update(self.connector.get_settings())
         return self.ioc_settings
 
     def get_settings(self):
@@ -335,9 +343,9 @@ class Device_Config(QWidget):
         Overwrite this function for each device to specify the settings.
         It is recommended to still call the super() method for the
         connection-settings."""
-        if not self.no_ioc_connection:
-            self.settings_dict.update({'connection': {'type': self.comboBox_connection_type.currentText()}})
-            self.settings_dict['connection'].update(self.connector.get_settings())
+        # if not self.no_ioc_connection:
+        self.settings_dict.update({'connection': {'type': self.comboBox_connection_type.currentText()}})
+        self.settings_dict['connection'].update(self.connector.get_settings())
         return self.settings_dict
 
     def load_settings(self):
@@ -345,9 +353,12 @@ class Device_Config(QWidget):
         connection-type, the correct widget is set and the settings
         entered. Overwrite this function (and call it) for the specific
         settings."""
-        if 'connection' in self.ioc_settings and not self.no_ioc_connection:
+        if 'connection' in self.ioc_settings:
             self.comboBox_connection_type.setCurrentText(self.ioc_settings['connection']['type'])
             self.connector.load_settings(self.ioc_settings['connection'])
+            no_choice = self.comboBox_connection_type.count() < 2
+            self.comboBox_connection_type.setHidden(no_choice)
+            self.label_connection.setHidden(no_choice)
 
     def get_config(self):
         """Returns the config_dict of the device. Overwrite this
@@ -462,6 +473,44 @@ class USB_Serial_Config(Connection_Config):
     def load_settings(self, settings_dict):
         if 'Port' in settings_dict and settings_dict['Port'] in self.ports.keys():
             self.comboBox_port.setCurrentText(settings_dict['Port'])
+
+
+
+class Local_VISA(Connection_Config):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        label_port = QLabel('Resource-Name:')
+        self.comboBox_port = QComboBox()
+        import pyvisa
+        rm = pyvisa.ResourceManager()
+        self.ports = rm.list_resources()
+        self.comboBox_port.addItems(self.ports)
+        # self.comboBox_port.currentTextChanged.connect(self.change_desc)
+
+        # self.label_desc = QLabel()
+        # self.label_desc.setEnabled(False)
+        # self.label_hwid = QLabel()
+        # self.label_hwid.setEnabled(False)
+
+        self.layout().addWidget(label_port, 0, 0)
+        self.layout().addWidget(self.comboBox_port, 0, 1, 1, 4)
+        # self.layout().addWidget(self.label_desc, 1, 0, 1, 2)
+        # self.layout().addWidget(self.label_hwid, 1, 2, 1, 3)
+    #     self.change_desc()
+    #
+    # def change_desc(self):
+    #     port = self.comboBox_port.currentText()
+    #     desc = self.ports[port]['description']
+    #     hwid = self.ports[port]['hardware']
+    #     self.label_desc.setText(desc)
+    #     self.label_hwid.setText(hwid)
+
+    def get_settings(self):
+        return {'resource_name': self.comboBox_port.currentText()}
+
+    def load_settings(self, settings_dict):
+        if 'resource_name' in settings_dict and settings_dict['resource_name'] in self.ports:
+            self.comboBox_port.setCurrentText(settings_dict['resource_name'])
 
 
 

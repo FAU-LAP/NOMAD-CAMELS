@@ -253,7 +253,7 @@ def update_addresses(device, address_dict, port_string, supports):
         conn_type = conn_dict['type']
         if conn_type not in address_dict:
             address_dict.update({conn_type: []})
-        if conn_type == 'prologix-GPIB':
+        if conn_type == 'EPICS: prologix-GPIB':
             if 'prologixSup' not in supports:
                 supports.append('prologixSup')
             if conn_dict['IP-Address'] in address_dict[conn_type]:
@@ -268,7 +268,7 @@ def update_addresses(device, address_dict, port_string, supports):
                 port_string += f'asynSetTraceIOMask("prologix_{n}", 5, 0x2)\n'
                 port_string += f'asynSetTraceMask("prologix_{n}", 5, 0x9)\n'
             comm = f'prologix_{n} {conn_dict["GPIB-Address"]}'
-        elif conn_type == 'USB-serial':
+        elif conn_type == 'EPICS: USB-serial':
             address_dict[conn_type].append(conn_dict['Port'])
             tty = f'/dev/ttyS{conn_dict["Port"][3:]}'
             info = subprocess.Popen(['wsl', './EPICS_handling/chmod_maker.cmd',

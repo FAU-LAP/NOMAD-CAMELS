@@ -38,7 +38,7 @@ class subclass_config(device_class.Device_Config):
                  config_dict=None, ioc_dict=None, additional_info=None):
         super().__init__(parent, 'Voltcraft PPS', data, settings_dict,
                          config_dict, ioc_dict, additional_info)
-        self.comboBox_connection_type.addItem('USB-serial')
+        self.comboBox_connection_type.addItem('EPICS: USB-serial')
         self.lineEdit_R = QLineEdit()
         self.lineEdit_R.setText(str(config_dict['setR']))
         self.labelR = QLabel('Resistance:')

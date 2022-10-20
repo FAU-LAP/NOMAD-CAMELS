@@ -103,12 +103,15 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         if 'description' in additional_info:
             desc = additional_info['description'].replace('\n', '\n\t\t')
             devices_string += f'\t\t"""{dev} ({classname}):\n\t\t{desc}"""\n'
-        devices_string += f'\t\tsettings = {settings}\n'
-        devices_string += f'\t\tioc_settings = {ioc_settings}\n'
         if not ioc_settings or ioc_settings['use_local_ioc']:
             ioc_name = variables_handling.preset
         else:
             ioc_name = ioc_settings['ioc_name']
+        connection_check(ioc_settings, settings)
+        devices_string += f'\t\tsettings = {settings}\n'
+        if ioc_settings:
+            devices_string += f'\t\tioc_settings = {ioc_settings}\n'
+        devices_string += f'\t\tadditional_info = {additional_info}\n'
         devices_string += f'\t\t{dev} = {classname}("{ioc_name}:{dev}:", name="{dev}", **settings)\n'
         devices_string += f'\t\tprint("connecting {dev}")\n'
         devices_string += f'\t\t{dev}.wait_for_connection()\n'
@@ -117,7 +120,9 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         devices_string += f'\t\tdevice_config["{dev}"] = {{}}\n'
         devices_string += f'\t\tdevice_config["{dev}"].update(configs)\n'
         devices_string += f'\t\tdevice_config["{dev}"]["settings"] = settings\n'
-        devices_string += f'\t\tdevice_config["{dev}"]["ioc_settings"] = ioc_settings\n'
+        if ioc_settings:
+            devices_string += f'\t\tdevice_config["{dev}"]["ioc_settings"] = ioc_settings\n'
+        devices_string += f'\t\tdevice_config["{dev}"]["additional_info"] = additional_info\n'
         devices_string += f'\t\tdevs.update({{"{dev}": {dev}}})\n'
         device_import_string += f'from {device.name}.{device.name}_ophyd import {classname}\n'
         additional_string_devices += device.get_additional_string()
@@ -181,9 +186,18 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     with open(file_path, 'w+') as file:
         file.write(protocol_string)
 
+
 def user_sample_string(userdata, sampledata):
     """Returns the string adding userdata and sampledata to the md."""
     u_s_string = f'\t\tmd["user"] = {userdata}\n'
     u_s_string += f'\t\tmd["sample"] = {sampledata}\n'
     return u_s_string
 
+def connection_check(ioc_settings, settings):
+    if not 'connection' in ioc_settings:
+        return
+    conn = ioc_settings['connection']
+    connTyp = conn['type']
+    if connTyp == 'Local VISA':
+        settings['resource_name'] = conn['resource_name']
+        ioc_settings.clear()

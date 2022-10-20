@@ -77,7 +77,7 @@ class subclass_config(device_class.Device_Config):
                  config_dict=None, ioc_dict=None, additional_info=None):
         super().__init__(parent, 'Keysight E5270B', data, settings_dict,
                          config_dict, ioc_dict, additional_info)
-        self.comboBox_connection_type.addItem('prologix-GPIB')
+        self.comboBox_connection_type.addItem('EPICS: prologix-GPIB')
         self.sub_widget = subclass_config_sub(config_dict=self.config_dict, parent=self)
         self.layout().addWidget(self.sub_widget, 20, 0, 1, 5)
         self.load_settings()

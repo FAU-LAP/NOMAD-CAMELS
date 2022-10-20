@@ -13,6 +13,7 @@ class subclass(device_class.Device):
 class subclass_config(device_class.Device_Config):
     def __init__(self, parent=None, data='', settings_dict=None, config_dict=None, additional_info=None, **kwargs):
         super().__init__(parent, 'Keysight B2912', data, settings_dict=settings_dict, config_dict=config_dict, additional_info=additional_info, no_ioc_connection=True, **kwargs)
+        self.comboBox_connection_type.addItem('Local VISA')
         self.tab_widget = QTabWidget()
         conf1 = {}
         conf2 = {}
@@ -26,6 +27,7 @@ class subclass_config(device_class.Device_Config):
         self.tab_widget.addTab(self.channel_widge_1, 'Channel 1')
         self.tab_widget.addTab(self.channel_widge_2, 'Channel 2')
         self.layout().addWidget(self.tab_widget, 20, 0, 1, 5)
+        self.load_settings()
 
     def get_config(self):
         conf1 = self.channel_widge_1.get_config()
@@ -70,8 +72,17 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_B2912_channel):
             self.checkBox_output_protection.setChecked(config_dict['output_protection'])
         if 'current_compliance' in config_dict:
             self.lineEdit_current_compliance.setText(str(config_dict['current_compliance']))
+        else:
+            self.lineEdit_current_compliance.setText('0.1')
         if 'voltage_compliance' in config_dict:
             self.lineEdit_voltage_compliance.setText(str(config_dict['voltage_compliance']))
+        else:
+            self.lineEdit_voltage_compliance.setText('2')
+
+        if 'NPLC' in config_dict:
+            self.lineEdit_NPLC.setText(str(config_dict['NPLC']))
+        else:
+            self.lineEdit_NPLC.setText('1')
 
         if 'four_wire_meas' in config_dict:
             self.checkBox_four_wire_meas.setChecked(config_dict['four_wire_meas'])
