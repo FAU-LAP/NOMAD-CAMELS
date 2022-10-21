@@ -190,6 +190,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_sample_data()
         variables_handling.CAMELS_path = os.path.dirname(__file__)
 
+        self.show_console_output()
+
         if 'autostart_ioc' in self.preferences and self.preferences['autostart_ioc']:
             self.run_stop_ioc()
 

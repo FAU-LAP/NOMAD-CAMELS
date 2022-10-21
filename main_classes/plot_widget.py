@@ -80,7 +80,12 @@ class PlotWidget(QWidget):
             else:
                 for i, param in enumerate(fit['initial_params']['name']):
                     params[param].set(min=lower[param], max=upper[param])
-
+            # unneeded_params = []
+            # for param, val in params.items():
+            #     if val.expr is not None:
+            #         unneeded_params.append(param)
+            # for p in unneeded_params:
+            #     params.pop(p)
             name = f'{label}_{fit["y"]}_v_{fit["x"]}'
             name = replace_name(name)
             livefit = LiveFit_Eva(model, fit["y"], {'x': fit["x"]}, init_guess,
@@ -246,20 +251,23 @@ class Fit_Ophyd(Device):
                          configuration_attrs=configuration_attrs, parent=parent,
                          **kwargs)
         self.params = params.keys()
-        order = [self.a, self.b, self.c, self.d, self.e, self.f, self.g, self.h,
-                 self.i, self.j, self.k, self.l, self.m, self.n, self.o, self.p,
-                 self.q, self.r]
-        self.used_comps = [self.covar]
-        for i, comp in enumerate(self.params):
-            order[i].name = f'{name}_{comp}'
-            self.used_comps.append(order[i])
+        self.order = [self.a, self.b, self.c, self.d, self.e, self.f, self.g,
+                      self.h, self.i, self.j, self.k, self.l, self.m, self.n,
+                      self.o, self.p, self.q, self.r]
+        self.used_comps = []
+
+    # def update_used_comps(self):
+    #     self.used_comps = [self.covar]
+    #     for i, comp in enumerate(self.params):
+    #         self.order[i].name = f'{self.name}_{comp}'
+    #         self.used_comps.append(self.order[i])
 
     def update_data(self, result, timestamp):
-        order = [self.a, self.b, self.c, self.d, self.e, self.f, self.g, self.h,
-                 self.i, self.j, self.k, self.l, self.m, self.n, self.o, self.p,
-                 self.q, self.r]
+        self.used_comps = [self.covar]
         for i, comp in enumerate(self.params):
-            order[i].update_data(result.best_values[comp], timestamp)
+            if comp in result.best_values:
+                self.order[i].update_data(result.best_values[comp], timestamp)
+                self.used_comps.append(self.order[i])
         self.covar.update_data(result.covar, timestamp)
 
 
