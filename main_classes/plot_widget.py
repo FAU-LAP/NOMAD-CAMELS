@@ -256,18 +256,13 @@ class Fit_Ophyd(Device):
                       self.o, self.p, self.q, self.r]
         self.used_comps = []
 
-    # def update_used_comps(self):
-    #     self.used_comps = [self.covar]
-    #     for i, comp in enumerate(self.params):
-    #         self.order[i].name = f'{self.name}_{comp}'
-    #         self.used_comps.append(self.order[i])
-
     def update_data(self, result, timestamp):
         self.used_comps = [self.covar]
         for i, comp in enumerate(self.params):
             if comp in result.best_values:
                 self.order[i].update_data(result.best_values[comp], timestamp)
                 self.used_comps.append(self.order[i])
+                self.order[i].name = f'{self.name}_{comp}'
         self.covar.update_data(result.covar, timestamp)
 
 
