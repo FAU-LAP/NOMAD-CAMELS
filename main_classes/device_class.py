@@ -114,6 +114,9 @@ class Device:
                     self.passive_config.update({f'{name}': 0})
         self.add_ons = {}
 
+    def get_necessary_devices(self):
+        return []
+
     def get_add_ons(self):
         return self.add_ons
 
@@ -356,12 +359,13 @@ class Device_Config(QWidget):
         connection-type, the correct widget is set and the settings
         entered. Overwrite this function (and call it) for the specific
         settings."""
+        self.connection_type_changed()
+        no_choice = self.comboBox_connection_type.count() < 2
+        self.label_connection.setHidden(no_choice)
+        self.comboBox_connection_type.setHidden(no_choice)
         if 'connection' in self.ioc_settings:
             self.comboBox_connection_type.setCurrentText(self.ioc_settings['connection']['type'])
             self.connector.load_settings(self.ioc_settings['connection'])
-            no_choice = self.comboBox_connection_type.count() < 2
-            self.comboBox_connection_type.setHidden(no_choice)
-            self.label_connection.setHidden(no_choice)
 
     def get_config(self):
         """Returns the config_dict of the device. Overwrite this

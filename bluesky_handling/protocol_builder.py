@@ -100,6 +100,14 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
             settings.pop('connection')
         if 'idn' in settings:
             settings.pop('idn')
+        extra_settings = {}
+        non_strings = []
+        for key in settings:
+            if key.startswith('!non_string!_'):
+                extra_settings[key.replace('!non_string!_', '')] = settings[key]
+                non_strings.append(key)
+        for s in non_strings:
+            settings.pop(s)
         if not ioc_settings or ioc_settings['use_local_ioc']:
             ioc_name = variables_handling.preset
         else:
@@ -114,7 +122,10 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         if ioc_settings:
             devices_string += f'\t\tioc_settings = {ioc_settings}\n'
         devices_string += f'\t\tadditional_info = {additional_info}\n'
-        devices_string += f'\t\t{dev} = {classname}("{ioc_name}:{dev}:", name="{dev}", **settings)\n'
+        devices_string += f'\t\t{dev} = {classname}("{ioc_name}:{dev}:", name="{dev}", '
+        for key, value in extra_settings.items():
+            devices_string += f'{key}={value}, '
+        devices_string += '**settings)\n'
         devices_string += f'\t\tprint("connecting {dev}")\n'
         devices_string += f'\t\t{dev}.wait_for_connection()\n'
         devices_string += f'\t\tconfig = {config}\n'

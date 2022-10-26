@@ -57,7 +57,7 @@ class PID_Controller(Device):
     #pid_bias = Cpt(Simple_Signal, read_pv_name=None, name='pid_bias')
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, pid_val_table=None, read_conv_func=None, auto_pid=True, interpolate_auto=True, set_conv_func=None, bias_signal=None, **kwargs):
-        super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent)
+        super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, **kwargs)
         self.pid_val.read_pv_name = f'{prefix}pid_controller.VAL'
         self.pid_cval.read_pv_name = f'{prefix}pid_controller.CVAL'
         self.pid_kp.read_pv_name = f'{prefix}pid_controller.KP'

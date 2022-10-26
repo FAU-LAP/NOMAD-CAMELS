@@ -205,7 +205,13 @@ class Measurement_Protocol:
         for step in self.loop_steps:
             step.update_used_devices()
             devices += step.used_devices
-        return list(set(devices))
+        adds = []
+        for dev in devices:
+            adds += variables_handling.devices[dev].get_necessary_devices()
+        devices += adds
+        devices = list(set(devices))
+        devices = sorted(devices, key=lambda x: x in adds, reverse=True)
+        return devices
 
 def append_all_children(child_list, step, step_dict):
     """Takes a list of the kind specified in rearrange_loop_steps, does

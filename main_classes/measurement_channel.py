@@ -22,6 +22,9 @@ class Measurement_Channel:
             return self.min_val
         return val
 
+    def get_bluesky_name(self):
+        return f'{self.device}.{self.name.split(".")[-1]}'
+
     def get_pv_name(self):
         """Returns the name of the corresponding EPICS PV."""
         name = f'{variables_handling.preset}:{self.device}:{self.name.split(".")[-1]}'
