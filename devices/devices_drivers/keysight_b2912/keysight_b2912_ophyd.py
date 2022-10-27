@@ -11,11 +11,11 @@ def source_func(inp, chan, volt_source):
     else:
         v = 'CURR'
         volt_source[chan-1] = False
-    return f':SOUR{chan}:{v}'
+    return f':SOUR{chan}:{v} 0.0'
 
 def source_range_func(inp, chan, volt_source):
     v = 'VOLT' if volt_source[chan-1] else 'CURR'
-    return f':SOUR{chan}:{v}:{inp[:-2]}'
+    return f'SOUR{chan}:{v}:{inp[:-2]}'
 
 def source_auto_func(inp, chan, volt_source):
     v = 'VOLT' if volt_source[chan-1] else 'CURR'

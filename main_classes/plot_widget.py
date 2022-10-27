@@ -14,7 +14,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg,\
 
 from PyQt5.QtWidgets import QWidget, QGridLayout, QApplication, QPushButton,\
     QTableWidgetItem, QColorDialog, QComboBox
-from PyQt5.QtCore import pyqtSignal, QObject, Qt
+from PyQt5.QtCore import pyqtSignal, QObject, Qt, QCoreApplication
 from PyQt5.QtGui import QIcon
 
 from gui.plot_options import Ui_Plot_Options
@@ -629,6 +629,9 @@ class MultiLivePlot(LivePlot, QObject):
 class PlotWidget_NoBluesky(QWidget):
     def __init__(self, xlabel='', ylabel='', parent=None, title='', ylabel2='',
                  y_axes=None, labels=()):
+        app = QCoreApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
         super().__init__(parent=parent)
         canvas = MPLwidget()
         self.ax = canvas.axes

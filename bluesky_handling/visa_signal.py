@@ -1,5 +1,8 @@
 from ophyd import Signal, SignalRO, Device
 import pyvisa
+import re
+
+# number_pattern =
 
 rm = pyvisa.ResourceManager()
 open_resources = {}
@@ -48,10 +51,11 @@ class VISA_Signal_Write(Signal):
 
 
 class VISA_Signal_Read(SignalRO):
-    def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', read_termination='\n', write_termination='\n', baud_rate=9600, resource_name='', query_text='', read_conv_function=None):
+    def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', read_termination='\n', write_termination='\n', baud_rate=9600, resource_name='', query_text='', match_return=False, read_function=None):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
         self.visa_instrument = None
         self.resource_name = resource_name
+        self.match_return = match_return
         if resource_name:
             if resource_name in open_resources:
                 self.visa_instrument = open_resources[resource_name]
@@ -61,17 +65,24 @@ class VISA_Signal_Read(SignalRO):
             self.visa_instrument.read_termination = read_termination
             self.visa_instrument.write_termination = write_termination
             self.visa_instrument.baud_rate = baud_rate
-        self.read_conv_function = read_conv_function or None
+        self.read_function = read_function or None
         self.query_text = query_text
 
     def get(self):
-        val = self.visa_instrument.query(self.query_text)
-        if self.read_conv_function:
-            val = self.read_conv_function(val)
+        if self.read_function:
+            val = self.visa_instrument.query(self.read_function())
+        else:
+            val = self.visa_instrument.query(self.query_text)
         try:
             val = float(val)
         except:
-            pass
+            if self.match_return:
+                try:
+                    match = re.search(r".*?([-+eE\d.]+).*", val)
+                    gr = match.group(1)
+                    val = float(gr)
+                except:
+                    pass
         self._readback = val
         return super().get()
 
@@ -81,7 +92,7 @@ class VISA_Device(Device):
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, resource_name='',
                  read_termination='\r\n', write_termination='\r\n',
-                 baud_rate=9600,**kwargs):
+                 baud_rate=9600, **kwargs):
         super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
                          configuration_attrs=configuration_attrs, parent=parent, **kwargs)
         self.visa_instrument = None
@@ -95,6 +106,9 @@ class VISA_Device(Device):
             self.visa_instrument.read_termination = read_termination
             self.visa_instrument.baud_rate = baud_rate
 
+        for comp in self.walk_signals():
+            it = comp.item
+            it.visa_instrument = self.visa_instrument
 
 
 
