@@ -15,16 +15,16 @@ def source_func(inp, chan, volt_source):
 
 def source_range_func(inp, chan, volt_source):
     v = 'VOLT' if volt_source[chan-1] else 'CURR'
-    return f'SOUR{chan}:{v}:{inp[:-2]}'
+    return f':SOUR{chan}:{v}:RANG {inp[:-2]}'
 
 def source_auto_func(inp, chan, volt_source):
     v = 'VOLT' if volt_source[chan-1] else 'CURR'
     m = 'ON' if inp else 'OFF'
-    return f':SOUR{chan}:{v}:AUTO {m}'
+    return f':SOUR{chan}:{v}:RANG:AUTO {m}'
 
 def range_lower_lim_func(inp, chan, volt_source):
     v = 'VOLT' if volt_source[chan-1] else 'CURR'
-    return f':SOUR{chan}:{v}:AUTO:LLIM {inp[:-2]}'
+    return f':SOUR{chan}:{v}:RANG:AUTO:LLIM {inp[:-2]}'
 
 def output_protection_func(inp, chan):
     v = 'ON' if inp else 'OFF'
