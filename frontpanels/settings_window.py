@@ -1,6 +1,8 @@
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QApplication
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent
+import qt_material
+import qdarkstyle
 
 from gui.settings_window import Ui_settings_window
 from utility.load_save_functions import standard_pref
@@ -11,10 +13,21 @@ class Settings_Window(QDialog, Ui_settings_window):
         super().__init__(parent)
         self.setupUi(self)
         self.setWindowTitle('CAMELS - Settings')
-        if 'dark_mode' in settings:
-            self.checkBox_dark_mode.setChecked(settings['dark_mode'])
+        # if 'dark_mode' in settings:
+        #     self.checkBox_dark_mode.setChecked(settings['dark_mode'])
+        # else:
+        #     self.checkBox_dark_mode.setChecked(standard_pref['dark_mode'])
+        themes = ['default', 'qdarkstyle']
+        themes += qt_material.list_themes()
+        for i, theme in enumerate(themes):
+            if theme.endswith('.xml'):
+                themes[i] = theme[:-4]
+        self.comboBox_theme.addItems(themes)
+        if 'graphic_theme' in settings and settings['graphic_theme'] in themes:
+            self.comboBox_theme.setCurrentText(settings['graphic_theme'])
         else:
-            self.checkBox_dark_mode.setChecked(standard_pref['dark_mode'])
+            self.comboBox_theme.setCurrentText('default')
+        self.comboBox_theme.currentTextChanged.connect(self.change_theme)
         if 'autosave' in settings:
             self.checkBox_autosave.setChecked(settings['autosave'])
         else:
@@ -57,6 +70,16 @@ class Settings_Window(QDialog, Ui_settings_window):
         else:
             self.lineEdit_catalog_name.setText(standard_pref['databroker_catalog_name'])
 
+    def change_theme(self):
+        theme = self.comboBox_theme.currentText()
+        main_app = QApplication.instance()
+        if theme == 'default':
+            main_app.setStyleSheet('')
+        elif theme == 'qdarkstyle':
+            main_app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
+        else:
+            qt_material.apply_stylesheet(main_app, theme=theme+'.xml')
+
     def get_settings(self):
         """Reading all the UI-elements to get the selected settings,
         then returning those as a dictionary."""
@@ -66,8 +89,10 @@ class Settings_Window(QDialog, Ui_settings_window):
             numbers = 'scientific'
         else:
             numbers = 'mixed'
-        return {'dark_mode': self.checkBox_dark_mode.isChecked(),
-                'autosave': self.checkBox_autosave.isChecked(),
+        theme = self.comboBox_theme.currentText()
+        return {'autosave': self.checkBox_autosave.isChecked(),
+                'dark_mode': 'dark' in theme,
+                'graphic_theme': theme,
                 'n_decimals': self.spinBox_n_decimals.value(),
                 'number_format': numbers,
                 'mixed_from': self.spinBox_scientific_from.value(),

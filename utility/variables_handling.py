@@ -80,13 +80,13 @@ def get_color(color='', string=False):
     """Returns the respective QColor or rgb-code(if `string`) for
     `color`, taking dark-mode into account."""
     if color == 'red' or color == 'r':
-        rgb = (255, 153, 153)
+        rgb = (255, 180, 180)
         if dark_mode:
-            rgb = (153, 0, 0)
+            rgb = (75, 0, 0)
     elif color == 'green' or color == 'g':
-        rgb = (153, 255, 153)
+        rgb = (180, 255, 180)
         if dark_mode:
-            rgb = (0, 153, 0)
+            rgb = (0, 75, 0)
     elif color == 'grey' or color == 'gray':
         rgb = (169, 169, 169)
     elif color == 'black':

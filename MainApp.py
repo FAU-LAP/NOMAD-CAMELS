@@ -31,6 +31,7 @@ from main_classes.protocol_class import Measurement_Protocol, General_Protocol_S
 from commands import change_sequence
 
 from loop_steps import make_step_of_type
+from qt_material import apply_stylesheet
 
 from main_classes.add_on import AddOn
 
@@ -390,25 +391,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.preferences = load_save_functions.get_preferences()
         variables_handling.preferences = self.preferences
         number_formatting.preferences = self.preferences
-        if 'dark_mode' in self.preferences:
-            self.toggle_dark_mode()
+        # if 'dark_mode' in self.preferences:
+        #     self.toggle_dark_mode()
+        if 'graphic_theme' in self.preferences:
+            self.change_theme()
         self.change_catalog_name()
         variables_handling.device_driver_path = self.preferences['device_driver_path']
         variables_handling.meas_files_path = self.preferences['meas_files_path']
+
+    def change_theme(self):
+        theme = self.preferences['graphic_theme']
+        main_app = QApplication.instance()
+        if main_app is None:
+            raise RuntimeError("MainApp not found.")
+        if theme == 'default':
+            main_app.setStyleSheet('')
+        elif theme == 'qdarkstyle':
+            main_app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
+        else:
+            apply_stylesheet(main_app, theme=theme+'.xml')
+        self.toggle_dark_mode()
 
     def toggle_dark_mode(self):
         """Turning dark mode on / off, called whenever the settigns are
         changed. Using qdarkstyle to provide the stylesheets."""
         dark = self.preferences['dark_mode']
-        main_app = QApplication.instance()
-        if main_app is None:
-            raise RuntimeError("MainApp not found.")
-        if dark:
-            main_app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
-            variables_handling.dark_mode = True
-        else:
-            main_app.setStyleSheet('')
-            variables_handling.dark_mode = False
+        variables_handling.dark_mode = dark
 
     def change_catalog_name(self):
         if 'meas_files_path' in self.preferences:
@@ -425,11 +433,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if settings_dialog.exec_():
             self.preferences = settings_dialog.get_settings()
             number_formatting.preferences = self.preferences
-            self.toggle_dark_mode()
+            # self.toggle_dark_mode()
             self.change_catalog_name()
             load_save_functions.save_preferences(self.preferences)
             variables_handling.device_driver_path = self.preferences['device_driver_path']
             variables_handling.meas_files_path = self.preferences['meas_files_path']
+        self.change_theme()
         # prefs = {'autosave': self.actionAutosave_on_closing.isChecked(),
         #          'dark_mode': self.actionDark_Mode.isChecked()}
         # load_save_functions.save_preferences(prefs)

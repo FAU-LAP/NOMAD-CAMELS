@@ -29,6 +29,7 @@ save_dict_skip = [QWidget, QSplitter, QLabel, QPushButton, QMenu, QMenuBar,
 
 standard_pref = {'autosave': True,
                  'dark_mode': False,
+                 'graphic_theme': 'default',
                  'n_decimals': 3,
                  'number_format': 'mixed',
                  'mixed_from': 3,
@@ -299,6 +300,9 @@ def get_preferences():
             json.dump(standard_pref, file, indent=2)
     with open(f'{appdata_path}/preferences.json', 'r') as file:
         prefs = json.load(file)
+    for key, value in standard_pref.items():
+        if key not in prefs:
+            prefs[key] = value
     return prefs
 
 def save_preferences(prefs:dict):
