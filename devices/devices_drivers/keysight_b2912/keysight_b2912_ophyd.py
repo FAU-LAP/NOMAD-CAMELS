@@ -11,7 +11,14 @@ def source_func(inp, chan, volt_source):
     else:
         v = 'CURR'
         volt_source[chan-1] = False
-    return f':SOUR{chan}:{v} 0.0'
+    return f':SOUR{chan}:{v} 0.0; :SOUR{chan}:FUNC DC; FUNC:MODE {v}'
+
+def compliance_func(inp, chan, comp_type, volt_source):
+    v = 'VOLT' if volt_source[chan-1] else 'CURR'
+    if comp_type == v:
+        return ''
+    return f':SENS{chan}:{comp_type}:PROT {inp}'
+
 
 def source_range_func(inp, chan, volt_source):
     v = 'VOLT' if volt_source[chan-1] else 'CURR'
@@ -158,6 +165,10 @@ class Keysight_B2912(Device):
         self.source_range1.put_conv_function = lambda x: source_range_func(x, 1, self.v_source)
         self.range_lower_lim1.put_conv_function = lambda x: range_lower_lim_func(x, 1, self.v_source)
         self.source_auto1.put_conv_function = lambda x: source_auto_func(x, 1, self.v_source)
+        self.voltage_compliance1.put_conv_function = lambda x: compliance_func(x, 1, 'VOLT', self.v_source)
+        self.voltage_compliance2.put_conv_function = lambda x: compliance_func(x, 2, 'VOLT', self.v_source)
+        self.current_compliance1.put_conv_function = lambda x: compliance_func(x, 1, 'CURR', self.v_source)
+        self.current_compliance2.put_conv_function = lambda x: compliance_func(x, 2, 'CURR', self.v_source)
 
         self.source2.put_conv_function = lambda x: source_func(x, 2, self.v_source)
         self.source_range2.put_conv_function = lambda x: source_range_func(x, 2, self.v_source)
