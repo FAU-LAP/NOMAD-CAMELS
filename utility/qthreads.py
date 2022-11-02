@@ -70,9 +70,6 @@ class Run_Protocol(QThread):
         provided, the stdout will be written there. If `info_step` is
         provided, it will update the completed-percentage with each starting
         loopstep."""
-        args = []
-        if variables_handling.dark_mode:
-            args.append('--darkmode')
         cmd = ['.desertenv/Scripts/pythonw', '-c', "from IPython import embed; embed()"]
         self.popen = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
@@ -106,7 +103,9 @@ class Run_Protocol(QThread):
         self.write_to_console(f'spec.loader.exec_module({name}_mod)')
         self.counter = 0
         self.total_time = prot_time
-        self.write_to_console(f'dat_{name} = {name}_mod.main()')
+        dark = variables_handling.dark_mode
+        theme = variables_handling.preferences['graphic_theme']
+        self.write_to_console(f'dat_{name} = {name}_mod.main(dark={dark}, used_theme="{theme}")')
         self.already_run = True
         # self.write_to_console(f'print(dat_{name})')
 

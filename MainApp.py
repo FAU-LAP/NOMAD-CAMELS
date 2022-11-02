@@ -1,7 +1,6 @@
 import json
 import sys
 
-import qdarkstyle
 import importlib
 import os
 import socket
@@ -17,7 +16,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox,
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
 from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, \
-    add_remove_table
+    add_remove_table, theme_changing
 from bluesky_handling import protocol_builder, make_catalog
 from EPICS_handling import make_ioc
 
@@ -31,9 +30,7 @@ from main_classes.protocol_class import Measurement_Protocol, General_Protocol_S
 from commands import change_sequence
 
 from loop_steps import make_step_of_type
-from qt_material import apply_stylesheet
 
-from main_classes.add_on import AddOn
 
 os.environ['QT_API'] = 'pyqt5'
 camels_web = 'https://github.com/FAU-LAP/CAMELS'
@@ -401,15 +398,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def change_theme(self):
         theme = self.preferences['graphic_theme']
-        main_app = QApplication.instance()
-        if main_app is None:
-            raise RuntimeError("MainApp not found.")
-        if theme == 'default':
-            main_app.setStyleSheet('')
-        elif theme == 'qdarkstyle':
-            main_app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
-        else:
-            apply_stylesheet(main_app, theme=theme+'.xml')
+        theme_changing.change_theme(theme)
         self.toggle_dark_mode()
 
     def toggle_dark_mode(self):

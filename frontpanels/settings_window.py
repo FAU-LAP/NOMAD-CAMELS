@@ -1,11 +1,11 @@
-from PyQt5.QtWidgets import QDialog, QApplication
+from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent
 import qt_material
-import qdarkstyle
 
 from gui.settings_window import Ui_settings_window
 from utility.load_save_functions import standard_pref
+from utility.theme_changing import change_theme
 
 class Settings_Window(QDialog, Ui_settings_window):
     """Dialog to change the settings used in CAMELS."""
@@ -72,13 +72,7 @@ class Settings_Window(QDialog, Ui_settings_window):
 
     def change_theme(self):
         theme = self.comboBox_theme.currentText()
-        main_app = QApplication.instance()
-        if theme == 'default':
-            main_app.setStyleSheet('')
-        elif theme == 'qdarkstyle':
-            main_app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
-        else:
-            qt_material.apply_stylesheet(main_app, theme=theme+'.xml')
+        change_theme(theme)
 
     def get_settings(self):
         """Reading all the UI-elements to get the selected settings,
