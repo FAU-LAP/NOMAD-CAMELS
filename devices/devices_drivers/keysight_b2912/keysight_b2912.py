@@ -103,16 +103,22 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_B2912_channel):
         if 'current_auto_mode' in config_dict and config_dict['current_auto_mode'] in auto_range_modes:
             self.comboBox_current_auto_mode.setCurrentText(config_dict['current_auto_mode'])
 
+        self.comboBox_current_lower_lim.addItems(self.ranges_current)
         if 'current_lower_lim' in self.config_dict and self.config_dict['current_lower_lim'] in self.ranges_current:
             self.comboBox_current_lower_lim.setCurrentText(self.config_dict['current_lower_lim'])
+        self.comboBox_current_range.addItems(self.ranges_current)
         if 'current_range' in self.config_dict and self.config_dict['current_range'] in self.ranges_current:
             self.comboBox_current_range.setCurrentText(self.config_dict['current_range'])
+        self.comboBox_voltage_lower_lim.addItems(self.ranges_voltage)
         if 'voltage_lower_lim' in self.config_dict and self.config_dict['voltage_lower_lim'] in self.ranges_voltage:
             self.comboBox_voltage_lower_lim.setCurrentText(self.config_dict['voltage_lower_lim'])
+        self.comboBox_voltage_range.addItems(self.ranges_voltage)
         if 'voltage_range' in self.config_dict and self.config_dict['voltage_range'] in self.ranges_voltage:
             self.comboBox_voltage_range.setCurrentText(self.config_dict['voltage_range'])
+        self.comboBox_resistance_range.addItems(self.ranges_resistance)
         if 'resistance_range' in self.config_dict and self.config_dict['resistance_range'] in self.ranges_resistance:
             self.comboBox_resistance_range.setCurrentText(self.config_dict['resistance_range'])
+        self.comboBox_resistance_upper_lim.addItems(self.ranges_resistance)
         if 'resistance_upper_lim' in self.config_dict and self.config_dict['resistance_upper_lim'] in self.ranges_resistance:
             self.comboBox_resistance_upper_lim.setCurrentText(self.config_dict['resistance_upper_lim'])
 

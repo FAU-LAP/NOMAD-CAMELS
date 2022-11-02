@@ -49,7 +49,7 @@ def auto_range_lower_lim_func(inp, chan, typ):
     return f':SENS{chan}:{typ}:RANG:AUTO:LLIM {inp[:-2]}'
 
 def auto_range_upper_lim_func(inp, chan, typ):
-    return f':SENS{chan}:{typ}:RANG:AUTO:ULIM {inp[:-2]}'
+    return f':SENS{chan}:{typ}:RANG:AUTO:ULIM {inp[:-4]}'
 
 def res_comp_func(inp, chan):
     v = 'ON' if inp else 'OFF'
@@ -96,11 +96,11 @@ class Keysight_B2912(Device):
     low_terminal1 = Cpt(VISA_Signal_Write, name="low_terminal1", kind='config', put_conv_function=lambda x: low_terminal_func(x, 1))
     current_auto_mode1 = Cpt(VISA_Signal_Write, name="current_auto_mode1", kind='config', put_conv_function=lambda x: auto_range_mode_func(x, 1, 'CURR'))
     current_lower_lim1 = Cpt(VISA_Signal_Write, name="current_lower_lim1", kind='config', put_conv_function=lambda x: auto_range_lower_lim_func(x, 1, 'CURR'))
-    current_range1 = Cpt(VISA_Signal_Write, name="current_range1", kind='config', put_conv_function=lambda x: range_func(x, 1, 'CURR'))
-    voltage_range1 = Cpt(VISA_Signal_Write, name="voltage_range1", kind='config', put_conv_function=lambda x: range_func(x, 1, 'VOLT'))
+    current_range1 = Cpt(VISA_Signal_Write, name="current_range1", kind='config', put_conv_function=lambda x: range_func(x[:-2], 1, 'CURR'))
+    voltage_range1 = Cpt(VISA_Signal_Write, name="voltage_range1", kind='config', put_conv_function=lambda x: range_func(x[:-2], 1, 'VOLT'))
     voltage_auto_mode1 = Cpt(VISA_Signal_Write, name="voltage_auto_mode1", kind='config', put_conv_function=lambda x: auto_range_mode_func(x, 1, 'VOLT'))
     voltage_lower_lim1 = Cpt(VISA_Signal_Write, name="voltage_lower_lim1", kind='config', put_conv_function=lambda x: auto_range_lower_lim_func(x, 1, 'VOLT'))
-    resistance_range1 = Cpt(VISA_Signal_Write, name="resistance_range1", kind='config', put_conv_function=lambda x: range_func(x, 1, 'RES'))
+    resistance_range1 = Cpt(VISA_Signal_Write, name="resistance_range1", kind='config', put_conv_function=lambda x: range_func(x[:-4], 1, 'RES'))
     resistance_upper_lim1 = Cpt(VISA_Signal_Write, name="resistance_upper_lim1", kind='config', put_conv_function=lambda x: auto_range_upper_lim_func(x, 1, 'RES'))
     output_protection1 = Cpt(VISA_Signal_Write, name="output_protection1", kind='config', put_conv_function=lambda x: output_protection_func(x, 1))
     four_wire_meas1 = Cpt(VISA_Signal_Write, name="four_wire_meas1", kind='config', put_conv_function=lambda x: four_wire_meas_func(x, 1))
@@ -119,11 +119,11 @@ class Keysight_B2912(Device):
     low_terminal2 = Cpt(VISA_Signal_Write, name="low_terminal2", kind='config', put_conv_function=lambda x: low_terminal_func(x, 2))
     current_auto_mode2 = Cpt(VISA_Signal_Write, name="current_auto_mode2", kind='config', put_conv_function=lambda x: auto_range_mode_func(x, 2, 'CURR'))
     current_lower_lim2 = Cpt(VISA_Signal_Write, name="current_lower_lim2", kind='config', put_conv_function=lambda x: auto_range_lower_lim_func(x, 2, 'CURR'))
-    current_range2 = Cpt(VISA_Signal_Write, name="current_range2", kind='config', put_conv_function=lambda x: range_func(x, 2, 'CURR'))
-    voltage_range2 = Cpt(VISA_Signal_Write, name="voltage_range2", kind='config', put_conv_function=lambda x: range_func(x, 2, 'VOLT'))
+    current_range2 = Cpt(VISA_Signal_Write, name="current_range2", kind='config', put_conv_function=lambda x: range_func(x[:-2], 2, 'CURR'))
+    voltage_range2 = Cpt(VISA_Signal_Write, name="voltage_range2", kind='config', put_conv_function=lambda x: range_func(x[:-2], 2, 'VOLT'))
     voltage_auto_mode2 = Cpt(VISA_Signal_Write, name="voltage_auto_mode2", kind='config', put_conv_function=lambda x: auto_range_mode_func(x, 2, 'VOLT'))
     voltage_lower_lim2 = Cpt(VISA_Signal_Write, name="voltage_lower_lim2", kind='config', put_conv_function=lambda x: auto_range_lower_lim_func(x, 2, 'VOLT'))
-    resistance_range2 = Cpt(VISA_Signal_Write, name="resistance_range2", kind='config', put_conv_function=lambda x: range_func(x, 2, 'RES'))
+    resistance_range2 = Cpt(VISA_Signal_Write, name="resistance_range2", kind='config', put_conv_function=lambda x: range_func(x[:-4], 2, 'RES'))
     resistance_upper_lim2 = Cpt(VISA_Signal_Write, name="resistance_upper_lim2", kind='config', put_conv_function=lambda x: auto_range_upper_lim_func(x, 2, 'RES'))
     output_protection2 = Cpt(VISA_Signal_Write, name="output_protection2", kind='config', put_conv_function=lambda x: output_protection_func(x, 2))
     four_wire_meas2 = Cpt(VISA_Signal_Write, name="four_wire_meas2", kind='config', put_conv_function=lambda x: four_wire_meas_func(x, 2))
