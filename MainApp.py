@@ -1048,7 +1048,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.item_model_protocols.clear()
         for protocol in sorted(self.protocols_dict, key=lambda x: x.lower()):
             item = QStandardItem(protocol)
-            item.setCheckable(True)
+            # item.setCheckable(True)
             item.setData(protocol)
             self.item_model_protocols.appendRow(item)
 
