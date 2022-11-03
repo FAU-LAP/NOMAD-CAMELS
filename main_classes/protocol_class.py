@@ -138,7 +138,7 @@ class Measurement_Protocol:
         """Creates the step specified with step_info (including the
         children), 'step_type' gives which subclass of Loop_Step shall
         be created."""
-        children = None
+        # children = None
         # if step_info['has_children']:
         children = []
         if 'children' in step_info:

@@ -22,6 +22,8 @@ step_type_config = {'Change Device Config': [change_device_config.Change_DeviceC
                                      set_channels.Set_Channels_Config],
                     'Simple Sweep': [simple_sweep.Simple_Sweep,
                                      simple_sweep.Simple_Sweep_Config],
+                    'Trigger Channels': [read_channels.Trigger_Channels_Step,
+                                         read_channels.Trigger_Channels_Config],
                     'While Loop': [for_while_loops.While_Loop_Step,
                                    for_while_loops.While_Loop_Step_Config],
                     'Wait': [wait_loop_step.Wait_Loop_Step,

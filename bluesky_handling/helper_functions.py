@@ -2,6 +2,24 @@ import numpy as np
 from bluesky import plan_stubs as bps
 
 
+def trigger_multi(devices, grp=None):
+    for obj in devices:
+        if hasattr(obj, 'trigger'):
+            yield from bps.trigger(obj, group=grp)
+
+def read_wo_trigger(devices, grp=None, stream='primary'):
+    if grp is not None:
+        yield from bps.wait(grp)
+    yield from bps.create(stream)
+    ret = {}  # collect and return readings to give plan access to them
+    for obj in devices:
+        reading = (yield from bps.read(obj))
+        if reading is not None:
+            ret.update(reading)
+    yield from bps.save()
+    return ret
+
+
 def get_fit_results(fits, namespace, yielding=False, stream='primary'):
     for name, fit in fits.items():
         if not fit.result:

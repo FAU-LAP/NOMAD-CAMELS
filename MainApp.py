@@ -1076,6 +1076,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         prot_name = self.item_model_protocols.itemFromIndex(ind).data()
         protocol = self.protocols_dict[prot_name]
         self.current_protocol = protocol
+        variables_handling.current_protocol = protocol
         variables_handling.protocol_variables = self.current_protocol.variables
         variables_handling.loop_step_variables = self.current_protocol.loop_step_variables
         self.item_model_sequence.clear()

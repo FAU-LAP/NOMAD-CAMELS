@@ -69,8 +69,8 @@ class Set_Channels_Config(Loop_Step_Config):
         self.checkBox_wait_for_set = QCheckBox('Wait for set')
         self.checkBox_wait_for_set.setChecked(True)
         self.checkBox_wait_for_set.stateChanged.connect(self.check_change)
-        self.layout().addWidget(self.checkBox_wait_for_set, 1, 0)
-        self.layout().addWidget(self.sub_widget, 2, 0)
+        self.layout().addWidget(self.checkBox_wait_for_set, 1, 0, 1, 5)
+        self.layout().addWidget(self.sub_widget, 2, 0, 1, 5)
 
     def check_change(self):
         self.loop_step.wait_for_set = self.checkBox_wait_for_set.isChecked()

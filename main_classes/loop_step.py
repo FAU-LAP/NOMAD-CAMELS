@@ -198,6 +198,7 @@ class Loop_Step_Config(QWidget):
     Provides the main layout and a lineEdit for changing the loop_steps
     name."""
     name_changed = pyqtSignal()
+    add_other_step = pyqtSignal(dict)
 
     def __init__(self, parent=None, loop_step=None):
         super(Loop_Step_Config, self).__init__(parent)

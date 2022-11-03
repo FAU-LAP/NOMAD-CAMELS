@@ -18,6 +18,7 @@ protocol_variables = {}
 channels = {}
 loop_step_variables = {}
 devices = {}
+current_protocol = None
 dark_mode = False
 # evaluation_functions = simpleeval.DEFAULT_FUNCTIONS.copy()
 # evaluation_functions.update({'exp': np.exp,

@@ -380,7 +380,7 @@ class Ui_MainWindow(object):
         self.configuration_main_widget = QtWidgets.QWidget(self.meas_splitter)
         self.configuration_main_widget.setObjectName("configuration_main_widget")
         self.gridLayout_9 = QtWidgets.QGridLayout(self.configuration_main_widget)
-        self.gridLayout_9.setContentsMargins(0, 0, 9, 0)
+        self.gridLayout_9.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_9.setObjectName("gridLayout_9")
         self.label_5 = QtWidgets.QLabel(self.configuration_main_widget)
         self.label_5.setMaximumSize(QtCore.QSize(16777215, 19))

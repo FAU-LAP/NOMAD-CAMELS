@@ -177,8 +177,8 @@ class If_Step_Config_Sub(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(label, 0, 0)
         layout.addWidget(self.lineEdit_condition, 0, 1)
-        layout.addWidget(self.elif_table, 2, 0)
-        layout.addWidget(self.checkBox_use_else, 4, 0)
+        layout.addWidget(self.checkBox_use_else, 1, 0, 1, 2)
+        layout.addWidget(self.elif_table, 2, 0, 1, 2)
         self.setLayout(layout)
 
     def else_change(self):

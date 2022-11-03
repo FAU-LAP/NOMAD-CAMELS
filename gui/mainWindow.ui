@@ -514,6 +514,9 @@
       </widget>
       <widget class="QWidget" name="meas_main_widget" native="true">
        <layout class="QGridLayout" name="gridLayout_4">
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
         <item row="0" column="0" colspan="2">
          <widget class="QWidget" name="meas_widget" native="true">
           <layout class="QGridLayout" name="gridLayout_3">
@@ -878,7 +881,7 @@
                 <number>0</number>
                </property>
                <property name="rightMargin">
-                <number>9</number>
+                <number>0</number>
                </property>
                <property name="bottomMargin">
                 <number>0</number>
