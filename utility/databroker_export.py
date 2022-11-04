@@ -47,6 +47,9 @@ def broker_to_hdf5(runs, filename, additional_data=None):
         start_time = timestamp_to_ISO8601(metadata['start']['time'])
         with h5py.File(filename, 'a') as file:
             entry = file.create_group(start_time)
+            recourse_entry_dict(entry, metadata)
+            additional_data = additional_data or {}
+            recourse_entry_dict(entry, additional_data)
             for stream in run:
                 dataset = run[stream].read()
                 group = entry.create_group(stream)
@@ -63,9 +66,6 @@ def broker_to_hdf5(runs, filename, additional_data=None):
                         group[coord] = dataset[coord]
                 for col in dataset:
                     group[col] = dataset[col]
-            recourse_entry_dict(entry, metadata)
-            additional_data = additional_data or {}
-            recourse_entry_dict(entry, additional_data)
 
 
 

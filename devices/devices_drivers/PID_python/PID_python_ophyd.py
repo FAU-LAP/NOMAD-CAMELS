@@ -126,6 +126,7 @@ class PID_Controller(Device):
                                                  y_axes=y_axes)
                 self.pid_thread.new_data.connect(self.data_update)
             self.pid_thread.start()
+            self.update_PID_vals(self.pid_thread.pid.setpoint)
 
     def data_update(self, timestamp, setpoint, current, output, kid):
         ys = {'current value': current,
@@ -262,6 +263,6 @@ class PID_Thread(QThread):
             self.stable_time += dis
         else:
             self.stable_time = 0
-        self.new_data.emit(self.last, self.pid.setpoint, read_val, new_output,
+        self.new_data.emit(self.last, self.pid.setpoint, read_val, new_output or 0,
                            self.pid.components)
 

@@ -120,6 +120,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         connection_check(ioc_settings, settings)
         if not ioc_settings and classname.endswith('_EPICS'):
             classname = classname[:-6]
+        additional_info['device_class_name'] = classname
         if 'description' in additional_info:
             desc = additional_info['description'].replace('\n', '\n\t\t')
             devices_string += f'\t\t"""{dev} ({classname}):\n\t\t{desc}"""\n'
@@ -136,11 +137,11 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         devices_string += f'\t\tconfig = {config}\n'
         devices_string += f'\t\tconfigs = {dev}.configure(config)[1]\n'
         devices_string += f'\t\tdevice_config["{dev}"] = {{}}\n'
-        devices_string += f'\t\tdevice_config["{dev}"].update(configs)\n'
-        devices_string += f'\t\tdevice_config["{dev}"]["settings"] = settings\n'
+        devices_string += f'\t\tdevice_config["{dev}"].update(helper_functions.simplify_configs_dict(configs))\n'
+        devices_string += f'\t\tdevice_config["{dev}"].update(settings)\n'
         if ioc_settings:
             devices_string += f'\t\tdevice_config["{dev}"]["ioc_settings"] = ioc_settings\n'
-        devices_string += f'\t\tdevice_config["{dev}"]["additional_info"] = additional_info\n'
+        devices_string += f'\t\tdevice_config["{dev}"].update(additional_info)\n'
         devices_string += f'\t\tdevs.update({{"{dev}": {dev}}})\n'
         device_import_string += f'from {device.name}.{device.name}_ophyd import {classname}\n'
         additional_string_devices += device.get_additional_string()
@@ -212,10 +213,12 @@ def user_sample_string(userdata, sampledata):
     return u_s_string
 
 def connection_check(ioc_settings, settings):
-    if not 'connection' in ioc_settings:
+    if 'connection' not in ioc_settings:
         return
     conn = ioc_settings['connection']
     connTyp = conn['type']
     if connTyp == 'Local VISA':
         settings['resource_name'] = conn['resource_name']
+        ioc_settings.clear()
+    elif connTyp == '':
         ioc_settings.clear()

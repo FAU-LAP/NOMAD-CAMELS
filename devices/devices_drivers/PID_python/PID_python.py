@@ -42,6 +42,19 @@ class subclass(device_class.Device):
         devs = list({inp_dev, out_dev})
         return devs
 
+    def get_config(self):
+        if 'pid_val_table' not in self.settings:
+            return super().get_config()
+        for c in ['kp', 'ki', 'kd', 'min_value', 'max_value']:
+            if c in self.settings['pid_val_table']:
+                val = self.settings['pid_val_table'][c]
+                try:
+                    self.config[c] = val[0]
+                except:
+                    self.config[c] = val
+        return super().get_config()
+
+
 
 class subclass_config(device_class.Device_Config):
     def __init__(self, parent=None, data='', settings_dict=None,

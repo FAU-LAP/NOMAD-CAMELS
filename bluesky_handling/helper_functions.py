@@ -19,6 +19,14 @@ def read_wo_trigger(devices, grp=None, stream='primary'):
     yield from bps.save()
     return ret
 
+def simplify_configs_dict(configs):
+    confs = {}
+    for key, value in configs.items():
+        if 'value' in value:
+            confs[key] = value['value']
+        else:
+            confs[key] = value
+    return confs
 
 def get_fit_results(fits, namespace, yielding=False, stream='primary'):
     for name, fit in fits.items():
