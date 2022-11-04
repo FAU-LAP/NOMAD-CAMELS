@@ -146,7 +146,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         additional_string_devices += device.get_additional_string()
         final_string += device.get_finalize_steps()
     devices_string += '\t\tprint("devices connected")\n'
-    devices_string += '\t\tmd = {"device_config": device_config}\n'
+    devices_string += f'\t\tmd = {{"devices": device_config, "description": "{protocol.description}"}}\n'
     devices_string += '\t\tmd.update({"program": "CAMELS", "version": "0.1"})\n'
     devices_string += '\t\tmd["variables"] = namespace\n'
     if protocol.use_nexus:

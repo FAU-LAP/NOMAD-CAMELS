@@ -18,7 +18,10 @@ def recourse_entry_dict(entry, metadata):
             # stamp = rundict['metadata_stop']['time']
             # rundict['metadata_stop']['time'] = timestamp_to_ISO8601(stamp)
         if type(val) is dict:
-            sub_entry = entry.create_group(key)
+            if key == 'start':
+                sub_entry = entry
+            else:
+                sub_entry = entry.create_group(key)
             recourse_entry_dict(sub_entry, val)
         elif type(val) is list:
             for i, value in enumerate(val):
@@ -47,10 +50,19 @@ def broker_to_hdf5(runs, filename, additional_data=None):
             for stream in run:
                 dataset = run[stream].read()
                 group = entry.create_group(stream)
+                for coord in dataset.coords:
+                    if coord == 'time':
+                        isos = []
+                        for t in dataset[coord].values:
+                            isos.append(timestamp_to_ISO8601(t))
+                        since = dataset[coord].to_numpy()
+                        since -= metadata['start']['time']
+                        group['time_since_start'] = since
+                        group['time'] = isos
+                    else:
+                        group[coord] = dataset[coord]
                 for col in dataset:
                     group[col] = dataset[col]
-                for coord in dataset.coords:
-                    group[coord] = dataset[coord]
             recourse_entry_dict(entry, metadata)
             additional_data = additional_data or {}
             recourse_entry_dict(entry, additional_data)

@@ -230,6 +230,8 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.config_metadata = prot_data['config_metadata']
         if 'use_nexus' in prot_data:
             prot.use_nexus = prot_data['use_nexus']
+        if 'description' in prot_data:
+            prot.description = prot_data['description']
         prot_dict.update({key: prot})
 
 def load_devices_dict(string_dict, devices_dict):

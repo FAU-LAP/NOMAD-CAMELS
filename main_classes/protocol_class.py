@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QCheckBox, QPushButton
+from PyQt5.QtWidgets import QWidget, QCheckBox, QTextEdit
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont
 
 # from main_classes.loop_step import Loop_Step, Loop_Step_Container
@@ -17,7 +17,7 @@ class Measurement_Protocol:
     loop_steps and plots."""
     def __init__(self, loop_steps=None, plots=None, channels=None, name='',
                  channel_metadata=None, metadata=None, use_nexus=False,
-                 config_metadata=None):
+                 config_metadata=None, **kwargs):
         if plots is None:
             plots = []
         if loop_steps is None:
@@ -28,6 +28,7 @@ class Measurement_Protocol:
             channel_metadata = {}
         if metadata is None:
             metadata = {}
+        self.description = kwargs['description'] if 'description' in kwargs else ''
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -289,7 +290,13 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         self.checkBox_NeXus.setChecked(self.protocol.use_nexus)
         self.enable_nexus()
 
-        self.layout().addWidget(self.plot_widge, 1, 0, 1, 4)
+        self.textEdit_desc = QTextEdit(parent=self)
+        self.textEdit_desc.setPlaceholderText('Enter your description here.')
+        if self.protocol.description:
+            self.textEdit_desc.setText(self.protocol.description)
+
+        self.layout().addWidget(self.textEdit_desc, 1, 0, 1, 4)
+        self.layout().addWidget(self.plot_widge, 2, 0, 1, 4)
         self.layout().addWidget(self.checkBox_NeXus, 5, 0, 1, 4)
         self.layout().addWidget(self.table_channel_NX_paths, 6, 0, 1, 4)
         self.layout().addWidget(self.table_config_NX_paths, 7, 0, 1, 4)
@@ -345,6 +352,7 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
     def update_step_config(self):
         """Updates all the protocol settings."""
         self.protocol.filename = self.lineEdit_filename.text()
+        self.protocol.description = self.textEdit_desc.toPlainText()
         # self.plot_table.update_table_data()
         # self.protocol.plots = self.plot_table.tableData
         self.protocol.plots = self.plot_widge.plot_data
