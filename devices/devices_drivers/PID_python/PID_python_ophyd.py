@@ -78,6 +78,7 @@ class PID_Controller(Device):
         def read_function():
             x = read_signal.get()
             return read_conv_func(x)
+        self.read_function = read_function
 
         def set_function(x):
             x = set_conv_func(x)
@@ -91,7 +92,7 @@ class PID_Controller(Device):
         else:
             self.bias_func = None
 
-        self.current_value.read_function = read_function
+        self.current_value.read_function = self.current_value_read
         self.output_value.read_function = self.get_output
         self.pid_stable.read_function = self.stable_check
         self.kp.put_function = self.set_Kp
@@ -127,6 +128,9 @@ class PID_Controller(Device):
                 self.pid_thread.new_data.connect(self.data_update)
             self.pid_thread.start()
             self.update_PID_vals(self.pid_thread.pid.setpoint)
+
+    def current_value_read(self):
+        return self.pid_thread.current_value
 
     def data_update(self, timestamp, setpoint, current, output, kid):
         ys = {'current value': current,
@@ -236,6 +240,7 @@ class PID_Thread(QThread):
         self.stability_delta = 0
         self.last = None
         self.starttime = 0
+        self.current_value = 0
 
     def update_pid(self, Kp=None, Ki=None, Kd=None, setpoint=None,
                    sample_time=None, output_limits=None, auto_mode=True,
@@ -254,15 +259,15 @@ class PID_Thread(QThread):
         if dis < self.sample_time:
             time.sleep(self.sample_time - dis)
             dis = time.monotonic() - self.last
-        read_val = self.device.current_value.get()
-        new_output = self.pid(read_val)
+        self.current_value = self.device.read_function()
+        new_output = self.pid(self.current_value)
         self.last = time.monotonic()
         if new_output is not None:
             self.device.set_function(new_output)
-        if np.abs(self.pid.setpoint - read_val) <= self.stability_delta:
+        if np.abs(self.pid.setpoint - self.current_value) <= self.stability_delta:
             self.stable_time += dis
         else:
             self.stable_time = 0
-        self.new_data.emit(self.last, self.pid.setpoint, read_val, new_output or 0,
+        self.new_data.emit(self.last, self.pid.setpoint, self.current_value, new_output or 0,
                            self.pid.components)
 

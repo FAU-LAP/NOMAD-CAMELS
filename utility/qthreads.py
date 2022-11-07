@@ -1,5 +1,6 @@
 import signal
 import os
+import time
 
 import numpy as np
 
@@ -64,6 +65,7 @@ class Run_Protocol(QThread):
         self.counter = 0
         self.paused = False
         self.already_run = False
+        self.ready_to_run = False
 
     def run(self) -> None:
         """Runs the given `protocol` at `file_path`. If `sig_step` is
@@ -81,6 +83,7 @@ class Run_Protocol(QThread):
         self.write_to_console('from PyQt5.QtWidgets import QApplication')
         self.write_to_console('app = QApplication(sys.argv)')
         self.write_to_console('import bluesky_handling.standard_imports')
+        self.ready_to_run = True
         for line in iter(self.popen.stdout.readline, b''):
             text = line.decode().rstrip()
             if text.startswith("starting loop_step "):
@@ -95,6 +98,8 @@ class Run_Protocol(QThread):
         self.sig_step.emit(100)
 
     def run_protocol(self, path, prot_time):
+        while not self.ready_to_run:
+            time.sleep(0.1)
         name = os.path.basename(path)[:-3]
         self.current_protocol = name
         self.write_to_console(f'spec = importlib.util.spec_from_file_location("{name}", "{path}")')

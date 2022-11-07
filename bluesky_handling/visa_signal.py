@@ -1,3 +1,5 @@
+import time
+
 from ophyd import Signal, SignalRO, Device
 import pyvisa
 import re
@@ -20,14 +22,14 @@ class VISA_Signal_Write(Signal):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
         self.visa_instrument = None
         self.resource_name = resource_name
-        if resource_name:
-            if resource_name in open_resources:
-                self.visa_instrument = open_resources[resource_name]
-            else:
-                self.visa_instrument = rm.open_resource(resource_name)
-                open_resources[resource_name] = self.visa_instrument
-            self.visa_instrument.write_termination = write_termination
-            self.visa_instrument.baud_rate = baud_rate
+        # if resource_name:
+        #     if resource_name in open_resources:
+        #         self.visa_instrument = open_resources[resource_name]
+        #     else:
+        #         self.visa_instrument = rm.open_resource(resource_name)
+        #         open_resources[resource_name] = self.visa_instrument
+        #     self.visa_instrument.write_termination = write_termination
+        #     self.visa_instrument.baud_rate = baud_rate
         self.put_conv_function = put_conv_function or None
         self.additional_put_text = additional_put_text
 
@@ -56,23 +58,28 @@ class VISA_Signal_Read(SignalRO):
         self.visa_instrument = None
         self.resource_name = resource_name
         self.match_return = match_return
-        if resource_name:
-            if resource_name in open_resources:
-                self.visa_instrument = open_resources[resource_name]
-            else:
-                self.visa_instrument = rm.open_resource(resource_name)
-                open_resources[resource_name] = self.visa_instrument
-            self.visa_instrument.read_termination = read_termination
-            self.visa_instrument.write_termination = write_termination
-            self.visa_instrument.baud_rate = baud_rate
+        # if resource_name:
+        #     if resource_name in open_resources:
+        #         self.visa_instrument = open_resources[resource_name]
+        #     else:
+        #         self.visa_instrument = rm.open_resource(resource_name)
+        #         open_resources[resource_name] = self.visa_instrument
+        #     self.visa_instrument.read_termination = read_termination
+        #     self.visa_instrument.write_termination = write_termination
+        #     self.visa_instrument.baud_rate = baud_rate
         self.read_function = read_function or None
         self.query_text = query_text
+        self.reading = False
 
     def get(self):
+        while self.visa_instrument.currently_reading:
+            time.sleep(0.1)
+        self.visa_instrument.currently_reading = True
         if self.read_function:
             val = self.visa_instrument.query(self.read_function())
         else:
             val = self.visa_instrument.query(self.query_text)
+        self.visa_instrument.currently_reading = False
         try:
             val = float(val)
         except:
@@ -105,6 +112,7 @@ class VISA_Device(Device):
             self.visa_instrument.write_termination = write_termination
             self.visa_instrument.read_termination = read_termination
             self.visa_instrument.baud_rate = baud_rate
+            self.visa_instrument.currently_reading = False
 
         for comp in self.walk_signals():
             it = comp.item

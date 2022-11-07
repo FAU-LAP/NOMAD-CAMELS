@@ -107,6 +107,7 @@ class Device:
         for comp in self.ophyd_instance.walk_components():
             name = comp.item.attr
             cls = comp.item.cls
+            print(name in self.ophyd_instance.configuration_attrs)
             if name in self.ophyd_instance.configuration_attrs:
                 if check_output(cls):
                     self.config.update({f'{name}': 0})
@@ -518,6 +519,160 @@ class Local_VISA(Connection_Config):
     def load_settings(self, settings_dict):
         if 'resource_name' in settings_dict and settings_dict['resource_name'] in self.ports:
             self.comboBox_port.setCurrentText(settings_dict['resource_name'])
+
+
+
+class Simple_Config(Device_Config):
+    def __init__(self, parent=None, device_name='', data='', settings_dict=None,
+                 config_dict=None, ioc_dict=None, additional_info=None,
+                 comboBoxes=None):
+        super().__init__(parent, device_name=device_name, data=data,
+                         settings_dict=settings_dict,
+                         config_dict=config_dict, ioc_dict=ioc_dict,
+                         additional_info=additional_info)
+        self.sub_widget = Simple_Config_Sub(settings_dict=settings_dict,
+                                            parent=self,
+                                            config_dict=config_dict,
+                                            comboBoxes=comboBoxes)
+        self.layout().addWidget(self.sub_widget, 10, 0, 1, 5)
+        self.load_settings()
+
+    def get_settings(self):
+        self.sub_widget.get_settings()
+        return super().get_settings()
+
+    def get_config(self):
+        self.sub_widget.get_config()
+        return super().get_config()
+
+
+class Simple_Config_Sub(Device_Config_Sub):
+    def __init__(self, settings_dict=None, parent=None, config_dict=None,
+                 comboBoxes=None):
+        super().__init__(settings_dict=settings_dict, parent=parent,
+                         config_dict=config_dict)
+        self.setLayout(QGridLayout())
+        self.layout().setContentsMargins(0,0,0,0)
+        comboBoxes = comboBoxes or {}
+        self.setting_checks = {}
+        self.setting_floats = {}
+        self.setting_strings = {}
+        self.setting_combos = {}
+        for name, val in settings_dict.items():
+            if name == 'connection':
+                continue
+            if name in comboBoxes:
+                self.setting_combos[name] = QComboBox()
+                self.setting_combos[name].addItems(comboBoxes[name])
+            elif isinstance(val, bool):
+                self.setting_checks[name] = QCheckBox(name)
+                self.setting_checks[name].setChecked(val)
+            elif isinstance(val, float) or isinstance(val, int):
+                self.setting_floats[name] = QLineEdit(str(val))
+            elif isinstance(val, str):
+                self.setting_strings[name] = QLineEdit(val)
+            else:
+                raise Exception(f'Type of {name} with value {val} not supported for simple device config!')
+        self.config_checks = {}
+        self.config_floats = {}
+        self.config_strings = {}
+        self.config_combos = {}
+        for name, val in config_dict.items():
+            if name in comboBoxes:
+                self.config_combos[name] = QComboBox()
+                self.config_combos[name].addItems(comboBoxes[name])
+            elif isinstance(val, bool):
+                self.config_checks[name] = QCheckBox(name)
+                self.config_checks[name].setChecked(val)
+            elif isinstance(val, float) or isinstance(val, int):
+                self.config_floats[name] = QLineEdit(str(val))
+            elif isinstance(val, str):
+                self.config_strings[name] = QLineEdit(val)
+            else:
+                raise Exception(f'Type of {name} with value {val} not supported for simple device config!')
+
+        col = 0
+        row = 0
+        for name, widge in self.setting_checks.items():
+            self.layout().addWidget(widge, row, col, 1, 2)
+            col += 1
+            if col == 4:
+                col = 0
+                row += 1
+        for name, widge in self.setting_floats.items():
+            self.layout().addWidget(QLabel(name), row, col)
+            self.layout().addWidget(widge, row, col+1)
+            col += 2
+            if col == 4:
+                col = 0
+                row += 1
+        for name, widge in self.setting_strings.items():
+            self.layout().addWidget(QLabel(name), row, col)
+            self.layout().addWidget(widge, row, col+1)
+            col += 2
+            if col == 4:
+                col = 0
+                row += 1
+        for name, widge in self.setting_combos.items():
+            self.layout().addWidget(QLabel(name), row, col)
+            self.layout().addWidget(widge, row, col+1)
+            col += 2
+            if col == 4:
+                col = 0
+                row += 1
+        for name, widge in self.config_checks.items():
+            self.layout().addWidget(widge, row, col, 1, 2)
+            col += 1
+            if col == 4:
+                col = 0
+                row += 1
+        for name, widge in self.config_floats.items():
+            self.layout().addWidget(QLabel(name), row, col)
+            self.layout().addWidget(widge, row, col+1)
+            col += 2
+            if col == 4:
+                col = 0
+                row += 1
+        for name, widge in self.config_strings.items():
+            self.layout().addWidget(QLabel(name), row, col)
+            self.layout().addWidget(widge, row, col+1)
+            col += 2
+            if col == 4:
+                col = 0
+                row += 1
+        for name, widge in self.config_combos.items():
+            self.layout().addWidget(QLabel(name), row, col)
+            self.layout().addWidget(widge, row, col+1)
+            col += 2
+            if col == 4:
+                col = 0
+                row += 1
+
+    def get_settings(self):
+        for name, widge in self.setting_checks.items():
+            self.settings_dict[name] = widge.isChecked()
+        for name, widge in self.setting_combos.items():
+            self.settings_dict[name] = widge.currentText()
+        for name, widge in self.setting_strings.items():
+            self.settings_dict[name] = widge.text()
+        for name, widge in self.setting_floats.items():
+            self.settings_dict[name] = float(widge.text())
+        return super().get_settings()
+
+    def get_config(self):
+        for name, widge in self.config_checks.items():
+            self.config_dict[name] = widge.isChecked()
+        for name, widge in self.config_combos.items():
+            self.config_dict[name] = widge.currentText()
+        for name, widge in self.config_strings.items():
+            self.config_dict[name] = widge.text()
+        for name, widge in self.config_floats.items():
+            self.config_dict[name] = float(widge.text())
+        return super().get_config()
+
+
+
+
 
 
 
