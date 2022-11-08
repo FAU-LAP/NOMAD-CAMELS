@@ -24,16 +24,23 @@ def recourse_entry_dict(entry, metadata):
                 sub_entry = entry.create_group(key)
             recourse_entry_dict(sub_entry, val)
         elif type(val) is list:
+            no_dict = False
             for i, value in enumerate(val):
                 if isinstance(value, dict):
                     sub_entry = entry.create_group(f'{key}_{i}')
                     recourse_entry_dict(sub_entry, value)
+                # else:
+                #     # entry.attrs[f'{key}_{i}'] = val
                 else:
-                    entry.attrs[f'{key}_{i}'] = val
+                    no_dict = True
+                    break
+            if no_dict:
+                entry[key] = val
         elif val is None:
             continue
         else:
-            entry.attrs[key] = val
+            # entry.attrs[key] = val
+            entry[key] = val
 
 def broker_to_hdf5(runs, filename, additional_data=None):
     """Puts the given `runs` into `filename`, containing the run's
@@ -52,6 +59,8 @@ def broker_to_hdf5(runs, filename, additional_data=None):
             recourse_entry_dict(entry, additional_data)
             for stream in run:
                 dataset = run[stream].read()
+                # entry[stream] = dataset.to_pandas()
+                # return
                 group = entry.create_group(stream)
                 for coord in dataset.coords:
                     if coord == 'time':

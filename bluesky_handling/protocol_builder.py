@@ -1,5 +1,4 @@
 import os.path
-import subprocess
 import copy
 
 from main_classes.protocol_class import Measurement_Protocol
@@ -9,6 +8,8 @@ from bluesky_handling.builder_helper_functions import plot_creator
 
 standard_string = 'import numpy as np\n'
 standard_string += 'import importlib\n'
+standard_string += 'import bluesky\n'
+standard_string += 'import ophyd\n'
 standard_string += 'from bluesky import RunEngine\n'
 standard_string += 'from bluesky.callbacks.best_effort import BestEffortCallback\n'
 standard_string += 'import bluesky.plan_stubs as bps\n'
@@ -148,7 +149,8 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         final_string += device.get_finalize_steps()
     devices_string += '\t\tprint("devices connected")\n'
     devices_string += f'\t\tmd = {{"devices": device_config, "description": "{protocol.description}"}}\n'
-    devices_string += '\t\tmd.update({"program": "CAMELS", "version": "0.1"})\n'
+    # devices_string += '\t\tmd.update({"program": "CAMELS", "version": "0.1"})\n'
+    devices_string += '\t\tmd.update({"versions": {"CAMELS": "0.1", "EPICS": "7.0.6.2", "bluesky": bluesky.__version__, "ophyd": ophyd.__version__}})\n'
     devices_string += '\t\tmd["variables"] = namespace\n'
     if protocol.use_nexus:
         md_dict = {}

@@ -251,8 +251,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.run_thread.terminate()
         if self.make_thread:
             self.make_thread.terminate()
-        if self.preferences['autosave']:
-            self.save_state()
+        # if self.preferences['autosave']:
+        #     self.save_state()
         for add_on in self.active_add_ons:
             self.active_add_ons[add_on].close()
         super().closeEvent(a0)

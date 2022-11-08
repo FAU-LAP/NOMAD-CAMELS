@@ -1,7 +1,6 @@
-from ophyd import Device
 from ophyd import Component as Cpt
 
-from bluesky_handling.visa_signal import VISA_Signal_Read, VISA_Signal_Write, rm, open_resources
+from bluesky_handling.visa_signal import VISA_Signal_Read, VISA_Signal_Write, VISA_Device
 
 
 def source_func(inp, chan, volt_source):
@@ -81,7 +80,7 @@ def enable_func(inp, chan):
 
 
 
-class Keysight_B2912(Device):
+class Keysight_B2912(VISA_Device):
     mesV1 = Cpt(VISA_Signal_Read, name='mesV1', query_text='MEAS:VOLT? (@1)')
     mesI1 = Cpt(VISA_Signal_Read, name='mesI1', query_text='MEAS:CURR? (@1)')
     mesV2 = Cpt(VISA_Signal_Read, name='mesV2', query_text='MEAS:VOLT? (@2)')
@@ -145,18 +144,25 @@ class Keysight_B2912(Device):
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, resource_name='', **kwargs):
-        super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
-                         configuration_attrs=configuration_attrs, parent=parent, **kwargs)
-        self.visa_instrument = None
-        if resource_name:
-            if resource_name in open_resources:
-                self.visa_instrument = open_resources[resource_name]
-            else:
-                self.visa_instrument = rm.open_resource(resource_name)
-                open_resources[resource_name] = self.visa_instrument
-            # self.visa_instrument.write_termination = '\r\n'
-            self.visa_instrument.read_termination = '\n'
-            # self.visa_instrument.baud_rate = 9600
+        # super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
+        #                  configuration_attrs=configuration_attrs, parent=parent, **kwargs)
+        super().__init__(prefix=prefix, name=name, kind=kind,
+                         read_attrs=read_attrs,
+                         configuration_attrs=configuration_attrs,
+                         parent=parent,
+                         resource_name=resource_name,
+                         read_termination='\n',
+                         **kwargs)
+        # self.visa_instrument = None
+        # if resource_name:
+        #     if resource_name in open_resources:
+        #         self.visa_instrument = open_resources[resource_name]
+        #     else:
+        #         self.visa_instrument = rm.open_resource(resource_name)
+        #         open_resources[resource_name] = self.visa_instrument
+        #     # self.visa_instrument.write_termination = '\r\n'
+        #     self.visa_instrument.read_termination = '\n'
+        #     # self.visa_instrument.baud_rate = 9600
 
 
         self.v_source = [True, True]
@@ -177,10 +183,10 @@ class Keysight_B2912(Device):
 
         # self.idn.visa_instrument = self.visa_instrument
 
-        for comp in self.walk_signals():
-            it = comp.item
-            it.visa_instrument = self.visa_instrument
+        # for comp in self.walk_signals():
+        #     it = comp.item
+        #     it.visa_instrument = self.visa_instrument
 
-if __name__ == '__main__':
-    b29 = Keysight_B2912('test', name='b29', resource_name='USB0::0x0957::0x8E18::MY51140626::INSTR')
-    print(b29.idn.get())
+# if __name__ == '__main__':
+#     b29 = Keysight_B2912('test', name='b29', resource_name='USB0::0x0957::0x8E18::MY51140626::INSTR')
+#     print(b29.idn.get())

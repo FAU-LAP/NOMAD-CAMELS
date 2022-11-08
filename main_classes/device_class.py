@@ -107,7 +107,6 @@ class Device:
         for comp in self.ophyd_instance.walk_components():
             name = comp.item.attr
             cls = comp.item.cls
-            print(name in self.ophyd_instance.configuration_attrs)
             if name in self.ophyd_instance.configuration_attrs:
                 if check_output(cls):
                     self.config.update({f'{name}': 0})
