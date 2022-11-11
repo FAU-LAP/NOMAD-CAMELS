@@ -977,6 +977,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionDevice_Driver_Builder"/>
+    <addaction name="actionVISA_device_builder"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuPreferences"/>
@@ -1098,6 +1099,11 @@
   <action name="actionReport_Bug">
    <property name="text">
     <string>Report Bug</string>
+   </property>
+  </action>
+  <action name="actionVISA_device_builder">
+   <property name="text">
+    <string>VISA-device builder</string>
    </property>
   </action>
  </widget>

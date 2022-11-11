@@ -524,7 +524,7 @@ class Local_VISA(Connection_Config):
 class Simple_Config(Device_Config):
     def __init__(self, parent=None, device_name='', data='', settings_dict=None,
                  config_dict=None, ioc_dict=None, additional_info=None,
-                 comboBoxes=None):
+                 comboBoxes=None, config_types=None):
         super().__init__(parent, device_name=device_name, data=data,
                          settings_dict=settings_dict,
                          config_dict=config_dict, ioc_dict=ioc_dict,
@@ -532,7 +532,8 @@ class Simple_Config(Device_Config):
         self.sub_widget = Simple_Config_Sub(settings_dict=settings_dict,
                                             parent=self,
                                             config_dict=config_dict,
-                                            comboBoxes=comboBoxes)
+                                            comboBoxes=comboBoxes,
+                                            config_types=config_types)
         self.layout().addWidget(self.sub_widget, 10, 0, 1, 5)
         self.load_settings()
 
@@ -547,12 +548,13 @@ class Simple_Config(Device_Config):
 
 class Simple_Config_Sub(Device_Config_Sub):
     def __init__(self, settings_dict=None, parent=None, config_dict=None,
-                 comboBoxes=None):
+                 comboBoxes=None, config_types=None):
         super().__init__(settings_dict=settings_dict, parent=parent,
                          config_dict=config_dict)
         self.setLayout(QGridLayout())
         self.layout().setContentsMargins(0,0,0,0)
         comboBoxes = comboBoxes or {}
+        config_types = config_types or {}
         self.setting_checks = {}
         self.setting_floats = {}
         self.setting_strings = {}
@@ -563,6 +565,17 @@ class Simple_Config_Sub(Device_Config_Sub):
             if name in comboBoxes:
                 self.setting_combos[name] = QComboBox()
                 self.setting_combos[name].addItems(comboBoxes[name])
+            elif name in config_types:
+                if config_types[name] == 'bool':
+                    self.setting_checks[name] = QCheckBox(name)
+                    if isinstance(val, bool):
+                        self.setting_checks[name].setChecked(val)
+                elif config_types[name] == 'float':
+                    self.setting_floats[name] = QLineEdit(str(val))
+                elif config_types[name] == 'str':
+                    self.setting_strings[name] = QLineEdit(str(val))
+                else:
+                    raise Exception(f'Named config_type {config_types[name]} of {name} is not supported in Simple_Device_Config!')
             elif isinstance(val, bool):
                 self.setting_checks[name] = QCheckBox(name)
                 self.setting_checks[name].setChecked(val)
@@ -580,6 +593,17 @@ class Simple_Config_Sub(Device_Config_Sub):
             if name in comboBoxes:
                 self.config_combos[name] = QComboBox()
                 self.config_combos[name].addItems(comboBoxes[name])
+            elif name in config_types:
+                if config_types[name] == 'bool':
+                    self.config_checks[name] = QCheckBox(name)
+                    if isinstance(val, bool):
+                        self.config_checks[name].setChecked(val)
+                elif config_types[name] == 'float':
+                    self.config_floats[name] = QLineEdit(str(val))
+                elif config_types[name] == 'str':
+                    self.config_strings[name] = QLineEdit(str(val))
+                else:
+                    raise Exception(f'Named config_type {config_types[name]} of {name} is not supported in Simple_Device_Config!')
             elif isinstance(val, bool):
                 self.config_checks[name] = QCheckBox(name)
                 self.config_checks[name].setChecked(val)

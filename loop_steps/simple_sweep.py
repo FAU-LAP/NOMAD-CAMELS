@@ -4,6 +4,7 @@ from PyQt5.QtGui import QFont
 from main_classes.loop_step import Loop_Step_Config
 from utility import variables_handling
 from utility.add_remove_table import AddRemoveTable
+from utility.channels_check_table import Channels_Check_Table
 from utility.load_save_helper_functions import load_plots
 from bluesky_handling.builder_helper_functions import plot_creator
 from frontpanels.plot_definer import Plot_Button_Overview
@@ -70,17 +71,17 @@ class Simple_Sweep(For_Loop_Step):
     def get_protocol_string(self, n_tabs=1):
         """The loop is enumerating over the selected points."""
         tabs = '\t'*n_tabs
-        if self.loop_type in ['start - stop', 'start - min - max - stop',
-                              'start - max - min - stop']:
-            enumerator = get_space_string(self.start_val, self.stop_val,
-                                          self.n_points, self.min_val,
-                                          self.max_val, self.loop_type,
-                                          self.sweep_mode,
-                                          self.include_end_points)
-        elif self.loop_type == 'Value-List':
-            enumerator = self.val_list
-        else:
-            enumerator = f'np.loadtxt("{self.file_path}")'
+        # if self.loop_type in ['start - stop', 'start - min - max - stop',
+        #                       'start - max - min - stop']:
+        #     enumerator = get_space_string(self.start_val, self.stop_val,
+        #                                   self.n_points, self.min_val,
+        #                                   self.max_val, self.loop_type,
+        #                                   self.sweep_mode,
+        #                                   self.include_end_points)
+        # elif self.loop_type == 'Value-List':
+        #     enumerator = self.val_list
+        # else:
+        #     enumerator = f'np.loadtxt("{self.file_path}")'
 
         stream = f'"{self.name}"'
         if self.data_output == 'main stream':
@@ -144,9 +145,12 @@ class Simple_Sweep_Config(Loop_Step_Config):
         self.sweep_widget = For_Loop_Step_Config_Sub(parent=self,
                                                    loop_step=loop_step)
 
-        self.read_table = AddRemoveTable(title='Read Channels', headerLabels=[],
-                                         tableData=loop_step.read_channels,
-                                         comboBoxes=in_box)
+        # self.read_table = AddRemoveTable(title='Read Channels', headerLabels=[],
+        #                                  tableData=loop_step.read_channels,
+        #                                  comboBoxes=in_box)
+        labels = ['read', 'channel']
+        info_dict = {'channel': self.loop_step.read_channels}
+        self.read_table = Channels_Check_Table(self, labels, info_dict=info_dict)
 
         self.checkBox_use_own_plots = QCheckBox('Use own Plots')
         self.checkBox_use_own_plots.setChecked(loop_step.use_own_plots)
@@ -254,7 +258,7 @@ class Simple_Sweep_Config(Loop_Step_Config):
         self.loop_step.use_own_plots = self.checkBox_use_own_plots.isChecked()
         self.loop_step.plots = self.plot_widge.plot_data
         # self.loop_step.plots = self.plot_table.update_table_data()
-        self.loop_step.read_channels = self.read_table.update_table_data()
+        self.loop_step.read_channels = self.read_table.get_info()['channel']
         self.loop_step.data_output = self.comboBox_data_output.currentText()
         self.loop_step.sweep_channel = self.comboBox_sweep_channel.currentText()
         self.loop_step.calc_minmax = self.checkBox_minmax.isChecked()

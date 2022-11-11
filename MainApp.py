@@ -106,6 +106,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionSave_Preset.triggered.connect(self.save_state)
         self.actionSave_Preset_As.triggered.connect(self.save_preset_as)
         self.actionLoad_Backup_Preset.triggered.connect(self.load_backup_preset)
+        self.actionVISA_device_builder.triggered.connect(self.launch_device_builder)
         self.pushButton_make_EPICS_environment.clicked.connect(self.make_epics_environment)
         self.pushButton_run_ioc.clicked.connect(self.run_stop_ioc)
         self.pushButton_show_console_output.clicked.connect(self.show_console_output)
@@ -413,6 +414,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if 'databroker_catalog_name' in self.preferences:
                 catalog_name = self.preferences['databroker_catalog_name']
             make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name)
+
+    def launch_device_builder(self):
+        from tools import VISA_device_builder
+        device_builder = VISA_device_builder.VISA_Device_Builder(self)
+
 
     def change_preferences(self):
         """Called when any preferences are changed. Makes the dictionary

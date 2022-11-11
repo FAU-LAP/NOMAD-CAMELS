@@ -18,7 +18,7 @@ def close_resources():
     open_resources.clear()
 
 class VISA_Signal_Write(Signal):
-    def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', write_termination='\n', baud_rate=9600, resource_name='', additional_put_text='', put_conv_function=None):
+    def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', write_termination='\n', baud_rate=9600, resource_name='', additional_put_text='', put_conv_function=None, put_format_string=''):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
         self.visa_instrument = None
         self.resource_name = resource_name
@@ -32,6 +32,7 @@ class VISA_Signal_Write(Signal):
         #     self.visa_instrument.baud_rate = baud_rate
         self.put_conv_function = put_conv_function or None
         self.additional_put_text = additional_put_text
+        self.put_format_string = put_format_string
 
     def change_instrument(self, resource_name):
         if resource_name:
@@ -45,6 +46,8 @@ class VISA_Signal_Write(Signal):
             **kwargs):
         if self.put_conv_function:
             write_text = self.put_conv_function(value)
+        elif self.put_format_string:
+            write_text = self.put_format_string % value
         else:
             write_text = f'{self.additional_put_text}{value}'
         self.visa_instrument.write(write_text)
