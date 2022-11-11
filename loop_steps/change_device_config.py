@@ -33,6 +33,11 @@ class Change_DeviceConf(Loop_Step):
         protocol_string += f'{tabs}devs["{self.device}"].configure(config)\n'
         return protocol_string
 
+    def get_protocol_short_string(self, n_tabs=0):
+        short_string = super().get_protocol_short_string(n_tabs)
+        short_string = f'{short_string[:-1]} - {self.device}\n'
+        return short_string
+
 
 class Change_DeviceConf_Config(Loop_Step_Config):
     def __init__(self, loop_step:Change_DeviceConf, parent=None):

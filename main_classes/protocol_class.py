@@ -179,6 +179,12 @@ class Measurement_Protocol:
         plan_string += '\tyield from bps.close_run()\n'
         return plan_string
 
+    def get_short_string(self):
+        short_string = ''
+        for step in self.loop_steps:
+            short_string += step.get_protocol_short_string()
+        return short_string
+
     def get_add_main_string(self):
         add_main_string = 'def steps_add_main(RE):\n'
         add_main_string += '\treturner = {}\n'

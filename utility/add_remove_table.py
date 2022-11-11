@@ -217,7 +217,6 @@ class AddRemoveTable(QWidget):
         """Used for the single actions of the context menu."""
         ind = self.table.selectedIndexes()[0]
         item = self.table_model.itemFromIndex(ind)
-        text = item.text()
         item.setText(f'{val}')
 
     def check_string(self, item):

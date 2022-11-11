@@ -118,6 +118,12 @@ class Simple_Sweep(For_Loop_Step):
         self.update_time_weight()
         return protocol_string
 
+    def get_protocol_short_string(self, n_tabs=0):
+        short_string = super().get_protocol_short_string(n_tabs)
+        tabs = '\t' * n_tabs
+        short_string += f'{tabs}Sweep: {self.sweep_channel}, Read: {self.read_channels}\n'
+        return short_string
+
 
 
 class Simple_Sweep_Config(Loop_Step_Config):

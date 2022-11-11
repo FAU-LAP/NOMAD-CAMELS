@@ -36,6 +36,11 @@ class Run_Subprotocol(Loop_Step):
             protocol_string += f'{tabs}namespace["{self.vars_out["Write to name"][i]}"] = {prot_name}_mod.namespace["{var}"]\n'
         return protocol_string
 
+    def get_protocol_short_string(self, n_tabs=0):
+        short_string = super().get_protocol_short_string(n_tabs)
+        short_string = f'{short_string[:-1]} - {self.prot_path}'
+        return short_string
+
     def get_outer_string(self):
         prot_name = os.path.basename(self.prot_path)[:-3]
         outer_string = f'spec = importlib.util.spec_from_file_location("{prot_name}", "{self.prot_path}")\n'

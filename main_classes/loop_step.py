@@ -82,6 +82,12 @@ class Loop_Step:
         protocol_string += f'{tabs}yield from bps.checkpoint()\n'
         return protocol_string
 
+    def get_protocol_short_string(self, n_tabs=0):
+        tabs = '\t' * n_tabs
+        short_string = f'{tabs}{self.step_type}\n'
+        return short_string
+
+
     def get_outer_string(self):
         return ''
 
@@ -151,6 +157,12 @@ class Loop_Step_Container(Loop_Step):
         # protocol_string += self.get_children_strings(n_tabs+1)
         self.update_time_weight()
         return protocol_string
+
+    def get_protocol_short_string(self, n_tabs=0):
+        short_string = super().get_protocol_short_string(n_tabs)
+        for child in self.children:
+            short_string += child.get_protocol_short_string(n_tabs+1)
+        return short_string
 
     def get_outer_string(self):
         outer_string = ''

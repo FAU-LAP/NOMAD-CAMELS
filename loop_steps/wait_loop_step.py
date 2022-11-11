@@ -25,6 +25,11 @@ class Wait_Loop_Step(Loop_Step):
         protocol_string += f'{tabs}yield from bps.sleep(eva.eval("{self.wait_time}"))\n'
         return protocol_string
 
+    def get_protocol_short_string(self, n_tabs=0):
+        short_string = super().get_protocol_short_string(n_tabs)
+        short_string = f'{short_string[:-1]} - {self.wait_time} s\n'
+        return short_string
+
 
 class Wait_Loop_Step_Config(Loop_Step_Config):
     """The configuration just provides a line to enter the time to wait."""

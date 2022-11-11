@@ -87,6 +87,11 @@ class Read_Channels(Loop_Step):
             protocol_string += f'{tabs}yield from bps.trigger_and_read(channels_{self.variable_name()}, name=stream_name)\n'
         return protocol_string
 
+    def get_protocol_short_string(self, n_tabs=0):
+        short_string = super().get_protocol_short_string(n_tabs)
+        short_string = f'{short_string[:-1]} - {self.channel_list}\n'
+        return short_string
+
 def get_channel_string(channel):
     name = variables_handling.channels[channel].name
     if '.' in name:
@@ -252,6 +257,12 @@ class Trigger_Channels_Step(Loop_Step):
         protocol_string += f'{tabs}grp_{step_name} = bps._short_uid("trigger")\n'
         protocol_string += f'{tabs}yield from helper_functions.trigger_multi(channels_{step_name}, grp_{step_name})\n'
         return protocol_string
+
+    def get_protocol_short_string(self, n_tabs=0):
+        short_string = super().get_protocol_short_string(n_tabs)
+        read_step = variables_handling.current_protocol.loop_step_dict[self.read_step]
+        short_string = f'{short_string[:-1]} - {read_step.channel_list}\n'
+        return short_string
 
 
 class Trigger_Channels_Config(Loop_Step_Config):

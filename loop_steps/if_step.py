@@ -88,6 +88,21 @@ class If_Loop_Step(Loop_Step_Container):
             protocol_string += self.children[-1].get_children_strings(n_tabs+1)
         return protocol_string
 
+    def get_protocol_short_string(self, n_tabs=0):
+        tabs = '\t' * n_tabs
+        short_string = f'{tabs}if {self.condition}:\n'
+        for child in self.children[0].children:
+            short_string += child.get_protocol_short_string(n_tabs+1)
+        for i, el in enumerate(self.elifs):
+            short_string += f'{tabs}else if {el}:\n'
+            for child in self.children[i+1].children:
+                short_string += child.get_protocol_short_string(n_tabs+1)
+        if self.use_else:
+            short_string += f'{tabs}else:\n'
+            for child in self.children[-1].children:
+                short_string += child.get_protocol_short_string(n_tabs+1)
+        return short_string
+
 
 
 

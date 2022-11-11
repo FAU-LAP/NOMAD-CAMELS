@@ -151,6 +151,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     devices_string += f'\t\tmd = {{"devices": device_config, "description": "{protocol.description}"}}\n'
     # devices_string += '\t\tmd.update({"program": "CAMELS", "version": "0.1"})\n'
     devices_string += '\t\tmd.update({"versions": {"CAMELS": "0.1", "EPICS": "7.0.6.2", "bluesky": bluesky.__version__, "ophyd": ophyd.__version__}})\n'
+    devices_string += f'\t\tmd["protocol_overview"] = "{protocol.get_short_string().encode("unicode_escape").decode()}"\n'
     devices_string += '\t\tmd["variables"] = namespace\n'
     if protocol.use_nexus:
         md_dict = {}
