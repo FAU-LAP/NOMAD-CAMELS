@@ -125,6 +125,12 @@ class Channels_Check_Table(QWidget):
                         self.info_dict[lab].append(None)
                     item = self.tableWidget_channels.item(i, 2+j)
                     self.info_dict[lab][n] = item.text()
+        rems = []
+        for channel in channel_list:
+            if channel not in variables_handling.channels:
+                rems.append(channel)
+        for channel in rems:
+            channel_list.remove(channel)
 
 
 

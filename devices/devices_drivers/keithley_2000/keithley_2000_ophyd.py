@@ -12,6 +12,7 @@ class Keithley_2000(VISA_Device):
     resistance = Cpt(VISA_Signal_Read, name='resistance')
     resistance_4_wire = Cpt(VISA_Signal_Read, name='resistance_4_wire')
 
+    idn = Cpt(VISA_Signal_Read, name='idn', kind='config', query_text='*IDN?')
     NPLC = Cpt(VISA_Signal_Write, name='NPLC', kind='config')
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,

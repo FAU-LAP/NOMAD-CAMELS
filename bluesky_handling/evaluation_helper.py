@@ -15,6 +15,19 @@ class Evaluator(CallbackBase):
         self.namespace.update(self.add_namespace)
         self.last_update = 0
 
+    def eval_string(self, eval_str:str):
+        self.namespace.update(self.add_namespace)
+        try:
+            reter = ''
+            for part in eval_str.split('"' if '"' in eval_str else "'"):
+                try:
+                    reter += str(eval(part, self.namespace))
+                except:
+                    reter += part
+            return reter
+        except Exception as err:
+            raise ValueError(f"Could not evaluate {eval_str!r}") from err
+
     def eval(self, eval_str:str):
         self.namespace.update(self.add_namespace)
         # If it is a key in our namespace, look it up.
