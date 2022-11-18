@@ -124,7 +124,10 @@ class PID_Controller(Device):
                           'd': 2}
                 self.plot = PlotWidget_NoBluesky('time', title='PID plot',
                                                  ylabel='value', ylabel2='PID-values',
-                                                 y_axes=y_axes)
+                                                 y_axes=y_axes,
+                                                 first_hidden=list(y_axes.keys()))
+                # for y in y_axes:
+                #     self.plot.plot.current_lines[y].setLinestyle('None')
                 self.pid_thread.new_data.connect(self.data_update)
             self.pid_thread.start()
             self.update_PID_vals(self.pid_thread.pid.setpoint)

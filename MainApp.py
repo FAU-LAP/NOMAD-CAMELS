@@ -194,6 +194,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if 'autostart_ioc' in self.preferences and self.preferences['autostart_ioc']:
             self.run_stop_ioc()
 
+        # TODO remove followin line after tutorial!!!!
+        self.device_epics_widget.setHidden(True)
+
 
     def report_bug(self):
         path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"

@@ -628,7 +628,7 @@ class MultiLivePlot(LivePlot, QObject):
 
 class PlotWidget_NoBluesky(QWidget):
     def __init__(self, xlabel='', ylabel='', parent=None, title='', ylabel2='',
-                 y_axes=None, labels=()):
+                 y_axes=None, labels=(), first_hidden=None):
         app = QCoreApplication.instance()
         if app is None:
             app = QApplication(sys.argv)
@@ -636,7 +636,7 @@ class PlotWidget_NoBluesky(QWidget):
         canvas = MPLwidget()
         self.ax = canvas.axes
         self.plot = MultiPlot_NoBluesky(self.ax, xlabel, ylabel, ylabel2,
-                                        y_axes, labels)
+                                        y_axes, labels, first_hidden)
         self.toolbar = NavigationToolbar2QT(canvas, self)
 
         self.pushButton_show_options = QPushButton('Show Options')
@@ -682,7 +682,7 @@ class MultiPlot_NoBluesky(QObject):
     setup_done = pyqtSignal()
 
     def __init__(self, ax, xlabel='', ylabel='', ylabel2='', y_axes=None,
-                 labels=()):
+                 labels=(), first_hidden=None):
         super().__init__()
         self.ax = ax
         self.ax.set_xlabel(xlabel)
@@ -694,6 +694,7 @@ class MultiPlot_NoBluesky(QObject):
         self.ydata = {}
         self.current_lines = {}
         self.y_axes = y_axes or {}
+        self.first_hidden = first_hidden or []
         self.use_abs = {'x': False, 'y': False, 'y2': False}
 
     def add_data(self, x, ys, add=True):
@@ -704,13 +705,17 @@ class MultiPlot_NoBluesky(QObject):
                 try:
                     if y in self.y_axes and self.y_axes[y] == 2:
                         self.current_lines[y], = self.ax2.plot([], [],
+                                                               linestyle='' if y in self.first_hidden else '-',
                                                               label=self.labels[i],
                                                                color=stdCols[i])
-                        self.ax.plot([], [], label=self.labels[i],
+                        self.ax.plot([], [],
+                                     linestyle='' if y in self.first_hidden else '-',
+                                     label=self.labels[i],
                                      color=stdCols[i])
                     else:
                         self.current_lines[y], = self.ax.plot([], [],
-                                                          label=self.labels[i],
+                                                              linestyle='' if y in self.first_hidden else '-',
+                                                              label=self.labels[i],
                                                               color=stdCols[i])
                     self.ydata[y] = []
                 except Exception as e:

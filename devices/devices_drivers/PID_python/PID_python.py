@@ -11,12 +11,27 @@ from PyQt5.QtWidgets import QComboBox
 from utility import variables_handling
 from main_classes import measurement_channel
 
+default_pid_val_table = {'setpoint': [0],
+                         'kp': [1],
+                         'ki': [1],
+                         'kd': [1],
+                         'max_value': [2],
+                         'min_value': [-2],
+                         'bias': [0],
+                         'stability-delta': [0.5],
+                         'stability-time': [10]}
 
 class subclass(device_class.Device):
     def __init__(self, **kwargs):
         files = ['']
         req = ['']
         super().__init__(name='PID_python', virtual=True, tags=['PID', 'control'], files=files, directory='PID_python', ophyd_device=PID_Controller, ophyd_class_name='PID_Controller', requirements=req, **kwargs)
+        self.settings['pid_val_table'] = default_pid_val_table
+        self.settings['auto_pid'] = True
+        self.settings['show_plot'] = True
+        self.config['dt'] = 0.5
+
+
         # self.add_ons = {'manual control': [PID_manual_control, self]}
 
     # def get_additional_string(self):

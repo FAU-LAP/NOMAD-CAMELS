@@ -328,6 +328,8 @@ class Device_Config(QWidget):
             self.connector = Prologix_Config()
         elif self.comboBox_connection_type.currentText() == 'EPICS: USB-serial':
             self.connector = USB_Serial_Config()
+        elif self.comboBox_connection_type.currentText() == 'EPICS: LAN':
+            self.connector = LAN_Config()
         elif self.comboBox_connection_type.currentText() == 'Local VISA':
             self.connector = Local_VISA()
         self.layout().replaceWidget(conn_old, self.connector)
@@ -445,6 +447,29 @@ class Prologix_Config(Connection_Config):
             self.lineEdit_ip.setText(settings_dict['IP-Address'])
         if 'GPIB-Address' in settings_dict:
             self.lineEdit_GPIB.setText(settings_dict['GPIB-Address'])
+
+
+class LAN_Config(Connection_Config):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = self.layout()
+        label_ip = QLabel('IP-Address:')
+        self.lineEdit_ip = QLineEdit()
+        self.lineEdit_ip.textChanged.connect(self.connection_change.emit)
+
+        layout.addWidget(label_ip, 0, 0)
+        layout.addWidget(self.lineEdit_ip, 0, 1)
+
+    def get_settings(self):
+        """Returns the set IP-Address and GPIB-Address."""
+        return {'IP-Address': self.lineEdit_ip.text()}
+
+    def load_settings(self, settings_dict):
+        """Loads the settings_dict, specifically the IP-Address and the
+        GPIB-Address."""
+        if 'IP-Address' in settings_dict:
+            self.lineEdit_ip.setText(settings_dict['IP-Address'])
+
 
 
 class USB_Serial_Config(Connection_Config):
