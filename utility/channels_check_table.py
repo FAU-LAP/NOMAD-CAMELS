@@ -12,6 +12,7 @@ class Channels_Check_Table(QWidget):
     def __init__(self, parent, headerLabels=None, only_output=False,
                  info_dict=None, checkstrings=None):
         super().__init__(parent)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         self.only_output = only_output
         self.headerLabels = headerLabels or []
@@ -27,6 +28,7 @@ class Channels_Check_Table(QWidget):
         self.tableWidget_channels = QTableWidget()
         self.tableWidget_channels.setHorizontalHeaderLabels(self.headerLabels)
         label_search = QLabel('Search:')
+        self.tableWidget_channels.clicked.connect(self.tableWidget_channels.resizeColumnsToContents)
         self.lineEdit_search = QLineEdit()
         self.lineEdit_search.textChanged.connect(self.change_search)
 
