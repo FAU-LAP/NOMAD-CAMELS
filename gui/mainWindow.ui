@@ -568,7 +568,7 @@
                 </widget>
                </item>
                <item row="0" column="0">
-                <widget class="QLabel" name="label_3">
+                <widget class="QLabel" name="label_protocols">
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
@@ -800,7 +800,7 @@
                 </widget>
                </item>
                <item row="0" column="0">
-                <widget class="QLabel" name="label_4">
+                <widget class="QLabel" name="label_sequence">
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
@@ -887,7 +887,7 @@
                 <number>0</number>
                </property>
                <item row="0" column="0">
-                <widget class="QLabel" name="label_5">
+                <widget class="QLabel" name="label_configuration">
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>

@@ -195,7 +195,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.run_stop_ioc()
 
         # TODO remove followin line after tutorial!!!!
-        self.device_epics_widget.setHidden(True)
+        # self.device_epics_widget.setHidden(True)
+        self.sequence_main_widget.setHidden(True)
+        self.configuration_main_widget.setHidden(True)
 
 
     def report_bug(self):
@@ -952,6 +954,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if general:
             config = General_Protocol_Settings(self, self.current_protocol)
             self.enable_step_move(False)
+            self.label_configuration.setText('Configuration: General Protocol Settings')
         else:
             index = self.treeView_protocol_sequence.selectedIndexes()[0]
             dat = self.item_model_sequence.itemFromIndex(index).data()
@@ -960,6 +963,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 config = make_step_of_type.get_config(step)
                 enable = step.step_type not in make_step_of_type.non_addables
                 self.enable_step_move(enable)
+                self.label_configuration.setText(f'Configuration: {step.full_name}')
         if config is not None:
             if self.loop_step_configuration_widget is not None:
                 self.configuration_main_widget.layout().removeWidget(self.loop_step_configuration_widget)
@@ -1069,6 +1073,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         the new one."""
         self.update_loop_step_order()
         self.build_protocol_sequence()
+        ind = self.listView_protocols.selectedIndexes()[0]
+        prot_name = self.item_model_protocols.itemFromIndex(ind).data()
+        self.label_sequence.setText(f'{prot_name}: Sequence')
+        self.sequence_main_widget.setHidden(False)
+        self.configuration_main_widget.setHidden(False)
         self.tree_click_sequence(True)
 
     def build_protocol_sequence(self):

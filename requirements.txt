@@ -89,3 +89,4 @@ tables>=3.7.0
 numexpr>=2.8.4
 simple-pid>=1.0.1
 PyVISA-py>=0.5.3
+qt-material>=2.12
