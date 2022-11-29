@@ -323,6 +323,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             userdat.pop('active_user')
         self.userdata = userdat
         self.comboBox_user.addItems(userdat.keys())
+        if not self.active_user == 'default_user':
+            self.comboBox_user.setCurrentText(self.active_user)
 
     def edit_sample_info(self):
         """Calls dialog for user-information when
@@ -372,6 +374,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             sampledat.pop('active_sample')
         self.sampledata = sampledat
         self.comboBox_sample.addItems(sampledat.keys())
+        if not self.active_sample == 'default_sample':
+            self.comboBox_sample.setCurrentText(self.active_sample)
 
     # --------------------------------------------------
     # save / load methods
