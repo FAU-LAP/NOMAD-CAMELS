@@ -7,6 +7,7 @@ class Custom_Function_Signal(Signal):
         self.put_function = put_function
         self.read_function = read_function
         self.trigger_function = trigger_function
+        self.add_metadata = metadata
 
     def put(self, value, *, timestamp=None, force=False, metadata=None,
             **kwargs):
@@ -24,6 +25,12 @@ class Custom_Function_Signal(Signal):
             self.trigger_function()
         return super().trigger()
 
+    def describe(self):
+        info = super().describe()
+        info[self.name]['source'] = 'Custom Function'
+        info[self.name].update(self.add_metadata)
+        return info
+
 
 
 class Custom_Function_SignalRO(SignalRO):
@@ -31,6 +38,7 @@ class Custom_Function_SignalRO(SignalRO):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
         self.read_function = read_function
         self.trigger_function = trigger_function
+        self.add_metadata = metadata
 
     def get(self):
         if self.read_function:
@@ -41,3 +49,9 @@ class Custom_Function_SignalRO(SignalRO):
         if self.trigger_function:
             self.trigger_function()
         return super().trigger()
+
+    def describe(self):
+        info = super().describe()
+        info[self.name]['source'] = 'Custom Function'
+        info[self.name].update(self.add_metadata)
+        return info

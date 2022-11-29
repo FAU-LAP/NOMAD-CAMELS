@@ -1,4 +1,3 @@
-import time
 import numpy as np
 
 from ophyd import Device
@@ -10,13 +9,13 @@ def gauss(x, sig, a, mu):
 
 
 class Demo_Device(Device):
-    motorX = Cpt(Custom_Function_Signal, name='motorX')
-    motorY = Cpt(Custom_Function_Signal, name='motorY')
-    motorZ = Cpt(Custom_Function_Signal, name='motorZ')
-    detectorX = Cpt(Custom_Function_SignalRO, name='detector1')
-    detectorY = Cpt(Custom_Function_SignalRO, name='detector2')
-    detectorZ = Cpt(Custom_Function_SignalRO, name='detector3')
-    detectorComm = Cpt(Custom_Function_SignalRO, name='detector4')
+    motorX = Cpt(Custom_Function_Signal, name='motorX', metadata={'units': 'm'})
+    motorY = Cpt(Custom_Function_Signal, name='motorY', metadata={'units': 'm'})
+    motorZ = Cpt(Custom_Function_Signal, name='motorZ', metadata={'units': 'm'})
+    detectorX = Cpt(Custom_Function_SignalRO, name='detectorX', metadata={'units': 'counts/s'})
+    detectorY = Cpt(Custom_Function_SignalRO, name='detectorY', metadata={'units': 'kg'})
+    detectorZ = Cpt(Custom_Function_SignalRO, name='detectorZ', metadata={'units': 'eV'})
+    detectorComm = Cpt(Custom_Function_SignalRO, name='detectorComm', metadata={'units': '$'})
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, motor_noises=None,

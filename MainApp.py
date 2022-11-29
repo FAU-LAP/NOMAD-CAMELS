@@ -42,7 +42,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # basic setup
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
-        self.setWindowTitle('CAMELS - Configurable Application for Measurement- and Laboratory-Systems')
+        self.setWindowTitle('CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems')
         self.setWindowIcon(QIcon('graphics/CAMELS.svg'))
         presets = load_save_functions.get_preset_list()
         for pre in presets:
@@ -177,6 +177,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QShortcut('Ctrl+z', self).activated.connect(self.undo)
         QShortcut('Ctrl+y', self).activated.connect(self.redo)
         QShortcut('Ctrl+s', self).activated.connect(self.save_state)
+
+        QShortcut('Ctrl+x', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.cut_shortcut)
+        QShortcut('Ctrl+v', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.paste_shortcut)
+        QShortcut('Ctrl+c', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.copy_shortcut)
 
         # user and sample data
         self.sampledata = {}
@@ -1218,6 +1222,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             menu.addMenu(add_menu)
             menu.addAction(paste_action)
         menu.exec_(self.treeView_protocol_sequence.viewport().mapToGlobal(pos))
+
+    def paste_shortcut(self):
+        inds = self.treeView_protocol_sequence.selectedIndexes()
+        if inds and (self.copied_loop_step is not None):
+            ind = inds[0]
+            item = self.item_model_sequence.itemFromIndex(ind)
+            if self.current_protocol.loop_step_dict[item.data()].has_children:
+                pos = -1
+                parent = item.data()
+            else:
+                pos = ind.row() + 1
+                parent = item.parent()
+            self.add_loop_step(copied_step=True, position=pos, parent=parent)
+
+
+
+    def cut_shortcut(self):
+        inds = self.treeView_protocol_sequence.selectedIndexes()
+        if not inds:
+            return
+        item = self.item_model_sequence.itemFromIndex(inds[0])
+        self.cut_loop_step(item.data())
+
+    def copy_shortcut(self):
+        inds = self.treeView_protocol_sequence.selectedIndexes()
+        if not inds:
+            return
+        item = self.item_model_sequence.itemFromIndex(inds[0])
+        self.copy_loop_step(item.data())
+
 
     def cut_loop_step(self, step_name):
         """Copies the given step, then removes it."""

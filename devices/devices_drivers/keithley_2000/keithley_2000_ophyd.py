@@ -5,12 +5,12 @@ from bluesky_handling.visa_signal import VISA_Signal_Write, VISA_Signal_Read, VI
 
 
 class Keithley_2000(VISA_Device):
-    V_DC = Cpt(VISA_Signal_Read, name='V_DC')
-    V_AC = Cpt(VISA_Signal_Read, name='V_AC')
-    I_DC = Cpt(VISA_Signal_Read, name='I_DC')
-    I_AC = Cpt(VISA_Signal_Read, name='I_AC')
-    resistance = Cpt(VISA_Signal_Read, name='resistance')
-    resistance_4_wire = Cpt(VISA_Signal_Read, name='resistance_4_wire')
+    V_DC = Cpt(VISA_Signal_Read, name='V_DC', metadata={'units': 'V'})
+    V_AC = Cpt(VISA_Signal_Read, name='V_AC', metadata={'units': 'V'})
+    I_DC = Cpt(VISA_Signal_Read, name='I_DC', metadata={'units': 'A'})
+    I_AC = Cpt(VISA_Signal_Read, name='I_AC', metadata={'units': 'A'})
+    resistance = Cpt(VISA_Signal_Read, name='resistance', metadata={'units': 'Ohm'})
+    resistance_4_wire = Cpt(VISA_Signal_Read, name='resistance_4_wire', metadata={'units': 'Ohm'})
 
     idn = Cpt(VISA_Signal_Read, name='idn', kind='config', query_text='*IDN?')
     NPLC = Cpt(VISA_Signal_Write, name='NPLC', kind='config')

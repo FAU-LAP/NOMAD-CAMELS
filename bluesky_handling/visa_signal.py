@@ -53,6 +53,12 @@ class VISA_Signal_Write(Signal):
         self.visa_instrument.write(write_text)
         super().put(value, timestamp=timestamp, force=force, metadata=metadata, **kwargs)
 
+    def describe(self):
+        info = super().describe()
+        info[self.name]['source'] = 'VISA'
+        info[self.name].update(self.metadata)
+        return info
+
 
 
 class VISA_Signal_Read(SignalRO):
@@ -95,6 +101,12 @@ class VISA_Signal_Read(SignalRO):
                     pass
         self._readback = val
         return super().get()
+
+    def describe(self):
+        info = super().describe()
+        info[self.name]['source'] = 'VISA'
+        info[self.name].update(self.metadata)
+        return info
 
 
 

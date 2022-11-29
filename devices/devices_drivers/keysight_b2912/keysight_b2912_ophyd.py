@@ -81,14 +81,14 @@ def enable_func(inp, chan):
 
 
 class Keysight_B2912(VISA_Device):
-    mesV1 = Cpt(VISA_Signal_Read, name='mesV1', query_text='MEAS:VOLT? (@1)')
-    mesI1 = Cpt(VISA_Signal_Read, name='mesI1', query_text='MEAS:CURR? (@1)')
-    mesV2 = Cpt(VISA_Signal_Read, name='mesV2', query_text='MEAS:VOLT? (@2)')
-    mesI2 = Cpt(VISA_Signal_Read, name='mesI2', query_text='MEAS:CURR? (@2)')
-    setV1 = Cpt(VISA_Signal_Write, name='setV1', additional_put_text='SOUR1:VOLT ')
-    setI1 = Cpt(VISA_Signal_Write, name='setI1', additional_put_text='SOUR1:CURR ')
-    setV2 = Cpt(VISA_Signal_Write, name='setV2', additional_put_text='SOUR2:VOLT ')
-    setI2 = Cpt(VISA_Signal_Write, name='setI2', additional_put_text='SOUR2:CURR ')
+    mesV1 = Cpt(VISA_Signal_Read, name='mesV1', query_text='MEAS:VOLT? (@1)', metadata={'units': 'V'})
+    mesI1 = Cpt(VISA_Signal_Read, name='mesI1', query_text='MEAS:CURR? (@1)', metadata={'units': 'A'})
+    mesV2 = Cpt(VISA_Signal_Read, name='mesV2', query_text='MEAS:VOLT? (@2)', metadata={'units': 'V'})
+    mesI2 = Cpt(VISA_Signal_Read, name='mesI2', query_text='MEAS:CURR? (@2)', metadata={'units': 'A'})
+    setV1 = Cpt(VISA_Signal_Write, name='setV1', additional_put_text='SOUR1:VOLT ', metadata={'units': 'V'})
+    setI1 = Cpt(VISA_Signal_Write, name='setI1', additional_put_text='SOUR1:CURR ', metadata={'units': 'A'})
+    setV2 = Cpt(VISA_Signal_Write, name='setV2', additional_put_text='SOUR2:VOLT ', metadata={'units': 'V'})
+    setI2 = Cpt(VISA_Signal_Write, name='setI2', additional_put_text='SOUR2:CURR ', metadata={'units': 'A'})
 
     enable1 = Cpt(VISA_Signal_Write, name='enable1', put_conv_function=lambda x: enable_func(x, 1))
     enable2 = Cpt(VISA_Signal_Write, name='enable2', put_conv_function=lambda x: enable_func(x, 2))

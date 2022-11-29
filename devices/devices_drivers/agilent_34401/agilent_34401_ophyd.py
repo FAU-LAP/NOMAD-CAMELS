@@ -19,12 +19,12 @@ class Agilent_34401_EPICS(Device):
 
 
 class Agilent_34401(VISA_Device):
-    mesDCV = Cpt(VISA_Signal_Read, name='mesDCV', query_text="MEAS:VOLT:DC?")
-    mesDCI = Cpt(VISA_Signal_Read, name='mesDCI', query_text="MEAS:CURR:DC?")
-    mesACV = Cpt(VISA_Signal_Read, name='mesACV', query_text="MEAS:VOLT:AC?")
-    mesACI = Cpt(VISA_Signal_Read, name='mesACI', query_text="MEAS:CURR:AC?")
-    mesR = Cpt(VISA_Signal_Read, name='mesR', query_text="MEAS:RES?")
-    mesR4w = Cpt(VISA_Signal_Read, name='mesR4w', query_text="MEAS:FRES?")
+    mesDCV = Cpt(VISA_Signal_Read, name='mesDCV', query_text="MEAS:VOLT:DC?", metadata={'units': 'V'})
+    mesDCI = Cpt(VISA_Signal_Read, name='mesDCI', query_text="MEAS:CURR:DC?", metadata={'units': 'A'})
+    mesACV = Cpt(VISA_Signal_Read, name='mesACV', query_text="MEAS:VOLT:AC?", metadata={'units': 'V'})
+    mesACI = Cpt(VISA_Signal_Read, name='mesACI', query_text="MEAS:CURR:AC?", metadata={'units': 'A'})
+    mesR = Cpt(VISA_Signal_Read, name='mesR', query_text="MEAS:RES?", metadata={'units': 'Ohm'})
+    mesR4w = Cpt(VISA_Signal_Read, name='mesR4w', query_text="MEAS:FRES?", metadata={'units': 'Ohm'})
     idn = Cpt(VISA_Signal_Read, name='idn', kind='config', query_text='*IDN?')
     nPLC = Cpt(VISA_Signal_Write, name='nPLC', kind='config')
 

@@ -73,8 +73,16 @@ def broker_to_hdf5(runs, filename, additional_data=None):
                         group['time'] = isos
                     else:
                         group[coord] = dataset[coord]
+                stream_meta = run[stream].metadata
                 for col in dataset:
                     group[col] = dataset[col]
+                if 'descriptors' in stream_meta:
+                    dat = stream_meta['descriptors'][0]['data_keys']
+                    for key, val in dat.items():
+                        if isinstance(val, dict):
+                            for k, v in val.items():
+                                group[key].attrs[k] = v
+
 
 
 
