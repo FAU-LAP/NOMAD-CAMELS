@@ -9,7 +9,7 @@ def gauss(x, sig, a, mu):
 
 
 class Demo_Device(Device):
-    motorX = Cpt(Custom_Function_Signal, name='motorX', metadata={'units': 'm'})
+    motorX = Cpt(Custom_Function_Signal, name='motorX', metadata={'units': 'm', 'description': 'This is the X-axis of the not actually existing motor.'})
     motorY = Cpt(Custom_Function_Signal, name='motorY', metadata={'units': 'm'})
     motorZ = Cpt(Custom_Function_Signal, name='motorZ', metadata={'units': 'm'})
     detectorX = Cpt(Custom_Function_SignalRO, name='detectorX', metadata={'units': 'counts/s'})
