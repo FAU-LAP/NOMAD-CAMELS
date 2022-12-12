@@ -281,8 +281,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
 
         self.active_user = self.comboBox_user.currentText()
-        headers = ['Name', 'E-Mail', 'Affiliation',
-                   'Address (affiliation)', 'ORCID', 'Phone']
+        headers = ['name', 'email', 'affiliation',
+                   'address', 'orcid', 'telephone_number']
         tableData = pd.DataFrame.from_dict(self.userdata, 'index')
         dialog = add_remove_table.AddRemoveDialoge(headerLabels=headers,
                                                    parent=self,
@@ -293,7 +293,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # changing the returned dict to dataframe and back to have a
             # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
-            dat['Name2'] = dat['Name']
+            dat['Name2'] = dat['name']
             data = pd.DataFrame(dat)
             data.set_index('Name2', inplace=True)
             self.userdata = data.to_dict('index')
@@ -337,14 +337,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
 
         self.active_sample = self.comboBox_sample.currentText()
-        headers = ['Name', 'Identifier', 'Preparation-Info']
+        headers = ['name', 'sample_id', 'description']
         tableData = pd.DataFrame.from_dict(self.sampledata, 'index')
         dialog = add_remove_table.AddRemoveDialoge(headerLabels=headers, parent=self, title='Sample-Information', askdelete=True, tableData=tableData)
         if dialog.exec_():
             # changing the returned dict to dataframe and back to have a
             # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
-            dat['Name2'] = dat['Name']
+            dat['Name2'] = dat['name']
             data = pd.DataFrame(dat)
             data.set_index('Name2', inplace=True)
             self.sampledata = data.to_dict('index')

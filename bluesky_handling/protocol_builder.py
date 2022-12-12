@@ -20,7 +20,7 @@ standard_string += 'from PyQt5.QtCore import QCoreApplication\n'
 standard_string += 'from epics import caput\n'
 standard_string += 'import datetime\n'
 standard_string += 'from CAMELS.main_classes import plot_widget, list_plot, plot_2D\n'
-standard_string += 'from CAMELS.utility.databroker_export import broker_to_hdf5, broker_to_dict\n'
+standard_string += 'from CAMELS.utility.databroker_export import broker_to_hdf5, broker_to_dict, broker_to_NX\n'
 standard_string += 'from CAMELS.utility import theme_changing\n'
 standard_string += 'from CAMELS.bluesky_handling.evaluation_helper import Evaluator\n'
 standard_string += 'from CAMELS.bluesky_handling import helper_functions\n'
@@ -182,6 +182,8 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     protocol_string += additional_string_devices
     if plotting:
         protocol_string += '\t\tplot_dat = create_plots(RE)\n'
+    else:
+        protocol_string += '\t\tplot_dat = None\n'
     protocol_string += user_sample_string(userdata, sampledata)
     protocol_string += '\t\tadditional_step_data = steps_add_main(RE)\n'
     protocol_string += f'\t\tuids = RE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
@@ -196,7 +198,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         standard_save_string += f'\tnexus_mapper = {nexus_dict}\n'
         # TODO finish this
     else:
-        standard_save_string += f'\tbroker_to_hdf5(runs, "{save_path}")\n\n\n'
+        standard_save_string += f'\tbroker_to_NX(runs, "{save_path}", plot_dat)\n\n\n'
     standard_save_string += '\tapp = QCoreApplication.instance()\n'
     standard_save_string += '\tprint("protocol finished!")\n'
     standard_save_string += '\tif app is not None:\n'

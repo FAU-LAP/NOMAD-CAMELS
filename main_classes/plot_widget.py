@@ -49,6 +49,8 @@ class PlotWidget(QWidget):
         if isinstance(y_names, str):
             y_names = [y_names]
         self.ax = canvas.axes
+        self.x_name = x_name
+        self.y_names = y_names
         self.stream_name = stream_name
         self.fits = fits or []
         self.liveFits = []

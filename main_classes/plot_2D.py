@@ -23,12 +23,15 @@ class PlotWidget_2D(QWidget):
         canvas = MPLwidget()
         self.ax = canvas.axes
         self.stream_name = stream_name
+        self.x_name = x_name
+        self.y_name = y_name
+        self.z_name = z_name
         eva = Evaluator(namespace=namespace)
         self.livePlot = LivePlot_2D(x_name, y_name, z_name, xlim=xlim,
                                     ylim=ylim, zlim=zlim, ax=self.ax,
                                     xlabel=xlabel, ylabel=ylabel, zlabel=zlabel,
                                     cmap='viridis', evaluator=eva,
-                                    stream_name='primary', **kwargs)
+                                    stream_name=stream_name, **kwargs)
         self.livePlot.new_data.connect(self.show)
         self.toolbar = NavigationToolbar2QT(canvas, self)
 
@@ -47,6 +50,9 @@ class PlotWidget_2D(QWidget):
     def autoscale(self):
         self.ax.autoscale()
         self.ax.figure.canvas.draw_idle()
+
+    def clear_plot(self):
+        self.livePlot.clear_plot()
 
 
 class LivePlot_2D(LiveScatter, QObject):
@@ -179,3 +185,8 @@ class LivePlot_2D(LiveScatter, QObject):
             clim = np.nanmin(self._Idata), np.nanmax(self._Idata)
             self.sc.set_clim(*clim)
         self.ax.figure.canvas.draw_idle()
+
+    def clear_plot(self):
+        self._xdata.clear()
+        self._ydata.clear()
+        self._Idata.clear()

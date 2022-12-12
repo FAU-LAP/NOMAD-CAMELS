@@ -84,6 +84,121 @@ def broker_to_hdf5(runs, filename, additional_data=None):
                                 group[key].attrs[k] = v
 
 
+def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
+    if not os.path.isdir(os.path.dirname(filename)):
+        os.makedirs(os.path.dirname(filename))
+    if not isinstance(runs, list):
+        runs = [runs]
+    for run in runs:
+        metadata = run.metadata
+        meta_start = dict(metadata['start'])
+        meta_stop = dict(metadata['stop'])
+        st_time = meta_start.pop('time')
+        start_time = timestamp_to_ISO8601(st_time)
+        end_time = timestamp_to_ISO8601(meta_stop.pop('time'))
+        with h5py.File(filename, 'a') as file:
+            entry = file.create_group(start_time)
+            entry.attrs['NX_class'] = 'NXentry'
+            entry['definition'] = 'NXsensor_scan'
+            entry['start_time'] = start_time
+            entry['end_time'] = end_time
+            if 'description' in meta_start:
+                desc = meta_start.pop('description')
+                entry['experiment_description'] = desc
+            if 'identifier' in meta_start:
+                ident = meta_start.pop('identifier')
+                entry['experiment_identifier'] = ident
+            proc = entry.create_group('process')
+            proc.attrs['NX_class'] = 'NXprocess'
+            proc['program'] = 'CAMELS'
+            proc['program'].attrs['version'] = '0.1'
+            proc['program'].attrs['program_url'] = 'https://github.com/FAU-LAP/CAMELS'
+            version_dict = meta_start.pop('versions')
+            vers_group = proc.create_group('versions')
+            recourse_entry_dict(vers_group, version_dict)
+            user = entry.create_group('user')
+            user.attrs['NX_class'] = 'NXuser'
+            recourse_entry_dict(user, meta_start.pop('user'))
+            sample = entry.create_group('sample')
+            sample.attrs['NX_class'] = 'NXsample'
+            recourse_entry_dict(sample, meta_start.pop('sample'))
+
+            instr = entry.create_group('instrument')
+            instr.attrs['NX_class'] = 'NXinstrument'
+            environ = instr.create_group('environment')
+            environ.attrs['NX_class'] = 'NXenvironment'
+            for dev, dat in meta_start.pop('devices').items():
+                dev_group = environ.create_group(dev)
+                if 'idn' in dat:
+                    dev_group['model'] = dat.pop('idn')
+                else:
+                    dev_group['model'] = dat['device_class_name']
+                dev_group['name'] = dat.pop('device_class_name')
+                dev_group['short_name'] = dev
+                settings = dev_group.create_group('settings')
+                recourse_entry_dict(settings, dat)
+
+            recourse_entry_dict(entry, meta_start)
+
+            data_entry = entry.create_group('data')
+            data_entry.attrs['NX_class'] = 'NXdata'
+            for stream in run:
+                dataset = run[stream].read()
+                if stream == 'primary':
+                    group = data_entry
+                else:
+                    group = data_entry.create_group(stream)
+                for coord in dataset.coords:
+                    if coord == 'time':
+                        isos = []
+                        for t in dataset[coord].values:
+                            isos.append(timestamp_to_ISO8601(t))
+                        since = dataset[coord].to_numpy()
+                        since -= st_time
+                        group['time_since_start'] = since
+                        group['time'] = isos
+                    else:
+                        group[coord] = dataset[coord]
+                stream_meta = run[stream].metadata
+                for col in dataset:
+                    group[col] = dataset[col]
+                if 'descriptors' in stream_meta:
+                    dat = stream_meta['descriptors'][0]['data_keys']
+                    for key, val in dat.items():
+                        if isinstance(val, dict):
+                            for k, v in val.items():
+                                group[key].attrs[k] = v
+                if not plot_data:
+                    continue
+                axes = []
+                signals = []
+                for plot in plot_data[1]:
+                    if plot.stream_name == stream:
+                        if plot.x_name not in axes:
+                            axes.append(plot.x_name)
+                        if hasattr(plot, 'z_name'):
+                            if plot.y_name not in axes:
+                                axes.append(plot.y_name)
+                            if plot.z_name not in signals:
+                                signals.append(plot.z_name)
+                        else:
+                            for y in plot.y_names:
+                                if y not in signals:
+                                    signals.append(y)
+                if signals:
+                    group.attrs['signal'] = signals[0]
+                    if len(signals) > 1:
+                        group.attrs['auxiliary_signals'] = signals[1:]
+                group.attrs['axes'] = axes
+                group.attrs['NX_class'] = 'NXdata'
+
+
+
+
+
+
+
+
 
 
 def broker_to_dict(runs, to_iso_time=True):
