@@ -17,10 +17,13 @@ class Keithley_2000(VISA_Device):
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, resource_name='',
-                 **kwargs):
+                 baud_rate=9600, write_termination='\r\n',
+                 read_termination='\r\n', **kwargs):
         super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
                          configuration_attrs=configuration_attrs, parent=parent,
-                         resource_name=resource_name, baud_rate=19200, write_termination='\r', read_termination='\r', **kwargs)
+                         resource_name=resource_name, baud_rate=baud_rate,
+                         write_termination=write_termination,
+                         read_termination=read_termination, **kwargs)
         self.last_meas = ''
         self.nplc = 1
         self.V_DC.read_function = lambda: self.query_function('VOLT:DC')

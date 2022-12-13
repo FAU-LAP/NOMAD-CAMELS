@@ -167,7 +167,10 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
                     for key, val in dat.items():
                         if isinstance(val, dict):
                             for k, v in val.items():
-                                group[key].attrs[k] = v
+                                try:
+                                    group[key].attrs[k] = v
+                                except Exception as e:
+                                    print(f"could not add value {v} to metadata with name {k}\n{e}")
                 if not plot_data:
                     continue
                 axes = []

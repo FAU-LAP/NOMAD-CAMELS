@@ -526,6 +526,21 @@ class Local_VISA(Connection_Config):
 
         self.layout().addWidget(label_port, 0, 0)
         self.layout().addWidget(self.comboBox_port, 0, 1, 1, 4)
+
+        label_baud = QLabel('Baud-Rate:')
+        self.lineEdit_baud = QLineEdit('9600')
+        self.layout().addWidget(label_baud, 1, 0)
+        self.layout().addWidget(self.lineEdit_baud, 1, 1, 1, 4)
+
+        label_in_term = QLabel('In-Terminator:')
+        self.lineEdit_in_term = QLineEdit('\\r\\n')
+        self.layout().addWidget(label_in_term, 2, 0)
+        self.layout().addWidget(self.lineEdit_in_term, 2, 1)
+
+        label_out_term = QLabel('Out-Terminator:')
+        self.lineEdit_out_term = QLineEdit('\\r\\n')
+        self.layout().addWidget(label_out_term, 2, 2)
+        self.layout().addWidget(self.lineEdit_out_term, 2, 3)
         # self.layout().addWidget(self.label_desc, 1, 0, 1, 2)
         # self.layout().addWidget(self.label_hwid, 1, 2, 1, 3)
     #     self.change_desc()
@@ -538,11 +553,20 @@ class Local_VISA(Connection_Config):
     #     self.label_hwid.setText(hwid)
 
     def get_settings(self):
-        return {'resource_name': self.comboBox_port.currentText()}
+        return {'resource_name': self.comboBox_port.currentText(),
+                'baud_rate': int(self.lineEdit_baud.text()),
+                'read_termination': self.lineEdit_in_term.text().replace('\\r', '\r').replace('\\n', '\n'),
+                'write_termination': self.lineEdit_out_term.text().replace('\\r', '\r').replace('\\n', '\n')}
 
     def load_settings(self, settings_dict):
         if 'resource_name' in settings_dict and settings_dict['resource_name'] in self.ports:
             self.comboBox_port.setCurrentText(settings_dict['resource_name'])
+        if 'baud_rate' in settings_dict:
+            self.lineEdit_baud.setText(str(settings_dict['baud_rate']))
+        if 'read_termination' in settings_dict:
+            self.lineEdit_in_term.setText(settings_dict['read_termination'].replace('\r', '\\r').replace('\n', '\\n'))
+        if 'write_termination' in settings_dict:
+            self.lineEdit_out_term.setText(settings_dict['write_termination'].replace('\r', '\\r').replace('\n', '\\n'))
 
 
 

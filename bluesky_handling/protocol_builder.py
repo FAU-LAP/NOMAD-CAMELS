@@ -226,6 +226,9 @@ def connection_check(ioc_settings, settings):
     connTyp = conn['type']
     if connTyp == 'Local VISA':
         settings['resource_name'] = conn['resource_name']
+        settings['baud_rate'] = conn['baud_rate']
+        settings['read_termination'] = conn['read_termination']
+        settings['write_termination'] = conn['write_termination']
         ioc_settings.clear()
     elif connTyp == '':
         ioc_settings.clear()

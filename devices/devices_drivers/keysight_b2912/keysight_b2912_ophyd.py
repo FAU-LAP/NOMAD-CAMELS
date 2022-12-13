@@ -143,15 +143,19 @@ class Keysight_B2912(VISA_Device):
 
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
-                 configuration_attrs=None, parent=None, resource_name='', **kwargs):
+                 configuration_attrs=None, parent=None, resource_name='',
+                 read_termination='\r\n', write_termination='\r\n',
+                 baud_rate=9600, **kwargs):
         # super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
         #                  configuration_attrs=configuration_attrs, parent=parent, **kwargs)
         super().__init__(prefix=prefix, name=name, kind=kind,
                          read_attrs=read_attrs,
                          configuration_attrs=configuration_attrs,
                          parent=parent,
-                         resource_name=resource_name,
-                         read_termination='\n',
+                         resource_name=resource_name, baud_rate=baud_rate,
+                         write_termination=write_termination,
+                         read_termination=read_termination,
+                         #read_termination='\n',
                          **kwargs)
         # self.visa_instrument = None
         # if resource_name:
