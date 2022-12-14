@@ -431,6 +431,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def launch_device_builder(self):
         from tools import VISA_device_builder
         device_builder = VISA_device_builder.VISA_Device_Builder(self)
+        device_builder.show()
 
 
     def change_preferences(self):

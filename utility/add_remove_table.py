@@ -352,6 +352,8 @@ class AddRemoveTable(QWidget):
                         tab = self.table.indexWidget(ind)
                         tab.update_table_data()
                         vals.append(tab.tableData)
+                    elif i in self.checkables:
+                        vals.append(self.table_model.item(j, i).checkState() > 0)
                     else:
                         try:
                             vals.append(int(self.table_model.item(j, i).text()))

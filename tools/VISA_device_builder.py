@@ -1,13 +1,17 @@
-import os.path
+import sys
+import os
 
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QFileDialog, QMessageBox
 from PyQt5.QtGui import QIcon, QCloseEvent
 
 from utility.add_remove_table import AddRemoveTable
 from utility import variables_handling, fit_variable_renaming
 from tools.VISA_builder import Ui_VISA_Device_Builder
 
-class VISA_Device_Builder(QWidget, Ui_VISA_Device_Builder):
+import importlib
+
+
+class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -16,6 +20,7 @@ class VISA_Device_Builder(QWidget, Ui_VISA_Device_Builder):
             self.setWindowIcon(QIcon('graphics/CAMELS.svg'))
         else:
             self.setWindowIcon(QIcon('../graphics/CAMELS.svg'))
+        self.setWindowTitle('CAMELS - VISA-device-builder')
 
         label_in = QLabel('Input Channels')
         label_out = QLabel('Output Channels')
@@ -57,7 +62,7 @@ class VISA_Device_Builder(QWidget, Ui_VISA_Device_Builder):
         self.resize(600, 700)
 
     def build_device(self):
-        name = fit_variable_renaming.replace_name(self.lineEdit_name.text())
+        dev_name = fit_variable_renaming.replace_name(self.lineEdit_name.text())
         ophyd_name = fit_variable_renaming.replace_name(self.lineEdit_ophyd_name.text())
         read_term = fit_variable_renaming.replace_name(self.lineEdit_read_term.text())
         write_term = fit_variable_renaming.replace_name(self.lineEdit_write_term.text())
@@ -73,17 +78,34 @@ class VISA_Device_Builder(QWidget, Ui_VISA_Device_Builder):
         if not directory:
             return
 
-        fdir = f'{directory}/{name}'
-        os.mkdir(fdir)
+        sys.path.append(directory)
+        if not os.path.isfile(f'{directory}/__init__.py'):
+            with open(f'{directory}/__init__.py', 'w') as f:
+                pass
+        fdir = f'{directory}/{dev_name}'
+        fname = f'{fdir}/{dev_name}.py'
+        if os.path.isdir(fdir) and os.path.isfile(fname):
+            answer = QMessageBox.question(self, 'Device already exists!', f'Device type with name {dev_name} already exists.\nDo you want to overwrite the device?', buttons=QMessageBox.Yes | QMessageBox.Cancel, defaultButton=QMessageBox.Cancel)
+            if answer != QMessageBox.Yes:
+                return
+        if not os.path.isdir(fdir):
+            os.mkdir(fdir)
 
-        class_string = f'from {name}.{name}_ophyd import {ophyd_name}\n\n'
+        class_string = f'from {dev_name}.{dev_name}_ophyd import {ophyd_name}\n\n'
         class_string += 'from main_classes import device_class\n\n'
         class_string += 'class subclass(device_class.Device):\n'
         class_string += '\tdef __init__(self, **kwargs):\n'
-        class_string += f'\t\tsuper().__init__(name="{name}", virtual=False, tags={search_tags}, directory="{name}", ophyd_device={ophyd_name}, ophyd_class_name="{ophyd_name}", **kwargs)\n\n'
-        class_string += 'class subclass_config(device_class.Simple_Config):\n'
+        class_string += f'\t\tsuper().__init__(name="{dev_name}", virtual=False, tags={search_tags}, directory="{dev_name}", ophyd_device={ophyd_name}, ophyd_class_name="{ophyd_name}", **kwargs)\n'
+        for i, name in enumerate(configs['Name']):
+            if configs['Input-Type'][i] == 'str':
+                class_string += f'\t\tself.config["{name}"] = ""\n'
+            elif configs['Input-Type'][i] == 'float':
+                class_string += f'\t\tself.config["{name}"] = 0\n'
+            elif configs['Input-Type'][i] == 'bool':
+                class_string += f'\t\tself.config["{name}"] = False\n'
+        class_string += '\n\nclass subclass_config(device_class.Simple_Config):\n'
         class_string += '\tdef __init__(self, parent=None, data="", settings_dict=None, config_dict=None, ioc_dict=None, additional_info=None):\n'
-        class_string += f'\t\tsuper().__init__(parent, "{name}", data, settings_dict, config_dict, ioc_dict, additional_info)\n'
+        class_string += f'\t\tsuper().__init__(parent, "{dev_name}", data, settings_dict, config_dict, ioc_dict, additional_info)\n'
         class_string += '\t\tself.comboBox_connection_type.addItem("Local VISA")\n'
         class_string += '\t\tself.load_settings()\n'
 
@@ -93,14 +115,25 @@ class VISA_Device_Builder(QWidget, Ui_VISA_Device_Builder):
         for i, name in enumerate(inputs['Name']):
             ophyd_string += f'\t{name} = Cpt(VISA_Signal_Read, name="{name}", query_text="{inputs["Query-Text"][i]}", match_return={inputs["fetch number from return-string"][i]})\n'
         for i, name in enumerate(outputs['Name']):
-            ophyd_string += f'\t{name} = Cpt(VISA_Signal_Write, name="{name}", put_format_string="{inputs["Format-String"][i]}")\n'
+            ophyd_string += f'\t{name} = Cpt(VISA_Signal_Write, name="{name}", put_format_string="{outputs["Format-String"][i]}")\n'
         for i, name in enumerate(configs['Name']):
-            ophyd_string += f'\t{name} = Cpt(VISA_Signal_Write, name="{name}", put_format_string="{inputs["Format-String"][i]}")\n'
+            ophyd_string += f'\t{name} = Cpt(VISA_Signal_Write, name="{name}", put_format_string="{configs["Format-String"][i]}", kind="config")\n'
         for i, name in enumerate(configs_in['Name']):
-            ophyd_string += f'\t{name} = Cpt(VISA_Signal_Read, name="{name}", query_text="{inputs["Query-Text"][i]}", match_return={inputs["fetch number from return-string"][i]})\n'
+            ophyd_string += f'\t{name} = Cpt(VISA_Signal_Read, name="{name}", query_text="{configs_in["Query-Text"][i]}", match_return={configs_in["fetch number from return-string"][i]}, kind="config")\n'
 
-        ophyd_string += f'\n\tdef __init__(self, prefix="", *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, resource_name="", **kwargs):\n'
-        ophyd_string += f'\t\tsuper().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, resource_name=resource_name, baud_rate={baud_rate}, read_termination="{read_term}", write_termination="{write_term}", **kwargs)'
+        ophyd_string += f'\n\tdef __init__(self, prefix="", *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, resource_name="", write_termination="{write_term}", read_termination="{read_term}", baud_rate={baud_rate}, **kwargs):\n'
+        ophyd_string += f'\t\tsuper().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, resource_name=resource_name, baud_rate=baud_rate, read_termination=read_termination, write_termination=write_termination, **kwargs)'
+
+        with open(f'{fdir}/{dev_name}_camels.py', 'w') as f:
+            f.write(class_string)
+        with open(f'{fdir}/{dev_name}_ophyd.py', 'w') as f:
+            f.write(ophyd_string)
+        with open(f'{fdir}/__init__.py', 'w') as f:
+            f.write(ophyd_string)
+
+        QMessageBox.information(self, 'Build finished!',
+                                f'The device {dev_name} has been built!')
+
 
     def closeEvent(self, a0: QCloseEvent) -> None:
         discard_dialog = QMessageBox.question(self, 'Discard Changes?',
@@ -119,7 +152,6 @@ class VISA_Device_Builder(QWidget, Ui_VISA_Device_Builder):
 if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     from PyQt5.QtCore import QCoreApplication
-    import sys
     from utility import exception_hook
     sys.excepthook = exception_hook.exception_hook
     app = QCoreApplication.instance()

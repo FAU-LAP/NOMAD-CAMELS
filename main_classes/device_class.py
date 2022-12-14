@@ -667,7 +667,7 @@ class Simple_Config_Sub(Device_Config_Sub):
         row = 0
         for name, widge in self.setting_checks.items():
             self.layout().addWidget(widge, row, col, 1, 2)
-            col += 1
+            col += 2
             if col == 4:
                 col = 0
                 row += 1
@@ -694,7 +694,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 row += 1
         for name, widge in self.config_checks.items():
             self.layout().addWidget(widge, row, col, 1, 2)
-            col += 1
+            col += 2
             if col == 4:
                 col = 0
                 row += 1
