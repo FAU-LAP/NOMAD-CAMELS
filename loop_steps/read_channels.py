@@ -5,6 +5,7 @@ from main_classes.loop_step import Loop_Step, Loop_Step_Config
 from gui.read_channels import Ui_read_channels_config
 
 from utility import variables_handling, fit_variable_renaming
+from utility.channels_check_table import Channels_Check_Table
 
 
 class Read_Channels(Loop_Step):
@@ -124,16 +125,21 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
         # self.comboBox_readType.addItems(['read all', 'read selected'])
         # self.comboBox_readType.currentTextChanged.connect(self.read_type_changed)
         self.load_data()
+        labels = ['read', 'channel']
+        info_dict = {'channel': self.loop_step.channel_list}
+        self.read_table = Channels_Check_Table(self, labels, info_dict=info_dict,
+                                               title='Read-Channels')
         self.read_type_changed()
-        self.tableWidget_channels.setHorizontalHeaderLabels(['read',
-                                                             'channel name',
-                                                             'use set-value'])
-        self.build_channels_table()
-        self.lineEdit_search.textChanged.connect(self.build_channels_table)
+        self.layout().addWidget(self.read_table, 5, 0, 1, 2)
+        # self.tableWidget_channels.setHorizontalHeaderLabels(['read',
+        #                                                      'channel name',
+        #                                                      'use set-value'])
+        # self.build_channels_table()
+        # self.lineEdit_search.textChanged.connect(self.build_channels_table)
         # self.checkBox_use_set.toggled.connect(self.checkbox_toggle)
         # self.checkBox_plot.toggled.connect(self.checkbox_toggle)
         # self.checkBox_save.toggled.connect(self.checkbox_toggle)
-        self.tableWidget_channels.clicked.connect(self.table_check_changed)
+        # self.tableWidget_channels.clicked.connect(self.table_check_changed)
 
     def use_trigger(self):
         self.loop_step.split_trigger = self.checkBox_split_trigger.isChecked()
@@ -149,12 +155,13 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
         """If the read-all checkbox is checked, disables the table, if
         not, enables it."""
         read_all = self.checkBox_read_all.isChecked()
-        if read_all:
-            self.tableWidget_channels.setEnabled(False)
-            # self.checkBox_use_set.setEnabled(True)
-        else:
-            self.tableWidget_channels.setEnabled(True)
-            # self.checkBox_use_set.setEnabled(False)
+        self.read_table.setEnabled(not read_all)
+        # if read_all:
+        #     self.tableWidget_channels.setEnabled(False)
+        #     self.checkBox_use_set.setEnabled(True)
+        # else:
+        #     self.tableWidget_channels.setEnabled(True)
+        #     self.checkBox_use_set.setEnabled(False)
         self.loop_step.read_all = read_all
         self.loop_step.update_used_devices()
 
@@ -165,16 +172,17 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
         # self.checkBox_save.setChecked(self.loop_step.save_data)
         # self.checkBox_plot.setChecked(self.loop_step.plot_data)
         # self.checkBox_use_set.setChecked(self.loop_step.use_set_val)
-        self.build_channels_table()
+        # self.build_channels_table()
 
     def update_step_config(self):
-        self.lineEdit_search.clear()
-        self.build_channels_table()
-        self.loop_step.channel_list = []
-        for i in range(self.tableWidget_channels.rowCount()):
-            if self.tableWidget_channels.item(i, 0).checkState() > 0:
-                name = self.tableWidget_channels.item(i, 1).text()
-                self.loop_step.channel_list.append(name)
+        self.loop_step.channel_list = self.read_table.get_inf()['channel']
+        # self.lineEdit_search.clear()
+        # self.build_channels_table()
+        # self.loop_step.channel_list = []
+        # for i in range(self.tableWidget_channels.rowCount()):
+        #     if self.tableWidget_channels.item(i, 0).checkState() > 0:
+        #         name = self.tableWidget_channels.item(i, 1).text()
+        #         self.loop_step.channel_list.append(name)
 
     def table_check_changed(self, pos):
         """If a checkbox inside the table is clicked, the value is
