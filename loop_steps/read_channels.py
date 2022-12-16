@@ -175,7 +175,7 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
         # self.build_channels_table()
 
     def update_step_config(self):
-        self.loop_step.channel_list = self.read_table.get_inf()['channel']
+        self.loop_step.channel_list = self.read_table.get_info()['channel']
         # self.lineEdit_search.clear()
         # self.build_channels_table()
         # self.loop_step.channel_list = []
