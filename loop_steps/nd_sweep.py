@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QComboBox, QLabel, QCheckBox
+from PyQt5.QtWidgets import QComboBox, QLabel, QCheckBox, QTabWidget, QPushButton, QWidget, QGridLayout
 from PyQt5.QtGui import QFont
+from PyQt5.QtCore import pyqtSignal
 
 from main_classes.loop_step import Loop_Step_Config, Loop_Step
 from utility import variables_handling
@@ -13,20 +14,19 @@ from loop_steps.for_while_loops import For_Loop_Step_Config_Sub, For_Loop_Step
 
 
 class ND_Sweep(Loop_Step):
-    def __init__(self, name='', children=None, parent_step=None, step_info=None,
+    def __init__(self, name='', parent_step=None, step_info=None,
                  **kwargs):
-        super().__init__(name, children, parent_step, step_info, **kwargs)
+        super().__init__(name=name, parent_step=parent_step, step_info=step_info,
+                         **kwargs)
         step_info = step_info or {}
-        self.step_type = 'n-D Sweep'
+        self.step_type = 'N-D Sweep'
         self.has_children = False
         self.sweep_channels = step_info['sweep_channels'] if 'sweep_channels' in step_info else []
         self.data_output = step_info['data_output'] if 'data_output' in step_info else 'sub-stream'
         self.plots = load_plots([], step_info['plots']) if 'plots' in step_info else []
         self.read_channels = step_info['read_channels'] if 'read_channels' in step_info else []
         self.use_own_plots = step_info['use_own_plots'] if 'use_own_plots' in step_info else False
-        self.calc_minmax = step_info['calc_minmax'] if 'calc_minmax' in step_info else False
-        self.calc_mean = step_info['calc_mean'] if 'calc_mean' in step_info else False
-        self.calc_stddev = step_info['calc_stddev'] if 'calc_stddev' in step_info else False
+        self.sweep_values = step_info['sweep_values'] if 'sweep_values' in step_info else []
 
     def update_used_devices(self):
         self.used_devices = []
@@ -56,153 +56,158 @@ class ND_Sweep(Loop_Step):
         return add_main_string
 
 
+
+class Sweep_Step(For_Loop_Step):
+    def __init__(self, step_info=None):
+        step_info = step_info or {}
+        super().__init__(step_info=step_info)
+        self.sweep_channel = step_info['sweep_channel'] if 'sweep_channel' in step_info else ''
+
+
+
+
 class ND_Sweep_Config(Loop_Step_Config):
     def __init__(self, loop_step:ND_Sweep, parent=None):
         super().__init__(parent, loop_step)
         self.loop_step = loop_step
-        label_sweep_channel = QLabel('Sweep Channel')
-        out_box = []
-        in_box = []
-        for channel in variables_handling.channels:
-            in_box.append(channel)
-            if variables_handling.channels[channel].output:
-                out_box.append(channel)
-        self.comboBox_sweep_channel = QComboBox()
-        self.comboBox_sweep_channel.addItems(out_box)
-        if loop_step.sweep_channel in out_box:
-            self.comboBox_sweep_channel.setCurrentText(loop_step.sweep_channel)
 
         label_data = QLabel('Data Output:')
+        font = QFont()
+        font.setBold(True)
+        label_data.setStyleSheet('font-size: 9pt')
+        label_data.setFont(font)
         self.comboBox_data_output = QComboBox()
         output_types = ['sub-stream', 'main stream', 'own file']
         self.comboBox_data_output.addItems(output_types)
         self.comboBox_data_output.setCurrentText(loop_step.data_output)
 
-        self.sweep_widget = For_Loop_Step_Config_Sub(parent=self,
-                                                     loop_step=loop_step)
-
-        # self.read_table = AddRemoveTable(title='Read Channels', headerLabels=[],
-        #                                  tableData=loop_step.read_channels,
-        #                                  comboBoxes=in_box)
         labels = ['read', 'channel']
         info_dict = {'channel': self.loop_step.read_channels}
-        self.read_table = Channels_Check_Table(self, labels, info_dict=info_dict)
-
-        self.checkBox_use_own_plots = QCheckBox('Use own Plots')
-        self.checkBox_use_own_plots.setChecked(loop_step.use_own_plots)
+        self.read_table = Channels_Check_Table(self, labels, info_dict=info_dict,
+                                               title='Read-Channels')
 
         self.plot_widge = Plot_Button_Overview(self, self.loop_step.plots)
 
-        label_proc = QLabel('Data processing')
-        font = QFont()
-        font.setBold(True)
-        label_proc.setStyleSheet('font-size: 9pt')
-        label_proc.setFont(font)
-        self.checkBox_minmax = QCheckBox('Calculate min/max')
-        self.checkBox_minmax.setChecked(loop_step.calc_minmax)
-        self.checkBox_mean = QCheckBox('Calculate mean')
-        self.checkBox_mean.setChecked(loop_step.calc_mean)
-        self.checkBox_stddev = QCheckBox('Calculate standard deviation')
-        self.checkBox_stddev.setChecked(loop_step.calc_stddev)
-        # self.checkBox_fit = QCheckBox('Calculate fit')
-        # self.checkBox_fit.setChecked(loop_step.calc_fit)
-        # self.checkBox_fit.clicked.connect(self.change_fitting)
-        # self.checkBox_guess_fit = QCheckBox('Guess initial params')
-        # self.checkBox_guess_fit.setChecked(loop_step.guess_fit_params)
-        # self.checkBox_guess_fit.clicked.connect(self.change_fitting)
-        # self.radioButton_predev = QRadioButton('Predefined function')
-        # self.radioButton_own = QRadioButton('Own function')
-        # self.radioButton_predev.setChecked(True)
-        # self.radioButton_own.setChecked(loop_step.use_custom_fit)
-        # self.radioButton_predev.clicked.connect(self.change_fitting)
-        # self.radioButton_own.clicked.connect(self.change_fitting)
-        #
-        # self.comboBox_fit = QComboBox()
-        # self.comboBox_fit.addItems(sorted(models_names.keys()))
-        # if loop_step.predef_fit in models_names.keys():
-        #     self.comboBox_fit.setCurrentText(loop_step.predef_fit)
-        # else:
-        #     self.comboBox_fit.setCurrentText('Linear')
-        # self.lineEdit_fit_func = QLineEdit()
-        # self.lineEdit_fit_func.setText(loop_step.custom_fit)
-        # self.comboBox_fit.currentTextChanged.connect(self.change_fitting)
-        # self.lineEdit_fit_func.textChanged.connect(self.change_fitting)
-        #
-        # cols = ['name', 'initial value']
-        # self.start_params = AddRemoveTable(headerLabels=cols,
-        #                                   title='Fit Parameters',
-        #                                   editables=[1],
-        #                                   tableData=loop_step.fit_params)
-        # self.start_params.addButton.setHidden(True)
-        # self.start_params.removeButton.setHidden(True)
-        # self.change_fitting()
+        self.addSweepChannelButton = QPushButton('Add sweep channel')
+        self.addSweepChannelButton.clicked.connect(self.add_sweep_channel)
 
-        self.layout().addWidget(label_sweep_channel, 1, 0)
-        self.layout().addWidget(self.comboBox_sweep_channel, 1, 1, 1, 4)
+        self.tabs = []
+        self.tab_widget = QTabWidget()
+        for sweep in loop_step.sweep_values:
+            self.add_sweep_channel(sweep)
+        if not self.tabs:
+            self.add_sweep_channel()
+
+        self.layout().addWidget(self.plot_widge, 1, 0, 1, 5)
         self.layout().addWidget(label_data, 2, 0)
         self.layout().addWidget(self.comboBox_data_output, 2, 1, 1, 4)
-        self.layout().addWidget(self.sweep_widget, 5, 0, 1, 5)
         self.layout().addWidget(self.read_table, 6, 0, 1, 5)
+        self.layout().addWidget(self.addSweepChannelButton, 10, 0, 1, 5)
+        self.layout().addWidget(self.tab_widget, 11, 0, 1, 5)
 
-        self.layout().addWidget(self.plot_widge, 8, 0, 1, 5)
-        self.layout().addWidget(self.checkBox_use_own_plots, 7, 0, 1, 5)
-        # self.layout().addWidget(self.plot_table, 7, 2, 1, 3)
-        self.checkBox_use_own_plots.clicked.connect(self.use_plot_change)
+    def remove_sweep_channel(self):
+        ind = self.tab_widget.currentIndex()
+        self.tab_widget.removeTab(ind)
+        self.tabs.pop(ind)
+        self.change_tab_name()
 
-        self.layout().addWidget(label_proc, 10, 0, 1, 5)
-        self.layout().addWidget(self.checkBox_minmax, 11, 0, 1, 2)
-        self.layout().addWidget(self.checkBox_mean, 11, 2, 1, 3)
-        self.layout().addWidget(self.checkBox_stddev, 13, 0, 1, 2)
-        # self.layout().addWidget(self.checkBox_fit, 20, 0, 1, 2)
-        # self.layout().addWidget(self.checkBox_guess_fit, 20, 2, 1, 3)
-        # self.layout().addWidget(self.radioButton_predev, 21, 0, 1, 2)
-        # self.layout().addWidget(self.radioButton_own, 21, 2, 1, 3)
-        # self.layout().addWidget(self.comboBox_fit, 22, 0, 1, 2)
-        # self.layout().addWidget(self.lineEdit_fit_func, 22, 2, 1, 3)
-        # self.layout().addWidget(self.start_params, 23, 0, 1, 5)
+    def add_sweep_channel(self, sweep_info=None):
+        if not sweep_info:
+            sweep_info = Sweep_Step()
+        tab = Single_Sweep_Tab(sweep_info, self)
+        tab.signal_change_sweep.connect(self.change_tab_name)
+        tab.signal_remove.connect(self.remove_sweep_channel)
+        tab.signal_move_left.connect(lambda: self.move_tab(-1))
+        tab.signal_move_right.connect(lambda: self.move_tab(1))
+        self.tabs.append(tab)
+        self.tab_widget.addTab(tab, '')
+        self.change_tab_name()
 
+    def change_tab_name(self):
+        for i, tab in enumerate(self.tabs):
+            if i == 0:
+                pos = 'outer'
+            elif i == len(self.tabs) - 1:
+                pos = 'inner'
+            else:
+                pos = 'mid'
+            name = tab.get_name(pos)
+            self.tab_widget.setTabText(i, name)
 
-        self.use_plot_change()
-
-    # def setup_plots(self):
-    #     """Called when any preferences are changed. Makes the dictionary
-    #      of preferences and calls save_preferences from the
-    #      load_save_functions module."""
-    #     plot_dialog = Plot_Definer(self)
-    #     plot_dialog.exec_()
-    #     print(plot_dialog.data)
-    # if settings_dialog.exec_():
-    #     self.preferences = settings_dialog.get_settings()
-    #     number_formatting.preferences = self.preferences
-    #     self.toggle_dark_mode()
-    #     load_save_functions.save_preferences(self.preferences)
-    #     variables_handling.device_driver_path = self.preferences['device_driver_path']
-    #     variables_handling.meas_files_path = self.preferences['meas_files_path']
-    # prefs = {'autosave': self.actionAutosave_on_closing.isChecked(),
-    #          'dark_mode': self.actionDark_Mode.isChecked()}
-    # load_save_functions.save_preferences(prefs)
-
-    def use_plot_change(self):
-        use_plots = self.checkBox_use_own_plots.isChecked()
-        self.plot_widge.setEnabled(use_plots)
-
-
-
+    def move_tab(self, direction=1):
+        ind = self.tab_widget.currentIndex()
+        self.tab_widget.tabBar().moveTab(ind, ind + direction)
+        self.tabs[ind + direction], self.tabs[ind] = self.tabs[ind], self.tabs[ind + direction]
+        self.change_tab_name()
 
     def update_step_config(self):
+        self.loop_step.sweep_values = []
+        self.loop_step.sweep_channels = []
+        for tab in self.tabs:
+            info = tab.get_info()
+            chan = info.sweep_channel
+            if chan in self.loop_step.sweep_channels:
+                raise Exception(f'Can only scan same channel once in ND-sweep!\n{chan}')
+            self.loop_step.sweep_channels.append(chan)
+            self.loop_step.sweep_values.append(info)
         super().update_step_config()
-        self.loop_step.use_own_plots = self.checkBox_use_own_plots.isChecked()
         self.loop_step.plots = self.plot_widge.plot_data
-        # self.loop_step.plots = self.plot_table.update_table_data()
         self.loop_step.read_channels = self.read_table.get_info()['channel']
         self.loop_step.data_output = self.comboBox_data_output.currentText()
-        self.loop_step.sweep_channel = self.comboBox_sweep_channel.currentText()
-        self.loop_step.calc_minmax = self.checkBox_minmax.isChecked()
-        self.loop_step.calc_mean = self.checkBox_mean.isChecked()
-        self.loop_step.calc_stddev = self.checkBox_stddev.isChecked()
-        # self.loop_step.calc_fit = self.checkBox_fit.isChecked()
-        # self.loop_step.use_custom_fit = self.radioButton_own.isChecked()
-        # self.loop_step.predef_fit = self.comboBox_fit.currentText()
-        # self.loop_step.custom_fit = self.lineEdit_fit_func.text()
 
+
+
+
+
+class Single_Sweep_Tab(QWidget):
+    signal_remove = pyqtSignal()
+    signal_move_left = pyqtSignal()
+    signal_move_right = pyqtSignal()
+    signal_change_sweep = pyqtSignal()
+
+    def __init__(self, loop_step:Sweep_Step, parent=None):
+        super().__init__(parent)
+        self.loop_step = loop_step
+        label_sweep = QLabel('Sweep Channel:')
+        out_channels = variables_handling.get_output_channels()
+        self.comboBox_sweep_channel = QComboBox()
+        self.comboBox_sweep_channel.addItems(out_channels)
+        if loop_step.sweep_channel in out_channels:
+            self.comboBox_sweep_channel.setCurrentText(loop_step.sweep_channel)
+        self.comboBox_sweep_channel.currentTextChanged.connect(self.signal_change_sweep.emit)
+
+        self.sweep_widget = For_Loop_Step_Config_Sub(parent=self,
+                                                     loop_step=loop_step)
+
+        self.moveLeftButton = QPushButton('Move left/out')
+        self.moveRightButton = QPushButton('Move right/in')
+        self.removeButton = QPushButton('Remove')
+
+        self.moveRightButton.clicked.connect(self.signal_move_right.emit)
+        self.moveLeftButton.clicked.connect(self.signal_move_left.emit)
+        self.removeButton.clicked.connect(self.signal_remove.emit)
+
+        layout = QGridLayout()
+        layout.addWidget(self.moveLeftButton, 2, 0)
+        layout.addWidget(self.moveRightButton, 2, 1)
+        layout.addWidget(self.removeButton, 2, 2)
+        layout.addWidget(label_sweep, 4, 0)
+        layout.addWidget(self.comboBox_sweep_channel, 4, 1, 1, 2)
+        layout.addWidget(self.sweep_widget, 10, 0, 1, 3)
+        self.setLayout(layout)
+
+    def get_name(self, pos):
+        self.moveLeftButton.setEnabled(True)
+        self.moveRightButton.setEnabled(True)
+        if pos == 'outer':
+            self.moveLeftButton.setEnabled(False)
+        elif pos == 'inner':
+            self.moveRightButton.setEnabled(False)
+        p = f'{pos}: ' if pos != 'mid' else ''
+        return f'{p}{self.comboBox_sweep_channel.currentText()}'
+
+
+    def get_info(self):
+        self.loop_step.sweep_channel = self.comboBox_sweep_channel.currentText()
+        return self.loop_step
 

@@ -128,7 +128,7 @@ class Simple_Sweep_Config(Loop_Step_Config):
     def __init__(self, loop_step:Simple_Sweep, parent=None):
         super().__init__(parent, loop_step)
         self.loop_step = loop_step
-        label_sweep_channel = QLabel('Sweep Channel')
+        label_sweep_channel = QLabel('Sweep Channel:')
         out_box = []
         in_box = []
         for channel in variables_handling.channels:

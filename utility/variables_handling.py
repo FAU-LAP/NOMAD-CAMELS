@@ -20,6 +20,14 @@ loop_step_variables = {}
 devices = {}
 current_protocol = None
 dark_mode = False
+
+def get_output_channels():
+    outputs = []
+    for channel in channels:
+        if channels[channel].output:
+            outputs.append(channel)
+    return outputs
+
 # evaluation_functions = simpleeval.DEFAULT_FUNCTIONS.copy()
 # evaluation_functions.update({'exp': np.exp,
 #                              'log': np.log,
