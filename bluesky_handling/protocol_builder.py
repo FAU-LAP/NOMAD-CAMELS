@@ -181,9 +181,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     protocol_string += devices_string
     protocol_string += additional_string_devices
     if plotting:
-        protocol_string += '\t\tplot_dat = create_plots(RE)\n'
-    else:
-        protocol_string += '\t\tplot_dat = None\n'
+        protocol_string += '\t\tplot_etc = create_plots(RE)\n'
     protocol_string += user_sample_string(userdata, sampledata)
     protocol_string += '\t\tadditional_step_data = steps_add_main(RE)\n'
     protocol_string += f'\t\tuids = RE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
@@ -198,7 +196,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         standard_save_string += f'\tnexus_mapper = {nexus_dict}\n'
         # TODO finish this
     else:
-        standard_save_string += f'\tbroker_to_NX(runs, "{save_path}", plot_dat)\n\n\n'
+        standard_save_string += f'\tbroker_to_NX(runs, "{save_path}", plots)\n\n\n'
     standard_save_string += '\tapp = QCoreApplication.instance()\n'
     standard_save_string += '\tprint("protocol finished!")\n'
     standard_save_string += '\tif app is not None:\n'

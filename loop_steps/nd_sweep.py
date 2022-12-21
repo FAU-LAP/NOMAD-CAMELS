@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QComboBox, QLabel, QCheckBox, QTabWidget, QPushButton, QWidget, QGridLayout
+from PyQt5.QtWidgets import QComboBox, QLabel, QCheckBox, QTabWidget, QPushButton, QWidget, QGridLayout, QLineEdit
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import pyqtSignal
 
@@ -19,13 +19,12 @@ class ND_Sweep(Loop_Step):
         super().__init__(name=name, parent_step=parent_step, step_info=step_info,
                          **kwargs)
         step_info = step_info or {}
-        self.step_type = 'N-D Sweep'
+        self.step_type = 'ND Sweep'
         self.has_children = False
         self.sweep_channels = step_info['sweep_channels'] if 'sweep_channels' in step_info else []
         self.data_output = step_info['data_output'] if 'data_output' in step_info else 'sub-stream'
         self.plots = load_plots([], step_info['plots']) if 'plots' in step_info else []
         self.read_channels = step_info['read_channels'] if 'read_channels' in step_info else []
-        self.use_own_plots = step_info['use_own_plots'] if 'use_own_plots' in step_info else False
         self.sweep_values = step_info['sweep_values'] if 'sweep_values' in step_info else []
 
     def update_used_devices(self):
@@ -42,7 +41,7 @@ class ND_Sweep(Loop_Step):
                     self.used_devices.append(device)
 
     def get_outer_string(self):
-        if self.use_own_plots:
+        if self.plots:
             return plot_creator(self.plots, f'create_plots_{self.name}')[0]
         return ''
 
@@ -51,9 +50,51 @@ class ND_Sweep(Loop_Step):
         if self.data_output == 'main stream':
             stream = '"primary"'
         add_main_string = ''
-        if self.use_own_plots:
+        if self.plots:
             add_main_string += f'\treturner["{self.name}_plot_stuff"] = create_plots_{self.name}(RE, {stream})\n'
         return add_main_string
+
+
+    def get_protocol_string(self, n_tabs=1):
+        """The loop is enumerating over the selected points."""
+        tabs = '\t'*n_tabs
+
+        stream = f'"{self.name}"'
+        if self.data_output == 'main stream':
+            stream = 'stream_name'
+
+        protocol_string = super().get_protocol_string(n_tabs)
+        protocol_string += f'{tabs}channels = ['
+        for i, channel in enumerate(self.read_channels):
+            if channel not in variables_handling.channels:
+                raise Exception(f'Trying to read channel {channel} in {self.full_name}, but it does not exist!')
+            if i > 0:
+                protocol_string += ', '
+            name = variables_handling.channels[channel].name
+            if '.' in name:
+                dev, chan = name.split('.')
+                protocol_string += f'devs["{dev}"].{chan}'
+            else:
+                protocol_string += f'devs["{name}"]'
+        protocol_string += ']\n'
+        protocol_string += f'{tabs}helper_functions.clear_plots(plots, {stream})'
+
+        if not self.sweep_values:
+            raise Exception(f'Trying to sweep nothing!\n{self.full_name}')
+        i = 0
+        for i, sweep in enumerate(self.sweep_values):
+            if not isinstance(sweep, Sweep_Step):
+                sweep = Sweep_Step(sweep)
+            sweep.name = f'sub_step_{i}'
+            sweep.update_full_name()
+            protocol_string += sweep.get_protocol_string(n_tabs + i)
+
+        tabs = '\t' * (n_tabs + i)
+        protocol_string += f'{tabs}\tyield from bps.wait("A")\n'
+        protocol_string += f'{tabs}\tyield from bps.trigger_and_read(channels, name={stream})\n'
+        protocol_string += f'{tabs}yield from helper_functions.get_fit_results(all_fits, namespace, True, {stream})\n'
+        self.update_time_weight()
+        return protocol_string
 
 
 
@@ -61,7 +102,23 @@ class Sweep_Step(For_Loop_Step):
     def __init__(self, step_info=None):
         step_info = step_info or {}
         super().__init__(step_info=step_info)
+        self.step_type = 'ND Sweep Part'
         self.sweep_channel = step_info['sweep_channel'] if 'sweep_channel' in step_info else ''
+        self.wait_time = step_info['wait_time'] if 'wait_time' in step_info else ''
+
+    def get_protocol_string(self, n_tabs=1):
+        tabs = '\t'*n_tabs
+        protocol_string = super().get_protocol_string(n_tabs)
+        name = variables_handling.channels[self.sweep_channel].name
+        if '.' in name:
+            dev, chan = name.split('.')
+            setter = f'devs["{dev}"].{chan}'
+        else:
+            setter = f'devs["{name}"]'
+        protocol_string += f'{tabs}\tyield from bps.abs_set({setter}, {self.name.replace(" ", "_")}_Value, group="A")\n'
+        if self.wait_time:
+            protocol_string += f'{tabs}\tyield from bps.sleep(eva.eval("{self.wait_time}"))\n'
+        return protocol_string
 
 
 
@@ -112,9 +169,11 @@ class ND_Sweep_Config(Loop_Step_Config):
         self.change_tab_name()
 
     def add_sweep_channel(self, sweep_info=None):
-        if not sweep_info:
-            sweep_info = Sweep_Step()
-        tab = Single_Sweep_Tab(sweep_info, self)
+        if isinstance(sweep_info, Sweep_Step):
+            sweep_step = sweep_info
+        else:
+            sweep_step = Sweep_Step(sweep_info)
+        tab = Single_Sweep_Tab(sweep_step, self)
         tab.signal_change_sweep.connect(self.change_tab_name)
         tab.signal_remove.connect(self.remove_sweep_channel)
         tab.signal_move_left.connect(lambda: self.move_tab(-1))
@@ -176,6 +235,11 @@ class Single_Sweep_Tab(QWidget):
             self.comboBox_sweep_channel.setCurrentText(loop_step.sweep_channel)
         self.comboBox_sweep_channel.currentTextChanged.connect(self.signal_change_sweep.emit)
 
+        label_wait = QLabel('Wait after setting:')
+        self.lineEdit_wait_time = QLineEdit('0')
+        if loop_step.wait_time:
+            self.lineEdit_wait_time.setText(loop_step.wait_time)
+
         self.sweep_widget = For_Loop_Step_Config_Sub(parent=self,
                                                      loop_step=loop_step)
 
@@ -193,6 +257,8 @@ class Single_Sweep_Tab(QWidget):
         layout.addWidget(self.removeButton, 2, 2)
         layout.addWidget(label_sweep, 4, 0)
         layout.addWidget(self.comboBox_sweep_channel, 4, 1, 1, 2)
+        layout.addWidget(label_wait, 6, 0)
+        layout.addWidget(self.lineEdit_wait_time, 6, 1, 1, 2)
         layout.addWidget(self.sweep_widget, 10, 0, 1, 3)
         self.setLayout(layout)
 
@@ -209,5 +275,6 @@ class Single_Sweep_Tab(QWidget):
 
     def get_info(self):
         self.loop_step.sweep_channel = self.comboBox_sweep_channel.currentText()
+        self.loop_step.wait_time = self.lineEdit_wait_time.text()
         return self.loop_step
 

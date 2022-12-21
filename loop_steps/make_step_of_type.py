@@ -12,7 +12,7 @@ step_type_config = {'Change Device Config': [change_device_config.Change_DeviceC
                     'Gradient Descent': [gradient_descent.Gradient_Descent_Step,
                                          gradient_descent.Gradient_Descent_Config],
                     'If': [if_step.If_Loop_Step, if_step.If_Step_Config],
-                    'N-D Sweep': [nd_sweep.ND_Sweep, nd_sweep.ND_Sweep_Config],
+                    'ND Sweep': [nd_sweep.ND_Sweep, nd_sweep.ND_Sweep_Config],
                     'Prompt': [prompt_loop_step.Prompt_Loop_Step,
                                prompt_loop_step.Prompt_Loop_Step_Config],
                     'Read Channels': [read_channels.Read_Channels,
