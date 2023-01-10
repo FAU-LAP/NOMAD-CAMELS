@@ -209,7 +209,10 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     protocol_string += standard_save_string
     protocol_string += standard_start_string
     protocol_string += f'\tcatalog = databroker.catalog["{catalog}"]\n'
-    protocol_string += '\tRE.subscribe(catalog.v1.insert)\n'
+    protocol_string += '\tRE.subscribe(catalog.v1.insert)\n\n'
+    protocol_string += '\tfrom utility import tqdm_progress_bar\n'
+    protocol_string += f'\ttqdm_bar = tqdm_progress_bar.ProgressBar({protocol.get_total_steps()})\n'
+    protocol_string += '\tprotocol_step_information["protocol_stepper_signal"] = tqdm_bar\n'
     protocol_string += standard_start_string2
     if not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))

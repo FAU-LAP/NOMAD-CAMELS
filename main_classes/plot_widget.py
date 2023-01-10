@@ -122,7 +122,6 @@ class PlotWidget(QWidget):
 
         self.setWindowTitle(title or f'{x_name} vs. {y_names[0]}')
         self.setWindowIcon(QIcon('graphics/CAMELS.svg'))
-        print(os.getcwd())
 
         self.plot_options.hide()
         self.options_open = False
