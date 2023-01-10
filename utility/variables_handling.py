@@ -92,6 +92,8 @@ def get_color(color='', string=False):
         rgb = (255, 180, 180)
         if dark_mode:
             rgb = (75, 0, 0)
+    elif color == 'strong_red':
+        rgb = (230, 0, 0)
     elif color == 'green' or color == 'g':
         rgb = (180, 255, 180)
         if dark_mode:

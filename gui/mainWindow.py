@@ -315,7 +315,7 @@ class Ui_MainWindow(object):
         self.progressBar_protocols.setProperty("value", 0)
         self.progressBar_protocols.setObjectName("progressBar_protocols")
         self.gridLayout_14.addWidget(self.progressBar_protocols, 1, 0, 1, 2)
-        self.textEdit_console_output_meas = QtWidgets.QTextEdit(self.protocols_build_widget)
+        self.textEdit_console_output_meas = Console_TextEdit(self.protocols_build_widget)
         self.textEdit_console_output_meas.setTextInteractionFlags(QtCore.Qt.TextSelectableByKeyboard|QtCore.Qt.TextSelectableByMouse)
         self.textEdit_console_output_meas.setObjectName("textEdit_console_output_meas")
         self.gridLayout_14.addWidget(self.textEdit_console_output_meas, 4, 0, 1, 2)
@@ -572,3 +572,4 @@ class Ui_MainWindow(object):
         self.actionDocumentation.setText(_translate("MainWindow", "Documentation"))
         self.actionReport_Bug.setText(_translate("MainWindow", "Report Bug"))
         self.actionVISA_device_builder.setText(_translate("MainWindow", "VISA-device builder"))
+from utility.console_redirect import Console_TextEdit

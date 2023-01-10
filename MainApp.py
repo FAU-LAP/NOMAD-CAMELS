@@ -9,14 +9,14 @@ import pandas as pd
 
 from copy import deepcopy
 
-from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel
+from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox,\
     QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut, QStyle,\
     QPushButton
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
 from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, \
-    add_remove_table, theme_changing
+    add_remove_table, theme_changing, console_redirect
 from bluesky_handling import protocol_builder, make_catalog
 from EPICS_handling import make_ioc
 
@@ -32,12 +32,19 @@ from commands import change_sequence
 from loop_steps import make_step_of_type
 
 
+from bluesky import RunEngine
+from bluesky.callbacks.best_effort import BestEffortCallback
+import databroker
+
+
 os.environ['QT_API'] = 'pyqt5'
 camels_web = 'https://github.com/FAU-LAP/CAMELS'
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """Main Window for the program. Connects to all the other classes."""
+    protocol_stepper_signal = pyqtSignal(int)
+
     def __init__(self, parent=None):
         # basic setup
         super(MainWindow, self).__init__(parent)
@@ -78,8 +85,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.textEdit_console_output_meas.setHidden(True)
 
         # measurements
-        self.run_thread = qthreads.Run_Protocol()
-        self.make_new_run_thread()
+        # self.run_thread = qthreads.Run_Protocol()
+        # self.make_new_run_thread()
         self.protocols_dict = {}
         self.item_model_protocols = QStandardItemModel(0,1)
         self.listView_protocols.setModel(self.item_model_protocols)
@@ -120,6 +127,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.item_model_protocols.itemChanged.connect(self.change_protocol_name)
         self.pushButton_show_output_meas.clicked.connect(self.show_meas_output)
         self.pushButton_clear_output_meas.clicked.connect(self.textEdit_console_output_meas.clear)
+
+        sys.stdout = self.textEdit_console_output_meas.text_writer
+        sys.stderr = self.textEdit_console_output_meas.error_writer
+
         self.listView_protocols.clicked.connect(self.protocol_selected)
         self.pushButton_move_step_up.clicked.connect(lambda state: self.move_loop_step(-1,0))
         self.pushButton_move_step_down.clicked.connect(lambda state: self.move_loop_step(1,0))
@@ -136,6 +147,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_run_protocol.clicked.connect(self.run_current_protocol)
         self.pushButton_write_to_ipython.clicked.connect(self.write_to_ipython)
         self.lineEdit_write_to_ipython.returnPressed.connect(self.write_to_ipython)
+        self.lineEdit_write_to_ipython.setHidden(True)
+        self.pushButton_write_to_ipython.setHidden(True)
 
         icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
         self.pushButton_run_protocol.setIcon(icon)
@@ -146,6 +159,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.pushButton_pause_protocol.clicked.connect(self.pause_protocol)
         self.pushButton_stop_protocol.clicked.connect(self.stop_protocol)
+
+
+        self.protocol_stepper_signal.connect(self.change_progressBar_value_meas)
+
 
         # help
         self.actionReport_Bug.triggered.connect(lambda x: os.startfile(f'{camels_web}/issues'))
@@ -202,6 +219,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.device_epics_widget.setHidden(True)
         self.sequence_main_widget.setHidden(True)
         self.configuration_main_widget.setHidden(True)
+
+
+        self.run_engine = RunEngine()
+        bec = BestEffortCallback()
+        self.run_engine.subscribe(bec)
+        self.databroker_catalog = databroker.catalog["CAMELS_CATALOG"]
+        self.run_engine.subscribe(self.databroker_catalog.v1.insert)
+        self.run_engine.subscribe(self.protocol_finished, 'stop')
+        self.re_subs = []
+        self.run_test = None
 
 
     def report_bug(self):
@@ -599,12 +626,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # --------------------------------------------------
     # Threads - general
     # --------------------------------------------------
-    def protocol_finished(self):
+    def protocol_finished(self, *args):
         # self.pushButton_run_protocol.setText('Build and run selected protocol')
         self.thread_finished()
+        for sub in self.re_subs:
+            self.run_engine.unsubscribe(sub)
         self.pushButton_stop_protocol.setEnabled(False)
         self.pushButton_pause_protocol.setEnabled(False)
         self.pushButton_run_protocol.setEnabled(True)
+        self.pushButton_run_protocol.setText('Run')
 
     def make_new_run_thread(self):
         self.run_thread = qthreads.Run_Protocol()
@@ -882,26 +912,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Calls the Run_Protocol QThread. The currently selected
         protocol is used. If the button is clicked agian, the thread is
         terminated."""
-        if self.run_thread is None:
-            self.make_new_run_thread()
-        elif self.run_thread.paused:
-            self.run_thread.resume()
+        # if self.run_thread is None:
+        #     self.make_new_run_thread()
+        # elif self.run_thread.paused:
+        #     self.run_thread.resume()
+        #     self.pushButton_run_protocol.setEnabled(False)
+        #     self.pushButton_pause_protocol.setEnabled(True)
+        #     self.pushButton_run_protocol.setText('Run')
+        #     return
+        # elif self.run_thread.already_run:
+        #     self.stop_protocol()
+        #     self.make_new_run_thread()
+        #     print(3)
+        if self.run_engine.state == 'paused':
+            self.run_engine.resume()
+            self.pushButton_run_protocol.setText('Run')
             self.pushButton_run_protocol.setEnabled(False)
             self.pushButton_pause_protocol.setEnabled(True)
-            self.pushButton_run_protocol.setText('Run')
-            return
-        elif self.run_thread.already_run:
-            self.stop_protocol()
-            # self.make_new_run_thread()
-            # print(3)
-        self.build_current_protocol(put100=False)
-        self.setCursor(Qt.WaitCursor)
-        path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
-        # self.pushButton_run_protocol.setText('Abort Run')
-        self.run_thread.run_protocol(path, self.current_protocol.get_total_steps())
-        self.pushButton_run_protocol.setEnabled(False)
-        self.pushButton_pause_protocol.setEnabled(True)
-        self.pushButton_stop_protocol.setEnabled(True)
+        else:
+            self.build_current_protocol(put100=False)
+            self.setCursor(Qt.WaitCursor)
+            path = f"{self.preferences['py_files_path']}/{self.current_protocol.name}.py"
+            # self.pushButton_run_protocol.setText('Abort Run')
+            # self.run_thread.run_protocol(path, self.current_protocol.get_total_steps())
+            name = os.path.basename(path)[:-3]
+            spec = importlib.util.spec_from_file_location(name, path)
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = mod
+            spec.loader.exec_module(mod)
+            mod.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
+            plots, self.re_subs = mod.create_plots(self.run_engine)
+            self.pushButton_run_protocol.setEnabled(False)
+            self.pushButton_pause_protocol.setEnabled(True)
+            self.pushButton_stop_protocol.setEnabled(True)
+            mod.main(self.run_engine, catalog=self.databroker_catalog)
+            self.protocol_stepper_signal.emit(100)
+        # self.run_test = qthreads.Run_Protocol_test(self.run_engine, mod.main)
+        # self.run_test.start()
         # else:
         #     self.run_thread.terminate()
         #     self.run_thread_finished()
@@ -915,15 +962,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             raise Exception('No IPython shell open!')
 
     def pause_protocol(self):
-        if self.run_thread is not None:
-            self.run_thread.pause()
+        # if self.run_thread is not None:
+        #     self.run_thread.pause()
+        if self.run_engine.state == 'running':
+            self.run_engine.request_pause(True)
             self.pushButton_run_protocol.setText('Resume')
             self.pushButton_run_protocol.setEnabled(True)
             self.pushButton_pause_protocol.setEnabled(False)
 
     def stop_protocol(self):
         # self.run_thread.terminate()
-        self.run_thread.abort()
+        if self.run_engine.state != 'idle':
+            self.run_engine.abort('Aborted by user')
+        # self.run_thread.abort()
         self.protocol_finished()
 
     def open_protocol(self):
@@ -1358,4 +1409,6 @@ if __name__ == '__main__':
     ui = MainWindow()
     ui.show()
     ui.showMaximized()
+    # RE = RunEngine()
+    # ui.run_engine = RE
     app.exec_()
