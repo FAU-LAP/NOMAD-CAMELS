@@ -2,7 +2,7 @@ import os.path
 import copy
 
 from main_classes.protocol_class import Measurement_Protocol
-from utility import variables_handling
+from utility import variables_handling, device_handling
 
 from bluesky_handling.builder_helper_functions import plot_creator
 
@@ -30,7 +30,9 @@ standard_string += 'theme = "default"\n'
 standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "total_protocol_steps": 0, "protocol_stepper_signal": None}\n'
 
 # standard_run_string = '\n\neva = Evaluator(namespace=namespace)\n\n\n'
-standard_run_string = 'def main(RE, dark=False, used_theme="default", catalog=None):\n'
+standard_run_string = 'def main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None):\n'
+standard_run_string += '\tdevs = devices or {}\n'
+standard_run_string += '\tmd = md or {}\n'
 standard_run_string += '\tglobal darkmode, theme, protocol_step_information\n'
 standard_run_string += '\tdarkmode, theme = dark, used_theme\n'
 # standard_run_string += '\tbec = BestEffortCallback()\n'
@@ -40,12 +42,12 @@ standard_start_string = '\n\n\nif __name__ == "__main__":\n'
 standard_start_string += '\tRE = RunEngine()\n'
 standard_start_string += '\tbec = BestEffortCallback()\n'
 standard_start_string += '\tRE.subscribe(bec)\n'
-standard_start_string2 = '\tplot_etc = create_plots(RE)\n'
-standard_start_string2 += '\tmain(RE=RE, catalog=catalog)\n'
-standard_start_string2 += '\tapp = QCoreApplication.instance()\n'
-standard_start_string2 += '\tprint("protocol finished!")\n'
-standard_start_string2 += '\tif app is not None:\n'
-standard_start_string2 += '\t\tsys.exit(app.exec_())\n'
+standard_start_string2 = '\t\tplot_etc = create_plots(RE)\n'
+standard_start_string2 += '\t\tmain(RE=RE, catalog=catalog, devices=devs, md=md)\n'
+standard_start_string3 = '\tapp = QCoreApplication.instance()\n'
+standard_start_string3 += '\tprint("protocol finished!")\n'
+standard_start_string3 += '\tif app is not None:\n'
+standard_start_string3 += '\t\tsys.exit(app.exec_())\n'
 # standard_start_string += '\treturn plot_dat, additional_step_data\n'
 
 standard_nexus_dict = {'/ENTRY[entry]/operator/address': 'metadata_start/user/Address (affiliation)',
@@ -84,7 +86,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         Should contain information about the sample
     """
     device_import_string = '\n'
-    devices_string = '\n\t\tdevs = {}\n\t\tdevice_config = {}\n'
+    devices_string = '\t\tdevs = {}\n\t\tdevice_config = {}\n'
     variable_string = '\nnamespace = {}\n'
     variable_string += 'all_fits = {}\n'
     variable_string += 'plots = []\n'
@@ -127,7 +129,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
             ioc_name = variables_handling.preset
         else:
             ioc_name = ioc_settings['ioc_name']
-        connection_check(ioc_settings, settings)
+        device_handling.connection_check(ioc_settings, settings)
         if not ioc_settings and classname.endswith('_EPICS'):
             classname = classname[:-6]
         additional_info['device_class_name'] = classname
@@ -184,17 +186,17 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     protocol_string += protocol.get_add_main_string()
     protocol_string += standard_run_string
     protocol_string += f'\tprotocol_step_information["total_protocol_steps"] = {protocol.get_total_steps()}\n'
-    protocol_string += '\ttry:\n'
+    # protocol_string += '\ttry:\n'
     # protocol_string += '\tRE.subscribe(eva)\n\n'
-    protocol_string += devices_string
+    # protocol_string += devices_string
     protocol_string += additional_string_devices
     # if plotting:
     #     protocol_string += '\t\tplot_etc = create_plots(RE)\n'
     protocol_string += user_sample_string(userdata, sampledata)
-    protocol_string += '\t\tadditional_step_data = steps_add_main(RE)\n'
-    protocol_string += f'\t\tuids = RE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
-    protocol_string += '\tfinally:\n'
-    protocol_string += final_string or '\t\tpass\n'
+    protocol_string += '\tadditional_step_data = steps_add_main(RE)\n'
+    protocol_string += f'\tuids = RE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
+    # protocol_string += '\tfinally:\n'
+    # protocol_string += final_string or '\t\tpass\n'
 
     standard_save_string = '\n\n\truns = catalog[uids]\n'
     if protocol.use_nexus:
@@ -211,9 +213,14 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
     protocol_string += f'\tcatalog = databroker.catalog["{catalog}"]\n'
     protocol_string += '\tRE.subscribe(catalog.v1.insert)\n\n'
     protocol_string += '\tfrom utility import tqdm_progress_bar\n'
-    protocol_string += f'\ttqdm_bar = tqdm_progress_bar.ProgressBar({protocol.get_total_steps()})\n'
+    protocol_string += f'\ttqdm_bar = tqdm_progress_bar.ProgressBar({protocol.get_total_steps()})\n\n'
     protocol_string += '\tprotocol_step_information["protocol_stepper_signal"] = tqdm_bar\n'
+    protocol_string += '\ttry:\n'
+    protocol_string += devices_string
     protocol_string += standard_start_string2
+    protocol_string += '\tfinally:\n'
+    protocol_string += final_string or '\t\tpass\n'
+    protocol_string += standard_start_string3
     if not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, 'w+') as file:
@@ -222,20 +229,7 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
 
 def user_sample_string(userdata, sampledata):
     """Returns the string adding userdata and sampledata to the md."""
-    u_s_string = f'\t\tmd["user"] = {userdata}\n'
-    u_s_string += f'\t\tmd["sample"] = {sampledata}\n'
+    u_s_string = f'\tmd["user"] = {userdata}\n'
+    u_s_string += f'\tmd["sample"] = {sampledata}\n'
     return u_s_string
 
-def connection_check(ioc_settings, settings):
-    if 'connection' not in ioc_settings:
-        return
-    conn = ioc_settings['connection']
-    connTyp = conn['type']
-    if connTyp == 'Local VISA':
-        settings['resource_name'] = conn['resource_name']
-        settings['baud_rate'] = conn['baud_rate']
-        settings['read_termination'] = conn['read_termination']
-        settings['write_termination'] = conn['write_termination']
-        ioc_settings.clear()
-    elif connTyp == '':
-        ioc_settings.clear()

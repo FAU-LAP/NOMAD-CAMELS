@@ -31,10 +31,10 @@ class Text_Writer(io.StringIO):
 
     def write(self, *args, **kwargs):
         text = args[0]
-        if text == '\n':
-            return
         if self.use_old_stdout:
             self.old_stdout.write(text)
+        if text == '\n':
+            return
         self.textEdit.setTextColor(variables_handling.get_color('black'))
         self.textEdit.append(text)
 

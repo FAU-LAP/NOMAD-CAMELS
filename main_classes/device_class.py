@@ -97,6 +97,7 @@ class Device:
         if ophyd_device is None:
             ophyd_device = OphydDevice
         # self.ophyd_device = ophyd_device
+        self.ophyd_class = ophyd_device
         self.ophyd_instance = ophyd_device(name='test')
         outputs = get_outputs(self.ophyd_instance)
         for chan in get_channels(self.ophyd_instance):

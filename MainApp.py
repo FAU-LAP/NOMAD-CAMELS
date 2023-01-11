@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox,
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
 from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, \
-    add_remove_table, theme_changing, console_redirect
+    add_remove_table, theme_changing, device_handling
 from bluesky_handling import protocol_builder, make_catalog
 from EPICS_handling import make_ioc
 
@@ -945,7 +945,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pushButton_run_protocol.setEnabled(False)
             self.pushButton_pause_protocol.setEnabled(True)
             self.pushButton_stop_protocol.setEnabled(True)
-            mod.main(self.run_engine, catalog=self.databroker_catalog)
+            device_list = self.current_protocol.get_used_devices()
+            devs, dev_data = device_handling.instantiate_devices(device_list)
+            mod.main(self.run_engine, catalog=self.databroker_catalog, devices=devs, md={'devices': dev_data})
             self.protocol_stepper_signal.emit(100)
         # self.run_test = qthreads.Run_Protocol_test(self.run_engine, mod.main)
         # self.run_test.start()

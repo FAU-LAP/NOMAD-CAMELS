@@ -37,19 +37,22 @@ class Custom_DAQ_Device(Device):
                     break
             self.component_names = tuple(comps)
 
-        comps = {'in1': self.in1, 'in2': self.in2, 'in3': self.in3,
+        self.comps = {'in1': self.in1, 'in2': self.in2, 'in3': self.in3,
                  'in4': self.in4, 'in5': self.in5, 'in6': self.in6,
                  'in7': self.in7, 'in8': self.in8,
                  'out1': self.out1, 'out2': self.out2, 'out3': self.out3,
                  'out4': self.out4, 'out5': self.out5, 'out6': self.out6,
                  'out7': self.out7, 'out8': self.out8}
         for nam, info in self.component_setups.items():
-            comp = comps[nam]
+            comp = self.comps[nam]
             comp.setup_line(info['line_name'], digital=info['digital'],
                             terminal_config=info['terminal_config'],
                             minV=info['minV'], maxV=info['maxV'])
 
 
+    def finalize_steps(self):
+        for nam in self.component_setups:
+            self.comps[nam].close_task()
 
 
 

@@ -74,7 +74,10 @@ class DAQ_Signal_Output(Signal):
                 value = False
         self.task.write(value)
         super().put(value, timestamp=timestamp, force=force, metadata=metadata, **kwargs)
-        
+
+    def close_task(self):
+        self.task.close()
+        tasks.remove(self.task)
         
         
 class DAQ_Signal_Input(SignalRO):
