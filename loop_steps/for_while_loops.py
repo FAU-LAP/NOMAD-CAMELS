@@ -50,6 +50,7 @@ class While_Loop_Step(Loop_Step_Container):
         self.update_time_weight()
         return protocol_string
 
+
 class While_Loop_Step_Config(Loop_Step_Config):
     """Configuration-Widget for the while-loop step."""
     def __init__(self, loop_step:While_Loop_Step, parent=None):
@@ -177,7 +178,8 @@ class For_Loop_Step(Loop_Step_Container):
 
     def update_time_weight(self):
         super().update_time_weight()
-        self.time_weight *= self.n_iterations
+        self.time_weight = (self.time_weight - 1) * self.n_iterations + 1
+
 
 class For_Loop_Step_Config(Loop_Step_Config):
     """Configuration-Widget for the for-loop step."""

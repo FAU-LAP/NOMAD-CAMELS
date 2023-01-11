@@ -37,7 +37,8 @@ standard_pref = {'autosave': True,
                  'meas_files_path': os.path.expanduser('~/CAMELS_data').replace('\\','/'),
                  'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/'),
                  'autostart_ioc': True,
-                 'databroker_catalog_name': 'CAMELS_CATALOG'}
+                 'databroker_catalog_name': 'CAMELS_CATALOG',
+                 'play_camel_on_error': False}
 
 def get_preset_list():
     """returns a two list of available presets, once for devices, once
