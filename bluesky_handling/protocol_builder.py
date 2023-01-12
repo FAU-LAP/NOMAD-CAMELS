@@ -1,8 +1,8 @@
 import os.path
 import copy
 
-from main_classes.protocol_class import Measurement_Protocol
-from utility import variables_handling, device_handling
+# from main_classes.protocol_class import Measurement_Protocol
+from utility import variables_handling, device_handling, load_save_functions
 
 from bluesky_handling.builder_helper_functions import plot_creator
 
@@ -65,7 +65,7 @@ standard_nexus_dict = {'/ENTRY[entry]/operator/address': 'metadata_start/user/Ad
                        "/ENTRY[entry]/SAMPLE[sample]/measured_data": 'data'}
 
 
-def build_protocol(protocol:Measurement_Protocol, file_path,
+def build_protocol(protocol, file_path,
                    save_path='test.h5', catalog='CAMELS_CATALOG', userdata=None,
                    sampledata=None):
     """Creating the python file from a given `protocol`.
@@ -225,6 +225,9 @@ def build_protocol(protocol:Measurement_Protocol, file_path,
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, 'w+') as file:
         file.write(protocol_string)
+    protocol_dict = load_save_functions.get_save_str(protocol)
+    load_save_functions.save_dictionary(f'{file_path[:-3]}.cprot', protocol_dict)
+
 
 
 def user_sample_string(userdata, sampledata):

@@ -53,5 +53,5 @@ def plot_creator(plot_data, func_name='create_plots'):
             plot_string += f'\tplots.append(plot_{i})\n'
             plot_string += f'\tplot_{i}.show()\n'
             plot_string += f'\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n'
-    plot_string += '\treturn plots, subs\n\n'
+    plot_string += '\treturn plots, subs, app\n\n'
     return plot_string, plotting

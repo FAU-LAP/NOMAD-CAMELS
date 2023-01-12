@@ -182,6 +182,7 @@ class Loop_Step_Container(Loop_Step):
         """The time_weight of the children is included."""
         self.time_weight = 1
         for child in self.children:
+            child.update_time_weight()
             self.time_weight += child.time_weight
 
 

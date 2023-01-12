@@ -202,11 +202,25 @@ def make_save_dict(obj):
     object. Thus working recursively if an attribute of obj also has a
     __save_dict__"""
     for key in obj.__dict__:
-        if key == '__save_dict__' or (isinstance(obj, device_class.Device) and key == 'add_ons'):
+        if key == '__save_dict__' or (isinstance(obj, device_class.Device) and key in ['add_ons', 'ophyd_class']):
             continue
         add_string = get_save_str(obj.__dict__[key])
         if add_string is not None:
             obj.__save_dict__.update({key: get_save_str(obj.__dict__[key])})
+
+
+def load_protocol(path):
+    prot_name = os.path.basename(path)[:-6]
+    if not os.path.isfile(path):
+        return
+    with open(path, 'r') as f:
+        preset_dict = json.load(f)
+    prot_string_dict = {prot_name: preset_dict}
+    sub_protocol = {}
+    load_protocols_dict(prot_string_dict, sub_protocol)
+    return sub_protocol[prot_name]
+
+
 
 def load_protocols_dict(string_dict, prot_dict):
     """Specific function to load a protocol."""

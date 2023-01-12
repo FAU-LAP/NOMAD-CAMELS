@@ -941,7 +941,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             sys.modules[spec.name] = mod
             spec.loader.exec_module(mod)
             mod.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
-            plots, self.re_subs = mod.create_plots(self.run_engine)
+            plots, subs, _ = mod.create_plots(self.run_engine)
+            self.re_subs += subs
             self.pushButton_run_protocol.setEnabled(False)
             self.pushButton_pause_protocol.setEnabled(True)
             self.pushButton_stop_protocol.setEnabled(True)

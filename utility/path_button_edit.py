@@ -10,7 +10,7 @@ class Path_Button_Edit(QWidget):
     a file-path, that is then displayed in the LineEdit."""
     path_changed = pyqtSignal(str)
 
-    def __init__(self, parent=None, path='', default_dir=''):
+    def __init__(self, parent=None, path='', default_dir='', file_extension=''):
         super().__init__(parent)
         layout = QGridLayout()
         self.setLayout(layout)
@@ -25,6 +25,7 @@ class Path_Button_Edit(QWidget):
         self.default_dir = default_dir
         self.button.clicked.connect(self.choose_path)
         self.line.textChanged.connect(self.changed)
+        self.file_extension = file_extension
 
     def get_path(self):
         return self.line.text()
@@ -37,7 +38,7 @@ class Path_Button_Edit(QWidget):
             direc = os.path.dirname(self.get_path()) or self.default_dir
         except OSError:
             direc = self.default_dir
-        path = QFileDialog.getOpenFileName(self, 'Select File', directory=direc)[0]
+        path = QFileDialog.getOpenFileName(self, 'Select File', directory=direc, filter=self.file_extension)[0]
         if path:
             self.line.setText(path)
 

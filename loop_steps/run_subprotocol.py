@@ -1,13 +1,14 @@
-import sys
-import importlib
 import os
 
 from PyQt5.QtWidgets import QLabel, QComboBox, QCheckBox
 
 from main_classes.loop_step import Loop_Step, Loop_Step_Config
 from utility.path_button_edit import Path_Button_Edit
-from utility import variables_handling
+from utility import variables_handling, load_save_functions
 from utility.add_remove_table import AddRemoveTable
+from bluesky_handling import protocol_builder
+
+
 
 class Run_Subprotocol(Loop_Step):
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
@@ -24,8 +25,10 @@ class Run_Subprotocol(Loop_Step):
 
     def get_protocol_string(self, n_tabs=1):
         tabs = '\t' * n_tabs
-        prot_name = os.path.basename(self.prot_path)[:-3]
+        prot_name = os.path.basename(self.prot_path)[:-6]
         protocol_string = super().get_protocol_string(n_tabs)
+        protocol_string += f'{tabs}{prot_name}_mod.protocol_step_information["protocol_stepper_signal"] = protocol_step_information["protocol_stepper_signal"]\n'
+        protocol_string += f'{tabs}{prot_name}_mod.protocol_step_information["total_protocol_steps"] = {self.time_weight}\n'
         for i, var in enumerate(self.vars_in['Variable']):
             protocol_string += f'{tabs}{prot_name}_mod.namespace["{var}"] = eva.eval("{self.vars_in["Value"][i]}")\n'
         stream = prot_name
@@ -42,24 +45,38 @@ class Run_Subprotocol(Loop_Step):
         return short_string
 
     def get_outer_string(self):
-        prot_name = os.path.basename(self.prot_path)[:-3]
-        outer_string = f'spec = importlib.util.spec_from_file_location("{prot_name}", "{self.prot_path}")\n'
+        prot_name = os.path.basename(self.prot_path)[:-6]
+        py_file = f'{self.prot_path[:-6]}.py'
+        if not os.path.isfile(py_file):
+            sub_protocol = load_save_functions.load_protocol(self.prot_path)
+            protocol_builder.build_protocol(sub_protocol, py_file)
+        outer_string = f'spec = importlib.util.spec_from_file_location("{prot_name}", "{py_file}")\n'
         outer_string += f'{prot_name}_mod = importlib.util.module_from_spec(spec)\n'
         outer_string += f'sys.modules[spec.name] = {prot_name}_mod\n'
         outer_string += f'spec.loader.exec_module({prot_name}_mod)\n'
         return outer_string
 
     def get_add_main_string(self):
-        prot_name = os.path.basename(self.prot_path)[:-3]
+        prot_name = os.path.basename(self.prot_path)[:-6]
         stream = f'"{prot_name}"'
         if self.data_output == 'main stream':
             stream = '"primary"'
-        prot_name = os.path.basename(self.prot_path)[:-3]
+        prot_name = os.path.basename(self.prot_path)[:-6]
         add_main_string = ''
         if self.own_plots:
             add_main_string += f'\treturner["{prot_name}_plot_stuff"] = {prot_name}_mod.create_plots(RE, {stream})\n'
         add_main_string += f'\treturner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE)\n'
         return add_main_string
+
+    def update_used_devices(self):
+        sub_protocol = load_save_functions.load_protocol(self.prot_path)
+        self.used_devices = sub_protocol.get_used_devices()
+
+    def update_time_weight(self):
+        super().update_time_weight()
+        sub_protocol = load_save_functions.load_protocol(self.prot_path)
+        self.time_weight += sub_protocol.get_total_steps()
+
 
 
 class Run_Subprotocol_Config(Loop_Step_Config):
@@ -68,7 +85,8 @@ class Run_Subprotocol_Config(Loop_Step_Config):
         label = QLabel('Select Protocol:')
         self.loop_step = loop_step
         self.path_button = Path_Button_Edit(self, loop_step.prot_path,
-                                            variables_handling.preferences['py_files_path'])
+                                            variables_handling.preferences['py_files_path'],
+                                            file_extension='*.cprot')
         self.sub_vars = {}
         self.load_sub_vars()
         headerLabels = ['Variable', 'Value']
@@ -112,15 +130,10 @@ class Run_Subprotocol_Config(Loop_Step_Config):
         self.output_table.load_table_data()
 
     def load_sub_vars(self):
+        self.sub_vars = {}
         prot_path = self.path_button.get_path()
-        try:
-            spec = importlib.util.spec_from_file_location("subprot", prot_path)
-            subprot_mod = importlib.util.module_from_spec(spec)
-            sys.modules[spec.name] = subprot_mod
-            spec.loader.exec_module(subprot_mod)
-            self.sub_vars = subprot_mod.namespace
-        except:
-            self.sub_vars = {}
+        sub_protocol = load_save_functions.load_protocol(prot_path)
+        self.sub_vars = sub_protocol.variables
 
     def update_step_config(self):
         super().update_step_config()
