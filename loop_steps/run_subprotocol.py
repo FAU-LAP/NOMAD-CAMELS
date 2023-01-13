@@ -6,7 +6,7 @@ from main_classes.loop_step import Loop_Step, Loop_Step_Config
 from utility.path_button_edit import Path_Button_Edit
 from utility import variables_handling, load_save_functions
 from utility.add_remove_table import AddRemoveTable
-from bluesky_handling import protocol_builder
+from bluesky_handling import protocol_builder, builder_helper_functions
 
 
 
@@ -64,7 +64,7 @@ class Run_Subprotocol(Loop_Step):
         prot_name = os.path.basename(self.prot_path)[:-6]
         add_main_string = ''
         if self.own_plots:
-            add_main_string += f'\treturner["{prot_name}_plot_stuff"] = {prot_name}_mod.create_plots(RE, {stream})\n'
+            add_main_string += builder_helper_functions.get_plot_add_string(prot_name, stream, True)
         add_main_string += f'\treturner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE)\n'
         return add_main_string
 

@@ -11,6 +11,22 @@ standard_plot_string += '\t\tplot_widget.activate_dark_mode()\n'
 # standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())\n'
 # standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet(qt_api="pyqt5"))\n'
 
+
+def get_plot_add_string(name, stream, subprotocol=False):
+    add_main_string = '\tif "subs" not in returner:\n'
+    add_main_string += '\t\treturner["subs"] = []\n'
+    add_main_string += '\tif "plots" not in returner:\n'
+    add_main_string += '\t\treturner["plots"] = []\n'
+    if subprotocol:
+        add_main_string += f'\tplots, subs, _ = {name}_mod.create_plots(RE, {stream})\n'
+    else:
+        add_main_string += f'\tplots, subs, _ = create_plots_{name}(RE, {stream})\n'
+    add_main_string += '\treturner["subs"] += subs\n'
+    add_main_string += '\treturner["plots"] += plots\n'
+    return add_main_string
+
+
+
 def plot_creator(plot_data, func_name='create_plots'):
     plot_string = f'\ndef {func_name}(RE, stream="primary"):\n'
     plot_string += standard_plot_string

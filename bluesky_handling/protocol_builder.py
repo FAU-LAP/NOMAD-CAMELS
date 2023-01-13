@@ -43,6 +43,7 @@ standard_start_string += '\tRE = RunEngine()\n'
 standard_start_string += '\tbec = BestEffortCallback()\n'
 standard_start_string += '\tRE.subscribe(bec)\n'
 standard_start_string2 = '\t\tplot_etc = create_plots(RE)\n'
+standard_start_string2 += '\t\tadditional_step_data = steps_add_main(RE)\n'
 standard_start_string2 += '\t\tmain(RE=RE, catalog=catalog, devices=devs, md=md)\n'
 standard_start_string3 = '\tapp = QCoreApplication.instance()\n'
 standard_start_string3 += '\tprint("protocol finished!")\n'
@@ -193,7 +194,6 @@ def build_protocol(protocol, file_path,
     # if plotting:
     #     protocol_string += '\t\tplot_etc = create_plots(RE)\n'
     protocol_string += user_sample_string(userdata, sampledata)
-    protocol_string += '\tadditional_step_data = steps_add_main(RE)\n'
     protocol_string += f'\tuids = RE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
     # protocol_string += '\tfinally:\n'
     # protocol_string += final_string or '\t\tpass\n'

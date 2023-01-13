@@ -942,7 +942,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             spec.loader.exec_module(mod)
             mod.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
             plots, subs, _ = mod.create_plots(self.run_engine)
+            additionals = mod.steps_add_main(self.run_engine)
             self.re_subs += subs
+            self.add_subs_from_dict(additionals)
             self.pushButton_run_protocol.setEnabled(False)
             self.pushButton_pause_protocol.setEnabled(True)
             self.pushButton_stop_protocol.setEnabled(True)
@@ -955,6 +957,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # else:
         #     self.run_thread.terminate()
         #     self.run_thread_finished()
+
+    def add_subs_from_dict(self, dictionary):
+        for k, v in dictionary.items():
+            if k == 'subs':
+                self.re_subs += v
+            elif isinstance(v, dict):
+                self.add_subs_from_dict(v)
+
+
 
     def write_to_ipython(self):
         if self.run_thread is not None:
