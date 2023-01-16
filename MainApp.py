@@ -65,6 +65,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.add_on_widget.setHidden(True)
         self.closing = False
 
+        self.current_protocol_device_list = []
         # devices
         self.active_devices_dict = {}
         variables_handling.devices = self.active_devices_dict
@@ -603,7 +604,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def start_addon(self, addon, button, device=None):
         self.get_device_config(False)
-        add_on = self.add_ons[addon][0](device=device)
+        if device:
+            device_list = device.get_necessary_devices()
+            device_list = list(set(device_list))
+            if device.name in device_list:
+                device_list.remove(device.name)
+            device_list.append(device.name)
+            devs, dev_data = device_handling.instantiate_devices(device_list)
+            dev = devs[device.name]
+        else:
+            dev = None
+            device_list = None
+        add_on = self.add_ons[addon][0](device=device, ophyd_device=dev,
+                                        device_list=device_list)
         self.active_add_ons[addon] = add_on
         add_on.closing.connect(lambda x=addon, y=button: self.stopped_addon(x, y))
         button.setEnabled(False)
@@ -611,7 +624,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def stopped_addon(self, addon, button):
         if self.closing:
             return
-        self.active_add_ons.pop(addon)
+        self.closed_addon = self.active_add_ons.pop(addon)
+        # self.closed_addon.deleteLater()
         button.setEnabled(True)
 
     def make_save_dict(self):
@@ -631,6 +645,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.thread_finished()
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
+        device_handling.close_devices(self.current_protocol_device_list)
         self.pushButton_stop_protocol.setEnabled(False)
         self.pushButton_pause_protocol.setEnabled(False)
         self.pushButton_run_protocol.setEnabled(True)
@@ -950,6 +965,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pushButton_stop_protocol.setEnabled(True)
             device_list = self.current_protocol.get_used_devices()
             devs, dev_data = device_handling.instantiate_devices(device_list)
+            self.current_protocol_device_list = device_list
             mod.main(self.run_engine, catalog=self.databroker_catalog, devices=devs, md={'devices': dev_data})
             self.protocol_stepper_signal.emit(100)
         # self.run_test = qthreads.Run_Protocol_test(self.run_engine, mod.main)

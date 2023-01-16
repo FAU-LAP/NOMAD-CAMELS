@@ -1,5 +1,5 @@
 from PID_python.PID_python_ophyd import PID_Controller
-# from PID_python.PID_python_manual import PID_manual_control
+from PID_python.PID_python_manual import PID_manual_control
 
 from PID_python.PID_python_config_sub import subclass_config_sub
 
@@ -32,7 +32,7 @@ class subclass(device_class.Device):
         self.config['dt'] = 0.5
 
 
-        # self.add_ons = {'manual control': [PID_manual_control, self]}
+        self.add_ons = {'manual control': [PID_manual_control, self]}
 
     # def get_additional_string(self):
     #     inp_pv = self.config['pid_inp'].split(' ')[0]

@@ -7,6 +7,14 @@ import copy
 running_devices = {}
 
 
+def get_channel_from_string(channel):
+    dev, chan = channel.split('.')
+    if dev not in running_devices:
+        raise Exception(f'Device {dev} is needed, but not yet instantiated!')
+    device = running_devices[dev]
+    return getattr(device, chan)
+
+
 
 def connection_check(ioc_settings, settings):
     if 'connection' not in ioc_settings:

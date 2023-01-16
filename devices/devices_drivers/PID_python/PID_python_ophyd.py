@@ -11,6 +11,7 @@ from ophyd import Device
 from ophyd import Component as Cpt
 
 from bluesky_handling.custom_function_signal import Custom_Function_Signal, Custom_Function_SignalRO
+from utility import device_handling
 
 from PyQt5.QtCore import QThread, pyqtSignal
 
@@ -65,6 +66,12 @@ class PID_Controller(Device):
             if p in kwargs:
                 kwargs.pop(p)
         super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, **kwargs)
+        if isinstance(read_signal, str):
+            read_signal = device_handling.get_channel_from_string(read_signal)
+        if isinstance(set_signal, str):
+            set_signal = device_handling.get_channel_from_string(set_signal)
+        if isinstance(bias_signal, str):
+            bias_signal = device_handling.get_channel_from_string(bias_signal)
 
         if not read_conv_func:
             read_conv_func = lambda x: x
@@ -116,21 +123,26 @@ class PID_Controller(Device):
         self.stability_delta = 0
         if name != 'test':
             self.pid_thread = PID_Thread(self)
-            if show_plot:
-                from main_classes.plot_widget import PlotWidget_NoBluesky
-                y_axes = {'output': 2,
-                          'k': 2,
-                          'i': 2,
-                          'd': 2}
-                self.plot = PlotWidget_NoBluesky('time', title='PID plot',
-                                                 ylabel='value', ylabel2='PID-values',
-                                                 y_axes=y_axes,
-                                                 first_hidden=list(y_axes.keys()))
-                # for y in y_axes:
-                #     self.plot.plot.current_lines[y].setLinestyle('None')
-                self.pid_thread.new_data.connect(self.data_update)
+            # if show_plot:
+            from main_classes.plot_widget import PlotWidget_NoBluesky
+            y_axes = {'output': 2,
+                      'k': 2,
+                      'i': 2,
+                      'd': 2}
+            self.plot = PlotWidget_NoBluesky('time', title='PID plot',
+                                             ylabel='value', ylabel2='PID-values',
+                                             y_axes=y_axes,
+                                             first_hidden=list(y_axes.keys()),
+                                             show_plot=show_plot)
+            # for y in y_axes:
+            #     self.plot.plot.current_lines[y].setLinestyle('None')
+            self.pid_thread.new_data.connect(self.data_update)
             self.pid_thread.start()
             self.update_PID_vals(self.pid_thread.pid.setpoint)
+
+    def change_show_plot(self, show):
+        self.plot.plot.show_plot = show
+        self.plot.setHidden(not show)
 
     def current_value_read(self):
         return self.pid_thread.current_value
@@ -183,6 +195,10 @@ class PID_Controller(Device):
 
     def set_pid_on(self, value):
         self.pid_thread.pid.set_auto_mode(value)
+
+    def finalize_steps(self):
+        self.pid_thread.still_running = False
+        self.plot.close()
 
 
     def update_PID_vals(self, setpoint):
@@ -244,6 +260,7 @@ class PID_Thread(QThread):
         self.last = None
         self.starttime = 0
         self.current_value = 0
+        self.still_running = True
 
     def update_pid(self, Kp=None, Ki=None, Kd=None, setpoint=None,
                    sample_time=None, output_limits=None, auto_mode=True,
@@ -253,7 +270,7 @@ class PID_Thread(QThread):
     def run(self):
         self.starttime = time.monotonic()
         self.last = time.monotonic()
-        while True:
+        while self.still_running:
             self.pid_step()
 
     def pid_step(self):
@@ -271,6 +288,6 @@ class PID_Thread(QThread):
             self.stable_time += dis
         else:
             self.stable_time = 0
-        self.new_data.emit(self.last, self.pid.setpoint, self.current_value, new_output or 0,
-                           self.pid.components)
+        self.new_data.emit(self.last - self.starttime, self.pid.setpoint, self.current_value,
+                           new_output or 0, self.pid.components)
 
