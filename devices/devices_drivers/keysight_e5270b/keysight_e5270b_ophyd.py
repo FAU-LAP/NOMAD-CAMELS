@@ -1,12 +1,121 @@
 from ophyd import EpicsSignal, EpicsSignalRO, Device
 from ophyd import Component as Cpt
-
+from bluesky_handling.visa_signal import VISA_Signal_Read, VISA_Signal_Write, VISA_Device
 from bluesky_handling import TriggerEpicsSignalRO
+from bluesky_handling.custom_function_signal import (Custom_Function_Signal,
+                                                     Custom_Function_SignalRO)
 import time as ttime
 
 
 
-class Keysight_E5270B(Device):
+class Keysight_E5270B(VISA_Device):
+    setV1 = Cpt(VISA_Signal_Write, name='setV1', metadata={'units': 'V'})
+    setI1 = Cpt(VISA_Signal_Write, name='setI1', metadata={'units': 'A'})
+    mesI1 = Cpt(VISA_Signal_Read, name='mesI1', metadata={'units': 'A'})
+    mesV1 = Cpt(VISA_Signal_Read, name='mesV1', metadata={'units': 'V'})
+    enable1 = Cpt(VISA_Signal_Write, name='enable1',
+                  put_conv_function=lambda: f'CN 1')
+    # Config settings of the device
+    #measMode1 = Cpt(VISA_Signal_Write, name='measMode1', kind='config',)
+    currComp1 = Cpt(Custom_Function_Signal, name='currComp1', kind='config')
+    voltComp1 = Cpt(Custom_Function_Signal, name='voltComp1', kind='config')
+    VoutRange1 = Cpt(Custom_Function_Signal, name='VoutRange1', kind='config')
+    IoutRange1 = Cpt(Custom_Function_Signal, name='IoutRange1', kind='config')
+    VmeasRange1 = Cpt(Custom_Function_Signal, name='VmeasRange1', kind='config')
+    ImeasRange1 = Cpt(Custom_Function_Signal, name='ImeasRange1', kind='config')
+    setADC1 = Cpt(VISA_Signal_Write, name='setADC1', kind='config',
+                  put_conv_function=lambda x: f'ADD 1, {x}')
+    # 0 for disconnect, 1 for connect of the filter
+    outputFilter1 = Cpt(VISA_Signal_Write, name='outputFilter1', kind='config',
+                        put_conv_function=lambda x: f'FL {x}, 1')
+
+    def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
+                 configuration_attrs=None, parent=None, use_channels=(), **kwargs):
+        super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
+                         configuration_attrs=configuration_attrs, parent=parent, **kwargs)
+        self.use_channels = use_channels
+        if use_channels:
+            comps = list(self.component_names)
+            for comp in self.component_names:
+                for i in range(1, 9):
+                    if i not in self.use_channels and str(i) in comp:
+                        comps.remove(comp)
+                        break
+            self.component_names = tuple(comps)
+
+        # set array element of curr compliance to the value entered
+        self.currComp1.put_function = lambda x: self.set_currCompliance(x, 1)
+        self.setV1.put_conv_function = lambda x: self.source_voltage(x, 1, self.VoutRange1)
+        # array of current compliances for each of the 8 channels
+        # array[i] corresponds to channel number i+1
+        self.curr_compliance_array = [0, 0, 0, 0, 0, 0, 0, 0]
+
+        # set array element of volt compliance to the value entered
+        self.voltComp1.put_function = lambda x: self.set_voltCompliance(x, 1)
+        self.setI1.put_conv_function = lambda x: self.source_current(x, 1, self.VoutRange1)
+        # array of voltage compliances for each of the 8 channels
+        # array[i] corresponds to channel number i+1
+        self.volt_compliance_array = [0, 0, 0, 0, 0, 0, 0, 0]
+        # arrays containing the last values set for MM and CMM for each channel
+        self.last_MM_value = [1, 1, 1, 1, 1, 1, 1, 1]
+        self.last_CMM_value = [0, 0, 0, 0, 0, 0, 0, 0]
+        # Read single voltage value using MM, CMM and XE command
+        # check to see if the current settings of MM and CMM are correct for the desired
+        # voltage measurement, the passed value is the channel number to check for
+        self.mesV1.read_function = lambda: self.measure_single_voltage(1)
+        # Read single current value using MM, CMM and XE command
+        # check to see if the current settings of MM and CMM are correct for the desired
+        # current measurement, the passed value is the channel number to check for
+        self.mesI1.read_function = lambda: self.measure_single_current(1)
+        # function called when putting value to measMode1
+        # self.measMode1.put_conv_function = lambda x: self.set_MM_value(x, 1)
+
+    def set_MM_value(self,val, chnum):
+        self.visa_instrument.write(f'MM {val} {chnum}')
+        self.last_MM_value[chnum - 1] = val
+
+    def set_CMM_value(self, val, chnum):
+        self.visa_instrument.write(f'CMM {chnum} {val}')
+        self.last_CMM_value[chnum - 1] = val
+
+    def measure_single_voltage(self, chnum):
+        if self.last_MM_value[chnum-1] != 0:
+            self.set_MM_value(0, chnum)
+        if self.last_CMM_value[chnum-1] != 2:
+            self.set_CMM_value(2, chnum)
+        return 'XE'
+
+    def measure_single_current(self, chnum):
+        if self.last_MM_value[chnum-1] != 0:
+            self.set_MM_value(0, chnum)
+        if self.last_CMM_value[chnum-1] != 2:
+            self.set_CMM_value(1, chnum)
+        return 'XE'
+
+    def set_currCompliance(self, value, chan):
+        self.curr_compliance_array[chan] = value
+
+    def set_voltCompliance(self, value, chan):
+        self.volt_compliance_array[chan] = value
+
+    # def source_current(self, chnum, current, irange=0, Vcomp='',
+    # comp_polarity='', vrange=''):
+    def source_current(self, current, chnum, range_signal,):
+        irange = range_signal.get()
+        Vcomp = self.volt_compliance_array[chnum]
+        return f'DI {chnum} {irange} {current} {Vcomp}'
+        #return f'DI {chnum} {irange} {current} {Vcomp} {comp_polarity} {vrange}'
+
+    # def source_voltage(self, voltage, chnum, vrange=0, Icomp='',
+    # comp_polarity='', irange=''):
+    def source_voltage(self, voltage, chnum, range_signal,):
+        vrange = range_signal.get()
+        Icomp = self.curr_compliance_array[chnum]
+        return f'DV {chnum} {vrange} {voltage} {Icomp}'
+        # return f'DV {chnum} {vrange} {voltage} {Icomp} {comp_polarity} {irange}'
+
+
+class Keysight_E5270B_epics(Device):
     setV1 = Cpt(EpicsSignal, 'setV1')
     setI1 = Cpt(EpicsSignal, 'setI1')
     mesI1 = Cpt(TriggerEpicsSignalRO, 'mesI1')
@@ -136,7 +245,8 @@ class Keysight_E5270B(Device):
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, use_channels=(), **kwargs):
-        super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, **kwargs)
+        super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
+                         configuration_attrs=configuration_attrs, parent=parent, **kwargs)
         self.use_channels = use_channels
         if use_channels:
             comps = list(self.component_names)
@@ -204,7 +314,7 @@ class Keysight_E5270B(Device):
 
 
 if __name__ == '__main__':
-    e5270b = Keysight_E5270B('Default:', name='e5270b', use_channels=[1,8])
-    comps = e5270b.walk_components()
-    for comp in comps:
-        print(comp)
+    e5270b = Keysight_E5270B(prefix='Default:', name='e5270b', use_channels=[1,8])
+    # comps = e5270b.walk_components()
+    # for comp in comps:
+    #     print(comp)
