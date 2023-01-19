@@ -195,6 +195,7 @@ class PID_Controller(Device):
 
     def set_pid_on(self, value):
         self.pid_thread.pid.set_auto_mode(value)
+        self.output_value.put(0)
 
     def finalize_steps(self):
         self.pid_thread.still_running = False
