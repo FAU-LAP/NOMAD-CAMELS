@@ -195,7 +195,6 @@ class PID_Controller(Device):
 
     def set_pid_on(self, value):
         self.pid_thread.pid.set_auto_mode(value)
-        self.output_value.put(0)
 
     def finalize_steps(self):
         self.pid_thread.still_running = False
@@ -281,7 +280,10 @@ class PID_Thread(QThread):
             time.sleep(self.sample_time - dis)
             dis = time.monotonic() - self.last
         self.current_value = self.device.read_function()
-        new_output = self.pid(self.current_value)
+        if self.pid.auto_mode:
+            new_output = self.pid(self.current_value)
+        else:
+            new_output = 0
         self.last = time.monotonic()
         if new_output is not None:
             self.device.set_function(new_output)
