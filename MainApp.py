@@ -608,10 +608,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             device_list = device.get_necessary_devices()
             device_list = list(set(device_list))
             if device.name in device_list:
-                device_list.remove(device.name)
-            device_list.append(device.name)
+                device_list.remove(device.custom_name)
+            device_list.append(device.custom_name)
             devs, dev_data = device_handling.instantiate_devices(device_list)
-            dev = devs[device.name]
+            dev = devs[device.custom_name]
         else:
             dev = None
             device_list = None
