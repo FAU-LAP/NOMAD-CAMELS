@@ -7,8 +7,7 @@ from PID_python.PID_python_ophyd import PID_Controller
 from PyQt5.QtWidgets import QCheckBox, QLineEdit, QPushButton, QLabel, QSpacerItem, QSizePolicy, QFrame
 from PyQt5.QtCore import pyqtSignal, QThread
 
-from utility import variables_handling
-from utility.qthreads import Manual_Device_Thread
+from utility import variables_handling, device_handling
 
 
 class PID_manual_control(AddOn):
@@ -83,14 +82,12 @@ class PID_manual_control(AddOn):
         self.update_thread.data_sig.connect(self.data_update)
         self.update_thread.start()
 
-        # from main_classes.plot_widget import PlotWidget_NoBluesky
-        # y_axes = {'output': 2,
-        #           'k': 2,
-        #           'i': 2,
-        #           'd': 2}
-        # self.plot = PlotWidget_NoBluesky('time', title='PID plot',
-        #                                  ylabel='value', ylabel2='PID-values',
-        #                                  y_axes=y_axes)
+        self.sub_devices = []
+        for dev in device_list:
+            if dev in device_handling.running_devices:
+                self.sub_devices.append(device_handling.running_devices[dev])
+
+
 
     def change_show_plot(self):
         showing = self.ophyd_device.plot.plot.show_plot
@@ -128,6 +125,10 @@ class PID_manual_control(AddOn):
 
     def change_state(self):
         on = self.on_off_box.isChecked()
+        if on:
+            for dev in self.sub_devices:
+                if hasattr(dev, 'turn_on_output') and callable(dev.turn_on_output):
+                    dev.turn_on_output()
         col = variables_handling.get_color('green' if on else 'red', True)
         self.on_off_box.setText('On' if on else 'Off')
         self.on_off_box.setStyleSheet(f"color: rgb{col}")
