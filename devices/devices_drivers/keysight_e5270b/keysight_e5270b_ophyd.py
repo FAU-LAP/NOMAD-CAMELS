@@ -11,10 +11,10 @@ import time as ttime
 class Keysight_E5270B(VISA_Device):
     setV1 = Cpt(VISA_Signal_Write, name='setV1', metadata={'units': 'V'})
     setI1 = Cpt(VISA_Signal_Write, name='setI1', metadata={'units': 'A'})
-    mesI1 = Cpt(VISA_Signal_Read, name='mesI1', metadata={'units': 'A'})
-    mesV1 = Cpt(VISA_Signal_Read, name='mesV1', metadata={'units': 'V'})
+    mesI1 = Cpt(VISA_Signal_Read, name='mesI1', kind="hinted", metadata={'units': 'A'})
+    mesV1 = Cpt(VISA_Signal_Read, name='mesV1', kind="hinted", metadata={'units': 'V'})
     enable1 = Cpt(VISA_Signal_Write, name='enable1',
-                  put_conv_function=lambda: f'CN 1')
+                  put_conv_function=lambda x: f'RED 1; FMT 2,0; CN 1')
     # Config settings of the device
     #measMode1 = Cpt(VISA_Signal_Write, name='measMode1', kind='config',)
     currComp1 = Cpt(Custom_Function_Signal, name='currComp1', kind='config')
@@ -24,7 +24,7 @@ class Keysight_E5270B(VISA_Device):
     VmeasRange1 = Cpt(Custom_Function_Signal, name='VmeasRange1', kind='config')
     ImeasRange1 = Cpt(Custom_Function_Signal, name='ImeasRange1', kind='config')
     setADC1 = Cpt(VISA_Signal_Write, name='setADC1', kind='config',
-                  put_conv_function=lambda x: f'ADD 1, {x}')
+                  put_conv_function=lambda x: f'AAD 1, {x}')
     # 0 for disconnect, 1 for connect of the filter
     outputFilter1 = Cpt(VISA_Signal_Write, name='outputFilter1', kind='config',
                         put_conv_function=lambda x: f'FL {x}, 1')
@@ -49,7 +49,6 @@ class Keysight_E5270B(VISA_Device):
         # array of current compliances for each of the 8 channels
         # array[i] corresponds to channel number i+1
         self.curr_compliance_array = [0, 0, 0, 0, 0, 0, 0, 0]
-
         # set array element of volt compliance to the value entered
         self.voltComp1.put_function = lambda x: self.set_voltCompliance(x, 1)
         self.setI1.put_conv_function = lambda x: self.source_current(x, 1, self.VoutRange1)
@@ -57,8 +56,8 @@ class Keysight_E5270B(VISA_Device):
         # array[i] corresponds to channel number i+1
         self.volt_compliance_array = [0, 0, 0, 0, 0, 0, 0, 0]
         # arrays containing the last values set for MM and CMM for each channel
-        self.last_MM_value = [1, 1, 1, 1, 1, 1, 1, 1]
-        self.last_CMM_value = [0, 0, 0, 0, 0, 0, 0, 0]
+        self.last_MM_value = [None, None, None, None, None, None, None, None]
+        self.last_CMM_value = [None, None, None, None, None, None, None, None]
         # Read single voltage value using MM, CMM and XE command
         # check to see if the current settings of MM and CMM are correct for the desired
         # voltage measurement, the passed value is the channel number to check for
@@ -71,24 +70,25 @@ class Keysight_E5270B(VISA_Device):
         # self.measMode1.put_conv_function = lambda x: self.set_MM_value(x, 1)
 
     def set_MM_value(self,val, chnum):
-        self.visa_instrument.write(f'MM {val} {chnum}')
+        self.visa_instrument.write(f'MM {val}, {chnum}')
+        # print(f'MM {val}, {chnum}')
         self.last_MM_value[chnum - 1] = val
 
     def set_CMM_value(self, val, chnum):
-        self.visa_instrument.write(f'CMM {chnum} {val}')
+        self.visa_instrument.write(f'CMM {chnum}, {val}')
         self.last_CMM_value[chnum - 1] = val
 
     def measure_single_voltage(self, chnum):
-        if self.last_MM_value[chnum-1] != 0:
-            self.set_MM_value(0, chnum)
+        if self.last_MM_value[chnum-1] != 1:
+            self.set_MM_value(1, chnum)
         if self.last_CMM_value[chnum-1] != 2:
             self.set_CMM_value(2, chnum)
         return 'XE'
 
     def measure_single_current(self, chnum):
-        if self.last_MM_value[chnum-1] != 0:
-            self.set_MM_value(0, chnum)
-        if self.last_CMM_value[chnum-1] != 2:
+        if self.last_MM_value[chnum-1] != 1:
+            self.set_MM_value(1, chnum)
+        if self.last_CMM_value[chnum-1] != 1:
             self.set_CMM_value(1, chnum)
         return 'XE'
 

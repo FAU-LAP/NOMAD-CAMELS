@@ -18,8 +18,14 @@ def close_resources():
     open_resources.clear()
 
 class VISA_Signal_Write(Signal):
-    def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', write_termination='\n', baud_rate=9600, resource_name='', additional_put_text='', put_conv_function=None, put_format_string=''):
-        super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
+    def __init__(self,  name, value=0., timestamp=None, parent=None,
+                 labels=None, kind='hinted', tolerance=None, rtolerance=None,
+                 metadata=None, cl=None, attr_name='', write_termination='\n',
+                 baud_rate=9600, resource_name='', additional_put_text='',
+                 put_conv_function=None, put_format_string=''):
+        super().__init__(name=name, value=value, timestamp=timestamp, parent=parent,
+                         labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance,
+                         metadata=metadata, cl=cl, attr_name=attr_name)
         self.visa_instrument = None
         self.resource_name = resource_name
         # if resource_name:
@@ -62,7 +68,11 @@ class VISA_Signal_Write(Signal):
 
 
 class VISA_Signal_Read(SignalRO):
-    def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name='', read_termination='\n', write_termination='\n', baud_rate=9600, resource_name='', query_text='', match_return=False, read_function=None):
+    def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None,
+                 kind='hinted', tolerance=None, rtolerance=None, metadata=None,
+                 cl=None, attr_name='', read_termination='\n', write_termination='\n',
+                 baud_rate=9600, resource_name='', query_text='', match_return=False,
+                 read_function=None):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
         self.visa_instrument = None
         self.resource_name = resource_name
