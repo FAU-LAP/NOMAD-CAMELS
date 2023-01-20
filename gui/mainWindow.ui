@@ -731,7 +731,7 @@
                        </widget>
                       </item>
                       <item row="4" column="0" colspan="2">
-                       <widget class="QTextEdit" name="textEdit_console_output_meas">
+                       <widget class="Console_TextEdit" name="textEdit_console_output_meas">
                         <property name="textInteractionFlags">
                          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                         </property>
@@ -1107,6 +1107,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Console_TextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>utility.console_redirect</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>lineEdit_device_search</tabstop>
   <tabstop>pushButton_add_device</tabstop>

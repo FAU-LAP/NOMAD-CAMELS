@@ -146,8 +146,6 @@ class Keysight_B2912(VISA_Device):
                  configuration_attrs=None, parent=None, resource_name='',
                  read_termination='\r\n', write_termination='\r\n',
                  baud_rate=9600, **kwargs):
-        # super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
-        #                  configuration_attrs=configuration_attrs, parent=parent, **kwargs)
         super().__init__(prefix=prefix, name=name, kind=kind,
                          read_attrs=read_attrs,
                          configuration_attrs=configuration_attrs,
@@ -155,18 +153,7 @@ class Keysight_B2912(VISA_Device):
                          resource_name=resource_name, baud_rate=baud_rate,
                          write_termination=write_termination,
                          read_termination=read_termination,
-                         #read_termination='\n',
                          **kwargs)
-        # self.visa_instrument = None
-        # if resource_name:
-        #     if resource_name in open_resources:
-        #         self.visa_instrument = open_resources[resource_name]
-        #     else:
-        #         self.visa_instrument = rm.open_resource(resource_name)
-        #         open_resources[resource_name] = self.visa_instrument
-        #     # self.visa_instrument.write_termination = '\r\n'
-        #     self.visa_instrument.read_termination = '\n'
-        #     # self.visa_instrument.baud_rate = 9600
 
 
         self.v_source = [True, True]
@@ -185,12 +172,14 @@ class Keysight_B2912(VISA_Device):
         self.range_lower_lim2.put_conv_function = lambda x: range_lower_lim_func(x, 2, self.v_source)
         self.source_auto2.put_conv_function = lambda x: source_auto_func(x, 2, self.v_source)
 
-        # self.idn.visa_instrument = self.visa_instrument
+    def turn_on_output(self):
+        self.enable1.put(1)
+        self.enable2.put(1)
 
-        # for comp in self.walk_signals():
-        #     it = comp.item
-        #     it.visa_instrument = self.visa_instrument
+    def turn_off_output(self):
+        self.finalize_steps()
 
-# if __name__ == '__main__':
-#     b29 = Keysight_B2912('test', name='b29', resource_name='USB0::0x0957::0x8E18::MY51140626::INSTR')
-#     print(b29.idn.get())
+    def finalize_steps(self):
+        self.enable1.put(0)
+        self.enable2.put(0)
+

@@ -3,14 +3,12 @@ from PyQt5.QtGui import QFont
 
 from main_classes.loop_step import Loop_Step_Config
 from utility import variables_handling
-from utility.add_remove_table import AddRemoveTable
 from utility.channels_check_table import Channels_Check_Table
 from utility.load_save_helper_functions import load_plots
-from bluesky_handling.builder_helper_functions import plot_creator
+from bluesky_handling import builder_helper_functions
 from frontpanels.plot_definer import Plot_Button_Overview
 
-from loop_steps.for_while_loops import For_Loop_Step_Config_Sub, For_Loop_Step,\
-    get_space_string
+from loop_steps.for_while_loops import For_Loop_Step_Config_Sub, For_Loop_Step
 
 class Simple_Sweep(For_Loop_Step):
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
@@ -56,7 +54,8 @@ class Simple_Sweep(For_Loop_Step):
 
     def get_outer_string(self):
         if self.use_own_plots:
-            return plot_creator(self.plots, f'create_plots_{self.name}')[0]
+            return builder_helper_functions.plot_creator(self.plots,
+                                                         f'create_plots_{self.name}')[0]
         return ''
 
     def get_add_main_string(self):
@@ -65,7 +64,7 @@ class Simple_Sweep(For_Loop_Step):
             stream = '"primary"'
         add_main_string = ''
         if self.use_own_plots:
-            add_main_string += f'\treturner["{self.name}_plot_stuff"] = create_plots_{self.name}(RE, {stream})\n'
+            add_main_string += builder_helper_functions.get_plot_add_string(self.name, stream)
         return add_main_string
 
     def get_protocol_string(self, n_tabs=1):
@@ -130,7 +129,7 @@ class Simple_Sweep_Config(Loop_Step_Config):
     def __init__(self, loop_step:Simple_Sweep, parent=None):
         super().__init__(parent, loop_step)
         self.loop_step = loop_step
-        label_sweep_channel = QLabel('Sweep Channel')
+        label_sweep_channel = QLabel('Sweep Channel:')
         out_box = []
         in_box = []
         for channel in variables_handling.channels:
@@ -156,7 +155,8 @@ class Simple_Sweep_Config(Loop_Step_Config):
         #                                  comboBoxes=in_box)
         labels = ['read', 'channel']
         info_dict = {'channel': self.loop_step.read_channels}
-        self.read_table = Channels_Check_Table(self, labels, info_dict=info_dict)
+        self.read_table = Channels_Check_Table(self, labels, info_dict=info_dict,
+                                               title='Read-Channels')
 
         self.checkBox_use_own_plots = QCheckBox('Use own Plots')
         self.checkBox_use_own_plots.setChecked(loop_step.use_own_plots)

@@ -5,7 +5,7 @@ from main_classes.loop_step import Loop_Step, Loop_Step_Config
 from gui.gradient_descent_step import Ui_Grad_Desc
 from utility.add_remove_table import AddRemoveTable
 from utility import variables_handling
-from bluesky_handling.builder_helper_functions import plot_creator
+from bluesky_handling import builder_helper_functions
 from frontpanels.plot_definer import Plot_Info
 
 class Gradient_Descent_Step(Loop_Step):
@@ -44,14 +44,14 @@ class Gradient_Descent_Step(Loop_Step):
                               y_axes={'formula': [self.opt_func],
                                       'axis':['left']},
                               title='gradient-descent')
-            return plot_creator([plot], f'create_plots_{self.name}')[0]
+            return builder_helper_functions.plot_creator([plot], f'create_plots_{self.name}')[0]
         return ''
 
     def get_add_main_string(self):
         add_main_string = ''
         if self.plot_steps:
             stream = f'"{self.name}"'
-            add_main_string += f'\treturner["{self.name}_plot_stuff"] = create_plots_{self.name}(RE, {stream})\n'
+            add_main_string += builder_helper_functions.get_plot_add_string(self.name, stream)
         return add_main_string
 
     def get_protocol_string(self, n_tabs=1):

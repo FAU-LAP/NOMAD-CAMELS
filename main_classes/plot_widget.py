@@ -122,7 +122,6 @@ class PlotWidget(QWidget):
 
         self.setWindowTitle(title or f'{x_name} vs. {y_names[0]}')
         self.setWindowIcon(QIcon('graphics/CAMELS.svg'))
-        print(os.getcwd())
 
         self.plot_options.hide()
         self.options_open = False
@@ -387,7 +386,7 @@ class Plot_Options(QWidget, Ui_Plot_Options):
 
             linestylewidge = QComboBox()
             linestylewidge.addItems(self.linestyle_dict.keys())
-            print(line.get_linestyle)
+            # print(line.get_linestyle)
             linestylewidge.setCurrentText(''.join(line.lineStyles[line.get_linestyle()].split('_')[2:]))
             linestylewidge.currentTextChanged.connect(lambda x, n=i: self.change_linestyle(n))
             self.linestyle_widges.append(linestylewidge)
@@ -484,7 +483,7 @@ class MultiLivePlot(LivePlot, QObject):
                 self.x = 'seq_num'
             self.ys = get_obj_fields(ys)
             a = ylabel or ys[0]
-            print(a)
+            # print(a)
             self.ax.set_ylabel(ylabel or ys[0])
             self.ax.set_xlabel(xlabel or x or 'sequence #')
             if title:
@@ -630,7 +629,7 @@ class MultiLivePlot(LivePlot, QObject):
 
 class PlotWidget_NoBluesky(QWidget):
     def __init__(self, xlabel='', ylabel='', parent=None, title='', ylabel2='',
-                 y_axes=None, labels=(), first_hidden=None):
+                 y_axes=None, labels=(), first_hidden=None, show_plot=True):
         app = QCoreApplication.instance()
         if app is None:
             app = QApplication(sys.argv)
@@ -638,7 +637,7 @@ class PlotWidget_NoBluesky(QWidget):
         canvas = MPLwidget()
         self.ax = canvas.axes
         self.plot = MultiPlot_NoBluesky(self.ax, xlabel, ylabel, ylabel2,
-                                        y_axes, labels, first_hidden)
+                                        y_axes, labels, first_hidden, show_plot)
         self.toolbar = NavigationToolbar2QT(canvas, self)
 
         self.pushButton_show_options = QPushButton('Show Options')
@@ -684,7 +683,7 @@ class MultiPlot_NoBluesky(QObject):
     setup_done = pyqtSignal()
 
     def __init__(self, ax, xlabel='', ylabel='', ylabel2='', y_axes=None,
-                 labels=(), first_hidden=None):
+                 labels=(), first_hidden=None, show_plot=True):
         super().__init__()
         self.ax = ax
         self.ax.set_xlabel(xlabel)
@@ -697,6 +696,7 @@ class MultiPlot_NoBluesky(QObject):
         self.current_lines = {}
         self.y_axes = y_axes or {}
         self.first_hidden = first_hidden or []
+        self.show_plot = show_plot
         self.use_abs = {'x': False, 'y': False, 'y2': False}
 
     def add_data(self, x, ys, add=True):
@@ -733,7 +733,8 @@ class MultiPlot_NoBluesky(QObject):
             self.ydata.clear()
             for y in ys:
                 self.ydata[y] = [ys[y]]
-        self.update_plot()
+        if self.show_plot:
+            self.update_plot()
 
 
     def update_plot(self):

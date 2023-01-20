@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QComboBox, QTableWidget, QGridLayout, QLineEdit, QMenu
 from PyQt5.QtCore import Qt, QModelIndex
-from PyQt5.QtGui import QBrush
+from PyQt5.QtGui import QBrush, QFont
 from main_classes.loop_step import Loop_Step, Loop_Step_Config
 
 from gui.read_channels import Ui_read_channels_config
@@ -10,7 +10,7 @@ from utility import variables_handling, fit_variable_renaming
 
 class Channels_Check_Table(QWidget):
     def __init__(self, parent, headerLabels=None, only_output=False,
-                 info_dict=None, checkstrings=None):
+                 info_dict=None, checkstrings=None, title=''):
         super().__init__(parent)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
@@ -33,9 +33,16 @@ class Channels_Check_Table(QWidget):
         self.lineEdit_search.textChanged.connect(self.change_search)
 
         self.setLayout(layout)
-        layout.addWidget(label_search, 0, 0)
-        layout.addWidget(self.lineEdit_search, 0, 1)
-        layout.addWidget(self.tableWidget_channels, 1, 0, 1, 2)
+        if title:
+            title_label = QLabel(title)
+            layout.addWidget(title_label, 0, 0, 1, 2)
+            font = QFont()
+            font.setBold(True)
+            title_label.setStyleSheet('font-size: 9pt')
+            title_label.setFont(font)
+        layout.addWidget(label_search, 1, 0)
+        layout.addWidget(self.lineEdit_search, 1, 1)
+        layout.addWidget(self.tableWidget_channels, 2, 0, 1, 2)
         layout.setContentsMargins(0,0,0,0)
         self.build_channels_table()
         self.tableWidget_channels.itemChanged.connect(self.check_string)

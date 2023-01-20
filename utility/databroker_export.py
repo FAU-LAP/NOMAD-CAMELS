@@ -148,6 +148,7 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
                     group = data_entry
                 else:
                     group = data_entry.create_group(stream)
+                    group.attrs['NX_class'] = 'NXdata'
                 for coord in dataset.coords:
                     if coord == 'time':
                         isos = []
@@ -175,7 +176,7 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
                     continue
                 axes = []
                 signals = []
-                for plot in plot_data[1]:
+                for plot in plot_data:
                     if plot.stream_name == stream:
                         if plot.x_name not in axes:
                             axes.append(plot.x_name)
