@@ -143,6 +143,11 @@ class Bruker_Magnet_NI_DAQ(Device):
                                power_off=self.power_off,
                                reverse=self.reverse)
 
+    def finalize_steps(self):
+        for c in [self.polarity, self.power_on, self.power_off, self.power_read,
+                  self.reverse]:
+            c.close_task()
+
 
 
 if __name__ == '__main__':

@@ -6,10 +6,26 @@ standard_plot_string += '\t\tapp = QApplication(sys.argv)\n'
 # standard_plot_string += '\tapp.aboutToQuit.connect(wait_for_workers_to_quit)\n'
 standard_plot_string += '\tif darkmode:\n'
 standard_plot_string += '\t\tplot_widget.activate_dark_mode()\n'
-standard_plot_string += '\ttheme_changing.change_theme(theme, app)\n'
+# standard_plot_string += '\ttheme_changing.change_theme(theme, app)\n'
 # standard_plot_string += '\t\timport qdarkstyle\n'
 # standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())\n'
 # standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet(qt_api="pyqt5"))\n'
+
+
+def get_plot_add_string(name, stream, subprotocol=False):
+    add_main_string = '\tif "subs" not in returner:\n'
+    add_main_string += '\t\treturner["subs"] = []\n'
+    add_main_string += '\tif "plots" not in returner:\n'
+    add_main_string += '\t\treturner["plots"] = []\n'
+    if subprotocol:
+        add_main_string += f'\tplots, subs, _ = {name}_mod.create_plots(RE, {stream})\n'
+    else:
+        add_main_string += f'\tplots, subs, _ = create_plots_{name}(RE, {stream})\n'
+    add_main_string += '\treturner["subs"] += subs\n'
+    add_main_string += '\treturner["plots"] += plots\n'
+    return add_main_string
+
+
 
 def plot_creator(plot_data, func_name='create_plots'):
     plot_string = f'\ndef {func_name}(RE, stream="primary"):\n'
@@ -53,5 +69,5 @@ def plot_creator(plot_data, func_name='create_plots'):
             plot_string += f'\tplots.append(plot_{i})\n'
             plot_string += f'\tplot_{i}.show()\n'
             plot_string += f'\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n'
-    plot_string += '\treturn app, plots, subs\n\n'
+    plot_string += '\treturn plots, subs, app\n\n'
     return plot_string, plotting

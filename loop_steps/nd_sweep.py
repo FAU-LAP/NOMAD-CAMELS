@@ -6,7 +6,7 @@ from main_classes.loop_step import Loop_Step_Config, Loop_Step
 from utility import variables_handling
 from utility.channels_check_table import Channels_Check_Table
 from utility.load_save_helper_functions import load_plots
-from bluesky_handling.builder_helper_functions import plot_creator
+from bluesky_handling import builder_helper_functions
 from frontpanels.plot_definer import Plot_Button_Overview
 
 from loop_steps.for_while_loops import For_Loop_Step_Config_Sub, For_Loop_Step
@@ -42,7 +42,7 @@ class ND_Sweep(Loop_Step):
 
     def get_outer_string(self):
         if self.plots:
-            return plot_creator(self.plots, f'create_plots_{self.name}')[0]
+            return builder_helper_functions.plot_creator(self.plots, f'create_plots_{self.name}')[0]
         return ''
 
     def get_add_main_string(self):
@@ -51,7 +51,7 @@ class ND_Sweep(Loop_Step):
             stream = '"primary"'
         add_main_string = ''
         if self.plots:
-            add_main_string += f'\treturner["{self.name}_plot_stuff"] = create_plots_{self.name}(RE, {stream})\n'
+            add_main_string += builder_helper_functions.get_plot_add_string(self.name, stream)
         return add_main_string
 
 

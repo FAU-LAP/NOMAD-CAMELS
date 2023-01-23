@@ -69,6 +69,11 @@ class Settings_Window(QDialog, Ui_settings_window):
             self.lineEdit_catalog_name.setText(settings['databroker_catalog_name'])
         else:
             self.lineEdit_catalog_name.setText(standard_pref['databroker_catalog_name'])
+        if 'play_camel_on_error' in settings:
+            self.checkBox_play_camel_on_error.setChecked(settings['play_camel_on_error'])
+        else:
+            self.checkBox_play_camel_on_error.setChecked(standard_pref['play_camel_on_error'])
+
 
     def change_theme(self):
         theme = self.comboBox_theme.currentText()
@@ -94,7 +99,8 @@ class Settings_Window(QDialog, Ui_settings_window):
                 'meas_files_path': self.pathButton_meas_files.get_path(),
                 'device_driver_path': self.pathButton_device_path.get_path(),
                 'autostart_ioc': self.checkBox_autostart_ioc.isChecked(),
-                'databroker_catalog_name': self.lineEdit_catalog_name.text()}
+                'databroker_catalog_name': self.lineEdit_catalog_name.text(),
+                'play_camel_on_error': self.checkBox_play_camel_on_error.isChecked()}
 
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
