@@ -15,7 +15,7 @@ class Keysight_E5270B(VISA_Device):
     resADCmode = Cpt(Custom_Function_Signal, name='resADCmode', kind='config')
     idn = Cpt(VISA_Signal_Read, name='idn', kind='config', 
               read_function= lambda:'*IDN?')
-    err = Cpt(VISA_Signal_Read, name='err',
+    err = Cpt(VISA_Signal_Read, name='err', kind = 'hinted',
               read_function=lambda: 'ERR?')
     # --------------------Channel 1----------------------------------------
     setV1 = Cpt(VISA_Signal_Write, name='setV1', metadata={'units': 'V'})
@@ -150,7 +150,6 @@ class Keysight_E5270B(VISA_Device):
             self.set_MM_value(1, chnum)
         if self.last_CMM_value[chnum-1] != 2:
             self.set_CMM_value(2, chnum)
-        print('meas volts')
         return 'XE'
 
     def measure_single_current(self, chnum):
@@ -158,7 +157,6 @@ class Keysight_E5270B(VISA_Device):
             self.set_MM_value(1, chnum)
         if self.last_CMM_value[chnum-1] != 1:
             self.set_CMM_value(1, chnum)
-        print('meas currs')
         return 'XE'
 
     def set_currCompliance(self, value, chan,):
