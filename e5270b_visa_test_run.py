@@ -53,7 +53,7 @@ def Unnamed_Protocol_plan_inner(devs, runEngine=None, stream_name="primary"):
     """"""
     print("starting loop_step Read Channels (Read_Channels)")
     yield from bps.checkpoint()
-    channels_Read_Channels = [devs["keysight_e5270b"].mesV1,]#devs["keysight_e5270b"].mesI1]
+    channels_Read_Channels = [devs["keysight_e5270b"].mesV1,devs["keysight_e5270b"].mesI1]
     yield from bps.trigger_and_read(channels_Read_Channels, name=stream_name)
 
 
@@ -121,7 +121,7 @@ def main(dark=False, used_theme="default"):
 
 
     runs = catalog[uids]
-    broker_to_NX(runs, r"C:\Users\fulapuser\CAMELS_data\databroker\CAMELS_CATALOG\data.h5", plot_dat)
+    broker_to_NX(runs, r"C:\Users\fulapuser\CAMELS_data\databroker\CAMELS_CATALOG\data_new.h5", plot_dat)
 
 
     app = QCoreApplication.instance()

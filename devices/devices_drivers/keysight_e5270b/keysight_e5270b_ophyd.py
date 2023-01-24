@@ -9,6 +9,41 @@ import time as ttime
 
 
 class Keysight_E5270B(VISA_Device):
+    speedADCPLC = Cpt(Custom_Function_Signal, name='speedADCPLC', kind='config')
+    speedADCmode = Cpt(Custom_Function_Signal, name='speedADCmode', kind='config')
+    resADCPLC = Cpt(Custom_Function_Signal, name='resADCPLC', kind='config')
+    resADCmode = Cpt(Custom_Function_Signal, name='resADCmode', kind='config')
+    idn = Cpt(VISA_Signal_Read, name='idn', kind='config', 
+              read_function= lambda:'*IDN?')
+    err = Cpt(VISA_Signal_Read, name='err',
+              read_function=lambda: 'ERR?')
+    # --------------------Channel 1----------------------------------------
+    setV1 = Cpt(VISA_Signal_Write, name='setV1', metadata={'units': 'V'})
+    setI1 = Cpt(VISA_Signal_Write, name='setI1', metadata={'units': 'A'})
+    mesI1 = Cpt(VISA_Signal_Read, name='mesI1',kind='hinted', metadata={'units': 'A'})
+    mesV1 = Cpt(VISA_Signal_Read, name='mesV1', metadata={'units': 'V'})
+    enable1 = Cpt(VISA_Signal_Write, name='enable1',
+                  put_conv_function=lambda x: 'RED 1; FMT 2,0; CN 1; MM 1,1')
+    # Config settings of the device
+    measMode1 = Cpt(VISA_Signal_Write, name='measMode1', kind='config',)
+    # used in setting current DI and setting voltage DV, only a variable
+    currComp1 = Cpt(Custom_Function_Signal, name='currComp1', kind='config')
+    voltComp1 = Cpt(Custom_Function_Signal, name='voltComp1', kind='config')
+    # voltage range used when setting DV
+    VoutRange1 = Cpt(Custom_Function_Signal, name='VoutRange1', kind='config')
+    # current range used when setting DI
+    IoutRange1 = Cpt(Custom_Function_Signal, name='IoutRange1', kind='config')
+    # voltage range used when simply using (MM, CMM and XE)
+    VmeasRange1 = Cpt(Custom_Function_Signal, name='VmeasRange1', kind='config')
+    # current range used when simply using (MM, CMM and XE)
+    ImeasRange1 = Cpt(Custom_Function_Signal, name='ImeasRange1', kind='config')
+    # sets ADC to high res=1 or high speed=0, default is high speed
+    setADC1 = Cpt(VISA_Signal_Write, name='setADC1', kind='config',
+                  put_conv_function=lambda x: f'AAD 1, {x}')
+    # sets filter mode: 0 for disconnect, 1 for connect of the filter
+    outputFilter1 = Cpt(VISA_Signal_Write, name='outputFilter1', kind='config',
+                        put_conv_function=lambda x: f'FL {x}, 1')
+    # --------------------Channel 2----------------------------------------
     setV1 = Cpt(VISA_Signal_Write, name='setV1', metadata={'units': 'V'})
     setI1 = Cpt(VISA_Signal_Write, name='setI1', metadata={'units': 'A'})
     mesI1 = Cpt(VISA_Signal_Read, name='mesI1',kind='hinted', metadata={'units': 'A'})
@@ -35,12 +70,7 @@ class Keysight_E5270B(VISA_Device):
     outputFilter1 = Cpt(VISA_Signal_Write, name='outputFilter1', kind='config',
                         put_conv_function=lambda x: f'FL {x}, 1')
 
-    speedADCPLC = Cpt(Custom_Function_Signal, name='speedADCPLC', kind='config')
-    speedADCmode = Cpt(Custom_Function_Signal, name='speedADCmode', kind='config')
-    resADCPLC = Cpt(Custom_Function_Signal, name='resADCPLC', kind='config')
-    resADCmode = Cpt(Custom_Function_Signal, name='resADCmode', kind='config')
-    idn = Cpt(Custom_Function_Signal, name='idn', kind='config')
-    err = Cpt(Custom_Function_Signal, name='err', )
+
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, use_channels=(), **kwargs):
@@ -58,42 +88,51 @@ class Keysight_E5270B(VISA_Device):
 
         # set array element of curr compliance to the value entered
         self.currComp1.put_function = lambda x: self.set_currCompliance(x, 1,)
-        self.setV1.put_conv_function = lambda x: self.source_voltage(x, 1, self.VoutRange1)
-        
+        self.setV1.put_conv_function = lambda x: self.source_voltage(x, 1, 
+                                                               self.VoutRange1)        
         # array of current compliances for each of the 8 channels
         # array[i] corresponds to channel number i+1
-        self.curr_compliance_array = [0, 0, 0, 0, 0, 0, 0, 0]
-        
+        self.curr_compliance_array = [0, 0, 0, 0, 0, 0, 0, 0]        
         # set array element of volt compliance to the value entered
         self.voltComp1.put_function = lambda x: self.set_voltCompliance(x, 1)
-        self.setI1.put_conv_function = lambda x: self.source_current(x, 1, self.IoutRange1, )
-        
+        self.setI1.put_conv_function = lambda x: self.source_current(x, 1, 
+                                                             self.IoutRange1, )        
         # array of voltage compliances for each of the 8 channels
         # array[i] corresponds to channel number i+1
-        self.volt_compliance_array = [0, 0, 0, 0, 0, 0, 0, 0]
-       
+        self.volt_compliance_array = [0, 0, 0, 0, 0, 0, 0, 0]       
         # arrays containing the last values set for MM and CMM for each channel
         self.last_MM_value = [None, None, None, None, None, None, None, None]
-        self.last_CMM_value = [None, None, None, None, None, None, None, None]
-        
+        self.last_CMM_value = [None, None, None, None, None, None, None, None]        
+        #Mode and NPLC of the High Res AD converters for the entire SMU
+        self.resADCmode.put_conv_function = lambda x: self.set_ADC_mode(1, x)
+        #Mode and NPLC of the High Speed AD converters for the entire SMU
+        self.speedADCmode.put_conv_function = lambda x: self.set_ADC_mode(0, x)
+        # --------------------Channel 1----------------------------------------
         # Read single voltage value using MM, CMM and XE command
         # check to see if the current settings of MM and CMM are correct for the desired
         # voltage measurement, the passed value is the channel number to check for
-        self.mesV1.read_function = lambda: self.measure_single_voltage(1)
-        
+        self.mesV1.read_function = lambda: self.measure_single_voltage(1)        
         # Read single current value using MM, CMM and XE command
         # check to see if the current settings of MM and CMM are correct for the desired
         # current measurement, the passed value is the channel number to check for
-        self.mesI1.read_function = lambda: self.measure_single_current(1)
-        
+        self.mesI1.read_function = lambda: self.measure_single_current(1)        
         # function called when putting value to measMode1
-        self.measMode1.put_conv_function = lambda x: self.set_MM_value(x, 1)
-        
+        self.measMode1.put_conv_function = lambda x: self.set_MM_value(x, 1)        
         # function called when putting value to currComp1
-        self.ImeasRange1.put_conv_function = lambda x: f'RI 1,{x}'
-        
+        self.ImeasRange1.put_conv_function = lambda x: f'RI 1,{x}'        
         # function called when putting value to voltComp1
         self.VmeasRange1.put_conv_function = lambda x: f'RV 1,{x}'
+        
+        
+    def set_ADC_mode(self, type_res_or_speed, mode):
+        if mode==2 or mode == 1:
+            plc = self.resADCPLC.get()
+            return f'AIT {type_res_or_speed},{mode},{plc}'
+        if mode==0:
+            return f'AIT {type_res_or_speed},{mode}'
+            
+        
+        
 
     def set_MM_value(self,val, chnum):
         self.last_MM_value[chnum-1] = val
