@@ -150,6 +150,13 @@ class Keysight_E5270B(Device):
     def wait_for_connection(self, all_signals=False, timeout=2.0):
         self.wait_conn_sub(all_signals, timeout)
         self.measMode1.put(1)
+        self.measMode2.put(1)
+        self.measMode3.put(1)
+        self.measMode4.put(1)
+        self.measMode5.put(1)
+        self.measMode6.put(1)
+        self.measMode7.put(1)
+        self.measMode8.put(1)
 
     def wait_conn_sub(self, all_signals=False, timeout=2.0):
         """Wait for signals to connect

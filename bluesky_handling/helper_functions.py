@@ -30,20 +30,23 @@ def simplify_configs_dict(configs):
 
 def get_fit_results(fits, namespace, yielding=False, stream='primary'):
     for name, fit in fits.items():
+        if yielding and fit.stream_name == stream:
+            fit.start_waiting()
+            fit.event('stop_waiting')
+            fit.update_fit()
+            yield from bps.trigger_and_read(fit.ophyd_fit.used_comps,
+                                            name=f'{stream}_fits_{name}')
+            fit._reset()
         if not fit.result:
             continue
         for param in fit.params:
             if param in fit.result.best_values:
                 namespace[f'{name}_{param}'] = fit.result.best_values[param]
         namespace[f'{name}_covar'] = fit.result.covar
-        if yielding and fit.stream_name == stream:
-            yield from bps.trigger_and_read(fit.ophyd_fit.used_comps,
-                                            name=f'{stream}_fits_{name}')
-            fit._reset()
 
 def clear_plots(plots, stream='primary'):
     for plot in plots:
-        if plot.stream_name == stream:
+        if plot.stream_name == stream or plot.stream_name.startswith(f'{stream}_fits_'):
             plot.clear_plot()
 
 

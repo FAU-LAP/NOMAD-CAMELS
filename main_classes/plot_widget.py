@@ -4,9 +4,10 @@ from collections import ChainMap
 import threading
 import numpy as np
 import lmfit
+import time
 
 import matplotlib.pyplot as plt
-from bluesky.callbacks.mpl_plotting import LivePlot, LiveFitPlot
+from bluesky.callbacks.mpl_plotting import LivePlot, LiveFitPlot, CallbackBase
 from bluesky.callbacks import LiveFit
 from bluesky.callbacks.core import get_obj_fields
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg,\
@@ -130,6 +131,8 @@ class PlotWidget(QWidget):
 
     def clear_plot(self):
         self.livePlot.clear_plot()
+        for fit_plot in self.liveFitPlots:
+            fit_plot.clear_plot()
 
     def autoscale(self):
         self.ax.autoscale()
@@ -148,22 +151,33 @@ class PlotWidget(QWidget):
 
 
 class LiveFit_Eva(LiveFit):
+    has_result = pyqtSignal()
+
     def __init__(self, model, y, independent_vars, init_guess=None, *,
                  update_every=1, evaluator=None, name='', params=None,
                  stream_name='primary'):
         super().__init__(model=model, y=y, independent_vars=independent_vars,
                          init_guess=init_guess, update_every=update_every)
-        # change_name = name.replace(' ', '_').replace(':', '_').replace('.', '_')
         self.eva = evaluator
         self.name = f'{name}_{stream_name}'
         self.params = params
-        # name = name.replace('(', '').replace(')', '').replace('.', '')
         name = replace_name(name)
-        self.ophyd_fit = Fit_Ophyd(name, name=name, params=params)
+        self.ophyd_fit = Fit_Ophyd(name, name=name, params=params,
+                                   parent_fit=self)
         self.stream_name = stream_name
+        self.timestamp = None
+        self.parent_plot = None
+        self.__stale = True
+        self.waiting = False
 
+
+    def start_waiting(self):
+        self.waiting = True
 
     def event(self, doc):
+        if doc == 'stop_waiting':
+            self.waiting = False
+            return
         idv = {}
         for k, v in self.independent_vars.items():
             try:
@@ -185,40 +199,55 @@ class LiveFit_Eva(LiveFit):
             y = self.eva.eval(self.y)
         # Always stash the data for the next time the fit is updated.
         self.update_caches(y, idv)
+        self.timestamp = doc['time']
         self.__stale = True
 
         # Maybe update the fit or maybe wait.
-        if self.update_every is not None:
-            i = len(self.ydata)
-            N = len(self.model.param_names)
-            if i < N:
-                # not enough points to fit yet
-                pass
-            elif (i == N) or ((i - 1) % self.update_every == 0):
-                self.update_fit()
-                self.ophyd_fit.update_data(self.result, doc['time'])
-                # self.ophyd_fit.result = self.result.best_values
-                # self.ophyd_fit.timestamp = doc['time']
-        super().event(doc)
+        # if self.update_every is not None:
+        #     i = len(self.ydata)
+        #     N = len(self.model.param_names)
+        #     if i < N:
+        #         # not enough points to fit yet
+        #         pass
+        #     elif (i == N) or ((i - 1) % self.update_every == 0):
+        #         self.update_fit()
+        #         self.ophyd_fit.update_data(self.result, doc['time'])
 
     def update_fit(self):
-        N = len(self.model.param_names)
-        if len(self.ydata) < N:
+        while self.waiting:
+            time.sleep(0.1)
+        if not self.__stale:
             return
+        counter = 0
+        # while len(self.ydata) <= len(self.model.param_names):
+        #     if counter > 10:
+        #         raise Exception('Cannot fit with too little values!')
+        #     time.sleep(1)
+        #     counter += 1
+        kwargs = {}
+        kwargs.update(self.independent_vars_data)
+        kwargs.update(self.init_guess)
+        if self.params:
+            self.result = self.model.fit(self.ydata, params=self.params,
+                                         **kwargs)
         else:
-            kwargs = {}
-            kwargs.update(self.independent_vars_data)
-            kwargs.update(self.init_guess)
-            if self.params:
-                self.result = self.model.fit(self.ydata, params=self.params,
-                                             **kwargs)
-            else:
-                self.result = self.model.fit(self.ydata, **kwargs)
-            self.__stale = False
+            self.result = self.model.fit(self.ydata, **kwargs)
+        self.__stale = False
+        self.ophyd_fit.update_data(self.result, self.timestamp)
+        self.parent_plot.fit_has_result()
+
 
 class Fit_Signal(SignalRO):
-    # def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None, kind='hinted', tolerance=None, rtolerance=None, metadata=None, cl=None, attr_name=''):
-    #     super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
+    def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None,
+                 kind='hinted', tolerance=None, rtolerance=None, metadata=None,
+                 cl=None, attr_name=''):
+        super().__init__(name=name, value=value, timestamp=timestamp,
+                         parent=parent, labels=labels, kind=kind,
+                         tolerance=tolerance, rtolerance=rtolerance,
+                         metadata=metadata, cl=cl, attr_name=attr_name)
+
+    def get(self, **kwargs):
+        return super().get(**kwargs)
 
     def update_data(self, result, timestamp):
         self._readback = result
@@ -246,7 +275,8 @@ class Fit_Ophyd(Device):
     covar = Component(Fit_Signal, name='covar')
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
-                 configuration_attrs=None, parent=None, params=None, **kwargs):
+                 configuration_attrs=None, parent=None, params=None,
+                 parent_fit=None, **kwargs):
         super().__init__(prefix=prefix, name=name, kind=kind,
                          read_attrs=read_attrs,
                          configuration_attrs=configuration_attrs, parent=parent,
@@ -255,7 +285,13 @@ class Fit_Ophyd(Device):
         self.order = [self.a, self.b, self.c, self.d, self.e, self.f, self.g,
                       self.h, self.i, self.j, self.k, self.l, self.m, self.n,
                       self.o, self.p, self.q, self.r]
-        self.used_comps = []
+        self.used_comps = [self.covar]
+        for i, p in enumerate(self.params):
+            self.used_comps.append(self.order[i])
+        self.parent_fit = parent_fit
+
+    # def update_fit(self):
+    #     self.parent_fit.update_fit()
 
     def update_data(self, result, timestamp):
         self.used_comps = [self.covar]
@@ -264,9 +300,8 @@ class Fit_Ophyd(Device):
                 self.order[i].update_data(result.best_values[comp], timestamp)
                 self.used_comps.append(self.order[i])
                 self.order[i].name = f'{self.name}_{comp}'
-        self.covar.update_data(result.covar, timestamp)
-
-
+        if result.covar is not None:
+            self.covar.update_data(result.covar, timestamp)
 
     def read(self):
         res = BlueskyInterface.read(self)
@@ -292,8 +327,12 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         x, = livefit.independent_vars.values()  # this may change
         self.num_points = num_points
         self._livefit = livefit
+        livefit.parent_plot = self
         self._xlim = xlim
         self._has_been_run = False
+        self.x_data = []
+        self.y_data = []
+        self.current_line = None
 
     def start(self, doc):
         LivePlot.start(self, doc)
@@ -308,6 +347,8 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
 
     def event(self, doc):
         self.livefit.event(doc)
+
+    def fit_has_result(self):
         if self.livefit.result is not None:
             # Evaluate the model function at equally-spaced points.
             # To determine the domain of x, use xlim if availabe. Otherwise,
@@ -327,8 +368,13 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
             self.update_plot()
         # Intentionally override LivePlot.event. Do not call super().
 
+    def clear_plot(self):
+        if self.current_line:
+            self.current_line.set_data([], [])
+
     def update_plot(self):
         self.current_line.set_data(self.x_data, self.y_data)
+        self.parent_plot.update_plot()
         # Rescale and redraw.
         # self.ax.relim(visible_only=True)
         # self.ax.autoscale_view(tight=True)
@@ -459,6 +505,8 @@ class MultiLivePlot(LivePlot, QObject):
         self.desc = ''
         self.do_plot = do_plot
         self.fitPlots = fitPlots or []
+        for fit in self.fitPlots:
+            fit.parent_plot = self
         if isinstance(ys, str):
             ys = [ys]
 

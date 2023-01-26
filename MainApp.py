@@ -5,9 +5,9 @@ import importlib
 import os
 import socket
 
-import pandas as pd
-
 from copy import deepcopy
+
+import pandas as pd
 
 from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox,\
@@ -51,10 +51,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle('CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems')
         self.setWindowIcon(QIcon('graphics/CAMELS.svg'))
-        presets = load_save_functions.get_preset_list()
-        for pre in presets:
+        self.loaded_presets = load_save_functions.get_preset_list()
+        for pre in self.loaded_presets:
             self.comboBox_preset.addItem(pre)
-        if not presets:
+        if not self.loaded_presets:
             self.comboBox_preset.addItem(f'{socket.gethostname()}')
         self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.make_thread = None
@@ -536,10 +536,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not len(file):
             return
         preset_name = file.split('_')[-1][:-7]
-        preset = f'Backup/{file.split("/")[-2]}/{file.split("/")[-1][:-7]}'
+        # preset = f'Backup/{file.split("/")[-2]}/{file.split("/")[-1][:-7]}'
         self.save_state()
         self._current_preset[0] = preset_name
-        self.load_preset(preset)
+        self.load_preset(file)
 
 
     def load_state(self):
@@ -563,8 +563,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         (or when loading the last state). Opens the given preset."""
         if self.saving:
             return
-        with open(f'{load_save_functions.preset_path}{preset}.preset', 'r') as f:
-            preset_dict = json.load(f)
+        try:
+            with open(f'{load_save_functions.preset_path}{preset}.preset', 'r') as f:
+                preset_dict = json.load(f)
+        except:
+            with open(preset, 'r') as f:
+                preset_dict = json.load(f)
         load_save_functions.load_save_dict(preset_dict, self.preset_save_dict)
         self.pushButton_make_EPICS_environment.setEnabled(True)
         self.comboBox_preset.setCurrentText(self._current_preset[0])
