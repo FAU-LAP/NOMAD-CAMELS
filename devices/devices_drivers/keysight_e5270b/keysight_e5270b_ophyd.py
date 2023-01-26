@@ -15,19 +15,18 @@ class Keysight_E5270B(VISA_Device):
     resADCmode = Cpt(Custom_Function_Signal, name='resADCmode', kind='config')
     idn = Cpt(VISA_Signal_Read, name='idn', kind='config', 
               read_function= lambda:'*IDN?')
-    err = Cpt(VISA_Signal_Read, name='err', kind = 'hinted',
-              read_function=lambda: 'ERR?')
+    err = Cpt(Custom_Function_Signal, name='err', kind = 'hinted')
     # --------------------Channel 1----------------------------------------
     setV1 = Cpt(VISA_Signal_Write, name='setV1', metadata={'units': 'V'})
     setI1 = Cpt(VISA_Signal_Write, name='setI1', metadata={'units': 'A'})
     mesI1 = Cpt(VISA_Signal_Read, name='mesI1',kind='hinted', metadata={'units': 'A'})
     mesV1 = Cpt(VISA_Signal_Read, name='mesV1', metadata={'units': 'V'})
-    enable1 = Cpt(VISA_Signal_Write, name='enable1',
-                  put_conv_function=lambda x: 'RED 1; FMT 2,0; CN 1; MM 1,1')
+    enable1 = Cpt(VISA_Signal_Write, name='enable1',)
+                  #put_conv_function=lambda x: 'RED 1')# 'RED 1; FMT 2,0; CN 1; MM 1,1')
     # Config settings of the device
-    measMode1 = Cpt(VISA_Signal_Write, name='measMode1', kind='config',)
+    measMode1 = Cpt(VISA_Signal_Write, name='measMode1', kind='config', value=1)
     # used in setting current DI and setting voltage DV, only a variable
-    currComp1 = Cpt(Custom_Function_Signal, name='currComp1', kind='config')
+    currComp1 = Cpt(Custom_Function_Signal, name='currComp1', kind='config',)
     voltComp1 = Cpt(Custom_Function_Signal, name='voltComp1', kind='config')
     # voltage range used when setting DV
     VoutRange1 = Cpt(Custom_Function_Signal, name='VoutRange1', kind='config')
@@ -38,37 +37,35 @@ class Keysight_E5270B(VISA_Device):
     # current range used when simply using (MM, CMM and XE)
     ImeasRange1 = Cpt(Custom_Function_Signal, name='ImeasRange1', kind='config')
     # sets ADC to high res=1 or high speed=0, default is high speed
-    setADC1 = Cpt(VISA_Signal_Write, name='setADC1', kind='config',
-                  put_conv_function=lambda x: f'AAD 1, {x}')
+    setADC1 = Cpt(VISA_Signal_Write, name='setADC1', kind='config',)
     # sets filter mode: 0 for disconnect, 1 for connect of the filter
-    outputFilter1 = Cpt(VISA_Signal_Write, name='outputFilter1', kind='config',
-                        put_conv_function=lambda x: f'FL {x}, 1')
-    # --------------------Channel 2----------------------------------------
-    setV1 = Cpt(VISA_Signal_Write, name='setV1', metadata={'units': 'V'})
-    setI1 = Cpt(VISA_Signal_Write, name='setI1', metadata={'units': 'A'})
-    mesI1 = Cpt(VISA_Signal_Read, name='mesI1',kind='hinted', metadata={'units': 'A'})
-    mesV1 = Cpt(VISA_Signal_Read, name='mesV1', metadata={'units': 'V'})
-    enable1 = Cpt(VISA_Signal_Write, name='enable1',
-                  put_conv_function=lambda x: 'RED 1; FMT 2,0; CN 1; MM 1,1')
-    # Config settings of the device
-    measMode1 = Cpt(VISA_Signal_Write, name='measMode1', kind='config',)
-    # used in setting current DI and setting voltage DV, only a variable
-    currComp1 = Cpt(Custom_Function_Signal, name='currComp1', kind='config')
-    voltComp1 = Cpt(Custom_Function_Signal, name='voltComp1', kind='config')
-    # voltage range used when setting DV
-    VoutRange1 = Cpt(Custom_Function_Signal, name='VoutRange1', kind='config')
-    # current range used when setting DI
-    IoutRange1 = Cpt(Custom_Function_Signal, name='IoutRange1', kind='config')
-    # voltage range used when simply using (MM, CMM and XE)
-    VmeasRange1 = Cpt(Custom_Function_Signal, name='VmeasRange1', kind='config')
-    # current range used when simply using (MM, CMM and XE)
-    ImeasRange1 = Cpt(Custom_Function_Signal, name='ImeasRange1', kind='config')
-    # sets ADC to high res=1 or high speed=0, default is high speed
-    setADC1 = Cpt(VISA_Signal_Write, name='setADC1', kind='config',
-                  put_conv_function=lambda x: f'AAD 1, {x}')
-    # sets filter mode: 0 for disconnect, 1 for connect of the filter
-    outputFilter1 = Cpt(VISA_Signal_Write, name='outputFilter1', kind='config',
-                        put_conv_function=lambda x: f'FL {x}, 1')
+    outputFilter1 = Cpt(VISA_Signal_Write, name='outputFilter1', kind='config', )
+    # # --------------------Channel 2----------------------------------------
+    # setV1 = Cpt(VISA_Signal_Write, name='setV1', metadata={'units': 'V'})
+    # setI1 = Cpt(VISA_Signal_Write, name='setI1', metadata={'units': 'A'})
+    # mesI1 = Cpt(VISA_Signal_Read, name='mesI1',kind='hinted', metadata={'units': 'A'})
+    # mesV1 = Cpt(VISA_Signal_Read, name='mesV1', metadata={'units': 'V'})
+    # enable1 = Cpt(VISA_Signal_Write, name='enable1',
+    #               put_conv_function=lambda x: 'RED 1; FMT 2,0; CN 1; MM 1,1')
+    # # Config settings of the device
+    # measMode1 = Cpt(VISA_Signal_Write, name='measMode1', kind='config',)
+    # # used in setting current DI and setting voltage DV, only a variable
+    # currComp1 = Cpt(Custom_Function_Signal, name='currComp1', kind='config')
+    # voltComp1 = Cpt(Custom_Function_Signal, name='voltComp1', kind='config')
+    # # voltage range used when setting DV
+    # VoutRange1 = Cpt(Custom_Function_Signal, name='VoutRange1', kind='config')
+    # # current range used when setting DI
+    # IoutRange1 = Cpt(Custom_Function_Signal, name='IoutRange1', kind='config')
+    # # voltage range used when simply using (MM, CMM and XE)
+    # VmeasRange1 = Cpt(Custom_Function_Signal, name='VmeasRange1', kind='config')
+    # # current range used when simply using (MM, CMM and XE)
+    # ImeasRange1 = Cpt(Custom_Function_Signal, name='ImeasRange1', kind='config')
+    # # sets ADC to high res=1 or high speed=0, default is high speed
+    # setADC1 = Cpt(VISA_Signal_Write, name='setADC1', kind='config',
+    #               put_conv_function=lambda x: f'AAD 1, {x}')
+    # # sets filter mode: 0 for disconnect, 1 for connect of the filter
+    # outputFilter1 = Cpt(VISA_Signal_Write, name='outputFilter1', kind='config',
+    #                     put_conv_function=lambda x: f'FL {x}, 1')
 
 
 
@@ -85,6 +82,60 @@ class Keysight_E5270B(VISA_Device):
                         comps.remove(comp)
                         break
             self.component_names = tuple(comps)
+        def wait_for_connection(self, all_signals=False, timeout=2.0):
+            self.wait_conn_sub(all_signals, timeout)
+            self.measMode1.put(1)
+
+        def wait_conn_sub(self, all_signals=False, timeout=2.0):
+            """Wait for signals to connect
+
+            Parameters
+            ----------
+            all_signals : bool, optional
+                Wait for all signals to connect (including lazy ones)
+            timeout : float or None
+                Overall timeout
+            """
+            signals = []
+            for walk in self.walk_signals(include_lazy=all_signals):
+                name = walk.item.attr_name
+                use = True
+                for i in range(1, 9):
+                    if i not in self.use_channels and str(i) in name:
+                        use = False
+                        break
+                if use:
+                    signals.append(walk.item)
+
+            pending_funcs = {
+                dev: getattr(dev, '_required_for_connection', {})
+                for name, dev in self.walk_subdevices(include_lazy=all_signals)
+            }
+            pending_funcs[self] = self._required_for_connection
+
+            t0 = ttime.time()
+            while timeout is None or (ttime.time() - t0) < timeout:
+                connected = all(sig.connected for sig in signals)
+                if connected and not any(pending_funcs.values()):
+                    return
+                ttime.sleep(min((0.05, timeout / 10.0)))
+
+            def get_name(sig):
+                sig_name = f'{self.name}.{sig.dotted_name}'
+                return (f'{sig_name} ({sig.pvname})' if hasattr(sig, 'pvname')
+                        else sig_name)
+
+            reasons = []
+            unconnected = ', '.join(get_name(sig)
+                                    for sig in signals if not sig.connected)
+            if unconnected:
+                reasons.append(f'Failed to connect to all signals: {unconnected}')
+            if any(pending_funcs.values()):
+                pending = ', '.join(description.format(device=dev)
+                                    for dev, funcs in pending_funcs.items()
+                                    for obj, description in funcs.items())
+                reasons.append(f'Pending operations: {pending}')
+            raise TimeoutError('; '.join(reasons))
 
         # set array element of curr compliance to the value entered
         self.currComp1.put_function = lambda x: self.set_currCompliance(x, 1,)
@@ -107,7 +158,11 @@ class Keysight_E5270B(VISA_Device):
         self.resADCmode.put_conv_function = lambda x: self.set_ADC_mode(1, x)
         #Mode and NPLC of the High Speed AD converters for the entire SMU
         self.speedADCmode.put_conv_function = lambda x: self.set_ADC_mode(0, x)
+        self.err.put_conv_function = lambda: 'ERR?'
         # --------------------Channel 1----------------------------------------
+        self.enable1.put_conv_function = lambda x: f'FMT 2,0;RED 1;CN {x};MM 1,1'
+        self.setADC1.put_conv_function = lambda x: f'AAD 1,{x}'
+        self.outputFilter1.put_conv_function = lambda x: f'FL {x},1'
         # Read single voltage value using MM, CMM and XE command
         # check to see if the current settings of MM and CMM are correct for the desired
         # voltage measurement, the passed value is the channel number to check for
@@ -130,19 +185,18 @@ class Keysight_E5270B(VISA_Device):
             return f'AIT {type_res_or_speed},{mode},{plc}'
         if mode==0:
             return f'AIT {type_res_or_speed},{mode}'
-            
-        
-        
 
     def set_MM_value(self,val, chnum):
         self.last_MM_value[chnum-1] = val
-        self.visa_instrument.write(f'MM {val}, {chnum}')
-        return f'MM {val}, {chnum}'
+        #self.visa_instrument.write(f'MM {val},{chnum}')
+        print(f'from set_MM_val: MM {val},{chnum}')
+        return f'MM {val},{chnum}'
 
     def set_CMM_value(self, val, chnum):
         self.last_CMM_value[chnum - 1] = val
-        self.visa_instrument.write(f'CMM {chnum}, {val}')
-        return f'CMM {chnum}, {val}'
+        #self.visa_instrument.write(f'CMM {chnum},{val}')
+        print(f'CMM {chnum},{val}')
+        return f'CMM {chnum},{val}'
         
 
     def measure_single_voltage(self, chnum):
@@ -170,6 +224,7 @@ class Keysight_E5270B(VISA_Device):
     def source_current(self, current, chnum, range_signal,):
         irange = range_signal.get()
         Vcomp = self.volt_compliance_array[chnum-1]
+        print(f'DI {chnum} {irange} {current} {Vcomp}')
         return f'DI {chnum} {irange} {current} {Vcomp}'
         #return f'DI {chnum} {irange} {current} {Vcomp} {comp_polarity} {vrange}'
 
@@ -178,10 +233,11 @@ class Keysight_E5270B(VISA_Device):
     def source_voltage(self, voltage, chnum, range_signal,):
         vrange = range_signal.get()
         Icomp = self.curr_compliance_array[chnum-1]
+        print(f'DV {chnum} {vrange} {voltage} {Icomp}')
         return f'DV {chnum} {vrange} {voltage} {Icomp}'
         # return f'DV {chnum} {vrange} {voltage} {Icomp} {comp_polarity} {irange}'
 
-
+#### Driver for E5270B using EPICS ####
 class Keysight_E5270B_EPICS(Device):
     setV1 = Cpt(EpicsSignal, 'setV1')
     setI1 = Cpt(EpicsSignal, 'setI1')
