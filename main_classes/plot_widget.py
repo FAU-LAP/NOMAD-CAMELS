@@ -34,6 +34,14 @@ def activate_dark_mode():
 
 
 class MPLwidget(FigureCanvasQTAgg):
+    """
+    Custom QT widget for displaying matplotlib plots.
+
+    This class inherits from matplotlib's FigureCanvasQTAgg to create a custom
+    QT widget for displaying matplotlib plots. In the init method, a new figure
+    and axes are created using matplotlib.pyplot.subplots(). The grid is then
+    displayed on the axes.
+    """
     def __init__(self):
         fig, ax = plt.subplots()
         self.axes = ax
@@ -83,12 +91,6 @@ class PlotWidget(QWidget):
             else:
                 for i, param in enumerate(fit['initial_params']['name']):
                     params[param].set(min=lower[param], max=upper[param])
-            # unneeded_params = []
-            # for param, val in params.items():
-            #     if val.expr is not None:
-            #         unneeded_params.append(param)
-            # for p in unneeded_params:
-            #     params.pop(p)
             name = f'{label}_{fit["y"]}_v_{fit["x"]}'
             name = replace_name(name)
             livefit = LiveFit_Eva(model, fit["y"], {'x': fit["x"]}, init_guess,
@@ -168,16 +170,13 @@ class LiveFit_Eva(LiveFit):
         self.timestamp = None
         self.parent_plot = None
         self.__stale = True
-        self.waiting = False
+        self.ready_to_read = False
 
-
-    def start_waiting(self):
-        self.waiting = True
+    def _reset(self):
+        super()._reset()
+        self.ready_to_read = False
 
     def event(self, doc):
-        if doc == 'stop_waiting':
-            self.waiting = False
-            return
         idv = {}
         for k, v in self.independent_vars.items():
             try:
@@ -213,8 +212,12 @@ class LiveFit_Eva(LiveFit):
         #         self.update_fit()
         #         self.ophyd_fit.update_data(self.result, doc['time'])
 
+    def get_ready(self):
+        self.ready_to_read = True
+
+
     def update_fit(self):
-        while self.waiting:
+        while not self.ready_to_read:
             time.sleep(0.1)
         if not self.__stale:
             return
@@ -273,6 +276,7 @@ class Fit_Ophyd(Device):
     q = Component(Fit_Signal, name='q')
     r = Component(Fit_Signal, name='r')
     covar = Component(Fit_Signal, name='covar')
+    read_ready = Component(Fit_Signal, name='read_ready')
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, params=None,
@@ -344,6 +348,8 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
             self.current_line.set_label(self.legend_keys[-1])
         self.ax.legend(loc=0, title='')
 
+    def get_ready(self):
+        self._livefit.get_ready()
 
     def event(self, doc):
         self.livefit.event(doc)
@@ -559,6 +565,7 @@ class MultiLivePlot(LivePlot, QObject):
         for y in ys:
             self.y_data[y] = []
         self.current_lines = {}
+        self.descs_fit_readying = []
 
     def start(self, doc):
         self.__setup()
@@ -596,6 +603,8 @@ class MultiLivePlot(LivePlot, QObject):
     def descriptor(self, doc):
         if doc['name'] == self.stream_name:
             self.desc = doc['uid']
+        elif doc['name'].startswith(f'{self.stream_name}_fits_readying_'):
+            self.descs_fit_readying.append(doc['uid'])
 
     def clear_plot(self):
         self.x_data.clear()
@@ -611,6 +620,9 @@ class MultiLivePlot(LivePlot, QObject):
         # be keys in the data or accessing the standard entries in every
         # event.
         if doc['descriptor'] != self.desc:
+            if doc['descriptor'] in self.descs_fit_readying:
+                for fit in self.fitPlots:
+                    fit.get_ready()
             return
         try:
             new_x = doc['data'][self.x]
