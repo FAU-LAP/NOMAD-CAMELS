@@ -503,6 +503,27 @@ class Fit_Ophyd(Device):
 
 
 class Fit_Plot_No_Init_Guess(LiveFitPlot):
+    """
+    A subclass of LiveFitPlot that doesn't plot the initial guess for the fit.
+
+    Parameters
+    ----------
+    livefit : LiveFit_Eva
+        an instance of ``LiveFit``
+    num_points : int, optional
+        number of points to sample when evaluating the model; default 100
+    legend_keys : list, optional
+        The list of keys to extract from the RunStart document and format
+        in the legend of the plot. The legend will always show the
+        scan_id followed by a colon ("1: ").  Each
+    xlim : tuple, optional
+        passed to Axes.set_xlim
+    ylim : tuple, optional
+        passed to Axes.set_ylim
+    ax : Axes, optional
+        matplotib Axes; if none specified, new figure and axes are made.
+    All additional keyword arguments are passed through to ``Axes.plot``.
+    """
     def __init__(self, livefit, *, num_points=100, legend_keys=None, xlim=None,
                  ylim=None, ax=None, **kwargs):
         super().__init__(livefit, num_points=num_points, legend_keys=legend_keys,
@@ -514,15 +535,19 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         # x, = livefit.independent_vars.values()  # this may change
         self.num_points = num_points
         self._livefit = livefit
-        livefit.parent_plot = self
         self._xlim = xlim
         self._has_been_run = False
+        livefit.parent_plot = self
         self.x_data = []
         self.y_data = []
         self.current_line = None
         self.x = None
 
     def start(self, doc):
+        """
+        Overwrites the `start` method of LiveFitPlot to not display the
+        init_guess_line.
+        """
         LivePlot.start(self, doc)
         self.livefit.start(doc)
         self.x, = self.livefit.independent_vars.keys()  # in case it changed
@@ -533,12 +558,23 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         self.ax.legend(loc=0, title='')
 
     def get_ready(self):
+        """
+        Passes the command to the `_livefit`
+        """
         self._livefit.get_ready()
 
     def event(self, doc):
+        """
+        Passes the event to the `livefit`
+        """
         self.livefit.event(doc)
 
     def fit_has_result(self):
+        """
+        If the `livefit` has a result, a resulting line is calculated, and the
+        plot is updated.
+        Called by LiveFit_Eva.update_fit().
+        """
         if self.livefit.result is not None:
             # Evaluate the model function at equally-spaced points.
             # To determine the domain of x, use xlim if availabe. Otherwise,
@@ -559,16 +595,18 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         # Intentionally override LivePlot.event. Do not call super().
 
     def clear_plot(self):
+        """
+        Empties the data of the current plot line.
+        """
         if self.current_line:
             self.current_line.set_data([], [])
 
     def update_plot(self):
+        """
+        Sets the current x and y data, then calls the `parent_plot` to update.
+        """
         self.current_line.set_data(self.x_data, self.y_data)
         self.parent_plot.update_plot()
-        # Rescale and redraw.
-        # self.ax.relim(visible_only=True)
-        # self.ax.autoscale_view(tight=True)
-        # self.ax.figure.canvas.draw_idle()
 
 
 
@@ -749,7 +787,7 @@ class MultiLivePlot(LivePlot, QObject):
         for y in ys:
             self.y_data[y] = []
         self.current_lines = {}
-        self.descs_fit_readying = []
+        self.descs_fit_readying = {}
         self.legend = None
 
     def start(self, doc):
@@ -789,7 +827,9 @@ class MultiLivePlot(LivePlot, QObject):
         if doc['name'] == self.stream_name:
             self.desc = doc['uid']
         elif doc['name'].startswith(f'{self.stream_name}_fits_readying_'):
-            self.descs_fit_readying.append(doc['uid'])
+            for fit in self.fitPlots:
+                if doc['name'] == f'{self.stream_name}_fits_readying_{fit.livefit.name}':
+                    self.descs_fit_readying[doc['uid']] = fit
 
     def clear_plot(self):
         self.x_data.clear()
@@ -806,8 +846,7 @@ class MultiLivePlot(LivePlot, QObject):
         # event.
         if doc['descriptor'] != self.desc:
             if doc['descriptor'] in self.descs_fit_readying:
-                for fit in self.fitPlots:
-                    fit.get_ready()
+                self.descs_fit_readying[doc['descriptor']].get_ready()
             return
         try:
             new_x = doc['data'][self.x]
