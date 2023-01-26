@@ -143,6 +143,8 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
             data_entry = entry.create_group('data')
             data_entry.attrs['NX_class'] = 'NXdata'
             for stream in run:
+                if '_fits_readying_' in stream:
+                    continue
                 dataset = run[stream].read()
                 if stream == 'primary':
                     group = data_entry

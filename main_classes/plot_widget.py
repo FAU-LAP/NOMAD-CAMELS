@@ -1,4 +1,3 @@
-import os
 import sys
 from collections import ChainMap
 import threading
@@ -7,7 +6,7 @@ import lmfit
 import time
 
 import matplotlib.pyplot as plt
-from bluesky.callbacks.mpl_plotting import LivePlot, LiveFitPlot, CallbackBase
+from bluesky.callbacks.mpl_plotting import LivePlot, LiveFitPlot
 from bluesky.callbacks import LiveFit
 from bluesky.callbacks.core import get_obj_fields
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg,\
@@ -49,7 +48,73 @@ class MPLwidget(FigureCanvasQTAgg):
         super().__init__(fig)
 
 class PlotWidget(QWidget):
-    def __init__(self, x_name=None, y_names=(), *, legend_keys=None, xlim=None,
+    """
+    Class for creating a plot widget.
+
+    Parameters
+    ----------
+    x_name : str
+        The name of the x-axis variable
+    y_names : Union[str, Tuple[str]]
+        The name(s) of the y-axis variable(s)
+    legend_keys : List[str], optional
+        The keys for the legend, by default None
+    xlim : Tuple[float, float], optional
+        passed to Axes.set_xlim
+    ylim : Tuple[float, float], optional
+        passed to Axes.set_ylim
+    epoch : {'run', 'unix'}, optional
+        If 'run' t=0 is the time recorded in the RunStart document. If 'unix',
+        t=0 is 1 Jan 1970 ("the UNIX epoch"). Default is 'run'.
+    parent : QWidget, optional
+        The parent widget, by default None
+    namespace : Optional[Mapping[str, Any]]
+        The namespace to use for the `Evaluator`, by default None
+    ylabel : str, optional
+        The y-axis label, by default ''
+    xlabel : str, optional
+        The x-axis label, by default ''
+    title : str, optional
+        The title of the plot, by default ''
+    stream_name : str, optional
+        The name of the stream to be used for the plot. Default is 'primary'
+    fits : List[Dict[str, Union[str, bool, List[str], Tuple[float, float], Dict[str, Union[str, float]]]]], optional
+        The fits for the plot, by default None
+    do_plot : bool, optional
+        Whether to show the plot, by default True
+    **kwargs : Any, optional
+        Additional keyword arguments to pass to `MultiLivePlot`
+
+    Attributes
+    ----------
+    ax : Axes
+        The matplotlib axes of the plot
+    x_name : str
+        The name of the x-axis variable
+    y_names : List[str]
+        The name(s) of the y-axis variable(s)
+    stream_name : str
+        The name of the stream
+    fits : List[Dict[str, Union[str, bool, List[str], Tuple[float, float], Dict[str, Union[str, float]]]]]
+        The fits for the plot as they come from the fit/plot definer.
+    liveFits : List[LiveFit_Eva]
+        The live fit objects for the plot, handled by the liveFitPlots
+    liveFitPlots : List[Fit_Plot_No_Init_Guess]
+        The live fit plots for the plot, used to display the fits
+    livePlot : MultiLivePlot
+        The live plot, using the canvas etc.
+    toolbar : NavigationToolbar2QT
+        The toolbar for the plot
+    pushButton_show_options : QPushButton
+        The push button to show the plot options
+    pushButton_autoscale : QPushButton
+        The push button to autoscale the plot
+    plot_options : Plot_Options
+        The options widget for the plot
+    options_open : bool
+        Whether the options are currently open
+    """
+    def __init__(self, x_name, y_names, *, legend_keys=None, xlim=None,
                  ylim=None, epoch='run', parent=None, namespace=None, ylabel='',
                  xlabel='', title='', stream_name='primary', fits=None,
                  do_plot=True, **kwargs):
@@ -93,8 +158,8 @@ class PlotWidget(QWidget):
                     params[param].set(min=lower[param], max=upper[param])
             name = f'{label}_{fit["y"]}_v_{fit["x"]}'
             name = replace_name(name)
-            livefit = LiveFit_Eva(model, fit["y"], {'x': fit["x"]}, init_guess,
-                                  evaluator=eva, name=name,
+            livefit = LiveFit_Eva(model, fit["y"], {'x': fit["x"]}, eva,
+                                  init_guess, name=name,
                                   params=params, stream_name=stream_name)
             self.liveFits.append(livefit)
             self.liveFitPlots.append(Fit_Plot_No_Init_Guess(livefit, ax=self.ax,
@@ -132,15 +197,22 @@ class PlotWidget(QWidget):
             self.show()
 
     def clear_plot(self):
+        """Clear the plot by removing the data from the plot and clearing all
+        fit plots."""
         self.livePlot.clear_plot()
         for fit_plot in self.liveFitPlots:
             fit_plot.clear_plot()
 
     def autoscale(self):
+        """Autoscale the plot's x and y axis."""
         self.ax.autoscale()
         self.ax.figure.canvas.draw_idle()
 
     def show_options(self):
+        """
+        Show or hide the options for the plot.
+        Toggles between 'Show Options' and 'Hide Options' on the button press.
+        """
         if self.options_open:
             self.pushButton_show_options.setText('Show Options')
             self.options_open = False
@@ -153,13 +225,37 @@ class PlotWidget(QWidget):
 
 
 class LiveFit_Eva(LiveFit):
-    has_result = pyqtSignal()
+    """
+    LiveFit_Eva is a subclass of LiveFit that adds the ability to evaluate the
+    independent variables before fitting. It uses the given evaluator for that.
 
-    def __init__(self, model, y, independent_vars, init_guess=None, *,
-                 update_every=1, evaluator=None, name='', params=None,
-                 stream_name='primary'):
+    Parameters
+    ----------
+    model : lmfit.Model
+        The model to be fitted
+    y : str
+        The expression for the y data
+    evaluator : Evaluator
+        An object that can evaluate expressions
+    independent_vars : dict
+        Dictionary with keys being the independent variable name and value being
+        the data source
+    init_guess : dict, optional
+        A dictionary of initial guess values for the model's parameters. If not
+        provided, the model's default initial guesses will be used.
+    name : str, optional
+        The name of the fit, used for the saving of the data.
+    params : lmfit.Parameters, optional
+        The parameter set to use for the fit. If not provided, the model's
+        default parameter set will be used.
+    stream_name : str, optional
+        The name of the stream, defaults to 'primary'
+    """
+
+    def __init__(self, model, y, independent_vars, evaluator, init_guess=None,
+                 *, name='', params=None, stream_name='primary'):
         super().__init__(model=model, y=y, independent_vars=independent_vars,
-                         init_guess=init_guess, update_every=update_every)
+                         init_guess=init_guess)
         self.eva = evaluator
         self.name = f'{name}_{stream_name}'
         self.params = params
@@ -173,10 +269,22 @@ class LiveFit_Eva(LiveFit):
         self.ready_to_read = False
 
     def _reset(self):
+        """
+        Resets the fit, also sets the `ready_to_read` to False.
+        """
         super()._reset()
         self.ready_to_read = False
 
     def event(self, doc):
+        """
+        Handles new events received by the fit. Evaluates the independent variables using the evaluator
+        and updates the fit with the new data.
+
+        Parameters
+        ----------
+        doc : dict
+            The event data
+        """
         idv = {}
         for k, v in self.independent_vars.items():
             try:
@@ -201,32 +309,30 @@ class LiveFit_Eva(LiveFit):
         self.timestamp = doc['time']
         self.__stale = True
 
-        # Maybe update the fit or maybe wait.
-        # if self.update_every is not None:
-        #     i = len(self.ydata)
-        #     N = len(self.model.param_names)
-        #     if i < N:
-        #         # not enough points to fit yet
-        #         pass
-        #     elif (i == N) or ((i - 1) % self.update_every == 0):
-        #         self.update_fit()
-        #         self.ophyd_fit.update_data(self.result, doc['time'])
-
     def get_ready(self):
+        """
+        This function is used to set the ready_to_read attribute to True.
+        """
         self.ready_to_read = True
 
-
     def update_fit(self):
+        """
+        Update the fit by evaluating the model with the current data.
+
+        This method updates the fit by evaluating the current data using the
+        model defined by the user. The method uses the `params` attribute, if
+        available, to pass on the parameters to the fitting method. If the fit
+        is not stale (i.e. no new data has arrived since the last update) the
+        method will return without doing anything. Otherwise, the method updates
+        the `result` attribute with the fit result and the `ophyd_fit` with the
+        updated data. It also calls the `fit_has_result` method on the parent
+        plot.
+        Before doing anything, it will wait for `ready_to_read` to be True.
+        """
         while not self.ready_to_read:
             time.sleep(0.1)
         if not self.__stale:
             return
-        counter = 0
-        # while len(self.ydata) <= len(self.model.param_names):
-        #     if counter > 10:
-        #         raise Exception('Cannot fit with too little values!')
-        #     time.sleep(1)
-        #     counter += 1
         kwargs = {}
         kwargs.update(self.independent_vars_data)
         kwargs.update(self.init_guess)
@@ -241,6 +347,40 @@ class LiveFit_Eva(LiveFit):
 
 
 class Fit_Signal(SignalRO):
+    """
+    A subclass of ophyd.SignalRO for storing fit results
+
+    This class is a subclass of ophyd.SignalRO, which is used to store the
+    results of a fit.
+    It has an additional method `update_data` that updates the readback value
+    and timestamp metadata of the signal.
+    
+    Parameters
+    ----------
+    name : str
+        name of the signal
+    value : float, optional
+        initial value of the signal, by default 0.
+    timestamp : float, optional
+        The timestamp associated with the initial value. Defaults to the
+        current local time.
+    parent : Device, optional
+        The parent Device holding this signal
+    labels : list, optional
+        labels of the signal, by default None
+    kind : str, optional
+        signal kind, by default 'hinted'
+    tolerance : any, optional
+        The absolute tolerance associated with the value
+    rtolerance : any, optional
+        The relative tolerance associated with the value, used as in ophyd.Signal
+    metadata : dict, optional
+        metadata of the signal, by default None
+    cl : namespace, optional
+        Control Layer.  Must provide 'get_pv' and 'thread_class'
+    attr_name : str, optional
+        The parent Device attribute name that corresponds to this Signal
+    """
     def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None,
                  kind='hinted', tolerance=None, rtolerance=None, metadata=None,
                  cl=None, attr_name=''):
@@ -249,14 +389,38 @@ class Fit_Signal(SignalRO):
                          tolerance=tolerance, rtolerance=rtolerance,
                          metadata=metadata, cl=cl, attr_name=attr_name)
 
-    def get(self, **kwargs):
-        return super().get(**kwargs)
-
     def update_data(self, result, timestamp):
+        """Updates the readback value and timestamp metadata of the signal.
+        Called by the parent's `update_data` function."""
         self._readback = result
         self._metadata['timestamp'] = timestamp
 
 class Fit_Ophyd(Device):
+    """
+    A device that extends the functionality of the Device class from Ophyd.
+    It is included in the LiveFit_Eva class.
+
+    Parameters
+    ----------
+    prefix : str
+       The prefix for the device
+    name : str
+        The name of the device (as will be reported via read()
+    kind : str, optional
+       The kind of the device, default is 'normal'
+    read_attrs : sequence of attribute names
+        DEPRECATED: the components to include in a normal reading
+        (i.e., in ``read()``)
+    configuration_attrs : sequence of attribute names
+        DEPRECATED: the components to be read less often (i.e., in
+        ``read_configuration()``) and to adjust via ``configure()``
+    parent : Device, optional
+        The instance of the parent device, if applicable
+    params : dict, optional
+       The parameters used in the fit
+    parent_fit : LiveFit_Eva, optional
+       The parent fit, used to notify on update
+    """
     a = Component(Fit_Signal, name='a')
     b = Component(Fit_Signal, name='b')
     c = Component(Fit_Signal, name='c')
@@ -294,10 +458,18 @@ class Fit_Ophyd(Device):
             self.used_comps.append(self.order[i])
         self.parent_fit = parent_fit
 
-    # def update_fit(self):
-    #     self.parent_fit.update_fit()
-
     def update_data(self, result, timestamp):
+        """
+        Update the data of all the components.
+        For each fit parameter, the corresponding component is updated.
+
+        Parameters
+        ----------
+        result : lmfit.ModelResult
+            Result of the fit.
+        timestamp : float
+            Timestamp of the data.
+        """
         self.used_comps = [self.covar]
         for i, comp in enumerate(self.params):
             if comp in result.best_values:
@@ -308,6 +480,17 @@ class Fit_Ophyd(Device):
             self.covar.update_data(result.covar, timestamp)
 
     def read(self):
+        """
+        Overwrites the `read` method from `Device`.
+        Stops reading, as soon as the number of parameters is reached.
+
+        Returns
+        -------
+        res : OrderedDict
+            The results of the reading.
+            The keys must be strings and the values must be dict-like
+            with the keys ``{'value', 'timestamp'}``
+        """
         res = BlueskyInterface.read(self)
         i = 1
         for _, component in self._get_components_of_kind(Kind.normal):
@@ -328,7 +511,7 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
             raise NotImplementedError("LiveFitPlot supports models with one "
                                       "independent variable only.")
         self.__x_key, = livefit.independent_vars.keys()  # this never changes
-        x, = livefit.independent_vars.values()  # this may change
+        # x, = livefit.independent_vars.values()  # this may change
         self.num_points = num_points
         self._livefit = livefit
         livefit.parent_plot = self
@@ -337,6 +520,7 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         self.x_data = []
         self.y_data = []
         self.current_line = None
+        self.x = None
 
     def start(self, doc):
         LivePlot.start(self, doc)
@@ -536,7 +720,7 @@ class MultiLivePlot(LivePlot, QObject):
             else:
                 self.x = 'seq_num'
             self.ys = get_obj_fields(ys)
-            a = ylabel or ys[0]
+            # a = ylabel or ys[0]
             # print(a)
             self.ax.set_ylabel(ylabel or ys[0])
             self.ax.set_xlabel(xlabel or x or 'sequence #')
@@ -566,6 +750,7 @@ class MultiLivePlot(LivePlot, QObject):
             self.y_data[y] = []
         self.current_lines = {}
         self.descs_fit_readying = []
+        self.legend = None
 
     def start(self, doc):
         self.__setup()
@@ -810,22 +995,22 @@ class MultiPlot_NoBluesky(QObject):
         self.new_data.emit()
 
 
-if __name__ == '__main__':
-    from bluesky import RunEngine
-    from bluesky.plans import scan
-    from ophyd.sim import motor, det
-
-    motor.delay = 0.1
-
-    def plan():
-        for i in range(4, 5):
-            yield from scan([det], motor, -5, 5, 3**i)
-
-    RE = RunEngine()
-    app = QApplication(sys.argv)
-    # myapp = PlotWidget(run_engine=RE, x_name='motor', y_names=['det'], title='test', xlabel='aaaa', ylabel='bbbb')
-    myapp = PlotWidget('motor', ['det', 'det**2', 'sin(motor)'])
-    myapp.show()
-    RE.subscribe(myapp.livePlot)
-    RE(plan())
-    sys.exit(app.exec_())
+# if __name__ == '__main__':
+#     from bluesky import RunEngine
+#     from bluesky.plans import scan
+#     from ophyd.sim import motor, det
+#
+#     motor.delay = 0.1
+#
+#     def plan():
+#         for i in range(4, 5):
+#             yield from scan([det], motor, -5, 5, 3**i)
+#
+#     RE = RunEngine()
+#     app = QApplication(sys.argv)
+#     # myapp = PlotWidget(run_engine=RE, x_name='motor', y_names=['det'], title='test', xlabel='aaaa', ylabel='bbbb')
+#     myapp = PlotWidget('motor', ['det', 'det**2', 'sin(motor)'])
+#     myapp.show()
+#     RE.subscribe(myapp.livePlot)
+#     RE(plan())
+#     sys.exit(app.exec_())
