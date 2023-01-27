@@ -180,7 +180,7 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
                 axes = []
                 signals = []
                 for plot in plot_data:
-                    if plot.stream_name == stream:
+                    if plot.stream_name == stream and hasattr(plot, 'x_name'):
                         if plot.x_name not in axes:
                             axes.append(plot.x_name)
                         if hasattr(plot, 'z_name'):
