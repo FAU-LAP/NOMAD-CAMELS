@@ -31,7 +31,7 @@ def simplify_configs_dict(configs):
 def get_fit_results(fits, namespace, yielding=False, stream='primary'):
     for name, fit in fits.items():
         if yielding and fit.stream_name == stream:
-            yield from bps.trigger_and_read([fit.ophyd_fit.read_ready],
+            yield from bps.trigger_and_read([fit.read_ready],
                                             name=f'{stream}_fits_readying_{name}')
             yield from fit.update_fit()
             # yield from bps.trigger_and_read(fit.ophyd_fit.used_comps,

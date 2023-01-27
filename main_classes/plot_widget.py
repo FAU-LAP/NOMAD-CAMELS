@@ -261,14 +261,15 @@ class LiveFit_Eva(LiveFit):
         self.name = f'{name}_{stream_name}'
         self.params = params
         name = replace_name(name)
-        self.ophyd_fit = Fit_Ophyd(name, name=name, params=params,
-                                   parent_fit=self)
+        # self.ophyd_fit = Fit_Ophyd(name, name=name, params=params,
+        #                            parent_fit=self)
         self.stream_name = stream_name
         self.timestamp = None
         self.parent_plot = None
         self.__stale = True
         self.ready_to_read = False
         self.results = {}
+        self.read_ready = Fit_Signal(f'{self.name}_read_ready')
 
     def _reset(self):
         """
