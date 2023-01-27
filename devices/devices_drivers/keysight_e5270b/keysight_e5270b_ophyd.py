@@ -32,9 +32,9 @@ class Keysight_E5270B(VISA_Device):
     # current range used when setting DI
     IoutRange1 = Cpt(Custom_Function_Signal, name='IoutRange1', kind='config')
     # voltage range used when simply using (MM, CMM and XE)
-    VmeasRange1 = Cpt(Custom_Function_Signal, name='VmeasRange1', kind='config')
+    VmeasRange1 = Cpt(VISA_Signal_Write, name='VmeasRange1', kind='config')
     # current range used when simply using (MM, CMM and XE)
-    ImeasRange1 = Cpt(Custom_Function_Signal, name='ImeasRange1', kind='config')
+    ImeasRange1 = Cpt(VISA_Signal_Write, name='ImeasRange1', kind='config')
     # sets ADC to high resolution(=1) or high speed(=0), default is high speed
     setADC1 = Cpt(VISA_Signal_Write, name='setADC1', kind='config',)
     # sets filter mode: 0 for disconnect, 1 for connect of the filter
@@ -281,7 +281,7 @@ class Keysight_E5270B(VISA_Device):
         print(f'voltage measurement {chnum=}')
         if self.last_MM_channel != chnum:
             self.set_MM_value(1, chnum)
-        if self.last_MM_value[chnum-1] != 1:
+        elif self.last_MM_value[chnum-1] != 1:
             self.set_MM_value(1, chnum)
         if self.last_CMM_value[chnum-1] != 2:
             self.set_CMM_value(2, chnum)
@@ -291,7 +291,7 @@ class Keysight_E5270B(VISA_Device):
         print(f'current measurement {chnum=}')
         if self.last_MM_channel != chnum:
             self.set_MM_value(1, chnum)
-        if self.last_MM_value[chnum-1] != 1:
+        elif self.last_MM_value[chnum-1] != 1:
             self.set_MM_value(1, chnum)
         if self.last_CMM_value[chnum-1] != 1:
             self.set_CMM_value(1, chnum)
@@ -318,6 +318,7 @@ class Keysight_E5270B(VISA_Device):
 
     def source_current(self, current, chnum, range_signal,):
         irange = range_signal.get()
+        print(f'{irange}')
         Vcomp = self.volt_compliance_array[chnum-1]
         return f'DI {chnum},{irange},{current},{Vcomp}'
 
