@@ -21,6 +21,7 @@ from gui.plot_options import Ui_Plot_Options
 from utility.fit_variable_renaming import replace_name
 from bluesky_handling.evaluation_helper import Evaluator
 from ophyd import SignalRO, Device, Component, BlueskyInterface, Kind
+from bluesky import plan_stubs as bps
 
 stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
@@ -267,6 +268,7 @@ class LiveFit_Eva(LiveFit):
         self.parent_plot = None
         self.__stale = True
         self.ready_to_read = False
+        self.results = {}
 
     def _reset(self):
         """
@@ -330,9 +332,9 @@ class LiveFit_Eva(LiveFit):
         Before doing anything, it will wait for `ready_to_read` to be True.
         """
         while not self.ready_to_read:
-            time.sleep(0.1)
+            yield from bps.sleep(0.1)
         if not self.__stale:
-            return
+            return None
         kwargs = {}
         kwargs.update(self.independent_vars_data)
         kwargs.update(self.init_guess)
@@ -342,7 +344,8 @@ class LiveFit_Eva(LiveFit):
         else:
             self.result = self.model.fit(self.ydata, **kwargs)
         self.__stale = False
-        self.ophyd_fit.update_data(self.result, self.timestamp)
+        self.results[f'{self.timestamp}'] = self.result
+        # self.ophyd_fit.update_data(self.result, self.timestamp)
         self.parent_plot.fit_has_result()
 
 

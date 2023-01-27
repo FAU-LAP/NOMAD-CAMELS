@@ -30,7 +30,10 @@ standard_string += 'theme = "default"\n'
 standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "total_protocol_steps": 0, "protocol_stepper_signal": None}\n'
 
 # standard_run_string = '\n\neva = Evaluator(namespace=namespace)\n\n\n'
-standard_run_string = 'def main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None):\n'
+standard_run_string = 'uids = []\n'
+standard_run_string += 'def uid_collector(name, doc):\n'
+standard_run_string += '\tuids.append(doc["uid"])\n\n\n'
+standard_run_string += 'def main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None):\n'
 standard_run_string += '\tdevs = devices or {}\n'
 standard_run_string += '\tmd = md or {}\n'
 standard_run_string += '\tglobal darkmode, theme, protocol_step_information\n'
@@ -163,10 +166,6 @@ def build_protocol(protocol, file_path,
     devices_string += f'\t\tmd = {{"devices": device_config, "description": "{protocol.description}"}}\n'
     # devices_string += '\t\tmd.update({"program": "CAMELS", "version": "0.1"})\n'
     devices_string += '\t\tmd.update({"versions": {"CAMELS": "0.1", "EPICS": "7.0.6.2", "bluesky": bluesky.__version__, "ophyd": ophyd.__version__}})\n'
-    devices_string += f'\t\tmd["protocol_overview"] = "{protocol.get_short_string().encode("unicode_escape").decode()}"\n'
-    devices_string += '\t\twith open(__file__, "r") as f:\n'
-    devices_string += '\t\t\tmd["python_script"] = f.read()\n'
-    devices_string += '\t\tmd["variables"] = namespace\n'
     if protocol.use_nexus:
         md_dict = {}
         for i, name in enumerate(protocol.metadata['Name']):
@@ -194,19 +193,26 @@ def build_protocol(protocol, file_path,
     # if plotting:
     #     protocol_string += '\t\tplot_etc = create_plots(RE)\n'
     protocol_string += user_sample_string(userdata, sampledata)
-    protocol_string += f'\tuids = RE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
+    protocol_string += f'\tmd["protocol_overview"] = "{protocol.get_short_string().encode("unicode_escape").decode()}"\n'
+    protocol_string += '\twith open(__file__, "r") as f:\n'
+    protocol_string += '\t\tmd["python_script"] = f.read()\n'
+    protocol_string += '\tmd["variables"] = namespace\n'
+    protocol_string += '\tRE.subscribe(uid_collector, "start")\n'
+    protocol_string += '\ttry:\n'
+    protocol_string += f'\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
     # protocol_string += '\tfinally:\n'
     # protocol_string += final_string or '\t\tpass\n'
-
-    standard_save_string = '\n\n\truns = catalog[uids]\n'
+    standard_save_string = '\tfinally:\n'
+    standard_save_string += '\t\tif uids:\n'
+    standard_save_string += '\t\t\truns = catalog[tuple(uids)]\n'
     if protocol.use_nexus:
         nexus_dict = protocol.get_nexus_paths()
         nexus_dict.update(standard_nexus_dict)
-        standard_save_string += '\tdata = broker_to_dict(runs)\n'
-        standard_save_string += f'\tnexus_mapper = {nexus_dict}\n'
+        standard_save_string += '\t\t\tdata = broker_to_dict(runs)\n'
+        standard_save_string += f'\t\t\tnexus_mapper = {nexus_dict}\n'
         # TODO finish this
     else:
-        standard_save_string += f'\tbroker_to_NX(runs, "{save_path}", plots)\n\n\n'
+        standard_save_string += f'\t\t\tbroker_to_NX(runs, "{save_path}", plots)\n\n\n'
 
     protocol_string += standard_save_string
     protocol_string += standard_start_string
