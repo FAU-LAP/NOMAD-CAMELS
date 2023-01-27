@@ -42,47 +42,47 @@ class Keysight_E5270B(VISA_Device):
     # --------------------Channel 2----------------------------------------
     setV2 = Cpt(VISA_Signal_Write, name='setV2', metadata={'units': 'V'})
     setI2 = Cpt(VISA_Signal_Write, name='setI2', metadata={'units': 'A'})
-    mesI2 = Cpt(VISA_Signal_Read, name='mesI2',kind='hinted', metadata={'units': 'A'})
+    mesI2 = Cpt(VISA_Signal_Read, name='mesI2', metadata={'units': 'A'})
     mesV2 = Cpt(VISA_Signal_Read, name='mesV2', metadata={'units': 'V'})
-    enable2 = Cpt(VISA_Signal_Write, name='enable2',)
+    enable2 = Cpt(VISA_Signal_Write, name='enable2', )
     # Config settings of the device
-    measMode2 = Cpt(VISA_Signal_Write, name='measMode2', kind='config',)
+    measMode2 = Cpt(VISA_Signal_Write, name='measMode2', kind='config', )
     # used in setting current DI and setting voltage DV, only a variable
-    currComp2 = Cpt(Custom_Function_Signal, name='currComp2', kind='config',)
+    currComp2 = Cpt(Custom_Function_Signal, name='currComp2', kind='config', )
     voltComp2 = Cpt(Custom_Function_Signal, name='voltComp2', kind='config')
     # voltage range used when setting DV
     VoutRange2 = Cpt(Custom_Function_Signal, name='VoutRange2', kind='config')
     # current range used when setting DI
     IoutRange2 = Cpt(Custom_Function_Signal, name='IoutRange2', kind='config')
     # voltage range used when simply using (MM, CMM and XE)
-    VmeasRange2 = Cpt(Custom_Function_Signal, name='VmeasRange2', kind='config')
+    VmeasRange2 = Cpt(VISA_Signal_Write, name='VmeasRange2', kind='config')
     # current range used when simply using (MM, CMM and XE)
-    ImeasRange2 = Cpt(Custom_Function_Signal, name='ImeasRange2', kind='config')
+    ImeasRange2 = Cpt(VISA_Signal_Write, name='ImeasRange2', kind='config')
     # sets ADC to high resolution(=1) or high speed(=0), default is high speed
-    setADC2 = Cpt(VISA_Signal_Write, name='setADC2', kind='config',)
+    setADC2 = Cpt(VISA_Signal_Write, name='setADC2', kind='config', )
     # sets filter mode: 0 for disconnect, 1 for connect of the filter
     outputFilter2 = Cpt(VISA_Signal_Write, name='outputFilter2', kind='config', )
     # --------------------Channel 3----------------------------------------
     setV3 = Cpt(VISA_Signal_Write, name='setV3', metadata={'units': 'V'})
     setI3 = Cpt(VISA_Signal_Write, name='setI3', metadata={'units': 'A'})
-    mesI3 = Cpt(VISA_Signal_Read, name='mesI3',kind='hinted', metadata={'units': 'A'})
+    mesI3 = Cpt(VISA_Signal_Read, name='mesI3', metadata={'units': 'A'})
     mesV3 = Cpt(VISA_Signal_Read, name='mesV3', metadata={'units': 'V'})
-    enable3 = Cpt(VISA_Signal_Write, name='enable3',)
+    enable3 = Cpt(VISA_Signal_Write, name='enable3', )
     # Config settings of the device
-    measMode3 = Cpt(VISA_Signal_Write, name='measMode3', kind='config',)
+    measMode3 = Cpt(VISA_Signal_Write, name='measMode3', kind='config', )
     # used in setting current DI and setting voltage DV, only a variable
-    currComp3 = Cpt(Custom_Function_Signal, name='currComp3', kind='config',)
+    currComp3 = Cpt(Custom_Function_Signal, name='currComp3', kind='config', )
     voltComp3 = Cpt(Custom_Function_Signal, name='voltComp3', kind='config')
     # voltage range used when setting DV
     VoutRange3 = Cpt(Custom_Function_Signal, name='VoutRange3', kind='config')
     # current range used when setting DI
     IoutRange3 = Cpt(Custom_Function_Signal, name='IoutRange3', kind='config')
     # voltage range used when simply using (MM, CMM and XE)
-    VmeasRange3 = Cpt(Custom_Function_Signal, name='VmeasRange3', kind='config')
+    VmeasRange3 = Cpt(VISA_Signal_Write, name='VmeasRange3', kind='config')
     # current range used when simply using (MM, CMM and XE)
-    ImeasRange3 = Cpt(Custom_Function_Signal, name='ImeasRange3', kind='config')
+    ImeasRange3 = Cpt(VISA_Signal_Write, name='ImeasRange3', kind='config')
     # sets ADC to high resolution(=1) or high speed(=0), default is high speed
-    setADC3 = Cpt(VISA_Signal_Write, name='setADC3', kind='config',)
+    setADC3 = Cpt(VISA_Signal_Write, name='setADC3', kind='config', )
     # sets filter mode: 0 for disconnect, 1 for connect of the filter
     outputFilter3 = Cpt(VISA_Signal_Write, name='outputFilter3', kind='config', )
 
@@ -286,29 +286,16 @@ class Keysight_E5270B(VISA_Device):
         if self.last_CMM_value[chnum-1] != 2:
             self.set_CMM_value(2, chnum)
         return 'XE'
-    #JUNK just for testing!!!!#
+
     def measure_single_current(self, chnum):
         print(f'current measurement {chnum=}')
         if self.last_MM_channel != chnum:
             self.set_MM_value(1, chnum)
-        elif self.last_MM_value[chnum-1] != 1:
+        if self.last_MM_value[chnum-1] != 1:
             self.set_MM_value(1, chnum)
         if self.last_CMM_value[chnum-1] != 1:
             self.set_CMM_value(1, chnum)
         return 'XE'
-
-    # def measure_single_current(self, chnum):
-    #     print(f'current measurement {chnum=}')
-    #     if self.last_MM_channel != chnum:
-    #         print('set mm cuz channel')
-    #         self.set_MM_value(1, chnum)
-    #     if self.last_MM_value[chnum-1] != 1:
-    #         print('set mm cuz mode')
-    #         ttime.sleep(0.3)
-    #         self.set_MM_value(1, chnum)
-    #     if self.last_CMM_value[chnum-1] != 1:
-    #         self.set_CMM_value(1, chnum)
-    #     return 'XE'
 
     def set_currCompliance(self, value, chan,):
         self.curr_compliance_array[chan-1] = value
@@ -318,8 +305,8 @@ class Keysight_E5270B(VISA_Device):
 
     def source_current(self, current, chnum, range_signal,):
         irange = range_signal.get()
-        print(f'{irange}')
         Vcomp = self.volt_compliance_array[chnum-1]
+        print(f'DI {chnum},{irange},{current},{Vcomp}')
         return f'DI {chnum},{irange},{current},{Vcomp}'
 
     def source_voltage(self, voltage, chnum, range_signal,):
