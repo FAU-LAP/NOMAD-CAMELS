@@ -7,7 +7,6 @@ from bluesky_handling.custom_function_signal import (Custom_Function_Signal,
 import time as ttime
 
 
-
 class Keysight_E5270B(VISA_Device):
     speedADCPLC = Cpt(Custom_Function_Signal, name='speedADCPLC', kind='config')
     speedADCmode = Cpt(Custom_Function_Signal, name='speedADCmode', kind='config')
@@ -85,9 +84,121 @@ class Keysight_E5270B(VISA_Device):
     setADC3 = Cpt(VISA_Signal_Write, name='setADC3', kind='config', )
     # sets filter mode: 0 for disconnect, 1 for connect of the filter
     outputFilter3 = Cpt(VISA_Signal_Write, name='outputFilter3', kind='config', )
-
-
-
+    # --------------------Channel 4----------------------------------------
+    setV4 = Cpt(VISA_Signal_Write, name='setV4', metadata={'units': 'V'})
+    setI4 = Cpt(VISA_Signal_Write, name='setI4', metadata={'units': 'A'})
+    mesI4 = Cpt(VISA_Signal_Read, name='mesI4', metadata={'units': 'A'})
+    mesV4 = Cpt(VISA_Signal_Read, name='mesV4', metadata={'units': 'V'})
+    enable4 = Cpt(VISA_Signal_Write, name='enable4', )
+    # Config settings of the device
+    measMode4 = Cpt(VISA_Signal_Write, name='measMode4', kind='config', )
+    # used in setting current DI and setting voltage DV, only a variable
+    currComp4 = Cpt(Custom_Function_Signal, name='currComp4', kind='config', )
+    voltComp4 = Cpt(Custom_Function_Signal, name='voltComp4', kind='config')
+    # voltage range used when setting DV
+    VoutRange4 = Cpt(Custom_Function_Signal, name='VoutRange4', kind='config')
+    # current range used when setting DI
+    IoutRange4 = Cpt(Custom_Function_Signal, name='IoutRange4', kind='config')
+    # voltage range used when simply using (MM, CMM and XE)
+    VmeasRange4 = Cpt(VISA_Signal_Write, name='VmeasRange4', kind='config')
+    # current range used when simply using (MM, CMM and XE)
+    ImeasRange4 = Cpt(VISA_Signal_Write, name='ImeasRange4', kind='config')
+    # sets ADC to high resolution(=1) or high speed(=0), default is high speed
+    setADC4 = Cpt(VISA_Signal_Write, name='setADC4', kind='config', )
+    # sets filter mode: 0 for disconnect, 1 for connect of the filter
+    outputFilter4 = Cpt(VISA_Signal_Write, name='outputFilter4', kind='config', )
+    # --------------------Channel 5----------------------------------------
+    setV5 = Cpt(VISA_Signal_Write, name='setV5', metadata={'units': 'V'})
+    setI5 = Cpt(VISA_Signal_Write, name='setI5', metadata={'units': 'A'})
+    mesI5 = Cpt(VISA_Signal_Read, name='mesI5', metadata={'units': 'A'})
+    mesV5 = Cpt(VISA_Signal_Read, name='mesV5', metadata={'units': 'V'})
+    enable5 = Cpt(VISA_Signal_Write, name='enable5', )
+    # Config settings of the device
+    measMode5 = Cpt(VISA_Signal_Write, name='measMode5', kind='config', )
+    # used in setting current DI and setting voltage DV, only a variable
+    currComp5 = Cpt(Custom_Function_Signal, name='currComp5', kind='config', )
+    voltComp5 = Cpt(Custom_Function_Signal, name='voltComp5', kind='config')
+    # voltage range used when setting DV
+    VoutRange5 = Cpt(Custom_Function_Signal, name='VoutRange5', kind='config')
+    # current range used when setting DI
+    IoutRange5 = Cpt(Custom_Function_Signal, name='IoutRange5', kind='config')
+    # voltage range used when simply using (MM, CMM and XE)
+    VmeasRange5 = Cpt(VISA_Signal_Write, name='VmeasRange5', kind='config')
+    # current range used when simply using (MM, CMM and XE)
+    ImeasRange5 = Cpt(VISA_Signal_Write, name='ImeasRange5', kind='config')
+    # sets ADC to high resolution(=1) or high speed(=0), default is high speed
+    setADC5 = Cpt(VISA_Signal_Write, name='setADC5', kind='config', )
+    # sets filter mode: 0 for disconnect, 1 for connect of the filter
+    outputFilter5 = Cpt(VISA_Signal_Write, name='outputFilter5', kind='config', )
+    # --------------------Channel 6----------------------------------------
+    setV6 = Cpt(VISA_Signal_Write, name='setV6', metadata={'units': 'V'})
+    setI6 = Cpt(VISA_Signal_Write, name='setI6', metadata={'units': 'A'})
+    mesI6 = Cpt(VISA_Signal_Read, name='mesI6', metadata={'units': 'A'})
+    mesV6 = Cpt(VISA_Signal_Read, name='mesV6', metadata={'units': 'V'})
+    enable6 = Cpt(VISA_Signal_Write, name='enable6', )
+    # Config settings of the device
+    measMode6 = Cpt(VISA_Signal_Write, name='measMode6', kind='config', )
+    # used in setting current DI and setting voltage DV, only a variable
+    currComp6 = Cpt(Custom_Function_Signal, name='currComp6', kind='config', )
+    voltComp6 = Cpt(Custom_Function_Signal, name='voltComp6', kind='config')
+    # voltage range used when setting DV
+    VoutRange6 = Cpt(Custom_Function_Signal, name='VoutRange6', kind='config')
+    # current range used when setting DI
+    IoutRange6 = Cpt(Custom_Function_Signal, name='IoutRange6', kind='config')
+    # voltage range used when simply using (MM, CMM and XE)
+    VmeasRange6 = Cpt(VISA_Signal_Write, name='VmeasRange6', kind='config')
+    # current range used when simply using (MM, CMM and XE)
+    ImeasRange6 = Cpt(VISA_Signal_Write, name='ImeasRange6', kind='config')
+    # sets ADC to high resolution(=1) or high speed(=0), default is high speed
+    setADC6 = Cpt(VISA_Signal_Write, name='setADC6', kind='config', )
+    # sets filter mode: 0 for disconnect, 1 for connect of the filter
+    outputFilter6 = Cpt(VISA_Signal_Write, name='outputFilter6', kind='config', )
+    # --------------------Channel 7----------------------------------------
+    setV7 = Cpt(VISA_Signal_Write, name='setV7', metadata={'units': 'V'})
+    setI7 = Cpt(VISA_Signal_Write, name='setI7', metadata={'units': 'A'})
+    mesI7 = Cpt(VISA_Signal_Read, name='mesI7', metadata={'units': 'A'})
+    mesV7 = Cpt(VISA_Signal_Read, name='mesV7', metadata={'units': 'V'})
+    enable7 = Cpt(VISA_Signal_Write, name='enable7', )
+    # Config settings of the device
+    measMode7 = Cpt(VISA_Signal_Write, name='measMode7', kind='config', )
+    # used in setting current DI and setting voltage DV, only a variable
+    currComp7 = Cpt(Custom_Function_Signal, name='currComp7', kind='config', )
+    voltComp7 = Cpt(Custom_Function_Signal, name='voltComp7', kind='config')
+    # voltage range used when setting DV
+    VoutRange7 = Cpt(Custom_Function_Signal, name='VoutRange7', kind='config')
+    # current range used when setting DI
+    IoutRange7 = Cpt(Custom_Function_Signal, name='IoutRange7', kind='config')
+    # voltage range used when simply using (MM, CMM and XE)
+    VmeasRange7 = Cpt(VISA_Signal_Write, name='VmeasRange7', kind='config')
+    # current range used when simply using (MM, CMM and XE)
+    ImeasRange7 = Cpt(VISA_Signal_Write, name='ImeasRange7', kind='config')
+    # sets ADC to high resolution(=1) or high speed(=0), default is high speed
+    setADC7 = Cpt(VISA_Signal_Write, name='setADC7', kind='config', )
+    # sets filter mode: 0 for disconnect, 1 for connect of the filter
+    outputFilter7 = Cpt(VISA_Signal_Write, name='outputFilter7', kind='config', )
+    # --------------------Channel 8----------------------------------------
+    setV8 = Cpt(VISA_Signal_Write, name='setV8', metadata={'units': 'V'})
+    setI8 = Cpt(VISA_Signal_Write, name='setI8', metadata={'units': 'A'})
+    mesI8 = Cpt(VISA_Signal_Read, name='mesI8', metadata={'units': 'A'})
+    mesV8 = Cpt(VISA_Signal_Read, name='mesV8', metadata={'units': 'V'})
+    enable8 = Cpt(VISA_Signal_Write, name='enable8', )
+    # Config settings of the device
+    measMode8 = Cpt(VISA_Signal_Write, name='measMode8', kind='config', )
+    # used in setting current DI and setting voltage DV, only a variable
+    currComp8 = Cpt(Custom_Function_Signal, name='currComp8', kind='config', )
+    voltComp8 = Cpt(Custom_Function_Signal, name='voltComp8', kind='config')
+    # voltage range used when setting DV
+    VoutRange8 = Cpt(Custom_Function_Signal, name='VoutRange8', kind='config')
+    # current range used when setting DI
+    IoutRange8 = Cpt(Custom_Function_Signal, name='IoutRange8', kind='config')
+    # voltage range used when simply using (MM, CMM and XE)
+    VmeasRange8 = Cpt(VISA_Signal_Write, name='VmeasRange8', kind='config')
+    # current range used when simply using (MM, CMM and XE)
+    ImeasRange8 = Cpt(VISA_Signal_Write, name='ImeasRange8', kind='config')
+    # sets ADC to high resolution(=1) or high speed(=0), default is high speed
+    setADC8 = Cpt(VISA_Signal_Write, name='setADC8', kind='config', )
+    # sets filter mode: 0 for disconnect, 1 for connect of the filter
+    outputFilter8 = Cpt(VISA_Signal_Write, name='outputFilter8', kind='config', )
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, use_channels=(), **kwargs):
@@ -192,6 +303,127 @@ class Keysight_E5270B(VISA_Device):
         self.ImeasRange3.put_conv_function = lambda x: f'RI 3,{x}'
         # function called when putting value to voltComp3
         self.VmeasRange3.put_conv_function = lambda x: f'RV 3,{x}'
+        # --------------------Channel 4----------------------------------------
+        # set array element of volt compliance to the value entered
+        self.voltComp4.put_function = lambda x: self.set_voltCompliance(x, 4)
+        self.setI4.put_conv_function = lambda x: self.source_current(x, 4, self.IoutRange4, )
+        # set array element of curr compliance to the value entered
+        self.currComp4.put_function = lambda x: self.set_currCompliance(x, 4, )
+        self.setV4.put_conv_function = lambda x: self.source_voltage(x, 4, self.VoutRange4)
+        self.enable4.put_conv_function = lambda x: f'CN 4'
+        self.setADC4.put_conv_function = lambda x: f'AAD 4,{x}'
+        self.outputFilter4.put_conv_function = lambda x: f'FL {x},4'
+        # Read single voltage value using MM, CMM and XE command
+        # check to see if the current settings of MM and CMM are correct for the desired
+        # voltage measurement, the passed value is the channel number to check for
+        self.mesV4.read_function = lambda: self.measure_single_voltage(4)
+        # Read single current value using MM, CMM and XE command
+        # check to see if the current settings of MM and CMM are correct for the desired
+        # current measurement, the passed value is the channel number to check for
+        self.mesI4.read_function = lambda: self.measure_single_current(4)
+        # function called when putting value to measMode4
+        self.measMode4.put_conv_function = lambda x: self.set_MM_value(x, 4)
+        # function called when putting value to currComp4
+        self.ImeasRange4.put_conv_function = lambda x: f'RI 4,{x}'
+        # function called when putting value to voltComp4
+        self.VmeasRange4.put_conv_function = lambda x: f'RV 4,{x}'
+        # --------------------Channel 5----------------------------------------
+        # set array element of volt compliance to the value entered
+        self.voltComp5.put_function = lambda x: self.set_voltCompliance(x, 5)
+        self.setI5.put_conv_function = lambda x: self.source_current(x, 5, self.IoutRange5, )
+        # set array element of curr compliance to the value entered
+        self.currComp5.put_function = lambda x: self.set_currCompliance(x, 5, )
+        self.setV5.put_conv_function = lambda x: self.source_voltage(x, 5, self.VoutRange5)
+        self.enable5.put_conv_function = lambda x: f'CN 5'
+        self.setADC5.put_conv_function = lambda x: f'AAD 5,{x}'
+        self.outputFilter5.put_conv_function = lambda x: f'FL {x},5'
+        # Read single voltage value using MM, CMM and XE command
+        # check to see if the current settings of MM and CMM are correct for the desired
+        # voltage measurement, the passed value is the channel number to check for
+        self.mesV5.read_function = lambda: self.measure_single_voltage(5)
+        # Read single current value using MM, CMM and XE command
+        # check to see if the current settings of MM and CMM are correct for the desired
+        # current measurement, the passed value is the channel number to check for
+        self.mesI5.read_function = lambda: self.measure_single_current(5)
+        # function called when putting value to measMode5
+        self.measMode5.put_conv_function = lambda x: self.set_MM_value(x, 5)
+        # function called when putting value to currComp5
+        self.ImeasRange5.put_conv_function = lambda x: f'RI 5,{x}'
+        # function called when putting value to voltComp5
+        self.VmeasRange5.put_conv_function = lambda x: f'RV 5,{x}'
+        # --------------------Channel 6----------------------------------------
+        # set array element of volt compliance to the value entered
+        self.voltComp6.put_function = lambda x: self.set_voltCompliance(x, 6)
+        self.setI6.put_conv_function = lambda x: self.source_current(x, 6, self.IoutRange6, )
+        # set array element of curr compliance to the value entered
+        self.currComp6.put_function = lambda x: self.set_currCompliance(x, 6, )
+        self.setV6.put_conv_function = lambda x: self.source_voltage(x, 6, self.VoutRange6)
+        self.enable6.put_conv_function = lambda x: f'CN 6'
+        self.setADC6.put_conv_function = lambda x: f'AAD 6,{x}'
+        self.outputFilter6.put_conv_function = lambda x: f'FL {x},6'
+        # Read single voltage value using MM, CMM and XE command
+        # check to see if the current settings of MM and CMM are correct for the desired
+        # voltage measurement, the passed value is the channel number to check for
+        self.mesV6.read_function = lambda: self.measure_single_voltage(6)
+        # Read single current value using MM, CMM and XE command
+        # check to see if the current settings of MM and CMM are correct for the desired
+        # current measurement, the passed value is the channel number to check for
+        self.mesI6.read_function = lambda: self.measure_single_current(6)
+        # function called when putting value to measMode6
+        self.measMode6.put_conv_function = lambda x: self.set_MM_value(x, 6)
+        # function called when putting value to currComp6
+        self.ImeasRange6.put_conv_function = lambda x: f'RI 6,{x}'
+        # function called when putting value to voltComp6
+        self.VmeasRange6.put_conv_function = lambda x: f'RV 6,{x}'
+        # --------------------Channel 7----------------------------------------
+        # set array element of volt compliance to the value entered
+        self.voltComp7.put_function = lambda x: self.set_voltCompliance(x, 7)
+        self.setI7.put_conv_function = lambda x: self.source_current(x, 7, self.IoutRange7, )
+        # set array element of curr compliance to the value entered
+        self.currComp7.put_function = lambda x: self.set_currCompliance(x, 7, )
+        self.setV7.put_conv_function = lambda x: self.source_voltage(x, 7, self.VoutRange7)
+        self.enable7.put_conv_function = lambda x: f'CN 7'
+        self.setADC7.put_conv_function = lambda x: f'AAD 7,{x}'
+        self.outputFilter7.put_conv_function = lambda x: f'FL {x},7'
+        # Read single voltage value using MM, CMM and XE command
+        # check to see if the current settings of MM and CMM are correct for the desired
+        # voltage measurement, the passed value is the channel number to check for
+        self.mesV7.read_function = lambda: self.measure_single_voltage(7)
+        # Read single current value using MM, CMM and XE command
+        # check to see if the current settings of MM and CMM are correct for the desired
+        # current measurement, the passed value is the channel number to check for
+        self.mesI7.read_function = lambda: self.measure_single_current(7)
+        # function called when putting value to measMode7
+        self.measMode7.put_conv_function = lambda x: self.set_MM_value(x, 7)
+        # function called when putting value to currComp7
+        self.ImeasRange7.put_conv_function = lambda x: f'RI 7,{x}'
+        # function called when putting value to voltComp7
+        self.VmeasRange7.put_conv_function = lambda x: f'RV 7,{x}'
+        # --------------------Channel 8----------------------------------------
+        # set array element of volt compliance to the value entered
+        self.voltComp8.put_function = lambda x: self.set_voltCompliance(x, 8)
+        self.setI8.put_conv_function = lambda x: self.source_current(x, 8, self.IoutRange8, )
+        # set array element of curr compliance to the value entered
+        self.currComp8.put_function = lambda x: self.set_currCompliance(x, 8, )
+        self.setV8.put_conv_function = lambda x: self.source_voltage(x, 8, self.VoutRange8)
+        self.enable8.put_conv_function = lambda x: f'CN 8'
+        self.setADC8.put_conv_function = lambda x: f'AAD 8,{x}'
+        self.outputFilter8.put_conv_function = lambda x: f'FL {x},8'
+        # Read single voltage value using MM, CMM and XE command
+        # check to see if the current settings of MM and CMM are correct for the desired
+        # voltage measurement, the passed value is the channel number to check for
+        self.mesV8.read_function = lambda: self.measure_single_voltage(8)
+        # Read single current value using MM, CMM and XE command
+        # check to see if the current settings of MM and CMM are correct for the desired
+        # current measurement, the passed value is the channel number to check for
+        self.mesI8.read_function = lambda: self.measure_single_current(8)
+        # function called when putting value to measMode8
+        self.measMode8.put_conv_function = lambda x: self.set_MM_value(x, 8)
+        # function called when putting value to currComp8
+        self.ImeasRange8.put_conv_function = lambda x: f'RI 8,{x}'
+        # function called when putting value to voltComp8
+        self.VmeasRange8.put_conv_function = lambda x: f'RV 8,{x}'
+
 
     def enable_used_channels(self):
         for channel in self.use_channels:

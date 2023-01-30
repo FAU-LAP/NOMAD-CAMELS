@@ -25,11 +25,11 @@ class subclass(device_class.Device):
         self.config['measMode1'] = 1
         self.config['measMode2'] = 1
         self.config['measMode3'] = 1
-        # self.config['measMode4'] = 1
-        # self.config['measMode5'] = 1
-        # self.config['measMode6'] = 1
-        # self.config['measMode7'] = 1
-        # self.config['measMode8'] = 1
+        self.config['measMode4'] = 1
+        self.config['measMode5'] = 1
+        self.config['measMode6'] = 1
+        self.config['measMode7'] = 1
+        self.config['measMode8'] = 1
         
         for i in range(1, 9):
             key = f'active{i}'
