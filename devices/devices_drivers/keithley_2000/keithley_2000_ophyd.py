@@ -58,3 +58,5 @@ class Keithley_2000(VISA_Device):
         else:
             self.visa_instrument.write('INIT')
         return 'DATA?'
+if __name__ == '__main__':
+    testk = Keithley_2000(name='testk')
