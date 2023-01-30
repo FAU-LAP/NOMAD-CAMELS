@@ -5,12 +5,12 @@ from bluesky_handling.custom_function_signal import Custom_Function_SignalRO, Cu
 ADC_range_values = ["100 nA", "1 uA", "10 uA", "100 uA", "1 mA", "10 mA"]
 
 class Gap_Burner_Arduino(VISA_Device):
-    ramp_time = Cpt(Custom_Function_Signal, name="ramp_time", kind='config', additional_put_text='ramp_time ')
-    offset = Cpt(Custom_Function_Signal, name="offset", kind='config', additional_put_text='offset ')
-    min_current = Cpt(Custom_Function_Signal, name="min_current", kind='config', additional_put_text='min_current ')
-    min_voltage = Cpt(Custom_Function_Signal, name="min_voltage", kind='config', additional_put_text='min_voltage ')
-    dac_ref_zero = Cpt(Custom_Function_Signal, name="dac_ref_zero", kind='config', additional_put_text='dac_ref_zero ')
-    dac_zero = Cpt(Custom_Function_Signal, name="dac_zero", kind='config', additional_put_text='dac_zero ')
+    ramp_time = Cpt(Custom_Function_Signal, name="ramp_time", kind='config')
+    offset = Cpt(Custom_Function_Signal, name="offset", kind='config')
+    min_current = Cpt(Custom_Function_Signal, name="min_current", kind='config')
+    min_voltage = Cpt(Custom_Function_Signal, name="min_voltage", kind='config')
+    dac_ref_zero = Cpt(Custom_Function_Signal, name="dac_ref_zero", kind='config')
+    dac_zero = Cpt(Custom_Function_Signal, name="dac_zero", kind='config')
     idn = Cpt(VISA_Signal_Read, name='idn', kind='config', query_text='*IDN?')
 
     output_range = Cpt(Custom_Function_Signal, name="output_range")
