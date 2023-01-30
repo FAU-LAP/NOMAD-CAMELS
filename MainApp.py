@@ -5,9 +5,9 @@ import importlib
 import os
 import socket
 
-import pandas as pd
-
 from copy import deepcopy
+
+import pandas as pd
 
 from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox,\
@@ -51,10 +51,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle('CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems')
         self.setWindowIcon(QIcon('graphics/CAMELS.svg'))
-        presets = load_save_functions.get_preset_list()
-        for pre in presets:
+        self.loaded_presets = load_save_functions.get_preset_list()
+        for pre in self.loaded_presets:
             self.comboBox_preset.addItem(pre)
-        if not presets:
+        if not self.loaded_presets:
             self.comboBox_preset.addItem(f'{socket.gethostname()}')
         self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.make_thread = None
@@ -107,6 +107,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
         #connecting buttons
+        self.pushButton_run_protocol.setText('Build+Run')
         self.pushButton_add_device.clicked.connect(self.add_device)
         self.pushButton_remove_device.clicked.connect(self.remove_device)
         self.actionSettings.triggered.connect(self.change_preferences)
@@ -216,8 +217,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if 'autostart_ioc' in self.preferences and self.preferences['autostart_ioc']:
             self.run_stop_ioc()
 
-        # TODO remove followin line after tutorial!!!!
-        # self.device_epics_widget.setHidden(True)
         self.sequence_main_widget.setHidden(True)
         self.configuration_main_widget.setHidden(True)
 
@@ -536,10 +535,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not len(file):
             return
         preset_name = file.split('_')[-1][:-7]
-        preset = f'Backup/{file.split("/")[-2]}/{file.split("/")[-1][:-7]}'
+        # preset = f'Backup/{file.split("/")[-2]}/{file.split("/")[-1][:-7]}'
         self.save_state()
         self._current_preset[0] = preset_name
-        self.load_preset(preset)
+        self.load_preset(file)
 
 
     def load_state(self):
@@ -563,8 +562,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         (or when loading the last state). Opens the given preset."""
         if self.saving:
             return
-        with open(f'{load_save_functions.preset_path}{preset}.preset', 'r') as f:
-            preset_dict = json.load(f)
+        try:
+            with open(f'{load_save_functions.preset_path}{preset}.preset', 'r') as f:
+                preset_dict = json.load(f)
+        except:
+            with open(preset, 'r') as f:
+                preset_dict = json.load(f)
         load_save_functions.load_save_dict(preset_dict, self.preset_save_dict)
         self.pushButton_make_EPICS_environment.setEnabled(True)
         self.comboBox_preset.setCurrentText(self._current_preset[0])
@@ -649,7 +652,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_stop_protocol.setEnabled(False)
         self.pushButton_pause_protocol.setEnabled(False)
         self.pushButton_run_protocol.setEnabled(True)
-        self.pushButton_run_protocol.setText('Run')
+        self.pushButton_run_protocol.setText('Build+Run')
 
     def make_new_run_thread(self):
         self.run_thread = qthreads.Run_Protocol()
@@ -941,7 +944,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #     print(3)
         if self.run_engine.state == 'paused':
             self.run_engine.resume()
-            self.pushButton_run_protocol.setText('Run')
+            self.pushButton_run_protocol.setText('Build+Run')
             self.pushButton_run_protocol.setEnabled(False)
             self.pushButton_pause_protocol.setEnabled(True)
         else:

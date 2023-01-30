@@ -4,6 +4,7 @@ import databroker
 import h5py
 from datetime import datetime as dt
 
+import numpy as np
 import xarray
 
 
@@ -143,6 +144,8 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
             data_entry = entry.create_group('data')
             data_entry.attrs['NX_class'] = 'NXdata'
             for stream in run:
+                if '_fits_readying_' in stream:
+                    continue
                 dataset = run[stream].read()
                 if stream == 'primary':
                     group = data_entry
@@ -177,7 +180,7 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
                 axes = []
                 signals = []
                 for plot in plot_data:
-                    if plot.stream_name == stream:
+                    if plot.stream_name == stream and hasattr(plot, 'x_name'):
                         if plot.x_name not in axes:
                             axes.append(plot.x_name)
                         if hasattr(plot, 'z_name'):
@@ -189,6 +192,44 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
                             for y in plot.y_names:
                                 if y not in signals:
                                     signals.append(y)
+                        if not plot.liveFits:
+                            continue
+                        fit_group = group.create_group('fits')
+                        for fit in plot.liveFits:
+                            if not fit.results:
+                                continue
+                            fg = fit_group.create_group(fit.name)
+                            param_names = []
+                            param_values = []
+                            covars = []
+                            timestamps = []
+                            for t, res in fit.results.items():
+                                timestamps.append(float(t))
+                                if res.covar is None:
+                                    covar = np.ones((len(res.best_values), len(res.best_values)))
+                                    covar *= np.nan
+                                else:
+                                    covar = res.covar
+                                covars.append(covar)
+                                if not param_names:
+                                    param_names = res.model.param_names
+                                param_values.append(res.params)
+                            fg.attrs['param_names'] = param_names
+                            timestamps, covars, param_values = sort_by_list(timestamps, [covars, param_values])
+                            isos = []
+                            for t in timestamps:
+                                isos.append(timestamp_to_ISO8601(t))
+                            fg['time'] = isos
+                            since = np.array(timestamps)
+                            since -= st_time
+                            fg['time_since_start'] = since
+                            fg['covariance'] = covars
+                            fg['covariance'].attrs['parameters'] = param_names[:len(covars[0])]
+                            param_values = get_param_dict(param_values)
+                            for p, v in param_values.items():
+                                fg[p] = v
+                            for name, val in fit.additional_data.items():
+                                fg[name] = val
                 if signals:
                     group.attrs['signal'] = signals[0]
                     if len(signals) > 1:
@@ -197,10 +238,20 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
                 group.attrs['NX_class'] = 'NXdata'
 
 
+def get_param_dict(param_values):
+    p_s = {}
+    for vals in param_values:
+        for k in vals:
+            if k in p_s:
+                p_s[k].append(vals[k].value)
+            else:
+                p_s[k] = [vals[k].value]
+    return p_s
 
 
-
-
+def sort_by_list(sort_list, other_lists):
+    s_list = sorted(zip(sort_list, *other_lists), key=lambda x: x[0])
+    return zip(*s_list)
 
 
 
