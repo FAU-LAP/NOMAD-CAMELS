@@ -159,8 +159,10 @@ class PlotWidget(QWidget):
                     params[param].set(min=lower[param], max=upper[param])
             name = f'{label}_{fit["y"]}_v_{fit["x"]}'
             name = replace_name(name)
+            add_data = fit['additional_data'] or {}
             livefit = LiveFit_Eva(model, fit["y"], {'x': fit["x"]}, eva,
                                   init_guess, name=name,
+                                  additional_data=add_data,
                                   params=params, stream_name=stream_name)
             self.liveFits.append(livefit)
             self.liveFitPlots.append(Fit_Plot_No_Init_Guess(livefit, ax=self.ax,
@@ -254,7 +256,8 @@ class LiveFit_Eva(LiveFit):
     """
 
     def __init__(self, model, y, independent_vars, evaluator, init_guess=None,
-                 *, name='', params=None, stream_name='primary'):
+                 additional_data=None, *, name='', params=None,
+                 stream_name='primary'):
         super().__init__(model=model, y=y, independent_vars=independent_vars,
                          init_guess=init_guess)
         self.eva = evaluator
@@ -269,6 +272,12 @@ class LiveFit_Eva(LiveFit):
         self.__stale = True
         self.ready_to_read = False
         self.results = {}
+        if isinstance(additional_data, list):
+            self.additional_data = {}
+            for d in additional_data:
+                self.additional_data[d] = []
+        else:
+            self.additional_data = additional_data or {}
         self.read_ready = Fit_Signal(f'{self.name}_read_ready')
 
     def _reset(self):
@@ -344,8 +353,10 @@ class LiveFit_Eva(LiveFit):
                                          **kwargs)
         else:
             self.result = self.model.fit(self.ydata, **kwargs)
-        self.__stale = False
         self.results[f'{self.timestamp}'] = self.result
+        for d in self.additional_data:
+            self.additional_data[d].append(self.eva.eval(d))
+        self.__stale = False
         # self.ophyd_fit.update_data(self.result, self.timestamp)
         self.parent_plot.fit_has_result()
 
@@ -841,7 +852,7 @@ class MultiLivePlot(LivePlot, QObject):
             self.y_data[y].clear()
 
     def event(self, doc):
-        """Unpack data from the event and call self.update()."""
+        """Unpack data from the event and call self.update_plot()."""
         # This outer try/except block is needed because multiple event
         # streams will be emitted by the RunEngine and not all event
         # streams will have the keys we want.

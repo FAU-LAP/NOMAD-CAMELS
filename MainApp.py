@@ -107,6 +107,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
         #connecting buttons
+        self.pushButton_run_protocol.setText('Build+Run')
         self.pushButton_add_device.clicked.connect(self.add_device)
         self.pushButton_remove_device.clicked.connect(self.remove_device)
         self.actionSettings.triggered.connect(self.change_preferences)
@@ -216,8 +217,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if 'autostart_ioc' in self.preferences and self.preferences['autostart_ioc']:
             self.run_stop_ioc()
 
-        # TODO remove followin line after tutorial!!!!
-        # self.device_epics_widget.setHidden(True)
         self.sequence_main_widget.setHidden(True)
         self.configuration_main_widget.setHidden(True)
 
@@ -653,7 +652,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_stop_protocol.setEnabled(False)
         self.pushButton_pause_protocol.setEnabled(False)
         self.pushButton_run_protocol.setEnabled(True)
-        self.pushButton_run_protocol.setText('Run')
+        self.pushButton_run_protocol.setText('Build+Run')
 
     def make_new_run_thread(self):
         self.run_thread = qthreads.Run_Protocol()
@@ -945,7 +944,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #     print(3)
         if self.run_engine.state == 'paused':
             self.run_engine.resume()
-            self.pushButton_run_protocol.setText('Run')
+            self.pushButton_run_protocol.setText('Build+Run')
             self.pushButton_run_protocol.setEnabled(False)
             self.pushButton_pause_protocol.setEnabled(True)
         else:

@@ -69,7 +69,7 @@ class Plot_Info:
         if self.same_fit:
             if self.all_fit.do_fit:
                 self.all_fit.x = self.x_axis
-                for y in self.y_axes:
+                for y in self.y_axes['formula']:
                     fit = copy.deepcopy(self.all_fit)
                     fit.y = y
                     variables.update(fit.get_variables(stream))
@@ -84,7 +84,7 @@ class Plot_Info:
 class Fit_Info:
     def __init__(self, do_fit=False, predef_func='Linear', custom_func='',
                  use_custom_func=False, guess_params=True, initial_params=None,
-                 y='', x=''):
+                 y='', x='', additional_data=None):
         self.do_fit = do_fit
         self.predef_func = predef_func
         self.custom_func = custom_func
@@ -95,6 +95,7 @@ class Fit_Info:
                                                  'initial value': [],
                                                  'lower bound': [],
                                                  'upper bound': []}
+        self.additional_data = additional_data or []
         self.y = y or ''
         self.x = x or ''
 
@@ -348,6 +349,9 @@ class Fit_Definer(QWidget, Ui_Fit_Definer):
                                            title='Fit Parameters',
                                            editables=[1, 2, 3],
                                            tableData=fit_info.initial_params)
+        self.add_data = AddRemoveTable(headerLabels=[],
+                                       title='Additional Data',
+                                       tableData=fit_info.additional_data)
         self.start_params.addButton.setHidden(True)
         self.start_params.removeButton.setHidden(True)
         self.load_data()
@@ -360,6 +364,7 @@ class Fit_Definer(QWidget, Ui_Fit_Definer):
         self.lineEdit_custom_func.textChanged.connect(self.change_func)
         self.change_func()
         self.layout().addWidget(self.start_params, 10, 0, 1, 2)
+        self.layout().addWidget(self.add_data, 0, 3, 11, 2)
 
     def change_func(self):
         fit = self.checkBox_fit.isChecked()
@@ -411,6 +416,7 @@ class Fit_Definer(QWidget, Ui_Fit_Definer):
 
     def get_data(self):
         self.fit_info.initial_params = self.start_params.update_table_data()
+        self.fit_info.additional_data = self.add_data.update_table_data()
         self.fit_info.do_fit = self.checkBox_fit.isChecked()
         self.fit_info.predef_func = self.comboBox_predef_func.currentText()
         self.fit_info.custom_func = self.lineEdit_custom_func.text()

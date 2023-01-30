@@ -36,13 +36,13 @@ def get_fit_results(fits, namespace, yielding=False, stream='primary'):
             yield from fit.update_fit()
             # yield from bps.trigger_and_read(fit.ophyd_fit.used_comps,
             #                                 name=f'{stream}_fits_{name}')
-            fit._reset()
         if not fit.result:
             continue
         for param in fit.params:
             if param in fit.result.best_values:
                 namespace[f'{name}_{param}'] = fit.result.best_values[param]
         namespace[f'{name}_covar'] = fit.result.covar
+        fit._reset()
 
 def clear_plots(plots, stream='primary'):
     for plot in plots:

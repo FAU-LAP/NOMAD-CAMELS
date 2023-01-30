@@ -176,6 +176,7 @@ def build_protocol(protocol, file_path,
     #     print(device)
     protocol_string = 'import sys\n'
     protocol_string += f'sys.path.append(r"{os.path.dirname(variables_handling.CAMELS_path)}")\n'
+    protocol_string += f'sys.path.append(r"{os.path.dirname(variables_handling.CAMELS_path)}/CAMELS")\n'
     protocol_string += f'sys.path.append("{variables_handling.device_driver_path}")\n\n'
     protocol_string += standard_string
     protocol_string += f'{variable_string}\n\n'

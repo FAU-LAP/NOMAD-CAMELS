@@ -228,6 +228,8 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
                             param_values = get_param_dict(param_values)
                             for p, v in param_values.items():
                                 fg[p] = v
+                            for name, val in fit.additional_data.items():
+                                fg[name] = val
                 if signals:
                     group.attrs['signal'] = signals[0]
                     if len(signals) > 1:
