@@ -1,3 +1,5 @@
+import numpy as np
+
 from ophyd import Component as Cpt
 from bluesky_handling.visa_signal import VISA_Device, VISA_Signal_Read, VISA_Signal_Write
 from bluesky_handling.custom_function_signal import Custom_Function_SignalRO, Custom_Function_Signal
@@ -11,7 +13,7 @@ class Gap_Burner_Arduino(VISA_Device):
     min_voltage = Cpt(Custom_Function_Signal, name="min_voltage", kind='config')
     dac_ref_zero = Cpt(Custom_Function_Signal, name="dac_ref_zero", kind='config')
     dac_zero = Cpt(Custom_Function_Signal, name="dac_zero", kind='config')
-    idn = Cpt(VISA_Signal_Read, name='idn', kind='config', query_text='*IDN?')
+    idn = Cpt(Custom_Function_Signal, name='idn', kind='config')
 
     output_range = Cpt(Custom_Function_Signal, name="output_range")
     input_range = Cpt(Custom_Function_Signal, name="input_range")
@@ -19,7 +21,11 @@ class Gap_Burner_Arduino(VISA_Device):
     threshold = Cpt(Custom_Function_Signal, name="threshold")
 
     burn_command = Cpt(Custom_Function_Signal, name='burn_command')
-    iv_curve = Cpt(Custom_Function_SignalRO, name='iv_curve')
+    iv_curve_adc = Cpt(Custom_Function_SignalRO, name='iv_curve_adc')
+    iv_curve_dac = Cpt(Custom_Function_SignalRO, name='iv_curve_dac')
+    burn_ok = Cpt(Custom_Function_SignalRO, name='burn_ok')
+    current_diff = Cpt(Custom_Function_SignalRO, name='current_diff')
+
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, resource_name='',
@@ -38,16 +44,24 @@ class Gap_Burner_Arduino(VISA_Device):
         self.dac_ref_zero.put_function = lambda x: self.param('dac_ref_zero', x)
         self.dac_zero.put_function = lambda x: self.param('dac_zero', x)
 
+        self.idn.read_function = lambda: self.query('*IDN?')
+
         self.lowpass_samples.put_function = lambda x: self.param("lowpass_samples", x)
         self.threshold.put_function = lambda x: self.param("threshold", x)
         self.output_range.put_function = self.out_range_func
         self.input_range.put_function = self.input_range_func
 
         self.burn_command.put_function = self.burn
-        self.iv_curve.read_function = self.iv
+        self.iv_curve_adc.read_function = lambda: self.current_iv
+        self.iv_curve_dac.read_function = self.get_iv_dac
+        self.burn_ok.read_function = lambda: self.burn_ok_val
+        self.current_diff.read_function = lambda: np.abs(self.current_iv[-1] - self.current_iv[0])
 
-    def get_iv_curve(self):
-        self.visa_instrument.query('iv?')
+        self.current_iv = None
+        self.burn_ok_val = True
+
+    def get_iv_dac(self):
+        return np.linspace(1, len(self.current_iv), num=len(self.current_iv))
 
 
     def write(self, cmd: str):
@@ -96,8 +110,9 @@ class Gap_Burner_Arduino(VISA_Device):
     def burn(self, val):
         self.write('burn')
         ok = self.visa_instrument.read(termination='\n')
+        self.burn_ok_val = ok == 'OK'
         print("Arduino >> " + ok)
-        return ok
+        self.iv()
 
 
     def iv(self):
@@ -105,5 +120,5 @@ class Gap_Burner_Arduino(VISA_Device):
         ok = self.visa_instrument.read(termination='\n')
         data = self.visa_instrument.read_ascii_values(converter='d')
         print("Arduino >> <%d ADC values>" % len(data))
-        return data
+        self.current_iv = data
 
