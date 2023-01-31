@@ -208,3 +208,9 @@ def check_data_type(s):
     except SyntaxError:
         return 'String'
     return str(type(lit))
+
+def get_write_from_data_type(s):
+    t = check_data_type(s)
+    if t == 'String':
+        return f'"{s}"'
+    return s

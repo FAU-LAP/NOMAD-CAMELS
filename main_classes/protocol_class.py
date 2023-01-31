@@ -168,6 +168,13 @@ class Measurement_Protocol:
     def get_plan_string(self):
         """Get the string for the protocol-plan, including the loopsteps."""
         plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, runEngine=None, stream_name="primary"):\n'
+        if variables_handling.protocol_variables:
+            plan_string += '\tglobal '
+            for i, var in enumerate(variables_handling.protocol_variables.keys()):
+                if i > 0:
+                    plan_string += ', '
+                plan_string += var
+            plan_string += '\n'
         plan_string += '\teva = Evaluator(namespace=namespace)\n'
         plan_string += '\trunEngine.subscribe(eva)\n'
         for step in self.loop_steps:

@@ -57,7 +57,7 @@ class Gap_Burner_Arduino(VISA_Device):
         self.burn_ok.read_function = lambda: self.burn_ok_val
         self.current_diff.read_function = lambda: np.abs(self.current_iv[-1] - self.current_iv[0])
 
-        self.current_iv = None
+        self.current_iv = [0, 1]
         self.burn_ok_val = True
 
     def get_iv_dac(self):

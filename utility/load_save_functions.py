@@ -36,7 +36,7 @@ standard_pref = {'autosave': True,
                  'py_files_path': f'{appdata_path}/python_files'.replace('\\','/'),
                  'meas_files_path': os.path.expanduser('~/CAMELS_data').replace('\\','/'),
                  'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/'),
-                 'autostart_ioc': True,
+                 'autostart_ioc': False,
                  'databroker_catalog_name': 'CAMELS_CATALOG',
                  'play_camel_on_error': False}
 
