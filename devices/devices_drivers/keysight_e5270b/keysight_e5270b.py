@@ -1,6 +1,6 @@
 import copy
 
-from keysight_e5270b.keysight_e5270b_ophyd import Keysight_E5270B
+from keysight_e5270b.keysight_e5270b_ophyd import Keysight_E5270B_EPICS
 from keysight_e5270b.keysight_e5270b_config import Ui_keysight_e5270b_config
 from keysight_e5270b.keysight_e5270b_config_channel import Ui_keysight_e5270b_config_channel
 
@@ -13,15 +13,24 @@ from PyQt5.QtCore import pyqtSignal
 
 
 
-
-
 class subclass(device_class.Device):
     def __init__(self, **kwargs):
         # package = importlib.import_module('keysight_e5270b.keysight_e5270b_ophyd')
         # ophyd_device = package.Keysight_E5270B
         files = ['keysight_e5270b.db', 'keysight_e5270b.proto']
         req = []
-        super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'], directory='keysight_e5270b', ophyd_device=Keysight_E5270B, requirements=req, files=files, ophyd_class_name='Keysight_E5270B', **kwargs)
+        super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'],
+                         directory='keysight_e5270b', ophyd_device=Keysight_E5270B_EPICS,
+                         requirements=req, files=files, ophyd_class_name='Keysight_E5270B_EPICS', **kwargs)
+        self.config['measMode1'] = 1
+        self.config['measMode2'] = 1
+        self.config['measMode3'] = 1
+        self.config['measMode4'] = 1
+        self.config['measMode5'] = 1
+        self.config['measMode6'] = 1
+        self.config['measMode7'] = 1
+        self.config['measMode8'] = 1
+        
         for i in range(1, 9):
             key = f'active{i}'
             if key not in self.config:
@@ -78,6 +87,7 @@ class subclass_config(device_class.Device_Config):
         super().__init__(parent, 'Keysight E5270B', data, settings_dict,
                          config_dict, ioc_dict, additional_info)
         self.comboBox_connection_type.addItem('EPICS: prologix-GPIB')
+        self.comboBox_connection_type.addItem('Local VISA')
         self.sub_widget = subclass_config_sub(config_dict=self.config_dict, parent=self)
         self.layout().addWidget(self.sub_widget, 20, 0, 1, 5)
         self.load_settings()
