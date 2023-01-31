@@ -13,7 +13,7 @@ class Gap_Burner_Arduino(VISA_Device):
     min_voltage = Cpt(Custom_Function_Signal, name="min_voltage", kind='config')
     dac_ref_zero = Cpt(Custom_Function_Signal, name="dac_ref_zero", kind='config')
     dac_zero = Cpt(Custom_Function_Signal, name="dac_zero", kind='config')
-    idn = Cpt(Custom_Function_Signal, name='idn', kind='config')
+    idn = Cpt(Custom_Function_SignalRO, name='idn', kind='config')
 
     output_range = Cpt(Custom_Function_Signal, name="output_range")
     input_range = Cpt(Custom_Function_Signal, name="input_range")
