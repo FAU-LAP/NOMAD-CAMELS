@@ -21,6 +21,10 @@ devices = {}
 current_protocol = None
 dark_mode = False
 
+read_channel_sets = []
+read_channel_names = []
+
+
 def get_output_channels():
     outputs = []
     for channel in channels:

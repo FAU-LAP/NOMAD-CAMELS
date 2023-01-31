@@ -1,5 +1,5 @@
 import numpy as np
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QGridLayout
+from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QGridLayout, QLineEdit
 from PyQt5.QtCore import Qt
 
 from main_classes.loop_step import Loop_Step_Container, Loop_Step_Config
@@ -25,6 +25,7 @@ class While_Loop_Step(Loop_Step_Container):
         if step_info is None:
             step_info = {}
         self.condition = step_info['condition'] if 'condition' in step_info else '!'
+        self.expected_interations = step_info['expected_interations'] if 'expected_interations' in step_info else 1
 
     def update_variables(self):
         """Here the Count of the while-loop is included as a variable."""
@@ -39,6 +40,7 @@ class While_Loop_Step(Loop_Step_Container):
         """The string consists of declaring the count-variable. Then the
         while loop with the desired condition is started. After all the
         children-steps, the count-variable increased by 1."""
+        self.update_time_weight()
         tabs = '\t'*n_tabs
         count_var = f'{self.name.replace(" ", "_")}_Count'
         protocol_string = super().get_protocol_string(n_tabs)
@@ -47,8 +49,11 @@ class While_Loop_Step(Loop_Step_Container):
         protocol_string += f'{tabs}\tnamespace["{count_var}"] = {count_var}\n'
         protocol_string += self.get_children_strings(n_tabs+1)
         protocol_string += f'{tabs}\t{count_var} += 1\n'
-        self.update_time_weight()
         return protocol_string
+
+    def update_time_weight(self):
+        super().update_time_weight()
+        self.time_weight *= self.expected_interations + 5
 
 
 class While_Loop_Step_Config(Loop_Step_Config):
@@ -67,19 +72,28 @@ class While_Loop_Step_Config_Sub(QWidget):
         self.loop_step = loop_step
 
         label = QLabel('Condition:')
+        label_it = QLabel('Expected number of iterations:')
         self.lineEdit_condition = Variable_Box(self)
         self.lineEdit_condition.setText(loop_step.condition)
         self.lineEdit_condition.textChanged.connect(self.update_condition)
+        self.lineEdit_expection.textChanged.connect(self.update_condition)
+        self.lineEdit_expection = QLineEdit(str(loop_step.expected_interations))
 
         layout = QGridLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(label, 0, 0)
         layout.addWidget(self.lineEdit_condition, 0, 1)
+        layout.addWidget(label_it, 1, 0)
+        layout.addWidget(self.lineEdit_expection, 1, 1)
         self.setLayout(layout)
 
     def update_condition(self):
         """Saves the condition into the loop_step."""
         self.loop_step.condition = self.lineEdit_condition.text()
+        try:
+            self.loop_step.expected_interations = self.lineEdit_expection.text()
+        except:
+            pass
 
 
 class For_Loop_Step(Loop_Step_Container):
