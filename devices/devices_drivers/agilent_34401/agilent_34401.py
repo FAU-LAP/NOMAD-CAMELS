@@ -1,4 +1,4 @@
-from agilent_34401.agilent_34401_ophyd import Agilent_34401_EPICS
+from agilent_34401.agilent_34401_ophyd import Agilent_34401_EPICS, Agilent_34401
 
 from main_classes import device_class
 
@@ -9,7 +9,7 @@ class subclass(device_class.Device):
     def __init__(self, **kwargs):
         files = ['agilent_34401.db', 'agilent_34401.proto']
         req = ['prologixSup']
-        super().__init__(name='agilent_34401', virtual=False, tags=['DMM', 'voltage', 'current'], directory='agilent_34401', ophyd_device=Agilent_34401_EPICS, requirements=req, files=files, ophyd_class_name='Agilent_34401_EPICS', **kwargs)
+        super().__init__(name='agilent_34401', virtual=False, tags=['DMM', 'voltage', 'current'], directory='agilent_34401', ophyd_device=Agilent_34401_EPICS, requirements=req, files=files, ophyd_class_name='Agilent_34401_EPICS', non_epics_class=Agilent_34401, **kwargs)
 
 class subclass_config(device_class.Device_Config):
     def __init__(self, parent=None, data='', settings_dict=None,

@@ -28,21 +28,10 @@ class Read_Channels(Loop_Step):
             step_info = {}
         self.read_all = step_info['read_all'] if 'read_all' in step_info else False
         self.split_trigger = step_info['split_trigger'] if 'split_trigger' in step_info else False
-        # self.plot_data = step_info['plot_data'] if 'plot_data' in step_info else True
-        # self.save_data = step_info['save_data'] if 'save_data' in step_info else True
-        # self.use_set_val = step_info['use_set_val'] if 'use_set_val' in step_info else False
-        # if 'channel_dict' in step_info:
-        #     self.channel_dict = step_info['channel_dict']
-        # else:
-        #     self.channel_dict = {}
         if 'channel_list' in step_info:
             self.channel_list = step_info['channel_list']
         else:
             self.channel_list = []
-        # for channel in variables_handling.channels:
-        #     if channel not in self.channel_dict:
-        #         self.channel_dict.update({channel: {'read': False,
-        #                                         'use set': False}})
         self.update_used_devices()
 
     def update_used_devices(self):
@@ -53,11 +42,15 @@ class Read_Channels(Loop_Step):
                 device = variables_handling.channels[channel].device
                 if device not in self.used_devices:
                     self.used_devices.append(device)
-        # for channel_name in self.channel_list:
-        #     if (self.read_all or channel_info['read']) and channel_name in variables_handling.channels:
-        #         device = variables_handling.channels[channel_name].device
-        #         if device not in self.used_devices:
-        #             self.used_devices.append(device)
+
+    def get_channels_set(self):
+        chan_list = []
+        if self.read_all:
+            for channel in variables_handling.channels:
+                chan_list.append(channel)
+        else:
+            chan_list = self.channel_list
+        return set(chan_list)
 
     def get_channels_string(self, tabs):
         channel_string = f'{tabs}channels_{self.variable_name()} = ['
@@ -79,13 +72,25 @@ class Read_Channels(Loop_Step):
         """In the protocol, at first a list `channels` is defined,
         including all the channels, that are selected to be read. Then
         bps.trigger_and_read is called on these channels."""
+        # checking compatibility with other readings
+        chan_list = self.get_channels_set()
+        if set(chan_list) in variables_handling.read_channel_sets:
+            n = variables_handling.read_channel_sets.index(set(chan_list))
+        else:
+            n = len(variables_handling.read_channel_names)
+            variables_handling.read_channel_sets.append(chan_list)
+            if n > 0:
+                variables_handling.read_channel_names.append(f'f"{{stream_name}}_{n}"')
+            else:
+                variables_handling.read_channel_names.append('stream_name')
+        stream_name = variables_handling.read_channel_names[n]
         tabs = '\t' * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.split_trigger:
-            protocol_string += f'{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream=stream_name)\n'
+            protocol_string += f'{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream_name})\n'
         else:
             protocol_string += self.get_channels_string(tabs)
-            protocol_string += f'{tabs}yield from bps.trigger_and_read(channels_{self.variable_name()}, name=stream_name)\n'
+            protocol_string += f'{tabs}yield from bps.trigger_and_read(channels_{self.variable_name()}, name={stream_name})\n'
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
