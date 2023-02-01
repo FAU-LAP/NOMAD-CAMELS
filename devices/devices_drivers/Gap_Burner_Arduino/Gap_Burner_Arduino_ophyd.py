@@ -72,12 +72,12 @@ class Gap_Burner_Arduino(VISA_Device):
             print("Arduino << " + cmd)
 
     def input_range_func(self, val):
-        self.visa_instrument.write(f'input_range {ADC_range_values[int(val)]}')
+        self.write(f'input_range {ADC_range_values[int(val)]}')
         ok = self.visa_instrument.read(termination='\n')
         print("Arduino >> " + ok)
 
     def out_range_func(self, val):
-        self.visa_instrument.write(f'output_range {val:d} V')
+        self.write(f'output_range {val:d} V')
         ok = self.visa_instrument.read(termination='\n')
         print("Arduino >> " + ok)
 

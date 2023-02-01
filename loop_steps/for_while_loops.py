@@ -75,9 +75,9 @@ class While_Loop_Step_Config_Sub(QWidget):
         label_it = QLabel('Expected number of iterations:')
         self.lineEdit_condition = Variable_Box(self)
         self.lineEdit_condition.setText(loop_step.condition)
+        self.lineEdit_expection = QLineEdit(str(loop_step.expected_interations))
         self.lineEdit_condition.textChanged.connect(self.update_condition)
         self.lineEdit_expection.textChanged.connect(self.update_condition)
-        self.lineEdit_expection = QLineEdit(str(loop_step.expected_interations))
 
         layout = QGridLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -91,7 +91,7 @@ class While_Loop_Step_Config_Sub(QWidget):
         """Saves the condition into the loop_step."""
         self.loop_step.condition = self.lineEdit_condition.text()
         try:
-            self.loop_step.expected_interations = self.lineEdit_expection.text()
+            self.loop_step.expected_interations = float(self.lineEdit_expection.text())
         except:
             pass
 
