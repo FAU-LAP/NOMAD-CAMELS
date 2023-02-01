@@ -1,6 +1,6 @@
 import copy
 
-from keysight_e5270b.keysight_e5270b_ophyd import Keysight_E5270B_EPICS
+from keysight_e5270b.keysight_e5270b_ophyd import Keysight_E5270B_EPICS, Keysight_E5270B
 from keysight_e5270b.keysight_e5270b_config import Ui_keysight_e5270b_config
 from keysight_e5270b.keysight_e5270b_config_channel import Ui_keysight_e5270b_config_channel
 
@@ -21,7 +21,8 @@ class subclass(device_class.Device):
         req = []
         super().__init__(name='keysight_e5270b', virtual=False, tags=['SMU', 'voltage', 'current'],
                          directory='keysight_e5270b', ophyd_device=Keysight_E5270B_EPICS,
-                         requirements=req, files=files, ophyd_class_name='Keysight_E5270B_EPICS', **kwargs)
+                         requirements=req, files=files, ophyd_class_name='Keysight_E5270B_EPICS',
+                         non_epics_class=Keysight_E5270B, **kwargs)
         self.config['measMode1'] = 1
         self.config['measMode2'] = 1
         self.config['measMode3'] = 1
