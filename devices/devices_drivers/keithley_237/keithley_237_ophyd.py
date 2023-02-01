@@ -14,8 +14,8 @@ class Keithley_237(VISA_Device):
 
     idn = Cpt(VISA_Signal_Read, name='idn', kind='config', query_text='*IDN?')
     NPLC = Cpt(VISA_Signal_Write, name='NPLC', kind='config')
-    optionen = Cpt(VISA_Signal_Write, name='optionen', kind='config')
-    andere = Cpt(VISA_Signal_Write, name='andere', kind='config')
+    Four_wire = Cpt(VISA_Signal_Write, name='optionen', kind='config')
+    Averages = Cpt(VISA_Signal_Write, name='andere', kind='config')
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, resource_name='',
