@@ -133,7 +133,8 @@ class Run_Subprotocol_Config(Loop_Step_Config):
         self.sub_vars = {}
         prot_path = self.path_button.get_path()
         sub_protocol = load_save_functions.load_protocol(prot_path)
-        self.sub_vars = sub_protocol.variables
+        if sub_protocol:
+            self.sub_vars = sub_protocol.variables
 
     def update_step_config(self):
         super().update_step_config()

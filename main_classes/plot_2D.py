@@ -13,6 +13,8 @@ from bluesky_handling.evaluation_helper import Evaluator
 
 from main_classes.plot_widget import MPLwidget
 
+from utility.plot_placement import place_widget
+
 stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 class PlotWidget_2D(QWidget):
@@ -46,6 +48,7 @@ class PlotWidget_2D(QWidget):
 
         self.setWindowTitle(title or f'{z_name} 2D')
         self.setWindowIcon(QIcon('graphics/CAMELS.svg'))
+        place_widget(self)
 
     def autoscale(self):
         self.ax.autoscale()

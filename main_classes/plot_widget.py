@@ -3,7 +3,6 @@ from collections import ChainMap
 import threading
 import numpy as np
 import lmfit
-import time
 
 import matplotlib.pyplot as plt
 from bluesky.callbacks.mpl_plotting import LivePlot, LiveFitPlot
@@ -22,6 +21,8 @@ from utility.fit_variable_renaming import replace_name
 from bluesky_handling.evaluation_helper import Evaluator
 from ophyd import SignalRO, Device, Component, BlueskyInterface, Kind
 from bluesky import plan_stubs as bps
+
+from utility.plot_placement import place_widget
 
 stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
@@ -199,6 +200,7 @@ class PlotWidget(QWidget):
         self.options_open = False
         if do_plot:
             self.show()
+        place_widget(self)
 
     def clear_plot(self):
         """Clear the plot by removing the data from the plot and clearing all

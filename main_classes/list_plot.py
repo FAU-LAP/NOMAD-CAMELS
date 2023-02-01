@@ -8,6 +8,8 @@ from PyQt5.QtGui import QIcon
 
 from bluesky_handling.evaluation_helper import Evaluator
 
+from utility.plot_placement import place_widget
+
 
 class Values_List_Plot(QtAwareCallback, QWidget):
     def __init__(self, value_list, *, epoch='run', namespace=None, title='',
@@ -43,6 +45,7 @@ class Values_List_Plot(QtAwareCallback, QWidget):
         self.epoch_offset = 0
         self.epoch = epoch
         self.table.resizeColumnsToContents()
+        place_widget(self)
 
     def descriptor(self, doc):
         if doc['name'] == self.stream_name:
