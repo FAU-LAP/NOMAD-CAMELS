@@ -42,6 +42,7 @@ class Text_Writer(io.StringIO):
 class Console_TextEdit(QTextEdit):
     def __init__(self, parent):
         super().__init__(parent)
-        self.text_writer = Text_Writer(self, True)
-        self.error_writer = Error_Writer(self, True)
+        use_old = not sys.executable.endswith('pythonw.exe')
+        self.text_writer = Text_Writer(self, use_old)
+        self.error_writer = Error_Writer(self, use_old)
 
