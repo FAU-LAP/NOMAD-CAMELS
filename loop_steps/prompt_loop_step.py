@@ -15,13 +15,18 @@ class Prompt_Loop_Step(Loop_Step):
 
     def get_protocol_string(self, n_tabs=1):
         tabs = '\t' * n_tabs
-        long_text = self.long_text.replace("\n", "\\n")
         protocol_string = super().get_protocol_string(n_tabs)
-        protocol_string += f'{tabs}from tkinter import messagebox, Tk\n'
-        protocol_string += f'{tabs}tk_window = Tk()\n'
-        protocol_string += f'{tabs}tk_window.wm_withdraw()\n'
-        protocol_string += f'{tabs}messagebox.show{self.icon.lower()}(title="{self.short_text}", message="{long_text}", parent=tk_window)\n'
+        protocol_string += f'{tabs}boxes["prompt_{self.name}"].done = False\n'
+        protocol_string += f'{tabs}boxes["prompt_{self.name}"].helper.executor.emit()\n'
+        protocol_string += f'{tabs}while not boxes["prompt_{self.name}"].done:\n'
+        protocol_string += f'{tabs}\tyield from bps.sleep(0.1)\n'
         return protocol_string
+
+    def get_add_main_string(self):
+        long_text = self.long_text.replace("\n", "\\n")
+        add_main_string = super().get_add_main_string()
+        add_main_string += f'\tboxes["prompt_{self.name}"] = helper_functions.Prompt_Box("{self.icon}", "{long_text}", "{self.short_text}")\n'
+        return add_main_string
 
 
 class Prompt_Loop_Step_Config(Loop_Step_Config):
@@ -49,7 +54,7 @@ class Prompt_Loop_Step_Config_Sub(QWidget):
         self.textEdit_long.textChanged.connect(self.update_info)
 
         self.comboBox_icon = QComboBox()
-        icons = ['Info', 'Warning', 'Error']
+        icons = ['Information', 'Warning', 'Critical']
         self.comboBox_icon.addItems(icons)
         self.comboBox_icon.setCurrentText(loop_step.icon)
         self.comboBox_icon.currentTextChanged.connect(self.update_info)

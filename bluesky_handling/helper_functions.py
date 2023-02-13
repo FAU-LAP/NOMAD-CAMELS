@@ -1,6 +1,15 @@
 import numpy as np
 from bluesky import plan_stubs as bps
 
+from ophyd import SignalRO
+
+from PyQt5.QtWidgets import QMessageBox, QWidget, QDialog, QDialogButtonBox, QGridLayout, QLabel, QLineEdit
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtGui import QFont
+
+from utility.add_remove_table import AddRemoveTable
+from utility.channels_check_table import Channels_Check_Table
+
 
 def trigger_multi(devices, grp=None):
     for obj in devices:
@@ -124,3 +133,159 @@ def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
             sort_f.pop(0)
             sort_w.pop(0)
     return w_history,f_history
+
+
+class Prompt_Box(QMessageBox):
+    def __init__(self, icon='', text='', title='', parent=None):
+        super().__init__(parent=parent)
+        if icon == 'Error':
+            self.setIcon(QMessageBox.Critical)
+        elif icon == 'Warning':
+            self.setIcon(QMessageBox.Warning)
+        else:
+            self.setIcon(QMessageBox.Information)
+        self.setText(text)
+        self.setWindowTitle(title)
+        self.helper = BoxHelper()
+        self.helper.executor.connect(self.start_execution)
+        self.buttonClicked.connect(self.set_done)
+        self.done = False
+
+    def set_done(self):
+        self.done = True
+
+    def start_execution(self):
+        self.done = False
+        self.exec()
+
+class BoxHelper(QWidget):
+    executor = pyqtSignal()
+
+
+class Value_Box(QDialog):
+    def __init__(self, text='', title='', variables=None, channels=None,
+                 free_variables=False, free_channels=False, parent=None,
+                 devs=None):
+        super().__init__(parent)
+        text_label = QLabel(text)
+        self.buttonBox = QDialogButtonBox(self)
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+        layout = QGridLayout()
+
+        self.helper = BoxHelper()
+        self.helper.executor.connect(self.start_execution)
+        self.done = False
+
+        channels_label = QLabel('Channels')
+        font = QFont()
+        font.setBold(True)
+        channels_label.setStyleSheet('font-size: 9pt')
+        channels_label.setFont(font)
+        layout.addWidget(channels_label, 1, 0, 1, 2)
+        variables_label = QLabel('Variables')
+        font = QFont()
+        font.setBold(True)
+        variables_label.setStyleSheet('font-size: 9pt')
+        variables_label.setFont(font)
+        layout.addWidget(variables_label, 1, 2, 1, 2)
+
+        channels = channels or []
+        n_channels = len(channels)
+        self.channel_boxes = []
+        self.channels = channels
+        for i, channel in enumerate(channels):
+            channel_label = QLabel(f'{channel}:')
+            channel_box = QLineEdit()
+            self.channel_boxes.append(channel_box)
+            layout.addWidget(channel_label, 2+i, 0)
+            layout.addWidget(channel_box, 2+i, 1)
+
+        variables = variables or []
+        n_variables = len(variables)
+        self.variable_boxes = []
+        self.variables = variables
+        for i, variable in enumerate(variables):
+            variable_label = QLabel(f'{variable}:')
+            variable_box = QLineEdit()
+            self.variable_boxes.append(variable_box)
+            layout.addWidget(variable_label, 2+i, 2)
+            layout.addWidget(variable_box, 2+i, 3)
+
+        devs = devs or {}
+        self.channel_devs = {}
+        for dev, val in devs.items():
+            self.channel_devs.update(get_channels(val))
+        self.channel_table = None
+        if free_channels:
+            self.channel_table = Channels_Check_Table(self, ['set', 'channel', 'value'], True, channels=list(self.channel_devs.keys()))
+            layout.addWidget(self.channel_table, 2+n_channels+n_variables, 0, 1, 2)
+        if free_variables:
+            header = ['variable', 'value']
+            self.variable_table = AddRemoveTable(headerLabels=header)
+            layout.addWidget(self.variable_table, 2+n_channels+n_variables, 2, 1, 2)
+
+        self.buttonBox.rejected.connect(self.reject)
+        self.buttonBox.accepted.connect(self.accept)
+
+        self.setLayout(layout)
+        layout.addWidget(text_label, 0, 0, 1, 4)
+        layout.addWidget(self.buttonBox, 10+n_channels+n_variables, 0, 1, 4)
+        self.setWindowTitle(title)
+        # self.table.sizechange.connect(self.adjustSize)
+        self.adjustSize()
+        self.was_accepted = False
+        self.set_variables = {}
+        self.set_channels = {}
+
+    def start_execution(self):
+        self.done = False
+        self.exec()
+
+    def accept(self) -> None:
+        self.set_variables = {}
+        self.set_channels = {}
+        for i, v_box in enumerate(self.variable_boxes):
+            val = v_box.text()
+            if val:
+                self.set_variables[self.variables[i]] = val
+        for i, c_box in enumerate(self.channel_boxes):
+            val = c_box.text()
+            if val:
+                self.set_channels[self.channels[i]] = val
+        var_table_data = self.variable_table.update_table_data()
+        for i, var in enumerate(var_table_data['variable']):
+            if var in self.set_variables:
+                box = Prompt_Box('Critical',
+                                 f'Cannot set two values to variable {var}!',
+                                 'identical variable names')
+                return box.exec()
+            self.set_variables[var] = var_table_data['value'][i]
+        channel_table_data = self.channel_table.get_info()
+        for i, channel in enumerate(channel_table_data['channel']):
+            if channel in self.set_channels:
+                box = Prompt_Box('Critical',
+                                 f'Cannot set two values to channel {channel}!',
+                                 'identical channel names')
+                return box.exec()
+            self.set_channels[channel] = channel_table_data['value'][i]
+        self.was_accepted = True
+        self.done = True
+        return super().accept()
+
+    def reject(self) -> None:
+        self.done = True
+        return super().reject()
+
+def get_channels(dev):
+    """returns the components of an ophyd-device that are not listed in
+    the configuration"""
+    channels = {}
+    for comp in dev.walk_components():
+        if issubclass(comp.item.cls, SignalRO):
+            continue
+        name = comp.item.attr
+        if name not in dev.configuration_attrs:
+            channels[f'{dev.name}_{name}'] = [dev.name, name]
+    return channels

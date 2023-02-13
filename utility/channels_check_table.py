@@ -10,19 +10,20 @@ from utility import variables_handling, fit_variable_renaming
 
 class Channels_Check_Table(QWidget):
     def __init__(self, parent, headerLabels=None, only_output=False,
-                 info_dict=None, checkstrings=None, title=''):
+                 info_dict=None, checkstrings=None, title='', channels=None):
         super().__init__(parent)
+        self.channels = channels or variables_handling.channels
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         self.only_output = only_output
         self.headerLabels = headerLabels or []
         self.checkstrings = checkstrings or []
         self.info_dict = info_dict or {}
-        if 'channel' not in info_dict:
-            info_dict['channel'] = []
-        for lab in headerLabels[2:]:
-            if lab not in info_dict:
-                info_dict[lab] = []
+        if 'channel' not in self.info_dict:
+            self.info_dict['channel'] = []
+        for lab in self.headerLabels[2:]:
+            if lab not in self.info_dict:
+                self.info_dict[lab] = []
 
         layout = QGridLayout()
         self.tableWidget_channels = QTableWidget()
@@ -139,7 +140,7 @@ class Channels_Check_Table(QWidget):
                     self.info_dict[lab][n] = t
         rems = []
         for channel in channel_list:
-            if channel not in variables_handling.channels:
+            if channel not in self.channels:
                 rems.append(channel)
         for channel in rems:
             channel_list.remove(channel)
@@ -154,8 +155,8 @@ class Channels_Check_Table(QWidget):
         searchtext = self.lineEdit_search.text()
         channel_list = self.info_dict['channel']
         n = 0
-        for i, channel in enumerate(sorted(variables_handling.channels, key=lambda x: x.lower())):
-            if searchtext not in channel or (self.only_output and not variables_handling.channels[channel].output):
+        for i, channel in enumerate(sorted(self.channels, key=lambda x: x.lower())):
+            if searchtext not in channel or (not isinstance(self.channels, list) and self.only_output and not self.channels[channel].output):
                 continue
             self.tableWidget_channels.setRowCount(n+1)
             item = QTableWidgetItem()

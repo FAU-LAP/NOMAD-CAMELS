@@ -193,7 +193,7 @@ class Measurement_Protocol:
         return short_string
 
     def get_add_main_string(self):
-        add_main_string = 'def steps_add_main(RE):\n'
+        add_main_string = 'def steps_add_main(RE, devs):\n'
         add_main_string += '\treturner = {}\n'
         for step in self.loop_steps:
             add_main_string += step.get_add_main_string()
