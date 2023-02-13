@@ -52,16 +52,17 @@ class Gap_Burner_Arduino(VISA_Device):
         self.input_range.put_function = self.input_range_func
 
         self.burn_command.put_function = self.burn
-        self.iv_curve_adc.read_function = lambda: self.current_iv
+        self.iv_curve_adc.read_function = lambda: self.current_iv_long
         self.iv_curve_dac.read_function = self.get_iv_dac
         self.burn_ok.read_function = lambda: self.burn_ok_val
         self.current_diff.read_function = lambda: np.abs(self.current_iv[-1] - self.current_iv[0])
 
-        self.current_iv = [0, 1]
+        self.current_iv_long = np.ones(3700) * 950
+        self.current_iv = [0,1]
         self.burn_ok_val = True
 
     def get_iv_dac(self):
-        return np.linspace(1, len(self.current_iv), num=len(self.current_iv))
+        return np.linspace(1, 3700, num=3700)
 
 
     def write(self, cmd: str):
@@ -121,4 +122,6 @@ class Gap_Burner_Arduino(VISA_Device):
         data = self.visa_instrument.read_ascii_values(converter='d')
         print("Arduino >> <%d ADC values>" % len(data))
         self.current_iv = data
+        self.current_iv_long = np.ones(3700) * 950
+        self.current_iv_long[:len(data)] = data
 
