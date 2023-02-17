@@ -70,6 +70,7 @@ class LivePlot_2D(LiveScatter, QObject):
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
         self._minx, self._maxx, self._miny, self._maxy = (None,)*4
+        self._xdata, self._ydata, self._Idata = [], [], []
 
         def setup():
             # Run this code in start() so that it runs on the correct thread.
