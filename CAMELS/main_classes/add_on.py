@@ -15,7 +15,7 @@ class AddOn(QWidget):
         self.setLayout(layout)
 
         self.setWindowTitle(f'CAMELS - {title}')
-        self.setWindowIcon(QIcon(resource_filename('graphics','CAMELS.svg')))
+        self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS.svg')))
         self.name = title
         self.device = device
         self.ophyd_device = ophyd_device

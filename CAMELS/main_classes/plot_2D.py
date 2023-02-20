@@ -48,7 +48,7 @@ class PlotWidget_2D(QWidget):
         self.setLayout(layout)
 
         self.setWindowTitle(title or f'{z_name} 2D')
-        self.setWindowIcon(QIcon(resource_filename('graphics','CAMELS.svg')))
+        self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS.svg')))
         place_widget(self)
 
     def autoscale(self):

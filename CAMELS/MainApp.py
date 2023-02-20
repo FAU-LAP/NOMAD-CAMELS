@@ -51,7 +51,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle('CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems')
-        self.setWindowIcon(QIcon(resource_filename('graphics','CAMELS.svg')))
+        self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS.svg')))
         self.loaded_presets = load_save_functions.get_preset_list()
         for pre in self.loaded_presets:
             self.comboBox_preset.addItem(pre)
