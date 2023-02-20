@@ -1,1 +1,1 @@
-start .desertenv\Scripts\pythonw.exe MainApp.py
+start CAMELS\.desertenv\Scripts\pythonw.exe MainApp.py
