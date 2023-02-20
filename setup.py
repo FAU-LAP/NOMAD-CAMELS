@@ -12,7 +12,7 @@ setup(
     author_email='johannes.lehmeyer@fau.de',
     packages=find_packages(),
     package_data={
-        'graphics': ['graphics/*']
+        'CAMELS': ['graphics/*']
     },
     install_requires=requirements
 )
