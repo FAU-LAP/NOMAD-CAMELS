@@ -1,6 +1,9 @@
 from setuptools import setup, find_packages
 from pkg_resources import parse_requirements
 
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
+
 setup(
     name='CAMELS_control',
     version='0.1',
@@ -8,5 +11,5 @@ setup(
     author='Johannes Lehmeyer / Alexander Fuchs',
     author_email='johannes.lehmeyer@fau.de',
     packages=find_packages(),
-    install_requires=parse_requirements('requirements.txt')
+    install_requires=requirements
 )
