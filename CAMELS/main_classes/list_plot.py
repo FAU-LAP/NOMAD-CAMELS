@@ -9,6 +9,7 @@ from PyQt5.QtGui import QIcon
 from bluesky_handling.evaluation_helper import Evaluator
 
 from utility.plot_placement import place_widget
+from pkg_resources import resource_filename
 
 
 class Values_List_Plot(QtAwareCallback, QWidget):
@@ -40,7 +41,7 @@ class Values_List_Plot(QtAwareCallback, QWidget):
             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
             self.table.setItem(i, 1, item)
             self.val_items.append(item)
-        self.setWindowIcon(QIcon('graphics/CAMELS.svg'))
+        self.setWindowIcon(QIcon(resource_filename('graphics','CAMELS.svg')))
         self.desc = ''
         self.epoch_offset = 0
         self.epoch = epoch

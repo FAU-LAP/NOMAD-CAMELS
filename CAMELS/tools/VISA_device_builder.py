@@ -9,6 +9,7 @@ from utility import variables_handling, fit_variable_renaming
 from tools.VISA_builder import Ui_VISA_Device_Builder
 
 import importlib
+from pkg_resources import resource_filename
 
 
 class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
@@ -17,7 +18,7 @@ class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
         self.setupUi(self)
 
         if os.path.isdir('graphics'):
-            self.setWindowIcon(QIcon('graphics/CAMELS.svg'))
+            self.setWindowIcon(QIcon(resource_filename('graphics','CAMELS.svg')))
         else:
             self.setWindowIcon(QIcon('../graphics/CAMELS.svg'))
         self.setWindowTitle('CAMELS - VISA-device-builder')
