@@ -11,5 +11,8 @@ setup(
     author='Johannes Lehmeyer / Alexander Fuchs',
     author_email='johannes.lehmeyer@fau.de',
     packages=find_packages(),
+    package_data={
+        'graphics': ['graphics/*']
+    },
     install_requires=requirements
 )
