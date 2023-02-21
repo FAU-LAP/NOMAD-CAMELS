@@ -102,6 +102,8 @@ def get_color(color='', string=False):
         rgb = (180, 255, 180)
         if dark_mode:
             rgb = (0, 75, 0)
+    elif color == 'dark_green':
+        rgb = (32, 175, 32)
     elif color == 'grey' or color == 'gray':
         rgb = (169, 169, 169)
     elif color == 'blue' or color == 'b':
@@ -112,6 +114,8 @@ def get_color(color='', string=False):
         rgb = (0, 0, 0)
         if dark_mode:
             rgb = (255, 255, 255)
+    elif color == 'orange':
+        rgb = (255, 170, 25)
     else:
         rgb = (255, 255, 255)
         if dark_mode:
