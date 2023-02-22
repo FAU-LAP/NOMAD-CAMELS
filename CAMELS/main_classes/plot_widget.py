@@ -16,13 +16,13 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QApplication, QPushButton,\
 from PyQt5.QtCore import pyqtSignal, QObject, Qt, QCoreApplication
 from PyQt5.QtGui import QIcon
 
-from gui.plot_options import Ui_Plot_Options
-from utility.fit_variable_renaming import replace_name
-from bluesky_handling.evaluation_helper import Evaluator
+from CAMELS.gui.plot_options import Ui_Plot_Options
+from CAMELS.utility.fit_variable_renaming import replace_name
+from CAMELS.bluesky_handling.evaluation_helper import Evaluator
 from ophyd import SignalRO, Device, Component, BlueskyInterface, Kind
 from bluesky import plan_stubs as bps
 
-from utility.plot_placement import place_widget
+from CAMELS.utility.plot_placement import place_widget
 
 stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']
 

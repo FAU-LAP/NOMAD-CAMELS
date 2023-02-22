@@ -6,9 +6,9 @@ from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QWidget, QGridLayout
 from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtGui import QIcon
 
-from bluesky_handling.evaluation_helper import Evaluator
+from CAMELS.bluesky_handling.evaluation_helper import Evaluator
 
-from utility.plot_placement import place_widget
+from CAMELS.utility.plot_placement import place_widget
 from pkg_resources import resource_filename
 
 

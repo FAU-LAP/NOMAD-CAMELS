@@ -3,9 +3,9 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent
 import qt_material
 
-from gui.settings_window import Ui_settings_window
-from utility.load_save_functions import standard_pref
-from utility.theme_changing import change_theme
+from CAMELS.gui.settings_window import Ui_settings_window
+from CAMELS.utility.load_save_functions import standard_pref
+from CAMELS.utility.theme_changing import change_theme
 
 class Settings_Window(QDialog, Ui_settings_window):
     """Dialog to change the settings used in CAMELS."""

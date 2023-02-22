@@ -14,8 +14,8 @@ from datetime import datetime
 import json
 import ophyd
 
-from main_classes import protocol_class, device_class
-from utility.load_save_helper_functions import load_plots
+from CAMELS.main_classes import protocol_class, device_class
+from CAMELS.utility.load_save_helper_functions import load_plots
 
 appdata_path = f'{getenv("LOCALAPPDATA")}/CAMELS'
 if not isdir(appdata_path):

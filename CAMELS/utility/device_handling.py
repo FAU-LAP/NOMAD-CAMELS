@@ -1,5 +1,5 @@
-from utility import variables_handling
-from bluesky_handling import helper_functions
+from CAMELS.utility import variables_handling
+from CAMELS.bluesky_handling import helper_functions
 
 import copy
 

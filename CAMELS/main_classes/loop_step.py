@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt, QSize, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QTextEdit
 
 
-from utility import treeView_functions
+from CAMELS.utility import treeView_functions
 
 
 

@@ -1,15 +1,15 @@
 from PyQt5.QtWidgets import QWidget, QCheckBox, QTextEdit
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont
 
-# from main_classes.loop_step import Loop_Step, Loop_Step_Container
-# from loop_steps import for_while_loops, read_channels
-from frontpanels.plot_definer import Plot_Button_Overview, Plot_Info,\
+# from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Container
+# from CAMELS.loop_steps import for_while_loops, read_channels
+from CAMELS.frontpanels.plot_definer import Plot_Button_Overview, Plot_Info,\
     Fit_Info
-from loop_steps import make_step_of_type
-from gui.general_protocol_settings import Ui_Protocol_Settings
+from CAMELS.loop_steps import make_step_of_type
+from CAMELS.gui.general_protocol_settings import Ui_Protocol_Settings
 
-from utility.add_remove_table import AddRemoveTable
-from utility import variables_handling
+from CAMELS.utility.add_remove_table import AddRemoveTable
+from CAMELS.utility import variables_handling
 
 
 class Measurement_Protocol:

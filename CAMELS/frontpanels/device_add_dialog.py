@@ -3,12 +3,12 @@ import os
 import sys
 import importlib
 
-from gui.addDeviceDialog import Ui_Dialog_Add_Device
+from CAMELS.gui.addDeviceDialog import Ui_Dialog_Add_Device
 from PyQt5.QtWidgets import QDialog, QMessageBox
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent
 from PyQt5.QtCore import Qt
 
-from utility import treeView_functions, variables_handling
+from CAMELS.utility import treeView_functions, variables_handling
 # device_driver_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
 
 def getInstalledDevices():

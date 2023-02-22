@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QLineEdit, QTextEdit,\
     QComboBox
 
-from main_classes.loop_step import Loop_Step, Loop_Step_Config
+from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
 class Prompt_Loop_Step(Loop_Step):
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):

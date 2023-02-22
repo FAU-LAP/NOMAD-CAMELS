@@ -8,8 +8,8 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 import subprocess
 
-from EPICS_handling import make_ioc
-from utility import variables_handling
+from CAMELS.EPICS_handling import make_ioc
+from CAMELS.utility import variables_handling
 
 import importlib
 import sys

@@ -1,5 +1,5 @@
 import numpy as np
-from utility import variables_handling
+from CAMELS.utility import variables_handling
 
 class Measurement_Channel:
     """Class that represents one single channel. Most important

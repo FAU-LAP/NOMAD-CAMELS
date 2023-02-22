@@ -1,11 +1,11 @@
 from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QComboBox
 from PyQt5.QtCore import Qt
-from main_classes.loop_step import Loop_Step, Loop_Step_Config
+from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
-from gui.read_channels import Ui_read_channels_config
+from CAMELS.gui.read_channels import Ui_read_channels_config
 
-from utility import variables_handling, fit_variable_renaming
-from utility.channels_check_table import Channels_Check_Table
+from CAMELS.utility import variables_handling, fit_variable_renaming
+from CAMELS.utility.channels_check_table import Channels_Check_Table
 
 
 class Read_Channels(Loop_Step):

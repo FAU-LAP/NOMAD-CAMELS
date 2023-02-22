@@ -146,6 +146,7 @@ class Device_Installer(QWidget, Ui_Form):
         search_text = self.lineEdit_search_name.text()
         self.checkboxes.clear()
         self.device_table.clear()
+        self.device_table.setRowCount(0)
         self.device_table.setHorizontalHeaderLabels(['instrument', 'available', 'installed'])
         i = 0
         for dev in sorted(self.all_devs.keys()):
@@ -209,8 +210,5 @@ if __name__ == '__main__':
     app = QApplication([])
 
     widge = Device_Installer()
-    # Show the scroll area
     widge.show()
-
-    # Start the event loop
     app.exec_()

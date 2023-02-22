@@ -1,10 +1,10 @@
 import os.path
 import copy
 
-# from main_classes.protocol_class import Measurement_Protocol
-from utility import variables_handling, device_handling, load_save_functions
+# from CAMELS.main_classes.protocol_class import Measurement_Protocol
+from CAMELS.utility import variables_handling, device_handling, load_save_functions
 
-from bluesky_handling.builder_helper_functions import plot_creator
+from CAMELS.bluesky_handling.builder_helper_functions import plot_creator
 
 standard_string = 'import numpy as np\n'
 standard_string += 'import importlib\n'
@@ -222,7 +222,7 @@ def build_protocol(protocol, file_path,
     protocol_string += standard_start_string
     protocol_string += f'\tcatalog = databroker.catalog["{catalog}"]\n'
     protocol_string += '\tRE.subscribe(catalog.v1.insert)\n\n'
-    protocol_string += '\tfrom utility import tqdm_progress_bar\n'
+    protocol_string += '\tfrom CAMELS.utility import tqdm_progress_bar\n'
     protocol_string += f'\ttqdm_bar = tqdm_progress_bar.ProgressBar({protocol.get_total_steps()})\n\n'
     protocol_string += '\tprotocol_step_information["protocol_stepper_signal"] = tqdm_bar\n'
     protocol_string += '\ttry:\n'

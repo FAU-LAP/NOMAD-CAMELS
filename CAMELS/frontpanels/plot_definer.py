@@ -7,13 +7,13 @@ from PyQt5.QtGui import QFont, QKeyEvent
 
 from lmfit import models
 
-from gui.plot_definer import Ui_Plot_Definer
-from gui.plot_definer_2d import Ui_Plot_Definer_2D
-from gui.fit_definer import Ui_Fit_Definer
+from CAMELS.gui.plot_definer import Ui_Plot_Definer
+from CAMELS.gui.plot_definer_2d import Ui_Plot_Definer_2D
+from CAMELS.gui.fit_definer import Ui_Fit_Definer
 
-from utility.add_remove_table import AddRemoveTable
-from utility import variables_handling
-from utility.fit_variable_renaming import replace_name
+from CAMELS.utility.add_remove_table import AddRemoveTable
+from CAMELS.utility import variables_handling
+from CAMELS.utility.fit_variable_renaming import replace_name
 
 
 plot_types = ['X-Y plot', 'Value-List', '2D plot']

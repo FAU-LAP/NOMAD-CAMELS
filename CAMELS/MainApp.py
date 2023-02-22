@@ -15,21 +15,21 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox,
     QPushButton
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
-from utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, \
+from CAMELS.utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, \
     add_remove_table, theme_changing, device_handling
-from bluesky_handling import protocol_builder, make_catalog
-from EPICS_handling import make_ioc
+from CAMELS.bluesky_handling import protocol_builder, make_catalog
+from CAMELS.EPICS_handling import make_ioc
 
-from frontpanels.helper_panels import pass_ask
+from CAMELS.frontpanels.helper_panels import pass_ask
 
-from gui.mainWindow import Ui_MainWindow
+from CAMELS.gui.mainWindow import Ui_MainWindow
 
-from frontpanels.device_add_dialog import AddDeviceDialog
-from frontpanels.settings_window import Settings_Window
-from main_classes.protocol_class import Measurement_Protocol, General_Protocol_Settings
+from CAMELS.frontpanels.device_add_dialog import AddDeviceDialog
+from CAMELS.frontpanels.settings_window import Settings_Window
+from CAMELS.main_classes.protocol_class import Measurement_Protocol, General_Protocol_Settings
 from commands import change_sequence
 
-from loop_steps import make_step_of_type
+from CAMELS.loop_steps import make_step_of_type
 
 
 from bluesky import RunEngine
@@ -457,7 +457,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name)
 
     def launch_device_builder(self):
-        from tools import VISA_device_builder
+        from CAMELS.tools import VISA_device_builder
         device_builder = VISA_device_builder.VISA_Device_Builder(self)
         device_builder.show()
 
@@ -1019,7 +1019,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
     def build_current_protocol(self, *, put100=True):
-        """Calls the build_protocol from bluesky_handling.protocol_builder
+        """Calls the build_protocol from CAMELS.bluesky_handling.protocol_builder
         for the selected protocol and provides it with a savepath and
         user- and sample-data."""
         self.progressBar_protocols.setValue(0)

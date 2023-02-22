@@ -1,9 +1,9 @@
-from gui.taskSelector import Ui_TaskSelector
-from frontpanels.helper_panels.enterTextDialog import EnterTextDialog
+from CAMELS.gui.taskSelector import Ui_TaskSelector
+from CAMELS.frontpanels.helper_panels.enterTextDialog import EnterTextDialog
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QIcon
 from os import getenv
-from utility.load_save_functions import get_task_list
+from CAMELS.utility.load_save_functions import get_task_list
 
 
 class TaskSelector(QDialog, Ui_TaskSelector):

@@ -1,4 +1,4 @@
-from gui.enterTextDialog import Ui_EnterTextDialog
+from CAMELS.gui.enterTextDialog import Ui_EnterTextDialog
 from PyQt5.QtWidgets import QDialog
 
 class EnterTextDialog(QDialog, Ui_EnterTextDialog):

@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QTextEdit
-from utility import variables_handling
+from CAMELS.utility import variables_handling
 
 import io
 

@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt, pyqtSignal
 import numpy as np
 import pandas as pd
 
-from utility import variables_handling
+from CAMELS.utility import variables_handling
 
 
 class AddRemoveTable(QWidget):

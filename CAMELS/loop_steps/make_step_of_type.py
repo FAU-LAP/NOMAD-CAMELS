@@ -1,9 +1,9 @@
-from main_classes.loop_step import Loop_Step
-from loop_steps import for_while_loops, read_channels, set_channels,\
+from CAMELS.main_classes.loop_step import Loop_Step
+from CAMELS.loop_steps import for_while_loops, read_channels, set_channels,\
     wait_loop_step, if_step, prompt_loop_step, run_subprotocol, simple_sweep,\
     gradient_descent, change_device_config, nd_sweep, set_variables, set_value_popup
 
-from utility import variables_handling
+from CAMELS.utility import variables_handling
 
 step_type_config = {'Change Device Config': [change_device_config.Change_DeviceConf,
                              change_device_config.Change_DeviceConf_Config],

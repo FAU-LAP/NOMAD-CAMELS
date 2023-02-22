@@ -1,12 +1,12 @@
 from PyQt5.QtWidgets import QWidget
 
-from main_classes.loop_step import Loop_Step, Loop_Step_Config
+from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
-from gui.gradient_descent_step import Ui_Grad_Desc
-from utility.add_remove_table import AddRemoveTable
-from utility import variables_handling
-from bluesky_handling import builder_helper_functions
-from frontpanels.plot_definer import Plot_Info
+from CAMELS.gui.gradient_descent_step import Ui_Grad_Desc
+from CAMELS.utility.add_remove_table import AddRemoveTable
+from CAMELS.utility import variables_handling
+from CAMELS.bluesky_handling import builder_helper_functions
+from CAMELS.frontpanels.plot_definer import Plot_Info
 
 class Gradient_Descent_Step(Loop_Step):
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):

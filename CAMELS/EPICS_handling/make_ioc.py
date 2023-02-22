@@ -1,6 +1,6 @@
 import subprocess
 import os
-from utility import variables_handling
+from CAMELS.utility import variables_handling
 
 # Finding / configuring the paths that will be used when building the IOC
 cmd = ['powershell', "echo ($env:LOCALAPPDATA + '\\Packages\\' + ($(get-appxpackage).PackageFamilyName|findstr UbuntuonWindows))"]

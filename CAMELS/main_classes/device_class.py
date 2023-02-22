@@ -9,10 +9,10 @@ from ophyd import EpicsSignalRO
 from ophyd import Device as OphydDevice
 from ophyd.signal import SignalRO
 
-from bluesky_handling import EpicsFieldSignalRO
+from CAMELS.bluesky_handling import EpicsFieldSignalRO
 
-from main_classes.measurement_channel import Measurement_Channel
-from main_classes.add_on import AddOn
+from CAMELS.main_classes.measurement_channel import Measurement_Channel
+from CAMELS.main_classes.add_on import AddOn
 
 
 class Device:

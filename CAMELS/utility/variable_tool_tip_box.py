@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtCore import Qt
 # from PyQt5.QtGui import QStandardItem
 
-from utility import variables_handling
+from CAMELS.utility import variables_handling
 
 
 # class VariableItem(QStandardItem):

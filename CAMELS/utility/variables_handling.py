@@ -3,7 +3,7 @@ from ast import literal_eval
 from PyQt5.QtWidgets import QMenu, QAction
 from PyQt5.QtGui import QColor
 
-# from utility import simpleeval
+# from CAMELS.utility import simpleeval
 
 from bluesky_widgets.models import utils
 

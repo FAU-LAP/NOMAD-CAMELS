@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QGridLayout
 from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtCore import pyqtSignal
 
-from utility import device_handling
+from CAMELS.utility import device_handling
 from pkg_resources import resource_filename
 
 class AddOn(QWidget):

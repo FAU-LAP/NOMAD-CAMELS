@@ -1,7 +1,7 @@
-from main_classes.loop_step import Loop_Step, Loop_Step_Config
+from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
-from utility.add_remove_table import AddRemoveTable
-from utility import variables_handling
+from CAMELS.utility.add_remove_table import AddRemoveTable
+from CAMELS.utility import variables_handling
 
 class Set_Variables(Loop_Step):
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):

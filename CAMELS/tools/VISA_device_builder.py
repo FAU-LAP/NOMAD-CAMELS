@@ -4,9 +4,9 @@ import os
 from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QFileDialog, QMessageBox
 from PyQt5.QtGui import QIcon, QCloseEvent
 
-from utility.add_remove_table import AddRemoveTable
-from utility import variables_handling, fit_variable_renaming
-from tools.VISA_builder import Ui_VISA_Device_Builder
+from CAMELS.utility.add_remove_table import AddRemoveTable
+from CAMELS.utility import variables_handling, fit_variable_renaming
+from CAMELS.tools.VISA_builder import Ui_VISA_Device_Builder
 
 import importlib
 from pkg_resources import resource_filename
@@ -93,7 +93,7 @@ class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
             os.mkdir(fdir)
 
         class_string = f'from {dev_name}.{dev_name}_ophyd import {ophyd_name}\n\n'
-        class_string += 'from main_classes import device_class\n\n'
+        class_string += 'from CAMELS.main_classes import device_class\n\n'
         class_string += 'class subclass(device_class.Device):\n'
         class_string += '\tdef __init__(self, **kwargs):\n'
         class_string += f'\t\tsuper().__init__(name="{dev_name}", virtual=False, tags={search_tags}, directory="{dev_name}", ophyd_device={ophyd_name}, ophyd_class_name="{ophyd_name}", **kwargs)\n'
@@ -111,7 +111,7 @@ class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
         class_string += '\t\tself.load_settings()\n'
 
         ophyd_string = 'from ophyd import Component as Cpt\n\n'
-        ophyd_string += 'from bluesky_handling.visa_signal import VISA_Signal_Write, VISA_Signal_Read, VISA_Device\n\n'
+        ophyd_string += 'from CAMELS.bluesky_handling.visa_signal import VISA_Signal_Write, VISA_Signal_Read, VISA_Device\n\n'
         ophyd_string += f'class {ophyd_name}(VISA_Device):\n'
         for i, name in enumerate(inputs['Name']):
             ophyd_string += f'\t{name} = Cpt(VISA_Signal_Read, name="{name}", query_text="{inputs["Query-Text"][i]}", match_return={inputs["fetch number from return-string"][i]})\n'
@@ -153,7 +153,7 @@ class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
 if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     from PyQt5.QtCore import QCoreApplication
-    from utility import exception_hook
+    from CAMELS.utility import exception_hook
     sys.excepthook = exception_hook.exception_hook
     app = QCoreApplication.instance()
     if app is None:

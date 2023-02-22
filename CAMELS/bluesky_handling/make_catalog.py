@@ -4,7 +4,7 @@ import sys
 import databroker
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from utility import load_save_functions
+from CAMELS.utility import load_save_functions
 
 def make_yml(datapath, catalog_name='CAMELS_CATALOG'):
     catalog_path = databroker.catalog_search_path()[0]

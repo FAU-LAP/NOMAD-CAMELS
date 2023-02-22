@@ -9,11 +9,11 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton
 from PyQt5.QtCore import pyqtSignal, QObject
 from PyQt5.QtGui import QIcon
 
-from bluesky_handling.evaluation_helper import Evaluator
+from CAMELS.bluesky_handling.evaluation_helper import Evaluator
 
-from main_classes.plot_widget import MPLwidget
+from CAMELS.main_classes.plot_widget import MPLwidget
 
-from utility.plot_placement import place_widget
+from CAMELS.utility.plot_placement import place_widget
 from pkg_resources import resource_filename
 
 stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']

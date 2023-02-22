@@ -1,4 +1,4 @@
-from frontpanels.plot_definer import Plot_Info, Fit_Info
+from CAMELS.frontpanels.plot_definer import Plot_Info, Fit_Info
 
 
 def load_plots(plots:list, plot_data):

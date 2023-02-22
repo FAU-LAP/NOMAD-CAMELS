@@ -6,11 +6,11 @@ from PyQt5.QtMultimedia import QSound
 
 import logging
 
-from utility.load_save_functions import appdata_path
+from CAMELS.utility.load_save_functions import appdata_path
 
 from bluesky.utils import RunEngineInterrupted
 
-from utility import variables_handling
+from CAMELS.utility import variables_handling
 from pkg_resources import resource_filename
 
 if not os.path.isfile(f'{appdata_path}/logging.log'):

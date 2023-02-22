@@ -1,10 +1,10 @@
 import importlib
 from PyQt5.QtWidgets import QComboBox, QLabel
 
-from main_classes.loop_step import Loop_Step, Loop_Step_Config
-from main_classes.device_class import Device_Config_Sub
+from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
+from CAMELS.main_classes.device_class import Device_Config_Sub
 
-from utility import variables_handling
+from CAMELS.utility import variables_handling
 
 class Change_DeviceConf(Loop_Step):
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):

@@ -4,7 +4,7 @@ import os
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QIcon, QPixmap
-from gui.installer_window import Ui_InstallerWindow
+from CAMELS.gui.installer_window import Ui_InstallerWindow
 
 class InstallerWindow(QMainWindow, Ui_InstallerWindow):
     def __init__(self, parent=None):

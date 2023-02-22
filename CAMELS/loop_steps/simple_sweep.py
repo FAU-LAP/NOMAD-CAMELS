@@ -1,14 +1,14 @@
 from PyQt5.QtWidgets import QComboBox, QLabel, QCheckBox
 from PyQt5.QtGui import QFont
 
-from main_classes.loop_step import Loop_Step_Config
-from utility import variables_handling
-from utility.channels_check_table import Channels_Check_Table
-from utility.load_save_helper_functions import load_plots
-from bluesky_handling import builder_helper_functions
-from frontpanels.plot_definer import Plot_Button_Overview
+from CAMELS.main_classes.loop_step import Loop_Step_Config
+from CAMELS.utility import variables_handling
+from CAMELS.utility.channels_check_table import Channels_Check_Table
+from CAMELS.utility.load_save_helper_functions import load_plots
+from CAMELS.bluesky_handling import builder_helper_functions
+from CAMELS.frontpanels.plot_definer import Plot_Button_Overview
 
-from loop_steps.for_while_loops import For_Loop_Step_Config_Sub, For_Loop_Step
+from CAMELS.loop_steps.for_while_loops import For_Loop_Step_Config_Sub, For_Loop_Step
 
 class Simple_Sweep(For_Loop_Step):
     def __init__(self, name='', children=None, parent_step=None, step_info=None,

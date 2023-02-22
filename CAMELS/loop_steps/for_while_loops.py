@@ -2,12 +2,12 @@ import numpy as np
 from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QGridLayout, QLineEdit
 from PyQt5.QtCore import Qt
 
-from main_classes.loop_step import Loop_Step_Container, Loop_Step_Config
-from utility.number_formatting import format_number
-from utility import variables_handling
-from utility.variable_tool_tip_box import Variable_Box
+from CAMELS.main_classes.loop_step import Loop_Step_Container, Loop_Step_Config
+from CAMELS.utility.number_formatting import format_number
+from CAMELS.utility import variables_handling
+from CAMELS.utility.variable_tool_tip_box import Variable_Box
 
-from gui.for_loop import Ui_for_loop_config
+from CAMELS.gui.for_loop import Ui_for_loop_config
 
 class While_Loop_Step(Loop_Step_Container):
     """A loopstep that adds a simple While Loop with a condition, that
