@@ -56,7 +56,20 @@ class Instrument_Config(QWidget, Ui_Form):
                                                   ioc_dict=instrument.ioc_settings,
                                                   additional_info=instrument.additional_info)
                 self.config_tabs.addTab(inst_widge, name)
+                inst_widge.name_change.connect(self.name_config_changed)
         self.pushButton_add.setEnabled(True)
+
+
+    def name_config_changed(self, new_name):
+        current_tab = self.config_tabs.currentIndex()
+        conf = self.config_tabs.widget(current_tab)
+        ind = self.tableWidget_instruments.selectedIndexes()[0]
+        instr = self.tableWidget_instruments.item(ind.row(), 0).text()
+        if hasattr(conf, 'data') and new_name not in self.get_all_names():
+            self.active_instruments[instr][current_tab].custom_name = new_name
+            conf.data = new_name
+            self.config_tabs.setTabText(current_tab, new_name)
+
 
     def get_config(self):
         self.get_current_config()
@@ -98,6 +111,7 @@ class Instrument_Config(QWidget, Ui_Form):
                                             config_dict={}, ioc_dict={},
                                             additional_info={})
         self.config_tabs.addTab(single_widge, name)
+        single_widge.name_change.connect(self.name_config_changed)
         self.tableWidget_instruments.item(ind.row(), 1).setText(str(len(self.active_instruments[instr])))
 
     def get_all_names(self):
