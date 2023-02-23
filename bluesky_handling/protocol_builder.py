@@ -15,7 +15,7 @@ standard_string += 'from bluesky.callbacks.best_effort import BestEffortCallback
 standard_string += 'import bluesky.plan_stubs as bps\n'
 standard_string += 'import databroker\n'
 # standard_string += 'from bluesky_widgets.qt.threading import wait_for_workers_to_quit\n'
-standard_string += 'from PyQt5.QtWidgets import QApplication\n'
+standard_string += 'from PyQt5.QtWidgets import QApplication, QMessageBox\n'
 standard_string += 'from PyQt5.QtCore import QCoreApplication\n'
 standard_string += 'from epics import caput\n'
 standard_string += 'import datetime\n'
@@ -46,7 +46,7 @@ standard_start_string += '\tRE = RunEngine()\n'
 standard_start_string += '\tbec = BestEffortCallback()\n'
 standard_start_string += '\tRE.subscribe(bec)\n'
 standard_start_string2 = '\t\tplot_etc = create_plots(RE)\n'
-standard_start_string2 += '\t\tadditional_step_data = steps_add_main(RE)\n'
+standard_start_string2 += '\t\tadditional_step_data = steps_add_main(RE, devs)\n'
 standard_start_string2 += '\t\tmain(RE=RE, catalog=catalog, devices=devs, md=md)\n'
 standard_start_string3 = '\tapp = QCoreApplication.instance()\n'
 standard_start_string3 += '\tprint("protocol finished!")\n'
@@ -89,11 +89,14 @@ def build_protocol(protocol, file_path,
     sampledata : dict, default None
         Should contain information about the sample
     """
+    variables_handling.read_channel_names.clear()
+    variables_handling.read_channel_sets.clear()
     device_import_string = '\n'
     devices_string = '\t\tdevs = {}\n\t\tdevice_config = {}\n'
     variable_string = '\nnamespace = {}\n'
     variable_string += 'all_fits = {}\n'
     variable_string += 'plots = []\n'
+    variable_string += 'boxes = {}\n'
     additional_string_devices = ''
     final_string = ''
     for var, val in variables_handling.protocol_variables.items():
@@ -171,7 +174,7 @@ def build_protocol(protocol, file_path,
         for i, name in enumerate(protocol.metadata['Name']):
             md_dict[name] = protocol.metadata['Value'][i]
         devices_string += f'\t\tmd.update({md_dict})\n'
-    plot_string, plotting = plot_creator(protocol.plots)
+    plot_string, plotting = plot_creator(protocol.plots, multi_stream=True)
     # for device in protocol.get_used_devices():
     #     print(device)
     protocol_string = 'import sys\n'

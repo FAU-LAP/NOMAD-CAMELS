@@ -3,7 +3,6 @@ from collections import ChainMap
 import threading
 import numpy as np
 import lmfit
-import time
 
 import matplotlib.pyplot as plt
 from bluesky.callbacks.mpl_plotting import LivePlot, LiveFitPlot
@@ -22,6 +21,8 @@ from utility.fit_variable_renaming import replace_name
 from bluesky_handling.evaluation_helper import Evaluator
 from ophyd import SignalRO, Device, Component, BlueskyInterface, Kind
 from bluesky import plan_stubs as bps
+
+from utility.plot_placement import place_widget
 
 stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
@@ -118,7 +119,7 @@ class PlotWidget(QWidget):
     def __init__(self, x_name, y_names, *, legend_keys=None, xlim=None,
                  ylim=None, epoch='run', parent=None, namespace=None, ylabel='',
                  xlabel='', title='', stream_name='primary', fits=None,
-                 do_plot=True, **kwargs):
+                 do_plot=True, multi_stream=False, **kwargs):
         super().__init__(parent=parent)
         canvas = MPLwidget()
         if isinstance(y_names, str):
@@ -172,7 +173,8 @@ class PlotWidget(QWidget):
                                       ax=canvas.axes, evaluator=eva,
                                       xlabel=xlabel, ylabel=ylabel, title=title,
                                       stream_name=stream_name, do_plot=do_plot,
-                                      fitPlots=self.liveFitPlots, **kwargs)
+                                      fitPlots=self.liveFitPlots,
+                                      multi_stream=multi_stream, **kwargs)
         self.livePlot.new_data.connect(self.show)
         self.toolbar = NavigationToolbar2QT(canvas, self)
 
@@ -198,6 +200,7 @@ class PlotWidget(QWidget):
         self.options_open = False
         if do_plot:
             self.show()
+        place_widget(self)
 
     def clear_plot(self):
         """Clear the plot by removing the data from the plot and clearing all
@@ -736,7 +739,7 @@ class MultiLivePlot(LivePlot, QObject):
     def __init__(self, ys=(), x=None, *, legend_keys=None, xlim=None, ylim=None,
                  ax=None, epoch='run', xlabel='', ylabel='', evaluator=None,
                  title='', stream_name='primary', do_plot=True, fitPlots=None,
-                 **kwargs):
+                 multi_stream=False, **kwargs):
         LivePlot.__init__(self, y=ys[0], x=x, legend_keys=legend_keys,
                           xlim=xlim, ylim=ylim, ax=ax, epoch=epoch, **kwargs)
         QObject.__init__(self)
@@ -745,8 +748,9 @@ class MultiLivePlot(LivePlot, QObject):
         self.__setup_event = threading.Event()
         self.eva = evaluator
         self.stream_name = stream_name
-        self.desc = ''
+        self.desc = []
         self.do_plot = do_plot
+        self.multi_stream = multi_stream
         self.fitPlots = fitPlots or []
         for fit in self.fitPlots:
             fit.parent_plot = self
@@ -840,11 +844,13 @@ class MultiLivePlot(LivePlot, QObject):
 
     def descriptor(self, doc):
         if doc['name'] == self.stream_name:
-            self.desc = doc['uid']
+            self.desc.append(doc['uid'])
         elif doc['name'].startswith(f'{self.stream_name}_fits_readying_'):
             for fit in self.fitPlots:
                 if doc['name'] == f'{self.stream_name}_fits_readying_{fit.livefit.name}':
                     self.descs_fit_readying[doc['uid']] = fit
+        elif self.multi_stream and doc['name'].startswith(self.stream_name):
+            self.desc.append(doc['uid'])
 
     def clear_plot(self):
         self.x_data.clear()
@@ -859,7 +865,7 @@ class MultiLivePlot(LivePlot, QObject):
         # This inner try/except block handles seq_num and time, which could
         # be keys in the data or accessing the standard entries in every
         # event.
-        if doc['descriptor'] != self.desc:
+        if doc['descriptor'] not in self.desc:
             if doc['descriptor'] in self.descs_fit_readying:
                 self.descs_fit_readying[doc['descriptor']].get_ready()
             return

@@ -4,4 +4,4 @@ camelsEnv/
 devices/devices_drivers/keithley_237/keithley_237/k237_visa_test.py
 **/__pycache__/
 __pycache__/
-
+.vscode/
