@@ -53,7 +53,8 @@ class Device:
 
     def __init__(self, name='', virtual=False, tags=None, files=None,
                  directory='', requirements=None, ophyd_device=None,
-                 ophyd_class_name='', additional_info=None, **kwargs):
+                 ophyd_class_name='', additional_info=None, non_epics_class=None,
+                 **kwargs):
         """
         Parameters
         ----------
@@ -98,6 +99,8 @@ class Device:
             ophyd_device = OphydDevice
         # self.ophyd_device = ophyd_device
         self.ophyd_class = ophyd_device
+        if non_epics_class:
+            self.ophyd_class_no_epics = non_epics_class
         self.ophyd_instance = ophyd_device(name='test')
         outputs = get_outputs(self.ophyd_instance)
         for chan in get_channels(self.ophyd_instance):

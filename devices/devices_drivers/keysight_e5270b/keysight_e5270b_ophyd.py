@@ -500,17 +500,14 @@ class Keysight_E5270B(VISA_Device):
         self.last_MM_channel=chnum
         self.last_MM_value[chnum-1] = val
         self.visa_instrument.write(f'MM {val},{chnum}')
-        print(f'from set_MM_val: MM {val},{chnum}')
         return f'MM {val},{chnum}'
 
     def set_CMM_value(self, val, chnum):
         self.last_CMM_value[chnum - 1] = val
         self.visa_instrument.write(f'CMM {chnum},{val}')
-        print(f'write string = CMM {chnum},{val}')
         return f'CMM {chnum},{val}'
 
     def measure_single_voltage(self, chnum):
-        print(f'voltage measurement {chnum=}')
         if self.last_MM_channel != chnum:
             self.set_MM_value(1, chnum)
         elif self.last_MM_value[chnum-1] != 1:
@@ -520,7 +517,6 @@ class Keysight_E5270B(VISA_Device):
         return 'XE'
 
     def measure_single_current(self, chnum):
-        print(f'current measurement {chnum=}')
         if self.last_MM_channel != chnum:
             self.set_MM_value(1, chnum)
         if self.last_MM_value[chnum-1] != 1:
@@ -538,7 +534,6 @@ class Keysight_E5270B(VISA_Device):
     def source_current(self, current, chnum, range_signal,):
         irange = range_signal.get()
         Vcomp = self.volt_compliance_array[chnum-1]
-        print(f'DI {chnum},{irange},{current},{Vcomp}')
         return f'DI {chnum},{irange},{current},{Vcomp}'
 
     def source_voltage(self, voltage, chnum, range_signal,):

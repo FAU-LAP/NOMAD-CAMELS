@@ -36,7 +36,7 @@ standard_pref = {'autosave': True,
                  'py_files_path': f'{appdata_path}/python_files'.replace('\\','/'),
                  'meas_files_path': os.path.expanduser('~/CAMELS_data').replace('\\','/'),
                  'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/'),
-                 'autostart_ioc': True,
+                 'autostart_ioc': False,
                  'databroker_catalog_name': 'CAMELS_CATALOG',
                  'play_camel_on_error': False}
 
@@ -202,7 +202,7 @@ def make_save_dict(obj):
     object. Thus working recursively if an attribute of obj also has a
     __save_dict__"""
     for key in obj.__dict__:
-        if key == '__save_dict__' or (isinstance(obj, device_class.Device) and key in ['add_ons', 'ophyd_class']):
+        if key == '__save_dict__' or (isinstance(obj, device_class.Device) and key in ['add_ons', 'ophyd_class', 'ophyd_class_no_epics']):
             continue
         add_string = get_save_str(obj.__dict__[key])
         if add_string is not None:

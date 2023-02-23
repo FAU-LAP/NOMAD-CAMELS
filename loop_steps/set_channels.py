@@ -48,7 +48,7 @@ class Set_Channels(Loop_Step):
                 raise Exception(f'Trying to set channel {channel} in {self.full_name}, but it does not exist!')
             dev, chan = variables_handling.channels[channel].name.split('.')
             val = self.channels_values['Values'][i]
-            protocol_string += f'{tabs}yield from bps.abs_set(devs["{dev}"].{chan}, {val}, group="A")\n'
+            protocol_string += f'{tabs}yield from bps.abs_set(devs["{dev}"].{chan}, eva.eval("{val}"), group="A")\n'
         if self.wait_for_set:
             protocol_string += f'{tabs}yield from bps.wait("A")\n'
         return protocol_string

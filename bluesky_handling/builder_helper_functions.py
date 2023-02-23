@@ -27,7 +27,7 @@ def get_plot_add_string(name, stream, subprotocol=False):
 
 
 
-def plot_creator(plot_data, func_name='create_plots'):
+def plot_creator(plot_data, func_name='create_plots', multi_stream=False):
     plot_string = f'\ndef {func_name}(RE, stream="primary"):\n'
     plot_string += standard_plot_string
     plot_string += '\tsubs = []\n'
@@ -49,7 +49,7 @@ def plot_creator(plot_data, func_name='create_plots'):
             plot_string += '\tfits = []\n'
             for fit in fits:
                 plot_string += f'\tfits.append({fit.__dict__})\n'
-            plot_string += f'\tplot_{i} = plot_widget.PlotWidget(x_name="{plot.x_axis or "time"}", y_names={plot.y_axes["formula"]}, ylabel="{plot.ylabel}", xlabel="{plot.xlabel}", title="{plot.title}", stream_name=stream, namespace=namespace, fits=fits)\n'
+            plot_string += f'\tplot_{i} = plot_widget.PlotWidget(x_name="{plot.x_axis or "time"}", y_names={plot.y_axes["formula"]}, ylabel="{plot.ylabel}", xlabel="{plot.xlabel}", title="{plot.title}", stream_name=stream, namespace=namespace, fits=fits, multi_stream={multi_stream})\n'
             plot_string += f'\tplots.append(plot_{i})\n'
             plot_string += f'\tplot_{i}.show()\n'
             plot_string += f'\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n'

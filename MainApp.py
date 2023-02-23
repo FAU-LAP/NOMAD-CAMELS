@@ -960,15 +960,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             spec.loader.exec_module(mod)
             mod.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
             plots, subs, _ = mod.create_plots(self.run_engine)
-            additionals = mod.steps_add_main(self.run_engine)
+            device_list = self.current_protocol.get_used_devices()
+            devs, dev_data = device_handling.instantiate_devices(device_list)
+            self.current_protocol_device_list = device_list
+            additionals = mod.steps_add_main(self.run_engine, devs)
             self.re_subs += subs
             self.add_subs_from_dict(additionals)
             self.pushButton_run_protocol.setEnabled(False)
             self.pushButton_pause_protocol.setEnabled(True)
             self.pushButton_stop_protocol.setEnabled(True)
-            device_list = self.current_protocol.get_used_devices()
-            devs, dev_data = device_handling.instantiate_devices(device_list)
-            self.current_protocol_device_list = device_list
             mod.main(self.run_engine, catalog=self.databroker_catalog, devices=devs, md={'devices': dev_data})
             self.protocol_stepper_signal.emit(100)
         # self.run_test = qthreads.Run_Protocol_test(self.run_engine, mod.main)
