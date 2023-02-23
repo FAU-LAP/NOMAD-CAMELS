@@ -577,7 +577,7 @@ class Local_VISA(Connection_Config):
 class Simple_Config(Device_Config):
     def __init__(self, parent=None, device_name='', data='', settings_dict=None,
                  config_dict=None, ioc_dict=None, additional_info=None,
-                 comboBoxes=None, config_types=None):
+                 comboBoxes=None, config_types=None, labels=None):
         super().__init__(parent, device_name=device_name, data=data,
                          settings_dict=settings_dict,
                          config_dict=config_dict, ioc_dict=ioc_dict,
@@ -586,7 +586,8 @@ class Simple_Config(Device_Config):
                                             parent=self,
                                             config_dict=config_dict,
                                             comboBoxes=comboBoxes,
-                                            config_types=config_types)
+                                            config_types=config_types,
+                                            labels=labels)
         self.layout().addWidget(self.sub_widget, 10, 0, 1, 5)
         self.load_settings()
 
@@ -601,13 +602,14 @@ class Simple_Config(Device_Config):
 
 class Simple_Config_Sub(Device_Config_Sub):
     def __init__(self, settings_dict=None, parent=None, config_dict=None,
-                 comboBoxes=None, config_types=None):
+                 comboBoxes=None, config_types=None, labels=None):
         super().__init__(settings_dict=settings_dict, parent=parent,
                          config_dict=config_dict)
         self.setLayout(QGridLayout())
         self.layout().setContentsMargins(0,0,0,0)
         comboBoxes = comboBoxes or {}
         config_types = config_types or {}
+        labels = labels or {}
         self.setting_checks = {}
         self.setting_floats = {}
         self.setting_strings = {}
@@ -618,9 +620,10 @@ class Simple_Config_Sub(Device_Config_Sub):
             if name in comboBoxes:
                 self.setting_combos[name] = QComboBox()
                 self.setting_combos[name].addItems(comboBoxes[name])
+                self.setting_combos[name].setCurrentText(val)
             elif name in config_types:
                 if config_types[name] == 'bool':
-                    self.setting_checks[name] = QCheckBox(name)
+                    self.setting_checks[name] = QCheckBox(labels[name] if name in labels else name)
                     if isinstance(val, bool):
                         self.setting_checks[name].setChecked(val)
                 elif config_types[name] == 'float':
@@ -630,7 +633,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 else:
                     raise Exception(f'Named config_type {config_types[name]} of {name} is not supported in Simple_Device_Config!')
             elif isinstance(val, bool):
-                self.setting_checks[name] = QCheckBox(name)
+                self.setting_checks[name] = QCheckBox(labels[name] if name in labels else name)
                 self.setting_checks[name].setChecked(val)
             elif isinstance(val, float) or isinstance(val, int):
                 self.setting_floats[name] = QLineEdit(str(val))
@@ -646,9 +649,10 @@ class Simple_Config_Sub(Device_Config_Sub):
             if name in comboBoxes:
                 self.config_combos[name] = QComboBox()
                 self.config_combos[name].addItems(comboBoxes[name])
+                self.config_combos[name].setCurrentText(val)
             elif name in config_types:
                 if config_types[name] == 'bool':
-                    self.config_checks[name] = QCheckBox(name)
+                    self.config_checks[name] = QCheckBox(labels[name] if name in labels else name)
                     if isinstance(val, bool):
                         self.config_checks[name].setChecked(val)
                 elif config_types[name] == 'float':
@@ -658,7 +662,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 else:
                     raise Exception(f'Named config_type {config_types[name]} of {name} is not supported in Simple_Device_Config!')
             elif isinstance(val, bool):
-                self.config_checks[name] = QCheckBox(name)
+                self.config_checks[name] = QCheckBox(labels[name] if name in labels else name)
                 self.config_checks[name].setChecked(val)
             elif isinstance(val, float) or isinstance(val, int):
                 self.config_floats[name] = QLineEdit(str(val))
@@ -676,21 +680,21 @@ class Simple_Config_Sub(Device_Config_Sub):
                 col = 0
                 row += 1
         for name, widge in self.setting_floats.items():
-            self.layout().addWidget(QLabel(name), row, col)
+            self.layout().addWidget(QLabel(labels[name] if name in labels else name), row, col)
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
         for name, widge in self.setting_strings.items():
-            self.layout().addWidget(QLabel(name), row, col)
+            self.layout().addWidget(QLabel(labels[name] if name in labels else name), row, col)
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
         for name, widge in self.setting_combos.items():
-            self.layout().addWidget(QLabel(name), row, col)
+            self.layout().addWidget(QLabel(labels[name] if name in labels else name), row, col)
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
@@ -703,21 +707,21 @@ class Simple_Config_Sub(Device_Config_Sub):
                 col = 0
                 row += 1
         for name, widge in self.config_floats.items():
-            self.layout().addWidget(QLabel(name), row, col)
+            self.layout().addWidget(QLabel(labels[name] if name in labels else name), row, col)
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
         for name, widge in self.config_strings.items():
-            self.layout().addWidget(QLabel(name), row, col)
+            self.layout().addWidget(QLabel(labels[name] if name in labels else name), row, col)
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
         for name, widge in self.config_combos.items():
-            self.layout().addWidget(QLabel(name), row, col)
+            self.layout().addWidget(QLabel(labels[name] if name in labels else name), row, col)
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
