@@ -5,19 +5,29 @@ from PyQt5.QtCore import Qt
 
 from CAMELS.gui.instrument_config import Ui_Form
 
-from CAMELS.frontpanels.device_installer import getInstalledDevices
+from CAMELS.frontpanels.instrument_installer import getInstalledDevices
 
 
 class Instrument_Config(QWidget, Ui_Form):
-    def __init__(self, parent=None):
+    def __init__(self, active_instruments=None, parent=None):
         super().__init__(parent)
         self.setupUi(self)
         self.installed_instr = getInstalledDevices()
         self.packages = {}
+        active_instruments = active_instruments or {}
         self.active_instruments = {}
+        for instrument in active_instruments.values():
+            instr = instrument.name
+            if instr in self.active_instruments:
+                self.active_instruments[instr].append(instrument)
+            else:
+                self.active_instruments[instr] = [instrument]
         for k in self.installed_instr:
             if k not in self.active_instruments:
                 self.active_instruments[k] = []
+        for k in self.active_instruments:
+            if k not in self.installed_instr:
+                raise Exception(f'Instrument type "{k}" in active instruments, but is not installed!')
         self.tableWidget_instruments.setColumnCount(2)
 
         self.tableWidget_instruments.verticalHeader().setHidden(True)
@@ -124,7 +134,7 @@ class Instrument_Config(QWidget, Ui_Form):
     def remove_instance(self):
         ind = self.config_tabs.currentIndex()
         name = self.config_tabs.tabText(ind)
-        remove_dialog = QMessageBox.question(self, 'Remove entry?',
+        remove_dialog = QMessageBox.question(self, 'Remove instrument?',
                                              f'Are you sure you want to remove the instrument {name}?',
                                              QMessageBox.Yes | QMessageBox.No)
         if remove_dialog != QMessageBox.Yes:

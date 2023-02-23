@@ -1,7 +1,7 @@
 import subprocess
 
 from CAMELS.gui.device_installer import Ui_Form
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QCheckBox
+from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QCheckBox, QMessageBox
 from PyQt5.QtGui import QBrush, QColor, QFont
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
@@ -42,15 +42,18 @@ def getAllDevices():
 bold_font = QFont()
 bold_font.setBold(True)
 
-class Device_Installer(QWidget, Ui_Form):
+class Instrument_Installer(QWidget, Ui_Form):
     """
     Parameters
     ----------
     parent : QWidget
         handed over to QWidget."""
-    def __init__(self, parent=None):
+    def __init__(self, active_instruments=None, parent=None):
         super().__init__(parent=parent)
         self.setupUi(self)
+
+        self.active_instruments = active_instruments or {}
+
         self.device_table.setColumnCount(3)
         self.device_table.setHorizontalHeaderLabels(['instrument', 'available', 'installed'])
         self.device_table.verticalHeader().setVisible(False)
@@ -90,6 +93,11 @@ class Device_Installer(QWidget, Ui_Form):
                 continue
             dev = box.text()
             if ignore_version:
+                remove_dialog = QMessageBox.question(self, 'Uninstall instrument?',
+                                                     f'You are trying to uninstall the instrument "{dev}", but it may still be in use.\nContinue?',
+                                                     QMessageBox.Yes | QMessageBox.No)
+                if remove_dialog != QMessageBox.Yes:
+                    continue
                 devs.append(dev)
                 continue
             if dev in self.installed_devs and self.all_devs[dev] == self.installed_devs[dev]:
@@ -209,6 +217,6 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     app = QApplication([])
 
-    widge = Device_Installer()
+    widge = Instrument_Installer()
     widge.show()
     app.exec_()

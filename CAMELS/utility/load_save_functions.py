@@ -131,7 +131,7 @@ def load_save_dict(string_dict:dict, object_dict:dict, update_missing_key=False,
                 obj.setText(val)
             elif key == 'protocols_dict':
                 load_protocols_dict(val, obj)
-            elif key == 'active_devices_dict':
+            elif key in ['active_devices_dict', 'active_instruments']:
                 load_devices_dict(val, obj)
             elif hasattr(obj, '__save_dict__') or hasattr(obj, '__dict__'):
                 load_save_dict(val, obj.__dict__)
@@ -202,7 +202,7 @@ def make_save_dict(obj):
     object. Thus working recursively if an attribute of obj also has a
     __save_dict__"""
     for key in obj.__dict__:
-        if key == '__save_dict__' or (isinstance(obj, device_class.Device) and key in ['add_ons', 'ophyd_class', 'ophyd_class_no_epics']):
+        if key == '__save_dict__' or (isinstance(obj, device_class.Device) and key in ['add_ons', 'ophyd_class', 'ophyd_class_no_epics', 'channels', 'virtual', 'tags', 'files', 'directory', 'requirements', 'ophyd_class_name', 'connection']):
             continue
         add_string = get_save_str(obj.__dict__[key])
         if add_string is not None:
@@ -256,9 +256,12 @@ def load_devices_dict(string_dict, devices_dict):
         dev_data = string_dict[key]
         name = dev_data['name']
         try:
-            dev_lib = importlib.import_module(f'{name}.{name}')
+            dev_lib = importlib.import_module(f'camels_driver_{name}.{name}')
         except Exception as e:
-            raise Exception(f'Could not import device module {name}\n{e}')
+            try:
+                dev_lib = importlib.import_module(f'{name}.{name}')
+            except Exception as e2:
+                raise Exception(f'Could not import device module {name}\n{e}\n{e2}')
         dev = dev_lib.subclass()
         dev.name = name
         if 'connection' in dev_data:
