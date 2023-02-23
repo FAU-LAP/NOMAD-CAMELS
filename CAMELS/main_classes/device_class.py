@@ -12,7 +12,6 @@ from ophyd.signal import SignalRO
 from CAMELS.bluesky_handling import EpicsFieldSignalRO
 
 from CAMELS.main_classes.measurement_channel import Measurement_Channel
-from CAMELS.main_classes.add_on import AddOn
 
 
 class Device:
@@ -80,7 +79,6 @@ class Device:
         """
 
         self.__save_dict__ = {}  # TODO use or remove
-        self.connection = Device_Connection()  # TODO use or remove
         self.name = name
         self.custom_name = name
         self.virtual = virtual
@@ -205,14 +203,6 @@ def get_channels(dev:OphydDevice):
             channels.append(name)
     return channels
 
-
-class Device_Connection:  # TODO use or remove
-    def __init__(self, connection_type=None, **kwargs):
-        self.__save_dict__ = {}
-        self.connection_type = connection_type
-        if connection_type == 'EPICS: prologix-GPIB':
-            self.IP_address = kwargs['IP_address']
-            self.GPIB_address = kwargs['GPIB_address']
 
 
 class Device_Config(QWidget):
