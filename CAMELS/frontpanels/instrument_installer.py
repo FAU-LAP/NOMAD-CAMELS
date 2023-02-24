@@ -16,27 +16,34 @@ if sys.version_info >= (3, 8):
 else:
     import importlib_metadata
 
+all_instr = {}
+installed_instr = {}
 
 def getInstalledDevices():
     """Goes through the given device_driver_path and returns a list of
     the available devices."""
-    devs = {}
+    global installed_instr
+    if installed_instr:
+        return installed_instr
     for x in importlib_metadata.distributions():
         name = x.metadata['Name']
         version = x.version
         if name.startswith('camels-driver-'):
-            devs[name[14:].replace('-', '_')] = version
-    return devs
+            installed_instr[name[14:].replace('-', '_')] = version
+    return installed_instr
 
 def getAllDevices():
     """So far only returns the installed devices, should in future work
     with the online repository of drivers."""
+    global all_instr
+    if all_instr:
+        return all_instr
+    all_instr = {}
     devices_str = requests.get('https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt').text
-    devs = {}
     for x in devices_str.splitlines():
         name, version = x.split('==')
-        devs[name.replace('-', '_')] = version
-    return devs
+        all_instr[name.replace('-', '_')] = version
+    return all_instr
 
 
 bold_font = QFont()

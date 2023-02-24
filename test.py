@@ -1,84 +1,51 @@
-from PyQt5.QtWidgets import QApplication, QScrollArea, QWidget, QVBoxLayout, QPushButton, QAbstractButton
-from PyQt5.QtCore import Qt, QMimeData, QByteArray, QDataStream, QIODevice
-from PyQt5.QtGui import QDrag
+from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QPushButton, QApplication
 
-class MyButton(QPushButton):
-    def __init__(self, text, parent=None):
-        super().__init__(text, parent)
-        self.setAcceptDrops(True)
-        self.setAutoFillBackground(True)
-        self.setFlat(True)
-        self.setFixedHeight(50)
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.drag_start_position = event.pos()
-
-        super().mousePressEvent(event)
-
-    def mouseMoveEvent(self, event):
-        if event.buttons() != Qt.LeftButton:
-            return
-
-        if (event.pos() - self.drag_start_position).manhattanLength() < QApplication.startDragDistance():
-            return
-
-        mime_data = QMimeData()
-        byte_array = QByteArray()
-        data_stream = QDataStream(byte_array, QIODevice.WriteOnly)
-        data_stream.writeString(self.objectName().encode())
-        mime_data.setData('application/x-dnditemdata', byte_array)
-
-        drag = QDrag(self)
-        drag.setMimeData(mime_data)
-        drag.setHotSpot(event.pos() - self.rect().topLeft())
-        drop_action = drag.exec_(Qt.MoveAction)
-
-    def dragEnterEvent(self, event):
-        if event.mimeData().hasFormat('application/x-dnditemdata'):
-            event.accept()
-        else:
-            event.ignore()
-
-    def dropEvent(self, event):
-        if event.mimeData().hasFormat('application/x-dnditemdata'):
-            byte_array = event.mimeData().data('application/x-dnditemdata')
-            data_stream = QDataStream(byte_array, QIODevice.ReadOnly)
-            button_name = data_stream.readString()
-
-            button = self.parent().findChild(QAbstractButton, button_name.decode())
-
-            if button is not self:
-                self.move(button.pos())
-                button.move(event.pos())
-                event.setDropAction(Qt.MoveAction)
-                event.accept()
-            else:
-                event.ignore()
-        else:
-            event.ignore()
-
-class Example(QWidget):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        scroll_area = QScrollArea(self)
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setMinimumSize(500, 500)
-        widget = QWidget(scroll_area)
-        scroll_area.setWidget(widget)
-        layout = QVBoxLayout(widget)
+        # create central widget
+        self.central_widget = CentralWidget()
+        self.setCentralWidget(self.central_widget)
 
-        for i in range(10):
-            button = MyButton('Button {}'.format(i), widget)
-            button.setObjectName('Button{}'.format(i))
-            layout.addWidget(button)
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.central_widget.updateLayout()
 
-        # self.setGeometry(300, 300, 300, 400)
+
+class CentralWidget(QWidget):
+
+    def __init__(self):
+        super().__init__()
+        # create grid layout and add buttons
+        self.layout = QGridLayout(self)
+        self.buttons = []
+        for i in range(5):
+            button = QPushButton(f"Button {i+1}", self)
+            button.setFixedSize(50, 50)
+            self.buttons.append(button)
+            self.layout.addWidget(button, i // 2, i % 2)
+
+    def updateLayout(self):
+        width = self.width()
+
+        # calculate minimum column width based on button size
+        button_width = self.buttons[0].width()
+        min_column_width = button_width * 1.5
+
+        # calculate number of columns based on current width
+        columns = max(1, width // min_column_width)
+
+        # calculate new positions of buttons based on columns
+        positions = [(i // columns, i % columns) for i in range(5)]
+        for button, position in zip(self.buttons, positions):
+            self.layout.addWidget(button, *position)
+
+
+
 
 if __name__ == '__main__':
-    import sys
-    app = QApplication(sys.argv)
-    ex = Example()
-    ex.show()
-    sys.exit(app.exec_())
+    app = QApplication([])
+    area = MainWindow()
+    area.show()
+    app.exec_()

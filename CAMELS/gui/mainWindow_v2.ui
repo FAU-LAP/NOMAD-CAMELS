@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>910</width>
-    <height>527</height>
+    <height>487</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -162,13 +162,13 @@ Instruments</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>120</width>
-            <height>120</height>
+            <width>100</width>
+            <height>100</height>
            </size>
           </property>
           <property name="font">
            <font>
-            <pointsize>70</pointsize>
+            <pointsize>57</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -178,7 +178,7 @@ Instruments</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="0" colspan="2">
+        <item row="2" column="0" colspan="3">
          <widget class="QWidget" name="manual_buttons_widget" native="true">
           <layout class="QGridLayout" name="gridLayout_3"/>
          </widget>
@@ -211,13 +211,13 @@ Instruments</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>120</width>
-            <height>120</height>
+            <width>100</width>
+            <height>100</height>
            </size>
           </property>
           <property name="font">
            <font>
-            <pointsize>70</pointsize>
+            <pointsize>57</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -227,7 +227,7 @@ Instruments</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="0" colspan="2">
+        <item row="2" column="0" colspan="3">
          <widget class="QWidget" name="meas_buttons_widget" native="true">
           <layout class="QGridLayout" name="gridLayout_4"/>
          </widget>
@@ -331,7 +331,7 @@ Instruments</string>
   </action>
   <action name="actionLoad_Backup_Preset">
    <property name="text">
-    <string>Load Backup Preset</string>
+    <string>Load Preset</string>
    </property>
   </action>
   <action name="actionAutosave_on_closing">

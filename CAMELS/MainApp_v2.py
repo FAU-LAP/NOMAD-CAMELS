@@ -5,7 +5,7 @@ import json
 import pandas as pd
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog
-from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtCore import QCoreApplication, Qt
 from PyQt5.QtGui import QIcon
 
 from CAMELS.gui.mainWindow_v2 import Ui_MainWindow
@@ -63,6 +63,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # actions
         self.actionSettings.triggered.connect(self.change_preferences)
+        self.actionSave_Preset_As.triggered.connect(self.save_preset_as)
+        self.actionSave_Preset.triggered.connect(self.save_state)
+        self.actionNew_Preset.triggered.connect(self.new_preset)
+        self.actionLoad_Backup_Preset.triggered.connect(self.load_backup_preset)
+        self.actionVISA_device_builder.triggered.connect(self.launch_device_builder)
 
         # buttons
         self.pushButton_manage_instr.clicked.connect(self.manage_instruments)
@@ -76,8 +81,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.label_no_instruments.setHidden(available)
 
     def manage_instruments(self):
+        self.setCursor(Qt.WaitCursor)
         dialog = ManageInstruments(active_instruments=self.active_instruments,
                                    parent=self)
+        self.setCursor(Qt.ArrowCursor)
         if dialog.exec():
             self.active_instruments.clear()
             self.active_instruments.update(dialog.active_instruments)
@@ -308,8 +315,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not len(file):
             return
         preset_name = file.split('/')[-1][:-7]
-        self.comboBox_preset.addItem(preset_name)
-        self.comboBox_preset.setCurrentText(preset_name)
         self._current_preset[0] = preset_name
         self.make_save_dict()
         load_save_functions.save_preset(file, self.__save_dict__)
@@ -319,7 +324,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Opens a QFileDialog in the Backup-folder of the presets.
         If a backup is selected, the current preset is put into backup."""
         file = QFileDialog.getOpenFileName(self, 'Open Preset',
-                                           f'{load_save_functions.preset_path}/Backup',
+                                           f'{load_save_functions.preset_path}',
                                            '*.preset')[0]
         if not len(file):
             return
@@ -379,7 +384,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 variables_handling.channels.update({channel: dev.channels[channel]})
 
 
-
+    # --------------------------------------------------
+    # tools
+    # --------------------------------------------------
     def launch_device_builder(self):
         from CAMELS.tools import VISA_device_builder
         device_builder = VISA_device_builder.VISA_Device_Builder(self)
