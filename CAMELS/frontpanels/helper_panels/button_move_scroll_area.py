@@ -57,45 +57,36 @@ class BidirectionalDict:
 
 
 class DropArea(QWidget):
-    def __init__(self):
+    def __init__(self, button_wdith:int):
         super().__init__()
         # self.initUI()
         self.buttons = BidirectionalDict()
         self.button_order = []
-        self.button_size = 50
         layout = QGridLayout()
-        # layout.setSpacing(10)
-        for i in range(9):
-            button = DragButton(f"Button {i+1}")
-            button.setFixedSize(self.button_size, self.button_size)
-            self.buttons[str(i)] = button
-            layout.addWidget(button, i // 2, i % 2)
-            self.button_order.append(str(i))
+        layout.setSpacing(0)
+        layout.setContentsMargins(0,0,0,0)
         self.setLayout(layout)
         self.setAcceptDrops(True)
         self.columnCount = 0
         self.rowCount = 0
+
+        self.min_column_width = button_wdith + 1
 
 
     def dragEnterEvent(self, event):
         event.accept()
 
     def dropEvent(self, event):
-        position = event.pos()
         event.setDropAction(Qt.MoveAction)
         event.accept()
 
         source_widget = event.source()
-        layout = self.layout()
 
         drag_pos = self.buttons.get_key(source_widget)
-        # drop_pos = self.buttons.get_key(self.childAt(position))
         drop_row, drop_col = self.get_drop_position(event.pos())
         if drop_row * self.columnCount + drop_col >= len(self.buttons):
-            drop_col = len(self.buttons) - drop_row * self.columnCount - 1
-        print(drop_row, drop_col)
+            drop_col = int(len(self.buttons) - drop_row * self.columnCount - 1)
         child_at = self.layout().itemAtPosition(drop_row, drop_col).widget()
-        print(child_at.text())
         drop_pos = self.buttons.get_key(child_at)
 
         adding = 0
@@ -116,19 +107,15 @@ class DropArea(QWidget):
         y_dist = (pos - center).y() + height/2
         column_width = width / self.columnCount
         row_height = height / self.rowCount
-        return y_dist // row_height, x_dist // column_width
+        return int(y_dist // row_height), int(x_dist // column_width)
 
 
 
     def updateLayout(self):
         width = self.width()
 
-        # calculate minimum column width based on button size
-        button_width = self.button_size
-        min_column_width = button_width * 1.5
-
         # calculate number of columns based on current width
-        columns = max(1, width // min_column_width)
+        columns = max(1, width // self.min_column_width)
 
         # calculate new positions of buttons based on columns
         positions = [(i // columns, i % columns) for i in range(len(self.buttons))]
@@ -137,23 +124,41 @@ class DropArea(QWidget):
         for button, position in zip(self.button_order, positions):
             self.layout().addWidget(self.buttons[button], *position)
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
 
-        # create central widget
-        self.central_widget = QScrollArea()
-        self.drop_area = DropArea()
-        self.central_widget.setWidget(self.drop_area)
-        self.central_widget.setWidgetResizable(True)
-        self.setCentralWidget(self.central_widget)
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
+class Drop_Scroll_Area(QScrollArea):
+    def __init__(self, button_width=100, button_height=100, parent=None):
+        super().__init__(parent=parent)
+        self.drop_area = DropArea(button_width)
+        self.setWidget(self.drop_area)
+        self.setWidgetResizable(True)
         self.drop_area.updateLayout()
+        self.button_width = button_width
+        self.button_height = button_height
+
+    def resizeEvent(self, a0):
+        super().resizeEvent(a0)
+        self.drop_area.updateLayout()
+
+    def updateLayout(self):
+        self.drop_area.updateLayout()
+
+    def add_button(self, button, name):
+        button.setFixedSize(self.button_width, self.button_height)
+        self.drop_area.buttons[name] = button
+        self.drop_area.button_order.append(name)
+        self.drop_area.updateLayout()
+
+    def get_button_order(self):
+        return self.drop_area.button_order
+
+
 
 if __name__ == '__main__':
     app = QApplication([])
-    area = MainWindow()
-    area.show()
+    main_window = QMainWindow()
+    area = Drop_Scroll_Area()
+    main_window.setCentralWidget(area)
+    for i in range(15):
+        area.add_button(DragButton(f'Button {i}'), str(i))
+    main_window.show()
     app.exec_()
