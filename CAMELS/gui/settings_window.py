@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_settings_window(object):
     def setupUi(self, settings_window):
         settings_window.setObjectName("settings_window")
-        settings_window.resize(549, 430)
+        settings_window.resize(549, 453)
         self.gridLayout = QtWidgets.QGridLayout(settings_window)
         self.gridLayout.setObjectName("gridLayout")
         self.pathButton_py_files = Path_Button_Edit(settings_window)
@@ -182,4 +182,4 @@ class Ui_settings_window(object):
         self.label_10.setText(_translate("settings_window", "Databroker catalog-name"))
         self.label_11.setText(_translate("settings_window", "Sounds"))
         self.checkBox_play_camel_on_error.setText(_translate("settings_window", "Play Camel-Roar on error"))
-from utility.path_button_edit import Path_Button_Edit
+from CAMELS.utility.path_button_edit import Path_Button_Edit

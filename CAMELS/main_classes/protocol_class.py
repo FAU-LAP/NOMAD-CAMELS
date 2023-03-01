@@ -1,10 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QCheckBox, QTextEdit
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
+from PyQt5.QtCore import pyqtSignal
 
-# from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Container
-# from CAMELS.loop_steps import for_while_loops, read_channels
-from CAMELS.frontpanels.plot_definer import Plot_Button_Overview, Plot_Info,\
-    Fit_Info
+from CAMELS.frontpanels.plot_definer import Plot_Button_Overview
 from CAMELS.loop_steps import make_step_of_type
 from CAMELS.gui.general_protocol_settings import Ui_Protocol_Settings
 
@@ -38,7 +36,7 @@ class Measurement_Protocol:
         self.variables = {}
         self.loop_step_variables = {}
         self.channels = channels
-        self.name = name
+        self.name = name or 'Protocol'
         self.channel_metadata = channel_metadata
         self.config_metadata = config_metadata
         self.metadata = metadata
@@ -250,11 +248,14 @@ def update_all_children(step_dict, step):
 class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
     """Widget for the configuration of the general protocol settings.
     Here plots may be defined and variables added to the protocol."""
+    name_changed = pyqtSignal()
+
     def __init__(self, parent=None, protocol=Measurement_Protocol()):
         super(General_Protocol_Settings, self).__init__(parent)
         self.setupUi(self)
         self.protocol = protocol
         self.lineEdit_filename.setText(self.protocol.filename)
+        self.lineEdit_protocol_name.setText(self.protocol.name)
 
         self.variable_model = QStandardItemModel()
         self.variable_model.setHorizontalHeaderLabels(['Name', 'Value',
@@ -301,28 +302,33 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         self.checkBox_NeXus = QCheckBox('Use NeXus-output')
         self.checkBox_NeXus.clicked.connect(self.enable_nexus)
         self.checkBox_NeXus.setChecked(self.protocol.use_nexus)
-        self.enable_nexus()
+        self.lineEdit_protocol_name.textChanged.connect(self.name_change)
+        self.name_change()
 
         self.textEdit_desc = QTextEdit(parent=self)
         self.textEdit_desc.setPlaceholderText('Enter your description here.')
         if self.protocol.description:
             self.textEdit_desc.setText(self.protocol.description)
 
-        self.layout().addWidget(self.textEdit_desc, 1, 0, 1, 4)
-        self.layout().addWidget(self.plot_widge, 2, 0, 1, 4)
+        self.layout().addWidget(self.textEdit_desc, 3, 0, 1, 4)
+        self.layout().addWidget(self.plot_widge, 4, 0, 1, 4)
         self.layout().addWidget(self.checkBox_NeXus, 5, 0, 1, 4)
-        self.layout().addWidget(self.table_channel_NX_paths, 6, 0, 1, 4)
-        self.layout().addWidget(self.table_config_NX_paths, 7, 0, 1, 4)
-        self.layout().addWidget(self.table_metadata, 8, 0, 1, 4)
+        self.layout().addWidget(self.table_channel_NX_paths, 8, 0, 1, 4)
+        self.layout().addWidget(self.table_config_NX_paths, 9, 0, 1, 4)
+        self.layout().addWidget(self.table_metadata, 10, 0, 1, 4)
+
+        self.checkBox_NeXus.setHidden(True)
+        self.enable_nexus()
+
 
 
     def enable_nexus(self):
         """When the checkBox_NeXus is clicked, enables / disables the
         other widgets for the nexus-definition."""
         nx = self.checkBox_NeXus.isChecked()
-        self.table_channel_NX_paths.setEnabled(nx)
-        self.table_metadata.setEnabled(nx)
-        self.table_config_NX_paths.setEnabled(nx)
+        self.table_channel_NX_paths.setHidden(not nx)
+        self.table_metadata.setHidden(not nx)
+        self.table_config_NX_paths.setHidden(not nx)
 
 
     def get_unique_name(self, name='name'):
@@ -365,9 +371,8 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
     def update_step_config(self):
         """Updates all the protocol settings."""
         self.protocol.filename = self.lineEdit_filename.text()
+        self.protocol.name = self.lineEdit_protocol_name.text()
         self.protocol.description = self.textEdit_desc.toPlainText()
-        # self.plot_table.update_table_data()
-        # self.protocol.plots = self.plot_table.tableData
         self.protocol.plots = self.plot_widge.plot_data
         self.protocol.metadata = self.table_metadata.update_table_data()
         self.protocol.channel_metadata = self.table_channel_NX_paths.update_table_data()
@@ -405,4 +410,8 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
             value = variables_handling.get_data(self.variable_model.item(i, 1).text())
             self.protocol.variables.update({name: value})
 
-
+    def name_change(self):
+        name = self.lineEdit_protocol_name.text()
+        self.label_title.setText(f'{name} - General Configuration')
+        self.protocol.name = name
+        self.name_changed.emit()

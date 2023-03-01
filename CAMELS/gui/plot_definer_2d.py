@@ -118,4 +118,4 @@ class Ui_Plot_Definer_2D(object):
         self.label_10.setText(_translate("Plot_Definer_2D", "z-label:"))
         self.label_8.setText(_translate("Plot_Definer_2D", "y-label:"))
         self.label_9.setText(_translate("Plot_Definer_2D", "x-label:"))
-from utility.variable_tool_tip_box import Variable_Box
+from CAMELS.utility.variable_tool_tip_box import Variable_Box

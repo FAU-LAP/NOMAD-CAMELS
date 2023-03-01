@@ -218,11 +218,16 @@ class Loop_Step_Config(QWidget):
     def __init__(self, parent=None, loop_step=None):
         super(Loop_Step_Config, self).__init__(parent)
         layout = QGridLayout()
-        self.name_widget = Loop_Step_Name_Widget(self, loop_step.name, loop_step.description)
+        self.name_widget = Loop_Step_Name_Widget(self, loop_step.name)
         self.loop_step = loop_step
         self.name_widget.name_changed.connect(self.change_name)
         layout.addWidget(self.name_widget, 0, 0, 1, 5)
         self.setLayout(layout)
+
+        self.textEdit_desc = QTextEdit(loop_step.description, self)
+        self.textEdit_desc.setPlaceholderText('Enter step description here.')
+
+        layout.addWidget(self.textEdit_desc, 500, 0, 1, 5)
 
     def change_name(self, name):
         """Changes the name of the loop_step, then emits the
@@ -236,25 +241,21 @@ class Loop_Step_Config(QWidget):
         provide the loop_step object with all necessary data."""
         # self.loop_step.update_variables()
         self.name_widget.change_name()
-        self.loop_step.description = self.name_widget.textEdit_desc.toPlainText()
+        self.loop_step.description = self.textEdit_desc.toPlainText()
 
 class Loop_Step_Name_Widget(QWidget):
     """Simple class that provides the necessary widgets for the step's
     name."""
     name_changed = pyqtSignal(str)
 
-    def __init__(self, parent=None, name='', description=''):
+    def __init__(self, parent=None, name=''):
         super().__init__(parent)
         label = QLabel('Name:')
         self.lineEdit_name = QLineEdit(name, self)
-        self.textEdit_desc = QTextEdit(description, self)
-        self.textEdit_desc.setText(description)
-        self.textEdit_desc.setPlaceholderText('Enter step description here.')
 
         layout = QGridLayout()
         layout.addWidget(label, 0, 0)
         layout.addWidget(self.lineEdit_name, 0, 1)
-        layout.addWidget(self.textEdit_desc, 1, 0, 1, 2)
         self.setLayout(layout)
         layout.setContentsMargins(0, 0, 0, 0)
 

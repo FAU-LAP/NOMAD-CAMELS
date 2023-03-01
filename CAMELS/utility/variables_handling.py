@@ -14,6 +14,7 @@ CAMELS_path = ''
 
 preferences = {}
 
+protocols = {}
 protocol_variables = {}
 channels = {}
 loop_step_variables = {}

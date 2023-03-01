@@ -1111,7 +1111,7 @@
   <customwidget>
    <class>Console_TextEdit</class>
    <extends>QTextEdit</extends>
-   <header>utility.console_redirect</header>
+   <header>CAMELS.utility.console_redirect</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QGridLayout, QTabWidget
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QGridLayout, QTabWidget, QMessageBox
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QCloseEvent, QKeyEvent
 
 from CAMELS.frontpanels import instrument_installer, instrument_config
 
@@ -37,6 +38,21 @@ class ManageInstruments(QDialog):
         self.active_instruments = self.config_widget.get_config()
         super().accept()
 
+    def closeEvent(self, a0: QCloseEvent) -> None:
+        discard_dialog = QMessageBox.question(self, 'Discard Changes?',
+                                              f'All changes to instrument configurations will be lost!',
+                                              QMessageBox.Yes | QMessageBox.No)
+        if discard_dialog != QMessageBox.Yes:
+            a0.ignore()
+            return
+        super().closeEvent(a0)
+
+    def keyPressEvent(self, a0: QKeyEvent) -> None:
+        """Overwrites the keyPressEvent of the QDialog so that it does
+        not close when pressing Enter/Return."""
+        if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
+            return
+        super().keyPressEvent(a0)
 
 
 if __name__ == '__main__':

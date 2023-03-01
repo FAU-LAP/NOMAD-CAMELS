@@ -39,7 +39,10 @@ def getAllDevices():
     if all_instr:
         return all_instr
     all_instr = {}
-    devices_str = requests.get('https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt').text
+    try:
+        devices_str = requests.get('https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt').text
+    except:
+        devices_str = ''
     for x in devices_str.splitlines():
         name, version = x.split('==')
         all_instr[name.replace('-', '_')] = version

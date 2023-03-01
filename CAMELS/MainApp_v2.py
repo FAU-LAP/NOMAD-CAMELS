@@ -16,7 +16,11 @@ from pkg_resources import resource_filename
 from CAMELS.bluesky_handling import make_catalog
 from CAMELS.frontpanels.manage_instruments import ManageInstruments
 from CAMELS.frontpanels.settings_window import Settings_Window
-from CAMELS.utility import load_save_functions, add_remove_table, variables_handling, number_formatting, theme_changing
+from CAMELS.frontpanels.protocol_config import Protocol_Config
+from CAMELS.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
+from CAMELS.utility import load_save_functions, add_remove_table, variables_handling, number_formatting, theme_changing, options_run_button
+
+from collections import OrderedDict
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -25,20 +29,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+
+        self.button_area_meas = Drop_Scroll_Area(self, 100, 100)
+        self.button_area_manual = Drop_Scroll_Area(self, 100, 100)
+        self.meas_widget.layout().addWidget(self.button_area_meas, 2, 0, 1, 3)
+        self.manual_widget.layout().addWidget(self.button_area_manual, 2, 0, 1, 3)
+        self.button_area_manual.setHidden(True)
+
         self.setWindowTitle('CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems')
         self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS_Icon_v2.ico')))
 
         arrow = self.style().standardIcon(QStyle.SP_ArrowUp)
         self.label_arrow.setPixmap(arrow.pixmap(130,130))
 
-
-
+        self.setStyleSheet("QSplitter::handle{background: gray;}")
 
         # saving / loading
         self.__save_dict__ = {}
         self._current_preset = [f'{socket.gethostname()}']
         self.active_instruments = {}
-        self.protocols_dict = {}
+        self.protocols_dict = OrderedDict()
+        variables_handling.protocols = self.protocols_dict
         self.preset_save_dict = {'_current_preset': self._current_preset,
                                  'active_instruments': self.active_instruments,
                                  'protocols_dict': self.protocols_dict}
@@ -47,6 +58,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_state()
 
         self.with_or_without_instruments()
+        self.populate_meas_buttons()
         self.adjustSize()
 
         # user and sample data
@@ -71,6 +83,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # buttons
         self.pushButton_manage_instr.clicked.connect(self.manage_instruments)
+        self.pushButton_add_meas.clicked.connect(self.add_measurement_protocol)
 
     def with_or_without_instruments(self):
         available = False
@@ -300,7 +313,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         preset_name = file.split('/')[-1][:-7]
         load_save_functions.save_preset(file, {'_current_preset': [preset_name],
                                                'active_instruments': {},
-                                               'protocols_dict': {}})
+                                               'protocols_dict': OrderedDict()})
         self.comboBox_preset.addItem(preset_name)
         self.comboBox_preset.setCurrentText(preset_name)
         self._current_preset[0] = preset_name
@@ -370,10 +383,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if add_string is not None:
                 self.__save_dict__.update({key: load_save_functions.get_save_str(self.preset_save_dict[key])})
 
-
-
-
-
     def update_channels(self):
         """Called when the active devices change.
         The channels in variables_handling are updated with the ones
@@ -383,6 +392,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             for channel in dev.get_channels():
                 variables_handling.channels.update({channel: dev.channels[channel]})
 
+    # --------------------------------------------------
+    # protocols
+    # --------------------------------------------------
+    def add_measurement_protocol(self):
+        dialog = Protocol_Config()
+        dialog.show()
+        dialog.accepted.connect(self.add_prot_to_data)
+
+    def add_prot_to_data(self, protocol):
+        self.protocols_dict[protocol.name] = protocol
+        self.populate_meas_buttons()
+
+
+    def populate_meas_buttons(self):
+        if not self.protocols_dict:
+            self.button_area_meas.setHidden(True)
+        else:
+            self.button_area_meas.setHidden(False)
+        for prot in self.protocols_dict:
+            button = options_run_button.Options_Run_Button(prot)
+            self.button_area_meas.add_button(button, prot)
 
     # --------------------------------------------------
     # tools

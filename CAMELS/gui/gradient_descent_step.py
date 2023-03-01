@@ -125,4 +125,4 @@ class Ui_Grad_Desc(object):
         self.label_8.setText(_translate("Grad_Desc", "Threshold"))
         self.label_4.setText(_translate("Grad_Desc", "Starting Value"))
         self.label_7.setText(_translate("Grad_Desc", "Learning Rate"))
-from utility.variable_tool_tip_box import Variable_Box
+from CAMELS.utility.variable_tool_tip_box import Variable_Box

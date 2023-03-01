@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QPushButton, QScrollArea, QMainWindow
 from PyQt5.QtGui import QDrag
-from PyQt5.QtCore import Qt, QMimeData
+from PyQt5.QtCore import Qt, QMimeData, pyqtSignal
 
 class DragButton(QPushButton):
     def __init__(self, text):
@@ -57,6 +57,8 @@ class BidirectionalDict:
 
 
 class DropArea(QWidget):
+    order_changed = pyqtSignal(list)
+
     def __init__(self, button_wdith:int):
         super().__init__()
         # self.initUI()
@@ -89,6 +91,8 @@ class DropArea(QWidget):
         child_at = self.layout().itemAtPosition(drop_row, drop_col).widget()
         drop_pos = self.buttons.get_key(child_at)
 
+        if drag_pos == drop_pos:
+            return
         adding = 0
         if self.button_order.index(drag_pos) < self.button_order.index(drop_pos):
             adding = 1
@@ -96,7 +100,6 @@ class DropArea(QWidget):
         insert_pos = self.button_order.index(drop_pos)
         self.button_order.insert(insert_pos + adding, drag_pos)
         self.updateLayout()
-        return
 
     def get_drop_position(self, pos):
         rect = self.rect()
@@ -126,7 +129,9 @@ class DropArea(QWidget):
 
 
 class Drop_Scroll_Area(QScrollArea):
-    def __init__(self, button_width=100, button_height=100, parent=None):
+    order_changed = pyqtSignal(list)
+
+    def __init__(self, parent=None, button_width=100, button_height=100):
         super().__init__(parent=parent)
         self.drop_area = DropArea(button_width)
         self.setWidget(self.drop_area)
@@ -134,10 +139,13 @@ class Drop_Scroll_Area(QScrollArea):
         self.drop_area.updateLayout()
         self.button_width = button_width
         self.button_height = button_height
+        self.setMinimumWidth(button_width)
+        self.setMinimumHeight(button_height)
+        self.drop_area.order_changed.connect(self.order_changed.emit)
 
     def resizeEvent(self, a0):
         super().resizeEvent(a0)
-        self.drop_area.updateLayout()
+        self.updateLayout()
 
     def updateLayout(self):
         self.drop_area.updateLayout()

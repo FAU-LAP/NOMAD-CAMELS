@@ -115,4 +115,4 @@ class Ui_Plot_Definer(object):
         self.label_4.setText(_translate("Plot_Definer", "y-label 2"))
         self.checkBox_ylog2.setText(_translate("Plot_Definer", "y2 logarithmic?"))
         self.label.setText(_translate("Plot_Definer", "title:"))
-from utility.variable_tool_tip_box import Variable_Box
+from CAMELS.utility.variable_tool_tip_box import Variable_Box

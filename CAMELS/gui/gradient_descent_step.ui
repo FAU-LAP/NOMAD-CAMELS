@@ -159,7 +159,7 @@
   <customwidget>
    <class>Variable_Box</class>
    <extends>QLineEdit</extends>
-   <header>utility.variable_tool_tip_box</header>
+   <header>CAMELS.utility.variable_tool_tip_box</header>
   </customwidget>
  </customwidgets>
  <tabstops>

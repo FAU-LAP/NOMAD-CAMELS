@@ -157,5 +157,5 @@ class Ui_for_loop_config(object):
         self.comboBox_sweep_mode.setItemText(2, _translate("for_loop_config", "exponential"))
         self.comboBox_sweep_mode.setItemText(3, _translate("for_loop_config", "1/x"))
         self.checkBox_include_endpoints.setText(_translate("for_loop_config", "Include end-points"))
-from utility.path_button_edit import Path_Button_Edit
-from utility.variable_tool_tip_box import Variable_Box
+from CAMELS.utility.path_button_edit import Path_Button_Edit
+from CAMELS.utility.variable_tool_tip_box import Variable_Box

@@ -316,13 +316,13 @@
   <customwidget>
    <class>Path_Button_Edit</class>
    <extends>QWidget</extends>
-   <header>utility.path_button_edit</header>
+   <header>CAMELS.utility.path_button_edit</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>Variable_Box</class>
    <extends>QLineEdit</extends>
-   <header>utility.variable_tool_tip_box</header>
+   <header>CAMELS.utility.variable_tool_tip_box</header>
   </customwidget>
  </customwidgets>
  <tabstops>

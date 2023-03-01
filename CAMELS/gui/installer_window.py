@@ -127,4 +127,4 @@ class Ui_InstallerWindow(object):
         self.radioButton_custom.setText(_translate("InstallerWindow", "Custom Install"))
         self.labela.setText(_translate("InstallerWindow", "CAMELS Installer"))
         self.label_2t.setText(_translate("InstallerWindow", "Configurable Application for Measurements, Experiments and Laboratory-Systems"))
-from utility.path_button_edit import Path_Button_Edit
+from CAMELS.utility.path_button_edit import Path_Button_Edit
