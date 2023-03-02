@@ -77,6 +77,9 @@ class Options_Run_Button(QFrame):
             drag.setMimeData(mimeData)
             drag.exec_(Qt.MoveAction)
 
+    def rename(self, new_name):
+        self.label.setText(new_name)
+
 
 if __name__ == '__main__':
     app = QApplication([])
