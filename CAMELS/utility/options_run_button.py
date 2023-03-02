@@ -62,7 +62,7 @@ class Options_Run_Button(QFrame):
         icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
         self.small_button.setIcon(icon)
         self.small_button.setIconSize(QSize(int(size/4), int(size/4)))
-        self.small_button.setGeometry(int(size/4),5,int(size/2),int(size/3))
+        self.small_button.setGeometry(5,5,size-10,int(size/3))
 
         self.setFixedSize(size,size)
         self.setFrameStyle(1)

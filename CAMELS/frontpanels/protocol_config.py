@@ -19,6 +19,7 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
 
     def __init__(self, protocol=Measurement_Protocol(), parent=None):
         super().__init__(parent=parent)
+        protocol = deepcopy(protocol)
         self.setupUi(self)
         self.old_name = None
         if protocol.name != 'Protocol':
@@ -272,8 +273,10 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
         menu.exec_(self.treeView_protocol_sequence.viewport().mapToGlobal(pos))
 
     def paste_shortcut(self):
+        if variables_handling.copied_step is None:
+            return
         inds = self.treeView_protocol_sequence.selectedIndexes()
-        if inds and (variables_handling.copied_step is not None):
+        if inds:
             ind = inds[0]
             item = self.item_model_sequence.itemFromIndex(ind)
             if self.protocol.loop_step_dict[item.data()].has_children:
@@ -282,7 +285,10 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
             else:
                 pos = ind.row() + 1
                 parent = item.parent()
-            self.add_loop_step(copied_step=True, position=pos, parent=parent)
+        else:
+            pos = -1
+            parent = None
+        self.add_loop_step(copied_step=True, position=pos, parent=parent)
 
     def cut_shortcut(self):
         inds = self.treeView_protocol_sequence.selectedIndexes()

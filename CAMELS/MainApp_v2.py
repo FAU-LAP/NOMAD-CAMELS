@@ -4,7 +4,7 @@ import socket
 import json
 import pandas as pd
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QShortcut
 from PyQt5.QtCore import QCoreApplication, Qt
 from PyQt5.QtGui import QIcon
 
@@ -29,6 +29,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        sys.stdout = self.textEdit_console_output.text_writer
+        sys.stderr = self.textEdit_console_output.error_writer
 
         self.button_area_meas = Drop_Scroll_Area(self, 100, 100)
         self.button_area_manual = Drop_Scroll_Area(self, 100, 100)
@@ -41,6 +43,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         arrow = self.style().standardIcon(QStyle.SP_ArrowUp)
         self.label_arrow.setPixmap(arrow.pixmap(130,130))
+
+        icon = self.style().standardIcon(QStyle.SP_MediaPause)
+        self.pushButton_pause.setIcon(icon)
+        icon = self.style().standardIcon(QStyle.SP_MediaPlay)
+        self.pushButton_resume.setIcon(icon)
+        icon = self.style().standardIcon(QStyle.SP_MediaStop)
+        self.pushButton_stop.setIcon(icon)
 
         self.setStyleSheet("QSplitter::handle{background: gray;}")
 
@@ -87,6 +96,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # buttons
         self.pushButton_manage_instr.clicked.connect(self.manage_instruments)
         self.pushButton_add_meas.clicked.connect(self.add_measurement_protocol)
+
+        QShortcut('Ctrl+s', self).activated.connect(self.save_state)
+
+        self.adjustSize()
 
     def with_or_without_instruments(self):
         available = False
