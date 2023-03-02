@@ -14,6 +14,8 @@ from datetime import datetime
 import json
 import ophyd
 
+from collections import OrderedDict
+
 from CAMELS.main_classes import protocol_class, device_class
 from CAMELS.utility.load_save_helper_functions import load_plots
 
@@ -176,10 +178,10 @@ def get_save_str(obj):
         obj.to_dict('list')
     if hasattr(obj, '__dict__') or type(obj) is dict:
         savedic = {}
-        if hasattr(obj, '__dict__'):
-            dictionary = obj.__dict__
-        else:
+        if isinstance(obj, dict):
             dictionary = obj
+        else:
+            dictionary = obj.__dict__
         for key in dictionary:
             if key == 'py_package':
                 continue

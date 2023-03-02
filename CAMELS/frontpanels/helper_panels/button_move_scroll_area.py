@@ -50,6 +50,11 @@ class BidirectionalDict:
     def get_value(self, key):
         return self._forward[key]
 
+    def pop(self, key):
+        val = self._forward.pop(key)
+        self._reverse.pop(val)
+        return val
+
     def __repr__(self):
         return f"BidirectionalDict({self._forward})"
 
@@ -100,6 +105,7 @@ class DropArea(QWidget):
         insert_pos = self.button_order.index(drop_pos)
         self.button_order.insert(insert_pos + adding, drag_pos)
         self.updateLayout()
+        self.order_changed.emit(self.button_order)
 
     def get_drop_position(self, pos):
         rect = self.rect()
@@ -158,6 +164,14 @@ class Drop_Scroll_Area(QScrollArea):
 
     def get_button_order(self):
         return self.drop_area.button_order
+
+    def rename_button(self, old_name, new_name):
+        button = self.drop_area.buttons.pop(old_name)
+        self.drop_area.buttons[new_name] = button
+        ind = self.drop_area.button_order.index(old_name)
+        self.drop_area.button_order.pop(ind)
+        self.drop_area.button_order.insert(ind, new_name)
+        button.rename(new_name)
 
 
 

@@ -60,6 +60,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.with_or_without_instruments()
         self.populate_meas_buttons()
         self.adjustSize()
+        self.button_area_meas.order_changed.connect(self.protocol_order_changed)
 
         # user and sample data
         self.sampledata = {}
@@ -378,6 +379,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         variables_handling.preset = self._current_preset[0]
 
     def make_save_dict(self):
+        self.preset_save_dict = {'_current_preset': self._current_preset,
+                                 'active_instruments': self.active_instruments,
+                                 'protocols_dict': self.protocols_dict}
         for key in self.preset_save_dict:
             add_string = load_save_functions.get_save_str(self.preset_save_dict[key])
             if add_string is not None:
@@ -395,6 +399,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # --------------------------------------------------
     # protocols
     # --------------------------------------------------
+    def protocol_order_changed(self, order):
+        self.protocols_dict = OrderedDict(sorted(self.protocols_dict.items(), key=lambda x: order.index(x[0])))
+
     def add_measurement_protocol(self):
         dialog = Protocol_Config()
         dialog.show()
@@ -402,8 +409,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def add_prot_to_data(self, protocol):
         self.protocols_dict[protocol.name] = protocol
-        self.populate_meas_buttons()
+        self.add_button_to_meas(protocol.name)
+        self.button_area_meas.setHidden(False)
 
+    def update_prot_data(self, protocol, old_name):
+        self.protocols_dict[protocol.name] = protocol
+        self.protocols_dict.pop(old_name)
+        self.button_area_meas.rename_button(old_name, protocol.name)
+
+    def open_protocol_config(self, prot_name):
+        dialog = Protocol_Config(self.protocols_dict[prot_name])
+        dialog.show()
+        dialog.accepted.connect(lambda x, y=prot_name: self.update_prot_data(x, y))
+
+    def add_button_to_meas(self, name):
+        button = options_run_button.Options_Run_Button(name)
+        self.button_area_meas.add_button(button, name)
+        button.button.clicked.connect(lambda state, x=name: self.open_protocol_config(x))
 
     def populate_meas_buttons(self):
         if not self.protocols_dict:
@@ -411,8 +433,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.button_area_meas.setHidden(False)
         for prot in self.protocols_dict:
-            button = options_run_button.Options_Run_Button(prot)
-            self.button_area_meas.add_button(button, prot)
+            self.add_button_to_meas(prot)
 
     # --------------------------------------------------
     # tools
