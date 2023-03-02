@@ -57,6 +57,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_preferences()
         self.load_state()
 
+        self.open_windows = []
+
         self.with_or_without_instruments()
         self.populate_meas_buttons()
         self.adjustSize()
@@ -109,15 +111,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # --------------------------------------------------
     def close(self) -> bool:
         """Calling the save_state method when closing the window."""
+        ret = super().close()
         if self.preferences['autosave']:
             self.save_state()
-        return super().close()
+        return ret
 
     def closeEvent(self, a0):
         """Calling the save_state method when closing the window."""
+        for window in self.open_windows:
+            window.close()
+        if self.open_windows:
+            a0.ignore()
+            return
+        super().closeEvent(a0)
         if self.preferences['autosave']:
             self.save_state()
-        super().closeEvent(a0)
 
     # --------------------------------------------------
     # user / sample methods
@@ -406,6 +414,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         dialog = Protocol_Config()
         dialog.show()
         dialog.accepted.connect(self.add_prot_to_data)
+        dialog.closing.connect(lambda x=dialog: self.open_windows.remove(x))
+        self.open_windows.append(dialog)
 
     def add_prot_to_data(self, protocol):
         self.protocols_dict[protocol.name] = protocol
@@ -413,14 +423,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_area_meas.setHidden(False)
 
     def update_prot_data(self, protocol, old_name):
-        self.protocols_dict[protocol.name] = protocol
         self.protocols_dict.pop(old_name)
+        self.protocols_dict[protocol.name] = protocol
         self.button_area_meas.rename_button(old_name, protocol.name)
 
     def open_protocol_config(self, prot_name):
         dialog = Protocol_Config(self.protocols_dict[prot_name])
         dialog.show()
         dialog.accepted.connect(lambda x, y=prot_name: self.update_prot_data(x, y))
+        dialog.closing.connect(lambda x=dialog: self.open_windows.remove(x))
+        self.open_windows.append(dialog)
 
     def add_button_to_meas(self, name):
         button = options_run_button.Options_Run_Button(name)

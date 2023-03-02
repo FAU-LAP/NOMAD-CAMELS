@@ -63,9 +63,6 @@ class Options_Run_Button(QFrame):
         self.small_button.setIcon(icon)
         self.small_button.setIconSize(QSize(int(size/4), int(size/4)))
         self.small_button.setGeometry(int(size/4),5,int(size/2),int(size/3))
-        # label_run = QLabel('run', parent=self)
-        # label_run.adjustSize()
-        # label_run.setGeometry(int(size/2-label_run.width()/2), int(size/3-3), int(size/3), int(size/3))
 
         self.setFixedSize(size,size)
         self.setFrameStyle(1)

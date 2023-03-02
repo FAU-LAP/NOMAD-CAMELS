@@ -15,10 +15,14 @@ from pkg_resources import resource_filename
 
 class Protocol_Config(QWidget, Ui_Protocol_View):
     accepted = pyqtSignal(Measurement_Protocol)
+    closing = pyqtSignal()
 
     def __init__(self, protocol=Measurement_Protocol(), parent=None):
         super().__init__(parent=parent)
         self.setupUi(self)
+        self.old_name = None
+        if protocol.name != 'Protocol':
+            self.old_name = protocol.name
         self.setWindowTitle(f'{protocol.name} - Measurement Protocol - CAMELS')
         self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS_Icon_v2.ico')))
         self.configuration_main_widget.setHidden(True)
@@ -31,7 +35,6 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
 
         self.add_actions = []
         self.device_actions = []
-        self.copied_loop_step = None
         self.is_accepted = False
 
         self.item_model_sequence = QStandardItemModel(0,1)
@@ -69,6 +72,8 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
         QShortcut('Ctrl+x', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.cut_shortcut)
         QShortcut('Ctrl+v', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.paste_shortcut)
         QShortcut('Ctrl+c', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.copy_shortcut)
+
+        self.build_protocol_sequence()
 
 
     def update_add_step_actions(self):
@@ -221,7 +226,7 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
             copy_action = QAction('Copy')
             copy_action.triggered.connect(lambda state, x=item.data(): self.copy_loop_step(x))
             paste_menu = QMenu('Paste')
-            if self.copied_loop_step is not None:
+            if variables_handling.copied_step is not None:
                 paste_above = QAction('Paste Above')
                 paste_above.triggered.connect(lambda state, x=True, y=row, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
                 paste_below = QAction('Paste Below')
@@ -258,7 +263,7 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
                 add_menu.addSeparator()
                 add_menu.addActions(device_actions)
             paste_action = QAction('Paste')
-            if self.copied_loop_step is not None:
+            if variables_handling.copied_step is not None:
                 paste_action.triggered.connect(lambda state, x=True, y=-1, z=None: self.add_loop_step(copied_step=x, position=y, parent=z))
             else:
                 paste_action.setEnabled(False)
@@ -268,7 +273,7 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
 
     def paste_shortcut(self):
         inds = self.treeView_protocol_sequence.selectedIndexes()
-        if inds and (self.copied_loop_step is not None):
+        if inds and (variables_handling.copied_step is not None):
             ind = inds[0]
             item = self.item_model_sequence.itemFromIndex(ind)
             if self.protocol.loop_step_dict[item.data()].has_children:
@@ -301,7 +306,7 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
     def copy_loop_step(self, step_name):
         """Makes a deepcopy of the given step and stores it in
         copied_loop_step."""
-        self.copied_loop_step = deepcopy(self.protocol.loop_step_dict[step_name])
+        variables_handling.copied_step = deepcopy(self.protocol.loop_step_dict[step_name])
 
     def move_loop_step(self, up_down=0, in_out=0):
         """Moves a loop_step up or down in the sequence. It can also be
@@ -339,13 +344,13 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
 
         self.update_loop_step_order()
         if copied_step:
-            step = self.copied_loop_step
+            step = variables_handling.copied_step
         else:
             step = make_step_of_type.make_step(step_type)
         self.protocol.add_loop_step_rec(step, model=self.item_model_sequence, position=position, parent_step_name=parent)
         self.build_protocol_sequence()
         if copied_step:
-            self.copy_loop_step(self.copied_loop_step.full_name)
+            self.copy_loop_step(variables_handling.copied_step.full_name)
         new_ind = treeView_functions.getItemIndex(self.item_model_sequence, step.full_name)
         self.treeView_protocol_sequence.selectionModel().select(new_ind, QItemSelectionModel.Select)
 
@@ -386,19 +391,21 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
 
     def check_protocol_name(self):
         name = self.general_settings.lineEdit_protocol_name.text()
-        if name in variables_handling.protocols:
+        if name in variables_handling.protocols and name != self.old_name:
             raise Exception(f'Protocol name "{name}" already in use!')
 
     def closeEvent(self, a0: QCloseEvent) -> None:
+        name = self.general_settings.lineEdit_protocol_name.text()
         if not self.is_accepted:
-            discard_dialog = QMessageBox.question(self, 'Discard Changes?',
-                                                  f'All changes will be lost!',
+            discard_dialog = QMessageBox.question(self, f'{name} - Discard Changes?',
+                                                  f'All changes to {name} will be lost!',
                                                   QMessageBox.Yes | QMessageBox.No)
             if discard_dialog != QMessageBox.Yes:
                 a0.ignore()
                 return
         a0.accept()
         super().closeEvent(a0)
+        self.closing.emit()
 
     def change_name(self):
         self.setWindowTitle(f'{self.protocol.name} - Measurement Protocol - CAMELS')

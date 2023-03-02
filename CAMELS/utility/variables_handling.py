@@ -22,6 +22,8 @@ devices = {}
 current_protocol = None
 dark_mode = False
 
+copied_step = None
+
 read_channel_sets = []
 read_channel_names = []
 
