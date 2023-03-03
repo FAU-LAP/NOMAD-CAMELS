@@ -3,9 +3,10 @@ import os
 import socket
 import json
 import pandas as pd
+import importlib
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QShortcut
-from PyQt5.QtCore import QCoreApplication, Qt
+from PyQt5.QtCore import QCoreApplication, Qt, pyqtSignal
 from PyQt5.QtGui import QIcon
 
 from CAMELS.gui.mainWindow_v2 import Ui_MainWindow
@@ -13,18 +14,23 @@ from CAMELS.utility import exception_hook
 
 from pkg_resources import resource_filename
 
-from CAMELS.bluesky_handling import make_catalog
+from CAMELS.bluesky_handling import make_catalog, protocol_builder
 from CAMELS.frontpanels.manage_instruments import ManageInstruments
 from CAMELS.frontpanels.settings_window import Settings_Window
 from CAMELS.frontpanels.protocol_config import Protocol_Config
 from CAMELS.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
-from CAMELS.utility import load_save_functions, add_remove_table, variables_handling, number_formatting, theme_changing, options_run_button
+from CAMELS.utility import load_save_functions, add_remove_table, variables_handling, number_formatting, theme_changing, options_run_button, device_handling
 
 from collections import OrderedDict
+
+from bluesky import RunEngine
+from bluesky.callbacks.best_effort import BestEffortCallback
+import databroker
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """Main Window for the program. Connects to all the other classes."""
+    protocol_stepper_signal = pyqtSignal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -52,11 +58,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_stop.setIcon(icon)
 
         self.setStyleSheet("QSplitter::handle{background: gray;}")
+        self.protocol_stepper_signal.connect(self.progressBar_protocols.setValue)
 
         # saving / loading
         self.__save_dict__ = {}
         self._current_preset = [f'{socket.gethostname()}']
         self.active_instruments = {}
+        variables_handling.devices = self.active_instruments
         self.protocols_dict = OrderedDict()
         variables_handling.protocols = self.protocols_dict
         self.preset_save_dict = {'_current_preset': self._current_preset,
@@ -67,6 +75,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_state()
 
         self.open_windows = []
+        self.current_protocol_device_list = []
 
         self.with_or_without_instruments()
         self.populate_meas_buttons()
@@ -97,9 +106,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_manage_instr.clicked.connect(self.manage_instruments)
         self.pushButton_add_meas.clicked.connect(self.add_measurement_protocol)
 
+        self.pushButton_stop.clicked.connect(self.stop_protocol)
+        self.pushButton_pause.clicked.connect(self.pause_protocol)
+        self.pushButton_resume.clicked.connect(self.resume_protocol)
+
         QShortcut('Ctrl+s', self).activated.connect(self.save_state)
 
         self.adjustSize()
+
+
+
+        # bluesky
+        self.run_engine = RunEngine()
+        bec = BestEffortCallback()
+        self.run_engine.subscribe(bec)
+        self.databroker_catalog = databroker.catalog["CAMELS_CATALOG"]
+        self.run_engine.subscribe(self.databroker_catalog.v1.insert)
+        self.run_engine.subscribe(self.protocol_finished, 'stop')
+        self.re_subs = []
 
     def with_or_without_instruments(self):
         available = False
@@ -451,6 +475,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         button = options_run_button.Options_Run_Button(name)
         self.button_area_meas.add_button(button, name)
         button.button.clicked.connect(lambda state, x=name: self.open_protocol_config(x))
+        button.small_button.clicked.connect(lambda state, x=name: self.run_protocol(x))
 
     def populate_meas_buttons(self):
         if not self.protocols_dict:
@@ -460,6 +485,82 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for prot in self.protocols_dict:
             self.add_button_to_meas(prot)
 
+    def run_protocol(self, protocol_name):
+        self.button_area_meas.disable_run_buttons()
+        self.build_protocol(protocol_name, put100=False)
+        self.setCursor(Qt.WaitCursor)
+        protocol = self.protocols_dict[protocol_name]
+        path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
+        name = os.path.basename(path)[:-3]
+        spec = importlib.util.spec_from_file_location(name, path)
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = mod
+        spec.loader.exec_module(mod)
+        mod.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
+        plots, subs, _ = mod.create_plots(self.run_engine)
+        device_list = protocol.get_used_devices()
+        devs, dev_data = device_handling.instantiate_devices(device_list)
+        self.current_protocol_device_list = device_list
+        additionals = mod.steps_add_main(self.run_engine, devs)
+        self.re_subs += subs
+        self.add_subs_from_dict(additionals)
+        self.pushButton_resume.setEnabled(False)
+        self.pushButton_pause.setEnabled(True)
+        self.pushButton_stop.setEnabled(True)
+        mod.main(self.run_engine, catalog=self.databroker_catalog, devices=devs, md={'devices': dev_data})
+        self.protocol_stepper_signal.emit(100)
+
+    def add_subs_from_dict(self, dictionary):
+        for k, v in dictionary.items():
+            if k == 'subs':
+                self.re_subs += v
+            elif isinstance(v, dict):
+                self.add_subs_from_dict(v)
+
+    def pause_protocol(self):
+        if self.run_engine.state == 'running':
+            self.run_engine.request_pause(True)
+            self.pushButton_resume.setEnabled(True)
+            self.pushButton_pause.setEnabled(False)
+
+    def stop_protocol(self):
+        if self.run_engine.state != 'idle':
+            self.run_engine.abort('Aborted by user')
+        self.protocol_finished()
+
+    def resume_protocol(self):
+        if self.run_engine.state == 'paused':
+            self.pushButton_resume.setEnabled(False)
+            self.pushButton_pause.setEnabled(True)
+            self.run_engine.resume()
+
+    def protocol_finished(self, *args):
+        for sub in self.re_subs:
+            self.run_engine.unsubscribe(sub)
+        device_handling.close_devices(self.current_protocol_device_list)
+        self.pushButton_stop.setEnabled(False)
+        self.pushButton_pause.setEnabled(False)
+        self.pushButton_resume.setEnabled(False)
+        self.button_area_meas.enable_run_buttons()
+        self.setCursor(Qt.ArrowCursor)
+
+    def build_protocol(self, protocol_name, put100=True):
+        """Calls the build_protocol from CAMELS.bluesky_handling.protocol_builder
+        for the selected protocol and provides it with a savepath and
+        user- and sample-data."""
+        self.progressBar_protocols.setValue(0)
+        protocol = self.protocols_dict[protocol_name]
+        path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
+        user = self.comboBox_user.currentText() or 'default_user'
+        sample = self.comboBox_sample.currentText() or 'default_sample'
+        userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
+        sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
+        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
+        protocol_builder.build_protocol(protocol,
+                                        path, savepath,
+                                        userdata=userdata, sampledata=sampledata)
+        print('\n\nBuild successfull!\n')
+        self.progressBar_protocols.setValue(100 if put100 else 1)
     # --------------------------------------------------
     # tools
     # --------------------------------------------------

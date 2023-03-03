@@ -162,7 +162,7 @@ def build_protocol(protocol, file_path,
             devices_string += f'\t\tdevice_config["{dev}"]["ioc_settings"] = ioc_settings\n'
         devices_string += f'\t\tdevice_config["{dev}"].update(additional_info)\n'
         devices_string += f'\t\tdevs.update({{"{dev}": {dev}}})\n'
-        device_import_string += f'from {device.name}.{device.name}_ophyd import {classname}\n'
+        device_import_string += f'from camels_driver_{device.name}.{device.name}_ophyd import {classname}\n'
         additional_string_devices += device.get_additional_string()
         final_string += device.get_finalize_steps()
     devices_string += '\t\tprint("devices connected")\n'
@@ -180,7 +180,7 @@ def build_protocol(protocol, file_path,
     protocol_string = 'import sys\n'
     protocol_string += f'sys.path.append(r"{os.path.dirname(variables_handling.CAMELS_path)}")\n'
     protocol_string += f'sys.path.append(r"{os.path.dirname(variables_handling.CAMELS_path)}/CAMELS")\n'
-    protocol_string += f'sys.path.append("{variables_handling.device_driver_path}")\n\n'
+    protocol_string += f'sys.path.append(r"{variables_handling.device_driver_path}")\n\n'
     protocol_string += standard_string
     protocol_string += f'{variable_string}\n\n'
     protocol_string += device_import_string
@@ -206,7 +206,11 @@ def build_protocol(protocol, file_path,
     protocol_string += f'\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
     # protocol_string += '\tfinally:\n'
     # protocol_string += final_string or '\t\tpass\n'
-    standard_save_string = '\tfinally:\n'
+    standard_save_string = '\texcept Exception as e:\n'
+    standard_save_string += '\t\tprint("EXCEPTION")\n'
+    standard_save_string += '\t\tprint(e)\n'
+    standard_save_string += '\t\tprint("EXCEPTION END")\n'
+    standard_save_string += '\tfinally:\n'
     standard_save_string += '\t\tif uids:\n'
     standard_save_string += '\t\t\truns = catalog[tuple(uids)]\n'
     if protocol.use_nexus:

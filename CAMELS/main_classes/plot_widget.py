@@ -24,6 +24,8 @@ from bluesky import plan_stubs as bps
 
 from CAMELS.utility.plot_placement import place_widget
 
+from pkg_resources import resource_filename
+
 stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 dark_mode = False

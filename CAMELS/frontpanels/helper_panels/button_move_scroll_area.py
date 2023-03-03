@@ -173,6 +173,14 @@ class Drop_Scroll_Area(QScrollArea):
         self.drop_area.button_order.insert(ind, new_name)
         button.rename(new_name)
 
+    def disable_run_buttons(self):
+        for button in self.drop_area.buttons.values():
+            button.small_button.setEnabled(False)
+
+    def enable_run_buttons(self):
+        for button in self.drop_area.buttons.values():
+            button.small_button.setEnabled(True)
+
 
 
 if __name__ == '__main__':
