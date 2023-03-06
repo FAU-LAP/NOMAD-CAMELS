@@ -41,7 +41,7 @@ class Values_List_Plot(QtAwareCallback, QWidget):
             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
             self.table.setItem(i, 1, item)
             self.val_items.append(item)
-        self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS.svg')))
+        self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS_Icon_v2.ico')))
         self.desc = ''
         self.epoch_offset = 0
         self.epoch = epoch

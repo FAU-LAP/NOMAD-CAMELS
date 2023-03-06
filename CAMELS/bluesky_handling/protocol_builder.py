@@ -16,7 +16,7 @@ standard_string += 'import bluesky.plan_stubs as bps\n'
 standard_string += 'import databroker\n'
 # standard_string += 'from bluesky_widgets.qt.threading import wait_for_workers_to_quit\n'
 standard_string += 'from PyQt5.QtWidgets import QApplication, QMessageBox\n'
-standard_string += 'from PyQt5.QtCore import QCoreApplication\n'
+standard_string += 'from PyQt5.QtCore import QCoreApplication, QThread\n'
 standard_string += 'from epics import caput\n'
 standard_string += 'import datetime\n'
 standard_string += 'from CAMELS.main_classes import plot_widget, list_plot, plot_2D\n'
@@ -33,7 +33,7 @@ standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "to
 standard_run_string = 'uids = []\n'
 standard_run_string += 'def uid_collector(name, doc):\n'
 standard_run_string += '\tuids.append(doc["uid"])\n\n\n'
-standard_run_string += 'def main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None):\n'
+standard_run_string += 'def run_protocol_main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None):\n'
 standard_run_string += '\tdevs = devices or {}\n'
 standard_run_string += '\tmd = md or {}\n'
 standard_run_string += '\tglobal darkmode, theme, protocol_step_information\n'
@@ -41,14 +41,15 @@ standard_run_string += '\tdarkmode, theme = dark, used_theme\n'
 # standard_run_string += '\tbec = BestEffortCallback()\n'
 # standard_run_string += '\tRE.subscribe(bec)\n'
 
-standard_start_string = '\n\n\nif __name__ == "__main__":\n'
+standard_start_string = '\n\n\ndef main():\n'
 standard_start_string += '\tRE = RunEngine()\n'
 standard_start_string += '\tbec = BestEffortCallback()\n'
 standard_start_string += '\tRE.subscribe(bec)\n'
 standard_start_string2 = '\t\tplot_etc = create_plots(RE)\n'
 standard_start_string2 += '\t\tadditional_step_data = steps_add_main(RE, devs)\n'
-standard_start_string2 += '\t\tmain(RE=RE, catalog=catalog, devices=devs, md=md)\n'
-standard_start_string3 = '\tapp = QCoreApplication.instance()\n'
+standard_start_string2 += '\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md)\n'
+standard_start_string3 = 'if __name__ == "__main__":\n'
+standard_start_string3 += '\tapp = QCoreApplication.instance()\n'
 standard_start_string3 += '\tprint("protocol finished!")\n'
 standard_start_string3 += '\tif app is not None:\n'
 standard_start_string3 += '\t\tsys.exit(app.exec_())\n'
@@ -202,15 +203,14 @@ def build_protocol(protocol, file_path,
     protocol_string += '\t\tmd["python_script"] = f.read()\n'
     protocol_string += '\tmd["variables"] = namespace\n'
     protocol_string += '\tRE.subscribe(uid_collector, "start")\n'
-    protocol_string += '\ttry:\n'
-    protocol_string += f'\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
+    # protocol_string += '\ttry:\n'
+    protocol_string += f'\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n'
     # protocol_string += '\tfinally:\n'
     # protocol_string += final_string or '\t\tpass\n'
-    standard_save_string = '\texcept Exception as e:\n'
-    standard_save_string += '\t\tprint("EXCEPTION")\n'
-    standard_save_string += '\t\tprint(e)\n'
-    standard_save_string += '\t\tprint("EXCEPTION END")\n'
-    standard_save_string += '\tfinally:\n'
+    standard_save_string = '\tfinally:\n'
+    standard_save_string += '\t\twhile RE.state not in ["idle", "panicked"]:\n'
+    standard_save_string += '\t\t\timport time\n'
+    standard_save_string += '\t\t\ttime.sleep(0.5)\n'
     standard_save_string += '\t\tif uids:\n'
     standard_save_string += '\t\t\truns = catalog[tuple(uids)]\n'
     if protocol.use_nexus:
@@ -222,7 +222,7 @@ def build_protocol(protocol, file_path,
     else:
         standard_save_string += f'\t\t\tbroker_to_NX(runs, "{save_path}", plots)\n\n\n'
 
-    protocol_string += standard_save_string
+    # protocol_string += standard_save_string
     protocol_string += standard_start_string
     protocol_string += f'\tcatalog = databroker.catalog["{catalog}"]\n'
     protocol_string += '\tRE.subscribe(catalog.v1.insert)\n\n'
@@ -232,7 +232,8 @@ def build_protocol(protocol, file_path,
     protocol_string += '\ttry:\n'
     protocol_string += devices_string
     protocol_string += standard_start_string2
-    protocol_string += '\tfinally:\n'
+    # protocol_string += '\tfinally:\n'
+    protocol_string += standard_save_string
     protocol_string += final_string or '\t\tpass\n'
     protocol_string += standard_start_string3
     if not os.path.isdir(os.path.dirname(file_path)):

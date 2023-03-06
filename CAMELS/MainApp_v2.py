@@ -6,7 +6,7 @@ import pandas as pd
 import importlib
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QShortcut
-from PyQt5.QtCore import QCoreApplication, Qt, pyqtSignal
+from PyQt5.QtCore import QCoreApplication, Qt, pyqtSignal, QThread
 from PyQt5.QtGui import QIcon
 
 from CAMELS.gui.mainWindow_v2 import Ui_MainWindow
@@ -19,7 +19,7 @@ from CAMELS.frontpanels.manage_instruments import ManageInstruments
 from CAMELS.frontpanels.settings_window import Settings_Window
 from CAMELS.frontpanels.protocol_config import Protocol_Config
 from CAMELS.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
-from CAMELS.utility import load_save_functions, add_remove_table, variables_handling, number_formatting, theme_changing, options_run_button, device_handling
+from CAMELS.utility import load_save_functions, add_remove_table, variables_handling, number_formatting, theme_changing, options_run_button, device_handling, databroker_export
 
 from collections import OrderedDict
 
@@ -124,6 +124,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.run_engine.subscribe(self.databroker_catalog.v1.insert)
         self.run_engine.subscribe(self.protocol_finished, 'stop')
         self.re_subs = []
+        self.protocol_module = None
+        self.protocol_savepath = ''
 
     def with_or_without_instruments(self):
         available = False
@@ -493,21 +495,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
         name = os.path.basename(path)[:-3]
         spec = importlib.util.spec_from_file_location(name, path)
-        mod = importlib.util.module_from_spec(spec)
-        sys.modules[spec.name] = mod
-        spec.loader.exec_module(mod)
-        mod.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
-        plots, subs, _ = mod.create_plots(self.run_engine)
+        self.protocol_module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = self.protocol_module
+        spec.loader.exec_module(self.protocol_module)
+        self.protocol_module.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
+        plots, subs, _ = self.protocol_module.create_plots(self.run_engine)
         device_list = protocol.get_used_devices()
         devs, dev_data = device_handling.instantiate_devices(device_list)
         self.current_protocol_device_list = device_list
-        additionals = mod.steps_add_main(self.run_engine, devs)
+        additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
         self.re_subs += subs
         self.add_subs_from_dict(additionals)
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
         self.pushButton_stop.setEnabled(True)
-        mod.main(self.run_engine, catalog=self.databroker_catalog, devices=devs, md={'devices': dev_data})
+        self.protocol_module.run_protocol_main(self.run_engine, catalog=self.databroker_catalog, devices=devs, md={'devices': dev_data})
+        self.pushButton_resume.setEnabled(False)
+        self.pushButton_pause.setEnabled(True)
+        self.pushButton_stop.setEnabled(True)
         self.protocol_stepper_signal.emit(100)
 
     def add_subs_from_dict(self, dictionary):
@@ -519,14 +524,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def pause_protocol(self):
         if self.run_engine.state == 'running':
-            self.run_engine.request_pause(True)
+            self.run_engine.request_pause()
             self.pushButton_resume.setEnabled(True)
             self.pushButton_pause.setEnabled(False)
 
     def stop_protocol(self):
         if self.run_engine.state != 'idle':
             self.run_engine.abort('Aborted by user')
-        self.protocol_finished()
+        # self.protocol_finished()
 
     def resume_protocol(self):
         if self.run_engine.state == 'paused':
@@ -535,6 +540,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.run_engine.resume()
 
     def protocol_finished(self, *args):
+        print('a')
+        if self.protocol_module and self.protocol_module.uids:
+            runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
+            databroker_export.broker_to_NX(runs, self.protocol_savepath)
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
         device_handling.close_devices(self.current_protocol_device_list)
@@ -542,6 +551,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_pause.setEnabled(False)
         self.pushButton_resume.setEnabled(False)
         self.button_area_meas.enable_run_buttons()
+        self.protocol_stepper_signal.emit(100)
         self.setCursor(Qt.ArrowCursor)
 
     def build_protocol(self, protocol_name, put100=True):
@@ -556,11 +566,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
         sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
         savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
+        self.protocol_savepath = savepath
         protocol_builder.build_protocol(protocol,
                                         path, savepath,
                                         userdata=userdata, sampledata=sampledata)
         print('\n\nBuild successfull!\n')
         self.progressBar_protocols.setValue(100 if put100 else 1)
+
     # --------------------------------------------------
     # tools
     # --------------------------------------------------
