@@ -49,6 +49,7 @@ standard_start_string2 = '\t\tplot_etc = create_plots(RE)\n'
 standard_start_string2 += '\t\tadditional_step_data = steps_add_main(RE, devs)\n'
 standard_start_string2 += '\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md)\n'
 standard_start_string3 = 'if __name__ == "__main__":\n'
+standard_start_string3 += '\tmain()\n'
 standard_start_string3 += '\tapp = QCoreApplication.instance()\n'
 standard_start_string3 += '\tprint("protocol finished!")\n'
 standard_start_string3 += '\tif app is not None:\n'
@@ -234,7 +235,7 @@ def build_protocol(protocol, file_path,
     protocol_string += standard_start_string2
     # protocol_string += '\tfinally:\n'
     protocol_string += standard_save_string
-    protocol_string += final_string or '\t\tpass\n'
+    protocol_string += final_string
     protocol_string += standard_start_string3
     if not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))

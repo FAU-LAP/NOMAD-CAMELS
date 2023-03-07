@@ -6,7 +6,7 @@ import pandas as pd
 import importlib
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QShortcut
-from PyQt5.QtCore import QCoreApplication, Qt, pyqtSignal, QThread
+from PyQt5.QtCore import QCoreApplication, Qt, pyqtSignal
 from PyQt5.QtGui import QIcon
 
 from CAMELS.gui.mainWindow_v2 import Ui_MainWindow
@@ -478,6 +478,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_area_meas.add_button(button, name)
         button.button.clicked.connect(lambda state, x=name: self.open_protocol_config(x))
         button.small_button.clicked.connect(lambda state, x=name: self.run_protocol(x))
+        button.build_asked.connect(lambda x=name: self.build_protocol(x))
+        button.external_asked.connect(lambda x=name: self.open_protocol(x))
 
     def populate_meas_buttons(self):
         if not self.protocols_dict:
@@ -489,7 +491,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def run_protocol(self, protocol_name):
         self.button_area_meas.disable_run_buttons()
-        self.build_protocol(protocol_name, put100=False)
+        self.build_protocol(protocol_name, ask_file=False)
         self.setCursor(Qt.WaitCursor)
         protocol = self.protocols_dict[protocol_name]
         path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
@@ -554,13 +556,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.protocol_stepper_signal.emit(100)
         self.setCursor(Qt.ArrowCursor)
 
-    def build_protocol(self, protocol_name, put100=True):
+    def build_protocol(self, protocol_name, ask_file=True):
         """Calls the build_protocol from CAMELS.bluesky_handling.protocol_builder
         for the selected protocol and provides it with a savepath and
         user- and sample-data."""
         self.progressBar_protocols.setValue(0)
         protocol = self.protocols_dict[protocol_name]
-        path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
+        if ask_file:
+            path = QFileDialog.getSaveFileName(self, 'Export Protocol',
+                                               protocol_name, '*.py')[0]
+            if not path:
+                return
+        else:
+            path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
         user = self.comboBox_user.currentText() or 'default_user'
         sample = self.comboBox_sample.currentText() or 'default_sample'
         userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
@@ -571,7 +579,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                         path, savepath,
                                         userdata=userdata, sampledata=sampledata)
         print('\n\nBuild successfull!\n')
-        self.progressBar_protocols.setValue(100 if put100 else 1)
+        self.progressBar_protocols.setValue(100 if ask_file else 1)
+
+    def open_protocol(self, protocol_name):
+        path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
+        if not os.path.isfile(path):
+            self.build_protocol(protocol_name, False)
+        os.startfile(path)
 
     # --------------------------------------------------
     # tools

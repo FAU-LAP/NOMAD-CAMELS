@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QPushButton, QApplication, QMainWindow, QLabel, QStyle, QFrame
+from PyQt5.QtWidgets import QPushButton, QApplication, QMainWindow, QLabel, QStyle, QFrame, QMenu, QAction
 from PyQt5.QtGui import QPainter, QColor, QBrush, QDrag
-from PyQt5.QtCore import Qt, QSize, QMimeData
+from PyQt5.QtCore import Qt, QSize, QMimeData, pyqtSignal
 
 from CAMELS.utility.variables_handling import get_color
 
@@ -49,6 +49,9 @@ class Dots_Button(QPushButton):
 
 
 class Options_Run_Button(QFrame):
+    build_asked = pyqtSignal()
+    external_asked = pyqtSignal()
+
     def __init__(self, text='', size=100):
         super().__init__()
         self.label = SimpleWrapLabel(text, parent=self)
@@ -63,9 +66,20 @@ class Options_Run_Button(QFrame):
         self.small_button.setIcon(icon)
         self.small_button.setIconSize(QSize(int(size/4), int(size/4)))
         self.small_button.setGeometry(5,5,size-10,int(size/3))
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.options_menu)
 
         self.setFixedSize(size,size)
         self.setFrameStyle(1)
+
+    def options_menu(self, pos):
+        menu = QMenu()
+        action_export = QAction('Export Protocol')
+        action_export.triggered.connect(self.build_asked.emit)
+        action_open = QAction('Open Externally')
+        action_open.triggered.connect(self.external_asked.emit)
+        menu.addActions([action_export, action_open])
+        menu.exec_(self.mapToGlobal(pos))
 
     def mouseMoveEvent(self, event):
         if event.buttons() == Qt.LeftButton:
