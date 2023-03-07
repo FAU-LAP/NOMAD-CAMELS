@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>B2912_channel</class>
+ <widget class="QWidget" name="B2912_channel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>593</width>
+    <height>410</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="1">
+    <widget class="QComboBox" name="comboBox_source"/>
+   </item>
+   <item row="1" column="0" colspan="4">
+    <widget class="QCheckBox" name="checkBox_source_auto">
+     <property name="text">
+      <string>Source Auto Range</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QComboBox" name="comboBox_source_range"/>
+   </item>
+   <item row="2" column="3">
+    <widget class="QComboBox" name="comboBox_range_lower_lim"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Source:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Current compliance:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="4">
+    <widget class="QCheckBox" name="checkBox_output_protection">
+     <property name="text">
+      <string>Output Protection</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Low Terminal:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QComboBox" name="comboBox_low_terminal"/>
+   </item>
+   <item row="2" column="2">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Range Lower Limit:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Source Range:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="label_11">
+     <property name="text">
+      <string>Voltage Range:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>Current Range:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" colspan="2">
+    <widget class="QCheckBox" name="checkBox_current_auto_range">
+     <property name="text">
+      <string>Current Meas Auto Range</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Voltage compliance:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="3">
+    <widget class="QLineEdit" name="lineEdit_NPLC"/>
+   </item>
+   <item row="4" column="3">
+    <widget class="QLineEdit" name="lineEdit_voltage_compliance"/>
+   </item>
+   <item row="13" column="0" colspan="2">
+    <widget class="QCheckBox" name="checkBox_resistance_auto_range">
+     <property name="text">
+      <string>Resistance Auto Range</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1">
+    <widget class="QComboBox" name="comboBox_voltage_range"/>
+   </item>
+   <item row="14" column="0">
+    <widget class="QLabel" name="label_14">
+     <property name="text">
+      <string>Resistance Range:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>NPLC:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QCheckBox" name="checkBox_four_wire_meas">
+     <property name="text">
+      <string>4-wire measurement</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="lineEdit_current_compliance"/>
+   </item>
+   <item row="10" column="0" colspan="2">
+    <widget class="QCheckBox" name="checkBox_voltage_auto_range">
+     <property name="text">
+      <string>Voltage Meas Auto Range</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="3">
+    <widget class="QComboBox" name="comboBox_resistance_upper_lim"/>
+   </item>
+   <item row="5" column="0" colspan="4">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="2">
+    <widget class="QLabel" name="label_15">
+     <property name="text">
+      <string>Resistance auto upper lim.:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="2" colspan="2">
+    <widget class="QCheckBox" name="checkBox_resistance_compensation">
+     <property name="text">
+      <string>Resistance Compensation</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QComboBox" name="comboBox_current_range"/>
+   </item>
+   <item row="14" column="1">
+    <widget class="QComboBox" name="comboBox_resistance_range"/>
+   </item>
+   <item row="8" column="3">
+    <widget class="QComboBox" name="comboBox_current_auto_mode"/>
+   </item>
+   <item row="9" column="2">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Current meas auto lower lim.:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="3">
+    <widget class="QComboBox" name="comboBox_current_lower_lim"/>
+   </item>
+   <item row="8" column="2">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>Current Auto Range Mode:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="2">
+    <widget class="QLabel" name="label_13">
+     <property name="text">
+      <string>Voltage Auto Range Mode:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="3">
+    <widget class="QComboBox" name="comboBox_voltage_auto_mode"/>
+   </item>
+   <item row="11" column="2">
+    <widget class="QLabel" name="label_12">
+     <property name="text">
+      <string>Voltage meas auto lower lim.:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="3">
+    <widget class="QComboBox" name="comboBox_voltage_lower_lim"/>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>comboBox_source</tabstop>
+  <tabstop>comboBox_low_terminal</tabstop>
+  <tabstop>checkBox_source_auto</tabstop>
+  <tabstop>comboBox_source_range</tabstop>
+  <tabstop>comboBox_range_lower_lim</tabstop>
+  <tabstop>checkBox_output_protection</tabstop>
+  <tabstop>lineEdit_current_compliance</tabstop>
+  <tabstop>lineEdit_voltage_compliance</tabstop>
+  <tabstop>checkBox_four_wire_meas</tabstop>
+  <tabstop>lineEdit_NPLC</tabstop>
+  <tabstop>checkBox_current_auto_range</tabstop>
+  <tabstop>comboBox_current_range</tabstop>
+  <tabstop>checkBox_voltage_auto_range</tabstop>
+  <tabstop>comboBox_voltage_range</tabstop>
+  <tabstop>checkBox_resistance_auto_range</tabstop>
+  <tabstop>checkBox_resistance_compensation</tabstop>
+  <tabstop>comboBox_resistance_range</tabstop>
+  <tabstop>comboBox_resistance_upper_lim</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

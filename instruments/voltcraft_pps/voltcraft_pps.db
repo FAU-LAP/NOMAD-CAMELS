@@ -1,0 +1,46 @@
+record (ao, "$(SETUP):$(device):setV")
+{
+    field (FLNK, "$(SETUP):$(device):calcV")
+}
+
+record (calcout, "$(SETUP):$(device):_setI")
+{
+	field (DESC, "write string to voltcraft")
+	field (DTYP, "stream")
+    field (OUT, "@voltcraft_pps.proto setI $(COMM)")
+    field (INPA, "$(SETUP):$(device):setI")
+    field (CALC, "10 * A")
+}
+
+record (ao, "$(SETUP):$(device):setI")
+{
+    field (FLNK, "$(SETUP):$(device):_setI")
+}
+
+record (ao, "$(SETUP):$(device):setR")
+{
+    field (FLNK, "$(SETUP):$(device):calcV")
+}
+
+record (ao, "$(SETUP):$(device):setP")
+{
+    field (FLNK, "$(SETUP):$(device):calcV")
+}
+
+record (bo, "$(SETUP):$(device):outputMode")
+{
+    field (FLNK, "$(SETUP):$(device):calcV")
+    field (ZNAM, "voltage")
+    field (ONAM, "power")
+}
+
+record (calcout, "$(SETUP):$(device):calcV")
+{
+	field (DTYP, "stream")
+    field (OUT, "@voltcraft_pps.proto setV $(COMM)")
+    field (INPA, "$(SETUP):$(device):setV")
+    field (INPB, "$(SETUP):$(device):setP")
+    field (INPC, "$(SETUP):$(device):setR")
+    field (INPD, "$(SETUP):$(device):outputMode")
+    field (CALC, "D>0?SQR(B*C)*10:10*A")
+}

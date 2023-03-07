@@ -1,0 +1,8 @@
+{
+	"name": "keysight e5270b",
+	"directory": "keysight_e5270b",
+	"tags": ["voltage", "current", "SMU", "Agilent"],
+	"requirements": ["prologixSup"],
+	"files": ["keysight_e5270b.proto", "gpib_keysight_e5270b.db"],
+	"virtual": false
+}

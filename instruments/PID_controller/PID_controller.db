@@ -1,0 +1,15 @@
+grecord(epid, "$(SETUP):$(device):pid_controller")
+{
+	field(DTYP, "Soft Channel")
+	field(MDT, "0.1")
+	field(INP, "$(SETUP):34401:mesR4w CCP")
+	field(SCAN, ".5 second")
+	#field(TPRO, "1")
+	field(DRVL, "0")
+	field(DRVH, "60")
+	field(OUTL, "$(SETUP):voltcraft:setP CCP")
+	field(KP, "15")
+	field(KI, "20")
+	field(KD, "350")
+	field(VAL, "300")
+}

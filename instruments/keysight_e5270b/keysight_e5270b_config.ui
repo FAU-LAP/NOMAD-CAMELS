@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>keysight_e5270b_config</class>
+ <widget class="QWidget" name="keysight_e5270b_config">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>782</width>
+    <height>431</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="1" column="2" colspan="2">
+    <widget class="QLabel" name="label_10">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>High Resolution ADC</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QComboBox" name="comboBox_highSpeedMode"/>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="lineEdit_highSpeedPLC"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_speedMode">
+     <property name="text">
+      <string>Mode</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
+    <widget class="QLineEdit" name="lineEdit_highResPLC"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_speedPLC">
+     <property name="text">
+      <string>PLC</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QLabel" name="label_resMode">
+     <property name="text">
+      <string>Mode</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLabel" name="label_resPLC">
+     <property name="text">
+      <string>PLC</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QComboBox" name="comboBox_highResMode"/>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QLabel" name="label_9">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>High Speed ADC</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="4">
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="4">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>250</height>
+      </size>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="channel1">
+      <attribute name="title">
+       <string>Channel 1</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2"/>
+     </widget>
+     <widget class="QWidget" name="channel2">
+      <attribute name="title">
+       <string>Channel 2</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3"/>
+     </widget>
+     <widget class="QWidget" name="channel3">
+      <attribute name="title">
+       <string>Channel 3</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4"/>
+     </widget>
+     <widget class="QWidget" name="channel4">
+      <attribute name="title">
+       <string>Channel 4</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_5"/>
+     </widget>
+     <widget class="QWidget" name="channel5">
+      <attribute name="title">
+       <string>Channel 5</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_6"/>
+     </widget>
+     <widget class="QWidget" name="channel6">
+      <attribute name="title">
+       <string>Channel 6</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_7"/>
+     </widget>
+     <widget class="QWidget" name="channel7">
+      <attribute name="title">
+       <string>Channel 7</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_8"/>
+     </widget>
+     <widget class="QWidget" name="channel8">
+      <attribute name="title">
+       <string>Channel 8</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_9"/>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>comboBox_highSpeedMode</tabstop>
+  <tabstop>lineEdit_highSpeedPLC</tabstop>
+  <tabstop>comboBox_highResMode</tabstop>
+  <tabstop>lineEdit_highResPLC</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
