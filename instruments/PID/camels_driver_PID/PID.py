@@ -1,7 +1,7 @@
-from .PID_python_ophyd import PID_Controller
-from .PID_python_manual import PID_manual_control
+from .PID_ophyd import PID_Controller
+from .PID_manual_control import PID_manual_control
 
-from .PID_python_config_sub import subclass_config_sub
+from .PID_config_sub import subclass_config_sub
 
 from CAMELS.main_classes import device_class
 import CAMELS.main_classes.loop_step as steps

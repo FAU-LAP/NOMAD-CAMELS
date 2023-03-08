@@ -151,6 +151,7 @@ class Instrument_Config(QWidget, Ui_Form):
 
     def build_table(self):
         search_text = self.lineEdit_search.text()
+        self.installed_instr = getInstalledDevices()
         self.tableWidget_instruments.clear()
         self.tableWidget_instruments.setRowCount(0)
         self.tableWidget_instruments.setHorizontalHeaderLabels(['instrument', 'number of instruments'])
