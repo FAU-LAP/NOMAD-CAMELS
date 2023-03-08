@@ -207,7 +207,7 @@ def make_save_dict(obj):
     object. Thus working recursively if an attribute of obj also has a
     __save_dict__"""
     for key in obj.__dict__:
-        if key == '__save_dict__' or (isinstance(obj, device_class.Device) and key in ['add_ons', 'ophyd_class', 'ophyd_class_no_epics', 'channels', 'virtual', 'tags', 'files', 'directory', 'requirements', 'ophyd_class_name', 'connection']):
+        if key == '__save_dict__' or (isinstance(obj, device_class.Device) and key in ['controls', 'ophyd_class', 'ophyd_class_no_epics', 'channels', 'virtual', 'tags', 'files', 'directory', 'requirements', 'ophyd_class_name', 'connection']):
             continue
         add_string = get_save_str(obj.__dict__[key])
         if add_string is not None:

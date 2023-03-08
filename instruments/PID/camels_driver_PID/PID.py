@@ -31,7 +31,7 @@ class subclass(device_class.Device):
         self.config['dt'] = 0.5
 
 
-        self.add_ons = {'manual control': [PID_manual_control, self]}
+        self.controls = {'PID manual control': PID_manual_control}
 
     # def get_additional_string(self):
     #     inp_pv = self.config['pid_inp'].split(' ')[0]

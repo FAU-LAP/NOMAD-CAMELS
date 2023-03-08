@@ -8,5 +8,5 @@ setup(
     author='Johannes Lehmeyer / Alexander Fuchs',
     author_email='johannes.lehmeyer@fau.de',
     packages=find_packages(),
-    install_requires=[]
+    install_requires=['simple-pid>=1.0.1']
 )

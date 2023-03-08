@@ -114,13 +114,13 @@ class Device:
                     self.config.update({f'{name}': 0})
                 else:
                     self.passive_config.update({f'{name}': 0})
-        self.add_ons = {}
+        self.controls = {}
 
     def get_necessary_devices(self):
         return []
 
-    def get_add_ons(self):
-        return self.add_ons
+    def get_controls(self):
+        return self.controls
 
     def get_finalize_steps(self):
         return ''

@@ -60,6 +60,8 @@ bold_font = QFont()
 bold_font.setBold(True)
 
 class Instrument_Installer(QWidget, Ui_Form):
+    instruments_updated = pyqtSignal()
+
     """
     Parameters
     ----------
@@ -158,6 +160,7 @@ class Instrument_Installer(QWidget, Ui_Form):
         self.all_devs = getAllDevices()
         self.installed_devs = getInstalledDevices(True)
         self.build_table()
+        self.instruments_updated.emit()
 
     def select_all(self):
         for box in self.checkboxes:

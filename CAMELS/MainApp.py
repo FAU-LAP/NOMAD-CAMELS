@@ -594,7 +594,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             layout.itemAt(i).widget().deleteLater()
         self.add_ons.clear()
         for key, dev in self.active_devices_dict.items():
-            add_ons = dev.get_add_ons()
+            add_ons = dev.get_controls()
             for add_on in add_ons:
                 self.add_ons[f'{key}\n{add_on}'] = add_ons[add_on]
         if self.add_ons:

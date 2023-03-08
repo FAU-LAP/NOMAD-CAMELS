@@ -30,6 +30,7 @@ class ManageInstruments(QDialog):
 
         settab = 1 if instrument_installer.getInstalledDevices() else 0
         self.tabs.setCurrentIndex(settab)
+        self.installer.instruments_updated.connect(self.config_widget.build_table)
 
         layout.addWidget(self.tabs, 0, 0)
         layout.addWidget(self.buttonBox, 1, 0)

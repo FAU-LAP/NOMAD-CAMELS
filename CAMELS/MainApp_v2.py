@@ -11,6 +11,7 @@ from PyQt5.QtGui import QIcon
 
 from CAMELS.gui.mainWindow_v2 import Ui_MainWindow
 from CAMELS.utility import exception_hook
+from CAMELS.main_classes import manual_control
 
 from pkg_resources import resource_filename
 
@@ -82,6 +83,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.adjustSize()
         self.button_area_meas.order_changed.connect(self.protocol_order_changed)
 
+        self.active_controls = {}
+        self.manual_controls = {}
+
+
         # user and sample data
         self.sampledata = {}
         self.userdata = {}
@@ -103,6 +108,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionVISA_device_builder.triggered.connect(self.launch_device_builder)
 
         # buttons
+        self.pushButton_add_manual.clicked.connect(self.add_manual_control)
+
         self.pushButton_manage_instr.clicked.connect(self.manage_instruments)
         self.pushButton_add_meas.clicked.connect(self.add_measurement_protocol)
 
@@ -442,6 +449,51 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for key, dev in self.active_instruments.items():
             for channel in dev.get_channels():
                 variables_handling.channels.update({channel: dev.channels[channel]})
+
+    # --------------------------------------------------
+    # manual controls
+    # --------------------------------------------------
+    def manual_control_order_changed(self, order):
+        self.manual_controls = OrderedDict(sorted(self.manual_controls.items(), key=lambda x: order.index(x[0])))
+
+    def add_manual_control(self):
+        dialog = manual_control.New_Manual_Control_Dialog(self)
+        if dialog.exec():
+            control = dialog.selected_control
+
+    def add_manual_control_to_data(self, control):
+        self.manual_controls[control.name] = control
+        self.add_button_to_manuals(control.name)
+        self.button_area_manual.setHidden(False)
+
+    def update_man_cont_data(self, control, old_name):
+        self.manual_controls.pop(old_name)
+        self.manual_controls[control.name] = control
+        self.button_area_manual.rename_button(old_name, control.name)
+
+    # def open_manual_control_config(self, control_name):
+    #     dialog = Protocol_Config(self.protocols_dict[control_name])
+    #     dialog.show()
+    #     dialog.accepted.connect(lambda x, y=control_name: self.update_man_cont_data(x, y))
+    #     dialog.closing.connect(lambda x=dialog: self.open_windows.remove(x))
+    #     self.open_windows.append(dialog)
+
+    # def add_button_to_manuals(self, name):
+    #     button = options_run_button.Options_Run_Button(name)
+    #     self.button_area_meas.add_button(button, name)
+    #     button.button.clicked.connect(lambda state, x=name: self.open_protocol_config(x))
+    #     button.small_button.clicked.connect(lambda state, x=name: self.run_protocol(x))
+    #     button.build_asked.connect(lambda x=name: self.build_protocol(x))
+    #     button.external_asked.connect(lambda x=name: self.open_protocol(x))
+
+    def populate_manuals_buttons(self):
+        if not self.manual_controls:
+            self.button_area_manual.setHidden(True)
+        else:
+            self.button_area_manual.setHidden(False)
+        for prot in self.manual_controls:
+            self.add_button_to_meas(prot)
+
 
     # --------------------------------------------------
     # protocols
