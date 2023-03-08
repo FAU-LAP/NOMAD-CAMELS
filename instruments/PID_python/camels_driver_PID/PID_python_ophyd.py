@@ -11,7 +11,7 @@ from ophyd import Device
 from ophyd import Component as Cpt
 
 from CAMELS.bluesky_handling.custom_function_signal import Custom_Function_Signal, Custom_Function_SignalRO
-from utility import device_handling
+from CAMELS.utility import device_handling
 
 from PyQt5.QtCore import QThread, pyqtSignal
 

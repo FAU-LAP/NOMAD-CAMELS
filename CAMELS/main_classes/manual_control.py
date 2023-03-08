@@ -5,10 +5,10 @@ from PyQt5.QtCore import pyqtSignal
 from CAMELS.utility import device_handling
 from pkg_resources import resource_filename
 
-class AddOn(QWidget):
+class Manual_Control(QWidget):
     closing = pyqtSignal()
 
-    def __init__(self, parent=None, title='AddOn', device=None,
+    def __init__(self, parent=None, title='Manual Control', device=None,
                  ophyd_device=None, device_list=None):
         super().__init__(parent=parent)
         layout = QGridLayout()

@@ -38,8 +38,11 @@ standard_pref = {'autosave': True,
                  'py_files_path': f'{appdata_path}/python_files'.replace('\\','/'),
                  'meas_files_path': os.path.expanduser('~/CAMELS_data').replace('\\','/'),
                  'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/'),
-                 'autostart_ioc': False,
+                 # 'autostart_ioc': False,
                  'databroker_catalog_name': 'CAMELS_CATALOG',
+                 'driver_repository': 'https://github.com/FAU-LAP/CAMELS.git',
+                 'repo_branch': 'main',
+                 'repo_directory': 'instruments',
                  'play_camel_on_error': False}
 
 def get_preset_list():

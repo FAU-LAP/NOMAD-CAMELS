@@ -10,6 +10,7 @@ import sys
 import os
 
 from CAMELS.utility.variables_handling import get_color
+from CAMELS.utility import variables_handling
 
 if sys.version_info >= (3, 8):
     import importlib.metadata as importlib_metadata
@@ -19,12 +20,13 @@ else:
 all_instr = {}
 installed_instr = {}
 
-def getInstalledDevices():
+def getInstalledDevices(force=False):
     """Goes through the given device_driver_path and returns a list of
     the available devices."""
     global installed_instr
-    if installed_instr:
+    if installed_instr and not force:
         return installed_instr
+    installed_instr.clear()
     for x in importlib_metadata.distributions():
         name = x.metadata['Name']
         version = x.version
@@ -40,7 +42,12 @@ def getAllDevices():
         return all_instr
     all_instr = {}
     try:
-        devices_str = requests.get('https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt').text
+        repo = variables_handling.preferences['driver_repository']
+        branch = variables_handling.preferences['repo_branch']
+        directory = variables_handling.preferences['repo_directory']
+        repo_part = repo.split('.com/')[1].split('.git')[0]
+        url = f'https://raw.githubusercontent.com/{repo_part}/{branch}/{directory}/driver_list.txt'
+        devices_str = requests.get(url).text
     except:
         devices_str = ''
     for x in devices_str.splitlines():
@@ -149,7 +156,7 @@ class Instrument_Installer(QWidget, Ui_Form):
             c.setEnabled(True)
         self.setCursor(Qt.ArrowCursor)
         self.all_devs = getAllDevices()
-        self.installed_devs = getInstalledDevices()
+        self.installed_devs = getInstalledDevices(True)
         self.build_table()
 
     def select_all(self):
@@ -211,8 +218,11 @@ class Install_Thread(QThread):
                 cmd = [f'{path}/pip', 'uninstall', '-y',
                        f'camels-driver-{dev.replace("_","-")}']
             else:
-                cmd = [f'{path}/pip', 'install',
-                       f'git+https://github.com/FAU-LAP/CAMELS_drivers.git@main#subdirectory={dev}']
+                repo = variables_handling.preferences['driver_repository']
+                branch = variables_handling.preferences['repo_branch']
+                directory = variables_handling.preferences['repo_directory']
+                url = f'git+{repo}@{branch}#subdirectory={directory}/{dev}'
+                cmd = [f'{path}/pip', 'install', url]
             popen = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT,
                                      stdin=subprocess.PIPE, bufsize=1,

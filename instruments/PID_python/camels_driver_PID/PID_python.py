@@ -1,15 +1,14 @@
-from PID_python.PID_python_ophyd import PID_Controller
-from PID_python.PID_python_manual import PID_manual_control
+from .PID_python_ophyd import PID_Controller
+from .PID_python_manual import PID_manual_control
 
-from PID_python.PID_python_config_sub import subclass_config_sub
+from .PID_python_config_sub import subclass_config_sub
 
 from CAMELS.main_classes import device_class
-import main_classes.loop_step as steps
+import CAMELS.main_classes.loop_step as steps
 
 from PyQt5.QtWidgets import QComboBox
 
-from utility import variables_handling
-from CAMELS.main_classes import measurement_channel
+from CAMELS.utility import variables_handling
 
 default_pid_val_table = {'setpoint': [0],
                          'kp': [1],

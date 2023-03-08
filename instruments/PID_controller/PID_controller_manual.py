@@ -1,6 +1,6 @@
 import time
 
-from CAMELS.main_classes.add_on import AddOn
+from CAMELS.main_classes.manual_control import Manual_Control
 from PID_controller.PID_controller_config_sub import subclass_config_sub
 from PID_controller.PID_controller_ophyd import PID_Controller
 
@@ -11,7 +11,7 @@ from utility import variables_handling
 from utility.qthreads import Manual_Device_Thread
 
 
-class PID_manual_control(AddOn):
+class PID_manual_control(Manual_Control):
     def __init__(self, device=None):
         super().__init__(title='PID-controller: manual control', device=device)
 

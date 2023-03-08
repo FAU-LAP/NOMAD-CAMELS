@@ -61,10 +61,10 @@ class Settings_Window(QDialog, Ui_settings_window):
             self.pathButton_device_path.set_path(settings['device_driver_path'])
         else:
             self.pathButton_device_path.set_path(standard_pref['device_driver_path'])
-        if 'autostart_ioc' in settings:
-            self.checkBox_autostart_ioc.setChecked(settings['autostart_ioc'])
-        else:
-            self.checkBox_autostart_ioc.setChecked(standard_pref['autostart_ioc'])
+        # if 'autostart_ioc' in settings:
+        #     self.checkBox_autostart_ioc.setChecked(settings['autostart_ioc'])
+        # else:
+        #     self.checkBox_autostart_ioc.setChecked(standard_pref['autostart_ioc'])
         if 'databroker_catalog_name' in settings:
             self.lineEdit_catalog_name.setText(settings['databroker_catalog_name'])
         else:
@@ -73,6 +73,18 @@ class Settings_Window(QDialog, Ui_settings_window):
             self.checkBox_play_camel_on_error.setChecked(settings['play_camel_on_error'])
         else:
             self.checkBox_play_camel_on_error.setChecked(standard_pref['play_camel_on_error'])
+        if 'driver_repository' in settings:
+            self.lineEdit_repo.setText(settings['driver_repository'])
+        else:
+            self.lineEdit_repo.setText(standard_pref['driver_repository'])
+        if 'repo_directory' in settings:
+            self.lineEdit_directory.setText(settings['repo_directory'])
+        else:
+            self.lineEdit_directory.setText(standard_pref['repo_directory'])
+        if 'repo_branch' in settings:
+            self.lineEdit_branch.setText(settings['repo_branch'])
+        else:
+            self.lineEdit_branch.setText(standard_pref['repo_branch'])
 
 
     def change_theme(self):
@@ -98,8 +110,11 @@ class Settings_Window(QDialog, Ui_settings_window):
                 'py_files_path': self.pathButton_py_files.get_path(),
                 'meas_files_path': self.pathButton_meas_files.get_path(),
                 'device_driver_path': self.pathButton_device_path.get_path(),
-                'autostart_ioc': self.checkBox_autostart_ioc.isChecked(),
+                # 'autostart_ioc': self.checkBox_autostart_ioc.isChecked(),
                 'databroker_catalog_name': self.lineEdit_catalog_name.text(),
+                'driver_repository': self.lineEdit_repo.text(),
+                'repo_branch': self.lineEdit_branch.text(),
+                'repo_directory': self.lineEdit_directory.text(),
                 'play_camel_on_error': self.checkBox_play_camel_on_error.isChecked()}
 
 
