@@ -117,9 +117,11 @@ class Instrument_Config(QWidget, Ui_Form):
         instr_instance = pack.subclass()
         instr_instance.custom_name = name
         self.active_instruments[instr].append(instr_instance)
-        single_widge = pack.subclass_config(data=name, settings_dict={},
-                                            config_dict={}, ioc_dict={},
-                                            additional_info={})
+        single_widge = pack.subclass_config(data=name,
+                                            settings_dict=instr_instance.settings,
+                                            config_dict=instr_instance.config,
+                                            ioc_dict=instr_instance.ioc_settings,
+                                            additional_info=instr_instance.additional_info)
         self.config_tabs.addTab(single_widge, name)
         single_widge.name_change.connect(self.name_config_changed)
         self.tableWidget_instruments.item(ind.row(), 1).setText(str(len(self.active_instruments[instr])))

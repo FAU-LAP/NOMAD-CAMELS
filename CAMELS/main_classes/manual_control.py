@@ -38,12 +38,12 @@ class Manual_Control(QWidget):
 
 
 class Manual_Control_Config(QDialog):
-    def __init__(self, parent=None, control=None, title='Manual Control Config'):
+    def __init__(self, parent=None, control_data=None, title='Manual Control Config'):
         super().__init__(parent=parent)
         layout = QGridLayout()
         self.setLayout(layout)
 
-        self.setWindowTitle(title)
+        self.setWindowTitle(f'{title} - CAMELS')
 
         self.buttonBox = QDialogButtonBox()
         self.buttonBox.setOrientation(Qt.Horizontal)
@@ -53,15 +53,15 @@ class Manual_Control_Config(QDialog):
         self.buttonBox.accepted.connect(self.accept)
 
         name_label = QLabel('Name:')
-        self.control = control or Manual_Control()
-        self.lineEdit_name = QLineEdit(self.control.name)
+        self.control_data = control_data or {}
+        self.lineEdit_name = QLineEdit(self.control_data.name)
 
         layout.addWidget(name_label, 0, 0)
         layout.addWidget(self.lineEdit_name, 0, 1)
         layout.addWidget(self.buttonBox, 11, 0, 1, 2)
 
     def accept(self):
-        self.control.name = self.lineEdit_name.text()
+        self.control_data.name = self.lineEdit_name.text()
         super().accept()
 
     def closeEvent(self, a0: QCloseEvent) -> None:

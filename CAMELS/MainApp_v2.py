@@ -459,7 +459,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def add_manual_control(self):
         dialog = manual_control.New_Manual_Control_Dialog(self)
         if dialog.exec():
-            control = dialog.selected_control
+            control_cls, options_cls = dialog.selected_control
+            options = options_cls()
+            options.exec()
 
     def add_manual_control_to_data(self, control):
         self.manual_controls[control.name] = control

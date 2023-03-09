@@ -1,9 +1,9 @@
 import time
 
-from CAMELS.main_classes.manual_control import Manual_Control
+from CAMELS.main_classes.manual_control import Manual_Control, Manual_Control_Config
 from .PID_config_sub import subclass_config_sub
 
-from PyQt5.QtWidgets import QCheckBox, QLineEdit, QPushButton, QLabel, QSpacerItem, QSizePolicy, QFrame
+from PyQt5.QtWidgets import QCheckBox, QLineEdit, QPushButton, QLabel, QSpacerItem, QSizePolicy, QFrame, QComboBox
 from PyQt5.QtCore import pyqtSignal, QThread
 
 from CAMELS.utility import variables_handling, device_handling
@@ -151,6 +151,26 @@ class PID_manual_control(Manual_Control):
         return super().closeEvent(a0)
 
 
+class PID_Manual_Control_Config(Manual_Control_Config):
+    def __init__(self, parent=None, control_data=None):
+        super().__init__(parent=parent, control_data=control_data,
+                         title='PID Control Config')
+        select_label = QLabel('PID Controller:')
+
+        self.pid_box = QComboBox()
+        pids = []
+        for name, device in variables_handling.devices.items():
+            if device.name == 'PID':
+                pids.append(name)
+        self.pid_box.addItems(pids)
+        self.layout().addWidget(select_label, 2, 0)
+        self.layout().addWidget(self.pid_box, 2, 1)
+
+    def accept(self):
+        self.control_data['pid_name'] = self.pid_box.currentText()
+        super().accept()
+
+
 class PID_update_thread(QThread):
     data_sig = pyqtSignal(float, float, float, bool)
 
@@ -178,34 +198,3 @@ class PID_update_thread(QThread):
         output = self.device.output_value.get()
         on = self.device.pid_on.get()
         self.data_sig.emit(setp, pid_val, output, on)
-
-# class PID_thread(Manual_Device_Thread):
-#     data_sig = pyqtSignal(float, float, float, bool, float, list)
-#
-#     def __init__(self, device, update_time):
-#         super().__init__(device=device, ophyd_class=PID_Controller)
-#         self.update_time = update_time
-#         self.stopping = False
-#         self.starttime = 0
-#
-#     def run(self) -> None:
-#         self.starttime = time.time()
-#         self.do_reading()
-#         while True:
-#             if self.update_time < 0:
-#                 time.sleep(5)
-#                 continue
-#             time.sleep(self.update_time)
-#             self.do_reading()
-#
-#     def do_reading(self):
-#         setp = self.device.pid_val.get()
-#         pid_val = self.device.pid_cval.get()
-#         output = self.device.pid_oval.get()
-#         on = self.device.pid_fbon.get()
-#         pval = self.device.pid_pval.get()
-#         ival = self.device.pid_ival.get()
-#         dval = self.device.pid_dval.get()
-#         self.data_sig.emit(setp, pid_val, output, on,
-#                            time.time() - self.starttime, [pval, ival, dval])
-
