@@ -37,41 +37,41 @@ class Manual_Control(QWidget):
 
 
 
-# class Manual_Control_Config(QDialog):
-#     def __init__(self, control=Manual_Control(), parent=None, title='Manual Control Config'):
-#         super().__init__(parent=parent)
-#         layout = QGridLayout()
-#         self.setLayout(layout)
-#
-#         self.setWindowTitle(title)
-#
-#         self.buttonBox = QDialogButtonBox()
-#         self.buttonBox.setOrientation(Qt.Horizontal)
-#         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
-#         self.buttonBox.setObjectName("buttonBox")
-#         self.buttonBox.rejected.connect(self.reject)
-#         self.buttonBox.accepted.connect(self.accept)
-#
-#         name_label = QLabel('Name:')
-#         self.lineEdit_name = QLineEdit(control.name)
-#         self.control = control
-#
-#         layout.addWidget(name_label, 0, 0)
-#         layout.addWidget(self.lineEdit_name, 0, 1)
-#         layout.addWidget(self.buttonBox, 11, 0, 1, 2)
-#
-#     def accept(self):
-#         self.control.name = self.lineEdit_name.text()
-#         super().accept()
-#
-#     def closeEvent(self, a0: QCloseEvent) -> None:
-#         discard_dialog = QMessageBox.question(self, 'Discard Changes?',
-#                                               f'All changes will be lost!',
-#                                               QMessageBox.Yes | QMessageBox.No)
-#         if discard_dialog != QMessageBox.Yes:
-#             a0.ignore()
-#             return
-#         super().closeEvent(a0)
+class Manual_Control_Config(QDialog):
+    def __init__(self, parent=None, control=None, title='Manual Control Config'):
+        super().__init__(parent=parent)
+        layout = QGridLayout()
+        self.setLayout(layout)
+
+        self.setWindowTitle(title)
+
+        self.buttonBox = QDialogButtonBox()
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+        self.buttonBox.rejected.connect(self.reject)
+        self.buttonBox.accepted.connect(self.accept)
+
+        name_label = QLabel('Name:')
+        self.control = control or Manual_Control()
+        self.lineEdit_name = QLineEdit(self.control.name)
+
+        layout.addWidget(name_label, 0, 0)
+        layout.addWidget(self.lineEdit_name, 0, 1)
+        layout.addWidget(self.buttonBox, 11, 0, 1, 2)
+
+    def accept(self):
+        self.control.name = self.lineEdit_name.text()
+        super().accept()
+
+    def closeEvent(self, a0: QCloseEvent) -> None:
+        discard_dialog = QMessageBox.question(self, 'Discard Changes?',
+                                              f'All changes will be lost!',
+                                              QMessageBox.Yes | QMessageBox.No)
+        if discard_dialog != QMessageBox.Yes:
+            a0.ignore()
+            return
+        super().closeEvent(a0)
 
 
 class New_Manual_Control_Dialog(QDialog):

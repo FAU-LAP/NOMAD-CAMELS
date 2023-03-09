@@ -24,7 +24,7 @@ class subclass(device_class.Device):
     def __init__(self, **kwargs):
         files = ['']
         req = ['']
-        super().__init__(name='PID_python', virtual=True, tags=['PID', 'control'], files=files, directory='PID_python', ophyd_device=PID_Controller, ophyd_class_name='PID_Controller', requirements=req, **kwargs)
+        super().__init__(name='PID', virtual=True, tags=['PID', 'control'], files=files, directory='PID', ophyd_device=PID_Controller, ophyd_class_name='PID_Controller', requirements=req, **kwargs)
         self.settings['pid_val_table'] = default_pid_val_table
         self.settings['auto_pid'] = True
         self.settings['show_plot'] = True
