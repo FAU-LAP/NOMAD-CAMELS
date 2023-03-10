@@ -516,7 +516,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         control_cls = get_control_by_type_name(control_type)[0]
         control = control_cls(control_data=control_data)
         self.open_windows.append(control)
-        control.closing.connect(lambda x=control: self.open_windows.remove(x))
+        control.closing.connect(lambda x=control, y=name: self.close_manual_control(x, y))
+        self.button_area_manual.disable_single_run(name)
+
+    def close_manual_control(self, control, name):
+        self.open_windows.remove(control)
+        self.button_area_manual.enable_single_run(name)
+
 
     # --------------------------------------------------
     # protocols

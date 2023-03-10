@@ -70,19 +70,19 @@ if __name__ == '__main__':
             import MainApp_v2
 
 
-    def start_main():
-        import MainApp_v2
-        import sys
-        from CAMELS.utility import exception_hook
-        sys.excepthook = exception_hook.exception_hook
-        main_window = MainApp_v2.MainWindow()
-        loading_screen.hide()
-        # loading_screen.deleteLater()
     # Start the thread and connect the progress signal
     thread = ImportThread()
     thread.update_progress.connect(loading_screen.set_progress)
     thread.update_text.connect(loading_screen.set_text)
-    thread.finished.connect(start_main)
+    # thread.finished.connect(start_main)
     thread.start()
+    while thread.isRunning():
+        app.processEvents()
+    import MainApp_v2
+    import sys
+    from CAMELS.utility import exception_hook
+    sys.excepthook = exception_hook.exception_hook
+    main_window = MainApp_v2.MainWindow()
+    loading_screen.hide()
 
     app.exec_()
