@@ -5,7 +5,7 @@ import json
 import pandas as pd
 import importlib
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QShortcut
+from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QShortcut, QWidget
 from PyQt5.QtCore import QCoreApplication, Qt, pyqtSignal
 from PyQt5.QtGui import QIcon
 
@@ -40,8 +40,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         sys.stdout = self.textEdit_console_output.text_writer
         sys.stderr = self.textEdit_console_output.error_writer
 
-        self.button_area_meas = Drop_Scroll_Area(self, 100, 100)
-        self.button_area_manual = Drop_Scroll_Area(self, 100, 100)
+        self.button_area_meas = Drop_Scroll_Area(self, 120, 120)
+        self.button_area_manual = Drop_Scroll_Area(self, 120, 120)
         self.meas_widget.layout().addWidget(self.button_area_meas, 2, 0, 1, 3)
         self.manual_widget.layout().addWidget(self.button_area_manual, 2, 0, 1, 3)
         self.button_area_manual.setHidden(True)
@@ -122,7 +122,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         QShortcut('Ctrl+s', self).activated.connect(self.save_state)
 
-        self.adjustSize()
 
 
 
@@ -137,6 +136,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.protocol_module = None
         self.protocol_savepath = ''
 
+        self.adjustSize()
         self.show()
 
     def with_or_without_instruments(self):
@@ -157,6 +157,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.active_instruments.update(dialog.active_instruments)
         self.with_or_without_instruments()
 
+    def add_to_open_windows(self, window):
+        self.open_windows.append(window)
+        window.closing.connect(lambda x=window: self.open_windows.remove(x))
     # --------------------------------------------------
     # Overwriting parent-methods
     # --------------------------------------------------
@@ -534,8 +537,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         dialog = Protocol_Config()
         dialog.show()
         dialog.accepted.connect(self.add_prot_to_data)
-        dialog.closing.connect(lambda x=dialog: self.open_windows.remove(x))
-        self.open_windows.append(dialog)
+        self.add_to_open_windows(dialog)
+        # dialog.closing.connect(lambda x=dialog: self.open_windows.remove(x))
+        # self.open_windows.append(dialog)
 
     def add_prot_to_data(self, protocol):
         self.protocols_dict[protocol.name] = protocol
@@ -557,8 +561,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         dialog = Protocol_Config(self.protocols_dict[prot_name])
         dialog.show()
         dialog.accepted.connect(lambda x, y=prot_name: self.update_prot_data(x, y))
-        dialog.closing.connect(lambda x=dialog: self.open_windows.remove(x))
-        self.open_windows.append(dialog)
+        self.add_to_open_windows(dialog)
+        # dialog.closing.connect(lambda x=dialog: self.open_windows.remove(x))
+        # self.open_windows.append(dialog)
 
     def add_button_to_meas(self, name):
         button = options_run_button.Options_Run_Button(name)
@@ -590,6 +595,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         spec.loader.exec_module(self.protocol_module)
         self.protocol_module.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
         plots, subs, _ = self.protocol_module.create_plots(self.run_engine)
+        for plot in plots:
+            self.add_to_open_windows(plot)
         device_list = protocol.get_used_devices()
         devs, dev_data = device_handling.instantiate_devices(device_list)
         self.current_protocol_device_list = device_list

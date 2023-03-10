@@ -3,7 +3,7 @@ import numpy as np
 from bluesky.callbacks.mpl_plotting import QtAwareCallback
 
 from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QWidget, QGridLayout
-from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtCore import Qt, QEvent, pyqtSignal
 from PyQt5.QtGui import QIcon
 
 from CAMELS.bluesky_handling.evaluation_helper import Evaluator
@@ -13,6 +13,8 @@ from pkg_resources import resource_filename
 
 
 class Values_List_Plot(QtAwareCallback, QWidget):
+    closing = pyqtSignal()
+
     def __init__(self, value_list, *, epoch='run', namespace=None, title='',
                  stream_name='primary', parent=None, **kwargs):
         QWidget.__init__(self, parent=parent)
@@ -77,3 +79,7 @@ class Values_List_Plot(QtAwareCallback, QWidget):
             self.val_items[i].setText(f'{new_val:7e}')
         self.table.resizeColumnsToContents()
         self.show()
+
+    def closeEvent(self, a0):
+        self.closing.emit()
+        super().closeEvent(a0)

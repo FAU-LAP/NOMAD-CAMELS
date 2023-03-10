@@ -118,6 +118,8 @@ class PlotWidget(QWidget):
     options_open : bool
         Whether the options are currently open
     """
+    closing = pyqtSignal()
+
     def __init__(self, x_name, y_names, *, legend_keys=None, xlim=None,
                  ylim=None, epoch='run', parent=None, namespace=None, ylabel='',
                  xlabel='', title='', stream_name='primary', fits=None,
@@ -230,6 +232,10 @@ class PlotWidget(QWidget):
             self.options_open = True
             self.plot_options.show()
         self.adjustSize()
+
+    def closeEvent(self, a0):
+        self.closing.emit()
+        super().closeEvent(a0)
 
 
 class LiveFit_Eva(LiveFit):

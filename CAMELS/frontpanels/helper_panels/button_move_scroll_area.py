@@ -137,7 +137,7 @@ class DropArea(QWidget):
 class Drop_Scroll_Area(QScrollArea):
     order_changed = pyqtSignal(list)
 
-    def __init__(self, parent=None, button_width=100, button_height=100):
+    def __init__(self, parent=None, button_width=120, button_height=120):
         super().__init__(parent=parent)
         self.drop_area = DropArea(button_width)
         self.setWidget(self.drop_area)

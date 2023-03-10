@@ -21,9 +21,9 @@ class SimpleWrapLabel(QLabel):
 
 
 class Dots_Button(QPushButton):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, size=100):
         super().__init__(parent)
-        self.setFixedSize(100, 100)
+        self.setFixedSize(size, size)
         self.setIconSize(self.size())
         self.setFlat(True)
         self.setCursor(Qt.PointingHandCursor)
@@ -53,7 +53,7 @@ class Options_Run_Button(QFrame):
     external_asked = pyqtSignal()
     del_asked = pyqtSignal()
 
-    def __init__(self, text='', size=100, small_text='run',
+    def __init__(self, text='', size=120, small_text='run',
                  protocol_options=True):
         super().__init__()
         self.label = SimpleWrapLabel(text, parent=self)
@@ -61,7 +61,7 @@ class Options_Run_Button(QFrame):
         self.label.setWordWrap(True)
         self.label.setStyleSheet("QLabel {font-weight: bold; font-size: 11pt; font-family: Calibri;}")
         self.label.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
-        self.button = Dots_Button(parent=self)
+        self.button = Dots_Button(parent=self, size=size)
         self.button.setGeometry(0,0,size,size)
         self.small_button = QPushButton(small_text, parent=self)
         icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)

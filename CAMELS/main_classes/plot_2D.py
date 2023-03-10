@@ -19,6 +19,8 @@ from pkg_resources import resource_filename
 stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 class PlotWidget_2D(QWidget):
+    closing = pyqtSignal()
+
     def __init__(self, x_name, y_name, z_name, *, xlim=None, ylim=None,
                  zlim=None, parent=None, namespace=None, zlabel='', ylabel='',
                  xlabel='', title='', stream_name='primary', **kwargs):
@@ -57,6 +59,10 @@ class PlotWidget_2D(QWidget):
 
     def clear_plot(self):
         self.livePlot.clear_plot()
+
+    def closeEvent(self, a0):
+        self.closing.emit()
+        super().closeEvent(a0)
 
 
 class LivePlot_2D(LiveScatter, QObject):
