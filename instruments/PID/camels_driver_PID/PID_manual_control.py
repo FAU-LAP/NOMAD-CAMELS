@@ -146,6 +146,7 @@ class PID_manual_control(Manual_Control):
             self.pushButton_settings.setText('Hide Settings')
         else:
             self.pushButton_settings.setText('Show Settings')
+        self.adjustSize()
 
     def close(self) -> bool:
         self.update_thread.still_running = False
@@ -161,6 +162,7 @@ class PID_Manual_Control_Config(Manual_Control_Config):
         super().__init__(parent=parent, control_data=control_data,
                          title='PID Control Config',
                          control_type='PID_manual_control')
+        control_data = control_data or {}
         select_label = QLabel('PID Controller:')
 
         self.pid_box = QComboBox()

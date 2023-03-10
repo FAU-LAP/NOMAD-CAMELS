@@ -137,6 +137,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.protocol_module = None
         self.protocol_savepath = ''
 
+        self.show()
+
     def with_or_without_instruments(self):
         available = False
         if self.active_instruments:
@@ -682,8 +684,11 @@ if __name__ == '__main__':
     app = QCoreApplication.instance()
     if app is None:
         app = QApplication(sys.argv)
+    # with open('packages.txt', 'w') as f:
+    #     for i, (mod_name, mod) in enumerate(sys.modules.items()):
+    #         if mod_name.startswith('_') or mod is None:
+    #             continue
+    #         f.write(f'{mod_name}\n')
     ui = MainWindow()
     ui.show()
-    # RE = RunEngine()
-    # ui.run_engine = RE
     app.exec_()

@@ -25,10 +25,10 @@ class Manual_Control(QWidget):
         self.device_list = []
         self.show()
 
-    def close(self) -> bool:
-        device_handling.close_devices(self.device_list)
-        self.closing.emit()
-        return super().close()
+    # def close(self) -> bool:
+    #     # device_handling.close_devices(self.device_list)
+    #     self.closing.emit()
+    #     return super().close()
 
     def closeEvent(self, a0: QCloseEvent) -> None:
         device_handling.close_devices(self.device_list)
