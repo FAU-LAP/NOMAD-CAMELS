@@ -17,7 +17,7 @@ class PID_manual_control(Manual_Control):
         else:
             name = 'PID manual control'
         super().__init__(parent=parent, title=name)
-        self.start_device(control_data['PID'])
+        self.start_device(control_data['pid_name'])
 
         self.settings_widge = subclass_config_sub(settings_dict=self.device.settings, config_dict=self.device.config, parent=self)
         self.settings_widge.input_label.setHidden(True)
@@ -169,8 +169,8 @@ class PID_Manual_Control_Config(Manual_Control_Config):
             if device.name == 'PID':
                 pids.append(name)
         self.pid_box.addItems(pids)
-        if 'PID' in control_data and control_data['PID'] in pids:
-            self.pid_box.setCurrentText(control_data['PID'])
+        if 'pid_name' in control_data and control_data['pid_name'] in pids:
+            self.pid_box.setCurrentText(control_data['pid_name'])
         self.layout().addWidget(select_label, 2, 0)
         self.layout().addWidget(self.pid_box, 2, 1)
 
