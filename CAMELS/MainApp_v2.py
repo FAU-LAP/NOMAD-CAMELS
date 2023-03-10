@@ -21,6 +21,7 @@ from CAMELS.frontpanels.settings_window import Settings_Window
 from CAMELS.frontpanels.protocol_config import Protocol_Config
 from CAMELS.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
 from CAMELS.utility import load_save_functions, add_remove_table, variables_handling, number_formatting, theme_changing, options_run_button, device_handling, databroker_export
+from CAMELS.manual_controls.get_manual_controls import get_control_by_type_name
 
 from collections import OrderedDict
 
@@ -68,9 +69,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         variables_handling.devices = self.active_instruments
         self.protocols_dict = OrderedDict()
         variables_handling.protocols = self.protocols_dict
+        self.manual_controls = OrderedDict()
         self.preset_save_dict = {'_current_preset': self._current_preset,
                                  'active_instruments': self.active_instruments,
-                                 'protocols_dict': self.protocols_dict}
+                                 'protocols_dict': self.protocols_dict,
+                                 'manual_controls': self.manual_controls}
         self.preferences = {}
         self.load_preferences()
         self.load_state()
@@ -80,11 +83,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.with_or_without_instruments()
         self.populate_meas_buttons()
+        self.populate_manuals_buttons()
         self.adjustSize()
         self.button_area_meas.order_changed.connect(self.protocol_order_changed)
 
         self.active_controls = {}
-        self.manual_controls = {}
 
 
         # user and sample data
@@ -435,7 +438,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def make_save_dict(self):
         self.preset_save_dict = {'_current_preset': self._current_preset,
                                  'active_instruments': self.active_instruments,
-                                 'protocols_dict': self.protocols_dict}
+                                 'protocols_dict': self.protocols_dict,
+                                 'manual_controls': self.manual_controls}
         for key in self.preset_save_dict:
             add_string = load_save_functions.get_save_str(self.preset_save_dict[key])
             if add_string is not None:
@@ -453,6 +457,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # --------------------------------------------------
     # manual controls
     # --------------------------------------------------
+
     def manual_control_order_changed(self, order):
         self.manual_controls = OrderedDict(sorted(self.manual_controls.items(), key=lambda x: order.index(x[0])))
 
@@ -461,41 +466,49 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if dialog.exec():
             control_cls, options_cls = dialog.selected_control
             options = options_cls()
-            options.exec()
+            if options.exec():
+                self.add_manual_control_to_data(options.control_data)
 
-    def add_manual_control_to_data(self, control):
-        self.manual_controls[control.name] = control
-        self.add_button_to_manuals(control.name)
+    def add_manual_control_to_data(self, control_data):
+        self.manual_controls[control_data['name']] = control_data
+        self.add_button_to_manuals(control_data['name'])
         self.button_area_manual.setHidden(False)
 
-    def update_man_cont_data(self, control, old_name):
+    def remove_manual_control(self, control_name):
+        self.manual_controls.pop(control_name)
+        self.button_area_manual.remove_button(control_name)
+        if not self.manual_controls:
+            self.button_area_manual.setHidden(True)
+
+    def update_man_cont_data(self, control_data, old_name):
         self.manual_controls.pop(old_name)
-        self.manual_controls[control.name] = control
-        self.button_area_manual.rename_button(old_name, control.name)
+        self.manual_controls[control_data['name']] = control_data
+        self.button_area_manual.rename_button(old_name, control_data['name'])
 
-    # def open_manual_control_config(self, control_name):
-    #     dialog = Protocol_Config(self.protocols_dict[control_name])
-    #     dialog.show()
-    #     dialog.accepted.connect(lambda x, y=control_name: self.update_man_cont_data(x, y))
-    #     dialog.closing.connect(lambda x=dialog: self.open_windows.remove(x))
-    #     self.open_windows.append(dialog)
+    def open_manual_control_config(self, control_name):
+        control_data = self.manual_controls[control_name]
+        config_cls = get_control_by_type_name(control_data['control_type'])[1]
+        dialog = config_cls(parent=self, control_data=control_data)
+        if dialog.exec():
+            self.update_man_cont_data(dialog.control_data, control_name)
 
-    # def add_button_to_manuals(self, name):
-    #     button = options_run_button.Options_Run_Button(name)
-    #     self.button_area_meas.add_button(button, name)
-    #     button.button.clicked.connect(lambda state, x=name: self.open_protocol_config(x))
-    #     button.small_button.clicked.connect(lambda state, x=name: self.run_protocol(x))
-    #     button.build_asked.connect(lambda x=name: self.build_protocol(x))
-    #     button.external_asked.connect(lambda x=name: self.open_protocol(x))
+    def add_button_to_manuals(self, name):
+        button = options_run_button.Options_Run_Button(name, small_text='Start',
+                                                       protocol_options=False)
+        self.button_area_manual.add_button(button, name)
+        button.button.clicked.connect(lambda state, x=name: self.open_manual_control_config(x))
+        button.del_asked.connect(lambda x=name: self.remove_manual_control(x))
+        # button.small_button.clicked.connect(lambda state, x=name: self.run_protocol(x))
+        # button.build_asked.connect(lambda x=name: self.build_protocol(x))
+        # button.external_asked.connect(lambda x=name: self.open_protocol(x))
 
     def populate_manuals_buttons(self):
         if not self.manual_controls:
             self.button_area_manual.setHidden(True)
         else:
             self.button_area_manual.setHidden(False)
-        for prot in self.manual_controls:
-            self.add_button_to_meas(prot)
-
+        for control in self.manual_controls:
+            self.add_button_to_manuals(control)
 
     # --------------------------------------------------
     # protocols
@@ -514,6 +527,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.protocols_dict[protocol.name] = protocol
         self.add_button_to_meas(protocol.name)
         self.button_area_meas.setHidden(False)
+
+    def remove_protocol(self, prot_name):
+        self.protocols_dict.pop(prot_name)
+        self.button_area_meas.remove_button(prot_name)
+        if not self.protocols_dict:
+            self.button_area_meas.setHidden(True)
 
     def update_prot_data(self, protocol, old_name):
         self.protocols_dict.pop(old_name)
@@ -534,6 +553,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         button.small_button.clicked.connect(lambda state, x=name: self.run_protocol(x))
         button.build_asked.connect(lambda x=name: self.build_protocol(x))
         button.external_asked.connect(lambda x=name: self.open_protocol(x))
+        button.del_asked.connect(lambda x=name: self.remove_protocol(x))
 
     def populate_meas_buttons(self):
         if not self.protocols_dict:

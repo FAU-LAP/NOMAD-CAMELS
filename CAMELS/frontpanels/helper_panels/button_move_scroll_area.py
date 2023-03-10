@@ -162,6 +162,12 @@ class Drop_Scroll_Area(QScrollArea):
         self.drop_area.button_order.append(name)
         self.drop_area.updateLayout()
 
+    def remove_button(self, name):
+        button = self.drop_area.buttons.pop(name)
+        self.drop_area.button_order.remove(name)
+        self.drop_area.updateLayout()
+        button.deleteLater()
+
     def get_button_order(self):
         return self.drop_area.button_order
 

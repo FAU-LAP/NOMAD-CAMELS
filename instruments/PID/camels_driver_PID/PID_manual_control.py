@@ -156,6 +156,7 @@ class PID_Manual_Control_Config(Manual_Control_Config):
         super().__init__(parent=parent, control_data=control_data,
                          title='PID Control Config')
         select_label = QLabel('PID Controller:')
+        self.control_type = 'PID_manual_control'
 
         self.pid_box = QComboBox()
         pids = []

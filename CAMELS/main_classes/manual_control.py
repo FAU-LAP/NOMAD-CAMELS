@@ -42,6 +42,7 @@ class Manual_Control_Config(QDialog):
         super().__init__(parent=parent)
         layout = QGridLayout()
         self.setLayout(layout)
+        self.control_type = 'Manual_Control'
 
         self.setWindowTitle(f'{title} - CAMELS')
 
@@ -54,14 +55,19 @@ class Manual_Control_Config(QDialog):
 
         name_label = QLabel('Name:')
         self.control_data = control_data or {}
-        self.lineEdit_name = QLineEdit(self.control_data.name)
+        if 'name' in self.control_data:
+            name = self.control_data['name']
+        else:
+            name = self.control_type
+        self.lineEdit_name = QLineEdit(name)
 
         layout.addWidget(name_label, 0, 0)
         layout.addWidget(self.lineEdit_name, 0, 1)
         layout.addWidget(self.buttonBox, 11, 0, 1, 2)
 
     def accept(self):
-        self.control_data.name = self.lineEdit_name.text()
+        self.control_data['name'] = self.lineEdit_name.text()
+        self.control_data['control_type'] = self.control_type
         super().accept()
 
     def closeEvent(self, a0: QCloseEvent) -> None:

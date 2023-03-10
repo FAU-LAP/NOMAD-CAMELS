@@ -14,10 +14,9 @@ from datetime import datetime
 import json
 import ophyd
 
-from collections import OrderedDict
-
 from CAMELS.main_classes import protocol_class, device_class
 from CAMELS.utility.load_save_helper_functions import load_plots
+from CAMELS.manual_controls import get_manual_controls
 
 appdata_path = f'{getenv("LOCALAPPDATA")}/CAMELS'
 if not isdir(appdata_path):
@@ -138,10 +137,10 @@ def load_save_dict(string_dict:dict, object_dict:dict, update_missing_key=False,
                 load_protocols_dict(val, obj)
             elif key in ['active_devices_dict', 'active_instruments']:
                 load_devices_dict(val, obj)
+            elif isinstance(obj, dict):
+                load_save_dict(val, obj, True, True)
             elif hasattr(obj, '__save_dict__') or hasattr(obj, '__dict__'):
                 load_save_dict(val, obj.__dict__)
-            elif type(obj) is dict:
-                load_save_dict(val, obj, True, True)
             elif type(obj) is list:
                 obj.clear()
                 for v in val:
@@ -225,6 +224,11 @@ def load_protocol(path):
     load_protocols_dict(prot_string_dict, sub_protocol)
     return sub_protocol[prot_name]
 
+# def load_manuals_dict(string_dict, manuals_dict):
+#     manuals_dict.clear()
+#     for key, val in string_dict.items():
+#         control_type = val['control_type']
+#         control = get_manual_controls.get_control_by_type_name(control_type)
 
 
 def load_protocols_dict(string_dict, prot_dict):

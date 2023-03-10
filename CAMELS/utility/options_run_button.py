@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QPushButton, QApplication, QMainWindow, QLabel, QStyle, QFrame, QMenu, QAction
+from PyQt5.QtWidgets import QPushButton, QApplication, QMainWindow, QLabel, QStyle, QFrame, QMenu, QAction, QMessageBox
 from PyQt5.QtGui import QPainter, QColor, QBrush, QDrag
 from PyQt5.QtCore import Qt, QSize, QMimeData, pyqtSignal
 
@@ -51,8 +51,10 @@ class Dots_Button(QPushButton):
 class Options_Run_Button(QFrame):
     build_asked = pyqtSignal()
     external_asked = pyqtSignal()
+    del_asked = pyqtSignal()
 
-    def __init__(self, text='', size=100):
+    def __init__(self, text='', size=100, small_text='run',
+                 protocol_options=True):
         super().__init__()
         self.label = SimpleWrapLabel(text, parent=self)
         self.label.setGeometry(5,0,size-20,size)
@@ -61,7 +63,7 @@ class Options_Run_Button(QFrame):
         self.label.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
         self.button = Dots_Button(parent=self)
         self.button.setGeometry(0,0,size,size)
-        self.small_button = QPushButton('run', parent=self)
+        self.small_button = QPushButton(small_text, parent=self)
         icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
         self.small_button.setIcon(icon)
         self.small_button.setIconSize(QSize(int(size/4), int(size/4)))
@@ -71,15 +73,29 @@ class Options_Run_Button(QFrame):
 
         self.setFixedSize(size,size)
         self.setFrameStyle(1)
+        self.protocol_options = protocol_options
 
     def options_menu(self, pos):
         menu = QMenu()
-        action_export = QAction('Export Protocol')
-        action_export.triggered.connect(self.build_asked.emit)
-        action_open = QAction('Open Externally')
-        action_open.triggered.connect(self.external_asked.emit)
-        menu.addActions([action_export, action_open])
+        actions = []
+        if self.protocol_options:
+            action_export = QAction('Export Protocol')
+            action_export.triggered.connect(self.build_asked.emit)
+            action_open = QAction('Open Externally')
+            action_open.triggered.connect(self.external_asked.emit)
+            actions += [action_export, action_open]
+        action_delete = QAction('Delete')
+        action_delete.triggered.connect(self.delete_button)
+        actions.append(action_delete)
+        menu.addActions(actions)
         menu.exec_(self.mapToGlobal(pos))
+
+    def delete_button(self):
+        del_dialog = QMessageBox.question(self, f'Delete {self.label.text()}?',
+                                          f'{self.label.text()} will be removed completely',
+                                          QMessageBox.Yes | QMessageBox.No)
+        if del_dialog == QMessageBox.Yes:
+            self.del_asked.emit()
 
     def mouseMoveEvent(self, event):
         if event.buttons() == Qt.LeftButton:

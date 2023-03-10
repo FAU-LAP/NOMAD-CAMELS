@@ -9,3 +9,11 @@ def get_instrument_controls():
         adds = instr.get_controls()
         controls.update(adds)
     return controls
+
+def get_control_by_type_name(name):
+    if name in manual_controls:
+        return manual_controls[name]
+    instr_controls = get_instrument_controls()
+    if name in instr_controls:
+        return instr_controls[name]
+    raise Exception(f'Manual Control of type {name} is not defined!')
