@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QDialog, QDialogButtonBox, QLa
 from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtCore import pyqtSignal, Qt
 
-from CAMELS.utility import device_handling
+from CAMELS.utility import device_handling, variables_handling
 from CAMELS.manual_controls import get_manual_controls
 
 from pkg_resources import resource_filename
@@ -11,18 +11,18 @@ from pkg_resources import resource_filename
 class Manual_Control(QWidget):
     closing = pyqtSignal()
 
-    def __init__(self, parent=None, title='Manual Control', device=None,
-                 ophyd_device=None, device_list=None):
+    def __init__(self, parent=None, title='Manual Control', control_data=None):
         super().__init__(parent=parent)
         layout = QGridLayout()
         self.setLayout(layout)
+        control_data = control_data or {}
 
         self.setWindowTitle(f'CAMELS - {title}')
         self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS.svg')))
         self.name = title
-        self.device = device
-        self.ophyd_device = ophyd_device
-        self.device_list = device_list or []
+        self.device = None
+        self.ophyd_device = None
+        self.device_list = []
         self.show()
 
     def close(self) -> bool:
@@ -35,14 +35,25 @@ class Manual_Control(QWidget):
         self.closing.emit()
         return super().closeEvent(a0)
 
+    def start_device(self, device_name):
+        self.device = variables_handling.devices[device_name]
+        if self.device:
+            self.device_list = self.device.get_necessary_devices()
+            self.device_list = list(set(self.device_list))
+            if self.device.name in self.device_list:
+                self.device_list.remove(self.device.custom_name)
+            self.device_list.append(self.device.custom_name)
+            devs, dev_data = device_handling.instantiate_devices(self.device_list)
+            self.ophyd_device = devs[self.device.custom_name]
+
 
 
 class Manual_Control_Config(QDialog):
-    def __init__(self, parent=None, control_data=None, title='Manual Control Config'):
+    def __init__(self, parent=None, control_data=None, title='Manual Control Config', control_type=''):
         super().__init__(parent=parent)
         layout = QGridLayout()
         self.setLayout(layout)
-        self.control_type = 'Manual_Control'
+        self.control_type = control_type or 'Manual_Control'
 
         self.setWindowTitle(f'{title} - CAMELS')
 

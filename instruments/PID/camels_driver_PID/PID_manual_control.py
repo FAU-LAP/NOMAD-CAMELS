@@ -10,9 +10,14 @@ from CAMELS.utility import variables_handling, device_handling
 
 
 class PID_manual_control(Manual_Control):
-    def __init__(self, device=None, ophyd_device=None, device_list=None):
-        super().__init__(title='PID-controller: manual control', device=device,
-                         ophyd_device=ophyd_device, device_list=device_list)
+    def __init__(self, parent=None, control_data=None):
+        control_data = control_data or {}
+        if 'name' in control_data:
+            name = control_data['name']
+        else:
+            name = 'PID manual control'
+        super().__init__(parent=parent, title=name)
+        self.start_device(control_data['PID'])
 
         self.settings_widge = subclass_config_sub(settings_dict=self.device.settings, config_dict=self.device.config, parent=self)
         self.settings_widge.input_label.setHidden(True)
@@ -82,7 +87,7 @@ class PID_manual_control(Manual_Control):
         self.update_thread.start()
 
         self.sub_devices = []
-        for dev in device_list:
+        for dev in self.device_list:
             if dev in device_handling.running_devices:
                 self.sub_devices.append(device_handling.running_devices[dev])
 
@@ -154,9 +159,9 @@ class PID_manual_control(Manual_Control):
 class PID_Manual_Control_Config(Manual_Control_Config):
     def __init__(self, parent=None, control_data=None):
         super().__init__(parent=parent, control_data=control_data,
-                         title='PID Control Config')
+                         title='PID Control Config',
+                         control_type='PID_manual_control')
         select_label = QLabel('PID Controller:')
-        self.control_type = 'PID_manual_control'
 
         self.pid_box = QComboBox()
         pids = []
@@ -164,6 +169,8 @@ class PID_Manual_Control_Config(Manual_Control_Config):
             if device.name == 'PID':
                 pids.append(name)
         self.pid_box.addItems(pids)
+        if 'PID' in control_data and control_data['PID'] in pids:
+            self.pid_box.setCurrentText(control_data['PID'])
         self.layout().addWidget(select_label, 2, 0)
         self.layout().addWidget(self.pid_box, 2, 1)
 

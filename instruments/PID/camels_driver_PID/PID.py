@@ -31,7 +31,7 @@ class subclass(device_class.Device):
         self.config['dt'] = 0.5
 
 
-        self.controls = {'PID manual control': [PID_manual_control,
+        self.controls = {'PID_manual_control': [PID_manual_control,
                                                 PID_Manual_Control_Config]}
 
     # def get_additional_string(self):

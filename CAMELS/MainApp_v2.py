@@ -498,9 +498,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_area_manual.add_button(button, name)
         button.button.clicked.connect(lambda state, x=name: self.open_manual_control_config(x))
         button.del_asked.connect(lambda x=name: self.remove_manual_control(x))
-        # button.small_button.clicked.connect(lambda state, x=name: self.run_protocol(x))
-        # button.build_asked.connect(lambda x=name: self.build_protocol(x))
-        # button.external_asked.connect(lambda x=name: self.open_protocol(x))
+        button.small_button.clicked.connect(lambda state, x=name: self.start_manual_control(x))
 
     def populate_manuals_buttons(self):
         if not self.manual_controls:
@@ -509,6 +507,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.button_area_manual.setHidden(False)
         for control in self.manual_controls:
             self.add_button_to_manuals(control)
+
+    def start_manual_control(self, name):
+        control_data = self.manual_controls[name]
+        control_type = control_data['control_type']
+        control_cls = get_control_by_type_name(control_type)[0]
+        control = control_cls(control_data=control_data)
+        self.open_windows.append(control)
+        control.closing.connect(lambda x=control: self.open_windows.remove(x))
 
     # --------------------------------------------------
     # protocols
