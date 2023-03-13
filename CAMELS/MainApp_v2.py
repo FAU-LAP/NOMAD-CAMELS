@@ -5,7 +5,7 @@ import json
 import pandas as pd
 import importlib
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QShortcut, QWidget
+from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QShortcut
 from PyQt5.QtCore import QCoreApplication, Qt, pyqtSignal
 from PyQt5.QtGui import QIcon
 
@@ -20,7 +20,8 @@ from CAMELS.frontpanels.manage_instruments import ManageInstruments
 from CAMELS.frontpanels.settings_window import Settings_Window
 from CAMELS.frontpanels.protocol_config import Protocol_Config
 from CAMELS.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
-from CAMELS.utility import load_save_functions, add_remove_table, variables_handling, number_formatting, theme_changing, options_run_button, device_handling, databroker_export
+from CAMELS.utility import load_save_functions, variables_handling, number_formatting, theme_changing, device_handling, databroker_export
+from CAMELS.ui_widgets import add_remove_table, options_run_button
 from CAMELS.manual_controls.get_manual_controls import get_control_by_type_name
 
 from collections import OrderedDict
@@ -697,11 +698,11 @@ if __name__ == '__main__':
     app = QCoreApplication.instance()
     if app is None:
         app = QApplication(sys.argv)
-    # with open('packages.txt', 'w') as f:
-    #     for i, (mod_name, mod) in enumerate(sys.modules.items()):
-    #         if mod_name.startswith('_') or mod is None:
-    #             continue
-    #         f.write(f'{mod_name}\n')
+    with open('packages.txt', 'w') as f:
+        for i, (mod_name, mod) in enumerate(sys.modules.items()):
+            if mod_name.startswith('_') or mod is None:
+                continue
+            f.write(f'{mod_name}\n')
     ui = MainWindow()
     ui.show()
     app.exec_()

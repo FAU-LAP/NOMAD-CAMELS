@@ -1,9 +1,8 @@
-from PyQt5.QtWidgets import QComboBox, QCheckBox
+from PyQt5.QtWidgets import QCheckBox
 
 from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
-from CAMELS.utility.add_remove_table import AddRemoveTable
-from CAMELS.utility.channels_check_table import Channels_Check_Table
+from CAMELS.ui_widgets.channels_check_table import Channels_Check_Table
 from CAMELS.utility import variables_handling
 
 

@@ -139,6 +139,8 @@ class Ui_MainWindow(object):
 "    font-family: Calibri;\n"
 "    font-size: 75pt;\n"
 "    font-weight: bold;\n"
+"    padding: 0px;\n"
+"    padding-bottom: 10px;\n"
 "}")
         self.pushButton_add_manual.setObjectName("pushButton_add_manual")
         self.gridLayout.addWidget(self.pushButton_add_manual, 1, 1, 1, 1)
@@ -196,6 +198,8 @@ class Ui_MainWindow(object):
 "    font-family: Calibri;\n"
 "    font-size: 75pt;\n"
 "    font-weight: bold;\n"
+"    padding: 0px;\n"
+"    padding-bottom: 10px;\n"
 "}")
         self.pushButton_add_meas.setObjectName("pushButton_add_meas")
         self.gridLayout_2.addWidget(self.pushButton_add_meas, 1, 1, 1, 1)
@@ -332,4 +336,4 @@ class Ui_MainWindow(object):
         self.actionDocumentation.setText(_translate("MainWindow", "Documentation"))
         self.actionReport_Bug.setText(_translate("MainWindow", "Report Bug"))
         self.actionVISA_device_builder.setText(_translate("MainWindow", "VISA-device builder"))
-from CAMELS.utility.console_redirect import Console_TextEdit
+from CAMELS.ui_widgets.console_redirect import Console_TextEdit

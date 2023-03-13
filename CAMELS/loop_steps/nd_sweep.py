@@ -1,10 +1,10 @@
-from PyQt5.QtWidgets import QComboBox, QLabel, QCheckBox, QTabWidget, QPushButton, QWidget, QGridLayout, QLineEdit
+from PyQt5.QtWidgets import QComboBox, QLabel, QTabWidget, QPushButton, QWidget, QGridLayout, QLineEdit
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import pyqtSignal
 
 from CAMELS.main_classes.loop_step import Loop_Step_Config, Loop_Step
 from CAMELS.utility import variables_handling
-from CAMELS.utility.channels_check_table import Channels_Check_Table
+from CAMELS.ui_widgets.channels_check_table import Channels_Check_Table
 from CAMELS.utility.load_save_helper_functions import load_plots
 from CAMELS.bluesky_handling import builder_helper_functions
 from CAMELS.frontpanels.plot_definer import Plot_Button_Overview

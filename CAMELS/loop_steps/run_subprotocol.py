@@ -3,9 +3,9 @@ import os
 from PyQt5.QtWidgets import QLabel, QComboBox, QCheckBox
 
 from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
-from CAMELS.utility.path_button_edit import Path_Button_Edit
+from CAMELS.ui_widgets.path_button_edit import Path_Button_Edit
 from CAMELS.utility import variables_handling, load_save_functions
-from CAMELS.utility.add_remove_table import AddRemoveTable
+from CAMELS.ui_widgets.add_remove_table import AddRemoveTable
 from CAMELS.bluesky_handling import protocol_builder, builder_helper_functions
 
 

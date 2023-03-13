@@ -15,8 +15,9 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox,
     QPushButton
 from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
-from CAMELS.utility import exception_hook, load_save_functions, treeView_functions, qthreads, drag_drop_tree_view, number_formatting, variables_handling, \
-    add_remove_table, theme_changing, device_handling
+from CAMELS.utility import exception_hook, load_save_functions, treeView_functions, qthreads, number_formatting, variables_handling, \
+    theme_changing, device_handling
+from CAMELS.ui_widgets import add_remove_table, drag_drop_tree_view
 from CAMELS.bluesky_handling import protocol_builder, make_catalog
 from CAMELS.EPICS_handling import make_ioc
 

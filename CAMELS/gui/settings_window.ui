@@ -358,7 +358,7 @@
   <customwidget>
    <class>Path_Button_Edit</class>
    <extends>QWidget</extends>
-   <header>CAMELS.utility.path_button_edit</header>
+   <header>CAMELS.ui_widgets.path_button_edit</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

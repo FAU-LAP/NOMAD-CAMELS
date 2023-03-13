@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt
 from CAMELS.main_classes.loop_step import Loop_Step_Container, Loop_Step_Config
 from CAMELS.utility.number_formatting import format_number
 from CAMELS.utility import variables_handling
-from CAMELS.utility.variable_tool_tip_box import Variable_Box
+from CAMELS.ui_widgets.variable_tool_tip_box import Variable_Box
 
 from CAMELS.gui.for_loop import Ui_for_loop_config
 

@@ -572,4 +572,4 @@ class Ui_MainWindow(object):
         self.actionDocumentation.setText(_translate("MainWindow", "Documentation"))
         self.actionReport_Bug.setText(_translate("MainWindow", "Report Bug"))
         self.actionVISA_device_builder.setText(_translate("MainWindow", "VISA-device builder"))
-from CAMELS.utility.console_redirect import Console_TextEdit
+from CAMELS.ui_widgets.console_redirect import Console_TextEdit

@@ -202,4 +202,4 @@ class Ui_settings_window(object):
         self.label_8.setText(_translate("settings_window", "Local drivers path"))
         self.lineEdit_directory.setPlaceholderText(_translate("settings_window", "directory"))
         self.label_13.setText(_translate("settings_window", "Drivers"))
-from CAMELS.utility.path_button_edit import Path_Button_Edit
+from CAMELS.ui_widgets.path_button_edit import Path_Button_Edit

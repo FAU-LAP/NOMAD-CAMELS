@@ -6,7 +6,7 @@ from CAMELS.frontpanels.plot_definer import Plot_Button_Overview
 from CAMELS.loop_steps import make_step_of_type
 from CAMELS.gui.general_protocol_settings import Ui_Protocol_Settings
 
-from CAMELS.utility.add_remove_table import AddRemoveTable
+from CAMELS.ui_widgets.add_remove_table import AddRemoveTable
 from CAMELS.utility import variables_handling
 
 

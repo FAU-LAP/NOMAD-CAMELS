@@ -11,7 +11,7 @@ from CAMELS.gui.plot_definer import Ui_Plot_Definer
 from CAMELS.gui.plot_definer_2d import Ui_Plot_Definer_2D
 from CAMELS.gui.fit_definer import Ui_Fit_Definer
 
-from CAMELS.utility.add_remove_table import AddRemoveTable
+from CAMELS.ui_widgets.add_remove_table import AddRemoveTable
 from CAMELS.utility import variables_handling
 from CAMELS.utility.fit_variable_renaming import replace_name
 

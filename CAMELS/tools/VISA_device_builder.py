@@ -4,11 +4,10 @@ import os
 from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QFileDialog, QMessageBox
 from PyQt5.QtGui import QIcon, QCloseEvent
 
-from CAMELS.utility.add_remove_table import AddRemoveTable
+from CAMELS.ui_widgets.add_remove_table import AddRemoveTable
 from CAMELS.utility import variables_handling, fit_variable_renaming
 from CAMELS.tools.VISA_builder import Ui_VISA_Device_Builder
 
-import importlib
 from pkg_resources import resource_filename
 
 

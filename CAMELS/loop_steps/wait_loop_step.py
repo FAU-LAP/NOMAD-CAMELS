@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout
 
 from CAMELS.main_classes.loop_step import Loop_Step_Config, Loop_Step
-from CAMELS.utility.variable_tool_tip_box import Variable_Box
+from CAMELS.ui_widgets.variable_tool_tip_box import Variable_Box
 
 class Wait_Loop_Step(Loop_Step):
     """A loopstep to simply wait some defined time.

@@ -7,7 +7,8 @@ from PyQt5.QtGui import QStandardItemModel, QCloseEvent, QKeyEvent, QIcon
 from CAMELS.gui.protocol_view import Ui_Protocol_View
 from CAMELS.main_classes.protocol_class import Measurement_Protocol, General_Protocol_Settings
 from CAMELS.loop_steps import make_step_of_type
-from CAMELS.utility import variables_handling, treeView_functions, drag_drop_tree_view
+from CAMELS.utility import variables_handling, treeView_functions
+from CAMELS.ui_widgets import drag_drop_tree_view
 from CAMELS.commands import change_sequence
 
 from pkg_resources import resource_filename

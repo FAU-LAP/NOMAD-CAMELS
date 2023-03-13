@@ -89,6 +89,8 @@ class DropArea(QWidget):
 
         source_widget = event.source()
 
+        if not source_widget in self.buttons.values():
+            return
         drag_pos = self.buttons.get_key(source_widget)
         drop_row, drop_col = self.get_drop_position(event.pos())
         if drop_row * self.columnCount + drop_col >= len(self.buttons):

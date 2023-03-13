@@ -4,8 +4,8 @@ from PyQt5.QtWidgets import QGridLayout, QCheckBox, QComboBox, QLabel, QLineEdit
 
 from CAMELS.main_classes import device_class
 
-from CAMELS.utility.add_remove_table import AddRemoveTable
-from CAMELS.utility.path_button_edit import Path_Button_Edit
+from CAMELS.ui_widgets.add_remove_table import AddRemoveTable
+from CAMELS.ui_widgets.path_button_edit import Path_Button_Edit
 from CAMELS.utility import variables_handling
 
 

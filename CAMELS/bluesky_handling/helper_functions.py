@@ -7,8 +7,8 @@ from PyQt5.QtWidgets import QMessageBox, QWidget, QDialog, QDialogButtonBox, QGr
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QFont
 
-from CAMELS.utility.add_remove_table import AddRemoveTable
-from CAMELS.utility.channels_check_table import Channels_Check_Table
+from CAMELS.ui_widgets.add_remove_table import AddRemoveTable
+from CAMELS.ui_widgets.channels_check_table import Channels_Check_Table
 
 
 def trigger_multi(devices, grp=None):

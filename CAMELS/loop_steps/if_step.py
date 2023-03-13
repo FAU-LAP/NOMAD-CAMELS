@@ -4,8 +4,8 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QStandardItemModel
 
 from CAMELS.main_classes.loop_step import Loop_Step_Container, Loop_Step_Config
-from CAMELS.utility.variable_tool_tip_box import Variable_Box
-from CAMELS.utility.add_remove_table import AddRemoveTable
+from CAMELS.ui_widgets.variable_tool_tip_box import Variable_Box
+from CAMELS.ui_widgets.add_remove_table import AddRemoveTable
 
 
 class If_Loop_Step(Loop_Step_Container):

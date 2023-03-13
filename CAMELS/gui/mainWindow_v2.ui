@@ -273,6 +273,8 @@ Instruments</string>
 	font-family: Calibri;
 	font-size: 75pt;
 	font-weight: bold;
+	padding: 0px;
+	padding-bottom: 10px;
 }</string>
           </property>
           <property name="text">
@@ -375,6 +377,8 @@ Instruments</string>
 	font-family: Calibri;
 	font-size: 75pt;
 	font-weight: bold;
+	padding: 0px;
+	padding-bottom: 10px;
 }</string>
           </property>
           <property name="text">
@@ -579,7 +583,7 @@ Instruments</string>
   <customwidget>
    <class>Console_TextEdit</class>
    <extends>QTextEdit</extends>
-   <header>CAMELS.utility.console_redirect</header>
+   <header>CAMELS.ui_widgets.console_redirect</header>
   </customwidget>
  </customwidgets>
  <resources/>

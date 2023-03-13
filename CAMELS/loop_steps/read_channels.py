@@ -5,7 +5,7 @@ from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from CAMELS.gui.read_channels import Ui_read_channels_config
 
 from CAMELS.utility import variables_handling, fit_variable_renaming
-from CAMELS.utility.channels_check_table import Channels_Check_Table
+from CAMELS.ui_widgets.channels_check_table import Channels_Check_Table
 
 
 class Read_Channels(Loop_Step):

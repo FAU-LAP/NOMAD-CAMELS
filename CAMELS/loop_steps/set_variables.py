@@ -1,6 +1,6 @@
 from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
-from CAMELS.utility.add_remove_table import AddRemoveTable
+from CAMELS.ui_widgets.add_remove_table import AddRemoveTable
 from CAMELS.utility import variables_handling
 
 class Set_Variables(Loop_Step):
