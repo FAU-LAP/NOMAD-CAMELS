@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='camels_driver_PID',
+    name='camels_driver_voltcraft_pps',
     version='1.0',
     description='This packes provides everything to run a Voltcraft PPS power'
                 'supply with CAMELS',
