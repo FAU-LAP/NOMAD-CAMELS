@@ -1,4 +1,4 @@
-from .Gap_Burner_Arduino_ophyd import Gap_Burner_Arduino
+from .gap_burner_arduino_ophyd import Gap_Burner_Arduino
 from CAMELS.main_classes import device_class
 
 class subclass(device_class.Device):

@@ -1,6 +1,6 @@
 from ophyd import EpicsSignal, EpicsSignalRO, Device
 from ophyd import Component as Cpt
-from CAMELS.bluesky_handling.visa_signal import VISA_Signal_Read, VISA_Signal_Write, VISA_Device
+from camels_support_visa_signal import VISA_Signal_Read, VISA_Signal_Write, VISA_Device
 from CAMELS.bluesky_handling import TriggerEpicsSignalRO
 from CAMELS.bluesky_handling.custom_function_signal import (Custom_Function_Signal,
                                                      Custom_Function_SignalRO)

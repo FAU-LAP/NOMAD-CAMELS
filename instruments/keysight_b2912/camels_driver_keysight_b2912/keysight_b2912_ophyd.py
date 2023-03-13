@@ -1,6 +1,6 @@
 from ophyd import Component as Cpt
 
-from CAMELS.bluesky_handling.visa_signal import VISA_Signal_Read, VISA_Signal_Write, VISA_Device
+from camels_support_visa_signal import VISA_Signal_Read, VISA_Signal_Write, VISA_Device
 
 
 def source_func(inp, chan, volt_source):

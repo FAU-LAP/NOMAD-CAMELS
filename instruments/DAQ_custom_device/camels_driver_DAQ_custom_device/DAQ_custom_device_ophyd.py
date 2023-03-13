@@ -1,4 +1,4 @@
-from CAMELS.bluesky_handling.daq_signal import DAQ_Signal_Input, DAQ_Signal_Output
+from camels_support_ni_daq_signal import DAQ_Signal_Input, DAQ_Signal_Output
 
 from ophyd import Component as Cpt
 from ophyd import Device

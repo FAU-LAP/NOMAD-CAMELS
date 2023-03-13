@@ -165,6 +165,8 @@ class Instrument_Config(QWidget, Ui_Form):
             item = QTableWidgetItem(dev)
             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
 
+            if dev not in self.active_instruments:
+                self.active_instruments[dev] = []
             item_n = QTableWidgetItem(str(len(self.active_instruments[dev])))
             item_n.setFlags(item.flags() & ~Qt.ItemIsEditable)
             self.tableWidget_instruments.setItem(i, 0, item)

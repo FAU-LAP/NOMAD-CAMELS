@@ -8,5 +8,5 @@ setup(
     author='Johannes Lehmeyer / Alexander Fuchs',
     author_email='johannes.lehmeyer@fau.de',
     packages=find_packages(),
-    install_requires=[]
+    install_requires=['camels_support_ni_daq_signal @ git+https://github.com/FAU-LAP/CAMELS.git@new_device_management#subdirectory=instruments/Support/ni_daq_signal']
 )
