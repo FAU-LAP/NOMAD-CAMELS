@@ -1,12 +1,12 @@
 import copy
 
-from keysight_e5270b.keysight_e5270b_ophyd import Keysight_E5270B_EPICS, Keysight_E5270B
-from keysight_e5270b.keysight_e5270b_config import Ui_keysight_e5270b_config
-from keysight_e5270b.keysight_e5270b_config_channel import Ui_keysight_e5270b_config_channel
+from .keysight_e5270b_ophyd import Keysight_E5270B_EPICS, Keysight_E5270B
+from .keysight_e5270b_config import Ui_keysight_e5270b_config
+from .keysight_e5270b_config_channel import Ui_keysight_e5270b_config_channel
 
 from CAMELS.main_classes import device_class
-from utility.number_formatting import format_number
-from utility.variables_handling import get_color
+from CAMELS.utility.number_formatting import format_number
+from CAMELS.utility.variables_handling import get_color
 
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSignal

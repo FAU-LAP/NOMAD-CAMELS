@@ -1,14 +1,14 @@
 import time
 
 from CAMELS.main_classes.manual_control import Manual_Control
-from PID_controller.PID_controller_config_sub import subclass_config_sub
-from PID_controller.PID_controller_ophyd import PID_Controller
+from .PID_controller_config_sub import subclass_config_sub
+from .PID_controller_ophyd import PID_Controller
 
 from PyQt5.QtWidgets import QCheckBox, QLineEdit, QPushButton, QLabel, QSpacerItem, QSizePolicy, QFrame
 from PyQt5.QtCore import pyqtSignal
 
-from utility import variables_handling
-from utility.qthreads import Manual_Device_Thread
+from CAMELS.utility import variables_handling
+from CAMELS.utility.qthreads import Manual_Device_Thread
 
 
 class PID_manual_control(Manual_Control):

@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QCheckBox, QLineEdit, QComboBox, QLabel, QFrame,\
 
 from CAMELS.main_classes import device_class
 
-from DAQ_custom_device.DAQ_custom_device_ophyd import Custom_DAQ_Device
+from .DAQ_custom_device_ophyd import Custom_DAQ_Device
 
 
 class subclass(device_class.Device):

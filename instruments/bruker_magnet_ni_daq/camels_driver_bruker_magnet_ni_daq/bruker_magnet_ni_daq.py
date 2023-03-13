@@ -1,7 +1,7 @@
 from CAMELS.main_classes import device_class
 
-from bruker_magnet_ni_daq.bruker_magnet_ni_daq_ophyd import Bruker_Magnet_NI_DAQ
-from bruker_magnet_ni_daq.bruker_magnet_ni_daq_config import Ui_bruker_magnet_config
+from .bruker_magnet_ni_daq_ophyd import Bruker_Magnet_NI_DAQ
+from .bruker_magnet_ni_daq_config import Ui_bruker_magnet_config
 
 
 class subclass(device_class.Device):
