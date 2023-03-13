@@ -39,9 +39,10 @@ class Dots_Button(QPushButton):
         painter.setPen(Qt.NoPen)
 
         # Draw three dots using the painter
-        painter.drawEllipse(90, 80, 4, 4)
-        painter.drawEllipse(90, 87, 4, 4)
-        painter.drawEllipse(90, 94, 4, 4)
+        size = self.size().width()
+        painter.drawEllipse(size-10, size-20, 4, 4)
+        painter.drawEllipse(size-10, size-13, 4, 4)
+        painter.drawEllipse(size-10, size-6, 4, 4)
         super().paintEvent(event)
 
     def sizeHint(self):
