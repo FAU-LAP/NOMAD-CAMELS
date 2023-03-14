@@ -541,7 +541,8 @@ class Keysight_E5270B(VISA_Device):
         Icomp = self.curr_compliance_array[chnum-1]
         return f'DV {chnum},{vrange},{voltage},{Icomp}'
 
-#### Driver for E5270B using EPICS ####
+
+# Driver for E5270B using EPICS ####
 class Keysight_E5270B_EPICS(Device):
     setV1 = Cpt(EpicsSignal, 'setV1')
     setI1 = Cpt(EpicsSignal, 'setI1')
