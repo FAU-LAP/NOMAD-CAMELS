@@ -134,6 +134,43 @@ def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
             sort_w.pop(0)
     return w_history,f_history
 
+def get_range(evaluator, start, stop, points, min_val=np.nan, max_val=np.nan,
+              loop_type='start - stop', sweep_mode='linear', endpoint=True):
+    start = evaluator.eval(start)
+    stop = evaluator.eval(stop)
+    points = evaluator.eval(points)
+    min_val = evaluator.eval(min_val)
+    max_val = evaluator.eval(max_val)
+    if loop_type == 'start - stop':
+        return get_inner_range(start, stop, points, sweep_mode, endpoint)
+    elif loop_type == 'start - min - max - stop':
+        part_points1 = round(points * np.abs(start-min_val)/np.abs(max_val-min_val))
+        part_points2 = round(points * np.abs(stop-max_val)/np.abs(max_val-min_val))
+        vals1 = get_inner_range(start, min_val, part_points1, sweep_mode, endpoint)
+        vals2 = get_inner_range(min_val, max_val, points, sweep_mode, endpoint)
+        vals3 = get_inner_range(max_val, stop, part_points2, sweep_mode, endpoint)
+    else:
+        part_points1 = round(points * np.abs(start-max_val)/np.abs(max_val-min_val))
+        part_points2 = round(points * np.abs(stop-min_val)/np.abs(max_val-min_val))
+        vals1 = get_inner_range(start, max_val, part_points1, sweep_mode, endpoint)
+        vals2 = get_inner_range(max_val, min_val, points, sweep_mode, endpoint)
+        vals3 = get_inner_range(min_val, stop, part_points2, sweep_mode, endpoint)
+    return np.concatenate([vals1, vals2, vals3])
+
+
+def get_inner_range(start, stop, points, sweep_mode, endpoint):
+    if sweep_mode == 'linear':
+        return np.linspace(start, stop, points, endpoint=endpoint)
+    elif sweep_mode == 'logarithmic':
+        start = np.log(start)
+        stop = np.log(stop)
+        return np.exp(np.linspace(start, stop, points, endpoint=endpoint))
+    elif sweep_mode == 'exponential':
+        start = np.exp(start)
+        stop = np.exp(stop)
+        return np.log(np.linspace(start, stop, points, endpoint=endpoint))
+    return 1/np.linspace(1/start, 1/stop, points, endpoint=endpoint)
+
 
 class Prompt_Box(QMessageBox):
     def __init__(self, icon='', text='', title='', parent=None):
@@ -218,6 +255,7 @@ class Value_Box(QDialog):
         for dev, val in devs.items():
             self.channel_devs.update(get_channels(val))
         self.channel_table = None
+        self.variable_table = None
         if free_channels:
             self.channel_table = Channels_Check_Table(self, ['set', 'channel', 'value'], True, channels=list(self.channel_devs.keys()))
             layout.addWidget(self.channel_table, 2+n_channels+n_variables, 0, 1, 2)
@@ -254,22 +292,26 @@ class Value_Box(QDialog):
             val = c_box.text()
             if val:
                 self.set_channels[self.channels[i]] = val
-        var_table_data = self.variable_table.update_table_data()
-        for i, var in enumerate(var_table_data['variable']):
-            if var in self.set_variables:
-                box = Prompt_Box('Critical',
-                                 f'Cannot set two values to variable {var}!',
-                                 'identical variable names')
-                return box.exec()
-            self.set_variables[var] = var_table_data['value'][i]
-        channel_table_data = self.channel_table.get_info()
-        for i, channel in enumerate(channel_table_data['channel']):
-            if channel in self.set_channels:
-                box = Prompt_Box('Critical',
-                                 f'Cannot set two values to channel {channel}!',
-                                 'identical channel names')
-                return box.exec()
-            self.set_channels[channel] = channel_table_data['value'][i]
+        if self.variable_table:
+            var_table_data = self.variable_table.update_table_data()
+            for i, var in enumerate(var_table_data['variable']):
+                if var in self.set_variables:
+                    box = Prompt_Box('Critical',
+                                     f'Cannot set two values to variable {var}!',
+                                     'identical variable names')
+                    box.exec()
+                    return
+                self.set_variables[var] = var_table_data['value'][i]
+        if self.channel_table:
+            channel_table_data = self.channel_table.get_info()
+            for i, channel in enumerate(channel_table_data['channel']):
+                if channel in self.set_channels:
+                    box = Prompt_Box('Critical',
+                                     f'Cannot set two values to channel {channel}!',
+                                     'identical channel names')
+                    box.exec()
+                    return
+                self.set_channels[channel] = channel_table_data['value'][i]
         self.was_accepted = True
         self.done = True
         return super().accept()

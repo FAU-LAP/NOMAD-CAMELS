@@ -101,14 +101,14 @@ def build_protocol(protocol, file_path,
     variable_string += 'boxes = {}\n'
     additional_string_devices = ''
     final_string = ''
-    for var, val in variables_handling.protocol_variables.items():
+    for var, val in protocol.variables.items():
         if variables_handling.check_data_type(val) == 'String':
             val = f'"{val}"'
         if '(' in var or ')' in var:
             continue
         variable_string += f'{var} = {val}\n'
         variable_string += f'namespace["{var}"] = {var}\n'
-    for var, val in variables_handling.loop_step_variables.items():
+    for var, val in protocol.loop_step_variables.items():
         if variables_handling.check_data_type(val) == 'String':
             val = f'"{val}"'
         if '(' in var or ')' in var:

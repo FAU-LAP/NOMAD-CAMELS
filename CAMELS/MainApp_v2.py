@@ -325,7 +325,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def change_theme(self):
         theme = self.preferences['graphic_theme']
-        theme_changing.change_theme(theme)
+        theme_changing.change_theme(theme, main_window=self)
         self.toggle_dark_mode()
 
     def toggle_dark_mode(self):
@@ -703,6 +703,6 @@ if __name__ == '__main__':
             if mod_name.startswith('_') or mod is None:
                 continue
             f.write(f'{mod_name}\n')
-    ui = MainWindow()
-    ui.show()
+    main_window = MainWindow()
+    main_window.show()
     app.exec_()

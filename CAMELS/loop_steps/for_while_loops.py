@@ -146,11 +146,11 @@ class For_Loop_Step(Loop_Step_Container):
         if step_info is None:
             step_info = {}
         self.loop_type = step_info['loop_type'] if 'loop_type' in step_info else 'start - stop'
-        self.start_val = step_info['start_val'] if 'start_val' in step_info else np.nan
-        self.stop_val = step_info['stop_val'] if 'stop_val' in step_info else np.nan
-        self.min_val = step_info['min_val'] if 'min_val' in step_info else np.nan
-        self.max_val = step_info['max_val'] if 'max_val' in step_info else np.nan
-        self.n_points = step_info['n_points'] if 'n_points' in step_info else np.nan
+        self.start_val = step_info['start_val'] if 'start_val' in step_info else ''
+        self.stop_val = step_info['stop_val'] if 'stop_val' in step_info else ''
+        self.min_val = step_info['min_val'] if 'min_val' in step_info else ''
+        self.max_val = step_info['max_val'] if 'max_val' in step_info else ''
+        self.n_points = step_info['n_points'] if 'n_points' in step_info else ''
         self.sweep_mode = step_info['sweep_mode'] if 'sweep_mode' in step_info else 'linear'
         self.n_iterations = step_info['n_iterations'] if 'n_iterations' in step_info else 0
         # self.point_array = step_info['point_array'] if 'point_array' in step_info else []
@@ -174,11 +174,12 @@ class For_Loop_Step(Loop_Step_Container):
         tabs = '\t'*n_tabs
         if self.loop_type in ['start - stop', 'start - min - max - stop',
                               'start - max - min - stop']:
-            enumerator = get_space_string(self.start_val, self.stop_val,
-                                          self.n_points, self.min_val,
-                                          self.max_val, self.loop_type,
-                                          self.sweep_mode,
-                                          self.include_end_points)
+            enumerator = f'helper_functions.get_range(eva, "{self.start_val}", "{self.stop_val}", "{self.n_points}", "{self.min_val or np.nan}", "{self.max_val or np.nan}", "{self.loop_type}", "{self.sweep_mode}", "{self.include_end_points}")'
+            # enumerator = get_space_string(self.start_val, self.stop_val,
+            #                               self.n_points, self.min_val,
+            #                               self.max_val, self.loop_type,
+            #                               self.sweep_mode,
+            #                               self.include_end_points)
         elif self.loop_type == 'Value-List':
             enumerator = self.val_list
         else:
@@ -232,16 +233,11 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
     def load_data(self):
         """Loads the data from the loop_step into the UI-widgets."""
         self.comboBox_loop_type.setCurrentText(self.loop_step.loop_type)
-        if not np.isnan(self.loop_step.start_val):
-            self.lineEdit_start.setText(str(self.loop_step.start_val))
-        if not np.isnan(self.loop_step.stop_val):
-            self.lineEdit_stop.setText(str(self.loop_step.stop_val))
-        if not np.isnan(self.loop_step.min_val):
-            self.lineEdit_min.setText(str(self.loop_step.min_val))
-        if not np.isnan(self.loop_step.max_val):
-            self.lineEdit_max.setText(str(self.loop_step.max_val))
-        if not np.isnan(self.loop_step.n_points):
-            self.lineEdit_n_points.setText(str(self.loop_step.n_points))
+        self.lineEdit_start.setText(self.loop_step.start_val)
+        self.lineEdit_stop.setText(self.loop_step.stop_val)
+        self.lineEdit_min.setText(self.loop_step.min_val)
+        self.lineEdit_max.setText(self.loop_step.max_val)
+        self.lineEdit_n_points.setText(self.loop_step.n_points)
         self.comboBox_sweep_mode.setCurrentText(self.loop_step.sweep_mode)
         self.checkBox_include_endpoints.setChecked(self.loop_step.include_end_points)
         self.path_line_button.set_path(self.loop_step.file_path)
@@ -288,13 +284,10 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
         is changed."""
         if self.building:
             return
-        try:
-            start = float(self.lineEdit_start.text())
-            stop = float(self.lineEdit_stop.text())
-            distance = float(self.lineEdit_point_distance.text())
-            points = int(abs(stop - start) / distance)
-        except (ValueError, ZeroDivisionError):
-            return
+        start = variables_handling.get_eval(self.lineEdit_start.text())
+        stop = variables_handling.get_eval(self.lineEdit_stop.text())
+        distance = variables_handling.get_eval(self.lineEdit_point_distance.text())
+        points = int(abs(stop - start) / distance)
         if self.checkBox_include_endpoints.isChecked():
             points += 1
         self.building = True
@@ -307,15 +300,12 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
         number is changed."""
         if self.building:
             return
-        try:
-            start = float(self.lineEdit_start.text())
-            stop = float(self.lineEdit_stop.text())
-            points = int(self.lineEdit_n_points.text())
-            self.loop_step.n_points = points
-        except ValueError:
-            return
+        start = self.lineEdit_start.text()
+        stop = self.lineEdit_stop.text()
+        points = self.lineEdit_n_points.text()
+        self.loop_step.n_points = points
         if self.comboBox_sweep_mode.currentText() == 'linear':
-            vals = np.linspace(start, stop, points, endpoint=self.checkBox_include_endpoints.isChecked())
+            vals = self.get_space(start, stop, points)
             distance = vals[1] - vals[0] if len(vals) > 1 else np.nan
         else:
             distance = np.nan
@@ -344,17 +334,17 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
                                                      'start - min - max - stop',
                                                      'start - max - min - stop']:
             try:
-                start = float(self.lineEdit_start.text())
+                start = self.lineEdit_start.text()
                 self.loop_step.start_val = start
             except ValueError:
                 start = np.nan
             try:
-                stop = float(self.lineEdit_stop.text())
+                stop = self.lineEdit_stop.text()
                 self.loop_step.stop_val = stop
             except ValueError:
                 stop = np.nan
             try:
-                points = int(self.lineEdit_n_points.text())
+                points = self.lineEdit_n_points.text()
                 self.loop_step.n_points = points
             except ValueError:
                 points = 0
@@ -362,12 +352,12 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
                 vals = self.get_space(start, stop, points)
             else:
                 try:
-                    min_val = float(self.lineEdit_min.text())
+                    min_val = self.lineEdit_min.text()
                     self.loop_step.min_val = min_val
                 except ValueError:
                     min_val = np.nan
                 try:
-                    max_val = float(self.lineEdit_max.text())
+                    max_val = self.lineEdit_max.text()
                     self.loop_step.max_val = max_val
                 except ValueError:
                     max_val = np.nan
@@ -441,6 +431,12 @@ class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
     def get_space(self, start, stop, points):
         """Returns the respective (e.g.) linspace regarding the selected
         configuration."""
+        start = variables_handling.get_eval(start)
+        stop = variables_handling.get_eval(stop)
+        points = variables_handling.get_eval(points)
+        if np.nan in [start, stop, points]:
+            return [np.nan]
+        points = int(points)
         try:
             if self.comboBox_sweep_mode.currentText() == 'linear':
                 vals = np.linspace(start, stop, points, endpoint=self.checkBox_include_endpoints.isChecked())

@@ -18,13 +18,15 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
     accepted = pyqtSignal(Measurement_Protocol)
     closing = pyqtSignal()
 
-    def __init__(self, protocol=Measurement_Protocol(), parent=None):
+    def __init__(self, protocol=None, parent=None):
         super().__init__(parent=parent)
-        protocol = deepcopy(protocol)
-        self.setupUi(self)
         self.old_name = None
-        if protocol.name != 'Protocol':
+        if protocol is None:
+            protocol = Measurement_Protocol()
+        else:
+            protocol = deepcopy(protocol)
             self.old_name = protocol.name
+        self.setupUi(self)
         self.setWindowTitle(f'{protocol.name} - Measurement Protocol - CAMELS')
         self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS_Icon_v2.ico')))
         self.configuration_main_widget.setHidden(True)
@@ -59,7 +61,7 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
         self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.buttonBox.rejected.connect(self.close)
+        self.buttonBox.rejected.connect(self.closeEvent)
         self.buttonBox.accepted.connect(self.accept)
 
         self.update_add_step_actions()
@@ -423,6 +425,7 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)
+
 
 if __name__ == '__main__':
     import sys

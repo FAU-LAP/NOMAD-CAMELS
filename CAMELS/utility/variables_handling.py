@@ -3,6 +3,7 @@ from ast import literal_eval
 from PyQt5.QtWidgets import QMenu, QAction
 from PyQt5.QtGui import QColor
 
+import numpy as np
 # from CAMELS.utility import simpleeval
 
 from bluesky_widgets.models import utils
@@ -196,6 +197,18 @@ def check_eval(s):
     except Exception as e:
         return False
 
+def get_eval(s):
+    try:
+        namespace = dict(utils._base_namespace)
+        namespace.update(protocol_variables)
+        namespace.update(loop_step_variables)
+        for channel in channels:
+            namespace.update({channel: 1})
+        return utils.call_or_eval_one(s, namespace)
+    except:
+        return np.nan
+
+
 def get_data(s):
     """Returns the evaluated data of s."""
     if not s:
@@ -210,6 +223,8 @@ def get_data(s):
 
 def check_data_type(s):
     """Returns the datatype of the string-evaluation of s."""
+    if not isinstance(s, str):
+        return str(type(s))
     if not s:
         return ''
     try:

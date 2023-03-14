@@ -38,6 +38,9 @@ class Variable_Box(QLineEdit):
         else:
             self.setStyleSheet(f'background-color: rgb{variables_handling.get_color("red", True)}')
 
+    def get_value(self):
+        return variables_handling.get_eval(self.text())
+
 
     def context_menu(self, pos):
         """Generates the right-click-menu.
