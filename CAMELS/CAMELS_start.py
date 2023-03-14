@@ -48,7 +48,9 @@ if __name__ == '__main__':
     # Create the loading screen
     loading_screen = LoadingScreen()
     loading_screen.show()
-    with open('packages.txt', 'r') as f:
+    import os.path
+    file_dir = os.path.dirname(__file__)
+    with open(f'{file_dir}/packages.txt', 'r') as f:
         package_list = [x.rstrip() for x in f.readlines()]
     n = len(package_list) + 1
 
