@@ -34,42 +34,11 @@ class subclass(device_class.Device):
         return channels
 
 
-class subclass_config(device_class.Device_Config):
+class subclass_config(device_class.Simple_Config):
     def __init__(self, parent=None, data='', settings_dict=None,
                  config_dict=None, ioc_dict=None, additional_info=None):
         super().__init__(parent, 'Voltcraft PPS', data, settings_dict,
                          config_dict, ioc_dict, additional_info)
         self.comboBox_connection_type.addItem('EPICS: USB-serial')
         self.comboBox_connection_type.addItem('Local VISA')
-        self.lineEdit_R = QLineEdit()
-        self.lineEdit_R.setText(str(config_dict['setR']))
-        self.labelR = QLabel('Resistance:')
-        # labelOutput = QLabel('Output mode:')
-        #
-        # modes = ['voltage', 'power']
-        # self.comboBox_output_mode = QComboBox()
-        # self.comboBox_output_mode.addItems(modes)
-        # if config_dict['outputMode'] in modes:
-        #     self.comboBox_output_mode.setCurrentText(config_dict['outputMode'])
-        # self.comboBox_output_mode.currentTextChanged.connect(self.mode_change)
-
-        # self.layout().addWidget(labelOutput, 20, 0)
-        # self.layout().addWidget(self.comboBox_output_mode, 20, 1)
-        self.layout().addWidget(self.labelR, 20, 2)
-        self.layout().addWidget(self.lineEdit_R, 20, 3, 1, 2)
-
-        # self.mode_change()
         self.load_settings()
-
-
-    # def mode_change(self):
-    #     power = self.comboBox_output_mode.currentText() == 'power'
-    #     self.labelR.setEnabled(power)
-    #     self.lineEdit_R.setEnabled(power)
-
-    def get_config(self):
-        super().get_config()
-        self.config_dict['outputMode'] = self.comboBox_output_mode.currentText()
-        r = self.lineEdit_R.text()
-        self.config_dict['setR'] = float(r) if r else 0
-        return self.config_dict
