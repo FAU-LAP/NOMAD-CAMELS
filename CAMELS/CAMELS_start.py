@@ -19,7 +19,9 @@ class LoadingScreen(QDialog):
         self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
 
         image = QPixmap()
-        image.load(resource_filename('CAMELS','graphics/CAMELS_Logo.png'))
+        image.load(resource_filename('CAMELS', 'graphics/CAMELS_vertical.png'))
+        size = image.size()
+        image = image.scaled(size.width() * 2, size.height() * 2)
         image_label = QLabel()
         image_label.setPixmap(image)
 

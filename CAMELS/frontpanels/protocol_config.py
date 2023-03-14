@@ -28,7 +28,7 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
             self.old_name = protocol.name
         self.setupUi(self)
         self.setWindowTitle(f'{protocol.name} - Measurement Protocol - CAMELS')
-        self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS_Icon_v2.ico')))
+        self.setWindowIcon(QIcon(resource_filename('CAMELS', 'graphics/camels_icon.png')))
         self.configuration_main_widget.setHidden(True)
         self.general_settings = General_Protocol_Settings(protocol=protocol)
         self.meas_splitter.insertWidget(0, self.general_settings)

@@ -5,7 +5,7 @@ import importlib
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QShortcut
 from PyQt5.QtCore import QCoreApplication, Qt, pyqtSignal
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QPixmap
 
 from CAMELS.gui.mainWindow_v2 import Ui_MainWindow
 from CAMELS.utility import exception_hook
@@ -43,10 +43,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_area_manual = Drop_Scroll_Area(self, 120, 120)
         self.meas_widget.layout().addWidget(self.button_area_meas, 2, 0, 1, 3)
         self.manual_widget.layout().addWidget(self.button_area_manual, 2, 0, 1, 3)
-        self.button_area_manual.setHidden(True)
 
         self.setWindowTitle('CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems')
-        self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS_Icon_v2.ico')))
+        self.setWindowIcon(QIcon(resource_filename('CAMELS', 'graphics/camels_icon.png')))
+
+        image = QPixmap()
+        image.load(resource_filename('CAMELS', 'graphics/CAMELS_horizontal.png'))
+        self.label_logo.setPixmap(image)
 
         arrow = self.style().standardIcon(QStyle.SP_ArrowUp)
         self.label_arrow.setPixmap(arrow.pixmap(130,130))
@@ -147,6 +150,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.active_instruments:
             available = True
         self.main_splitter.setHidden(not available)
+        self.pushButton_resume.setHidden(not available)
+        self.pushButton_pause.setHidden(not available)
+        self.pushButton_stop.setHidden(not available)
+        self.progressBar_protocols.setHidden(not available)
+        self.textEdit_console_output.setHidden(not available)
         self.label_arrow.setHidden(available)
         self.label_no_instruments.setHidden(available)
 

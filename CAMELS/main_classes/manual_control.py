@@ -18,7 +18,7 @@ class Manual_Control(QWidget):
         control_data = control_data or {}
 
         self.setWindowTitle(f'CAMELS - {title}')
-        self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS.svg')))
+        self.setWindowIcon(QIcon(resource_filename('CAMELS', 'graphics/camels_icon.png')))
         self.name = title
         self.device = None
         self.ophyd_device = None

@@ -3,24 +3,15 @@ from ophyd import Component as Cpt
 
 import numpy as np
 
-from camels_support_visa_signal import VISA_Signal_Write, VISA_Device
+from camels_support_visa_signal import VISA_Device
 
 from CAMELS.bluesky_handling.custom_function_signal import Custom_Function_Signal
 
 
-def volt_func(val):
-    val *= 10
-    return f'VOLT{val:03d}'
-
-def curr_func(val):
-    val *= 10
-    return f'CURR{val:03d}'
-
-
 class Voltcraft_PPS(VISA_Device):
-    setV = Cpt(VISA_Signal_Write, name='setV', put_conv_function=volt_func)
-    setI = Cpt(VISA_Signal_Write, name='setI', put_conv_function=curr_func)
-    setP = Cpt(VISA_Signal_Write, name='setP')
+    setV = Cpt(Custom_Function_Signal, name='setV')
+    setI = Cpt(Custom_Function_Signal, name='setI')
+    setP = Cpt(Custom_Function_Signal, name='setP')
     setR = Cpt(Custom_Function_Signal, name='setR', kind='config')
     # outputMode = Cpt(EpicsSignal, 'outputMode', kind='config')
 
@@ -30,11 +21,29 @@ class Voltcraft_PPS(VISA_Device):
                          configuration_attrs=configuration_attrs, parent=parent, **kwargs)
         self.resistance = 0
         self.setR.put_function = self.set_resistance
-        self.setP.put_conv_function = self.set_power
+        self.setI.put_function = self.curr_func
+        self.setP.put_function = self.set_power
+        self.setV.put_function = self.volt_func
+        maxes = self.visa_instrument.query('GMAX')
+        self.visa_instrument.read()
+        maxV = int(maxes[:3])
+        maxI = int(maxes[3:6])
+        self.visa_instrument.query(f'SOVP{maxV:03d}')
+        self.visa_instrument.query(f'SOCP{maxI:03d}')
+
+    def volt_func(self, val):
+        val *= 10
+        val = int(val)
+        self.visa_instrument.query(f'VOLT{val:03d}')
+
+    def curr_func(self, val):
+        val *= 100
+        val = int(val)
+        self.visa_instrument.query(f'CURR{val:03d}')
 
     def set_power(self, val):
-        val = np.sqrt(val, self.resistance) * 10
-        return volt_func(val)
+        val = np.sqrt(val * self.resistance)
+        self.volt_func(val)
 
     def set_resistance(self, val):
         self.resistance = val

@@ -198,7 +198,7 @@ class PlotWidget(QWidget):
         self.setLayout(layout)
 
         self.setWindowTitle(title or f'{x_name} vs. {y_names[0]}')
-        self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS_Icon_v2.ico')))
+        self.setWindowIcon(QIcon(resource_filename('CAMELS', 'graphics/camels_icon.png')))
 
         self.plot_options.hide()
         self.options_open = False
@@ -960,7 +960,7 @@ class PlotWidget_NoBluesky(QWidget):
         self.plot_options = Plot_Options(self, self.ax, self.plot)
 
         self.setWindowTitle(title or f'{xlabel} vs. {ylabel}')
-        self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS.svg')))
+        self.setWindowIcon(QIcon(resource_filename('CAMELS', 'graphics/camels_icon.png')))
 
         layout = QGridLayout()
         layout.addWidget(canvas, 0, 1, 1, 3)

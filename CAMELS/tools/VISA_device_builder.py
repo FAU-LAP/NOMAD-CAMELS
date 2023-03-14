@@ -17,7 +17,7 @@ class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
         self.setupUi(self)
 
         if os.path.isdir('graphics'):
-            self.setWindowIcon(QIcon(resource_filename('CAMELS','graphics/CAMELS.svg')))
+            self.setWindowIcon(QIcon(resource_filename('CAMELS', 'graphics/camels_icon.png')))
         else:
             self.setWindowIcon(QIcon('../graphics/CAMELS.svg'))
         self.setWindowTitle('CAMELS - VISA-device-builder')
