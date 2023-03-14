@@ -18,10 +18,10 @@ def curr_func(val):
 
 
 class Voltcraft_PPS(VISA_Device):
-    setV = Cpt(VISA_Signal_Write, 'setV', put_conv_function=volt_func)
+    setV = Cpt(VISA_Signal_Write, name='setV', put_conv_function=volt_func)
     setI = Cpt(VISA_Signal_Write, name='setI', put_conv_function=curr_func)
-    setP = Cpt(VISA_Signal_Write, 'setP')
-    setR = Cpt(Custom_Function_Signal, 'setR', kind='config')
+    setP = Cpt(VISA_Signal_Write, name='setP')
+    setR = Cpt(Custom_Function_Signal, name='setR', kind='config')
     # outputMode = Cpt(EpicsSignal, 'outputMode', kind='config')
 
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
