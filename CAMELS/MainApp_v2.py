@@ -1,8 +1,6 @@
 import sys
 import os
-import socket
 import json
-import pandas as pd
 import importlib
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QShortcut
@@ -65,7 +63,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # saving / loading
         self.__save_dict__ = {}
-        self._current_preset = [f'{socket.gethostname()}']
+        if os.name == 'nt':
+            name = os.environ['COMPUTERNAME']
+        else:
+            name = os.uname()[1]
+        self._current_preset = [name]
         self.active_instruments = {}
         variables_handling.devices = self.active_instruments
         self.protocols_dict = OrderedDict()
@@ -194,7 +196,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         If the dialog is canceled, nothing is changed, otherwise the new
         data will be written into self.userdata.
         """
-
+        import pandas as pd
         self.active_user = self.comboBox_user.currentText()
         headers = ['name', 'email', 'affiliation',
                    'address', 'orcid', 'telephone_number']
@@ -250,6 +252,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         If the dialog is canceled, nothing is changed, otherwise the new
         data will be written into self.userdata.
         """
+        import pandas as pd
         self.active_sample = self.comboBox_sample.currentText()
         headers = ['name', 'sample_id', 'description']
         tableData = pd.DataFrame.from_dict(self.sampledata, 'index')
@@ -698,7 +701,8 @@ if __name__ == '__main__':
     app = QCoreApplication.instance()
     if app is None:
         app = QApplication(sys.argv)
-    with open('packages.txt', 'w') as f:
+    file_dir = os.path.dirname(__file__)
+    with open(f'{file_dir}/packages.txt', 'w') as f:
         for i, (mod_name, mod) in enumerate(sys.modules.items()):
             if mod_name.startswith('_') or mod is None:
                 continue
