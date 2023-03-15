@@ -16,7 +16,6 @@ import ophyd
 
 from CAMELS.main_classes import protocol_class, device_class
 from CAMELS.utility.load_save_helper_functions import load_plots
-from CAMELS.manual_controls import get_manual_controls
 
 appdata_path = f'{getenv("LOCALAPPDATA")}/CAMELS'
 if not isdir(appdata_path):

@@ -61,7 +61,7 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
         self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.buttonBox.rejected.connect(self.closeEvent)
+        self.buttonBox.rejected.connect(self.close)
         self.buttonBox.accepted.connect(self.accept)
 
         self.update_add_step_actions()

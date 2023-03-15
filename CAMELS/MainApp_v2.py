@@ -13,14 +13,9 @@ from CAMELS.main_classes import manual_control
 
 from pkg_resources import resource_filename
 
-from CAMELS.bluesky_handling import make_catalog, protocol_builder
-from CAMELS.frontpanels.manage_instruments import ManageInstruments
-from CAMELS.frontpanels.settings_window import Settings_Window
-from CAMELS.frontpanels.protocol_config import Protocol_Config
 from CAMELS.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
-from CAMELS.utility import load_save_functions, variables_handling, number_formatting, theme_changing, device_handling, databroker_export
-from CAMELS.ui_widgets import add_remove_table, options_run_button
-from CAMELS.manual_controls.get_manual_controls import get_control_by_type_name
+from CAMELS.utility import load_save_functions, variables_handling, number_formatting, theme_changing
+from CAMELS.ui_widgets import options_run_button
 
 from collections import OrderedDict
 
@@ -142,8 +137,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.protocol_module = None
         self.protocol_savepath = ''
 
-        self.adjustSize()
         self.show()
+        self.adjustSize()
 
     def with_or_without_instruments(self):
         available = False
@@ -160,6 +155,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def manage_instruments(self):
         self.setCursor(Qt.WaitCursor)
+        from CAMELS.frontpanels.manage_instruments import ManageInstruments
         dialog = ManageInstruments(active_instruments=self.active_instruments,
                                    parent=self)
         self.setCursor(Qt.ArrowCursor)
@@ -205,6 +201,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         data will be written into self.userdata.
         """
         import pandas as pd
+        from CAMELS.ui_widgets import add_remove_table
         self.active_user = self.comboBox_user.currentText()
         headers = ['name', 'email', 'affiliation',
                    'address', 'orcid', 'telephone_number']
@@ -261,6 +258,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         data will be written into self.userdata.
         """
         import pandas as pd
+        from CAMELS.ui_widgets import add_remove_table
         self.active_sample = self.comboBox_sample.currentText()
         headers = ['name', 'sample_id', 'description']
         tableData = pd.DataFrame.from_dict(self.sampledata, 'index')
@@ -350,6 +348,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             catalog_name = 'CATALOG_NAME'
             if 'databroker_catalog_name' in self.preferences:
                 catalog_name = self.preferences['databroker_catalog_name']
+            from CAMELS.bluesky_handling import make_catalog
             make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name)
 
 
@@ -357,6 +356,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Called when any preferences are changed. Makes the dictionary
          of preferences and calls save_preferences from the
          load_save_functions module."""
+        from CAMELS.frontpanels.settings_window import Settings_Window
         settings_dialog = Settings_Window(parent=self, settings=self.preferences)
         if settings_dialog.exec_():
             self.preferences = settings_dialog.get_settings()
@@ -503,6 +503,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_area_manual.rename_button(old_name, control_data['name'])
 
     def open_manual_control_config(self, control_name):
+        from CAMELS.manual_controls.get_manual_controls import get_control_by_type_name
         control_data = self.manual_controls[control_name]
         config_cls = get_control_by_type_name(control_data['control_type'])[1]
         dialog = config_cls(parent=self, control_data=control_data)
@@ -526,6 +527,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.add_button_to_manuals(control)
 
     def start_manual_control(self, name):
+        from CAMELS.manual_controls.get_manual_controls import get_control_by_type_name
         control_data = self.manual_controls[name]
         control_type = control_data['control_type']
         control_cls = get_control_by_type_name(control_type)[0]
@@ -546,6 +548,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.protocols_dict = OrderedDict(sorted(self.protocols_dict.items(), key=lambda x: order.index(x[0])))
 
     def add_measurement_protocol(self):
+        from CAMELS.frontpanels.protocol_config import Protocol_Config
         dialog = Protocol_Config()
         dialog.show()
         dialog.accepted.connect(self.add_prot_to_data)
@@ -570,6 +573,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_area_meas.rename_button(old_name, protocol.name)
 
     def open_protocol_config(self, prot_name):
+        from CAMELS.frontpanels.protocol_config import Protocol_Config
         dialog = Protocol_Config(self.protocols_dict[prot_name])
         dialog.show()
         dialog.accepted.connect(lambda x, y=prot_name: self.update_prot_data(x, y))
@@ -595,6 +599,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.add_button_to_meas(prot)
 
     def run_protocol(self, protocol_name):
+        from CAMELS.utility import device_handling
         self.button_area_meas.disable_run_buttons()
         self.build_protocol(protocol_name, ask_file=False)
         self.setCursor(Qt.WaitCursor)
@@ -649,6 +654,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.run_engine.resume()
 
     def protocol_finished(self, *args):
+        from CAMELS.utility import databroker_export, device_handling
         print('a')
         if self.protocol_module and self.protocol_module.uids:
             runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
@@ -682,6 +688,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
         savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
         self.protocol_savepath = savepath
+        from CAMELS.bluesky_handling import protocol_builder
         protocol_builder.build_protocol(protocol,
                                         path, savepath,
                                         userdata=userdata, sampledata=sampledata)
