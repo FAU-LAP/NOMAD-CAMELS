@@ -20,11 +20,11 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QCoreApplication
 from epics import caput
 import datetime
-from main_classes import plot_widget, list_plot, plot_2D
-from utility.databroker_export import broker_to_hdf5, broker_to_dict, broker_to_NX
-from utility import theme_changing
-from bluesky_handling.evaluation_helper import Evaluator
-from bluesky_handling import helper_functions
+from CAMELS.main_classes import plot_widget, list_plot, plot_2D
+from CAMELS.utility.databroker_export import broker_to_hdf5, broker_to_dict, broker_to_NX
+from CAMELS.utility import theme_changing
+from CAMELS.bluesky_handling.evaluation_helper import Evaluator
+from CAMELS.bluesky_handling import helper_functions
 RE = RunEngine()
 darkmode = False
 theme = "default"

@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>for_loop_config</class>
+ <widget class="QWidget" name="for_loop_config">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>380</width>
+    <height>476</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="1" column="3">
+    <widget class="QPushButton" name="pushButton_add_point">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>23</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>30</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>+</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLabel" name="label_9">
+     <property name="maximumSize">
+      <size>
+       <width>80</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Points:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QPushButton" name="pushButton_del_point">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>23</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>30</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>-</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="comboBox_loop_type">
+     <property name="minimumSize">
+      <size>
+       <width>135</width>
+       <height>0</height>
+      </size>
+     </property>
+     <item>
+      <property name="text">
+       <string>start - stop</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>start - min - max - stop</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>start - max - min - stop</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Value-List</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Text-File</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Loop-Type:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <widget class="Path_Button_Edit" name="path_line_button" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QWidget" name="sweep_widget" native="true">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item row="5" column="1">
+       <widget class="QLabel" name="label_max">
+        <property name="text">
+         <string>Max</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>0</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="6" column="1">
+       <widget class="Variable_Box" name="lineEdit_max"/>
+      </item>
+      <item row="9" column="1">
+       <widget class="Variable_Box" name="lineEdit_point_distance"/>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Stop</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="Variable_Box" name="lineEdit_stop"/>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_min">
+        <property name="text">
+         <string>Min</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Sweep mode</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Start</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="Variable_Box" name="lineEdit_start"/>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>point-distance</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>0</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="11" column="0">
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>0</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string># points</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="comboBox_sweep_mode">
+        <item>
+         <property name="text">
+          <string>linear</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>logarithmic</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>exponential</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1/x</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="Variable_Box" name="lineEdit_min"/>
+      </item>
+      <item row="9" column="0">
+       <widget class="Variable_Box" name="lineEdit_n_points"/>
+      </item>
+      <item row="10" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkBox_include_endpoints">
+        <property name="text">
+         <string>Include end-points</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <spacer name="verticalSpacer_4">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="2" rowspan="5" colspan="3">
+    <widget class="QTableWidget" name="tableWidget_points">
+     <property name="maximumSize">
+      <size>
+       <width>150</width>
+       <height>16777215</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Path_Button_Edit</class>
+   <extends>QWidget</extends>
+   <header>CAMELS.ui_widgets.path_button_edit</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Variable_Box</class>
+   <extends>QLineEdit</extends>
+   <header>CAMELS.ui_widgets.variable_tool_tip_box</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>comboBox_loop_type</tabstop>
+  <tabstop>pushButton_add_point</tabstop>
+  <tabstop>pushButton_del_point</tabstop>
+  <tabstop>comboBox_sweep_mode</tabstop>
+  <tabstop>lineEdit_start</tabstop>
+  <tabstop>lineEdit_stop</tabstop>
+  <tabstop>lineEdit_min</tabstop>
+  <tabstop>lineEdit_max</tabstop>
+  <tabstop>lineEdit_n_points</tabstop>
+  <tabstop>lineEdit_point_distance</tabstop>
+  <tabstop>checkBox_include_endpoints</tabstop>
+  <tabstop>tableWidget_points</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
