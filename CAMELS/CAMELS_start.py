@@ -21,7 +21,7 @@ class LoadingScreen(QDialog):
         image = QPixmap()
         image.load(resource_filename('CAMELS', 'graphics/CAMELS_vertical.png'))
         size = image.size()
-        image = image.scaled(size.width() * 2, size.height() * 2)
+        image = image.scaled(403, 308)
         image_label = QLabel()
         image_label.setPixmap(image)
 

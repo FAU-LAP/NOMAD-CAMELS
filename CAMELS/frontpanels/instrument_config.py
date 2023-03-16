@@ -1,6 +1,6 @@
 import importlib
 
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QTabWidget, QLabel, QMessageBox
+from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QMessageBox
 from PyQt5.QtCore import Qt
 
 from CAMELS.gui.instrument_config import Ui_Form
@@ -12,8 +12,7 @@ class Instrument_Config(QWidget, Ui_Form):
     def __init__(self, active_instruments=None, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        self.installed_instr = getInstalledDevices()
-        self.packages = {}
+        self.installed_instr, self.packages = getInstalledDevices(return_packages=True)
         active_instruments = active_instruments or {}
         self.active_instruments = {}
         for instrument in active_instruments.values():
@@ -27,7 +26,7 @@ class Instrument_Config(QWidget, Ui_Form):
                 self.active_instruments[k] = []
         for k in self.active_instruments:
             if k not in self.installed_instr:
-                raise Exception(f'Instrument type "{k}" in active instruments, but is not installed!')
+                raise Warning(f'Instrument type "{k}" in active instruments, but is not installed!')
         self.tableWidget_instruments.setColumnCount(2)
 
         self.tableWidget_instruments.verticalHeader().setHidden(True)
