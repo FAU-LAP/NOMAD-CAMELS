@@ -43,7 +43,7 @@ class subclass_config_sub(device_class.Device_Config_Sub):
 
         self.input_label = QLabel('Input Channel:')
         self.output_label = QLabel('Output Channel:')
-        bias_label = QLabel('Bias Channel:')
+        self.bias_label = QLabel('Bias Channel:')
         timer_label = QLabel('Time Delta:')
         self.comboBox_input = QComboBox()
         self.comboBox_output = QComboBox()
@@ -62,6 +62,10 @@ class subclass_config_sub(device_class.Device_Config_Sub):
             channel = settings_dict['set_signal_name']
             if channel in variables_handling.channels:
                 self.comboBox_output.setCurrentText(channel)
+        if 'bias_signal_name' in settings_dict and type(settings_dict['bias_signal_name']) is str:
+            channel = settings_dict['bias_signal_name']
+            if channel in variables_handling.channels:
+                self.comboBox_bias.setCurrentText(channel)
         if 'dt' in config_dict:
             self.lineEdit_time.setText(str(config_dict['dt']))
         read_label = QLabel('Conversion function for reading:')
@@ -80,21 +84,23 @@ class subclass_config_sub(device_class.Device_Config_Sub):
             self.checkBox_plot.setChecked(settings_dict['show_plot'])
 
         layout.addWidget(self.checkBox_plot, 0, 0, 1, 2)
-        layout.addWidget(self.input_label, 1+0, 0)
-        layout.addWidget(self.comboBox_input, 1+0, 1)
-        layout.addWidget(self.output_label, 1+1, 0)
-        layout.addWidget(self.comboBox_output, 1+1, 1)
-        layout.addWidget(read_label, 1+2, 0)
-        layout.addWidget(self.lineEdit_read_function, 1+2, 1)
-        layout.addWidget(set_label, 1+3, 0)
-        layout.addWidget(self.lineEdit_set_function, 1+3, 1)
-        layout.addWidget(timer_label, 1+4, 0)
-        layout.addWidget(self.lineEdit_time, 1+4, 1)
-        layout.addWidget(self.checkBox_auto_select_values, 1+5, 0)
-        layout.addWidget(self.checkBox_interpolate_auto, 1+5, 1)
-        layout.addWidget(self.comboBox_pid_vals, 1+6, 0)
-        layout.addWidget(self.file_box, 1+6, 1)
-        layout.addWidget(self.val_table, 1+7, 0, 1, 2)
+        layout.addWidget(self.input_label, 1, 0)
+        layout.addWidget(self.comboBox_input, 1, 1)
+        layout.addWidget(self.output_label, 2, 0)
+        layout.addWidget(self.comboBox_output, 2, 1)
+        layout.addWidget(self.bias_label, 3, 0)
+        layout.addWidget(self.comboBox_bias, 3, 1)
+        layout.addWidget(read_label, 4, 0)
+        layout.addWidget(self.lineEdit_read_function, 4, 1)
+        layout.addWidget(set_label, 5, 0)
+        layout.addWidget(self.lineEdit_set_function, 5, 1)
+        layout.addWidget(timer_label, 6, 0)
+        layout.addWidget(self.lineEdit_time, 6, 1)
+        layout.addWidget(self.checkBox_auto_select_values, 7, 0)
+        layout.addWidget(self.checkBox_interpolate_auto, 7, 1)
+        layout.addWidget(self.comboBox_pid_vals, 8, 0)
+        layout.addWidget(self.file_box, 8, 1)
+        layout.addWidget(self.val_table, 9, 0, 1, 2)
 
         self.checkBox_auto_select_values.stateChanged.connect(self.auto_selection_switch)
         self.comboBox_pid_vals.currentTextChanged.connect(self.val_choice_switch)
@@ -132,10 +138,13 @@ class subclass_config_sub(device_class.Device_Config_Sub):
         self.settings_dict['set_conv_func'] = self.lineEdit_set_function.text()
         inp_chan = variables_handling.channels[self.comboBox_input.currentText()]
         out_chan = variables_handling.channels[self.comboBox_output.currentText()]
+        bias_chan = variables_handling.channels[self.comboBox_bias.currentText()]
         self.settings_dict['!non_string!_read_signal'] = inp_chan.get_bluesky_name()
         self.settings_dict['!non_string!_set_signal'] = out_chan.get_bluesky_name()
+        self.settings_dict['!non_string!_bias_signal'] = bias_chan.get_bluesky_name()
         self.settings_dict['read_signal_name'] = self.comboBox_input.currentText()
         self.settings_dict['set_signal_name'] = self.comboBox_output.currentText()
+        self.settings_dict['bias_signal_name'] = self.comboBox_bias.currentText()
         self.settings_dict['show_plot'] = self.checkBox_plot.isChecked()
         return self.settings_dict
 

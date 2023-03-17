@@ -1,5 +1,4 @@
 import subprocess
-import importlib
 
 from CAMELS.gui.device_installer import Ui_Form
 from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QCheckBox, QMessageBox
@@ -11,7 +10,7 @@ import sys
 import os
 
 from CAMELS.utility.variables_handling import get_color
-from CAMELS.utility import variables_handling
+from CAMELS.utility import variables_handling, device_handling
 
 if sys.version_info >= (3, 8):
     import importlib.metadata as importlib_metadata
@@ -33,26 +32,9 @@ def getInstalledDevices(force=False, return_packages=False):
         version = x.version
         if name.startswith('camels-driver-'):
             installed_instr[name[14:].replace('-', '_')] = version
-    local_instr_path = variables_handling.device_driver_path
-    sys.path.append(local_instr_path)
-    packages = {}
-    for f in os.listdir(local_instr_path):
-        full_path = f'{local_instr_path}/{f}'
-        if os.path.isdir(full_path):
-            package_path = ''
-            for p in os.listdir(full_path):
-                if p.startswith('camels_driver_'):
-                    package_path = f'{p}.{f}'
-                    break
-            if not package_path:
-                package_path = f'{f}.{f}'
-            try:
-                package = importlib.import_module(package_path)
-                device = package.subclass()
-                installed_instr[device.name] = 'local'
-                packages[f'local {device.name}'] = package
-            except Exception as e:
-                print(f, e)
+    packages = device_handling.load_local_packages()
+    for package in packages:
+        installed_instr[package] = 'local'
     if return_packages:
         return installed_instr, packages
     return installed_instr

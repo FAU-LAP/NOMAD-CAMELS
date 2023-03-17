@@ -540,7 +540,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.open_windows.remove(control)
         self.button_area_manual.enable_single_run(name)
 
-
     # --------------------------------------------------
     # protocols
     # --------------------------------------------------
@@ -625,8 +624,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_stop.setEnabled(True)
         self.protocol_module.run_protocol_main(self.run_engine, catalog=self.databroker_catalog, devices=devs, md={'devices': dev_data})
         self.pushButton_resume.setEnabled(False)
-        self.pushButton_pause.setEnabled(True)
-        self.pushButton_stop.setEnabled(True)
+        self.pushButton_pause.setEnabled(False)
+        self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
 
     def add_subs_from_dict(self, dictionary):
@@ -655,7 +654,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def protocol_finished(self, *args):
         from CAMELS.utility import databroker_export, device_handling
-        print('a')
         if self.protocol_module and self.protocol_module.uids:
             runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
             databroker_export.broker_to_NX(runs, self.protocol_savepath)

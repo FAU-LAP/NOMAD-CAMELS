@@ -5,7 +5,7 @@ class subclass(device_class.Device):
     def __init__(self, **kwargs):
         files = []
         req = []
-        super().__init__(name='gap_burner_arduino', virtual=False, tags=['Arduino', 'voltage', 'current', 'burn'], directory='Gap_Burner_Arduino', ophyd_device=Gap_Burner_Arduino, requirements=req, files=files, ophyd_class_name='Gap_Burner_Arduino', **kwargs)
+        super().__init__(name='gap_burner_arduino', virtual=False, tags=['Arduino', 'voltage', 'current', 'burn'], directory='gap_burner_arduino', ophyd_device=Gap_Burner_Arduino, requirements=req, files=files, ophyd_class_name='Gap_Burner_Arduino', **kwargs)
         self.config["ramp_time"] = 400
         self.config["offset"] = 1200
         self.config["min_current"] = 0
