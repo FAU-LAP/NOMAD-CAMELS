@@ -16,6 +16,7 @@ class ManageInstruments(QDialog):
         self.buttonBox.accepted.connect(self.accept)
 
         self.setWindowTitle('Manage Instruments - CAMELS')
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
 
         self.active_instruments = active_instruments or {}
 
