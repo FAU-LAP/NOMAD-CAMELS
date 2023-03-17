@@ -11,6 +11,7 @@ import os
 
 from CAMELS.utility.variables_handling import get_color
 from CAMELS.utility import variables_handling, device_handling
+from CAMELS.ui_widgets.warn_popup import WarnPopup
 
 if sys.version_info >= (3, 8):
     import importlib.metadata as importlib_metadata
@@ -55,8 +56,17 @@ def getAllDevices():
         devices_str = requests.get(url).text
     except:
         devices_str = ''
+    warned = False
     for x in devices_str.splitlines():
-        name, version = x.split('==')
+        try:
+            name, version = x.split('==')
+        except:
+            if not warned:
+                WarnPopup(None, 'Could not read driver_list.txt from repo.\n'
+                                'Check settings if repository and branch are correct.',
+                          'No online-drivers found')
+            warned = True
+            continue
         all_instr[name.replace('-', '_')] = version
     return all_instr
 
