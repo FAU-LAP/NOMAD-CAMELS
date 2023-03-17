@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>736</width>
+    <width>1021</width>
     <height>490</height>
    </rect>
   </property>
@@ -136,21 +136,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QPushButton" name="pushButton_manage_instr">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Mangage
-Instruments</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1">
         <widget class="QLabel" name="label">
          <property name="sizePolicy">
@@ -180,24 +165,18 @@ Instruments</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <widget class="QPushButton" name="pushButton_editUserInfo">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="pushButton_manage_instr">
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
           </font>
          </property>
          <property name="text">
-          <string>Edit User-Information</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="7">
-        <widget class="QComboBox" name="comboBox_sample">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
+          <string>Mangage
+Instruments</string>
          </property>
         </widget>
        </item>
@@ -224,13 +203,6 @@ Instruments</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="4">
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="8">
         <widget class="QPushButton" name="pushButton_editSampleInfo">
          <property name="font">
@@ -242,6 +214,67 @@ Instruments</string>
           <string>Edit Sample-Information</string>
          </property>
         </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QPushButton" name="pushButton_editUserInfo">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Edit User-Information</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="7">
+        <widget class="QComboBox" name="comboBox_sample">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="9">
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="10">
+        <widget class="QLabel" name="label_4">
+         <property name="maximumSize">
+          <size>
+           <width>70</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Session:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="11">
+        <widget class="QLineEdit" name="lineEdit_session"/>
        </item>
       </layout>
      </widget>
@@ -442,7 +475,7 @@ Instruments</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>736</width>
+     <width>1021</width>
      <height>21</height>
     </rect>
    </property>
