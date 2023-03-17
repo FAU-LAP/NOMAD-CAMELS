@@ -73,7 +73,7 @@ standard_nexus_dict = {'/ENTRY[entry]/operator/address': 'metadata_start/user/Ad
 
 def build_protocol(protocol, file_path,
                    save_path='test.h5', catalog='CAMELS_CATALOG', userdata=None,
-                   sampledata=None, session_name=''):
+                   sampledata=None):
     """Creating the python file from a given `protocol`.
 
     Parameters
@@ -222,7 +222,9 @@ def build_protocol(protocol, file_path,
         # TODO finish this
     else:
         standard_save_string += f'\t\t\tbroker_to_NX(runs, "{save_path}", plots,' \
-                                f'session_name="{session_name}")\n\n\n'
+                                f'session_name="{protocol.session_name}",' \
+                                f'export_to_csv={protocol.export_csv},' \
+                                f'export_to_json={protocol.export_json})\n\n\n'
 
     # protocol_string += standard_save_string
     protocol_string += standard_start_string

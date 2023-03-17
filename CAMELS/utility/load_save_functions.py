@@ -256,6 +256,10 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.use_nexus = prot_data['use_nexus']
         if 'description' in prot_data:
             prot.description = prot_data['description']
+        if 'export_json' in prot_data:
+            prot.export_json = prot_data['export_json']
+        if 'export_csv' in prot_data:
+            prot.export_csv = prot_data['export_csv']
         prot_dict.update({key: prot})
 
 def load_devices_dict(string_dict, devices_dict):

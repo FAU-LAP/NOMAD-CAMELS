@@ -27,6 +27,9 @@ class Measurement_Protocol:
         if metadata is None:
             metadata = {}
         self.description = kwargs['description'] if 'description' in kwargs else ''
+        self.export_csv = kwargs['export_csv'] if 'export_csv' in kwargs else False
+        self.export_json = kwargs['export_json'] if 'export_json' in kwargs else False
+        self.session_name = kwargs['session_name'] if 'session_name' in kwargs else ''
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -309,13 +312,15 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         self.textEdit_desc.setPlaceholderText('Enter your description here.')
         if self.protocol.description:
             self.textEdit_desc.setText(self.protocol.description)
+        self.checkBox_csv_exp.setChecked(self.protocol.export_csv)
+        self.checkBox_json_exp.setChecked(self.protocol.export_json)
 
-        self.layout().addWidget(self.textEdit_desc, 3, 0, 1, 4)
-        self.layout().addWidget(self.plot_widge, 4, 0, 1, 4)
-        self.layout().addWidget(self.checkBox_NeXus, 5, 0, 1, 4)
-        self.layout().addWidget(self.table_channel_NX_paths, 8, 0, 1, 4)
-        self.layout().addWidget(self.table_config_NX_paths, 9, 0, 1, 4)
-        self.layout().addWidget(self.table_metadata, 10, 0, 1, 4)
+        self.layout().addWidget(self.textEdit_desc, 5, 0, 1, 4)
+        self.layout().addWidget(self.plot_widge, 6, 0, 1, 4)
+        self.layout().addWidget(self.checkBox_NeXus, 7, 0, 1, 4)
+        self.layout().addWidget(self.table_channel_NX_paths, 9, 0, 1, 4)
+        self.layout().addWidget(self.table_config_NX_paths, 10, 0, 1, 4)
+        self.layout().addWidget(self.table_metadata, 11, 0, 1, 4)
 
         self.checkBox_NeXus.setHidden(True)
         self.enable_nexus()
@@ -377,6 +382,8 @@ class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
         self.protocol.metadata = self.table_metadata.update_table_data()
         self.protocol.channel_metadata = self.table_channel_NX_paths.update_table_data()
         self.protocol.config_metadata = self.table_config_NX_paths.update_table_data()
+        self.protocol.export_csv = self.checkBox_csv_exp.isChecked()
+        self.protocol.export_json = self.checkBox_json_exp.isChecked()
         self.update_variables()
         self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
 

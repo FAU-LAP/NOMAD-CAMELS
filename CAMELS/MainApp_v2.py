@@ -139,6 +139,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.re_subs = []
         self.protocol_module = None
         self.protocol_savepath = ''
+        self.running_protocol = None
 
         self.show()
         self.adjustSize()
@@ -670,7 +671,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
             databroker_export.broker_to_NX(runs, self.protocol_savepath,
                                            self.protocol_module.plots,
-                                           session_name=self.lineEdit_session.text())
+                                           session_name=self.running_protocol.session_name,
+                                           export_to_csv=self.running_protocol.export_csv,
+                                           export_to_json=self.running_protocol.export_json)
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
         device_handling.close_devices(self.current_protocol_device_list)
@@ -687,6 +690,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         user- and sample-data."""
         self.progressBar_protocols.setValue(0)
         protocol = self.protocols_dict[protocol_name]
+        protocol.session_name = self.lineEdit_session.text()
+        self.running_protocol = protocol
         if ask_file:
             path = QFileDialog.getSaveFileName(self, 'Export Protocol',
                                                protocol_name, '*.py')[0]
@@ -703,8 +708,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         from CAMELS.bluesky_handling import protocol_builder
         protocol_builder.build_protocol(protocol,
                                         path, savepath,
-                                        userdata=userdata, sampledata=sampledata,
-                                        session_name=self.lineEdit_session.text())
+                                        userdata=userdata, sampledata=sampledata)
         print('\n\nBuild successfull!\n')
         self.progressBar_protocols.setValue(100 if ask_file else 1)
 
