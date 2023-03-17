@@ -12,9 +12,10 @@ running_devices = {}
 
 def load_local_packages(tell_local=False):
     global local_packages
+    if local_packages:
+        return local_packages
     local_instr_path = variables_handling.device_driver_path
     sys.path.append(local_instr_path)
-    local_packages.clear()
     for f in os.listdir(local_instr_path):
         full_path = f'{local_instr_path}/{f}'
         if os.path.isdir(full_path):
@@ -35,7 +36,6 @@ def load_local_packages(tell_local=False):
                     local_packages[device.name] = package
             except Exception as e:
                 print(f, e)
-    p = local_packages
     return local_packages
 
 

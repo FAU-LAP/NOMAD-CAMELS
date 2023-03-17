@@ -1,5 +1,7 @@
 # Import the necessary PyQt5 modules
 import sys
+import os
+sys.path.append(os.path.dirname(__file__))
 from PyQt5.QtWidgets import QApplication, QDialog, QProgressBar, QGridLayout, QLabel
 from PyQt5.QtCore import Qt, QCoreApplication
 from PyQt5.QtGui import QPixmap
