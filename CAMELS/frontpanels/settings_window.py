@@ -61,6 +61,9 @@ class Settings_Window(QDialog, Ui_settings_window):
             self.pathButton_device_path.set_path(settings['device_driver_path'])
         else:
             self.pathButton_device_path.set_path(standard_pref['device_driver_path'])
+        self.pathButton_py_files.select_directory = True
+        self.pathButton_meas_files.select_directory = True
+        self.pathButton_device_path.select_directory = True
         # if 'autostart_ioc' in settings:
         #     self.checkBox_autostart_ioc.setChecked(settings['autostart_ioc'])
         # else:

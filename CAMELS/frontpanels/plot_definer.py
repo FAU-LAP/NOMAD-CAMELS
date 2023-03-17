@@ -141,6 +141,7 @@ class Plot_Definer(QDialog):
         self.dialog_buttons.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         self.dialog_buttons.accepted.connect(self.accept)
         self.dialog_buttons.rejected.connect(self.reject)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
 
 
         layout = QGridLayout()

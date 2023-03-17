@@ -1,19 +1,20 @@
 import importlib
 
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QTabWidget, QLabel, QMessageBox
+from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QMessageBox
 from PyQt5.QtCore import Qt
 
 from CAMELS.gui.instrument_config import Ui_Form
 
 from CAMELS.frontpanels.instrument_installer import getInstalledDevices
 
+from CAMELS.utility import variables_handling
+
 
 class Instrument_Config(QWidget, Ui_Form):
     def __init__(self, active_instruments=None, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        self.installed_instr = getInstalledDevices()
-        self.packages = {}
+        self.installed_instr, self.packages = getInstalledDevices(return_packages=True)
         active_instruments = active_instruments or {}
         self.active_instruments = {}
         for instrument in active_instruments.values():
@@ -27,7 +28,7 @@ class Instrument_Config(QWidget, Ui_Form):
                 self.active_instruments[k] = []
         for k in self.active_instruments:
             if k not in self.installed_instr:
-                raise Exception(f'Instrument type "{k}" in active instruments, but is not installed!')
+                raise Warning(f'Instrument type "{k}" in active instruments, but is not installed!')
         self.tableWidget_instruments.setColumnCount(2)
 
         self.tableWidget_instruments.verticalHeader().setHidden(True)
@@ -98,6 +99,20 @@ class Instrument_Config(QWidget, Ui_Form):
             self.active_instruments[self.current_instr][i].config = tab.get_config()
             self.active_instruments[self.current_instr][i].ioc_settings = tab.get_ioc_settings()
             self.active_instruments[self.current_instr][i].additional_info = tab.get_info()
+        self.update_channels()
+
+    def update_channels(self):
+        """Called when the active devices change.
+        The channels in variables_handling are updated with the ones
+        provided by the active devices."""
+        variables_handling.channels.clear()
+        instruments = {}
+        for instr in self.active_instruments:
+            for instrument in self.active_instruments[instr]:
+                instruments[instrument.custom_name] = instrument
+        for key, dev in instruments.items():
+            for channel in dev.get_channels():
+                variables_handling.channels.update({channel: dev.channels[channel]})
 
     def add_instance(self):
         ind = self.tableWidget_instruments.selectedIndexes()[0]

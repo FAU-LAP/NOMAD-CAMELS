@@ -1,5 +1,6 @@
 import sys
 import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 import json
 import importlib
 
@@ -19,6 +20,8 @@ from CAMELS.ui_widgets import options_run_button
 
 from collections import OrderedDict
 
+import bluesky
+import ophyd
 from bluesky import RunEngine
 from bluesky.callbacks.best_effort import BestEffortCallback
 import databroker
@@ -540,7 +543,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.open_windows.remove(control)
         self.button_area_manual.enable_single_run(name)
 
-
     # --------------------------------------------------
     # protocols
     # --------------------------------------------------
@@ -618,15 +620,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         devs, dev_data = device_handling.instantiate_devices(device_list)
         self.current_protocol_device_list = device_list
         additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
+        if 'plots' in additionals:
+            for plot in additionals['plots']:
+                self.add_to_open_windows(plot)
         self.re_subs += subs
         self.add_subs_from_dict(additionals)
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
         self.pushButton_stop.setEnabled(True)
-        self.protocol_module.run_protocol_main(self.run_engine, catalog=self.databroker_catalog, devices=devs, md={'devices': dev_data})
+        self.protocol_module.run_protocol_main(self.run_engine, catalog=self.databroker_catalog, devices=devs,
+                                               md={'devices': dev_data,
+                                                   'description': protocol.description,
+                                                   'versions': {"CAMELS": '0.1',
+                                                                'EPICS': '7.0.6.2',
+                                                                'bluesky': bluesky.__version__,
+                                                                'ophyd': ophyd.__version__}})
         self.pushButton_resume.setEnabled(False)
-        self.pushButton_pause.setEnabled(True)
-        self.pushButton_stop.setEnabled(True)
+        self.pushButton_pause.setEnabled(False)
+        self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
 
     def add_subs_from_dict(self, dictionary):
@@ -655,10 +666,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def protocol_finished(self, *args):
         from CAMELS.utility import databroker_export, device_handling
-        print('a')
         if self.protocol_module and self.protocol_module.uids:
             runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
-            databroker_export.broker_to_NX(runs, self.protocol_savepath)
+            databroker_export.broker_to_NX(runs, self.protocol_savepath,
+                                           self.protocol_module.plots,
+                                           session_name=self.lineEdit_session.text())
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
         device_handling.close_devices(self.current_protocol_device_list)
@@ -691,7 +703,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         from CAMELS.bluesky_handling import protocol_builder
         protocol_builder.build_protocol(protocol,
                                         path, savepath,
-                                        userdata=userdata, sampledata=sampledata)
+                                        userdata=userdata, sampledata=sampledata,
+                                        session_name=self.lineEdit_session.text())
         print('\n\nBuild successfull!\n')
         self.progressBar_protocols.setValue(100 if ask_file else 1)
 

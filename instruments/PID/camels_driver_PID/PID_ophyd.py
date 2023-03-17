@@ -61,7 +61,8 @@ class PID_Controller(Device):
                  configuration_attrs=None, parent=None, pid_val_table=None,
                  read_conv_func=None, auto_pid=True, interpolate_auto=True,
                  set_conv_func=None, bias_signal=None, set_signal=None, read_signal=None, show_plot=False, **kwargs):
-        pops = ['val_choice', 'val_file', 'read_signal_name', 'set_signal_name']
+        pops = ['val_choice', 'val_file', 'read_signal_name', 'set_signal_name',
+                'bias_signal_name']
         for p in pops:
             if p in kwargs:
                 kwargs.pop(p)
@@ -95,7 +96,7 @@ class PID_Controller(Device):
         self.current_output = 0
 
         if bias_signal:
-            self.bias_func = bias_signal.put()
+            self.bias_func = bias_signal.put
         else:
             self.bias_func = None
 
