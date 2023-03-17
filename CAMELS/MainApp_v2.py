@@ -20,6 +20,8 @@ from CAMELS.ui_widgets import options_run_button
 
 from collections import OrderedDict
 
+import bluesky
+import ophyd
 from bluesky import RunEngine
 from bluesky.callbacks.best_effort import BestEffortCallback
 import databroker
@@ -618,12 +620,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         devs, dev_data = device_handling.instantiate_devices(device_list)
         self.current_protocol_device_list = device_list
         additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
+        if 'plots' in additionals:
+            for plot in additionals['plots']:
+                self.add_to_open_windows(plot)
         self.re_subs += subs
         self.add_subs_from_dict(additionals)
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
         self.pushButton_stop.setEnabled(True)
-        self.protocol_module.run_protocol_main(self.run_engine, catalog=self.databroker_catalog, devices=devs, md={'devices': dev_data})
+        self.protocol_module.run_protocol_main(self.run_engine, catalog=self.databroker_catalog, devices=devs,
+                                               md={'devices': dev_data,
+                                                   'description': protocol.description,
+                                                   'versions': {"CAMELS": '0.1',
+                                                                'EPICS': '7.0.6.2',
+                                                                'bluesky': bluesky.__version__,
+                                                                'ophyd': ophyd.__version__}})
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(False)
         self.pushButton_stop.setEnabled(False)
