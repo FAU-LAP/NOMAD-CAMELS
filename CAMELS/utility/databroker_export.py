@@ -105,7 +105,7 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
             if not os.path.isdir(filename.split(".")[0]):
                 os.makedirs(filename.split(".")[0])
             with open(f'{filename.split(".")[0]}/{entry_name_non_iso}_metadata.json', 'w') as json_file:
-                json.dump(meta_start, json_file)
+                json.dump(meta_start, json_file, indent=2)
         with h5py.File(filename, 'a') as file:
             entry = file.create_group(entry_name)
             entry.attrs['NX_class'] = 'NXentry'
