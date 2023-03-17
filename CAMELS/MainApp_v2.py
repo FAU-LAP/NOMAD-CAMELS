@@ -657,7 +657,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         from CAMELS.utility import databroker_export, device_handling
         if self.protocol_module and self.protocol_module.uids:
             runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
-            databroker_export.broker_to_NX(runs, self.protocol_savepath)
+            databroker_export.broker_to_NX(runs, self.protocol_savepath,
+                                           self.protocol_module.plots,
+                                           session_name=self.lineEdit_session.text())
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
         device_handling.close_devices(self.current_protocol_device_list)
@@ -690,7 +692,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         from CAMELS.bluesky_handling import protocol_builder
         protocol_builder.build_protocol(protocol,
                                         path, savepath,
-                                        userdata=userdata, sampledata=sampledata)
+                                        userdata=userdata, sampledata=sampledata,
+                                        session_name=self.lineEdit_session.text())
         print('\n\nBuild successfull!\n')
         self.progressBar_protocols.setValue(100 if ask_file else 1)
 
