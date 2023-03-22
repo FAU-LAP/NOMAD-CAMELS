@@ -404,6 +404,7 @@ class AddRemoveDialoge(QDialog):
                  parent=None, tableData=None, title='', comboBoxes=None,
                  subtables=None, checkstrings=None, askdelete=False):
         super().__init__(parent)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
         self.buttonBox = QDialogButtonBox(self)
         self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)

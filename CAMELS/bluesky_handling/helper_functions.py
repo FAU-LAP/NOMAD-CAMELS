@@ -204,6 +204,7 @@ class Value_Box(QDialog):
                  free_variables=False, free_channels=False, parent=None,
                  devs=None):
         super().__init__(parent)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
         text_label = QLabel(text)
         self.buttonBox = QDialogButtonBox(self)
         self.buttonBox.setOrientation(Qt.Horizontal)

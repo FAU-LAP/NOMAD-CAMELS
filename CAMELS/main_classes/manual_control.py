@@ -51,6 +51,7 @@ class Manual_Control(QWidget):
 class Manual_Control_Config(QDialog):
     def __init__(self, parent=None, control_data=None, title='Manual Control Config', control_type=''):
         super().__init__(parent=parent)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
         layout = QGridLayout()
         self.setLayout(layout)
         self.control_type = control_type or 'Manual_Control'
