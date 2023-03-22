@@ -24,6 +24,14 @@ class PID_manual_control(Manual_Control):
         self.settings_widge.comboBox_input.setHidden(True)
         self.settings_widge.output_label.setHidden(True)
         self.settings_widge.comboBox_output.setHidden(True)
+        self.settings_widge.bias_label.setHidden(True)
+        self.settings_widge.comboBox_bias.setHidden(True)
+        self.settings_widge.lineEdit_time.setHidden(True)
+        self.settings_widge.timer_label.setHidden(True)
+        self.settings_widge.lineEdit_read_function.setHidden(True)
+        self.settings_widge.read_label.setHidden(True)
+        self.settings_widge.lineEdit_set_function.setHidden(True)
+        self.settings_widge.set_label.setHidden(True)
 
         label_state = QLabel('current state:')
         self.on_off_box = QCheckBox('Off')
@@ -103,8 +111,7 @@ class PID_manual_control(Manual_Control):
 
     def update_settings(self):
         settings = self.settings_widge.get_settings()
-        config = self.settings_widge.get_config()
-        self.run_thread.update_config_settings(config, settings)
+        self.ophyd_device.update_pid_settings(settings)
 
     def data_update(self, setp, pid_val, output, on):
         self.lineEdit_setpoint_show.setText(f'{setp:.3e}')

@@ -187,13 +187,16 @@ class PlotWidget(QWidget):
         self.pushButton_show_options.clicked.connect(self.show_options)
         self.pushButton_autoscale = QPushButton('Autoscale')
         self.pushButton_autoscale.clicked.connect(self.autoscale)
+        self.pushButton_clear = QPushButton('Clear Plot')
+        self.pushButton_clear.clicked.connect(self.clear_plot)
         self.plot_options = Plot_Options(self, self.ax, self.livePlot)
 
         layout = QGridLayout()
-        layout.addWidget(canvas, 0, 1, 1, 3)
-        layout.addWidget(self.toolbar, 1, 3)
+        layout.addWidget(canvas, 0, 1, 1, 4)
+        layout.addWidget(self.toolbar, 1, 4)
         layout.addWidget(self.pushButton_show_options, 1, 1)
         layout.addWidget(self.pushButton_autoscale, 1, 2)
+        layout.addWidget(self.pushButton_clear, 1, 3)
         layout.addWidget(self.plot_options, 0, 0, 2, 1)
         self.setLayout(layout)
 
@@ -957,16 +960,19 @@ class PlotWidget_NoBluesky(QWidget):
         self.pushButton_show_options.clicked.connect(self.show_options)
         self.pushButton_autoscale = QPushButton('Autoscale')
         self.pushButton_autoscale.clicked.connect(self.autoscale)
+        self.pushButton_clear = QPushButton('Clear Plot')
+        self.pushButton_clear.clicked.connect(self.clear_plot)
         self.plot_options = Plot_Options(self, self.ax, self.plot)
 
         self.setWindowTitle(title or f'{xlabel} vs. {ylabel}')
         self.setWindowIcon(QIcon(resource_filename('CAMELS', 'graphics/camels_icon.png')))
 
         layout = QGridLayout()
-        layout.addWidget(canvas, 0, 1, 1, 3)
-        layout.addWidget(self.toolbar, 1, 3)
+        layout.addWidget(canvas, 0, 1, 1, 4)
+        layout.addWidget(self.toolbar, 1, 4)
         layout.addWidget(self.pushButton_show_options, 1, 1)
         layout.addWidget(self.pushButton_autoscale, 1, 2)
+        layout.addWidget(self.pushButton_clear, 1, 3)
         layout.addWidget(self.plot_options, 0, 0, 2, 1)
         self.setLayout(layout)
 
@@ -974,8 +980,14 @@ class PlotWidget_NoBluesky(QWidget):
         self.options_open = False
         self.show()
 
+    def clear_plot(self):
+        """Clear the plot by removing the data from the plot and clearing all
+        fit plots."""
+        self.plot.clear_plot()
+
     def autoscale(self):
         self.ax.autoscale()
+        self.plot.ax2.autoscale()
         self.ax.figure.canvas.draw_idle()
 
     def show_options(self):
@@ -1061,6 +1073,11 @@ class MultiPlot_NoBluesky(QObject):
         self.ax.legend()
         self.ax.figure.canvas.draw_idle()
         self.new_data.emit()
+
+    def clear_plot(self):
+        self.xdata.clear()
+        for y in self.ydata:
+            self.ydata[y].clear()
 
 
 # if __name__ == '__main__':

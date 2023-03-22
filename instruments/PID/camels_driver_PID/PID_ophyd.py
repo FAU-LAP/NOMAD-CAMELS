@@ -30,14 +30,14 @@ def ptX(rMeas, rX=1000):
         return zero[0] + 273.15
     return t
 
-# def ptX_inv(T, rX=1000):
-#     return root(lambda r: ptX(r, rX) - T, 300).x[0]
+def ptX_inv(T, rX=1000):
+    return root(lambda r: ptX(r, rX) - T, 300).x[0]
 
 def pt1000(rMeas):
     return ptX(rMeas)
 
-# def pt1000_inv(T):
-#     return ptX_inv(T)
+def pt1000_inv(T):
+    return ptX_inv(T)
 
 
 class PID_Controller(Device):
@@ -196,14 +196,18 @@ class PID_Controller(Device):
 
     def set_pid_on(self, value):
         self.pid_thread.pid.set_auto_mode(value)
+        self.auto_pid = value
+        self.update_PID_vals(self.pid_thread.pid.setpoint, force=True)
 
     def finalize_steps(self):
         self.pid_thread.still_running = False
         self.plot.close()
 
 
-    def update_PID_vals(self, setpoint):
+    def update_PID_vals(self, setpoint, force=False):
         if not self.auto_pid:
+            if self.bias_func is not None:
+                self.bias_func(0)
             return
         old_vals = copy.deepcopy(self.pid_vals)
         pid_val_table = pd.DataFrame(self.pid_val_table)
@@ -223,7 +227,7 @@ class PID_Controller(Device):
         else:
             next_lo = max(setpoints[setpoints <= setpoint])
             self.pid_vals = pid_val_table[setpoints == next_lo].to_dict(orient='list')
-        if old_vals != self.pid_vals:
+        if old_vals != self.pid_vals or force:
             for key in self.pid_vals:
                 if key in ['setpoint', 'stability-time', 'stability-delta'] or (key == 'bias' and self.bias_func is None):
                     continue
@@ -238,6 +242,11 @@ class PID_Controller(Device):
         # self.setpoint = setpoint
         self.pid_thread.pid.setpoint = setpoint
         self.pid_thread.stable_time = 0
+
+    def update_pid_settings(self, settings):
+        self.pid_val_table = settings['pid_val_table']
+        self.interpolate_auto = settings['interpolate_auto']
+        self.update_PID_vals(self.pid_thread.pid.setpoint)
 
 
 

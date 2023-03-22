@@ -2,7 +2,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QDialog, QProgressBar, QGridLayout, QLabel
 from PyQt5.QtCore import Qt, QCoreApplication
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 
 from pkg_resources import resource_filename
 # Import your main application form
@@ -17,6 +17,7 @@ class LoadingScreen(QDialog):
         layout = QGridLayout()
         self.setLayout(layout)
         self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        self.setWindowIcon(QIcon(resource_filename('CAMELS', 'graphics/camels_icon.png')))
 
         image = QPixmap()
         image.load(resource_filename('CAMELS', 'graphics/CAMELS_vertical.png'))

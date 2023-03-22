@@ -22,14 +22,14 @@ class subclass_config_sub(device_class.Device_Config_Sub):
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
         self.checkBox_interpolate_auto = QCheckBox('Interpolate PID values')
-        self.checkBox_auto_select_values = QCheckBox('auto select values')
+        # self.checkBox_auto_select_values = QCheckBox('auto select values')
         self.comboBox_pid_vals = QComboBox()
         val_choice = ['Table', 'File']
         self.comboBox_pid_vals.addItems(val_choice)
         if 'interpolate_auto' in settings_dict:
             self.checkBox_interpolate_auto.setChecked(settings_dict['interpolate_auto'])
-        if 'auto_pid' in settings_dict:
-            self.checkBox_auto_select_values.setChecked(settings_dict['auto_pid'])
+        # if 'auto_pid' in settings_dict:
+        #     self.checkBox_auto_select_values.setChecked(settings_dict['auto_pid'])
         if 'val_choice' in settings_dict and settings_dict['val_choice'] in val_choice:
             self.comboBox_pid_vals.setCurrentText(settings_dict['val_choice'])
         self.file_box = Path_Button_Edit(self)
@@ -44,7 +44,7 @@ class subclass_config_sub(device_class.Device_Config_Sub):
         self.input_label = QLabel('Input Channel:')
         self.output_label = QLabel('Output Channel:')
         self.bias_label = QLabel('Bias Channel:')
-        timer_label = QLabel('Time Delta:')
+        self.timer_label = QLabel('Time Delta:')
         self.comboBox_input = QComboBox()
         self.comboBox_output = QComboBox()
         self.comboBox_bias = QComboBox()
@@ -68,8 +68,8 @@ class subclass_config_sub(device_class.Device_Config_Sub):
                 self.comboBox_bias.setCurrentText(channel)
         if 'dt' in config_dict:
             self.lineEdit_time.setText(str(config_dict['dt']))
-        read_label = QLabel('Conversion function for reading:')
-        set_label = QLabel('Conversion function for setting:')
+        self.read_label = QLabel('Conversion function for reading:')
+        self.set_label = QLabel('Conversion function for setting:')
         read_conv = ''
         if 'read_conv_func' in settings_dict:
             read_conv = str(settings_dict['read_conv_func']) or ''
@@ -90,22 +90,22 @@ class subclass_config_sub(device_class.Device_Config_Sub):
         layout.addWidget(self.comboBox_output, 2, 1)
         layout.addWidget(self.bias_label, 3, 0)
         layout.addWidget(self.comboBox_bias, 3, 1)
-        layout.addWidget(read_label, 4, 0)
+        layout.addWidget(self.read_label, 4, 0)
         layout.addWidget(self.lineEdit_read_function, 4, 1)
-        layout.addWidget(set_label, 5, 0)
+        layout.addWidget(self.set_label, 5, 0)
         layout.addWidget(self.lineEdit_set_function, 5, 1)
-        layout.addWidget(timer_label, 6, 0)
+        layout.addWidget(self.timer_label, 6, 0)
         layout.addWidget(self.lineEdit_time, 6, 1)
-        layout.addWidget(self.checkBox_auto_select_values, 7, 0)
-        layout.addWidget(self.checkBox_interpolate_auto, 7, 1)
+        # layout.addWidget(self.checkBox_auto_select_values, 7, 0)
+        layout.addWidget(self.checkBox_interpolate_auto, 7, 0, 1, 2)
         layout.addWidget(self.comboBox_pid_vals, 8, 0)
         layout.addWidget(self.file_box, 8, 1)
         layout.addWidget(self.val_table, 9, 0, 1, 2)
 
-        self.checkBox_auto_select_values.stateChanged.connect(self.auto_selection_switch)
+        # self.checkBox_auto_select_values.stateChanged.connect(self.auto_selection_switch)
         self.comboBox_pid_vals.currentTextChanged.connect(self.val_choice_switch)
         self.val_choice_switch()
-        self.auto_selection_switch()
+        # self.auto_selection_switch()
         self.file_box.path_changed.connect(self.file_changed)
 
     def val_choice_switch(self):
@@ -115,9 +115,9 @@ class subclass_config_sub(device_class.Device_Config_Sub):
         self.file_box.setEnabled(not table)
         self.val_table.setEnabled(table)
 
-    def auto_selection_switch(self):
-        sel_on = self.checkBox_auto_select_values.isChecked()
-        self.checkBox_interpolate_auto.setEnabled(sel_on)
+    # def auto_selection_switch(self):
+    #     sel_on = self.checkBox_auto_select_values.isChecked()
+    #     self.checkBox_interpolate_auto.setEnabled(sel_on)
 
     def file_changed(self):
         try:
@@ -128,7 +128,7 @@ class subclass_config_sub(device_class.Device_Config_Sub):
             print(e)
 
     def get_settings(self):
-        self.settings_dict['auto_pid'] = self.checkBox_auto_select_values.isChecked()
+        # self.settings_dict['auto_pid'] = self.checkBox_auto_select_values.isChecked()
         self.settings_dict['interpolate_auto'] = self.checkBox_interpolate_auto.isChecked()
         self.val_table.update_table_data()
         self.settings_dict['pid_val_table'] = self.val_table.tableData
