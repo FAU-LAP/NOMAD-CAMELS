@@ -3,6 +3,7 @@ from collections import ChainMap
 import threading
 import numpy as np
 import lmfit
+from collections import deque
 
 import matplotlib.pyplot as plt
 from bluesky.callbacks.mpl_plotting import LivePlot, LiveFitPlot
@@ -12,7 +13,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg,\
     NavigationToolbar2QT
 
 from PyQt5.QtWidgets import QWidget, QGridLayout, QApplication, QPushButton,\
-    QTableWidgetItem, QColorDialog, QComboBox
+    QTableWidgetItem, QColorDialog, QComboBox, QLabel, QLineEdit
 from PyQt5.QtCore import pyqtSignal, QObject, Qt, QCoreApplication
 from PyQt5.QtGui import QIcon
 
@@ -190,13 +191,18 @@ class PlotWidget(QWidget):
         self.pushButton_clear = QPushButton('Clear Plot')
         self.pushButton_clear.clicked.connect(self.clear_plot)
         self.plot_options = Plot_Options(self, self.ax, self.livePlot)
+        label_n_data = QLabel('# data points:')
+        self.lineEdit_n_data = QLineEdit(str(np.inf))
+        self.lineEdit_n_data.textChanged.connect(self.change_maxlen)
 
         layout = QGridLayout()
-        layout.addWidget(canvas, 0, 1, 1, 4)
+        layout.addWidget(canvas, 0, 1, 1, 6)
         layout.addWidget(self.toolbar, 1, 4)
         layout.addWidget(self.pushButton_show_options, 1, 1)
         layout.addWidget(self.pushButton_autoscale, 1, 2)
         layout.addWidget(self.pushButton_clear, 1, 3)
+        layout.addWidget(label_n_data, 1, 5)
+        layout.addWidget(self.lineEdit_n_data, 1, 6)
         layout.addWidget(self.plot_options, 0, 0, 2, 1)
         self.setLayout(layout)
 
@@ -208,6 +214,17 @@ class PlotWidget(QWidget):
         if do_plot:
             self.show()
         place_widget(self)
+
+    def change_maxlen(self):
+        text = self.lineEdit_n_data.text()
+        if not text:
+            maxlen = np.inf
+        else:
+            try:
+                maxlen = int(text)
+            except:
+                return
+        self.livePlot.change_maxlen(maxlen)
 
     def clear_plot(self):
         """Clear the plot by removing the data from the plot and clearing all
@@ -812,6 +829,7 @@ class MultiLivePlot(LivePlot, QObject):
         self._epoch_offset = 0
         self.x_data = []
         self.y_data = {}
+        self.maxlen = np.inf
         self.y_names = ys
         self.ys = get_obj_fields(ys)
         for y in ys:
@@ -819,6 +837,17 @@ class MultiLivePlot(LivePlot, QObject):
         self.current_lines = {}
         self.descs_fit_readying = {}
         self.legend = None
+
+    def change_maxlen(self, maxlen):
+        self.maxlen = maxlen
+        if maxlen < np.inf:
+            self.x_data = deque(self.x_data, maxlen=maxlen)
+            for y in self.y_data:
+                self.y_data[y] = deque(self.y_data[y], maxlen=maxlen)
+        else:
+            self.x_data = list(self.x_data)
+            for y in self.y_data:
+                self.y_data[y] = list(self.y_data[y])
 
     def start(self, doc):
         self.__setup()
@@ -963,22 +992,39 @@ class PlotWidget_NoBluesky(QWidget):
         self.pushButton_clear = QPushButton('Clear Plot')
         self.pushButton_clear.clicked.connect(self.clear_plot)
         self.plot_options = Plot_Options(self, self.ax, self.plot)
+        label_n_data = QLabel('# data points:')
+        self.lineEdit_n_data = QLineEdit(str(np.inf))
+        self.lineEdit_n_data.textChanged.connect(self.change_maxlen)
 
         self.setWindowTitle(title or f'{xlabel} vs. {ylabel}')
         self.setWindowIcon(QIcon(resource_filename('CAMELS', 'graphics/camels_icon.png')))
 
         layout = QGridLayout()
-        layout.addWidget(canvas, 0, 1, 1, 4)
+        layout.addWidget(canvas, 0, 1, 1, 6)
         layout.addWidget(self.toolbar, 1, 4)
         layout.addWidget(self.pushButton_show_options, 1, 1)
         layout.addWidget(self.pushButton_autoscale, 1, 2)
         layout.addWidget(self.pushButton_clear, 1, 3)
+        layout.addWidget(label_n_data, 1, 5)
+        layout.addWidget(self.lineEdit_n_data, 1, 6)
         layout.addWidget(self.plot_options, 0, 0, 2, 1)
         self.setLayout(layout)
 
         self.plot_options.hide()
         self.options_open = False
         self.show()
+
+    def change_maxlen(self):
+        text = self.lineEdit_n_data.text()
+        if not text:
+            maxlen = np.inf
+        else:
+            try:
+                maxlen = int(text)
+            except:
+                return
+        self.plot.change_maxlen(maxlen)
+
 
     def clear_plot(self):
         """Clear the plot by removing the data from the plot and clearing all
@@ -1016,6 +1062,7 @@ class MultiPlot_NoBluesky(QObject):
         self.ax2 = self.ax.twinx()
         self.ax2.set_ylabel(ylabel2)
         self.labels = labels
+        self.maxlen = np.inf
         self.xdata = []
         self.ydata = {}
         self.current_lines = {}
@@ -1044,7 +1091,10 @@ class MultiPlot_NoBluesky(QObject):
                                                               linestyle='' if y in self.first_hidden else '-',
                                                               label=self.labels[i],
                                                               color=stdCols[i])
-                    self.ydata[y] = []
+                    if self.maxlen < np.inf:
+                        self.ydata[y] = deque(maxlen=self.maxlen)
+                    else:
+                        self.ydata[y] = []
                 except Exception as e:
                     print(e)
             self.setup_done.emit()
@@ -1060,6 +1110,17 @@ class MultiPlot_NoBluesky(QObject):
                 self.ydata[y] = [ys[y]]
         if self.show_plot:
             self.update_plot()
+
+    def change_maxlen(self, maxlen):
+        self.maxlen = maxlen
+        if maxlen < np.inf:
+            self.xdata = deque(self.xdata, maxlen=maxlen)
+            for y in self.ydata:
+                self.ydata[y] = deque(self.ydata[y], maxlen=maxlen)
+        else:
+            self.xdata = list(self.xdata)
+            for y in self.ydata:
+                self.ydata[y] = list(self.ydata[y])
 
 
     def update_plot(self):
