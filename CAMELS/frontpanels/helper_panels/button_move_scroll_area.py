@@ -180,6 +180,7 @@ class Drop_Scroll_Area(QScrollArea):
         self.drop_area.button_order.pop(ind)
         self.drop_area.button_order.insert(ind, new_name)
         button.rename(new_name)
+        return button
 
     def disable_run_buttons(self):
         for button in self.drop_area.buttons.values():

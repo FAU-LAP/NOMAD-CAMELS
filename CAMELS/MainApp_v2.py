@@ -504,7 +504,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_man_cont_data(self, control_data, old_name):
         self.manual_controls.pop(old_name)
         self.manual_controls[control_data['name']] = control_data
-        self.button_area_manual.rename_button(old_name, control_data['name'])
+        button = self.button_area_manual.rename_button(old_name, control_data['name'])
+        self.add_functions_to_manual_button(button, control_data['name'])
 
     def open_manual_control_config(self, control_name):
         from CAMELS.manual_controls.get_manual_controls import get_control_by_type_name
@@ -518,9 +519,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         button = options_run_button.Options_Run_Button(name, small_text='Start',
                                                        protocol_options=False)
         self.button_area_manual.add_button(button, name)
-        button.button.clicked.connect(lambda state, x=name: self.open_manual_control_config(x))
-        button.del_asked.connect(lambda x=name: self.remove_manual_control(x))
-        button.small_button.clicked.connect(lambda state, x=name: self.start_manual_control(x))
+        self.add_functions_to_manual_button(button, name)
+
+    def add_functions_to_manual_button(self, button, name):
+        button.config_function = lambda state, x=name: self.open_manual_control_config(x)
+        button.run_function = lambda state, x=name: self.start_manual_control(x)
+        button.del_function = lambda x=name: self.remove_manual_control(x)
+        button.update_functions()
 
     def populate_manuals_buttons(self):
         if not self.manual_controls:
@@ -556,8 +561,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.accepted.connect(self.add_prot_to_data)
         self.add_to_open_windows(dialog)
-        # dialog.closing.connect(lambda x=dialog: self.open_windows.remove(x))
-        # self.open_windows.append(dialog)
 
     def add_prot_to_data(self, protocol):
         self.protocols_dict[protocol.name] = protocol
@@ -573,7 +576,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_prot_data(self, protocol, old_name):
         self.protocols_dict.pop(old_name)
         self.protocols_dict[protocol.name] = protocol
-        self.button_area_meas.rename_button(old_name, protocol.name)
+        button = self.button_area_meas.rename_button(old_name, protocol.name)
+        self.add_functions_to_meas_button(button, protocol.name)
 
     def open_protocol_config(self, prot_name):
         from CAMELS.frontpanels.protocol_config import Protocol_Config
@@ -581,17 +585,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.accepted.connect(lambda x, y=prot_name: self.update_prot_data(x, y))
         self.add_to_open_windows(dialog)
-        # dialog.closing.connect(lambda x=dialog: self.open_windows.remove(x))
-        # self.open_windows.append(dialog)
 
     def add_button_to_meas(self, name):
         button = options_run_button.Options_Run_Button(name)
         self.button_area_meas.add_button(button, name)
-        button.button.clicked.connect(lambda state, x=name: self.open_protocol_config(x))
-        button.small_button.clicked.connect(lambda state, x=name: self.run_protocol(x))
-        button.build_asked.connect(lambda x=name: self.build_protocol(x))
-        button.external_asked.connect(lambda x=name: self.open_protocol(x))
-        button.del_asked.connect(lambda x=name: self.remove_protocol(x))
+        self.add_functions_to_meas_button(button, name)
+
+    def add_functions_to_meas_button(self, button, name):
+        button.config_function = lambda state, x=name: self.open_protocol_config(x)
+        button.run_function = lambda state, x=name: self.run_protocol(x)
+        button.build_function = lambda x=name: self.build_protocol(x)
+        button.external_function = lambda x=name: self.open_protocol(x)
+        button.del_function = lambda x=name: self.remove_protocol(x)
+        button.update_functions()
 
     def populate_meas_buttons(self):
         if not self.protocols_dict:
