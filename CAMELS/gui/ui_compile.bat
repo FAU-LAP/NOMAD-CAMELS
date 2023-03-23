@@ -5,7 +5,7 @@ cd ../tools
 FOR /f "delims=" %%f IN ('dir *.ui /b') DO (
 call pyuic5 -o %%~nf.py %%f
 )
-cd ../add_ons
+cd ../manual_controls
 for /f "delims==" %%d in ('dir /b') do (
     if exist %%d\*.ui (
         cd %%d
