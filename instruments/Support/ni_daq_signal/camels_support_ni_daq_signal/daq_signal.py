@@ -1,4 +1,5 @@
 import nidaqmx
+import numpy as np
 
 from ophyd import Signal
 from ophyd.signal import SignalRO
@@ -116,7 +117,10 @@ class DAQ_Signal_Input(SignalRO):
         super().destroy()
                         
     def get(self):
-        self._readback = self.task.read()
+        try:
+            self._readback = self.task.read()
+        except:
+            self._readback = np.nan
         return super().get()
 
     

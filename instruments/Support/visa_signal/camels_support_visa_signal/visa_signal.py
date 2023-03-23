@@ -1,5 +1,6 @@
 import time
 
+import numpy as np
 from ophyd import Signal, SignalRO, Device
 import pyvisa
 import re
@@ -94,10 +95,13 @@ class VISA_Signal_Read(SignalRO):
         while self.visa_instrument.currently_reading:
             time.sleep(0.1)
         self.visa_instrument.currently_reading = True
-        if self.read_function:
-            val = self.visa_instrument.query(self.read_function())
-        else:
-            val = self.visa_instrument.query(self.query_text)
+        try:
+            if self.read_function:
+                val = self.visa_instrument.query(self.read_function())
+            else:
+                val = self.visa_instrument.query(self.query_text)
+        except:
+            val = np.nan
         self.visa_instrument.currently_reading = False
         try:
             val = float(val)
