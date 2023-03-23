@@ -123,6 +123,7 @@ class Plot_Definer(QDialog):
         self.plot_data = plot_data or []
         super().__init__(parent)
         self.setWindowTitle('CAMELS - define plot')
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
         cols = ['plot-type', 'name']
         comboBoxes = {'plot-type': plot_types}
         tableData = {'plot-type': [], 'name': []}
@@ -141,6 +142,7 @@ class Plot_Definer(QDialog):
         self.dialog_buttons.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         self.dialog_buttons.accepted.connect(self.accept)
         self.dialog_buttons.rejected.connect(self.reject)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
 
 
         layout = QGridLayout()

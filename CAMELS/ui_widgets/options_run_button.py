@@ -71,10 +71,27 @@ class Options_Run_Button(QFrame):
         self.small_button.setGeometry(5,5,size-10,int(size/3))
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.options_menu)
+        self.config_function = None
+        self.run_function = None
+        self.build_function = None
+        self.external_function = None
+        self.del_function = None
 
         self.setFixedSize(size,size)
         self.setFrameStyle(1)
         self.protocol_options = protocol_options
+
+    def update_functions(self):
+        if self.config_function is not None:
+            self.button.clicked.connect(self.config_function)
+        if self.run_function is not None:
+            self.small_button.clicked.connect(self.run_function)
+        if self.build_function is not None:
+            self.build_asked.connect(self.build_function)
+        if self.external_function is not None:
+            self.external_asked.connect(self.external_function)
+        if self.del_function is not None:
+            self.del_asked.connect(self.del_function)
 
     def options_menu(self, pos):
         menu = QMenu()
@@ -107,6 +124,17 @@ class Options_Run_Button(QFrame):
 
     def rename(self, new_name):
         self.label.setText(new_name)
+        if self.config_function is not None:
+            self.button.clicked.disconnect(self.config_function)
+        if self.run_function is not None:
+            self.small_button.clicked.disconnect(self.run_function)
+        if self.build_function is not None:
+            self.build_asked.disconnect(self.build_function)
+        if self.external_function is not None:
+            self.external_asked.disconnect(self.external_function)
+        if self.del_function is not None:
+            self.del_asked.disconnect(self.del_function)
+
 
 
 if __name__ == '__main__':

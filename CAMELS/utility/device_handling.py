@@ -1,10 +1,44 @@
+import sys
+import os
+import importlib
+
 from CAMELS.utility import variables_handling
 from CAMELS.bluesky_handling import helper_functions
 
 import copy
 
-
+local_packages = {}
 running_devices = {}
+
+def load_local_packages(tell_local=False):
+    global local_packages
+    if local_packages:
+        return local_packages
+    local_instr_path = variables_handling.device_driver_path
+    if not os.path.isdir(local_instr_path):
+        return local_packages
+    sys.path.append(local_instr_path)
+    for f in os.listdir(local_instr_path):
+        full_path = f'{local_instr_path}/{f}'
+        if os.path.isdir(full_path):
+            package_path = ''
+            for p in os.listdir(full_path):
+                if p.startswith('camels_driver_'):
+                    package_path = f'{p}.{f}'
+                    break
+            if not package_path:
+                package_path = f'{f}.{f}'
+            try:
+                sys.path.append(f'{local_instr_path}/{f}')
+                package = importlib.import_module(package_path)
+                device = package.subclass()
+                if tell_local:
+                    local_packages[f'local {device.name}'] = package
+                else:
+                    local_packages[device.name] = package
+            except Exception as e:
+                print(f, e)
+    return local_packages
 
 
 def get_channel_from_string(channel):

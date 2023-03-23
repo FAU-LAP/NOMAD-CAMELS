@@ -221,7 +221,10 @@ def build_protocol(protocol, file_path,
         standard_save_string += f'\t\t\tnexus_mapper = {nexus_dict}\n'
         # TODO finish this
     else:
-        standard_save_string += f'\t\t\tbroker_to_NX(runs, "{save_path}", plots)\n\n\n'
+        standard_save_string += f'\t\t\tbroker_to_NX(runs, "{save_path}", plots,' \
+                                f'session_name="{protocol.session_name}",' \
+                                f'export_to_csv={protocol.export_csv},' \
+                                f'export_to_json={protocol.export_json})\n\n\n'
 
     # protocol_string += standard_save_string
     protocol_string += standard_start_string

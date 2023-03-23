@@ -2,7 +2,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QDialog, QProgressBar, QGridLayout, QLabel
 from PyQt5.QtCore import Qt, QCoreApplication
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 
 from pkg_resources import resource_filename
 # Import your main application form
@@ -17,11 +17,12 @@ class LoadingScreen(QDialog):
         layout = QGridLayout()
         self.setLayout(layout)
         self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        self.setWindowIcon(QIcon(resource_filename('CAMELS', 'graphics/camels_icon.png')))
 
         image = QPixmap()
         image.load(resource_filename('CAMELS', 'graphics/CAMELS_vertical.png'))
         size = image.size()
-        image = image.scaled(size.width() * 2, size.height() * 2)
+        image = image.scaled(403, 308)
         image_label = QLabel()
         image_label.setPixmap(image)
 
@@ -51,39 +52,48 @@ if __name__ == '__main__':
     loading_screen = LoadingScreen()
     loading_screen.show()
     import os.path
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
     file_dir = os.path.dirname(__file__)
-    with open(f'{file_dir}/packages.txt', 'r') as f:
-        package_list = [x.rstrip() for x in f.readlines()]
-    n = len(package_list) + 1
+    package_file = f'{file_dir}/packages.txt'
+    if os.path.isfile(package_file):
+        with open(f'{file_dir}/packages.txt', 'r') as f:
+            package_list = [x.rstrip() for x in f.readlines()]
+        n = len(package_list) + 1
 
-    from PyQt5.QtCore import QThread, pyqtSignal
-    # Create a thread to import the packages
+        from PyQt5.QtCore import QThread, pyqtSignal
+        # Create a thread to import the packages
 
-    class ImportThread(QThread):
-        update_progress = pyqtSignal(int)
-        update_text = pyqtSignal(str)
+        class ImportThread(QThread):
+            update_progress = pyqtSignal(int)
+            update_text = pyqtSignal(str)
 
-        def run(self):
-            # Import your packages here
-            for i, package in enumerate(package_list):
-                self.update_progress.emit(int(i / n * 100))
-                self.update_text.emit(f'loading {package}...')
-                __import__(package)
-            self.update_text.emit('starting CAMELS...')
-            self.update_progress.emit(int((n-1)/n * 100))
-            import MainApp_v2
+            def run(self):
+                # Import your packages here
+                for i, package in enumerate(package_list):
+                    self.update_progress.emit(int(i / n * 100))
+                    self.update_text.emit(f'loading {package}...')
+                    __import__(package)
+                self.update_text.emit('starting CAMELS...')
+                self.update_progress.emit(int((n-1)/n * 100))
+                from CAMELS import MainApp_v2
 
 
-    # Start the thread and connect the progress signal
-    thread = ImportThread()
-    thread.update_progress.connect(loading_screen.set_progress)
-    thread.update_text.connect(loading_screen.set_text)
-    # thread.finished.connect(start_main)
-    thread.start()
-    while thread.isRunning():
-        app.processEvents()
-    import MainApp_v2
-    import sys
+        # Start the thread and connect the progress signal
+        thread = ImportThread()
+        thread.update_progress.connect(loading_screen.set_progress)
+        thread.update_text.connect(loading_screen.set_text)
+        # thread.finished.connect(start_main)
+        thread.start()
+        while thread.isRunning():
+            app.processEvents()
+    else:
+        from CAMELS import MainApp_v2
+        with open(package_file, 'w') as f:
+            for i, (mod_name, mod) in enumerate(sys.modules.items()):
+                if mod_name.startswith('_') or mod is None:
+                    continue
+                f.write(f'{mod_name}\n')
+    from CAMELS import MainApp_v2
     from CAMELS.utility import exception_hook
     sys.excepthook = exception_hook.exception_hook
     main_window = MainApp_v2.MainWindow()

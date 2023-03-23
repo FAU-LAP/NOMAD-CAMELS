@@ -10,7 +10,8 @@ import sys
 import os
 
 from CAMELS.utility.variables_handling import get_color
-from CAMELS.utility import variables_handling
+from CAMELS.utility import variables_handling, device_handling
+from CAMELS.ui_widgets.warn_popup import WarnPopup
 
 if sys.version_info >= (3, 8):
     import importlib.metadata as importlib_metadata
@@ -20,11 +21,11 @@ else:
 all_instr = {}
 installed_instr = {}
 
-def getInstalledDevices(force=False):
+def getInstalledDevices(force=False, return_packages=False):
     """Goes through the given device_driver_path and returns a list of
     the available devices."""
     global installed_instr
-    if installed_instr and not force:
+    if installed_instr and not force and not return_packages:
         return installed_instr
     installed_instr.clear()
     for x in importlib_metadata.distributions():
@@ -32,6 +33,11 @@ def getInstalledDevices(force=False):
         version = x.version
         if name.startswith('camels-driver-'):
             installed_instr[name[14:].replace('-', '_')] = version
+    packages = device_handling.load_local_packages()
+    for package in packages:
+        installed_instr[package] = 'local'
+    if return_packages:
+        return installed_instr, packages
     return installed_instr
 
 def getAllDevices():
@@ -50,8 +56,17 @@ def getAllDevices():
         devices_str = requests.get(url).text
     except:
         devices_str = ''
+    warned = False
     for x in devices_str.splitlines():
-        name, version = x.split('==')
+        try:
+            name, version = x.split('==')
+        except:
+            if not warned:
+                WarnPopup(None, 'Could not read driver_list.txt from repo.\n'
+                                'Check settings if repository and branch are correct.',
+                          'No online-drivers found')
+            warned = True
+            continue
         all_instr[name.replace('-', '_')] = version
     return all_instr
 

@@ -1,4 +1,5 @@
 import os.path
+import json
 
 import databroker
 import h5py
@@ -85,7 +86,8 @@ def broker_to_hdf5(runs, filename, additional_data=None):
                                 group[key].attrs[k] = v
 
 
-def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
+def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
+                 session_name='', export_to_csv=False, export_to_json=False):
     if not os.path.isdir(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
     if not isinstance(runs, list):
@@ -97,8 +99,15 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
         st_time = meta_start.pop('time')
         start_time = timestamp_to_ISO8601(st_time)
         end_time = timestamp_to_ISO8601(meta_stop.pop('time'))
+        entry_name = f'{session_name}_{start_time}' if session_name else start_time
+        entry_name_non_iso = f'{session_name}_{st_time}' if session_name else st_time
+        if export_to_json:
+            if not os.path.isdir(filename.split(".")[0]):
+                os.makedirs(filename.split(".")[0])
+            with open(f'{filename.split(".")[0]}/{entry_name_non_iso}_metadata.json', 'w') as json_file:
+                json.dump(meta_start, json_file, indent=2)
         with h5py.File(filename, 'a') as file:
-            entry = file.create_group(start_time)
+            entry = file.create_group(entry_name)
             entry.attrs['NX_class'] = 'NXentry'
             entry['definition'] = 'NXsensor_scan'
             entry['start_time'] = start_time
@@ -147,6 +156,13 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None):
                 if '_fits_readying_' in stream:
                     continue
                 dataset = run[stream].read()
+                if export_to_csv:
+                    if not os.path.isdir(f'{filename.split(".")[0]}/{entry_name_non_iso}'):
+                        os.makedirs(f'{filename.split(".")[0]}/{entry_name_non_iso}')
+                    try:
+                        dataset.to_pandas().to_csv(f'{filename.split(".")[0]}/{entry_name_non_iso}/{stream}.csv')
+                    except Exception as e:
+                        raise print(e)
                 if stream == 'primary':
                     group = data_entry
                 else:

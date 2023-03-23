@@ -1,5 +1,6 @@
 import sys
 import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 import json
 import importlib
 
@@ -19,6 +20,8 @@ from CAMELS.ui_widgets import options_run_button
 
 from collections import OrderedDict
 
+import bluesky
+import ophyd
 from bluesky import RunEngine
 from bluesky.callbacks.best_effort import BestEffortCallback
 import databroker
@@ -136,6 +139,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.re_subs = []
         self.protocol_module = None
         self.protocol_savepath = ''
+        self.running_protocol = None
 
         self.show()
         self.adjustSize()
@@ -500,7 +504,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_man_cont_data(self, control_data, old_name):
         self.manual_controls.pop(old_name)
         self.manual_controls[control_data['name']] = control_data
-        self.button_area_manual.rename_button(old_name, control_data['name'])
+        button = self.button_area_manual.rename_button(old_name, control_data['name'])
+        self.add_functions_to_manual_button(button, control_data['name'])
 
     def open_manual_control_config(self, control_name):
         from CAMELS.manual_controls.get_manual_controls import get_control_by_type_name
@@ -514,9 +519,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         button = options_run_button.Options_Run_Button(name, small_text='Start',
                                                        protocol_options=False)
         self.button_area_manual.add_button(button, name)
-        button.button.clicked.connect(lambda state, x=name: self.open_manual_control_config(x))
-        button.del_asked.connect(lambda x=name: self.remove_manual_control(x))
-        button.small_button.clicked.connect(lambda state, x=name: self.start_manual_control(x))
+        self.add_functions_to_manual_button(button, name)
+
+    def add_functions_to_manual_button(self, button, name):
+        button.config_function = lambda state, x=name: self.open_manual_control_config(x)
+        button.run_function = lambda state, x=name: self.start_manual_control(x)
+        button.del_function = lambda x=name: self.remove_manual_control(x)
+        button.update_functions()
 
     def populate_manuals_buttons(self):
         if not self.manual_controls:
@@ -540,7 +549,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.open_windows.remove(control)
         self.button_area_manual.enable_single_run(name)
 
-
     # --------------------------------------------------
     # protocols
     # --------------------------------------------------
@@ -553,8 +561,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.accepted.connect(self.add_prot_to_data)
         self.add_to_open_windows(dialog)
-        # dialog.closing.connect(lambda x=dialog: self.open_windows.remove(x))
-        # self.open_windows.append(dialog)
 
     def add_prot_to_data(self, protocol):
         self.protocols_dict[protocol.name] = protocol
@@ -570,7 +576,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_prot_data(self, protocol, old_name):
         self.protocols_dict.pop(old_name)
         self.protocols_dict[protocol.name] = protocol
-        self.button_area_meas.rename_button(old_name, protocol.name)
+        button = self.button_area_meas.rename_button(old_name, protocol.name)
+        self.add_functions_to_meas_button(button, protocol.name)
 
     def open_protocol_config(self, prot_name):
         from CAMELS.frontpanels.protocol_config import Protocol_Config
@@ -578,17 +585,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.accepted.connect(lambda x, y=prot_name: self.update_prot_data(x, y))
         self.add_to_open_windows(dialog)
-        # dialog.closing.connect(lambda x=dialog: self.open_windows.remove(x))
-        # self.open_windows.append(dialog)
 
     def add_button_to_meas(self, name):
         button = options_run_button.Options_Run_Button(name)
         self.button_area_meas.add_button(button, name)
-        button.button.clicked.connect(lambda state, x=name: self.open_protocol_config(x))
-        button.small_button.clicked.connect(lambda state, x=name: self.run_protocol(x))
-        button.build_asked.connect(lambda x=name: self.build_protocol(x))
-        button.external_asked.connect(lambda x=name: self.open_protocol(x))
-        button.del_asked.connect(lambda x=name: self.remove_protocol(x))
+        self.add_functions_to_meas_button(button, name)
+
+    def add_functions_to_meas_button(self, button, name):
+        button.config_function = lambda state, x=name: self.open_protocol_config(x)
+        button.run_function = lambda state, x=name: self.run_protocol(x)
+        button.build_function = lambda x=name: self.build_protocol(x)
+        button.external_function = lambda x=name: self.open_protocol(x)
+        button.del_function = lambda x=name: self.remove_protocol(x)
+        button.update_functions()
 
     def populate_meas_buttons(self):
         if not self.protocols_dict:
@@ -618,15 +627,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         devs, dev_data = device_handling.instantiate_devices(device_list)
         self.current_protocol_device_list = device_list
         additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
+        if 'plots' in additionals:
+            for plot in additionals['plots']:
+                self.add_to_open_windows(plot)
         self.re_subs += subs
         self.add_subs_from_dict(additionals)
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
         self.pushButton_stop.setEnabled(True)
-        self.protocol_module.run_protocol_main(self.run_engine, catalog=self.databroker_catalog, devices=devs, md={'devices': dev_data})
+        self.protocol_module.run_protocol_main(self.run_engine, catalog=self.databroker_catalog, devices=devs,
+                                               md={'devices': dev_data,
+                                                   'description': protocol.description,
+                                                   'versions': {"CAMELS": '0.1',
+                                                                'EPICS': '7.0.6.2',
+                                                                'bluesky': bluesky.__version__,
+                                                                'ophyd': ophyd.__version__}})
         self.pushButton_resume.setEnabled(False)
-        self.pushButton_pause.setEnabled(True)
-        self.pushButton_stop.setEnabled(True)
+        self.pushButton_pause.setEnabled(False)
+        self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
 
     def add_subs_from_dict(self, dictionary):
@@ -655,10 +673,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def protocol_finished(self, *args):
         from CAMELS.utility import databroker_export, device_handling
-        print('a')
         if self.protocol_module and self.protocol_module.uids:
             runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
-            databroker_export.broker_to_NX(runs, self.protocol_savepath)
+            databroker_export.broker_to_NX(runs, self.protocol_savepath,
+                                           self.protocol_module.plots,
+                                           session_name=self.running_protocol.session_name,
+                                           export_to_csv=self.running_protocol.export_csv,
+                                           export_to_json=self.running_protocol.export_json)
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
         device_handling.close_devices(self.current_protocol_device_list)
@@ -675,6 +696,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         user- and sample-data."""
         self.progressBar_protocols.setValue(0)
         protocol = self.protocols_dict[protocol_name]
+        protocol.session_name = self.lineEdit_session.text()
+        self.running_protocol = protocol
         if ask_file:
             path = QFileDialog.getSaveFileName(self, 'Export Protocol',
                                                protocol_name, '*.py')[0]

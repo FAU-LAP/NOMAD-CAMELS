@@ -16,6 +16,7 @@ import ophyd
 
 from CAMELS.main_classes import protocol_class, device_class
 from CAMELS.utility.load_save_helper_functions import load_plots
+from CAMELS.utility.device_handling import load_local_packages
 
 appdata_path = f'{getenv("LOCALAPPDATA")}/CAMELS'
 if not isdir(appdata_path):
@@ -255,21 +256,29 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.use_nexus = prot_data['use_nexus']
         if 'description' in prot_data:
             prot.description = prot_data['description']
+        if 'export_json' in prot_data:
+            prot.export_json = prot_data['export_json']
+        if 'export_csv' in prot_data:
+            prot.export_csv = prot_data['export_csv']
         prot_dict.update({key: prot})
 
 def load_devices_dict(string_dict, devices_dict):
     """Specific function to load devices."""
     devices_dict.clear()
+    local_packages = load_local_packages()
     for key in string_dict:
         dev_data = string_dict[key]
         name = dev_data['name']
-        try:
-            dev_lib = importlib.import_module(f'camels_driver_{name}.{name}')
-        except Exception as e:
+        if name in local_packages:
+            dev_lib = local_packages[name]
+        else:
             try:
-                dev_lib = importlib.import_module(f'{name}.{name}')
-            except Exception as e2:
-                raise Exception(f'Could not import device module {name}\n{e}\n{e2}')
+                dev_lib = importlib.import_module(f'camels_driver_{name}.{name}')
+            except Exception as e:
+                try:
+                    dev_lib = importlib.import_module(f'{name}.{name}')
+                except Exception as e2:
+                    raise Exception(f'Could not import device module {name}\n{e}\n{e2}')
         dev = dev_lib.subclass()
         dev.name = name
         if 'connection' in dev_data:
