@@ -48,6 +48,17 @@ def get_channel_from_string(channel):
     device = running_devices[dev]
     return getattr(device, chan)
 
+def get_channels_from_string_list(channel_list):
+    channels = []
+    for channel in channel_list:
+        chan = channel
+        if chan == 'None':
+            channels.append(None)
+            continue
+        if channel in variables_handling.channels:
+            chan = variables_handling.channels[channel]
+        channels.append(get_channel_from_string(chan.name))
+    return channels
 
 
 def connection_check(ioc_settings, settings):
@@ -64,6 +75,13 @@ def connection_check(ioc_settings, settings):
     elif connTyp == '':
         ioc_settings.clear()
 
+def start_devices_from_channel_list(channel_list):
+    dev_list = set()
+    for channel in channel_list:
+        dev_list.add(variables_handling.channels[channel].device)
+    dev_list = list(dev_list)
+    devs, dev_data = instantiate_devices(dev_list)
+    return devs, dev_data
 
 def instantiate_devices(device_list):
     device_config = {}

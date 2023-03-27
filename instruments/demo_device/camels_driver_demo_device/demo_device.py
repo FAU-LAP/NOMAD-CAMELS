@@ -18,10 +18,10 @@ class subclass_config(device_class.Device_Config):
         super().__init__(parent, 'Demo Device', data, settings_dict,
                          config_dict, ioc_dict, additional_info, **kwargs)
         self.table = QTableWidget()
-        self.table.setRowCount(5)
+        self.table.setRowCount(6)
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(['X', 'Y', 'Z'])
-        self.table.setVerticalHeaderLabels(['mu', 'amplitude', 'sigma', 'motor noise level', 'detector noise level'])
+        self.table.setVerticalHeaderLabels(['mu', 'amplitude', 'sigma', 'motor noise level', 'detector noise level', 'system delay'])
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
         self.layout().addWidget(self.table, 10, 0, 1, 5)
@@ -30,6 +30,7 @@ class subclass_config(device_class.Device_Config):
         sigmas = settings_dict['sigmas'] if 'sigmas' in settings_dict else [5, 7, 0.1]
         detector_noises = settings_dict['detector_noises'] if 'detector_noises' in settings_dict else [0, 0, 0]
         motor_noises = settings_dict['motor_noises'] if 'motor_noises' in settings_dict else [0, 0, 0]
+        system_delays = settings_dict['system_delays'] if 'system_delays' in settings_dict else [0, 0, 0]
         for i, mu in enumerate(mus):
             item = QTableWidgetItem(str(mu))
             self.table.setItem(0, i, item)
@@ -45,6 +46,9 @@ class subclass_config(device_class.Device_Config):
         for i, detector_noise in enumerate(detector_noises):
             item = QTableWidgetItem(str(detector_noise))
             self.table.setItem(4, i, item)
+        for i, system_delays in enumerate(system_delays):
+            item = QTableWidgetItem(str(system_delays))
+            self.table.setItem(5, i, item)
 
     def get_settings(self):
         mus = []
@@ -67,4 +71,8 @@ class subclass_config(device_class.Device_Config):
         for i in range(3):
             detector_noises.append(float(self.table.item(4, i).text()))
         self.settings_dict['detector_noises'] = detector_noises
+        system_delays = []
+        for i in range(3):
+            system_delays.append(float(self.table.item(5, i).text()))
+        self.settings_dict['system_delays'] = system_delays
         return super().get_settings()
