@@ -21,15 +21,17 @@ class Demo_Device(Device):
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, motor_noises=None,
                  detector_noises=None, sigmas=None, mus=None, amps=None,
-                 system_delays=None, **kwargs):
+                 set_delays=None, system_delays=None, **kwargs):
         super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, **kwargs)
         self.motor_vals = [0, 0, 0]
         self.motor_last_vals = [0, 0, 0]
         self.motor_noises = motor_noises or [0, 0, 0]
         self.detector_noises = detector_noises or [0, 0, 0]
+        self.set_delays = set_delays or [0, 0, 0]
         self.system_delays = system_delays or [0, 0, 0]
         self.motor_set_times = [0, 0, 0]
         self.motor_old_vals = [0, 0, 0]
+        self.system_old_vals = [0, 0, 0]
         self.sigmas = sigmas or [5, 7, 0.1]
         self.mus = mus or [0, 3, -4]
         self.amps = amps or [1, 2, 27]
@@ -48,14 +50,16 @@ class Demo_Device(Device):
         self.motorZ._tolerance = self.motor_noises[2]
 
     def motor_func(self, val, motor):
+        self.system_old_vals[motor] = self.det_func(motor)
         self.motor_old_vals[motor] = self.motor_read_func(motor)
         self.motor_vals[motor] = val
         self.motor_set_times[motor] = time.time()
 
     def motor_read_func(self, n):
+        val_dist = np.abs(self.motor_old_vals[n] - self.motor_vals[n])
         set_val = np.interp(time.time(),
                             [self.motor_set_times[n],
-                             self.motor_set_times[n] + self.system_delays[n]],
+                             self.motor_set_times[n] + val_dist * self.set_delays[n]],
                             [self.motor_old_vals[n], self.motor_vals[n]])
         return set_val + self.motor_noises[n] * (np.random.rand() - 0.5)
 
@@ -63,7 +67,12 @@ class Demo_Device(Device):
         if n == 3:
             return self.det_func(0) + self.det_func(1) + self.det_func(2)
         mot_val = self.motor_read_func(n)
-        g = gauss(mot_val, self.sigmas[n], self.amps[n], self.mus[n])
+        g_new = gauss(mot_val, self.sigmas[n], self.amps[n], self.mus[n])
+        g_old = self.system_old_vals[n]
+        if self.system_delays[n]:
+            g = g_new + (g_old - g_new) * np.exp(-(time.time() - self.motor_set_times[n]) / self.system_delays[n])
+        else:
+            g = g_new
         return g + self.detector_noises[n] * (1 - np.random.rand())
 
 

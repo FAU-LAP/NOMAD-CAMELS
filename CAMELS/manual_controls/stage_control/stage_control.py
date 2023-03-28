@@ -46,6 +46,12 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.pushButton_zUp.clicked.connect(lambda state, axis=2: self.step_axis(axis))
         self.pushButton_zDown.clicked.connect(lambda state, axis=2, u=False: self.step_axis(axis, u))
 
+        self.pushButton_ref.clicked.connect(self.reference_drive)
+        self.pushButton_stop.clicked.connect(self.stop_moving)
+
+        self.pushButton_position.clicked.connect(self.input_position)
+        self.pushButton_go_to.clicked.connect(self.move_to_position)
+
         self.lines = [self.lineEdit_read_frequ, self.lineEdit_stepX,
                       self.lineEdit_stepY, self.lineEdit_stepZ,
                       self.lineEdit_manualX, self.lineEdit_manualY,
@@ -173,8 +179,28 @@ class Stage_Control(Manual_Control, Ui_Form):
         before = self.set_channels[axis].get()
         self.set_channels[axis].put(before + step_size)
 
+    def reference_drive(self):
+        checks = [self.checkBox_refX, self.checkBox_refY, self.checkBox_refZ]
+        for i, channel in self.ref_channels:
+            if checks[i].isChecked():
+                channel.put(self.control_data['ref_vals'][i])
+
+    def stop_moving(self):
+        for i, channel in self.stop_channels:
+            channel.put(self.control_data['stop_vals'][i])
+
+    def input_position(self):
+        self.lineEdit_goX.setText(self.lineEdit_currentX.text())
+        self.lineEdit_goY.setText(self.lineEdit_currentY.text())
+        self.lineEdit_goZ.setText(self.lineEdit_currentZ.text())
+
+    def move_to_position(self):
+        self.set_channels[0].put(self.control_data['go_to_X'])
+        self.set_channels[1].put(self.control_data['go_to_Y'])
+        self.set_channels[2].put(self.control_data['go_to_Z'])
+
     def keyPressEvent(self, a0: QKeyEvent) -> None:
-        if a0.modifiers() != Qt.ControlModifier:
+        if not self.checkBox_manualActive.isChecked() or a0.modifiers() != Qt.ControlModifier:
             return super().keyPressEvent(a0)
         if a0.key() == Qt.Key_Left:
             self.move_thread.up_dir[0] = False
