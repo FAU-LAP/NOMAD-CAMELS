@@ -1631,8 +1631,6 @@ CAMELS.gui.general_protocol_settings
 CAMELS.main_classes.protocol_class
 CAMELS.utility.load_save_functions
 CAMELS.utility.exception_hook
-CAMELS.manual_controls
-CAMELS.manual_controls.get_manual_controls
 CAMELS.main_classes.manual_control
 CAMELS.frontpanels.helper_panels
 CAMELS.frontpanels.helper_panels.button_move_scroll_area

@@ -483,7 +483,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.manual_controls = OrderedDict(sorted(self.manual_controls.items(), key=lambda x: order.index(x[0])))
 
     def add_manual_control(self):
-        dialog = manual_control.New_Manual_Control_Dialog(self)
+        from CAMELS.manual_controls.get_manual_controls import New_Manual_Control_Dialog
+        dialog = New_Manual_Control_Dialog(self)
         if dialog.exec():
             control_cls, options_cls = dialog.selected_control
             options = options_cls()
