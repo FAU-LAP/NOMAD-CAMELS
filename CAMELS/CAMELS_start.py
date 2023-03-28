@@ -3,6 +3,8 @@ import sys
 from PyQt5.QtWidgets import QApplication, QDialog, QProgressBar, QGridLayout, QLabel
 from PyQt5.QtCore import Qt, QCoreApplication
 from PyQt5.QtGui import QPixmap, QIcon
+import os
+os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '1'
 
 from pkg_resources import resource_filename
 # Import your main application form
