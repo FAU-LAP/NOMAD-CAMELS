@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QDialog, QStyleFactory
+from PyQt5.QtCore import Qt, QCoreApplication
 from PyQt5.QtGui import QKeyEvent
 import qt_material
 
@@ -17,7 +17,8 @@ class Settings_Window(QDialog, Ui_settings_window):
         #     self.checkBox_dark_mode.setChecked(settings['dark_mode'])
         # else:
         #     self.checkBox_dark_mode.setChecked(standard_pref['dark_mode'])
-        themes = ['default', 'qdarkstyle']
+        themes = ['qdarkstyle']
+        themes += QStyleFactory.keys()
         themes += qt_material.list_themes()
         for i, theme in enumerate(themes):
             if theme.endswith('.xml'):
@@ -26,7 +27,8 @@ class Settings_Window(QDialog, Ui_settings_window):
         if 'graphic_theme' in settings and settings['graphic_theme'] in themes:
             self.comboBox_theme.setCurrentText(settings['graphic_theme'])
         else:
-            self.comboBox_theme.setCurrentText('default')
+            app = QCoreApplication.instance()
+            self.comboBox_theme.setCurrentText(app.style().objectName())
         self.comboBox_theme.currentTextChanged.connect(self.change_theme)
         if 'autosave' in settings:
             self.checkBox_autosave.setChecked(settings['autosave'])

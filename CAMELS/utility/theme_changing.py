@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QStyleFactory
 import qdarkstyle
 from qt_material import apply_stylesheet
 
@@ -11,6 +11,9 @@ def change_theme(theme, main_app=None, main_window=None):
         main_app.setStyleSheet('')
     elif theme == 'qdarkstyle':
         main_app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
+    elif theme in QStyleFactory.keys():
+        main_app.setStyleSheet('')
+        main_app.setStyle(QStyleFactory.create(theme))
     else:
         apply_stylesheet(main_app, theme=theme+'.xml')
         # if 'light' in theme and main_window:
