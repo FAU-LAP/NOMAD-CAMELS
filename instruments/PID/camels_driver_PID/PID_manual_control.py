@@ -3,7 +3,7 @@ import time
 from CAMELS.main_classes.manual_control import Manual_Control, Manual_Control_Config
 from .PID_config_sub import subclass_config_sub
 
-from PyQt5.QtWidgets import QCheckBox, QLineEdit, QPushButton, QLabel, QSpacerItem, QSizePolicy, QFrame, QComboBox
+from PyQt5.QtWidgets import QCheckBox, QLineEdit, QPushButton, QLabel, QSpacerItem, QSizePolicy, QFrame, QComboBox, QGridLayout
 from PyQt5.QtCore import pyqtSignal, QThread
 
 from CAMELS.utility import variables_handling, device_handling
@@ -17,6 +17,7 @@ class PID_manual_control(Manual_Control):
         else:
             name = 'PID manual control'
         super().__init__(parent=parent, title=name)
+        self.setLayout(QGridLayout())
         self.start_device(control_data['pid_name'])
 
         self.settings_widge = subclass_config_sub(settings_dict=self.device.settings, config_dict=self.device.config, parent=self)

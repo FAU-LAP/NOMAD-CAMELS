@@ -13,8 +13,8 @@ class Manual_Control(QWidget):
 
     def __init__(self, parent=None, title='Manual Control', control_data=None):
         super().__init__(parent=parent)
-        layout = QGridLayout()
-        self.setLayout(layout)
+        # layout = QGridLayout()
+        # self.setLayout(layout)
         control_data = control_data or {}
 
         self.setWindowTitle(f'CAMELS - {title}')

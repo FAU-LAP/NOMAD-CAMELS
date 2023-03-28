@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>434</width>
-    <height>270</height>
+    <width>424</width>
+    <height>279</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>40</width>
+       <width>0</width>
        <height>20</height>
       </size>
      </property>
@@ -63,7 +63,7 @@
     </widget>
    </item>
    <item row="4" column="10">
-    <widget class="QLineEdit" name="lineEdit"/>
+    <widget class="QLineEdit" name="lineEdit_stepZ"/>
    </item>
    <item row="2" column="8">
     <widget class="QLabel" name="label">
@@ -79,7 +79,7 @@
     </widget>
    </item>
    <item row="3" column="10">
-    <widget class="QLineEdit" name="lineEdit_2"/>
+    <widget class="QLineEdit" name="lineEdit_stepY"/>
    </item>
    <item row="4" column="6">
     <widget class="QPushButton" name="pushButton_zDown">
@@ -134,38 +134,18 @@
      </property>
     </spacer>
    </item>
-   <item row="5" column="0" colspan="14">
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="14">
-    <spacer name="horizontalSpacer_8">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="10" column="8" colspan="3">
-    <widget class="QLineEdit" name="lineEdit_12"/>
+    <widget class="QLineEdit" name="lineEdit_goZ"/>
    </item>
    <item row="7" column="8" colspan="3">
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="pushButton_go_to">
      <property name="text">
       <string>Go To</string>
      </property>
     </widget>
    </item>
    <item row="8" column="8" colspan="3">
-    <widget class="QLineEdit" name="lineEdit_10"/>
+    <widget class="QLineEdit" name="lineEdit_goX"/>
    </item>
    <item row="3" column="8">
     <widget class="QLabel" name="label_2">
@@ -188,7 +168,7 @@
     </widget>
    </item>
    <item row="9" column="8" colspan="3">
-    <widget class="QLineEdit" name="lineEdit_11"/>
+    <widget class="QLineEdit" name="lineEdit_goY"/>
    </item>
    <item row="0" column="10">
     <spacer name="verticalSpacer">
@@ -211,21 +191,21 @@
     </widget>
    </item>
    <item row="8" column="13" colspan="2">
-    <widget class="QLineEdit" name="lineEdit_7">
+    <widget class="QLineEdit" name="lineEdit_currentX">
      <property name="enabled">
       <bool>false</bool>
      </property>
     </widget>
    </item>
    <item row="10" column="13" colspan="2">
-    <widget class="QLineEdit" name="lineEdit_9">
+    <widget class="QLineEdit" name="lineEdit_currentZ">
      <property name="enabled">
       <bool>false</bool>
      </property>
     </widget>
    </item>
    <item row="2" column="10">
-    <widget class="QLineEdit" name="lineEdit_3"/>
+    <widget class="QLineEdit" name="lineEdit_stepX"/>
    </item>
    <item row="7" column="13" colspan="2">
     <widget class="QLabel" name="label_6">
@@ -248,7 +228,7 @@
     </widget>
    </item>
    <item row="9" column="13" colspan="2">
-    <widget class="QLineEdit" name="lineEdit_8">
+    <widget class="QLineEdit" name="lineEdit_currentY">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -268,7 +248,7 @@
     </spacer>
    </item>
    <item row="11" column="2" colspan="5">
-    <widget class="QCheckBox" name="checkBox_4">
+    <widget class="QCheckBox" name="checkBox_manualActive">
      <property name="text">
       <string>active</string>
      </property>
@@ -283,12 +263,12 @@
       </font>
      </property>
      <property name="text">
-      <string>Manual Movement</string>
+      <string>Manual Movement Speeds</string>
      </property>
     </widget>
    </item>
    <item row="9" column="2" colspan="5">
-    <widget class="QLineEdit" name="lineEdit_6"/>
+    <widget class="QLineEdit" name="lineEdit_manualY"/>
    </item>
    <item row="3" column="1">
     <spacer name="horizontalSpacer_6">
@@ -304,7 +284,7 @@
     </spacer>
    </item>
    <item row="10" column="2" colspan="5">
-    <widget class="QLineEdit" name="lineEdit_4"/>
+    <widget class="QLineEdit" name="lineEdit_manualZ"/>
    </item>
    <item row="7" column="7" rowspan="5">
     <widget class="Line" name="line_3">
@@ -327,10 +307,10 @@
     </spacer>
    </item>
    <item row="8" column="2" colspan="5">
-    <widget class="QLineEdit" name="lineEdit_5"/>
+    <widget class="QLineEdit" name="lineEdit_manualX"/>
    </item>
    <item row="3" column="12">
-    <widget class="QCheckBox" name="checkBox_2">
+    <widget class="QCheckBox" name="checkBox_refY">
      <property name="text">
       <string>y</string>
      </property>
@@ -340,7 +320,7 @@
     </widget>
    </item>
    <item row="4" column="12">
-    <widget class="QCheckBox" name="checkBox_3">
+    <widget class="QCheckBox" name="checkBox_refZ">
      <property name="text">
       <string>z</string>
      </property>
@@ -350,7 +330,7 @@
     </widget>
    </item>
    <item row="2" column="12">
-    <widget class="QCheckBox" name="checkBox">
+    <widget class="QCheckBox" name="checkBox_refX">
      <property name="text">
       <string>x</string>
      </property>
@@ -360,21 +340,21 @@
     </widget>
    </item>
    <item row="1" column="12" colspan="3">
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="pushButton_ref">
      <property name="text">
       <string>Find Reference</string>
      </property>
     </widget>
    </item>
    <item row="9" column="11" colspan="2">
-    <widget class="QPushButton" name="pushButton_3">
+    <widget class="QPushButton" name="pushButton_position">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
    <item row="11" column="13" colspan="2">
-    <widget class="QLineEdit" name="lineEdit_13"/>
+    <widget class="QLineEdit" name="lineEdit_read_frequ"/>
    </item>
    <item row="11" column="8" colspan="5">
     <widget class="QLabel" name="label_7">
@@ -383,6 +363,13 @@
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="15">
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>

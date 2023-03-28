@@ -1,6 +1,8 @@
 from CAMELS.utility import variables_handling
+from CAMELS.manual_controls.stage_control import stage_control
 
-manual_controls = {}
+manual_controls = {'Stage_Control': [stage_control.Stage_Control,
+                                     stage_control.Stage_Control_Config]}
 
 def get_instrument_controls():
     controls = {}
