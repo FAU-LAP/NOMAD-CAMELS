@@ -5,7 +5,7 @@ from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QKeyEvent
 
 from CAMELS.main_classes.manual_control import Manual_Control, Manual_Control_Config
-from CAMELS.utility import variables_handling, device_handling
+from CAMELS.utility import variables_handling, device_handling, number_formatting
 
 from .ui_stage_control import Ui_Form
 
@@ -138,6 +138,11 @@ class Stage_Control(Manual_Control, Ui_Form):
                                                                  manual_Y,
                                                                  manual_Z])
         self.move_thread.start()
+        for child in self.children():
+            if isinstance(child, QWidget):
+                child.setFocusPolicy(Qt.ClickFocus)
+        self.setFocusPolicy(Qt.ClickFocus)
+
 
     def line_change(self):
         for i, line in enumerate(self.lines):
@@ -157,9 +162,9 @@ class Stage_Control(Manual_Control, Ui_Form):
             self.control_data[self.check_names[i]] = check.isChecked()
 
     def update_readback(self, x, y, z):
-        self.lineEdit_currentX.setText(str(x))
-        self.lineEdit_currentY.setText(str(y))
-        self.lineEdit_currentZ.setText(str(z))
+        self.lineEdit_currentX.setText(number_formatting.format_number(x))
+        self.lineEdit_currentY.setText(number_formatting.format_number(y))
+        self.lineEdit_currentZ.setText(number_formatting.format_number(z))
 
     def close(self) -> bool:
         self.read_thread.still_running = False
