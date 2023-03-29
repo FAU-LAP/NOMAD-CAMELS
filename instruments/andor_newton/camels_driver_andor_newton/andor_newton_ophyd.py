@@ -12,7 +12,7 @@ sdk = atmcd() # Load the atmcd library
 codes = atmcd_codes
 imageSize = 1024 # number of pixels in x direction
 
-
+# TODO Add working communication to the driver!
 class Andor_Newton(VISA_Device):
     """
     Driver for the Andor Newton CCD camera
