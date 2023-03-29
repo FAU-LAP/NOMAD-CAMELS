@@ -326,6 +326,8 @@ class Device_Config(QWidget):
             self.connector = LAN_Config()
         elif self.comboBox_connection_type.currentText() == 'Local VISA':
             self.connector = Local_VISA()
+        elif self.comboBox_connection_type.currentText() == 'Windows dll':
+            self.connector = Local_dll()
         self.layout().replaceWidget(conn_old, self.connector)
         conn_old.deleteLater()
         if ep:
@@ -561,6 +563,19 @@ class Local_VISA(Connection_Config):
             self.lineEdit_in_term.setText(settings_dict['read_termination'].replace('\r', '\\r').replace('\n', '\\n'))
         if 'write_termination' in settings_dict:
             self.lineEdit_out_term.setText(settings_dict['write_termination'].replace('\r', '\\r').replace('\n', '\\n'))
+
+
+class Local_dll(Connection_Config):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def get_settings(self):
+        return {'dll': 'No initial settings need to be saved for a dll device'}
+
+    def load_settings(self, settings_dict):
+        pass
+
+
 
 
 
