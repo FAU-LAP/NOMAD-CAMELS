@@ -13,7 +13,7 @@ class subclass(device_class.Device):
 
 class subclass_config(device_class.Device_Config):
     def __init__(self, parent=None, data='', settings_dict=None, config_dict=None, additional_info=None, **kwargs):
-        super().__init__(parent, 'Andor Newton', data, settings_dict=settings_dict, config_dict=config_dict, additional_info=additional_info, no_ioc_connection=True, **kwargs)
+        super().__init__(parent, 'Andor Shamrock 500', data, settings_dict=settings_dict, config_dict=config_dict, additional_info=additional_info, no_ioc_connection=True, **kwargs)
         self.comboBox_connection_type.addItem('Windows dll')
         # self.comboBox_connection_type.addItem('Local VISA')
         self.tab_widget = QTabWidget()
