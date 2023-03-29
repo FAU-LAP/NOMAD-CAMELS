@@ -12,12 +12,14 @@ sdk = atmcd() # Load the atmcd library
 codes = atmcd_codes
 imageSize = 1024 # number of pixels in x direction
 
-# TODO Add working communication to the driver!
+# TODO
+#  Add working communication to the driver
+#  Change away from VISA device
 class Andor_Newton(VISA_Device):
     """
     Driver for the Andor Newton CCD camera
     """
-    read_camera = Cpt(Custom_Function_Signal, name='read_DC', metadata={'units': 'intensity'})
+    read_camera = Cpt(Custom_Function_Signal, name='read_camera', metadata={'units': 'intensity'})
     # Configuration settings
     serial_number = Cpt(Custom_Function_Signal, name='serial_number', kind='config',)
     set_temperature = Cpt(Custom_Function_Signal, name='set_temperature', kind='config',)

@@ -1,11 +1,12 @@
 from CAMELS.main_classes import device_class
 from .andor_newton_config import Ui_andor_newton_config
 from .andor_newton_ophyd import Andor_Newton
-from PyQt5.QtWidgets import QTabWidget, QWidget
+from PyQt5.QtWidgets import QTabWidget
+
 
 class subclass(device_class.Device):
     def __init__(self, **kwargs):
-        super().__init__(name='andor_newton', virtual=False, tags=['SMU', 'voltage', 'current', 'resistance'], directory='andor_newton', ophyd_device=Andor_Newton, ophyd_class_name='Andor_Newton', **kwargs)
+        super().__init__(name='andor_newton', virtual=False, tags=['Camera', 'spectrometer', 'CCD', 'spectrum', 'Andor',], directory='andor_newton', ophyd_device=Andor_Newton, ophyd_class_name='Andor_Newton', **kwargs)
         # for key, val in default_settings.items():
         #     self.config[f'{key}1'] = val
         #     self.config[f'{key}2'] = val
