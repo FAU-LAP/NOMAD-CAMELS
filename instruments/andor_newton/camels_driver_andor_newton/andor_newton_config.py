@@ -216,7 +216,7 @@ class Ui_andor_newton_config(object):
     def retranslateUi(self, andor_newton_config):
         _translate = QtCore.QCoreApplication.translate
         andor_newton_config.setWindowTitle(_translate("andor_newton_config", "Form"))
-        self.label_15.setText(_translate("andor_newton_config", "Temperature (┬░C)"))
+        self.label_15.setText(_translate("andor_newton_config", "Temperature (\u00B0C)"))
         self.label.setText(_translate("andor_newton_config", "Exposure"))
         self.comboBox_shutter_mode.setItemText(0, _translate("andor_newton_config", "Open for any series"))
         self.comboBox_shutter_mode.setItemText(1, _translate("andor_newton_config", "Open for FVB series"))
@@ -234,7 +234,7 @@ class Ui_andor_newton_config(object):
         self.label_9.setText(_translate("andor_newton_config", "Preamp Gain"))
         self.label_3.setText(_translate("andor_newton_config", "Readout"))
         self.label_11.setText(_translate("andor_newton_config", "HS Speed (MHz)"))
-        self.label_12.setText(_translate("andor_newton_config", "VS Speed (┬Ás/shift)"))
+        self.label_12.setText(_translate("andor_newton_config", "VS Speed (\u00B5/shift)"))
         self.label_10.setText(_translate("andor_newton_config", "Horizontal Binning"))
         self.label_6.setText(_translate("andor_newton_config", "Number of Tracks"))
         self.label_7.setText(_translate("andor_newton_config", "Track Height"))
