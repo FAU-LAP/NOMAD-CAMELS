@@ -22,7 +22,7 @@ class subclass_config(device_class.Device_Config):
             if key.endswith('1'):
                 conf1[key[:-1]] = val
         self.channel_widge_1 = subclass_config_sub(config_dict=conf1, parent=parent, settings_dict=settings_dict)
-        self.tab_widget.addTab(self.channel_widge_1, 'Channel 1')
+        self.tab_widget.addTab(self.channel_widge_1, 'Settings')
         self.layout().addWidget(self.tab_widget, 20, 0, 1, 5)
         self.load_settings()
 
