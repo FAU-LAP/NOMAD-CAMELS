@@ -1,5 +1,6 @@
 lsi: false
 safe: true
+theme: architect
 source: /docs
 incremental: false
 highlighter: rouge
