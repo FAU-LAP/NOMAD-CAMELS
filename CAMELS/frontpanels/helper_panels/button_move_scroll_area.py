@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QPushButton, QScrollArea, QMainWindow
-from PyQt5.QtGui import QDrag
-from PyQt5.QtCore import Qt, QMimeData, pyqtSignal
+from PySide6.QtWidgets import QApplication, QWidget, QGridLayout, QPushButton, QScrollArea, QMainWindow
+from PySide6.QtGui import QDrag
+from PySide6.QtCore import Qt, QMimeData, Signal
 
 class DragButton(QPushButton):
     def __init__(self, text):
@@ -62,7 +62,7 @@ class BidirectionalDict:
 
 
 class DropArea(QWidget):
-    order_changed = pyqtSignal(list)
+    order_changed = Signal(list)
 
     def __init__(self, button_wdith:int):
         super().__init__()
@@ -137,7 +137,7 @@ class DropArea(QWidget):
 
 
 class Drop_Scroll_Area(QScrollArea):
-    order_changed = pyqtSignal(list)
+    order_changed = Signal(list)
 
     def __init__(self, parent=None, button_width=120, button_height=120):
         super().__init__(parent=parent)
@@ -208,4 +208,4 @@ if __name__ == '__main__':
     for i in range(15):
         area.add_button(DragButton(f'Button {i}'), str(i))
     main_window.show()
-    app.exec_()
+    app.exec()

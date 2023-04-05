@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QLineEdit
-from PyQt5.QtCore import Qt
-# from PyQt5.QtGui import QStandardItem
+from PySide6.QtWidgets import QLineEdit
+from PySide6.QtCore import Qt
+# from PySide6.QtGui import QStandardItem
 
 from CAMELS.utility import variables_handling
 

@@ -1,6 +1,6 @@
 import copy
 
-from PyQt5.QtWidgets import QLineEdit, QLabel, QComboBox
+from PySide6.QtWidgets import QLineEdit, QLabel, QComboBox
 
 from CAMELS.main_classes import device_class
 

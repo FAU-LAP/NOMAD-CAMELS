@@ -1,6 +1,6 @@
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from PyQt5.QtCore import Qt, QSize, pyqtSignal
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QTextEdit
+from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtCore import Qt, QSize, Signal
+from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QTextEdit
 
 
 from CAMELS.utility import treeView_functions
@@ -212,8 +212,8 @@ class Loop_Step_Config(QWidget):
     """Parent class for the configuration Widget of the loop_step.
     Provides the main layout and a lineEdit for changing the loop_steps
     name."""
-    name_changed = pyqtSignal()
-    add_other_step = pyqtSignal(dict)
+    name_changed = Signal()
+    add_other_step = Signal(dict)
 
     def __init__(self, parent=None, loop_step=None):
         super(Loop_Step_Config, self).__init__(parent)
@@ -246,7 +246,7 @@ class Loop_Step_Config(QWidget):
 class Loop_Step_Name_Widget(QWidget):
     """Simple class that provides the necessary widgets for the step's
     name."""
-    name_changed = pyqtSignal(str)
+    name_changed = Signal(str)
 
     def __init__(self, parent=None, name=''):
         super().__init__(parent)

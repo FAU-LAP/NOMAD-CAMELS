@@ -1,7 +1,7 @@
 import importlib
 
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QMessageBox
-from PyQt5.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QTableWidgetItem, QLabel, QMessageBox
+from PySide6.QtCore import Qt
 
 from CAMELS.gui.instrument_config import Ui_Form
 
@@ -10,9 +10,9 @@ from CAMELS.frontpanels.instrument_installer import getInstalledDevices
 from CAMELS.utility import variables_handling
 
 
-class Instrument_Config(QWidget, Ui_Form):
+class Instrument_Config(Ui_Form, QWidget):
     def __init__(self, active_instruments=None, parent=None):
-        super().__init__(parent)
+        QWidget.__init__(self, parent=parent)
         self.setupUi(self)
         self.installed_instr, self.packages = getInstalledDevices(return_packages=True)
         active_instruments = active_instruments or {}
@@ -193,9 +193,9 @@ class Instrument_Config(QWidget, Ui_Form):
 
 
 if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication
+    from PySide6.QtWidgets import QApplication
     app = QApplication([])
 
     widge = Instrument_Config()
     widge.show()
-    app.exec_()
+    app.exec()

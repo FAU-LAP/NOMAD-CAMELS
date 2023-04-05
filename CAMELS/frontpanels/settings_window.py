@@ -1,13 +1,13 @@
-from PyQt5.QtWidgets import QDialog, QStyleFactory
-from PyQt5.QtCore import Qt, QCoreApplication
-from PyQt5.QtGui import QKeyEvent
+from PySide6.QtWidgets import QDialog, QStyleFactory
+from PySide6.QtCore import Qt, QCoreApplication
+from PySide6.QtGui import QKeyEvent
 import qt_material
 
 from CAMELS.gui.settings_window import Ui_settings_window
 from CAMELS.utility.load_save_functions import standard_pref
 from CAMELS.utility.theme_changing import change_theme
 
-class Settings_Window(QDialog, Ui_settings_window):
+class Settings_Window(Ui_settings_window, QDialog):
     """Dialog to change the settings used in CAMELS."""
     def __init__(self, parent=None, settings=None):
         super().__init__(parent)

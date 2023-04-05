@@ -6,7 +6,7 @@ from .PID_config_sub import subclass_config_sub
 from CAMELS.main_classes import device_class
 import CAMELS.main_classes.loop_step as steps
 
-from PyQt5.QtWidgets import QComboBox
+from PySide6.QtWidgets import QComboBox
 
 from CAMELS.utility import variables_handling
 

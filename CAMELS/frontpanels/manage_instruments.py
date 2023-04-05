@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QGridLayout, QTabWidget, QMessageBox
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QCloseEvent, QKeyEvent
+from PySide6.QtWidgets import QDialog, QDialogButtonBox, QGridLayout, QTabWidget, QMessageBox
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QCloseEvent, QKeyEvent
 
 from CAMELS.frontpanels import instrument_installer, instrument_config
 
@@ -60,9 +60,9 @@ class ManageInstruments(QDialog):
 
 
 if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication
+    from PySide6.QtWidgets import QApplication
     app = QApplication([])
 
     widge = ManageInstruments()
     widge.show()
-    app.exec_()
+    app.exec()

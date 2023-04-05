@@ -1,14 +1,14 @@
-from PyQt5.QtWidgets import QTreeView, QAbstractItemView
-from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QDropEvent, QKeyEvent
+from PySide6.QtWidgets import QTreeView, QAbstractItemView
+from PySide6.QtCore import Signal, Qt
+from PySide6.QtGui import QDropEvent, QKeyEvent
 
 
 
 class Drag_Drop_TreeView(QTreeView):
     """This Class is used for the protocol sequence. Most importantly it
     emits the dragdrop signal when something is dragged / dropped."""
-    dragdrop = pyqtSignal()
-    del_clicked = pyqtSignal()
+    dragdrop = Signal()
+    del_clicked = Signal()
 
     def __init__(self):
         super(Drag_Drop_TreeView, self).__init__()

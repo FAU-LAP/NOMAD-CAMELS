@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 from bluesky.callbacks.mpl_plotting import LiveScatter
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
 
-from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton
-from PyQt5.QtCore import pyqtSignal, QObject
-from PyQt5.QtGui import QIcon
+from PySide6.QtWidgets import QWidget, QGridLayout, QPushButton
+from PySide6.QtCore import Signal, QObject
+from PySide6.QtGui import QIcon
 
 from CAMELS.bluesky_handling.evaluation_helper import Evaluator
 
@@ -19,7 +19,7 @@ from pkg_resources import resource_filename
 stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 class PlotWidget_2D(QWidget):
-    closing = pyqtSignal()
+    closing = Signal()
 
     def __init__(self, x_name, y_name, z_name, *, xlim=None, ylim=None,
                  zlim=None, parent=None, namespace=None, zlabel='', ylabel='',
@@ -66,7 +66,7 @@ class PlotWidget_2D(QWidget):
 
 
 class LivePlot_2D(LiveScatter, QObject):
-    new_data = pyqtSignal()
+    new_data = Signal()
 
     def __init__(self, x, y, z, *, xlim=None, ylim=None, zlim=None,
                  ax=None, xlabel='', ylabel='', zlabel='', cmap='viridis',

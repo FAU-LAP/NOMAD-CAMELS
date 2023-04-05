@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QCheckBox
+from PySide6.QtWidgets import QCheckBox
 
 from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 

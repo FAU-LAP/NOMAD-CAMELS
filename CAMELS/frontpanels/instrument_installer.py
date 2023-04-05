@@ -1,9 +1,9 @@
 import subprocess
 
 from CAMELS.gui.device_installer import Ui_Form
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QCheckBox, QMessageBox
-from PyQt5.QtGui import QBrush, QColor, QFont
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PySide6.QtWidgets import QWidget, QTableWidgetItem, QCheckBox, QMessageBox
+from PySide6.QtGui import QBrush, QColor, QFont
+from PySide6.QtCore import Qt, QThread, Signal
 
 import requests
 import sys
@@ -74,8 +74,8 @@ def getAllDevices():
 bold_font = QFont()
 bold_font.setBold(True)
 
-class Instrument_Installer(QWidget, Ui_Form):
-    instruments_updated = pyqtSignal()
+class Instrument_Installer(Ui_Form, QWidget):
+    instruments_updated = Signal()
 
     """
     Parameters
@@ -219,8 +219,8 @@ class Instrument_Installer(QWidget, Ui_Form):
 
 
 class Install_Thread(QThread):
-    info_step = pyqtSignal(str)
-    val_step = pyqtSignal(int)
+    info_step = Signal(str)
+    val_step = Signal(int)
 
     def __init__(self, devs, uninstall=False, parent=None):
         super().__init__(parent=parent)
@@ -252,9 +252,9 @@ class Install_Thread(QThread):
 
 
 if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication
+    from PySide6.QtWidgets import QApplication
     app = QApplication([])
 
     widge = Instrument_Installer()
     widge.show()
-    app.exec_()
+    app.exec()

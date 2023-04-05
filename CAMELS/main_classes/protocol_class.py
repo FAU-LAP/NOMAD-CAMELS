@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QCheckBox, QTextEdit
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit
+from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtCore import Signal
 
 from CAMELS.frontpanels.plot_definer import Plot_Button_Overview
 from CAMELS.loop_steps import make_step_of_type
@@ -248,10 +248,10 @@ def update_all_children(step_dict, step):
         update_all_children(step_dict, child)
 
 
-class General_Protocol_Settings(QWidget, Ui_Protocol_Settings):
+class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
     """Widget for the configuration of the general protocol settings.
     Here plots may be defined and variables added to the protocol."""
-    name_changed = pyqtSignal()
+    name_changed = Signal()
 
     def __init__(self, parent=None, protocol=Measurement_Protocol()):
         super(General_Protocol_Settings, self).__init__(parent)

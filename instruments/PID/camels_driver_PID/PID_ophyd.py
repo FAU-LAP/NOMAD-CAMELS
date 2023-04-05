@@ -13,7 +13,7 @@ from ophyd import Component as Cpt
 from CAMELS.bluesky_handling.custom_function_signal import Custom_Function_Signal, Custom_Function_SignalRO
 from CAMELS.utility import device_handling
 
-from PyQt5.QtCore import QThread, pyqtSignal
+from PySide6.QtCore import QThread, Signal
 
 
 def helper_ptX(x, r, a, b, c):
@@ -251,7 +251,7 @@ class PID_Controller(Device):
 
 
 class PID_Thread(QThread):
-    new_data = pyqtSignal(float, float, float, float, tuple)
+    new_data = Signal(float, float, float, float, tuple)
 
     def __init__(self, pid_device, Kp=1.0, Ki=1.0, Kd=1.0, setpoint=0,
                  sample_time=1, output_limits=(None, None), auto_mode=False,

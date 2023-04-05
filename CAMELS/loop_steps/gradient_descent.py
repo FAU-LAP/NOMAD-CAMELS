@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget
 
 from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
@@ -99,7 +99,7 @@ class Gradient_Descent_Config(Loop_Step_Config):
         self.sub_widget.update_step_config()
 
 
-class Gradient_Descent_Config_Sub(QWidget, Ui_Grad_Desc):
+class Gradient_Descent_Config_Sub(Ui_Grad_Desc, QWidget):
     def __init__(self, loop_step:Gradient_Descent_Step, parent=None):
         super().__init__(parent)
         self.setupUi(self)

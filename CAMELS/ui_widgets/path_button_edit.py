@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton, QLineEdit, QFileDialog, QStyle, QApplication
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtWidgets import QWidget, QGridLayout, QPushButton, QLineEdit, QFileDialog, QStyle, QApplication
+from PySide6.QtCore import Signal
 
 import os
 
@@ -8,7 +8,7 @@ import os
 class Path_Button_Edit(QWidget):
     """This class provides QLineEdit with a QPushButton, used to select
     a file-path, that is then displayed in the LineEdit."""
-    path_changed = pyqtSignal(str)
+    path_changed = Signal(str)
 
     def __init__(self, parent=None, path='', default_dir='', file_extension='',
                  select_directory=False):

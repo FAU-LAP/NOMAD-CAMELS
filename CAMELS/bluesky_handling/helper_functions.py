@@ -3,9 +3,9 @@ from bluesky import plan_stubs as bps
 
 from ophyd import SignalRO
 
-from PyQt5.QtWidgets import QMessageBox, QWidget, QDialog, QDialogButtonBox, QGridLayout, QLabel, QLineEdit
-from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QFont
+from PySide6.QtWidgets import QMessageBox, QWidget, QDialog, QDialogButtonBox, QGridLayout, QLabel, QLineEdit
+from PySide6.QtCore import Signal, Qt
+from PySide6.QtGui import QFont
 
 from CAMELS.ui_widgets.add_remove_table import AddRemoveTable
 from CAMELS.ui_widgets.channels_check_table import Channels_Check_Table
@@ -196,7 +196,7 @@ class Prompt_Box(QMessageBox):
         self.exec()
 
 class BoxHelper(QWidget):
-    executor = pyqtSignal()
+    executor = Signal()
 
 
 class Value_Box(QDialog):

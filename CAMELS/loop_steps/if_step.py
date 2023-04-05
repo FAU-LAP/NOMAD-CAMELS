@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QCheckBox, QGridLayout,\
+from PySide6.QtWidgets import QWidget, QLabel, QCheckBox, QGridLayout,\
     QMessageBox
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QStandardItemModel
+from PySide6.QtCore import Signal
+from PySide6.QtGui import QStandardItemModel
 
 from CAMELS.main_classes.loop_step import Loop_Step_Container, Loop_Step_Config
 from CAMELS.ui_widgets.variable_tool_tip_box import Variable_Box
@@ -166,7 +166,7 @@ class If_Step_Config_Sub(QWidget):
     """This widget consists of a line for the if-condition an
     AddRemoveTable for the elif-conditions and a checkbox for whether to
     use an else-case."""
-    update_config = pyqtSignal()
+    update_config = Signal()
 
     def __init__(self, loop_step:If_Loop_Step, parent=None):
         super().__init__(parent)

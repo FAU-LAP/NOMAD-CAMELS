@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QGridLayout, QDialogButtonBox, QComboBox, QLabel
-from PyQt5.QtCore import Qt
+from PySide6.QtWidgets import QDialog, QGridLayout, QDialogButtonBox, QComboBox, QLabel
+from PySide6.QtCore import Qt
 
 from CAMELS.utility import variables_handling
 from CAMELS.manual_controls.stage_control import stage_control

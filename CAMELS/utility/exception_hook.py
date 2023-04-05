@@ -1,8 +1,9 @@
 import os.path
 from traceback import print_tb
-from PyQt5.QtWidgets import QMessageBox
+from PySide6.QtWidgets import QMessageBox
+from PySide6.QtCore import QUrl
 
-from PyQt5.QtMultimedia import QSound
+from PySide6.QtMultimedia import QSoundEffect
 
 import logging
 
@@ -40,5 +41,7 @@ def exception_hook(*exc_info):
 		return
 	logging.exception(str(exc_info))
 	if variables_handling.preferences['play_camel_on_error']:
-		QSound.play(resource_filename('CAMELS','graphics/Camel-Groan-2-QuickSounds.com.wav'))
-	ErrorMessage(exc_info[0].__name__, str(exc_info[1]) + '\n' + str(print_tb(exc_info[2]))).exec_()
+		effect = QSoundEffect()
+		effect.setSource(QUrl.fromLocalFile(resource_filename('CAMELS','graphics/Camel-Groan-2-QuickSounds.com.wav')))
+		effect.play()
+	ErrorMessage(exc_info[0].__name__, str(exc_info[1]) + '\n' + str(print_tb(exc_info[2]))).exec()

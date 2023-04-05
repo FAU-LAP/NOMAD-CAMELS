@@ -1,5 +1,5 @@
 import importlib
-from PyQt5.QtWidgets import QComboBox, QLabel
+from PySide6.QtWidgets import QComboBox, QLabel
 
 from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from CAMELS.main_classes.device_class import Device_Config_Sub

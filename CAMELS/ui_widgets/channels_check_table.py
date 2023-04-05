@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QComboBox, QTableWidget, QGridLayout, QLineEdit, QMenu
-from PyQt5.QtCore import Qt, QModelIndex
-from PyQt5.QtGui import QBrush, QFont
+from PySide6.QtWidgets import QWidget, QTableWidgetItem, QLabel, QComboBox, QTableWidget, QGridLayout, QLineEdit, QMenu
+from PySide6.QtCore import Qt, QModelIndex
+from PySide6.QtGui import QBrush, QFont
 from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
 from CAMELS.gui.read_channels import Ui_read_channels_config
@@ -92,7 +92,7 @@ class Channels_Check_Table(QWidget):
             return
         r = pos.row()
         item = self.tableWidget_channels.item(r, c)
-        if item.checkState() > 0:
+        if item.checkState() != Qt.CheckState.Unchecked:
             color = variables_handling.get_color('blue')
         else:
             color = variables_handling.get_color('white')
@@ -112,7 +112,7 @@ class Channels_Check_Table(QWidget):
         green if valid, red otherwise and white if empty."""
         if item.column() not in self.checkstrings:
             return
-        if self.tableWidget_channels.item(item.row(), 0).checkState() == 0 and item.text() == '':
+        if self.tableWidget_channels.item(item.row(), 0).checkState() == Qt.CheckState.Unchecked and item.text() == '':
             color = variables_handling.get_color('white')
         elif variables_handling.check_eval(item.text()):
             color = variables_handling.get_color('green')
@@ -124,9 +124,10 @@ class Channels_Check_Table(QWidget):
         channel_list = self.info_dict['channel']
         for i in range(self.tableWidget_channels.rowCount()):
             name = self.tableWidget_channels.item(i, 1).text()
-            if name not in channel_list and self.tableWidget_channels.item(i, 0).checkState() > 0:
+            if name not in channel_list and self.tableWidget_channels.item(i, 0).checkState() != Qt.CheckState.Unchecked:
                 channel_list.append(name)
-            elif name in channel_list and self.tableWidget_channels.item(i, 0).checkState() <= 0:
+            elif name in channel_list and self.tableWidget_channels.item(i, 0).checkState() == Qt.CheckState.Unchecked:
+            # else:
                 channel_list.remove(name)
             if name in channel_list:
                 n = channel_list.index(name)
@@ -162,9 +163,9 @@ class Channels_Check_Table(QWidget):
             item = QTableWidgetItem()
             item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
             if channel in channel_list:
-                item.setCheckState(2)
+                item.setCheckState(Qt.CheckState.Checked)
             else:
-                item.setCheckState(False)
+                item.setCheckState(Qt.CheckState.Unchecked)
             self.tableWidget_channels.setItem(n, 0, item)
             item = QTableWidgetItem(channel)
             item.setFlags(item.flags() ^ Qt.ItemIsEditable)

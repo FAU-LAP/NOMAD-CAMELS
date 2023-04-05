@@ -1,8 +1,8 @@
 import sys
 import os
 
-from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QFileDialog, QMessageBox
-from PyQt5.QtGui import QIcon, QCloseEvent
+from PySide6.QtWidgets import QDialog, QLabel, QPushButton, QFileDialog, QMessageBox
+from PySide6.QtGui import QIcon, QCloseEvent
 
 from CAMELS.ui_widgets.add_remove_table import AddRemoveTable
 from CAMELS.utility import variables_handling, fit_variable_renaming
@@ -150,8 +150,8 @@ class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
 
 
 if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication
-    from PyQt5.QtCore import QCoreApplication
+    from PySide6.QtWidgets import QApplication
+    from PySide6.QtCore import QCoreApplication
     from CAMELS.utility import exception_hook
     sys.excepthook = exception_hook.exception_hook
     app = QCoreApplication.instance()
@@ -159,4 +159,4 @@ if __name__ == '__main__':
         app = QApplication(sys.argv)
     ui = VISA_Device_Builder()
     ui.show()
-    app.exec_()
+    app.exec()

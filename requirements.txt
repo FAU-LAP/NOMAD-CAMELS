@@ -1,4 +1,4 @@
-PyQt5>=5.15.6
+PySide6>=6.5.0
 bluesky>=1.8.3
 ophyd>=1.6.4
 databroker>=1.2.5

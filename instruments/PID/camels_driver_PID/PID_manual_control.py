@@ -3,8 +3,8 @@ import time
 from CAMELS.main_classes.manual_control import Manual_Control, Manual_Control_Config
 from .PID_config_sub import subclass_config_sub
 
-from PyQt5.QtWidgets import QCheckBox, QLineEdit, QPushButton, QLabel, QSpacerItem, QSizePolicy, QFrame, QComboBox, QGridLayout
-from PyQt5.QtCore import pyqtSignal, QThread
+from PySide6.QtWidgets import QCheckBox, QLineEdit, QPushButton, QLabel, QSpacerItem, QSizePolicy, QFrame, QComboBox, QGridLayout
+from PySide6.QtCore import Signal, QThread
 
 from CAMELS.utility import variables_handling, device_handling
 
@@ -99,6 +99,7 @@ class PID_manual_control(Manual_Control):
         for dev in self.device_list:
             if dev in device_handling.running_devices:
                 self.sub_devices.append(device_handling.running_devices[dev])
+        self.adjustSize()
 
 
 
@@ -190,7 +191,7 @@ class PID_Manual_Control_Config(Manual_Control_Config):
 
 
 class PID_update_thread(QThread):
-    data_sig = pyqtSignal(float, float, float, bool)
+    data_sig = Signal(float, float, float, bool)
 
     def __init__(self, parent=None, device=None):
         super().__init__(parent=parent)

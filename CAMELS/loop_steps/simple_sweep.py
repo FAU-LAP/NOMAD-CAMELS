@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QComboBox, QLabel, QCheckBox
-from PyQt5.QtGui import QFont
+from PySide6.QtWidgets import QComboBox, QLabel, QCheckBox
+from PySide6.QtGui import QFont
 
 from CAMELS.main_classes.loop_step import Loop_Step_Config
 from CAMELS.utility import variables_handling
@@ -239,9 +239,9 @@ class Simple_Sweep_Config(Loop_Step_Config):
     #      of preferences and calls save_preferences from the
     #      load_save_functions module."""
     #     plot_dialog = Plot_Definer(self)
-    #     plot_dialog.exec_()
+    #     plot_dialog.exec()
     #     print(plot_dialog.data)
-        # if settings_dialog.exec_():
+        # if settings_dialog.exec():
         #     self.preferences = settings_dialog.get_settings()
         #     number_formatting.preferences = self.preferences
         #     self.toggle_dark_mode()

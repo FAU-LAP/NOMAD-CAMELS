@@ -1,7 +1,7 @@
 # import numpy as np
 from ast import literal_eval
-from PyQt5.QtWidgets import QMenu, QAction
-from PyQt5.QtGui import QColor
+from PySide6.QtWidgets import QMenu
+from PySide6.QtGui import QColor, QAction
 
 import numpy as np
 # from CAMELS.utility import simpleeval
@@ -142,28 +142,28 @@ def get_menus(connect_function, pretext='Insert'):
     add_actions_from_dict(channels, channel_actions, connect_function)
     # for channel in sorted(channels, key=lambda x: x.lower()):
     #     action = QAction(channel)
-    #     action.triggered.connect(lambda state, x=channel: connect_function(x))
+    #     action.triggered.connect(lambda state=None, x=channel: connect_function(x))
     #     channel_actions.append(action)
     add_actions_from_dict(protocol_variables, actions, connect_function)
     # for variable in sorted(protocol_variables, key=lambda x: x.lower()):
     #     action = QAction(variable)
-    #     action.triggered.connect(lambda state, x=variable: connect_function(x))
+    #     action.triggered.connect(lambda state=None, x=variable: connect_function(x))
     #     actions.append(action)
     add_actions_from_dict(loop_step_variables, actions, connect_function)
     # for variable in sorted(loop_step_variables, key=lambda x: x.lower()):
     #     action = QAction(variable)
-    #     action.triggered.connect(lambda state, x=variable: connect_function(x))
+    #     action.triggered.connect(lambda state=None, x=variable: connect_function(x))
     #     actions.append(action)
     add_actions_from_dict(operator_names, operator_actions, connect_function)
     # for op in operator_names:
     #     action = QAction(f'{op}\t{operator_names[op]}')
-    #     action.triggered.connect(lambda state, x=op: connect_function(x))
+    #     action.triggered.connect(lambda state=None, x=op: connect_function(x))
     #     operator_actions.append(action)
     add_actions_from_dict(evaluation_functions_names, function_actions,
                           connect_function)
     # for foo in sorted(evaluation_functions_names, key=lambda x: x.lower()):
     #     action = QAction(evaluation_functions_names[foo])
-    #     action.triggered.connect(lambda state, x=foo: connect_function(x))
+    #     action.triggered.connect(lambda state=None, x=foo: connect_function(x))
     #     function_actions.append(action)
     channel_menu.addActions(channel_actions)
     variable_menu.addActions(actions)
@@ -181,7 +181,7 @@ def add_actions_from_dict(dictionary, actions, connect_function, add_string=''):
         else:
             addvar = f'{add_string}{var}'
             action = QAction(addvar)
-            action.triggered.connect(lambda state, x=addvar: connect_function(x))
+            action.triggered.connect(lambda state=None, x=addvar: connect_function(x))
             actions.append(action)
 
 def check_eval(s):

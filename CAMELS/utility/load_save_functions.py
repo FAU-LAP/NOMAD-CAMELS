@@ -6,9 +6,10 @@ import importlib
 
 import numpy as np
 import pandas as pd
-from PyQt5.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel,\
-    QPushButton, QTreeView, QListView, QMenuBar, QAction, QMenu, QStatusBar,\
+from PySide6.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel,\
+    QPushButton, QTreeView, QListView, QMenuBar, QMenu, QStatusBar,\
     QGridLayout
+from PySide6.QtGui import QAction
 
 from datetime import datetime
 import json

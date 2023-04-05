@@ -1,9 +1,9 @@
 import serial.tools.list_ports
 
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox,\
+from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox,\
     QFrame, QCheckBox, QTextEdit
-from PyQt5.QtGui import QFont
-from PyQt5.QtCore import pyqtSignal, Qt
+from PySide6.QtGui import QFont
+from PySide6.QtCore import Signal, Qt
 
 from ophyd import EpicsSignalRO
 from ophyd import Device as OphydDevice
@@ -208,8 +208,8 @@ def get_channels(dev:OphydDevice):
 class Device_Config(QWidget):
     """Parent class for the configuration-widgets
     (shown on the frontpanel) of the devices."""
-    ioc_change = pyqtSignal()
-    name_change = pyqtSignal(str)
+    ioc_change = Signal()
+    name_change = Signal(str)
 
     def __init__(self, parent=None, device_name='', data='', settings_dict=None,
                  config_dict=None, ioc_dict=None, additional_info=None, no_ioc_connection=False):
@@ -392,7 +392,7 @@ class Device_Config_Sub(QWidget):
 class Connection_Config(QWidget):
     """Base Class for the widgets used to specify the connection of a
     given device."""
-    connection_change = pyqtSignal()
+    connection_change = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
