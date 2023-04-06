@@ -78,6 +78,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                                  'protocols_dict': self.protocols_dict,
                                  'manual_controls': self.manual_controls}
         self.preferences = {}
+        self.show()
         self.load_preferences()
         self.load_state()
 

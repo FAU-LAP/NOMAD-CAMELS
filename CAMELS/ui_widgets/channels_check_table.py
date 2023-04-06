@@ -127,7 +127,6 @@ class Channels_Check_Table(QWidget):
             if name not in channel_list and self.tableWidget_channels.item(i, 0).checkState() != Qt.CheckState.Unchecked:
                 channel_list.append(name)
             elif name in channel_list and self.tableWidget_channels.item(i, 0).checkState() == Qt.CheckState.Unchecked:
-            # else:
                 channel_list.remove(name)
             if name in channel_list:
                 n = channel_list.index(name)

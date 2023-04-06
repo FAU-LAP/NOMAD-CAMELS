@@ -42,10 +42,10 @@ class Path_Button_Edit(QWidget):
             direc = self.default_dir
         if self.select_directory:
             path = QFileDialog.getExistingDirectory(self, 'Select Directory',
-                                                    directory=direc)
+                                                    dir=direc)
         else:
             path = QFileDialog.getOpenFileName(self, 'Select File',
-                                               directory=direc,
+                                               dir=direc,
                                                filter=self.file_extension)[0]
         if path:
             self.line.setText(path)

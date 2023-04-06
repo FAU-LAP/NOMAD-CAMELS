@@ -47,6 +47,7 @@ class LoadingScreen(QDialog):
 if __name__ == '__main__':
     app = QCoreApplication.instance()
     if app is None:
+        # sys.argv += ['-platform', 'windows:darkmode=1']
         app = QApplication(sys.argv)
 
     # Create the loading screen

@@ -375,7 +375,7 @@ class Device_Config(QWidget):
 
 class Device_Config_Sub(QWidget):
     def __init__(self, settings_dict=None, parent=None, config_dict=None):
-        super().__init__(parent)
+        super().__init__()
         self.settings_dict = settings_dict or {}
         self.config_dict = config_dict or {}
         if settings_dict is None and config_dict is None:
