@@ -78,7 +78,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                                  'protocols_dict': self.protocols_dict,
                                  'manual_controls': self.manual_controls}
         self.preferences = {}
-        self.show()
         self.load_preferences()
         self.load_state()
 
@@ -338,7 +337,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def change_theme(self):
         theme = self.preferences['graphic_theme']
-        theme_changing.change_theme(theme, main_window=self)
+        material_theme = self.preferences['material_theme']
+        dark = self.preferences['dark_mode']
+        theme_changing.change_theme(theme, material_theme=material_theme, dark_mode=dark)
         self.toggle_dark_mode()
 
     def toggle_dark_mode(self):

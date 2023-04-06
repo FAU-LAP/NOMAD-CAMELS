@@ -17,19 +17,27 @@ class Settings_Window(Ui_settings_window, QDialog):
         #     self.checkBox_dark_mode.setChecked(settings['dark_mode'])
         # else:
         #     self.checkBox_dark_mode.setChecked(standard_pref['dark_mode'])
-        themes = ['qdarkstyle']
-        themes += QStyleFactory.keys()
-        themes += qt_material.list_themes()
-        for i, theme in enumerate(themes):
-            if theme.endswith('.xml'):
-                themes[i] = theme[:-4]
+        themes = QStyleFactory.keys()
+        themes.append('qt-material')
         self.comboBox_theme.addItems(themes)
         if 'graphic_theme' in settings and settings['graphic_theme'] in themes:
             self.comboBox_theme.setCurrentText(settings['graphic_theme'])
         else:
             app = QCoreApplication.instance()
             self.comboBox_theme.setCurrentText(app.style().objectName())
+        material_themes = []
+        for t in qt_material.list_themes():
+            if t.startswith('light_'):
+                material_themes.append(t[6:-4])
+        self.comboBox_material_theme.addItems(material_themes)
+        if 'material_theme' in settings and settings['material_theme'] in themes:
+            self.comboBox_material_theme.setCurrentText(settings['material_theme'])
+        if 'dark_mode' in settings:
+            self.checkBox_dark.setChecked(settings['dark_mode'])
         self.comboBox_theme.currentTextChanged.connect(self.change_theme)
+        self.comboBox_material_theme.currentTextChanged.connect(self.change_theme)
+        self.checkBox_dark.clicked.connect(self.change_theme)
+        self.change_theme()
         if 'autosave' in settings:
             self.checkBox_autosave.setChecked(settings['autosave'])
         else:
@@ -94,7 +102,11 @@ class Settings_Window(Ui_settings_window, QDialog):
 
     def change_theme(self):
         theme = self.comboBox_theme.currentText()
-        change_theme(theme)
+        mat = theme == 'qt-material'
+        self.comboBox_material_theme.setEnabled(mat)
+        material_theme = self.comboBox_material_theme.currentText()
+        dark_mode = self.checkBox_dark.isChecked()
+        change_theme(theme, material_theme=material_theme, dark_mode=dark_mode)
 
     def get_settings(self):
         """Reading all the UI-elements to get the selected settings,
@@ -105,10 +117,10 @@ class Settings_Window(Ui_settings_window, QDialog):
             numbers = 'scientific'
         else:
             numbers = 'mixed'
-        theme = self.comboBox_theme.currentText()
         return {'autosave': self.checkBox_autosave.isChecked(),
-                'dark_mode': 'dark' in theme,
-                'graphic_theme': theme,
+                'dark_mode': self.checkBox_dark.isChecked(),
+                'graphic_theme': self.comboBox_theme.currentText(),
+                'material_theme': self.comboBox_material_theme.currentText(),
                 'n_decimals': self.spinBox_n_decimals.value(),
                 'number_format': numbers,
                 'mixed_from': self.spinBox_scientific_from.value(),
