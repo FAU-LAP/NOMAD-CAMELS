@@ -954,7 +954,7 @@ class MultiLivePlot(LivePlot, QObject):
         self.ax.relim(visible_only=True)
         self.ax.autoscale_view(tight=True)
         self.ax.figure.canvas.draw_idle()
-        self.new_data.emit()
+        self.new_data.emit(None)
 
     def stop(self, doc):
         if not self.x_data:

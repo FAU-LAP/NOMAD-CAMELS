@@ -15,6 +15,48 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
+    <item row="5" column="9" colspan="3">
+     <widget class="QProgressBar" name="progressBar_protocols">
+      <property name="maximumSize">
+       <size>
+        <width>400</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="value">
+       <number>0</number>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="9" rowspan="2" colspan="3">
+     <widget class="Console_TextEdit" name="textEdit_console_output">
+      <property name="maximumSize">
+       <size>
+        <width>400</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="textInteractionFlags">
+       <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="10">
+     <widget class="QPushButton" name="pushButton_pause">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>130</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Pause</string>
+      </property>
+     </widget>
+    </item>
     <item row="2" column="2">
      <widget class="QLabel" name="label_arrow">
       <property name="text">
@@ -57,52 +99,29 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="10">
-     <widget class="QPushButton" name="pushButton_pause">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>130</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Pause</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="9" colspan="3">
-     <widget class="QProgressBar" name="progressBar_protocols">
-      <property name="maximumSize">
-       <size>
-        <width>400</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="value">
-       <number>0</number>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="9" rowspan="2" colspan="3">
-     <widget class="Console_TextEdit" name="textEdit_console_output">
-      <property name="maximumSize">
-       <size>
-        <width>400</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="textInteractionFlags">
-       <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-      </property>
-     </widget>
-    </item>
     <item row="2" column="3" colspan="9">
      <widget class="QLabel" name="label_no_instruments">
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;You are currently using no instruments.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Click &amp;quot;Manage Instruments&amp;quot; to configure your&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;first instrument and start with CAMELS!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="9" colspan="3">
+     <widget class="QLabel" name="label_logo">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>../graphics/camels_horizontal.png</pixmap>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -279,26 +298,7 @@ Instruments</string>
       </layout>
      </widget>
     </item>
-    <item row="8" column="9" colspan="3">
-     <widget class="QLabel" name="label_logo">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>70</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="pixmap">
-       <pixmap>../graphics/camels_horizontal.png</pixmap>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="2" rowspan="5" colspan="7">
+    <item row="4" column="2" rowspan="6" colspan="7">
      <widget class="QSplitter" name="main_splitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -466,6 +466,20 @@ Instruments</string>
         </item>
        </layout>
       </widget>
+     </widget>
+    </item>
+    <item row="8" column="11">
+     <widget class="QPushButton" name="pushButton_close_plots">
+      <property name="text">
+       <string>Close Plots</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="9" colspan="2">
+     <widget class="QPushButton" name="pushButton_clear_log">
+      <property name="text">
+       <string>Clear Log</string>
+      </property>
      </widget>
     </item>
    </layout>

@@ -80,6 +80,27 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout_5 = QGridLayout(self.centralwidget)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
+        self.progressBar_protocols = QProgressBar(self.centralwidget)
+        self.progressBar_protocols.setObjectName(u"progressBar_protocols")
+        self.progressBar_protocols.setMaximumSize(QSize(400, 16777215))
+        self.progressBar_protocols.setValue(0)
+
+        self.gridLayout_5.addWidget(self.progressBar_protocols, 5, 9, 1, 3)
+
+        self.textEdit_console_output = Console_TextEdit(self.centralwidget)
+        self.textEdit_console_output.setObjectName(u"textEdit_console_output")
+        self.textEdit_console_output.setMaximumSize(QSize(400, 16777215))
+        self.textEdit_console_output.setTextInteractionFlags(Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
+
+        self.gridLayout_5.addWidget(self.textEdit_console_output, 6, 9, 2, 3)
+
+        self.pushButton_pause = QPushButton(self.centralwidget)
+        self.pushButton_pause.setObjectName(u"pushButton_pause")
+        self.pushButton_pause.setEnabled(False)
+        self.pushButton_pause.setMaximumSize(QSize(130, 16777215))
+
+        self.gridLayout_5.addWidget(self.pushButton_pause, 4, 10, 1, 1)
+
         self.label_arrow = QLabel(self.centralwidget)
         self.label_arrow.setObjectName(u"label_arrow")
         self.label_arrow.setAlignment(Qt.AlignCenter)
@@ -100,31 +121,18 @@ class Ui_MainWindow(object):
 
         self.gridLayout_5.addWidget(self.pushButton_resume, 4, 9, 1, 1)
 
-        self.pushButton_pause = QPushButton(self.centralwidget)
-        self.pushButton_pause.setObjectName(u"pushButton_pause")
-        self.pushButton_pause.setEnabled(False)
-        self.pushButton_pause.setMaximumSize(QSize(130, 16777215))
-
-        self.gridLayout_5.addWidget(self.pushButton_pause, 4, 10, 1, 1)
-
-        self.progressBar_protocols = QProgressBar(self.centralwidget)
-        self.progressBar_protocols.setObjectName(u"progressBar_protocols")
-        self.progressBar_protocols.setMaximumSize(QSize(400, 16777215))
-        self.progressBar_protocols.setValue(0)
-
-        self.gridLayout_5.addWidget(self.progressBar_protocols, 5, 9, 1, 3)
-
-        self.textEdit_console_output = Console_TextEdit(self.centralwidget)
-        self.textEdit_console_output.setObjectName(u"textEdit_console_output")
-        self.textEdit_console_output.setMaximumSize(QSize(400, 16777215))
-        self.textEdit_console_output.setTextInteractionFlags(Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
-
-        self.gridLayout_5.addWidget(self.textEdit_console_output, 6, 9, 2, 3)
-
         self.label_no_instruments = QLabel(self.centralwidget)
         self.label_no_instruments.setObjectName(u"label_no_instruments")
 
         self.gridLayout_5.addWidget(self.label_no_instruments, 2, 3, 1, 9)
+
+        self.label_logo = QLabel(self.centralwidget)
+        self.label_logo.setObjectName(u"label_logo")
+        self.label_logo.setMaximumSize(QSize(16777215, 70))
+        self.label_logo.setPixmap(QPixmap(u"../graphics/camels_horizontal.png"))
+        self.label_logo.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.gridLayout_5.addWidget(self.label_logo, 9, 9, 1, 3)
 
         self.widget = QWidget(self.centralwidget)
         self.widget.setObjectName(u"widget")
@@ -221,14 +229,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_5.addWidget(self.widget, 1, 2, 1, 10)
 
-        self.label_logo = QLabel(self.centralwidget)
-        self.label_logo.setObjectName(u"label_logo")
-        self.label_logo.setMaximumSize(QSize(16777215, 70))
-        self.label_logo.setPixmap(QPixmap(u"../graphics/camels_horizontal.png"))
-        self.label_logo.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.gridLayout_5.addWidget(self.label_logo, 8, 9, 1, 3)
-
         self.main_splitter = QSplitter(self.centralwidget)
         self.main_splitter.setObjectName(u"main_splitter")
         self.main_splitter.setOrientation(Qt.Vertical)
@@ -323,7 +323,17 @@ class Ui_MainWindow(object):
 
         self.main_splitter.addWidget(self.meas_widget)
 
-        self.gridLayout_5.addWidget(self.main_splitter, 4, 2, 5, 7)
+        self.gridLayout_5.addWidget(self.main_splitter, 4, 2, 6, 7)
+
+        self.pushButton_close_plots = QPushButton(self.centralwidget)
+        self.pushButton_close_plots.setObjectName(u"pushButton_close_plots")
+
+        self.gridLayout_5.addWidget(self.pushButton_close_plots, 8, 11, 1, 1)
+
+        self.pushButton_clear_log = QPushButton(self.centralwidget)
+        self.pushButton_clear_log.setObjectName(u"pushButton_clear_log")
+
+        self.gridLayout_5.addWidget(self.pushButton_clear_log, 8, 9, 1, 2)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -384,11 +394,12 @@ class Ui_MainWindow(object):
         self.actionDocumentation.setText(QCoreApplication.translate("MainWindow", u"Documentation", None))
         self.actionReport_Bug.setText(QCoreApplication.translate("MainWindow", u"Report Bug", None))
         self.actionVISA_device_builder.setText(QCoreApplication.translate("MainWindow", u"VISA-device builder", None))
+        self.pushButton_pause.setText(QCoreApplication.translate("MainWindow", u"Pause", None))
         self.label_arrow.setText("")
         self.pushButton_stop.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
         self.pushButton_resume.setText(QCoreApplication.translate("MainWindow", u"Resume", None))
-        self.pushButton_pause.setText(QCoreApplication.translate("MainWindow", u"Pause", None))
         self.label_no_instruments.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">You are currently using no instruments.</span></p><p><span style=\" font-size:12pt; font-weight:600;\">Click &quot;Manage Instruments&quot; to configure your</span></p><p><span style=\" font-size:12pt; font-weight:600;\">first instrument and start with CAMELS!</span></p></body></html>", None))
+        self.label_logo.setText("")
         self.label.setText(QCoreApplication.translate("MainWindow", u"User:", None))
         self.pushButton_manage_instr.setText(QCoreApplication.translate("MainWindow", u"Mangage\n"
 "Instruments", None))
@@ -396,11 +407,12 @@ class Ui_MainWindow(object):
         self.pushButton_editSampleInfo.setText(QCoreApplication.translate("MainWindow", u"Edit Sample-Information", None))
         self.pushButton_editUserInfo.setText(QCoreApplication.translate("MainWindow", u"Edit User-Information", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Session:", None))
-        self.label_logo.setText("")
         self.pushButton_add_manual.setText(QCoreApplication.translate("MainWindow", u"+", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Manual Control", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Measurement Protocols", None))
         self.pushButton_add_meas.setText(QCoreApplication.translate("MainWindow", u"+", None))
+        self.pushButton_close_plots.setText(QCoreApplication.translate("MainWindow", u"Close Plots", None))
+        self.pushButton_clear_log.setText(QCoreApplication.translate("MainWindow", u"Clear Log", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
         self.menuTools.setTitle(QCoreApplication.translate("MainWindow", u"Tools", None))

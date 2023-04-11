@@ -91,6 +91,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.button_area_meas.order_changed.connect(self.protocol_order_changed)
 
         self.active_controls = {}
+        self.open_plots = []
 
 
         # user and sample data
@@ -122,6 +123,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_stop.clicked.connect(self.stop_protocol)
         self.pushButton_pause.clicked.connect(self.pause_protocol)
         self.pushButton_resume.clicked.connect(self.resume_protocol)
+
+        self.pushButton_clear_log.clicked.connect(self.textEdit_console_output.clear)
+        self.pushButton_close_plots.clicked.connect(self.close_plots)
 
         QShortcut('Ctrl+s', self).activated.connect(self.save_state)
 
@@ -170,6 +174,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def add_to_open_windows(self, window):
         self.open_windows.append(window)
         window.closing.connect(lambda x=window: self.open_windows.remove(x))
+
+    def add_to_plots(self, plot):
+        self.open_plots.append(plot)
+        plot.closing.connect(lambda x=plot: self.open_plots.remove(x))
+        self.add_to_open_windows(plot)
+
+    def close_plots(self):
+        for plot in self.open_plots:
+            plot.close()
     # --------------------------------------------------
     # Overwriting parent-methods
     # --------------------------------------------------
@@ -624,14 +637,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_module.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
         plots, subs, _ = self.protocol_module.create_plots(self.run_engine)
         for plot in plots:
-            self.add_to_open_windows(plot)
+            self.add_to_plots(plot)
         device_list = protocol.get_used_devices()
         devs, dev_data = device_handling.instantiate_devices(device_list)
         self.current_protocol_device_list = device_list
         additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
         if 'plots' in additionals:
             for plot in additionals['plots']:
-                self.add_to_open_windows(plot)
+                self.add_to_plots(plot)
         self.re_subs += subs
         self.add_subs_from_dict(additionals)
         self.pushButton_resume.setEnabled(False)
