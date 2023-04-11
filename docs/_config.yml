@@ -19,6 +19,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics. Here many experiments utilize a multitude of measurement devices used in dynamically changing setups.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
+  https://fau-lap.github.io/CAMELS
 #twitter_username: jekyllrb
 github_username:  fau-lap
 
