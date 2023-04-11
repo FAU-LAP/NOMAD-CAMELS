@@ -24,7 +24,7 @@ github_username:  fau-lap
 
 # Build settings
 markdown: kramdown
-theme: minima
+theme: just-the-docs
 #plugins:
 #  - jekyll-feed
 
