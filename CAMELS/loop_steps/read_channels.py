@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QComboBox
-from PyQt5.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QTableWidgetItem, QLabel, QComboBox
+from PySide6.QtCore import Qt
 from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
 from CAMELS.gui.read_channels import Ui_read_channels_config
@@ -117,7 +117,7 @@ class Read_Channels_Config(Loop_Step_Config):
     def update_step_config(self):
         self.sub_widget.update_step_config()
 
-class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
+class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
     """Config for the Read_Channels it provides a table of channels with
     a checkbox, whether to read them. Also there is a checkbox whether
     to simply read all available channels."""
@@ -196,7 +196,7 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
         c = pos.column()
         if c == 0:
             name = self.tableWidget_channels.item(r, 1).text()
-            if self.tableWidget_channels.item(r, c).checkState() > 0:
+            if self.tableWidget_channels.item(r, c).checkState() != Qt.CheckState.Unchecked:
                 self.loop_step.channel_list.append(name)
                 self.loop_step.channel_list = list(set(self.loop_step.channel_list))
             elif name in self.loop_step.channel_list:
@@ -224,9 +224,9 @@ class Read_Channels_Config_Sub(QWidget, Ui_read_channels_config):
             item = QTableWidgetItem()
             item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
             if channel in self.loop_step.channel_list:
-                item.setCheckState(2)
+                item.setCheckState(Qt.CheckState.Checked)
             else:
-                item.setCheckState(False)
+                item.setCheckState(Qt.CheckState.Unchecked)
             self.tableWidget_channels.setItem(n, 0, item)
             item = QTableWidgetItem(channel)
             item.setFlags(item.flags() ^ Qt.ItemIsEditable)

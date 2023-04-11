@@ -4,9 +4,9 @@ import sys
 import importlib
 
 from CAMELS.gui.addDeviceDialog import Ui_Dialog_Add_Device
-from PyQt5.QtWidgets import QDialog, QMessageBox
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent
-from PyQt5.QtCore import Qt
+from PySide6.QtWidgets import QDialog, QMessageBox
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QKeyEvent
+from PySide6.QtCore import Qt
 
 from CAMELS.utility import treeView_functions, variables_handling
 # device_driver_path = r'C:\Users\od93yces\FAIRmat\devices_drivers/'
@@ -36,7 +36,7 @@ def getAllDevices():
 
 
 
-class AddDeviceDialog(QDialog, Ui_Dialog_Add_Device):
+class AddDeviceDialog(Ui_Dialog_Add_Device, QDialog):
     """Dialog that handles adding new devices in the MainApp, should
     also download available drivers from the repository.
 

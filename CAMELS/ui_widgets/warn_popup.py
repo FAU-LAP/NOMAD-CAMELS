@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMessageBox
+from PySide6.QtWidgets import QMessageBox
 
 class WarnPopup(QMessageBox):
     def __init__(self, parent=None, text='', title='', info_icon=False):

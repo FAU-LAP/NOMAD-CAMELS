@@ -1,8 +1,8 @@
 from copy import deepcopy
 
-from PyQt5.QtWidgets import QWidget, QAction, QToolButton, QMenu, QMessageBox, QShortcut, QUndoStack, QDialogButtonBox
-from PyQt5.QtCore import QItemSelectionModel, Qt, pyqtSignal
-from PyQt5.QtGui import QStandardItemModel, QCloseEvent, QKeyEvent, QIcon
+from PySide6.QtWidgets import QWidget, QToolButton, QMenu, QMessageBox, QDialogButtonBox
+from PySide6.QtCore import QItemSelectionModel, Qt, Signal
+from PySide6.QtGui import QStandardItemModel, QAction, QCloseEvent, QKeyEvent, QShortcut, QIcon, QUndoStack
 
 from CAMELS.gui.protocol_view import Ui_Protocol_View
 from CAMELS.main_classes.protocol_class import Measurement_Protocol, General_Protocol_Settings
@@ -14,9 +14,9 @@ from CAMELS.commands import change_sequence
 from pkg_resources import resource_filename
 
 
-class Protocol_Config(QWidget, Ui_Protocol_View):
-    accepted = pyqtSignal(Measurement_Protocol)
-    closing = pyqtSignal()
+class Protocol_Config(Ui_Protocol_View, QWidget):
+    accepted = Signal(Measurement_Protocol)
+    closing = Signal()
 
     def __init__(self, protocol=None, parent=None):
         super().__init__(parent=parent)
@@ -87,11 +87,11 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
         self.device_actions.clear()
         for stp in sorted(make_step_of_type.step_type_config.keys(), key=lambda x: x.lower()):
             action = QAction(stp)
-            action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+            action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
             self.add_actions.append(action)
         for stp in make_step_of_type.get_device_steps():
             action = QAction(stp)
-            action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+            action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
             self.device_actions.append(action)
         self.toolButton_add_step.addActions(self.add_actions)
         if self.device_actions:
@@ -187,9 +187,9 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
                 action = QAction(stp)
                 action_a = QAction(stp)
                 action_in = QAction(stp)
-                action.triggered.connect(lambda state, x=stp, y=row+1, z=parent: self.add_loop_step(x, y, z))
-                action_a.triggered.connect(lambda state, x=stp, y=row, z=parent: self.add_loop_step(x, y, z))
-                action_in.triggered.connect(lambda state, x=stp, y=-1, z=item.data(): self.add_loop_step(x,y,z))
+                action.triggered.connect(lambda state=None, x=stp, y=row+1, z=parent: self.add_loop_step(x, y, z))
+                action_a.triggered.connect(lambda state=None, x=stp, y=row, z=parent: self.add_loop_step(x, y, z))
+                action_in.triggered.connect(lambda state=None, x=stp, y=-1, z=item.data(): self.add_loop_step(x,y,z))
                 below_actions.append(action)
                 above_actions.append(action_a)
                 into_actions.append(action_in)
@@ -200,9 +200,9 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
                 action = QAction(stp)
                 action_a = QAction(stp)
                 action_in = QAction(stp)
-                action.triggered.connect(lambda state, x=stp, y=row+1, z=parent: self.add_loop_step(x, y, z))
-                action_a.triggered.connect(lambda state, x=stp, y=row, z=parent: self.add_loop_step(x, y, z))
-                action_in.triggered.connect(lambda state, x=stp, y=-1, z=item.data(): self.add_loop_step(x,y,z))
+                action.triggered.connect(lambda state=None, x=stp, y=row+1, z=parent: self.add_loop_step(x, y, z))
+                action_a.triggered.connect(lambda state=None, x=stp, y=row, z=parent: self.add_loop_step(x, y, z))
+                action_in.triggered.connect(lambda state=None, x=stp, y=-1, z=item.data(): self.add_loop_step(x,y,z))
                 device_actions.append(action)
                 device_actions_a.append(action_a)
                 device_actions_in.append(action_in)
@@ -226,18 +226,18 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
             menu.addMenu(insert_below_menu)
             menu.addSeparator()
             cut_action = QAction('Cut')
-            cut_action.triggered.connect(lambda state, x=item.data(): self.cut_loop_step(x))
+            cut_action.triggered.connect(lambda state=None, x=item.data(): self.cut_loop_step(x))
             copy_action = QAction('Copy')
-            copy_action.triggered.connect(lambda state, x=item.data(): self.copy_loop_step(x))
+            copy_action.triggered.connect(lambda state=None, x=item.data(): self.copy_loop_step(x))
             paste_menu = QMenu('Paste')
             if variables_handling.copied_step is not None:
                 paste_above = QAction('Paste Above')
-                paste_above.triggered.connect(lambda state, x=True, y=row, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
+                paste_above.triggered.connect(lambda state=None, x=True, y=row, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
                 paste_below = QAction('Paste Below')
-                paste_below.triggered.connect(lambda state, x=True, y=row+1, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
+                paste_below.triggered.connect(lambda state=None, x=True, y=row+1, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
                 if self.protocol.loop_step_dict[item.data()].has_children:
                     paste_into = QAction('Paste Into')
-                    paste_into.triggered.connect(lambda state, x=True, y=-1, z=item.data(): self.add_loop_step(copied_step=x,position=y,parent=z))
+                    paste_into.triggered.connect(lambda state=None, x=True, y=-1, z=item.data(): self.add_loop_step(copied_step=x,position=y,parent=z))
                     paste_menu.addAction(paste_into)
                 paste_menu.addActions([paste_above, paste_below])
             else:
@@ -254,12 +254,12 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
             add_actions = []
             for stp in sorted(make_step_of_type.step_type_config, key=lambda x: x.lower()):
                 action = QAction(stp)
-                action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+                action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
                 add_actions.append(action)
             device_actions = []
             for stp in make_step_of_type.get_device_steps():
                 action = QAction(stp)
-                action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+                action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
                 device_actions.append(action)
             add_menu = QMenu('Add Step')
             add_menu.addActions(add_actions)
@@ -268,7 +268,7 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
                 add_menu.addActions(device_actions)
             paste_action = QAction('Paste')
             if variables_handling.copied_step is not None:
-                paste_action.triggered.connect(lambda state, x=True, y=-1, z=None: self.add_loop_step(copied_step=x, position=y, parent=z))
+                paste_action.triggered.connect(lambda state=None, x=True, y=-1, z=None: self.add_loop_step(copied_step=x, position=y, parent=z))
             else:
                 paste_action.setEnabled(False)
             menu.addMenu(add_menu)
@@ -429,7 +429,7 @@ class Protocol_Config(QWidget, Ui_Protocol_View):
 
 if __name__ == '__main__':
     import sys
-    from PyQt5.QtWidgets import QApplication
+    from PySide6.QtWidgets import QApplication
     app = QApplication(sys.argv)
     widge = Protocol_Config()
     widge.show()

@@ -4,8 +4,8 @@ from CAMELS.main_classes.manual_control import Manual_Control
 from .PID_controller_config_sub import subclass_config_sub
 from .PID_controller_ophyd import PID_Controller
 
-from PyQt5.QtWidgets import QCheckBox, QLineEdit, QPushButton, QLabel, QSpacerItem, QSizePolicy, QFrame
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtWidgets import QCheckBox, QLineEdit, QPushButton, QLabel, QSpacerItem, QSizePolicy, QFrame
+from PySide6.QtCore import Signal
 
 from CAMELS.utility import variables_handling
 from CAMELS.utility.qthreads import Manual_Device_Thread
@@ -139,7 +139,7 @@ class PID_manual_control(Manual_Control):
 
 
 class PID_thread(Manual_Device_Thread):
-    data_sig = pyqtSignal(float, float, float, bool, float, list)
+    data_sig = Signal(float, float, float, bool, float, list)
 
     def __init__(self, device, update_time):
         super().__init__(device=device, ophyd_class=PID_Controller)

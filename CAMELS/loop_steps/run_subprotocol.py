@@ -1,6 +1,6 @@
 import os
 
-from PyQt5.QtWidgets import QLabel, QComboBox, QCheckBox
+from PySide6.QtWidgets import QLabel, QComboBox, QCheckBox
 
 from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from CAMELS.ui_widgets.path_button_edit import Path_Button_Edit

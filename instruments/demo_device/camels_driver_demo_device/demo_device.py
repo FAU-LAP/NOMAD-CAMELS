@@ -1,7 +1,7 @@
 from CAMELS.main_classes import device_class
 from .demo_device_ophyd import Demo_Device
 
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
 
 
 class subclass(device_class.Device):

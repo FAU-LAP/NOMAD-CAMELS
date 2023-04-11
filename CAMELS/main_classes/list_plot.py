@@ -2,9 +2,9 @@ import numpy as np
 
 from bluesky.callbacks.mpl_plotting import QtAwareCallback
 
-from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QWidget, QGridLayout
-from PyQt5.QtCore import Qt, QEvent, pyqtSignal
-from PyQt5.QtGui import QIcon
+from PySide6.QtWidgets import QTableWidgetItem, QTableWidget, QWidget, QGridLayout
+from PySide6.QtCore import Qt, QEvent, Signal
+from PySide6.QtGui import QIcon
 
 from CAMELS.bluesky_handling.evaluation_helper import Evaluator
 
@@ -13,7 +13,7 @@ from pkg_resources import resource_filename
 
 
 class Values_List_Plot(QtAwareCallback, QWidget):
-    closing = pyqtSignal()
+    closing = Signal()
 
     def __init__(self, value_list, *, epoch='run', namespace=None, title='',
                  stream_name='primary', parent=None, **kwargs):

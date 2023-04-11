@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QDialog, QDialogButtonBox, QLabel, QLineEdit, QMessageBox, QComboBox
-from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtCore import pyqtSignal, Qt
+from PySide6.QtWidgets import QGridLayout, QDialog, QDialogButtonBox, QLabel, QLineEdit, QMessageBox, QWidget
+from PySide6.QtGui import QIcon, QCloseEvent
+from PySide6.QtCore import Signal, Qt
 
 from CAMELS.utility import device_handling, variables_handling
 
@@ -8,10 +8,10 @@ from pkg_resources import resource_filename
 
 
 class Manual_Control(QWidget):
-    closing = pyqtSignal()
+    closing = Signal()
 
     def __init__(self, parent=None, title='Manual Control', control_data=None):
-        super().__init__(parent=parent)
+        super().__init__()
         # layout = QGridLayout()
         # self.setLayout(layout)
         control_data = control_data or {}

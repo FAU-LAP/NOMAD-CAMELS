@@ -1,6 +1,6 @@
 import numpy as np
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QLabel, QGridLayout, QLineEdit
-from PyQt5.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QTableWidgetItem, QLabel, QGridLayout, QLineEdit
+from PySide6.QtCore import Qt
 
 from CAMELS.main_classes.loop_step import Loop_Step_Container, Loop_Step_Config
 from CAMELS.utility.number_formatting import format_number
@@ -203,7 +203,7 @@ class For_Loop_Step_Config(Loop_Step_Config):
         self.sub_widget = For_Loop_Step_Config_Sub(parent=self, loop_step=loop_step)
         self.layout().addWidget(self.sub_widget, 1, 0, 1, 5)
 
-class For_Loop_Step_Config_Sub(QWidget, Ui_for_loop_config):
+class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
     """Provides the main config for the For Loop."""
     def __init__(self, loop_step:For_Loop_Step, parent=None):
         super().__init__(parent)

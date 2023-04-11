@@ -1,6 +1,6 @@
 import pandas as pd
 
-from PyQt5.QtWidgets import QGridLayout, QCheckBox, QComboBox, QLabel, QLineEdit
+from PySide6.QtWidgets import QGridLayout, QCheckBox, QComboBox, QLabel, QLineEdit
 
 from CAMELS.main_classes import device_class
 

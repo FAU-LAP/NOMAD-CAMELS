@@ -1,9 +1,9 @@
 import copy
 
-from PyQt5.QtWidgets import QDialog, QWidget, QDialogButtonBox, QGridLayout,\
+from PySide6.QtWidgets import QDialog, QWidget, QDialogButtonBox, QGridLayout,\
     QLabel, QMessageBox, QPushButton
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QKeyEvent
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont, QKeyEvent
 
 from lmfit import models
 
@@ -233,7 +233,7 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
         return super().get_data()
 
 
-class Single_Plot_Definer_2D(Single_Plot_Definer, Ui_Plot_Definer_2D):
+class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
     def __init__(self, plot_data:Plot_Info, parent=None):
         super().__init__(plot_data, parent)
         self.setupUi(self)
@@ -259,7 +259,7 @@ class Single_Plot_Definer_2D(Single_Plot_Definer, Ui_Plot_Definer_2D):
         return super().get_data()
 
 
-class Single_Plot_Definer_XY(Single_Plot_Definer, Ui_Plot_Definer):
+class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
     def __init__(self, plot_data:Plot_Info, parent=None):
         super().__init__(plot_data, parent)
         self.fit_definer = None
@@ -339,7 +339,7 @@ class Single_Plot_Definer_XY(Single_Plot_Definer, Ui_Plot_Definer):
 
 
 
-class Fit_Definer(QWidget, Ui_Fit_Definer):
+class Fit_Definer(Ui_Fit_Definer, QWidget):
     def __init__(self, fit_info:Fit_Info, parent=None, fit_to=''):
         super().__init__(parent)
         self.setupUi(self)
@@ -482,7 +482,7 @@ class Plot_Button_Overview(QWidget):
 
     def define_plots(self):
         plot_definer = Plot_Definer(self, self.plot_data)
-        if plot_definer.exec_():
+        if plot_definer.exec():
             self.plot_data = plot_definer.plot_data
             tableData = make_table_data(self.plot_data)
             self.plot_table.change_table_data(tableData)

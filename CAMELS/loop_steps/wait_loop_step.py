@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout
+from PySide6.QtWidgets import QWidget, QLabel, QGridLayout
 
 from CAMELS.main_classes.loop_step import Loop_Step_Config, Loop_Step
 from CAMELS.ui_widgets.variable_tool_tip_box import Variable_Box

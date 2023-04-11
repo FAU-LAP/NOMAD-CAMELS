@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton, QTableView,\
+from PySide6.QtWidgets import QWidget, QGridLayout, QPushButton, QTableView,\
     QLabel, QComboBox, QMenu, QDialog, QDialogButtonBox, QMessageBox
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont, QBrush,\
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QFont, QBrush,\
     QKeyEvent
-from PyQt5.QtCore import Qt, pyqtSignal
+from PySide6.QtCore import Qt, Signal
 
 import numpy as np
 import pandas as pd
@@ -13,9 +13,9 @@ from CAMELS.utility import variables_handling
 class AddRemoveTable(QWidget):
     """This widget provides a QTableView and two buttons for adding /
     removing rows / columns. """
-    sizechange = pyqtSignal()
-    added = pyqtSignal(int)
-    removed = pyqtSignal(int)
+    sizechange = Signal()
+    added = Signal(int)
+    removed = Signal(int)
 
     def __init__(self, addLabel='+', removeLabel='-', horizontal=True,
                  editables=None, checkables=(), headerLabels=None, orderBy=None,
@@ -353,7 +353,7 @@ class AddRemoveTable(QWidget):
                         tab.update_table_data()
                         vals.append(tab.tableData)
                     elif i in self.checkables:
-                        vals.append(self.table_model.item(j, i).checkState() > 0)
+                        vals.append(self.table_model.item(j, i).checkState() != Qt.CheckState.Unchecked)
                     else:
                         try:
                             vals.append(int(self.table_model.item(j, i).text()))

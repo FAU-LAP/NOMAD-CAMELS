@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QUndoCommand
-from PyQt5.QtCore import QItemSelectionModel
+from PySide6.QtCore import QItemSelectionModel
+from PySide6.QtGui import QUndoCommand
 
 class CommandMoveStep(QUndoCommand):
     def __init__(self, treeView, item_model, up_down, in_out, loop_step_dict, update_func):

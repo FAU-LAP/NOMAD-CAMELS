@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QComboBox, QLabel, QTabWidget, QPushButton, QWidget, QGridLayout, QLineEdit
-from PyQt5.QtGui import QFont
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtWidgets import QComboBox, QLabel, QTabWidget, QPushButton, QWidget, QGridLayout, QLineEdit
+from PySide6.QtGui import QFont
+from PySide6.QtCore import Signal
 
 from CAMELS.main_classes.loop_step import Loop_Step_Config, Loop_Step
 from CAMELS.utility import variables_handling
@@ -219,10 +219,10 @@ class ND_Sweep_Config(Loop_Step_Config):
 
 
 class Single_Sweep_Tab(QWidget):
-    signal_remove = pyqtSignal()
-    signal_move_left = pyqtSignal()
-    signal_move_right = pyqtSignal()
-    signal_change_sweep = pyqtSignal()
+    signal_remove = Signal()
+    signal_move_left = Signal()
+    signal_move_right = Signal()
+    signal_change_sweep = Signal()
 
     def __init__(self, loop_step:Sweep_Step, parent=None):
         super().__init__(parent)

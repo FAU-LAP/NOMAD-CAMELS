@@ -4,7 +4,7 @@ import time
 
 import numpy as np
 
-from PyQt5.QtCore import QThread, pyqtSignal
+from PySide6.QtCore import QThread, Signal
 
 import subprocess
 
@@ -19,8 +19,8 @@ class Make_Ioc(QThread):
     """Called from the MainApp.
     It runs the steps from the make_ioc package to create a
     fully operational IOC."""
-    sig_step = pyqtSignal(int)
-    info_step = pyqtSignal(str)
+    sig_step = Signal(int)
+    info_step = Signal(str)
 
     def __init__(self, ioc_name='Default', device_data=None):
         """
@@ -54,9 +54,9 @@ class Make_Ioc(QThread):
 
 class Run_Protocol(QThread):
     """Runs the given protocol with a file at the given path."""
-    sig_step = pyqtSignal(int)
-    info_step = pyqtSignal(str)
-    protocol_done = pyqtSignal()
+    sig_step = Signal(int)
+    info_step = Signal(str)
+    protocol_done = Signal()
 
     def __init__(self):
         super().__init__()
@@ -83,7 +83,7 @@ class Run_Protocol(QThread):
         self.write_to_console('%gui qt5')
         self.write_to_console('import sys')
         self.write_to_console('import importlib')
-        self.write_to_console('from PyQt5.QtWidgets import QApplication')
+        self.write_to_console('from PySide6.QtWidgets import QApplication')
         self.write_to_console('app = QApplication(sys.argv)')
         self.write_to_console('import bluesky_handling.standard_imports')
         self.ready_to_run = True
@@ -146,9 +146,9 @@ class Run_Protocol(QThread):
 
 class Run_Protocol_test(QThread):
     """Runs the given protocol with a file at the given path."""
-    sig_step = pyqtSignal(int)
-    info_step = pyqtSignal(str)
-    protocol_done = pyqtSignal()
+    sig_step = Signal(int)
+    info_step = Signal(str)
+    protocol_done = Signal()
 
     def __init__(self, RE, main_fun):
         super().__init__()
@@ -182,7 +182,7 @@ class Run_Protocol_test(QThread):
         # self.write_to_console('%gui qt5')
         # self.write_to_console('import sys')
         # self.write_to_console('import importlib')
-        # self.write_to_console('from PyQt5.QtWidgets import QApplication')
+        # self.write_to_console('from PySide6.QtWidgets import QApplication')
         # self.write_to_console('app = QApplication(sys.argv)')
         # self.write_to_console('import bluesky_handling.standard_imports')
         # self.ready_to_run = True
@@ -257,7 +257,7 @@ class Run_IOC(QThread):
 
     Attributes
     ----------
-    info_step : pyqtSignal
+    info_step : Signal
         A signal that is emitted when there is a new step to be shown
     popen : Popen
         A Popen object representing the subprocess running the IOC
@@ -266,7 +266,7 @@ class Run_IOC(QThread):
     curr_last : int
         The index of the last input received by the IOC
     """
-    info_step = pyqtSignal(str)
+    info_step = Signal(str)
 
     def __init__(self, ioc_name='Default'):
         super().__init__()

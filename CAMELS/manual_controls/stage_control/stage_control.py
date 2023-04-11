@@ -1,8 +1,8 @@
 import time
 import numpy as np
-from PyQt5.QtWidgets import QCheckBox, QComboBox, QLabel, QWidget, QGridLayout, QStyle, QLineEdit
-from PyQt5.QtCore import QThread, pyqtSignal, Qt
-from PyQt5.QtGui import QKeyEvent
+from PySide6.QtWidgets import QCheckBox, QComboBox, QLabel, QWidget, QGridLayout, QStyle, QLineEdit
+from PySide6.QtCore import QThread, Signal, Qt
+from PySide6.QtGui import QKeyEvent
 
 from CAMELS.main_classes.manual_control import Manual_Control, Manual_Control_Config
 from CAMELS.utility import variables_handling, device_handling, number_formatting
@@ -39,12 +39,12 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.pushButton_zUp.setEnabled(use_z)
         self.pushButton_zDown.setEnabled(use_z)
 
-        self.pushButton_right.clicked.connect(lambda state, axis=0: self.step_axis(axis))
-        self.pushButton_left.clicked.connect(lambda state, axis=0, u=False: self.step_axis(axis, u))
-        self.pushButton_up.clicked.connect(lambda state, axis=1: self.step_axis(axis))
-        self.pushButton_down.clicked.connect(lambda state, axis=1, u=False: self.step_axis(axis, u))
-        self.pushButton_zUp.clicked.connect(lambda state, axis=2: self.step_axis(axis))
-        self.pushButton_zDown.clicked.connect(lambda state, axis=2, u=False: self.step_axis(axis, u))
+        self.pushButton_right.clicked.connect(lambda state=None, axis=0: self.step_axis(axis))
+        self.pushButton_left.clicked.connect(lambda state=None, axis=0, u=False: self.step_axis(axis, u))
+        self.pushButton_up.clicked.connect(lambda state=None, axis=1: self.step_axis(axis))
+        self.pushButton_down.clicked.connect(lambda state=None, axis=1, u=False: self.step_axis(axis, u))
+        self.pushButton_zUp.clicked.connect(lambda state=None, axis=2: self.step_axis(axis))
+        self.pushButton_zDown.clicked.connect(lambda state=None, axis=2, u=False: self.step_axis(axis, u))
 
         self.pushButton_ref.clicked.connect(self.reference_drive)
         self.pushButton_stop.clicked.connect(self.stop_moving)
@@ -287,7 +287,7 @@ class Move_Thread(QThread):
 
 
 class Readback_Thread(QThread):
-    data_sig = pyqtSignal(float, float, float)
+    data_sig = Signal(float, float, float)
 
     def __init__(self, parent=None, channels=None, read_time=np.inf):
         super().__init__(parent=parent)

@@ -9,11 +9,11 @@ from copy import deepcopy
 
 import pandas as pd
 
-from PyQt5.QtCore import QCoreApplication, Qt, QItemSelectionModel, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox,\
+from PySide6.QtCore import QCoreApplication, Qt, QItemSelectionModel, Signal
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox,\
     QWidget, QMenu, QAction, QToolButton, QUndoStack, QShortcut, QStyle,\
     QPushButton
-from PyQt5.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
+from PySide6.QtGui import QIcon, QCloseEvent, QStandardItem, QStandardItemModel, QMouseEvent
 
 from CAMELS.utility import exception_hook, load_save_functions, treeView_functions, qthreads, number_formatting, variables_handling, \
     theme_changing, device_handling
@@ -45,7 +45,7 @@ camels_web = 'https://github.com/FAU-LAP/CAMELS'
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """Main Window for the program. Connects to all the other classes."""
-    protocol_stepper_signal = pyqtSignal(int)
+    protocol_stepper_signal = Signal(int)
 
     def __init__(self, parent=None):
         # basic setup
@@ -318,7 +318,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                                    title='User-Information',
                                                    askdelete=True,
                                                    tableData=tableData)
-        if dialog.exec_():
+        if dialog.exec():
             # changing the returned dict to dataframe and back to have a
             # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
@@ -369,7 +369,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         headers = ['name', 'sample_id', 'description']
         tableData = pd.DataFrame.from_dict(self.sampledata, 'index')
         dialog = add_remove_table.AddRemoveDialoge(headerLabels=headers, parent=self, title='Sample-Information', askdelete=True, tableData=tableData)
-        if dialog.exec_():
+        if dialog.exec():
             # changing the returned dict to dataframe and back to have a
             # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
@@ -468,7 +468,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
          of preferences and calls save_preferences from the
          load_save_functions module."""
         settings_dialog = Settings_Window(parent=self, settings=self.preferences)
-        if settings_dialog.exec_():
+        if settings_dialog.exec():
             self.preferences = settings_dialog.get_settings()
             number_formatting.preferences = self.preferences
             # self.toggle_dark_mode()
@@ -605,7 +605,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for add_on in sorted(self.add_ons):
             button = QPushButton(add_on)
             self.add_on_buttons.layout().addWidget(button)
-            button.clicked.connect(lambda state, x=add_on, y=button, z=self.add_ons[add_on][1]: self.start_addon(x, y, z))
+            button.clicked.connect(lambda state=None, x=add_on, y=button, z=self.add_ons[add_on][1]: self.start_addon(x, y, z))
 
     def start_addon(self, addon, button, device=None):
         self.get_device_config(False)
@@ -713,7 +713,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         dialog are inserted to the available devices."""
         add_dialog = AddDeviceDialog(active_devices_dict=self.active_devices_dict,
                                      parent=self)
-        if add_dialog.exec_():
+        if add_dialog.exec():
             self.active_devices_dict = add_dialog.active_devices_dict
         self.build_devices_tree()
         # self.pushButton_make_EPICS_environment.setEnabled(True)
@@ -824,7 +824,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.get_device_config()
         if not make_ioc.sudo_pwd:
             pwd_dialog = pass_ask.Pass_Ask(self)
-            if pwd_dialog.exec_():
+            if pwd_dialog.exec():
                 make_ioc.sudo_pwd = pwd_dialog.lineEdit_password_1.text()
         self.make_thread = qthreads.Make_Ioc(self._current_preset[0], self.active_devices_dict)
         self.make_thread.sig_step.connect(self.change_progressBar_value)
@@ -913,11 +913,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.device_actions.clear()
         for stp in sorted(make_step_of_type.step_type_config.keys(), key=lambda x: x.lower()):
             action = QAction(stp)
-            action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+            action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
             self.add_actions.append(action)
         for stp in make_step_of_type.get_device_steps():
             action = QAction(stp)
-            action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+            action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
             self.device_actions.append(action)
         self.toolButton_add_step.addActions(self.add_actions)
         if self.device_actions:
@@ -1225,9 +1225,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 action = QAction(stp)
                 action_a = QAction(stp)
                 action_in = QAction(stp)
-                action.triggered.connect(lambda state, x=stp, y=row+1, z=parent: self.add_loop_step(x, y, z))
-                action_a.triggered.connect(lambda state, x=stp, y=row, z=parent: self.add_loop_step(x, y, z))
-                action_in.triggered.connect(lambda state, x=stp, y=-1, z=item.data(): self.add_loop_step(x,y,z))
+                action.triggered.connect(lambda state=None, x=stp, y=row+1, z=parent: self.add_loop_step(x, y, z))
+                action_a.triggered.connect(lambda state=None, x=stp, y=row, z=parent: self.add_loop_step(x, y, z))
+                action_in.triggered.connect(lambda state=None, x=stp, y=-1, z=item.data(): self.add_loop_step(x,y,z))
                 below_actions.append(action)
                 above_actions.append(action_a)
                 into_actions.append(action_in)
@@ -1238,9 +1238,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 action = QAction(stp)
                 action_a = QAction(stp)
                 action_in = QAction(stp)
-                action.triggered.connect(lambda state, x=stp, y=row+1, z=parent: self.add_loop_step(x, y, z))
-                action_a.triggered.connect(lambda state, x=stp, y=row, z=parent: self.add_loop_step(x, y, z))
-                action_in.triggered.connect(lambda state, x=stp, y=-1, z=item.data(): self.add_loop_step(x,y,z))
+                action.triggered.connect(lambda state=None, x=stp, y=row+1, z=parent: self.add_loop_step(x, y, z))
+                action_a.triggered.connect(lambda state=None, x=stp, y=row, z=parent: self.add_loop_step(x, y, z))
+                action_in.triggered.connect(lambda state=None, x=stp, y=-1, z=item.data(): self.add_loop_step(x,y,z))
                 device_actions.append(action)
                 device_actions_a.append(action_a)
                 device_actions_in.append(action_in)
@@ -1264,18 +1264,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             menu.addMenu(insert_below_menu)
             menu.addSeparator()
             cut_action = QAction('Cut')
-            cut_action.triggered.connect(lambda state, x=item.data(): self.cut_loop_step(x))
+            cut_action.triggered.connect(lambda state=None, x=item.data(): self.cut_loop_step(x))
             copy_action = QAction('Copy')
-            copy_action.triggered.connect(lambda state, x=item.data(): self.copy_loop_step(x))
+            copy_action.triggered.connect(lambda state=None, x=item.data(): self.copy_loop_step(x))
             paste_menu = QMenu('Paste')
             if self.copied_loop_step is not None:
                 paste_above = QAction('Paste Above')
-                paste_above.triggered.connect(lambda state, x=True, y=row, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
+                paste_above.triggered.connect(lambda state=None, x=True, y=row, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
                 paste_below = QAction('Paste Below')
-                paste_below.triggered.connect(lambda state, x=True, y=row+1, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
+                paste_below.triggered.connect(lambda state=None, x=True, y=row+1, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
                 if self.current_protocol.loop_step_dict[item.data()].has_children:
                     paste_into = QAction('Paste Into')
-                    paste_into.triggered.connect(lambda state, x=True, y=-1, z=item.data(): self.add_loop_step(copied_step=x,position=y,parent=z))
+                    paste_into.triggered.connect(lambda state=None, x=True, y=-1, z=item.data(): self.add_loop_step(copied_step=x,position=y,parent=z))
                     paste_menu.addAction(paste_into)
                 paste_menu.addActions([paste_above, paste_below])
             else:
@@ -1293,12 +1293,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # for stp in sorted(drag_drop_tree_view.step_types, key=lambda x: x.lower()):
             for stp in sorted(make_step_of_type.step_type_config, key=lambda x: x.lower()):
                 action = QAction(stp)
-                action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+                action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
                 add_actions.append(action)
             device_actions = []
             for stp in make_step_of_type.get_device_steps():
                 action = QAction(stp)
-                action.triggered.connect(lambda state, x=stp: self.add_loop_step(x))
+                action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
                 device_actions.append(action)
             add_menu = QMenu('Add Step')
             add_menu.addActions(add_actions)
@@ -1307,7 +1307,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 add_menu.addActions(device_actions)
             paste_action = QAction('Paste')
             if self.copied_loop_step is not None:
-                paste_action.triggered.connect(lambda state, x=True, y=-1, z=None: self.add_loop_step(copied_step=x, position=y, parent=z))
+                paste_action.triggered.connect(lambda state=None, x=True, y=-1, z=None: self.add_loop_step(copied_step=x, position=y, parent=z))
             else:
                 paste_action.setEnabled(False)
             menu.addMenu(add_menu)
@@ -1446,4 +1446,4 @@ if __name__ == '__main__':
     ui.showMaximized()
     # RE = RunEngine()
     # ui.run_engine = RE
-    app.exec_()
+    app.exec()

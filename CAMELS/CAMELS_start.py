@@ -1,8 +1,8 @@
-# Import the necessary PyQt5 modules
+# Import the necessary PySide6 modules
 import sys
-from PyQt5.QtWidgets import QApplication, QDialog, QProgressBar, QGridLayout, QLabel
-from PyQt5.QtCore import Qt, QCoreApplication
-from PyQt5.QtGui import QPixmap, QIcon
+from PySide6.QtWidgets import QApplication, QDialog, QProgressBar, QGridLayout, QLabel
+from PySide6.QtCore import Qt, QCoreApplication
+from PySide6.QtGui import QPixmap, QIcon
 import os
 os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '1'
 
@@ -47,6 +47,7 @@ class LoadingScreen(QDialog):
 if __name__ == '__main__':
     app = QCoreApplication.instance()
     if app is None:
+        # sys.argv += ['-platform', 'windows:darkmode=1']
         app = QApplication(sys.argv)
 
     # Create the loading screen
@@ -61,12 +62,12 @@ if __name__ == '__main__':
             package_list = [x.rstrip() for x in f.readlines()]
         n = len(package_list) + 1
 
-        from PyQt5.QtCore import QThread, pyqtSignal
+        from PySide6.QtCore import QThread, Signal
         # Create a thread to import the packages
 
         class ImportThread(QThread):
-            update_progress = pyqtSignal(int)
-            update_text = pyqtSignal(str)
+            update_progress = Signal(int)
+            update_text = Signal(str)
 
             def run(self):
                 # Import your packages here
@@ -100,4 +101,4 @@ if __name__ == '__main__':
     main_window = MainApp_v2.MainWindow()
     loading_screen.hide()
 
-    app.exec_()
+    app.exec()

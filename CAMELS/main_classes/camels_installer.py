@@ -1,9 +1,9 @@
 import sys
 import os
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtGui import QIcon, QPixmap
+from PySide6.QtWidgets import QMainWindow, QApplication, QLabel
+from PySide6.QtCore import QCoreApplication
+from PySide6.QtGui import QIcon, QPixmap
 from CAMELS.gui.installer_window import Ui_InstallerWindow
 
 class InstallerWindow(QMainWindow, Ui_InstallerWindow):
@@ -47,4 +47,4 @@ if __name__ == '__main__':
         app = QApplication(sys.argv)
     ui = InstallerWindow()
     ui.show()
-    app.exec_()
+    app.exec()

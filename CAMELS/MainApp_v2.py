@@ -4,13 +4,12 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 import json
 import importlib
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QShortcut
-from PyQt5.QtCore import QCoreApplication, Qt, pyqtSignal
-from PyQt5.QtGui import QIcon, QPixmap
+from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog
+from PySide6.QtCore import QCoreApplication, Qt, Signal
+from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
 from CAMELS.gui.mainWindow_v2 import Ui_MainWindow
 from CAMELS.utility import exception_hook
-from CAMELS.main_classes import manual_control
 
 from pkg_resources import resource_filename
 
@@ -27,12 +26,12 @@ from bluesky.callbacks.best_effort import BestEffortCallback
 import databroker
 
 
-class MainWindow(QMainWindow, Ui_MainWindow):
+class MainWindow(Ui_MainWindow, QMainWindow):
     """Main Window for the program. Connects to all the other classes."""
-    protocol_stepper_signal = pyqtSignal(int)
+    protocol_stepper_signal = Signal(int)
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__()
         self.setupUi(self)
         sys.stdout = self.textEdit_console_output.text_writer
         sys.stderr = self.textEdit_console_output.error_writer
@@ -215,7 +214,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                                    title='User-Information',
                                                    askdelete=True,
                                                    tableData=tableData)
-        if dialog.exec_():
+        if dialog.exec():
             # changing the returned dict to dataframe and back to have a
             # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
@@ -267,7 +266,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         headers = ['name', 'sample_id', 'description']
         tableData = pd.DataFrame.from_dict(self.sampledata, 'index')
         dialog = add_remove_table.AddRemoveDialoge(headerLabels=headers, parent=self, title='Sample-Information', askdelete=True, tableData=tableData)
-        if dialog.exec_():
+        if dialog.exec():
             # changing the returned dict to dataframe and back to have a
             # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
@@ -338,7 +337,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def change_theme(self):
         theme = self.preferences['graphic_theme']
-        theme_changing.change_theme(theme, main_window=self)
+        material_theme = self.preferences['material_theme']
+        dark = self.preferences['dark_mode']
+        theme_changing.change_theme(theme, material_theme=material_theme, dark_mode=dark)
         self.toggle_dark_mode()
 
     def toggle_dark_mode(self):
@@ -362,7 +363,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
          load_save_functions module."""
         from CAMELS.frontpanels.settings_window import Settings_Window
         settings_dialog = Settings_Window(parent=self, settings=self.preferences)
-        if settings_dialog.exec_():
+        if settings_dialog.exec():
             self.preferences = settings_dialog.get_settings()
             number_formatting.preferences = self.preferences
             # self.toggle_dark_mode()
@@ -523,8 +524,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.add_functions_to_manual_button(button, name)
 
     def add_functions_to_manual_button(self, button, name):
-        button.config_function = lambda state, x=name: self.open_manual_control_config(x)
-        button.run_function = lambda state, x=name: self.start_manual_control(x)
+        button.config_function = lambda state=None, x=name: self.open_manual_control_config(x)
+        button.run_function = lambda state=None, x=name: self.start_manual_control(x)
         button.del_function = lambda x=name: self.remove_manual_control(x)
         button.update_functions()
 
@@ -593,8 +594,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.add_functions_to_meas_button(button, name)
 
     def add_functions_to_meas_button(self, button, name):
-        button.config_function = lambda state, x=name: self.open_protocol_config(x)
-        button.run_function = lambda state, x=name: self.run_protocol(x)
+        button.config_function = lambda state=None, x=name: self.open_protocol_config(x)
+        button.run_function = lambda state=None, x=name: self.run_protocol(x)
         button.build_function = lambda x=name: self.build_protocol(x)
         button.external_function = lambda x=name: self.open_protocol(x)
         button.del_function = lambda x=name: self.remove_protocol(x)
@@ -748,4 +749,4 @@ if __name__ == '__main__':
             f.write(f'{mod_name}\n')
     main_window = MainWindow()
     main_window.show()
-    app.exec_()
+    app.exec()

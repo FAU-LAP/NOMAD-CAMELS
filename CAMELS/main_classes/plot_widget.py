@@ -12,10 +12,10 @@ from bluesky.callbacks.core import get_obj_fields
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg,\
     NavigationToolbar2QT
 
-from PyQt5.QtWidgets import QWidget, QGridLayout, QApplication, QPushButton,\
+from PySide6.QtWidgets import QWidget, QGridLayout, QApplication, QPushButton,\
     QTableWidgetItem, QColorDialog, QComboBox, QLabel, QLineEdit
-from PyQt5.QtCore import pyqtSignal, QObject, Qt, QCoreApplication
-from PyQt5.QtGui import QIcon
+from PySide6.QtCore import Signal, QObject, Qt, QCoreApplication
+from PySide6.QtGui import QIcon
 
 from CAMELS.gui.plot_options import Ui_Plot_Options
 from CAMELS.utility.fit_variable_renaming import replace_name
@@ -119,7 +119,7 @@ class PlotWidget(QWidget):
     options_open : bool
         Whether the options are currently open
     """
-    closing = pyqtSignal()
+    closing = Signal()
 
     def __init__(self, x_name, y_names, *, legend_keys=None, xlim=None,
                  ylim=None, epoch='run', parent=None, namespace=None, ylabel='',
@@ -656,7 +656,7 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
 
 
 
-class Plot_Options(QWidget, Ui_Plot_Options):
+class Plot_Options(Ui_Plot_Options, QWidget):
     def __init__(self, parent=None, ax=None, livePlot=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -761,8 +761,8 @@ class Plot_Options(QWidget, Ui_Plot_Options):
 
 
 class MultiLivePlot(LivePlot, QObject):
-    new_data = pyqtSignal()
-    setup_done = pyqtSignal()
+    new_data = Signal()
+    setup_done = Signal()
 
     def __init__(self, ys=(), x=None, *, legend_keys=None, xlim=None, ylim=None,
                  ax=None, epoch='run', xlabel='', ylabel='', evaluator=None,
@@ -1050,8 +1050,8 @@ class PlotWidget_NoBluesky(QWidget):
 
 
 class MultiPlot_NoBluesky(QObject):
-    new_data = pyqtSignal()
-    setup_done = pyqtSignal()
+    new_data = Signal()
+    setup_done = Signal()
 
     def __init__(self, ax, xlabel='', ylabel='', ylabel2='', y_axes=None,
                  labels=(), first_hidden=None, show_plot=True):
@@ -1159,4 +1159,4 @@ class MultiPlot_NoBluesky(QObject):
 #     myapp.show()
 #     RE.subscribe(myapp.livePlot)
 #     RE(plan())
-#     sys.exit(app.exec_())
+#     sys.exit(app.exec())

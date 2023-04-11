@@ -8,8 +8,8 @@ from CAMELS.main_classes import device_class
 from CAMELS.utility.number_formatting import format_number
 from CAMELS.utility.variables_handling import get_color
 
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtWidgets import QWidget
+from PySide6.QtCore import Signal
 
 
 
@@ -157,8 +157,8 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_keysight_e5270b_con
         return self.config_dict
 
 
-class subclass_config_channel(QWidget, Ui_keysight_e5270b_config_channel):
-    activate_sig = pyqtSignal(bool)
+class subclass_config_channel(Ui_keysight_e5270b_config_channel, QWidget):
+    activate_sig = Signal(bool)
 
     def __init__(self, settings_dict=None, parent=None, number=1):
         super().__init__(parent)

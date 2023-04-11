@@ -1,7 +1,7 @@
 from CAMELS.gui.enterTextDialog import Ui_EnterTextDialog
-from PyQt5.QtWidgets import QDialog
+from PySide6.QtWidgets import QDialog
 
-class EnterTextDialog(QDialog, Ui_EnterTextDialog):
+class EnterTextDialog(Ui_EnterTextDialog, QDialog):
     """A simple QDialog-Box that has the value of the entered textbox in "self.value".
 
     - parent: parent-widget, passed to QDialog

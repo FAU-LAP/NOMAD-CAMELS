@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QLineEdit, QTextEdit,\
+from PySide6.QtWidgets import QWidget, QLabel, QGridLayout, QLineEdit, QTextEdit,\
     QComboBox
 
 from CAMELS.main_classes.loop_step import Loop_Step, Loop_Step_Config

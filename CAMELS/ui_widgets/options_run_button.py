@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QPushButton, QApplication, QMainWindow, QLabel, QStyle, QFrame, QMenu, QAction, QMessageBox
-from PyQt5.QtGui import QPainter, QColor, QBrush, QDrag
-from PyQt5.QtCore import Qt, QSize, QMimeData, pyqtSignal
+from PySide6.QtWidgets import QPushButton, QApplication, QMainWindow, QLabel, QStyle, QFrame, QMenu, QMessageBox
+from PySide6.QtGui import QPainter, QColor, QBrush, QAction, QDrag
+from PySide6.QtCore import Qt, QSize, QMimeData, Signal
 
 from CAMELS.utility.variables_handling import get_color
 
@@ -50,9 +50,9 @@ class Dots_Button(QPushButton):
 
 
 class Options_Run_Button(QFrame):
-    build_asked = pyqtSignal()
-    external_asked = pyqtSignal()
-    del_asked = pyqtSignal()
+    build_asked = Signal()
+    external_asked = Signal()
+    del_asked = Signal()
 
     def __init__(self, text='', size=120, small_text='run',
                  protocol_options=True):
@@ -145,4 +145,4 @@ if __name__ == '__main__':
     # button = Options_Run_Button('s;aiouf;lwkeja;slkjfasd;lje')
     # widge.layout().addWidget(button)
     widget.show()
-    app.exec_()
+    app.exec()

@@ -1,7 +1,7 @@
 from CAMELS.gui.taskSelector import Ui_TaskSelector
 from CAMELS.frontpanels.helper_panels.enterTextDialog import EnterTextDialog
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtGui import QIcon
+from PySide6.QtWidgets import QDialog
+from PySide6.QtGui import QIcon
 from os import getenv
 from CAMELS.utility.load_save_functions import get_task_list
 
@@ -39,7 +39,7 @@ class TaskSelector(QDialog, Ui_TaskSelector):
     def create_task(self):
         """Creates a new empty task file."""
         text_dialog = EnterTextDialog(self, 'Create Task - CAMELS', 'Task name:')
-        text_dialog.exec_()
+        text_dialog.exec()
         name = text_dialog.value
         if name is not None:
             task_path = f'{getenv("LOCALAPPDATA")}/CAMELS/Tasks/'
