@@ -350,7 +350,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def change_theme(self):
         theme = self.preferences['graphic_theme']
-        material_theme = self.preferences['material_theme']
+        if 'material_theme' in self.preferences:
+            material_theme = self.preferences['material_theme']
+        else:
+            material_theme = None
         dark = self.preferences['dark_mode']
         theme_changing.change_theme(theme, material_theme=material_theme, dark_mode=dark)
         self.toggle_dark_mode()
