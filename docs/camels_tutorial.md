@@ -1,3 +1,0 @@
-![Header Image](../CAMELS/graphics/camels-horizontal.svg)
-# Tutorial
-To be done...
