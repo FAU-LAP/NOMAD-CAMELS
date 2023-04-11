@@ -3,7 +3,8 @@ title: Home
 layout: home
 ---
 
-CAMELS - Configurable Application for Measurements, Experiments and Laboratory Systems
+# CAMELS
+## Configurable Application for Measurements, Experiments and Laboratory Systems
 
 CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics. Here many experiments utilize a multitude of measurement devices used in dynamically changing setups. CAMELS will allow to define instrument control and measurement protocols using a graphical user interface (GUI). This provides a low entry threshold enabling the creation of new measurement protocols without programming knowledge or a deeper understanding of device communication.
 
