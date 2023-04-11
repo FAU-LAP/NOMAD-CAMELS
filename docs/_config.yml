@@ -4,7 +4,8 @@ theme: just-the-docs
 
 url: https://fau-lap.github.io/CAMELS
 
-logo: /docs/assets/camels-horizontal.svg
+#logo: /docs/assets/camels-horizontal.svg
+favicon_ico: "/assets/CAMELS.ico"
 
 #aux_links:
 #  Template Repository: https://github.com/just-the-docs/just-the-docs-template
