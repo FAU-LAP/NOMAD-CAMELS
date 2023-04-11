@@ -226,10 +226,12 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
         self.layout = QGridLayout()
         self.layout.addWidget(self.table)
         self.setLayout(self.layout)
+        self.plot_data.update_name()
 
     def get_data(self):
         self.plot_data.y_axes['formula'] = self.table.update_table_data()
         self.plot_data.y_axes['axis'] = [1] * len(self.plot_data.y_axes['formula'])
+        self.plot_data.update_name()
         return super().get_data()
 
 
@@ -247,6 +249,7 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.lineEdit_ylabel.setText(self.plot_data.ylabel)
         self.lineEdit_zlabel.setText(self.plot_data.zlabel)
         self.lineEdit_title.setText(self.plot_data.title)
+        self.plot_data.update_name()
 
     def get_data(self):
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
@@ -256,6 +259,7 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.plot_data.y_axes['formula'][0] = self.lineEdit_y_axis.text()
         self.plot_data.z_axis = self.lineEdit_z_axis.text()
         self.plot_data.title = self.lineEdit_title.text()
+        self.plot_data.update_name()
         return super().get_data()
 
 
