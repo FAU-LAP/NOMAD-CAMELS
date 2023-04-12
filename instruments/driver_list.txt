@@ -1,0 +1,11 @@
+agilent_34401==1.0
+bruker_magnet_ni_daq==1.0
+DAQ_custom_device==1.0
+demo_device==1.0
+gap_burner_arduino==1.0
+keithley_2000==1.0
+keysight_b2912==1.0
+keysight_e5270b==1.0
+PID==1.0
+PID_EPICS==1.0
+voltcraft_pps==1.0

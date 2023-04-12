@@ -1,1 +1,1 @@
-.desertenv\Scripts\python.exe MainApp.py
+CAMELS\.desertenv\Scripts\python.exe MainApp.py

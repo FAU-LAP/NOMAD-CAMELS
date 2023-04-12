@@ -1,11 +1,12 @@
-lsi: false
-safe: true
-theme: architect
-source: /docs
-incremental: false
-highlighter: rouge
-gist:
-  noscript: false
-kramdown:
-  math_engine: mathjax
-  syntax_highlighter: rouge
+title: CAMELS
+description: CAMELS
+theme: just-the-docs
+
+url: https://fau-lap.github.io/CAMELS
+
+#logo: "/assets/camels_horizontal.png"
+favicon_ico: "/assets/CAMELS.ico"
+color_scheme: dark
+
+#aux_links:
+#  Template Repository: https://github.com/just-the-docs/just-the-docs-template
