@@ -15,8 +15,10 @@ The GUI generates python code that interfaces with instruments and allows users 
 [Find us on Github.](https://github.com/FAU-LAP/CAMELS)
 
 <p style="text-align:left;">
+  <span style="color: grey;">
   &larr; Back
+  </span>
   <span style="float:right;">
-    <a href="/docs/installation">Next &rarr;</a><br>
+    <a href="docs/installation.html">Next &rarr;</a><br>
   </span>
 </p>
