@@ -10,7 +10,6 @@ on:
   push:
     branches:
       - "documentation"
-      - "main"
     paths:
       - "docs/**"
 
