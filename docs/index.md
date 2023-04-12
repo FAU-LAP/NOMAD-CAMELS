@@ -12,7 +12,6 @@ CAMELS is a configurable measurement software, targeted towards the requirements
 The GUI generates python code that interfaces with instruments and allows users to modify the code for specific applications and implementations of arbitrary devices if necessary. Even large-scale, distributed systems can be implemented. CAMELS is well suited to generate FAIR-compliant output data. NeXus standards, immediate NOMAD integration and hence a FAIRmat compliant data pipeline can be readily implemented.
 
 # CAMELS Installer
-![](camels_logo_large.png)
 
 As CAMELS is written in python it requires a working python environment to run properly. 
 
@@ -28,16 +27,16 @@ If you do not have python installed on your machine or a clean python environmen
 1. Using the installer (**RECOMENDED**)
 2. Custom installation
 
-## 1. Using the ![CAMELS_installer.exe](2023-04-11-18-24-27.png)
+## 1. Using the CAMELS_installer.exe
 Simply download the CAMELS installer (.exe) from the *[Homepage](https://fau-lap.github.io/CAMELS/)*
 
 Run the installer. Admin rights should not be rquired.
 
 - Creates all necessary folders and files
 - This installes pyenv to `%userprofile%` as `\.pyenv\`
-- Installes Python 3.9.6. 
-- Creates the correct python environment 
-- Installs CAMELS
+- Installes Python 3.9.6. using pyenv
+- Creates the correct python environment (called .desertenv using the pyenv 3.9.6 python version)
+- Installs CAMELS (using pip in the .desertenv environment)
 
 This takes about 2-3 minutes depending on your machine.
 
