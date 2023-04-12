@@ -10,7 +10,7 @@ nav_order: 1
 
 As CAMELS is written in python it requires a working python environment to run properly.
 
-With the correct python version ($>=$3.9.6) CAMELS can simply be installed using `pip`
+With the correct python version (>=3.9.6) CAMELS can simply be installed using `pip`
 (but this is not recomended! Try and use the installer if possible):
 
     pip install git+https://github.com/FAU-LAP/CAMELS.git
