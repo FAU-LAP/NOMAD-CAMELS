@@ -13,3 +13,10 @@ CAMELS is a configurable measurement software, targeted towards the requirements
 The GUI generates python code that interfaces with instruments and allows users to modify the code for specific applications and implementations of arbitrary devices if necessary. Even large-scale, distributed systems can be implemented. CAMELS is well suited to generate FAIR-compliant output data. NeXus standards, immediate NOMAD integration and hence a FAIRmat compliant data pipeline can be readily implemented.
 
 [Find us on Github.](https://github.com/FAU-LAP/CAMELS)
+
+<p style="text-align:left;">
+  &larr; Back
+  <span style="float:right;">
+    <a href="/docs/installation">Next &rarr;</a><br>
+  </span>
+</p>
