@@ -54,3 +54,7 @@ Try to always use this option as it minimizes any unwanted errors during setup a
 - Now type `pip install git+https://github.com/FAU-LAP/CAMELS.git@development` to install CAMELS
 - Create the folder `%localappdata%\CAMELS\Presets\Backup` manually
 
+
+
+|[&larr; Back](../index.md)|[Next &rarr;](quick_start.md)|
+|:---|---:|
