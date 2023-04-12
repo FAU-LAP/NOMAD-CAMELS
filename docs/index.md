@@ -29,7 +29,7 @@ If you do not have python installed on your machine or a clean python environmen
 2. Custom installation
 
 ## 1. Using the CAMELS_installer.exe
-Simply download the CAMELS installer (.exe) from the *[Homepage](https://fau-lap.github.io/CAMELS/)*
+Simply download the CAMELS installer (.exe) from the *[Homepage](https://fau-lap.github.io/CAMELS/)* or its current [repository](https://github.com/A-D-Fuchs/CAMELS_installer/blob/main/Output/CAMELS_installer.exe)
 
 Run the installer. Admin rights should not be rquired.
 
