@@ -1,1 +1,0 @@
-start CAMELS\.desertenv\Scripts\pythonw.exe CAMELS\CAMELS_start.py

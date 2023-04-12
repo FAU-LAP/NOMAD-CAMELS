@@ -1,2 +1,0 @@
-include "asyn.dbd"
-registrar("drvPrologixGPIB_RegisterCommands")
