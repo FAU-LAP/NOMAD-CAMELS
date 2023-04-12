@@ -2,6 +2,7 @@
 title: Home
 layout: home
 nav_order: 0
+back_to_top: true
 ---
 ![Logo](assets/camels-horizontal.svg)
 
@@ -14,5 +15,11 @@ The GUI generates python code that interfaces with instruments and allows users 
 
 [Find us on Github.](https://github.com/FAU-LAP/CAMELS)
 
-|<span style="color:grey;">&larr; Back</span>|[Next &rarr;](docs/installation.md)|
-|:---|---:|
+<p style="text-align:left;">
+  <span style="color: grey;">
+  &larr; Back
+  </span>
+  <span style="float:right;">
+    <a href="docs/installation.html">Next &rarr;</a><br>
+  </span>
+</p>

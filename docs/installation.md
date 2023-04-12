@@ -56,5 +56,12 @@ Try to always use this option as it minimizes any unwanted errors during setup a
 
 
 
-|[&larr; Back](../index.md)|[Next &rarr;](quick_start.md)|
-|:---|---:|
+
+<p style="text-align:left;">
+  <span style="color: grey;">
+  <a href="../index.html">&larr; Back</a>
+  </span>
+  <span style="float:right;">
+    <a href="quick_start.html">Next &rarr;</a><br>
+  </span>
+</p>
