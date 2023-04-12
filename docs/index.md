@@ -33,7 +33,7 @@ Simply download the CAMELS installer (.exe) from the *[Homepage](https://fau-lap
 Run the installer. Admin rights should not be rquired.
 
 - Creates all necessary folders and files
-- This installes pyenv to `%userprofile%` as `\.pyenv\`
+- This installes pyenv to `%userprofile%\.pyenv\`
 - Installes Python 3.9.6. using pyenv
 - Creates the correct python environment (called .desertenv using the pyenv 3.9.6 python version)
 - Installs CAMELS (using pip in the .desertenv environment)
