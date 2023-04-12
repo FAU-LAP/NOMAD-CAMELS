@@ -8,8 +8,9 @@ url: https://fau-lap.github.io/CAMELS
 favicon_ico: "/assets/CAMELS.ico"
 color_scheme: dark
 
-#aux_links:
-#  Template Repository: https://github.com/just-the-docs/just-the-docs-template
+aux_links:
+  CAMELS on GitHub: https://github.com/FAU-LAP/CAMELS
+  NOMAD Website: https://nomad-lab.eu/nomad-lab/
 
 
 # Footer last edited timestamp
