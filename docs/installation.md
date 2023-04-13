@@ -15,7 +15,16 @@ With the correct python version (>=3.9.6) CAMELS can simply be installed using `
 
     pip install git+https://github.com/FAU-LAP/CAMELS.git
 
+**Requires you to have git installed and availiable in your command line tool!** 
+
 This installs CAMELS as a python package into your package library (`\*env*\Lib\site-packages\CAMELS\`, where `*env*` is the path to the python environment used with the `pip install` command).
+
+You can also use this pip install command that is currently which **DOES NOT** require git!
+
+    pip install -i https://test.pypi.org/simple/ nomad-camels==0.1.1
+
+NOMAD-CAMELS will be move to PyPi in the near future.
+
 
 [comment]: <> (# Installing on Windows)
 
