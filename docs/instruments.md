@@ -12,6 +12,6 @@ nav_order: 5
   <a href="programmers_guide.html">&larr; Back</a>
   </span>
   <span style="float:right;">
-    <a href="keithley_237.html">Next &rarr;</a><br>
+    <a href="instruments/keithley_237.html">Next &rarr;</a><br>
   </span>
 </p>
