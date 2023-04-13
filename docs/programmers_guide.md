@@ -7,5 +7,11 @@ nav_order: 4
 
 # Programmer's Guide
 
-|[&larr; Back](users_guide.md)|[Next &rarr;](instruments.md)|
-|:---|---:|
+<p style="text-align:left;">
+  <span style="color: grey;">
+  <a href="users_guide.html">&larr; Back</a>
+  </span>
+  <span style="float:right;">
+    <a href="instruments.html">Next &rarr;</a><br>
+  </span>
+</p>

@@ -7,5 +7,11 @@ nav_order: 5
 
 # Instruments
 
-|[&larr; Back](programmers_guide.md)|[Next &rarr;](instruments/keithley_237.md)|
-|:---|---:|
+<p style="text-align:left;">
+  <span style="color: grey;">
+  <a href="programmers_guide.html">&larr; Back</a>
+  </span>
+  <span style="float:right;">
+    <a href="keithley_237.html">Next &rarr;</a><br>
+  </span>
+</p>

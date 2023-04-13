@@ -7,5 +7,9 @@ nav_order: 1
 
 # Keithley 237
 
-|[&larr; Back](../instruments.md)|<span style="color:grey;">Next &rarr;</span>|
-|:---|---:|
+<p style="text-align:left;">
+  <a href="../instruments.html">&larr; Back</a>
+  <span style="float:right; color:grey;">
+    Next &rarr;
+  </span>
+</p>

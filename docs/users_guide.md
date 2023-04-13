@@ -7,5 +7,11 @@ nav_order: 3
 
 # User's Guide
 
-|[&larr; Back](quick_start.md)|[Next &rarr;](programmers_guide.md)|
-|:---|---:|
+<p style="text-align:left;">
+  <span style="color: grey;">
+  <a href="quick_start.html">&larr; Back</a>
+  </span>
+  <span style="float:right;">
+    <a href="programmers_guide.html">Next &rarr;</a><br>
+  </span>
+</p>
