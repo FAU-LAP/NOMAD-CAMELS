@@ -19,7 +19,7 @@ from CAMELS.main_classes import protocol_class, device_class
 from CAMELS.utility.load_save_helper_functions import load_plots
 from CAMELS.utility.device_handling import load_local_packages
 
-appdata_path = f'{getenv("LOCALAPPDATA")}/CAMELS'
+appdata_path = f'{getenv("LOCALAPPDATA")}/NOMAD-CAMELS'
 if not isdir(appdata_path):
     makedirs(appdata_path)
 preset_path = f'{appdata_path}/Presets/'
