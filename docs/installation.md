@@ -66,7 +66,7 @@ If you have a working python environment (`python -V` returns `3.9.6`) then you 
 - Create the folder `%localappdata%\CAMELS\Presets\Backup` manually
 
 ## 3. Errors and Bugs
-As CAMELS is currently under development errors and bugs should be expected. We are working hard to keep the number of bugs small.\
+As CAMELS is currently under development errors and bugs can occur. We are working hard to keep the number of bugs small.\
 Here are some Errors and ways you might be able to fix them
 - **CATALOG_KEY_ERROR:**\
 This mostly occurs when starting CAMELS for the first time and is caused by a missing catalog file (for bluesky) in your folders. CAMELS normaly creates this file when you start it for the first time and you simply need to restart CAMELS again for it to work
