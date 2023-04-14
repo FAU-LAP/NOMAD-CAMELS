@@ -1,4 +1,5 @@
 LICENSE.txt
+MANIFEST.in
 README.md
 pyproject.toml
 requirements.txt
@@ -38,6 +39,27 @@ nomad_camels/frontpanels/helper_panels/__init__.py
 nomad_camels/frontpanels/helper_panels/button_move_scroll_area.py
 nomad_camels/frontpanels/helper_panels/enterTextDialog.py
 nomad_camels/frontpanels/helper_panels/pass_ask.py
+nomad_camels/graphics/CAMELS.ico
+nomad_camels/graphics/CAMELS_Icon.png
+nomad_camels/graphics/Camel Groan 2 - QuickSounds.com.mp3
+nomad_camels/graphics/Camel-Groan-2-QuickSounds.com.wav
+nomad_camels/graphics/camels-horizontal.svg
+nomad_camels/graphics/camels-vertical.svg
+nomad_camels/graphics/camels_horizontal.png
+nomad_camels/graphics/camels_vertical.png
+nomad_camels/graphics/dark.qss
+nomad_camels/graphics/legacy/CAMELS.svg
+nomad_camels/graphics/legacy/CAMELS_Icon.png
+nomad_camels/graphics/legacy/CAMELS_Icon_v1.ico
+nomad_camels/graphics/legacy/CAMELS_Icon_v2.ico
+nomad_camels/graphics/legacy/CAMELS_Logo.png
+nomad_camels/graphics/legacy/CAMELS_Logo.svg
+nomad_camels/graphics/legacy/CAMELS_Logo_v1.svg
+nomad_camels/graphics/legacy/CAMELS_V1.svg
+nomad_camels/graphics/legacy/CAMELS_v2.svg
+nomad_camels/graphics/legacy/camels - Kopie.png
+nomad_camels/graphics/legacy/camels_free.png
+nomad_camels/graphics/legacy/plus_sign.png
 nomad_camels/gui/__init__.py
 nomad_camels/gui/addDeviceDialog.py
 nomad_camels/gui/device_installer.py
