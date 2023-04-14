@@ -73,7 +73,9 @@ This mostly occurs when starting CAMELS for the first time and is caused by a mi
 - **PRESETS folder missing:**\
 This occurs when CAMELS can't find `%localappdata%\NOMAD-CAMELS\Presets\Backup` where all your settings are stored.\
 If this error occurs then simply add these folders (`Presets` and `Backup`) to `%localappdata%`.
-
+- **Install fails randomly**\
+If your installation fails randomly (setup of python environment takes less than a few seconds) and you can't run CAMELS with the created shortcuts then it is poissible that your pyenv PATH variables are not set correctly. Open powershell and  see if the `pyenv` command works.\
+Set the correct PATH variables for pyenv and retry the installation again.
 ## 4. Uninstalling CAMELS
 To remove CAMELS simply run the uninstaller. This is only possible if you used the installer.exe to install CAMELS in the first place.\
 The uninstaller does not remove your Presets and Backups (of the presets) under `%localappdata%\NOMAD-CAMELS` manually delete these files if you are sure you don't need them anymore. \
