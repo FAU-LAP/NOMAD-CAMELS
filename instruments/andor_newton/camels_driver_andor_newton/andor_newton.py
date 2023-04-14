@@ -1,7 +1,7 @@
 from CAMELS.main_classes import device_class
 from .andor_newton_config import Ui_andor_newton_config
 from .andor_newton_ophyd import Andor_Newton
-from PyQt5.QtWidgets import QTabWidget
+from PySide6.QtWidgets import QTabWidget
 
 
 class subclass(device_class.Device):

@@ -1,7 +1,7 @@
 from CAMELS.main_classes import device_class
 from .andor_shamrock_500_config import Ui_andor_shamrock500_config
 from .andor_shamrock_500_ophyd import Andor_Shamrock_500
-from PyQt5.QtWidgets import QTabWidget
+from PySide6.QtWidgets import QTabWidget
 
 
 class subclass(device_class.Device):
