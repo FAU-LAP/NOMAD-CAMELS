@@ -8,22 +8,16 @@ nav_order: 1
 
 # CAMELS Installation
 
-As CAMELS is written in python it requires a working python environment to run properly.
+As NOMAD-CAMELS (from now on only 'CAMELS') is written in python it requires a working python environment to run properly.
+The [installer.exe](#1-using-the-camels_installerexe) takes care of all of this for you.
 
 With the correct python version (>=3.9.6) CAMELS can simply be installed using `pip`
-(but this is not recomended! Try and use the installer if possible):
+(but this is not recommended! Try and use the installer if possible):
 
-    pip install git+https://github.com/FAU-LAP/CAMELS.git
+    pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels
 
-**Requires you to have `git` installed and availiable in your command line tool!** 
-
-This installs CAMELS as a python package into your package library (`\*env*\Lib\site-packages\CAMELS\`, where `*env*` is the path to the python environment used with the `pip install` command).
-
-You can also use this `pip install` command that is currently which **DOES NOT** require git!
-
-    pip install -i https://test.pypi.org/simple/ nomad-camels==0.1.1
-
-NOMAD-CAMELS will be move to PyPi in the near future.
+**This will install CAMELS in to your python environment but does not create all necessary folders under %localappdata% for example. Only use this if you know what you are doing!**\
+This installs CAMELS as a python package into your package library (`\*env*\Lib\site-packages\NOMAD-CAMELS\`, where `*env*` is the path to the python environment used with the `pip install` command).
 
 
 [comment]: <> (# Installing on Windows)
@@ -34,9 +28,8 @@ If you do not have python installed on your machine or a clean python environmen
 
 
 ## 1. Using the CAMELS_installer.exe (Windows)
-Simply download the CAMELS installer (.exe) from the *[Homepage](https://fau-lap.github.io/CAMELS/)*
-
-Run the installer. Admin rights should not be rquired.
+Simply download the CAMELS installer (.exe) from *[here](https://github.com/A-D-Fuchs/CAMELS_installer/blob/main/Output/NOMAD-CAMELS_installer.exe)*\
+Run the installer. Admin rights should not be required. 
 
 - Creates all necessary folders and files
 - This installes pyenv to `%userprofile%\.pyenv\`
@@ -44,24 +37,42 @@ Run the installer. Admin rights should not be rquired.
 - Creates the correct python environment (called .desertenv using the pyenv 3.9.6 python version)
 - Installs CAMELS (using pip in the .desertenv environment)
 
-This takes about 2-3 minutes depending on your machine.
-
+This takes about 2-3 minutes depending on your machine.\
 Try to always use this option as it minimizes any unwanted errors during setup and makes running and removing/uninstalling easy.
 
 ## 2. Custom Installation
 
-### Install python
+### 2.1 Install python
 
 - Install pyenv to install any python version (you do not need to do this if you already have a python versioning software like Anaconda installed):
 - Type in to the powershell:
-  `Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"`
+
+      Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
+
 - Then type in to the powershell `pyenv install 3.9.6`
+### 2.2 Install CAMELS
+If you have a working python environment (`python -V` returns `3.9.6`) then you can continue to install CAMELS.
 - Create a folder where you want to install CAMELS (e.g. `\NOMAD-CAMELS\`)
 - Type in your powershell `cd \NOMAD-CAMELS\;pyenv local 3.9.6. `
 - Now simply run the command `python -m venv .desertenv` in this folder to create a virtual python environment (using the python version given by `pyenv local <version>`)
 - Now simply activate the environment with `.\.desertenv\Scripts\activate`
-- Now type `pip install git+https://github.com/FAU-LAP/CAMELS.git@development` to install CAMELS
+- Now type
+
+      pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels 
+
+   to install CAMELS.
+
+### 2.3 Create necessary folders
 - Create the folder `%localappdata%\CAMELS\Presets\Backup` manually
+
+## 3. Errors and Bugs
+As CAMELS is currently under development errors and bugs should be expected. We are working hard to keep the number of bugs small.\
+Here are some Errors and ways you might be able to fix them
+- **CATALOG_KEY_ERROR:**\
+This mostly occurs when starting CAMELS for the first time and is caused by a missing catalog file (for bluesky) in your folders. CAMELS normaly creates this file when you start it for the first time and you simply need to restart CAMELS again for it to work
+- **PRESETS folder missing:**\
+This occurs when CAMELS can't find `%localappdata%\NOMAD-CAMELS\Presets\Backup` where all your settings are stored.\
+If this error occurs then simply add these folders (`Presets` and `Backup`) to `%localappdata%`.
 
 
 
