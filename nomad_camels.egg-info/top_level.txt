@@ -1,2 +1,2 @@
-NOMAD-CAMELS
 dist
+nomad_camels
