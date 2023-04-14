@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nomad_camels"
-version = "0.1.4"
+version = "0.1.6"
 authors = [
     { name="J. A. F. Lehmeyer", email="Johannes.Lehmeyer@physik.hu-berlin.de" },
   { name="A. D. Fuchs", email="alexander.fuchs@physik.hu-berlin.de" },

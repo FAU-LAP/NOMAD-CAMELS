@@ -1,6 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+sys.path.append(os.path.dirname(__file__))
 import json
 import importlib
 
@@ -8,10 +9,10 @@ from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog
 from PySide6.QtCore import QCoreApplication, Qt, Signal
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
-from nomad_camels.nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
+from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from nomad_camels.utility import exception_hook
-
+from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from pkg_resources import resource_filename
 
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
