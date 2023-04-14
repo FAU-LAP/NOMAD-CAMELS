@@ -19,10 +19,10 @@ class LoadingScreen(QDialog):
         layout = QGridLayout()
         self.setLayout(layout)
         self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-        self.setWindowIcon(QIcon(resource_filename('NOMAD-CAMELS', 'graphics/camels_icon.png')))
+        self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
 
         image = QPixmap()
-        image.load(resource_filename('NOMAD-CAMELS', 'graphics/CAMELS_vertical.png'))
+        image.load(resource_filename('nomad_camels', 'graphics/CAMELS_vertical.png'))
         image = image.scaled(403, 308)
         image_label = QLabel()
         image_label.setPixmap(image)

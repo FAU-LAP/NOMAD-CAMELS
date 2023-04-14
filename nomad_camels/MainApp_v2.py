@@ -8,6 +8,7 @@ from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog
 from PySide6.QtCore import QCoreApplication, Qt, Signal
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
+from nomad_camels.nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from nomad_camels.utility import exception_hook
 
