@@ -27,9 +27,10 @@ The `MANIFEST.in` file contains information about static non-python files that s
    where X.Y.Z is the version number given in the `.toml` file
 3. To upload the builds to PyPi (**!currently uploads to TestPyPi during development!**) run:
     ```bash
-    pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels
+    python -m twine upload --repository testpypi nomad*
     ```
-   The `extra-index-url` allows dependency installations from PyPi.\
+   > **_NOTE:_** Make sure there are only the newly built files in `dist/` that match `nomad*`. If you have multiple build files in `dist/` the upload might not work as desired. 
+
    Now enter `__token__` as the username and enter your saved API token as the password to complete the upload.
 4. The new version should then be available on https://test.pypi.org/project/nomad-camels/
 
@@ -38,6 +39,8 @@ To install the most recent version of NOMAD-CAMELS intp your python environment 
 ```bash
     pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels
 ```
+The `--extra-index-url` flag allows dependencies to be installed from PyPi.\
+The `--no-cache-dir` flag prevents any locally saved NOMAD-CAMELS version to be installed instead of the kost recent remote version. 
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="../index.html">&larr; Back</a>
