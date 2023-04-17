@@ -13,7 +13,7 @@ The [installer.exe](#1-using-the-camels_installerexe) takes care of all of this 
 
 With the correct python version (>=3.9.6) CAMELS can simply be installed using `pip`
 (but this is not recommended! Try and use the installer if possible):
-```commandline
+```bash
 pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels
 ```
 **This will install CAMELS in to your python environment but does not create all necessary folders under %localappdata% for example. Only use this if you know what you are doing!**\
@@ -46,7 +46,7 @@ Try to always use this option as it minimizes any unwanted errors during setup a
 
 - Install pyenv to install any python version (you do not need to do this if you already have a python versioning software like Anaconda installed):
 - Type in to the powershell:
-```PowerShell
+```bash
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
 ```
 - Then type in to the powershell `pyenv install 3.9.6`
@@ -57,7 +57,7 @@ If you have a working python environment (`python -V` returns `3.9.6`) then you 
 - Now simply run the command `python -m venv .desertenv` in this folder to create a virtual python environment (using the python version given by `pyenv local <version>`)
 - Now simply activate the environment with `.\.desertenv\Scripts\activate`
 - Now type
-```commandline
+```bash
 pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels 
 ```
    to install CAMELS.

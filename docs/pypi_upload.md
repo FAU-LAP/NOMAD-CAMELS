@@ -26,7 +26,7 @@ The `MANIFEST.in` file contains information about static non-python files that s
    ```
    where X.Y.Z is the version number given in the `.toml` file
 3. To upload the builds to PyPi (**!currently uploads to TestPyPi during development!**) run:
-    ```commandline
+    ```bash
     pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels
     ```
    The `extra-index-url` allows dependency installations from PyPi.\
@@ -35,7 +35,7 @@ The `MANIFEST.in` file contains information about static non-python files that s
 
 ## Install
 To install the most recent version of NOMAD-CAMELS intp your python environment run
-```commandline
+```bash
     pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels
 ```
 <p style="text-align:left;">
