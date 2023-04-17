@@ -21,7 +21,10 @@ This guide follows after the installation, to make you familiar with the main fu
 When you first start up NOMAD-CAMELS, you should see something like the following:  
 ![startup.svg](quick_start/startup.svg)  
 Clicking on the "Manage Instruments" button will open a dialog where you can install available instruments from the CAMELS repository. For this tutorial we use the "demo_device".  
-![instrument_install.svg](quick_start/instrument_install.svg)![install_complete.svg](quick_start/install_complete.svg)  
+<p float="left">
+    <img src="/quick_start/instrument_install.svg" width="49%"/>
+    <img src="/quick_start/install_complete.svg" width="49%"/>
+</p>
 After the install is successfull (second picture above), you can switch to the "Configure Instruments" tab.
 
 
