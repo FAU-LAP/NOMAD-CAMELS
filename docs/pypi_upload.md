@@ -15,14 +15,14 @@ The `MANIFEST.in` file contains information about static non-python files that s
    ```
    main_folder/
    |--- dist/
-         |--- Nomad_camels-X.Y.Z.tar.gz
+         |--- nomad_camels-X.Y.Z.tar.gz
          |--- nomad_camels-X.Y.Z-py3-none-any.whl
    |--- pyproject.toml
    |--- requirements.txt
    |--- MANIFEST.in
    |--- nomad_camels/
          |--- MainApp.py
-         |--- 'many other files' 
+         |--- 'many other files ...' 
    ```
    where X.Y.Z is the version number given in the `.toml` file
 3. To upload the builds to PyPi (**!currently uploads to TestPyPi during development!**) run:
