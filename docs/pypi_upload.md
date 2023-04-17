@@ -41,7 +41,7 @@ To install the most recent version of NOMAD-CAMELS intp your python environment 
     pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels
 ```
 The `--extra-index-url` flag allows dependencies to be installed from PyPi.\
-The `--no-cache-dir` flag prevents any locally saved NOMAD-CAMELS version to be installed instead of the kost recent remote version. 
+The `--no-cache-dir` flag prevents any locally saved NOMAD-CAMELS version to be installed instead of the most recent remote version. 
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="../index.html">&larr; Back</a>
