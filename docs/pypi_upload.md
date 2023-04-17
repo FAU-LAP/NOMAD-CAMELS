@@ -29,13 +29,13 @@ The `MANIFEST.in` file contains information about static non-python files that s
          |--- 'many other files ...' 
    ```
    where X.Y.Z is the version number (MAJOR.MINOR.PATCH) given in the `.toml` file. 
-3. To upload the builds to PyPi (**!currently uploads to TestPyPi during development!**) run:
+3. To upload the builds to PyPi (**!currently uploads to TestPyPi as it is under development!**) run:
     ```bash
     python -m twine upload --repository testpypi nomad*
     ```
 
    > &#x26A0; Make sure there are only the newly built files in `dist/` that match `nomad*`. If you have multiple build files in `dist/` the upload might not work as desired.
-
+   
    Now enter `__token__` as the username and enter your saved API token as the password to complete the upload.
 4. The new version should then be available on https://test.pypi.org/project/nomad-camels/
 
