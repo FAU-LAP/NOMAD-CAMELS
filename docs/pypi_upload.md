@@ -15,8 +15,8 @@ The `MANIFEST.in` file contains information about static non-python files that s
    ```
    main_folder/
    |--- dist/
-         --- Nomad_camels-X.Y.Z.tar.gz
-         --- nomad_camels-X.Y.Z-py3-none-any.whl
+         |--- Nomad_camels-X.Y.Z.tar.gz
+         |--- nomad_camels-X.Y.Z-py3-none-any.whl
    |--- pyproject.toml
    |--- requirements.txt
    |--- MANIFEST.in
