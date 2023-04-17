@@ -10,8 +10,12 @@ The `MANIFEST.in` file contains information about static non-python files that s
 
 ## Upload Workflow
 1. Make your desired changes in the `nomad_camels` folder (the main app folder). 
-2. Run `python -m build` in the folder where the `pyproject.toml` file is located (should be located in the parent folder of the `nomad_camels` folder). This creates the succesfull builds (`nomad_camels-X.Y.Z.tar.gz` and `nomad_camels-X.Y.Z-py3-none-any.whl`) in `/dist/`.  \
-   The folder structure should look something like this
+2. Run 
+   ```bash
+   python -m build
+   ``` 
+   in the folder where the `pyproject.toml` file is located (should be located in the parent folder of the `nomad_camels` folder). This creates the successful builds (`nomad_camels-X.Y.Z.tar.gz` and `nomad_camels-X.Y.Z-py3-none-any.whl`) in `/dist/`.  \
+   The folder structure should look something like this:
    ```
    main_folder/
    |--- dist/
@@ -24,7 +28,7 @@ The `MANIFEST.in` file contains information about static non-python files that s
          |--- MainApp.py
          |--- 'many other files ...' 
    ```
-   where X.Y.Z is the version number given in the `.toml` file
+   where X.Y.Z is the version number (MAJOR.MINOR.PATCH) given in the `.toml` file. 
 3. To upload the builds to PyPi (**!currently uploads to TestPyPi during development!**) run:
     ```bash
     python -m twine upload --repository testpypi nomad*
@@ -36,7 +40,7 @@ The `MANIFEST.in` file contains information about static non-python files that s
 4. The new version should then be available on https://test.pypi.org/project/nomad-camels/
 
 ## Install
-To install the most recent version of NOMAD-CAMELS intp your python environment run
+To install the most recent version of NOMAD-CAMELS into your python environment run
 ```bash
     pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels
 ```
