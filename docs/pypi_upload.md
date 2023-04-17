@@ -29,7 +29,7 @@ The `MANIFEST.in` file contains information about static non-python files that s
     ```bash
     python -m twine upload --repository testpypi nomad*
     ```
-   > &#1396 Make sure there are only the newly built files in `dist/` that match `nomad*`. If you have multiple build files in `dist/` the upload might not work as desired. 
+   > &#x26A0; Make sure there are only the newly built files in `dist/` that match `nomad*`. If you have multiple build files in `dist/` the upload might not work as desired. 
 
    Now enter `__token__` as the username and enter your saved API token as the password to complete the upload.
 4. The new version should then be available on https://test.pypi.org/project/nomad-camels/
