@@ -8,6 +8,12 @@ nav_order: 1
 
 # CAMELS Installation
 
+```python
+from test import junk
+for i in range(12):
+    print(i)
+```
+
 As NOMAD-CAMELS (from now on only 'CAMELS') is written in python it requires a working python environment to run properly.
 The [installer.exe](#1-using-the-camels_installerexe) takes care of all of this for you.
 
@@ -82,10 +88,6 @@ The uninstaller does not remove your Presets and Backups (of the presets) under 
 The `.pyenv` folder and any python versions installed with pyenv are **NOT** removed when uninstalling.\
 `.pyenv` can be found in `%userprofile%`. Manually remove this if you do not need it anymore.\
 **Beware that removing this might break OTHER applications or scripts that rely on python versions installed with pyenv!**
-
-
-
-
 
 
 <p style="text-align:left;">
