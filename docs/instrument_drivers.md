@@ -5,9 +5,6 @@ parent: Programmer's Guide
 nav_order: 1
 ---
 # NOMAD-CAMELS Instrument Drivers
-This is the officially maintained repository of the [NOMAD-CAMELS](https://fau-lap.github.io/NOMAD-CAMELS/) instrument drivers.\
-[This list](/drivers_list.txt) contains all drivers that are supplied by the NOMAD-CAMELS development team. \
-The [NOMAD-CAMELS measurement software](https://fau-lap.github.io/NOMAD-CAMELS/)  reads this file as a default to list the installable instruments. 
 ## 1. Writing New Instrument Drivers
 Every instrument driver is an individual [PyPi](https://pypi.org/) package.
 > &#9888; 
