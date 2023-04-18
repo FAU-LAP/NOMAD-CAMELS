@@ -8,12 +8,6 @@ nav_order: 1
 
 # CAMELS Installation
 
-```python
-from test import junk
-for i in range(12):
-    print(i)
-```
-
 As NOMAD-CAMELS (from now on only 'CAMELS') is written in python it requires a working python environment to run properly.
 The [installer.exe](#1-using-the-camels_installerexe) takes care of all of this for you.
 

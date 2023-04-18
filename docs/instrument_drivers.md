@@ -35,7 +35,7 @@ Most importantly the project name and version must be set in the `pyproject.toml
 <details>
   <summary>Code example: pyproject.toml file</summary>
 
-```toml
+{% highlight toml %}
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
@@ -60,7 +60,7 @@ dependencies = [
 [project.urls]
 "GitHub Page" = "https://github.com/FAU-LAP/NOMAD-CAMELS"
 "Documentation" = "https://fau-lap.github.io/NOMAD-CAMELS/"
-```
+{% endhighlight %}
 
 </details>
 
