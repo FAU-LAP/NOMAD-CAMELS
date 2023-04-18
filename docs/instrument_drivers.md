@@ -72,7 +72,7 @@ For simple instrument with only a few settings you do not need to write your own
 <details>
   <summary>Code example: Use the auto-generated UI for instrument settings</summary>
 
-```python
+{% highlight python %}
 from nomad_camels_driver_keithley_237.keithley_237_ophyd import Keithley_237 # Change this line!
 from nomad_camels.main_classes import device_class
 
@@ -125,7 +125,7 @@ class subclass_config(device_class.Simple_Config):
                          config_dict, ioc_dict, additional_info, comboBoxes=comboBoxes, labels=labels)
         self.comboBox_connection_type.addItem('Local VISA')
         self.load_settings()
-```
+{% endhighlight %}
 
 </details>
 
@@ -135,7 +135,7 @@ If the instrument is more complex CAMELS can not auto generate the UI anymore. H
 <details>
   <summary>Code example: Use your own UI file to create settings for your instrument</summary>
 
-```python
+{% highlight python %}
 from CAMELS.main_classes import device_class
 from .andor_shamrock_500_config import Ui_andor_shamrock500_config
 from .andor_shamrock_500_ophyd import Andor_Shamrock_500
@@ -203,7 +203,7 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_andor_shamrock500_c
         self.config_dict['input_slit_size'] = self.input_slit_size.value()
         self.config_dict['output_slit_size'] = self.output_slit_size.value()
         return super().get_config()
-```
+{% endhighlight %}
 
 </details>
 
@@ -211,7 +211,7 @@ Here is a more complex example which creates settings for two channels of a sing
 <details>
   <summary>Code example: Complex instrument</summary>
 
-```python
+{% highlight python %}
 from nomad_camels.main_classes import device_class
 from keysight_b2912.keysight_b2912_channel_config import Ui_B2912_channel # You need to import the created UI file
 from keysight_b2912.keysight_b2912_ophyd import Keysight_B2912 # Import the actual device communication
@@ -415,9 +415,8 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_B2912_channel):
         self.config_dict['voltage_compliance'] = float(self.lineEdit_voltage_compliance.text())
         self.config_dict['NPLC'] = float(self.lineEdit_NPLC.text())
         return super().get_config()
+{% endhighlight %}
 
-
-```
 </details>
 
 ### 1.3. Building the Instrument Package
