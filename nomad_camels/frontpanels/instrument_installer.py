@@ -1,3 +1,4 @@
+import re
 import subprocess
 
 from nomad_camels.gui.device_installer import Ui_Form
@@ -31,8 +32,9 @@ def getInstalledDevices(force=False, return_packages=False):
     for x in importlib_metadata.distributions():
         name = x.metadata['Name']
         version = x.version
-        if name.startswith('camels-driver-'):
-            installed_instr[name[14:].replace('-', '_')] = version
+        camels_driver_regex = r'^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$'
+        if re.match(camels_driver_regex, name):
+            installed_instr[name[20:].replace('-', '_')] = version
     packages = device_handling.load_local_packages()
     for package in packages:
         installed_instr[package] = 'local'
@@ -234,18 +236,17 @@ class Install_Thread(QThread):
             self.val_step.emit(i / n * 100)
             if self.uninstall:
                 cmd = [f'{path}/pip', 'uninstall', '-y',
-                       f'camels-driver-{dev.replace("_","-")}']
+                       f'nomad-camels-driver-{dev.replace("_","-")}']
             else:
-                repo = variables_handling.preferences['driver_repository']
-                branch = variables_handling.preferences['repo_branch']
-                directory = variables_handling.preferences['repo_directory']
-                url = f'git+{repo}@{branch}#subdirectory={directory}/{dev}'
-                cmd = [f'{path}/pip', 'install', url]
-            popen = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                pypi_url = r'https://test.pypi.org/simple/' # TODO Change to regular PyPi
+                device_name = dev.replace("_","-")
+                print()
+                print(path)
+            ret = subprocess.Popen(['powershell', f'{path}\\pip install --no-cache-dir --index-url {pypi_url} --extra-index-url https://pypi.org/simple nomad-camels-driver-{device_name}'], stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT,
-                                     stdin=subprocess.PIPE, bufsize=1,
+                                     stdin=subprocess.PIPE,
                                      creationflags=subprocess.CREATE_NO_WINDOW)
-            for line in iter(popen.stdout.readline, b''):
+            for line in iter(ret.stdout.readline, b''):
                 text = line.decode().rstrip()
                 self.info_step.emit(text)
         self.val_step.emit(100)
