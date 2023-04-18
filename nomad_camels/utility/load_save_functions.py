@@ -40,7 +40,7 @@ standard_pref = {'autosave': True,
                  'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/'),
                  # 'autostart_ioc': False,
                  'databroker_catalog_name': 'CAMELS_CATALOG',
-                 'driver_repository': 'https://github.com/FAU-LAP/NOMAD-CAMELS.git',
+                 'driver_repository': 'https://github.com/FAU-LAP/CAMELS_drivers',
                  'repo_branch': 'main',
                  'repo_directory': 'instruments',
                  'play_camel_on_error': False}
