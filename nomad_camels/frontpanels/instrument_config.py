@@ -50,7 +50,7 @@ class Instrument_Config(Ui_Form, QWidget):
         self.current_instr = instr
         self.label_config.setText(f'Configure: {instr}')
         if instr not in self.packages:
-            self.packages[instr] = importlib.import_module(f'camels_driver_{instr}.{instr}')
+            self.packages[instr] = importlib.import_module(f'nomad_camels_driver_{instr}.{instr}')
         self.config_tabs.clear()
         if not self.active_instruments[instr]:
             self.config_tabs.addTab(QLabel('Add an instrument\ninstance by clicking "+"'), 'no instrument')
