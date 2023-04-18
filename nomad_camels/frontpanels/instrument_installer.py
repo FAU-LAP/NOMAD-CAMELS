@@ -234,7 +234,7 @@ class Install_Thread(QThread):
             self.val_step.emit(i / n * 100)
             if self.uninstall:
                 cmd = [f'{path}/pip', 'uninstall', '-y',
-                       f'camels-driver-{dev.replace("_","-")}']
+                       f'nomad-camels-driver-{dev.replace("_","-")}']
             else:
                 repo = variables_handling.preferences['driver_repository']
                 branch = variables_handling.preferences['repo_branch']
