@@ -6,8 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "nomad_camels"
 version = "0.1.8"
 authors = [
-    { name="J. A. F. Lehmeyer", email="Johannes.Lehmeyer@physik.hu-berlin.de" },
-  { name="A. D. Fuchs", email="alexander.fuchs@physik.hu-berlin.de" },
+    { name="FAIRmat - HU Berlin", email="nomad-camels@fau.de" }
 ]
 description = "CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics."
 readme = "README.md"
