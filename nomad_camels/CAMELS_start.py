@@ -74,7 +74,10 @@ if __name__ == '__main__':
                 for i, package in enumerate(package_list):
                     self.update_progress.emit(int(i / n * 100))
                     self.update_text.emit(f'loading {package}...')
-                    __import__(package)
+                    try:
+                        __import__(package)
+                    except ModuleNotFoundError:
+                        pass
                 self.update_text.emit('starting NOMAD-CAMELS...')
                 self.update_progress.emit(int((n-1)/n * 100))
                 from nomad_camels import MainApp_v2

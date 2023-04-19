@@ -75,6 +75,8 @@ def autosave_preset(preset:str, preset_data):
         (usually the __save_dict__ of the MainApp)
     """
     preset_file = f'{preset}.preset'
+    if not os.path.isdir(preset_path):
+        makedirs(preset_path)
     with open(f'{preset_path}{preset_file}', 'w') as json_file:
         json.dump(preset_data, json_file, indent=2)
     make_backup(preset_file)
@@ -320,6 +322,8 @@ def get_most_recent_presets():
         name of the neweset measurement-preset, returns None, if none found
     """
     presets = []
+    if not os.path.isdir(preset_path):
+        makedirs(preset_path)
     for name in listdir(preset_path):
         if name.endswith('.preset'):
             presets.append(name)
