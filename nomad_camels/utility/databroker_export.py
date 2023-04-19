@@ -1,5 +1,7 @@
+import importlib.metadata
 import os.path
 import json
+import sys
 
 import databroker
 import h5py
@@ -125,6 +127,14 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
             proc['program'].attrs['program_url'] = 'https://github.com/FAU-LAP/NOMAD-CAMELS'
             version_dict = meta_start.pop('versions')
             vers_group = proc.create_group('versions')
+            py_environment = proc.create_group('python_environment')
+            py_environment.attrs['python_version'] = sys.version
+            d = importlib.metadata.distributions()
+            for x in importlib.metadata.distributions():
+                try:
+                    py_environment[x.metadata['Name']] = x.version
+                except Exception as e:
+                    print(e, x.metadata['Name'])
             recourse_entry_dict(vers_group, version_dict)
             user = entry.create_group('user')
             user.attrs['NX_class'] = 'NXuser'
