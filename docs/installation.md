@@ -49,12 +49,13 @@ Try to always use this option as it minimizes any unwanted errors during setup a
 ```bash
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
 ```
-- Then type in to the powershell `pyenv install 3.9.6`
+- Then type in to the powershell `pyenv install <python_version>` for example `pyenv install 3.9.6`.
+`<python_version>` is the python version you want to use that is 3.9.6 or higher.
 ### 2.2 Install CAMELS
-If you have a working python environment (`python -V` returns `3.9.6`) then you can continue to install CAMELS.
 - Create a folder where you want to install CAMELS (e.g. `\NOMAD-CAMELS\`)
 - Type in your powershell `cd \NOMAD-CAMELS\;pyenv local 3.9.6. `
-- Now simply run the command `python -m venv .desertenv` in this folder to create a virtual python environment (using the python version given by `pyenv local <version>`)
+- If you have a working python environment (`python -V` in `/NOMAD-CAMELS/` returns `<python_version>`) then you can continue to install CAMELS.
+- Now simply run the command `python -m venv .desertenv` in this folder to create a virtual python environment (using the python version given by `pyenv local <python_version>`)
 - Now simply activate the environment with `.\.desertenv\Scripts\activate`
 - Now type
 ```bash
