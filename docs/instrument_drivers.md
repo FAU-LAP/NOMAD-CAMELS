@@ -26,7 +26,7 @@ It is possible to create drivers that are only available locally for you.
 > Currently the drivers are located in [testPyPi.org](https://testPyPi.org/). &#9888;\
 > This will be changed to [PyPi.org](https://PyPi.org/) once the devices are stable.
 
-The source code of each driver can be found in this repository.
+The source code of each driver can be found in [this repository](https://github.com/FAU-LAP/CAMELS_drivers).
 ### 1.1. Folder structure
 The driver should have the following folder structure
 ```
