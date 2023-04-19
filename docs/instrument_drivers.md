@@ -4,6 +4,9 @@ title: Instrument Drivers
 parent: Programmer's Guide
 nav_order: 1
 ---
+
+# NOMAD-CAMELS Instrument Drivers
+This page should help you create new instrument drivers that can be used in NOMAD-CAMELS.
 # Navigation Structure
 {: .no_toc }
 
@@ -19,8 +22,6 @@ nav_order: 1
 {:toc}
 </details>
 
-# NOMAD-CAMELS Instrument Drivers
-This page should help you create new instrument drivers that can be used in NOMAD-CAMELS.
 ## 1. Writing New Instrument Drivers for PyPi
 Every instrument driver should be an individual [PyPi](https://pypi.org/) package.\
 It is possible to create drivers that are only available locally for you. 
