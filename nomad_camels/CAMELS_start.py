@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QApplication, QDialog, QProgressBar, QGridLayout, 
 from PySide6.QtCore import Qt, QCoreApplication
 from PySide6.QtGui import QPixmap, QIcon
 import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '1'
 
 from pkg_resources import resource_filename
@@ -55,7 +56,6 @@ if __name__ == '__main__':
     loading_screen = LoadingScreen()
     loading_screen.show()
     import os.path
-    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
     file_dir = os.path.dirname(__file__)
     package_file = f'{appdata_path}/startup_packages.txt'
     # package_file = f'{file_dir}/packages.txt'
