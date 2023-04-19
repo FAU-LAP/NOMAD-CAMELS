@@ -610,6 +610,7 @@ class Simple_Config_Sub(Device_Config_Sub):
             if name in comboBoxes:
                 self.setting_combos[name] = QComboBox()
                 self.setting_combos[name].addItems(comboBoxes[name])
+                self.setting_combos[name].setCurrentText(val)
             elif name in config_types:
                 if config_types[name] == 'bool':
                     self.setting_checks[name] = QCheckBox(name)
@@ -638,6 +639,7 @@ class Simple_Config_Sub(Device_Config_Sub):
             if name in comboBoxes:
                 self.config_combos[name] = QComboBox()
                 self.config_combos[name].addItems(comboBoxes[name])
+                self.config_combos[name].setCurrentText(val)
             elif name in config_types:
                 if config_types[name] == 'bool':
                     self.config_checks[name] = QCheckBox(name)
