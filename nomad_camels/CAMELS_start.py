@@ -60,44 +60,44 @@ if __name__ == '__main__':
     if os.path.isfile(package_file):
         with open(f'{file_dir}/packages.txt', 'r') as f:
             package_list = [x.rstrip() for x in f.readlines()]
-        n = len(package_list) + 1
-
-        from PySide6.QtCore import QThread, Signal
-        # Create a thread to import the packages
-
-        class ImportThread(QThread):
-            update_progress = Signal(int)
-            update_text = Signal(str)
-
-            def run(self):
-                # Import your packages here
-                for i, package in enumerate(package_list):
-                    self.update_progress.emit(int(i / n * 100))
-                    self.update_text.emit(f'loading {package}...')
-                    try:
-                        __import__(package)
-                    except ModuleNotFoundError:
-                        pass
-                self.update_text.emit('starting NOMAD-CAMELS...')
-                self.update_progress.emit(int((n-1)/n * 100))
-                from nomad_camels import MainApp_v2
-
-
-        # Start the thread and connect the progress signal
-        thread = ImportThread()
-        thread.update_progress.connect(loading_screen.set_progress)
-        thread.update_text.connect(loading_screen.set_text)
-        # thread.finished.connect(start_main)
-        thread.start()
-        while thread.isRunning():
-            app.processEvents()
     else:
-        from nomad_camels import MainApp_v2
-        with open(package_file, 'w') as f:
-            for i, (mod_name, mod) in enumerate(sys.modules.items()):
-                if mod_name.startswith('_') or mod is None:
-                    continue
-                f.write(f'{mod_name}\n')
+        package_list = []
+    n = len(package_list) + 1
+
+    from PySide6.QtCore import QThread, Signal
+    # Create a thread to import the packages
+
+    class ImportThread(QThread):
+        update_progress = Signal(int)
+        update_text = Signal(str)
+
+        def run(self):
+            # Import your packages here
+            for i, package in enumerate(package_list):
+                self.update_progress.emit(int(i / n * 100))
+                self.update_text.emit(f'loading {package}...')
+                try:
+                    __import__(package)
+                except ModuleNotFoundError:
+                    pass
+            self.update_text.emit('starting NOMAD-CAMELS...')
+            self.update_progress.emit(int((n-1)/n * 100))
+            from nomad_camels import MainApp_v2
+
+
+    # Start the thread and connect the progress signal
+    thread = ImportThread()
+    thread.update_progress.connect(loading_screen.set_progress)
+    thread.update_text.connect(loading_screen.set_text)
+    # thread.finished.connect(start_main)
+    thread.start()
+    while thread.isRunning():
+        app.processEvents()
+    with open(package_file, 'w') as f:
+        for i, (mod_name, mod) in enumerate(sys.modules.items()):
+            if mod_name.startswith('_') or mod is None:
+                continue
+            f.write(f'{mod_name}\n')
     from nomad_camels import MainApp_v2
     from nomad_camels.utility import exception_hook
     sys.excepthook = exception_hook.exception_hook
