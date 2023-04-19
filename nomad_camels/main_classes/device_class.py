@@ -567,7 +567,7 @@ class Local_VISA(Connection_Config):
 class Simple_Config(Device_Config):
     def __init__(self, parent=None, device_name='', data='', settings_dict=None,
                  config_dict=None, ioc_dict=None, additional_info=None,
-                 comboBoxes=None, config_types=None):
+                 comboBoxes=None, config_types=None, labels=None):
         super().__init__(parent, device_name=device_name, data=data,
                          settings_dict=settings_dict,
                          config_dict=config_dict, ioc_dict=ioc_dict,
@@ -576,7 +576,8 @@ class Simple_Config(Device_Config):
                                             parent=self,
                                             config_dict=config_dict,
                                             comboBoxes=comboBoxes,
-                                            config_types=config_types)
+                                            config_types=config_types,
+                                            labels=labels)
         self.layout().addWidget(self.sub_widget, 10, 0, 1, 5)
         self.load_settings()
 
@@ -591,7 +592,7 @@ class Simple_Config(Device_Config):
 
 class Simple_Config_Sub(Device_Config_Sub):
     def __init__(self, settings_dict=None, parent=None, config_dict=None,
-                 comboBoxes=None, config_types=None):
+                 comboBoxes=None, config_types=None, labels=None):
         super().__init__(settings_dict=settings_dict, parent=parent,
                          config_dict=config_dict)
         self.setLayout(QGridLayout())
@@ -602,6 +603,7 @@ class Simple_Config_Sub(Device_Config_Sub):
         self.setting_floats = {}
         self.setting_strings = {}
         self.setting_combos = {}
+        labels = labels or {}
         for name, val in settings_dict.items():
             if name == 'connection':
                 continue
@@ -666,21 +668,30 @@ class Simple_Config_Sub(Device_Config_Sub):
                 col = 0
                 row += 1
         for name, widge in self.setting_floats.items():
-            self.layout().addWidget(QLabel(name), row, col)
+            if name in labels:
+                self.layout().addWidget(QLabel(labels[name]), row, col)
+            else:
+                self.layout().addWidget(QLabel(name), row, col)
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
         for name, widge in self.setting_strings.items():
-            self.layout().addWidget(QLabel(name), row, col)
+            if name in labels:
+                self.layout().addWidget(QLabel(labels[name]), row, col)
+            else:
+                self.layout().addWidget(QLabel(name), row, col)
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
         for name, widge in self.setting_combos.items():
-            self.layout().addWidget(QLabel(name), row, col)
+            if name in labels:
+                self.layout().addWidget(QLabel(labels[name]), row, col)
+            else:
+                self.layout().addWidget(QLabel(name), row, col)
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
@@ -693,21 +704,30 @@ class Simple_Config_Sub(Device_Config_Sub):
                 col = 0
                 row += 1
         for name, widge in self.config_floats.items():
-            self.layout().addWidget(QLabel(name), row, col)
+            if name in labels:
+                self.layout().addWidget(QLabel(labels[name]), row, col)
+            else:
+                self.layout().addWidget(QLabel(name), row, col)
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
         for name, widge in self.config_strings.items():
-            self.layout().addWidget(QLabel(name), row, col)
+            if name in labels:
+                self.layout().addWidget(QLabel(labels[name]), row, col)
+            else:
+                self.layout().addWidget(QLabel(name), row, col)
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
         for name, widge in self.config_combos.items():
-            self.layout().addWidget(QLabel(name), row, col)
+            if name in labels:
+                self.layout().addWidget(QLabel(labels[name]), row, col)
+            else:
+                self.layout().addWidget(QLabel(name), row, col)
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
