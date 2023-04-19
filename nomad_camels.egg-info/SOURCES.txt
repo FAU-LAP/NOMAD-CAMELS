@@ -24,6 +24,7 @@ nomad_camels/bluesky_handling/helper_functions.py
 nomad_camels/bluesky_handling/make_catalog.py
 nomad_camels/bluesky_handling/protocol_builder.py
 nomad_camels/bluesky_handling/special_plan_stubs.py
+nomad_camels/bluesky_handling/visa_signal.py
 nomad_camels/commands/__init__.py
 nomad_camels/commands/change_sequence.py
 nomad_camels/frontpanels/__init__.py
