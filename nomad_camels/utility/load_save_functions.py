@@ -31,12 +31,12 @@ save_dict_skip = [QWidget, QSplitter, QLabel, QPushButton, QMenu, QMenuBar,
 
 standard_pref = {'autosave': True,
                  'dark_mode': False,
-                 'graphic_theme': 'default',
+                 'graphic_theme': 'Fusion',
                  'n_decimals': 3,
                  'number_format': 'mixed',
                  'mixed_from': 3,
                  'py_files_path': f'{appdata_path}/python_files'.replace('\\','/'),
-                 'meas_files_path': os.path.expanduser('~/CAMELS_data').replace('\\','/'),
+                 'meas_files_path': os.path.expanduser('~/NOMAD_CAMELS_data').replace('\\','/'),
                  'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/'),
                  # 'autostart_ioc': False,
                  'databroker_catalog_name': 'CAMELS_CATALOG',
@@ -75,6 +75,8 @@ def autosave_preset(preset:str, preset_data):
         (usually the __save_dict__ of the MainApp)
     """
     preset_file = f'{preset}.preset'
+    if not os.path.isdir(preset_path):
+        makedirs(preset_path)
     with open(f'{preset_path}{preset_file}', 'w') as json_file:
         json.dump(preset_data, json_file, indent=2)
     make_backup(preset_file)
@@ -320,6 +322,8 @@ def get_most_recent_presets():
         name of the neweset measurement-preset, returns None, if none found
     """
     presets = []
+    if not os.path.isdir(preset_path):
+        makedirs(preset_path)
     for name in listdir(preset_path):
         if name.endswith('.preset'):
             presets.append(name)
