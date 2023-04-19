@@ -42,7 +42,7 @@ standard_pref = {'autosave': True,
                  'databroker_catalog_name': 'CAMELS_CATALOG',
                  'driver_repository': 'https://github.com/FAU-LAP/CAMELS_drivers',
                  'repo_branch': 'main',
-                 'repo_directory': 'instruments',
+                 'repo_directory': '',
                  'play_camel_on_error': False}
 
 def get_preset_list():
