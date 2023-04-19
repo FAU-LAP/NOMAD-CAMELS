@@ -72,7 +72,7 @@ class VISA_Signal_Read(SignalRO):
                  kind='hinted', tolerance=None, rtolerance=None, metadata=None,
                  cl=None, attr_name='', read_termination='\n', write_termination='\n',
                  baud_rate=9600, resource_name='', query_text='', match_return=False,
-                 read_function=None):
+                 read_function=None, process_read_function=None,):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
         self.visa_instrument = None
         self.resource_name = resource_name
@@ -87,6 +87,7 @@ class VISA_Signal_Read(SignalRO):
         #     self.visa_instrument.write_termination = write_termination
         #     self.visa_instrument.baud_rate = baud_rate
         self.read_function = read_function or None
+        self.process_read_function = process_read_function or None
         self.query_text = query_text
         self.reading = False
 
@@ -109,6 +110,8 @@ class VISA_Signal_Read(SignalRO):
                     val = float(gr)
                 except:
                     pass
+        if self.process_read_function:
+            val = self.process_read_function(val)
         self._readback = val
         return super().get()
 
