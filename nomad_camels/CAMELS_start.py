@@ -45,6 +45,7 @@ class LoadingScreen(QDialog):
 
 # Show the loading screen and import your packages
 if __name__ == '__main__':
+    appdata_path = f'{os.getenv("LOCALAPPDATA")}/nomad_camels'
     app = QCoreApplication.instance()
     if app is None:
         # sys.argv += ['-platform', 'windows:darkmode=1']
@@ -56,9 +57,10 @@ if __name__ == '__main__':
     import os.path
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
     file_dir = os.path.dirname(__file__)
-    package_file = f'{file_dir}/packages.txt'
+    package_file = f'{appdata_path}/startup_packages.txt'
+    # package_file = f'{file_dir}/packages.txt'
     if os.path.isfile(package_file):
-        with open(f'{file_dir}/packages.txt', 'r') as f:
+        with open(package_file, 'r') as f:
             package_list = [x.rstrip() for x in f.readlines()]
     else:
         package_list = []
@@ -89,7 +91,6 @@ if __name__ == '__main__':
     thread = ImportThread()
     thread.update_progress.connect(loading_screen.set_progress)
     thread.update_text.connect(loading_screen.set_text)
-    # thread.finished.connect(start_main)
     thread.start()
     while thread.isRunning():
         app.processEvents()
