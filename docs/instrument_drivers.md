@@ -4,15 +4,32 @@ title: Instrument Drivers
 parent: Programmer's Guide
 nav_order: 1
 ---
+# Navigation Structure
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
 # NOMAD-CAMELS Instrument Drivers
-## 1. Writing New Instrument Drivers
-Every instrument driver is an individual [PyPi](https://pypi.org/) package.
+
+{:toc}
+
+This page should help you create new instrument drivers that can be used in NOMAD-CAMELS.
+## 1. Writing New Instrument Drivers for PyPi
+
+{:toc}
+
+Every instrument driver should be an individual [PyPi](https://pypi.org/) package.\
+It is possible to create drivers that are only available locally for you. 
 > &#9888; 
 > Currently the drivers are located in [testPyPi.org](https://testPyPi.org/). &#9888;\
 > This will be changed to [PyPi.org](https://PyPi.org/) once the devices are stable.
 
 The source code of each driver can be found in this repository.
 ### 1.1. Folder structure
+
+{:toc}
+
 The driver should have the following folder structure
 ```
 <parent_driver_name>
@@ -454,6 +471,20 @@ The `--no-cache-dir` flag prevents any locally saved NOMAD-CAMELS version to be 
 > &#9888; The index-url must be changed of course when installing from PyPi &#9888;
 
 ---
+## 2. Local Instrument Drivers
+You can create and use local instrument drivers by simple creating this kind of folder structure
+
+```
+nomad_camels_driver_<parent_driver_name> (contains the actual device communication files)
+└─> <parent_driver_name>.py
+└─> <parent_driver_name>_ophyd.py
+```
+and giving the path to the parent folder in the CAMELS settings.
+
+CAMELS then searches the given path for folder starting with `nomad_camels_driver_` and extracts the device name from the text following this.\
+For more details on how the .py and ophyd.py files should look like you can go to the code examples in [Section 1.2.](#12-python-files)
+
+---
 
 ### Advanced Driver Information
 
@@ -471,6 +502,7 @@ This should include a class (meaningfully named) inheriting from `ophyd.Device`.
 Here you may set all the components the device has. \
 Components that are created with kind='normal' (or not specified) will appear as channels inside CAMELS. Channels can be set and read and are the main way CAMELS communicates with devices during measurements. \
 Components with kind='config' should be part of the configuration-widget.
+
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="../index.html">&larr; Back</a>
