@@ -274,7 +274,7 @@ def load_devices_dict(string_dict, devices_dict):
             dev_lib = local_packages[name]
         else:
             try:
-                dev_lib = importlib.import_module(f'camels_driver_{name}.{name}')
+                dev_lib = importlib.import_module(f'nomad_camels_driver_{name}.{name}')
             except Exception as e:
                 try:
                     dev_lib = importlib.import_module(f'{name}.{name}')
