@@ -5,11 +5,9 @@ parent: Programmer's Guide
 nav_order: 1
 ---
 # Navigation Structure
-
 {: .no_toc }
 
 ## Table of contents
-
 {: .no_toc }
 
 <details open markdown="block">
