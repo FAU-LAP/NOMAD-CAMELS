@@ -61,10 +61,15 @@ dependencies = [
 
 </details>
 
+---
+
 ### 1.2. Python files
 The `<parent_driver_name>.py` file contains information about the possible instrument configurations and settings. This can be for example the current compliance of a voltage source or the integration time of a digital multimeter.\
 #### 1.2.1 Simple Device Configurations
-For simple instrument with only a few settings you do not need to write your own GUI for the settings but CAMELS can auto-generate the UI for you. An example file is displayed below:
+> &#9888; For **simple instruments** with only a **few settings** you do not need to write your own GUI for the settings but CAMELS can auto-generate the UI for you. \
+> An example file is displayed below:
+
+---
 
 <details>
   <summary>Code example: Use the auto-generated UI for instrument settings</summary>
@@ -126,9 +131,13 @@ class subclass_config(device_class.Simple_Config):
 
 </details>
 
+---
 
 #### 1.2.2 Complex Device Configurations
 If the instrument is more complex CAMELS can not auto generate the UI anymore. Here you need to write your own UI using for example QT Designer. The first three class definitions are relevant for this. 
+
+---
+
 <details>
   <summary>Code example: Use your own UI file to create settings for your instrument</summary>
 
@@ -203,6 +212,8 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_andor_shamrock500_c
 {% endhighlight %}
 
 </details>
+
+---
 
 Here is a more complex example which creates settings for two channels of a single instrument.
 <details>
@@ -416,6 +427,8 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_B2912_channel):
 
 </details>
 
+---
+
 ### 1.3. Building the Instrument Package
 To create a new package that can be installed via pip from PyPi or testPyPi follow these steps.
 1. Make sure you have `build` installed into your python environment with `pip install build`
@@ -428,6 +441,8 @@ To create a new package that can be installed via pip from PyPi or testPyPi foll
     ```
    &#9888; Change the repository used after the `--repository` flag to `pypi` to upload to PyPi
 
+---
+
 ### 1.4. Install Instrument Package
 To install simply run 
 ```bash
@@ -438,31 +453,24 @@ The `--extra-index-url` flag allows dependencies to be installed from PyPi.\
 The `--no-cache-dir` flag prevents any locally saved NOMAD-CAMELS version to be installed instead of the most recent remote version.\
 > &#9888; The index-url must be changed of course when installing from PyPi &#9888;
 
-
-
-
-
+---
 
 ### Advanced Driver Information
 
-The directory should be named like the device.
+**Regarding the `*.py` file.**
 
-
-`device`.py
-
-This should include a class `subclass` which inherits from `main_classes.device_class.Device`.
-The Arguments here should be set in the __init__ by the subclass (following) the documentation of the Device class.
+It should include a class `subclass` which inherits from `main_classes.device_class.Device`.
+The arguments here should be set in the __init__ by the subclass (following) the documentation of the Device class.
 For most devices, nothing further should be necessary in this class.
-In the attribute `files`, you should list all files, needed for an IOC to support this device. These should be in the same directory.
 
-The `subclass_config`, inheriting from `main_classes.device_class.Device_Config`.
-It should provide the necessary configuration for the device and put this information into the device's `config`, `settings` and `ioc_settings` attributes.
+The `subclass_config`, inheriting from `main_classes.device_class.Device_Config` should provide the necessary configuration for the device and put this information into the device's `config`, `settings` and `ioc_settings` attributes.
 
+**Regarding the `*ophyd.py` file.**
 
-
-`device_ophyd.py`
 This should include a class (meaningfully named) inheriting from `ophyd.Device`.
-Here you may set all the components the device has. Components are called 'channels' in CAMELS and is what you use to write and read to and from instruments. Those with a kind='normal' (or not specified) will appear as channels inside CAMELS. Those with kind='config' should be part of the configuration-Widget.
+Here you may set all the components the device has. \
+Components that are created with kind='normal' (or not specified) will appear as channels inside CAMELS. Channels can be set and read and are the main way CAMELS communicates with devices during measurements. \
+Components with kind='config' should be part of the configuration-widget.
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="../index.html">&larr; Back</a>
