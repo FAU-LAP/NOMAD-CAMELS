@@ -11,7 +11,7 @@ nav_order: 1
 As NOMAD-CAMELS (from now on only 'CAMELS') is written in python it requires a working python environment to run properly.
 The [installer.exe](#1-using-the-camels_installerexe) takes care of all of this for you.
 
-With the correct python version (>=3.11.3) CAMELS can simply be installed using `pip`
+With the correct python version (3.11.3 or newer) CAMELS can simply be installed using `pip`
 (but this is not recommended! Try and use the installer if possible):
 ```bash
 pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels
