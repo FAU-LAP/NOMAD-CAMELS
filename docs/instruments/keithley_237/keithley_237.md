@@ -70,6 +70,11 @@ Reads the `read_DC` channel.\
 `read_DC` always reads the compliance side of the source type. So it reads voltage when current is sourced and reads current when voltage is sourced.
 ![img_2.png](img_2.png)
 
+#### Resulting Data
+Example data from such a for-loop measurement. From the recorded instrument setting you will always know what was measured.
+![img_3.png](img_3.png)
+
+
 
 
 
