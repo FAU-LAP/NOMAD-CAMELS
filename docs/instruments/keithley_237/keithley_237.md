@@ -95,27 +95,35 @@ The type of sweep measurement is set by writing a value (0 to 4) to the  `setSwe
 Each type requires a different set of parameters from this list :\
 `level`, `points`, `pulses`, `start`, `step`, `stop`, `t_off` and `t_on`.
 
----
-
+### Setting up the Sweep
+### Sweep Parameters
 Before you start the sweep measurement you have to set the required parameters to the desired value in a measurement step. Here for example for a linear stair sweep from `start=0` to `stop=1` with `step size=0.1`. `Bias delay` and `range` are set in the instrument config page.\
 &#9888; You MUST set the sweep type here as well: `1 = linear stair`
 ![img_4.png](img_4.png)
 
----
+### Starting the Sweep
 
 Then you can start the measurement by setting the value of `keithley_237_start_sweep` to `1`
 ![img_5.png](img_5.png)
 and in a different step you have to start the sweep.
 
----
+Reading the sweep data
 
 To read the measured data simply read the `read_sweep` channel:
 ![img_6.png](img_6.png)
 
----
+### Example Sweep Data
 
-This produces the following data:
-![img_7.png](img_7.png)
+This produces the following data for a voltage sweep using a 15 k&#8486; resistor.
+
+<details>
+  <summary>Display example data</summary>
+
+<img src="img_7.png"/>
+
+</details>
+
+The first column in the data is the set value (in this case the voltage) while the second column is the measured value (current) for that voltage.
 The settings of the sweep can be read from the `protocol_overview` entry and the instrument settings.
 
 
