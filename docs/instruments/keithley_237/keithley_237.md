@@ -97,7 +97,7 @@ Each type requires a different set of parameters from this list :\
 
 ---
 
-Before you start the sweep measurement you have to set the required parameters to the desired value in a measurement step. Here for example for a linear stair sweep from 0 to 1 with step size 0.1.\
+Before you start the sweep measurement you have to set the required parameters to the desired value in a measurement step. Here for example for a linear stair sweep from `start=0` to `stop=1` with `step size=0.1`. `Bias delay` and `range` are set in the instrument config page.\
 &#9888; You MUST set the sweep type here as well: `1 = linear stair`
 ![img_4.png](img_4.png)
 
