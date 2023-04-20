@@ -25,6 +25,9 @@ from bluesky import RunEngine
 from bluesky.callbacks.best_effort import BestEffortCallback
 import databroker
 
+camels_github = 'https://github.com/FAU-LAP/NOMAD-CAMELS'
+camels_github_pages = 'https://fau-lap.github.io/NOMAD-CAMELS/'
+
 
 class MainWindow(Ui_MainWindow, QMainWindow):
     """Main Window for the program. Connects to all the other classes."""
@@ -113,6 +116,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionNew_Preset.triggered.connect(self.new_preset)
         self.actionLoad_Backup_Preset.triggered.connect(self.load_backup_preset)
         self.actionVISA_device_builder.triggered.connect(self.launch_device_builder)
+        self.actionReport_Bug.triggered.connect(lambda x: os.startfile(f'{camels_github}/issues'))
+        self.actionDocumentation.triggered.connect(lambda x: os.startfile(camels_github_pages))
 
         # buttons
         self.pushButton_add_manual.clicked.connect(self.add_manual_control)
