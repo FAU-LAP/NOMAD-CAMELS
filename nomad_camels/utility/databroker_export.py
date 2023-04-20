@@ -131,10 +131,11 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
             py_environment.attrs['python_version'] = sys.version
             d = importlib.metadata.distributions()
             for x in importlib.metadata.distributions():
-                try:
+                name = x.metadata['Name']
+                if name not in py_environment.keys():
                     py_environment[x.metadata['Name']] = x.version
-                except Exception as e:
-                    print(e, x.metadata['Name'])
+                # except Exception as e:
+                #     print(e, x.metadata['Name'])
             recourse_entry_dict(vers_group, version_dict)
             user = entry.create_group('user')
             user.attrs['NX_class'] = 'NXuser'
