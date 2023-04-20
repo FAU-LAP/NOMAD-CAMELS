@@ -6,7 +6,9 @@ nav_order: 3
 ---
 
 # User's Guide
-## Reading HDF5 files from CAMELS
+## Display HDF5 FIle
+You can simply display the HDF5 file you obtained from CAMELS by dragging-and-dropping it into the following [webpage](https://h5web.panosc.eu/h5wasm) or any other HDF5-viewer.
+## Reading HDF5 Files from CAMELS
 You can use this simple script to read your HDF5 recursively and convert it to a nested dictionary.
 
 ```python
