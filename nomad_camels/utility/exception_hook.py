@@ -28,6 +28,8 @@ class ErrorMessage(QMessageBox):
 		self.setIcon(QMessageBox.Warning)
 		self.setStandardButtons(QMessageBox.Ok)
 		self.setText(msg)
+		print(msg)
+		print(info_text)
 		if info_text:
 			self.setInformativeText(info_text)
 

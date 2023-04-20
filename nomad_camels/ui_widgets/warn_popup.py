@@ -5,6 +5,7 @@ class WarnPopup(QMessageBox):
         super().__init__(parent=parent)
         self.setText(text)
         self.setWindowTitle(f'{title} - NOMAD-CAMELS')
+        print(text)
         if info_icon:
             self.setIcon(QMessageBox.Information)
         else:
