@@ -72,7 +72,51 @@ Reads the `read_DC` channel.\
 
 #### Resulting Data
 Example data from such a for-loop measurement. From the recorded instrument setting you will always know what was measured.
+
+<details>
+  <summary>Display example data</summary>
+
 ![img_3.png](img_3.png)
+
+</details>
+
+## Using Internal Sweeps
+There are five different types of internal sweeps:
+1. Fixed Level (`setSweep_type = 0`)
+2. Linear Stair (`setSweep_type = 1`)
+3. Logarithmic Stair (`setSweep_type = 2`)
+4. Linear Stair Pulsed (`setSweep_type = 3`)
+5. Logarithmic Stair Pulsed (`setSweep_type = 4`)
+
+For more details on the exact specifications of these internal sweeps check out the [official manual](https://download.tek.com/manual/236_900_01E.pdf) on page 3-47 to 3-56.
+
+The type of sweep measurement is set by writing a value (0 to 4) to the  `setSweep_type` channel (see list above).
+
+Each type requires a different set of parameters from this list :\
+`level`, `points`, `pulses`, `start`, `step`, `stop`, `t_off` and `t_on`.
+
+---
+
+Before you start the sweep measurement you have to set the required parameters to the desired value in a measurement step. Here for example for a linear stair sweep from 0 to 1 with step size 0.1.\
+&#9888; You MUST set the sweep type here as well: `1 = linear stair`
+![img_4.png](img_4.png)
+
+---
+
+Then you can start the measurement by setting the value of `keithley_237_start_sweep` to `1`
+![img_5.png](img_5.png)
+and in a different step you have to start the sweep.
+
+---
+
+To read the measured data simply read the `read_sweep` channel:
+![img_6.png](img_6.png)
+
+---
+
+This produces the following data:
+![img_7.png](img_7.png)
+The settings of the sweep can be read from the `protocol_overview` entry and the instrument settings.
 
 
 
