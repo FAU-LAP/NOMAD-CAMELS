@@ -11,7 +11,7 @@ nav_order: 1
 As NOMAD-CAMELS (from now on only 'CAMELS') is written in python it requires a working python environment to run properly.
 The [installer.exe](#1-using-the-camels_installerexe) takes care of all of this for you.
 
-With the correct python version (>=3.9.6) CAMELS can simply be installed using `pip`
+With the correct python version (>=3.11.3) CAMELS can simply be installed using `pip`
 (but this is not recommended! Try and use the installer if possible):
 ```bash
 pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels
@@ -32,9 +32,9 @@ Simply download the CAMELS installer (.exe) from *[here](https://github.com/A-D-
 Run the installer. Admin rights should not be required. 
 
 - Creates all necessary folders and files
-- This installes pyenv to `%userprofile%\.pyenv\`
-- Installes Python 3.9.6. using pyenv
-- Creates the correct python environment (called .desertenv using the pyenv 3.9.6 python version)
+- This installs pyenv to `%userprofile%\.pyenv\`
+- Installs Python 3.11.3. using pyenv
+- Creates the correct python environment (called .desertenv using the pyenv 3.11.3 python version)
 - Installs CAMELS (using pip in the .desertenv environment)
 
 This takes about 2-3 minutes depending on your machine.\
@@ -42,15 +42,15 @@ Try to always use this option as it minimizes any unwanted errors during setup a
 
 ## 2. Custom Installation
 
-### 2.1 Install python
+### 2.1 Install Python
 
 - Install pyenv to install any python version (you do not need to do this if you already have a python versioning software like Anaconda installed):
 - Type in to the powershell:
 ```bash
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
 ```
-- Then type in to the powershell `pyenv install <python_version>` for example `pyenv install 3.9.6`.
-`<python_version>` is the python version you want to use that is 3.9.6 or higher.
+- Then type in to the powershell `pyenv install <python_version>` for example `pyenv install 3.11.3`.
+`<python_version>` is the python version you want to use that is 3.11.3 or higher.
 ### 2.2 Install CAMELS
 - Create a folder where you want to install CAMELS (e.g. `\NOMAD-CAMELS\`)
 - Type in your powershell `cd \NOMAD-CAMELS\;pyenv local <python_version> `
