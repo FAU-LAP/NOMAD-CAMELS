@@ -76,7 +76,7 @@ Example data from such a for-loop measurement. From the recorded instrument sett
 <details>
   <summary>Display example data</summary>
 
-![img_3.png](img_3.png)
+<img src="img_3.png"/>
 
 </details>
 
