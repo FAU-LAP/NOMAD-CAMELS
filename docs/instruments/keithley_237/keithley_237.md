@@ -43,9 +43,9 @@ The communication settings (baud rate, terminators, etc.) can be changed as well
 There are **four basic usage types** of the Keithley 237:
 
 1. Source voltage, read current
-2. Sweep voltage, read current and voltage (simpley read the set value of the voltage, does not actually measure it)
+2. Sweep voltage, read current and voltage (simply reads the set value of the voltage, does not actually measure it)
 3. Source current, read voltage
-4. Sweep current, read voltage and current (simpley read the set value of the current, does not actually measure it)
+4. Sweep current, read voltage and current (simply reads the set value of the current, does not actually measure it)
 
 > &#9888; The source type of your Keithley 237 must be set in the device configuration window (see image above)
 
