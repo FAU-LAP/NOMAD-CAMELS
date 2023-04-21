@@ -82,6 +82,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                                  'manual_controls': self.manual_controls}
         self.preferences = {}
         self.load_preferences()
+        if self.preferences['auto_check_updates']:
+            update_camels.auto_update(self)
         self.load_state()
 
         self.open_windows = []

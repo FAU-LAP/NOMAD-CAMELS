@@ -42,6 +42,10 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.checkBox_autosave.setChecked(settings['autosave'])
         else:
             self.checkBox_autosave.setChecked(standard_pref['autosave'])
+        if 'auto_check_updates' in settings:
+            self.checkBox_auto_check_updates.setChecked(settings['auto_check_updates'])
+        else:
+            self.checkBox_auto_check_updates.setChecked(standard_pref['auto_check_updates'])
         if 'number_format' in settings:
             if settings['number_format'] == 'plain':
                 self.radioButton_plain_numbers.setChecked(True)
@@ -119,6 +123,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             numbers = 'mixed'
         return {'autosave': self.checkBox_autosave.isChecked(),
                 'dark_mode': self.checkBox_dark.isChecked(),
+                'auto_check_updates': self.checkBox_auto_check_updates.isChecked(),
                 'graphic_theme': self.comboBox_theme.currentText(),
                 'material_theme': self.comboBox_material_theme.currentText(),
                 'n_decimals': self.spinBox_n_decimals.value(),
