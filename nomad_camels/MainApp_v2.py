@@ -9,15 +9,13 @@ from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog
 from PySide6.QtCore import QCoreApplication, Qt, Signal
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
-from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
-from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from nomad_camels.utility import exception_hook
 from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from pkg_resources import resource_filename
 
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
 from nomad_camels.utility import load_save_functions, variables_handling, number_formatting, theme_changing
-from nomad_camels.ui_widgets import options_run_button
+from nomad_camels.ui_widgets import options_run_button, warn_popup
 
 from collections import OrderedDict
 
@@ -26,6 +24,9 @@ import ophyd
 from bluesky import RunEngine
 from bluesky.callbacks.best_effort import BestEffortCallback
 import databroker
+
+camels_github = 'https://github.com/FAU-LAP/NOMAD-CAMELS'
+camels_github_pages = 'https://fau-lap.github.io/NOMAD-CAMELS/'
 
 
 class MainWindow(Ui_MainWindow, QMainWindow):
@@ -115,6 +116,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionNew_Preset.triggered.connect(self.new_preset)
         self.actionLoad_Backup_Preset.triggered.connect(self.load_backup_preset)
         self.actionVISA_device_builder.triggered.connect(self.launch_device_builder)
+        self.actionReport_Bug.triggered.connect(lambda x: os.startfile(f'{camels_github}/issues'))
+        self.actionDocumentation.triggered.connect(lambda x: os.startfile(camels_github_pages))
 
         # buttons
         self.pushButton_add_manual.clicked.connect(self.add_manual_control)
@@ -473,7 +476,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         except:
             with open(preset, 'r') as f:
                 preset_dict = json.load(f)
-        load_save_functions.load_save_dict(preset_dict, self.preset_save_dict)
+        try:
+            load_save_functions.load_save_dict(preset_dict, self.preset_save_dict)
+        except Exception as e:
+            text = f'Could not load preset {preset}.\nAn empty preset will be loaded instead.\nTo handle this error, you may want to install a missing driver or remove some settings from the preset.\n\nError Message:\n{e}'
+            warn_popup.WarnPopup(self, text, 'Load Error')
+            load_save_functions.load_save_dict({}, self.preset_save_dict,
+                                               remove_extra_key=True)
+            self._current_preset[0] = 'empty_preset'
         self.update_channels()
         variables_handling.preset = self._current_preset[0]
 
