@@ -5,6 +5,18 @@ has_children: true
 nav_order: 3
 ---
 
+## Table of contents
+{: .no_toc }
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+- TOC
+{:toc}
+</details>
+
 # User's Guide
 ## Display HDF5 File
 You can simply display the HDF5 file you obtained from CAMELS by dragging-and-dropping it into the following [webpage](https://h5web.panosc.eu/h5wasm) or any other HDF5-viewer.

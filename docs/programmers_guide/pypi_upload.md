@@ -4,6 +4,19 @@ title: Upload CAMELS to PyPi
 parent: Programmer's Guide
 nav_order: 3
 ---
+
+## Table of contents
+{: .no_toc }
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+- TOC
+{:toc}
+</details>
+
 # Uploading a new NOMAD-CAMELS version to PyPi
 The "backbone" of creating the PyPi project is the `pyproject.toml` file located in the root directory. Here almost all important settings are configured. The dependencies on other python packages is maintained with the `requirements.txt` file. \
 The `MANIFEST.in` file contains information about static non-python files that should be included (e.g. folders of images). 

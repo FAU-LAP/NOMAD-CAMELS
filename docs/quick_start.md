@@ -5,6 +5,18 @@ has_children: true
 nav_order: 2
 ---
 
+## Table of contents
+{: .no_toc }
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+- TOC
+{:toc}
+</details>
+
 # Quick Start Guide
 This guide follows after the installation, to make you familiar with the main functionalities of NOMAD-CAMELS (short: CAMELS).
 <details open markdown="block">
