@@ -247,19 +247,19 @@ class Ui_MainWindow(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.pushButton_add_manual.sizePolicy().hasHeightForWidth())
         self.pushButton_add_manual.setSizePolicy(sizePolicy1)
-        self.pushButton_add_manual.setMinimumSize(QSize(70, 70))
-        self.pushButton_add_manual.setMaximumSize(QSize(70, 70))
+        self.pushButton_add_manual.setMinimumSize(QSize(32, 32))
+        self.pushButton_add_manual.setMaximumSize(QSize(32, 32))
         font3 = QFont()
         font3.setFamilies([u"Calibri"])
-        font3.setPointSize(75)
+        font3.setPointSize(30)
         font3.setBold(True)
         self.pushButton_add_manual.setFont(font3)
         self.pushButton_add_manual.setStyleSheet(u"QPushButton {\n"
 "	font-family: Calibri;\n"
-"	font-size: 75pt;\n"
+"	font-size: 30pt;\n"
 "	font-weight: bold;\n"
 "	padding: 0px;\n"
-"	padding-bottom: 10px;\n"
+"	padding-bottom: 5px;\n"
 "}")
 
         self.gridLayout.addWidget(self.pushButton_add_manual, 1, 1, 1, 1)
@@ -303,20 +303,15 @@ class Ui_MainWindow(object):
         self.pushButton_add_meas.setObjectName(u"pushButton_add_meas")
         sizePolicy1.setHeightForWidth(self.pushButton_add_meas.sizePolicy().hasHeightForWidth())
         self.pushButton_add_meas.setSizePolicy(sizePolicy1)
-        self.pushButton_add_meas.setMinimumSize(QSize(70, 70))
-        self.pushButton_add_meas.setMaximumSize(QSize(70, 70))
-        font5 = QFont()
-        font5.setFamilies([u"Calibri"])
-        font5.setPointSize(75)
-        font5.setBold(True)
-        font5.setKerning(True)
-        self.pushButton_add_meas.setFont(font5)
+        self.pushButton_add_meas.setMinimumSize(QSize(32, 32))
+        self.pushButton_add_meas.setMaximumSize(QSize(32, 32))
+        self.pushButton_add_meas.setFont(font3)
         self.pushButton_add_meas.setStyleSheet(u"QPushButton {\n"
 "	font-family: Calibri;\n"
-"	font-size: 75pt;\n"
+"	font-size: 30pt;\n"
 "	font-weight: bold;\n"
 "	padding: 0px;\n"
-"	padding-bottom: 10px;\n"
+"	padding-bottom: 5px;\n"
 "}")
 
         self.gridLayout_2.addWidget(self.pushButton_add_meas, 1, 1, 1, 1)

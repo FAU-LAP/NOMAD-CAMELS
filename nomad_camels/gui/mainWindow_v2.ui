@@ -328,20 +328,20 @@ Instruments</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>70</width>
-            <height>70</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>70</width>
-            <height>70</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="font">
            <font>
             <family>Calibri</family>
-            <pointsize>75</pointsize>
+            <pointsize>30</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -349,10 +349,10 @@ Instruments</string>
           <property name="styleSheet">
            <string notr="true">QPushButton {
 	font-family: Calibri;
-	font-size: 75pt;
+	font-size: 30pt;
 	font-weight: bold;
 	padding: 0px;
-	padding-bottom: 10px;
+	padding-bottom: 5px;
 }</string>
           </property>
           <property name="text">
@@ -431,32 +431,31 @@ Instruments</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>70</width>
-            <height>70</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>70</width>
-            <height>70</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
           <property name="font">
            <font>
             <family>Calibri</family>
-            <pointsize>75</pointsize>
+            <pointsize>30</pointsize>
             <weight>75</weight>
             <bold>true</bold>
-            <kerning>true</kerning>
            </font>
           </property>
           <property name="styleSheet">
            <string notr="true">QPushButton {
 	font-family: Calibri;
-	font-size: 75pt;
+	font-size: 30pt;
 	font-weight: bold;
 	padding: 0px;
-	padding-bottom: 10px;
+	padding-bottom: 5px;
 }</string>
           </property>
           <property name="text">
