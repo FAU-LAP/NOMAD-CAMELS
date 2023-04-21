@@ -14,7 +14,7 @@ from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from pkg_resources import resource_filename
 
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
-from nomad_camels.utility import load_save_functions, variables_handling, number_formatting, theme_changing
+from nomad_camels.utility import load_save_functions, variables_handling, number_formatting, theme_changing, update_camels
 from nomad_camels.ui_widgets import options_run_button, warn_popup
 
 from collections import OrderedDict
@@ -118,6 +118,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionVISA_device_builder.triggered.connect(self.launch_device_builder)
         self.actionReport_Bug.triggered.connect(lambda x: os.startfile(f'{camels_github}/issues'))
         self.actionDocumentation.triggered.connect(lambda x: os.startfile(camels_github_pages))
+        self.actionUpdate_CAMELS.triggered.connect(lambda x: update_camels.question_message_box(self))
 
         # buttons
         self.pushButton_add_manual.clicked.connect(self.add_manual_control)
