@@ -45,7 +45,7 @@ The `pyproject.toml` file contains most of the relevant information concerning t
 Most importantly the project name and version must be set in the `pyproject.toml` file.
 
 <details>
-  <summary>Code example: pyproject.toml file</summary>
+  <summary>Code example: pyproject.toml file for the  Keithley 237</summary>
 
 {% highlight toml %}
 [build-system]
@@ -87,7 +87,7 @@ The `<parent_driver_name>.py` file contains information about the possible instr
 ---
 
 <details>
-  <summary>Code example: Use the auto-generated UI for instrument settings</summary>
+  <summary>Code example: Use the auto-generated UI for instrument settings (for Keithley 237)</summary>
 
 {% highlight python %}
 from nomad_camels_driver_keithley_237.keithley_237_ophyd import Keithley_237 # Change this line!
@@ -154,7 +154,7 @@ If the instrument is more complex CAMELS can not auto generate the UI anymore. H
 ---
 
 <details>
-  <summary>Code example: Use your own UI file to create settings for your instrument</summary>
+  <summary>Code example: Use your own UI file to create settings for your instrument (for Andor Shamrock spectrograph)</summary>
 
 {% highlight python %}
 from CAMELS.main_classes import device_class
@@ -232,7 +232,7 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_andor_shamrock500_c
 
 Here is a more complex example which creates settings for two channels of a single instrument.
 <details>
-  <summary>Code example: Complex instrument</summary>
+  <summary>Code example: Two separate channels (for Keysight 2912)</summary>
 
 {% highlight python %}
 from nomad_camels.main_classes import device_class
