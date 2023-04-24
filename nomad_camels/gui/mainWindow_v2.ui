@@ -514,7 +514,7 @@ Instruments</string>
     <property name="title">
      <string>Tools</string>
     </property>
-    <addaction name="actionDevice_Driver_Builder"/>
+    <addaction name="actionUpdate_CAMELS"/>
     <addaction name="actionVISA_device_builder"/>
    </widget>
    <addaction name="menuFile"/>
@@ -570,7 +570,7 @@ Instruments</string>
     <string>Autosave on closing</string>
    </property>
   </action>
-  <action name="actionDevice_Driver_Builder">
+  <action name="actionUpdate_CAMELS">
    <property name="text">
     <string>Update NOMAD-CAMELS</string>
    </property>

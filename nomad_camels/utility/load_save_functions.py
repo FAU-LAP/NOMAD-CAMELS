@@ -43,7 +43,8 @@ standard_pref = {'autosave': True,
                  'driver_repository': 'https://github.com/FAU-LAP/CAMELS_drivers',
                  'repo_branch': 'main',
                  'repo_directory': '',
-                 'play_camel_on_error': False}
+                 'play_camel_on_error': False,
+                 'auto_check_updates': False}
 
 def get_preset_list():
     """returns a two list of available presets, once for devices, once

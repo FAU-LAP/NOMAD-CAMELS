@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
     QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
     QStatusBar, QWidget)
 
-from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
+from CAMELS.ui_widgets.path_button_edit import Path_Button_Edit
 
 class Ui_InstallerWindow(object):
     def setupUi(self, InstallerWindow):
@@ -172,7 +172,7 @@ class Ui_InstallerWindow(object):
         self.label_current_job.setText(QCoreApplication.translate("InstallerWindow", u"TextLabel", None))
         self.groupBox_questions.setTitle("")
         self.groupBox_custom_install.setTitle("")
-        self.label_3.setText(QCoreApplication.translate("InstallerWindow", u"Path to NOMAD-CAMELS:", None))
+        self.label_3.setText(QCoreApplication.translate("InstallerWindow", u"Path to CAMELS:", None))
         self.checkBox_python.setText(QCoreApplication.translate("InstallerWindow", u"Install Python Environment for CAMELS", None))
         self.checkBox_camels.setText(QCoreApplication.translate("InstallerWindow", u"Install CAMELS", None))
         self.checkBox_epics.setText(QCoreApplication.translate("InstallerWindow", u"Install EPICS in WSL", None))
