@@ -2,7 +2,6 @@
 layout: default
 title: Keithley 237
 parent: Instruments
-nav_order: 1
 ---
 ## Table of contents
 {: .no_toc }
