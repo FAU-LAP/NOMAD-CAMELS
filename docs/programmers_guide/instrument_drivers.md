@@ -458,7 +458,26 @@ To create a new package that can be installed via pip from PyPi or testPyPi foll
 
 ---
 
-### 1.4. Install Instrument Package
+### 1.4. Automated Build and Upload
+You can run the following script using microsoft PowerShell in the `$rootFolder` containing multiple instrument drivers in subdirectories.\
+It runs the `python -m build` and `python -m twine upload -r testpypi dist/nomad*` commands in each subdirectory containing a `pyproject.toml` file.
+
+```powershell
+$rootFolder = "C:\Path\To\Root\Folder"
+Get-ChildItem $rootFolder -Recurse -Directory | ForEach-Object {
+    if (Test-Path "$($_.FullName)\pyproject.toml") {
+        Push-Location $_.FullName
+        python -m build
+        python -m twine upload -r testpypi dist/nomad*
+        Pop-Location
+    }
+}
+```
+
+
+---
+
+### 1.5. Install Instrument Package
 To install simply run 
 ```bash
 pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<parent_driver_name>
