@@ -50,28 +50,28 @@ There are **four basic usage types** of the Keithley 237:
 > &#9888; The source type of your Keithley 237 must be set in the device configuration window (see image above)
 
 > &#9888; If `Source Type` in the config window is set to `Voltage` or `Current` then it is NOT possible to read the data created during a sweep in a measurement protocol using the `start_sweep` channel.\
-> &#9888; If `Source Type` in the config window is set to `Sweep Voltage` or `Sweep Current` then it is NOT possible to read the data from a single measurement protocol using the channel `read_DC`.  
+> &#9888; If `Source Type` in the config window is set to `Sweep Voltage` or `Sweep Current` then it is NOT possible to read the data from an individual measurement using the channel `read_DC`.  
  
-## Reading Single Data Points
-To read single data points (for example set one voltage and read the corresponding current value in a for-loop) set `Source Type` to `Voltage` or `Current`. Then either current or voltage is measured respectively.\
-This is not very fast as the constant device communication has a lot of overhead.
+## Setting and Reading Individual Data Points
+To set and read single data points (for example set one voltage and read the corresponding current value in a for-loop) set `Source Type` to `Voltage` or `Current`. When voltage is sourced current is read and when current is sourced then voltage is read.\
+This is not very fast as the constant device communication has a lot of overhead. One can achieve at most about 10 measurements per second using this method.
 
 ### Example Protocol
-Here is an example protocol for setting and reading individual data points.\
+Here is an example protocol for setting and reading individual data points.
 #### For-Loop
 Settings of the for-loop: it will create 11 values between 0 and 1 including the 1.
 ![img.png](img.png)
 #### Set Channel
 Sets the `set_DC` channel to the value of the for-loop.\
-`set_DC` always sets the source type you selected in the configuration.
+&#9888; `set_DC` always sets the source type you selected in the configuration.
 ![img_1.png](img_1.png) 
 #### Read Channel
 Reads the `read_DC` channel.\
-`read_DC` always reads the compliance side of the source type. So it reads voltage when current is sourced and reads current when voltage is sourced.
+&#9888; `read_DC` always reads the compliance side of the source type. So it reads voltage when current is sourced and reads current when voltage is sourced.
 ![img_2.png](img_2.png)
 
 #### Resulting Data
-Example data from such a for-loop measurement. From the recorded instrument setting you will always know what was measured.
+Example data from such a for-loop measurement. From the recorded instrument settings (`keithley_237_Source_Type` entry) it is clear what was measured.
 
 <details>
   <summary>Display example data</summary>
@@ -88,7 +88,7 @@ There are five different types of internal sweeps:
 4. Linear Stair Pulsed (`setSweep_type = 3`)
 5. Logarithmic Stair Pulsed (`setSweep_type = 4`)
 
-For more details on the exact specifications of these internal sweeps check out the [official manual](https://download.tek.com/manual/236_900_01E.pdf) on page 3-47 to 3-56.
+For more details on the exact specifications of these internal sweeps check out the [official manual](https://download.tek.com/manual/236_900_01E.pdf) on pages 3-47 to 3-56.
 
 The type of sweep measurement is set by writing a value (0 to 4) to the  `setSweep_type` channel (see list above).
 
@@ -97,8 +97,10 @@ Each type requires a different set of parameters from this list :\
 
 ### Setting up the Sweep
 ### Sweep Parameters
-Before you start the sweep measurement you have to set the required parameters to the desired value in a measurement step. Here for example for a linear stair sweep from `start=0` to `stop=1` with `step size=0.1`. `Bias delay` and `range` are set in the instrument config page.\
-&#9888; You MUST set the sweep type here as well: `1 = linear stair`
+Before you start the sweep measurement you have to set the required parameters to the desired value in a _'Set Channels step'_. 
+
+E.g. for a linear stair sweep from `start=0` to `stop=1` with `step size=0.1`. `Bias delay` and `range` are set in the instrument config page.\
+&#9888; You **MUST set the sweep type** here as well using the `keithley_237_setSweep_Type` channel: `1 = linear stair`
 ![img_4.png](img_4.png)
 
 ### Starting the Sweep
