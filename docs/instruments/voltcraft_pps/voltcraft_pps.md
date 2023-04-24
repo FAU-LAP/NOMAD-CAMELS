@@ -15,7 +15,7 @@ parent: Instruments
 {:toc}
 </details>
 
-# PVoltcraft PPS - Laboratory Power Supply
+# Voltcraft PPS - Laboratory Power Supply
 
 ## Install
 Install the instrument using the _Manage Instruments_ button of NOMAD-CAMELS.\
