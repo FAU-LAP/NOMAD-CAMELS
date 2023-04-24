@@ -1,7 +1,7 @@
 ---
 layout: default
 title: User's Guide
-has_children: true
+has_children: false
 nav_order: 3
 ---
 
