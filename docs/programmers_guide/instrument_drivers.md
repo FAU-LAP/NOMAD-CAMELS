@@ -41,8 +41,10 @@ The driver should have the following folder structure
 └─> pyproject.toml
 └─> README.md
 ```
-The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPi ([see here for more information](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)). 
-Most importantly the project name and version must be set in the `pyproject.toml` file.
+The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPi ([see here for more information](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)).\
+&#9888; Most importantly the project name and version must be set in the `pyproject.toml` file.
+
+---
 
 <details>
   <summary>Code example: pyproject.toml file for the  Keithley 237</summary>
@@ -79,7 +81,7 @@ dependencies = [
 ---
 
 ### 1.2. Python files
-The `<parent_driver_name>.py` file contains information about the possible instrument configurations and settings. This can be for example the current compliance of a voltage source or the integration time of a digital multimeter.\
+The `<parent_driver_name>.py` file contains information about the possible instrument configurations and settings. This can be for example the current compliance of a voltage source or the integration time of a digital multimeter.
 #### 1.2.1 Simple Device Configurations
 > &#9888; For **simple instruments** with only a **few settings** you do not need to write your own GUI for the settings but CAMELS can auto-generate the UI for you. \
 > An example file is displayed below:
@@ -451,7 +453,7 @@ To create a new package that can be installed via pip from PyPi or testPyPi foll
 3. Set the correct version number and metadata in your `pyproject.toml` file
 4. Run the build command : `python -m build`. This creates the `dist/` folder and the distributions to upload to PyPi
 5. Upload to testPyPi (PyPi) with 
-    ```bash
+    ```powershell
     python -m twine upload --repository testpypi dist/nomad*
     ```
    &#9888; Change the repository used after the `--repository` flag to `pypi` to upload to PyPi
@@ -479,7 +481,7 @@ Get-ChildItem $rootFolder -Recurse -Directory | ForEach-Object {
 
 ### 1.5. Install Instrument Package
 To install simply run 
-```bash
+```powershell
 pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<parent_driver_name>
 ```
 where `nomad_camels_driver_<parent_driver_name>` is the driver name you gave your folder and project.\
