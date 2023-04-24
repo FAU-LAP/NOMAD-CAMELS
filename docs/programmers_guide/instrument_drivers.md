@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Instrument Drivers
+title: Create Instrument Drivers
 parent: Programmer's Guide
 nav_order: 1
 ---
