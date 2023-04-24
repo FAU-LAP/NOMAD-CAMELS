@@ -453,7 +453,7 @@ To create a new package that can be installed via pip from PyPi or testPyPi foll
 3. Set the correct version number and metadata in your `pyproject.toml` file
 4. Run the build command : `python -m build`. This creates the `dist/` folder and the distributions to upload to PyPi
 5. Upload to testPyPi (PyPi) with 
-    ```powershell
+    ```console
     python -m twine upload --repository testpypi dist/nomad*
     ```
    &#9888; Change the repository used after the `--repository` flag to `pypi` to upload to PyPi
@@ -481,7 +481,7 @@ Get-ChildItem $rootFolder -Recurse -Directory | ForEach-Object {
 
 ### 1.5. Install Instrument Package
 To install simply run 
-```powershell
+```console
 pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<parent_driver_name>
 ```
 where `nomad_camels_driver_<parent_driver_name>` is the driver name you gave your folder and project.\
