@@ -4,6 +4,8 @@ from qt_material import apply_stylesheet
 
 
 light_palette = QPalette(QColor(225, 225, 225), QColor(238, 238, 238))
+light_palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+
 dark_palette = QPalette()
 dark_palette.setColor(QPalette.Window, QColor(53, 53, 53))
 dark_palette.setColor(QPalette.WindowText, QColorConstants.White)
