@@ -144,6 +144,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.run_engine = RunEngine()
         bec = BestEffortCallback()
         self.run_engine.subscribe(bec)
+        self.change_catalog_name()
         self.databroker_catalog = databroker.catalog["CAMELS_CATALOG"]
         self.run_engine.subscribe(self.databroker_catalog.v1.insert)
         self.run_engine.subscribe(self.protocol_finished, 'stop')
@@ -381,6 +382,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 catalog_name = self.preferences['databroker_catalog_name']
             from nomad_camels.bluesky_handling import make_catalog
             make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name)
+        self.databroker_catalog = databroker.catalog["CAMELS_CATALOG"]
 
 
     def change_preferences(self):
