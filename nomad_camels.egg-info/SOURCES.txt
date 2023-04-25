@@ -137,4 +137,5 @@ nomad_camels/utility/qthreads.py
 nomad_camels/utility/theme_changing.py
 nomad_camels/utility/tqdm_progress_bar.py
 nomad_camels/utility/treeView_functions.py
+nomad_camels/utility/update_camels.py
 nomad_camels/utility/variables_handling.py
