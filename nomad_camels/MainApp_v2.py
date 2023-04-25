@@ -152,7 +152,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_savepath = ''
         self.running_protocol = None
 
-        self.show()
+        # self.show()
         self.adjustSize()
 
     def with_or_without_instruments(self):
@@ -775,7 +775,9 @@ if __name__ == '__main__':
     if app is None:
         app = QApplication(sys.argv)
     file_dir = os.path.dirname(__file__)
-    with open(f'{file_dir}/packages.txt', 'w') as f:
+    appdata_path = f'{os.getenv("LOCALAPPDATA")}/nomad_camels'
+    package_file = f'{appdata_path}/startup_packages.txt'
+    with open(package_file, 'w') as f:
         for i, (mod_name, mod) in enumerate(sys.modules.items()):
             if mod_name.startswith('_') or mod is None:
                 continue
