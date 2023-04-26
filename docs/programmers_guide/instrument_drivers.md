@@ -5,8 +5,14 @@ parent: Programmer's Guide
 nav_order: 1
 ---
 
-## Table of contents
+[comment]: <> (## Table of contents)
+
+[comment]: <> ({: .no_toc })
+
+
+# NOMAD-CAMELS Instrument Drivers
 {: .no_toc }
+This page should help you create new instrument drivers that can be used in NOMAD-CAMELS.
 
 <details open markdown="block">
   <summary>
@@ -17,9 +23,7 @@ nav_order: 1
 {:toc}
 </details>
 
-# NOMAD-CAMELS Instrument Drivers
-This page should help you create new instrument drivers that can be used in NOMAD-CAMELS.
-## 1. Writing New Instrument Drivers for PyPi
+# 1. Writing New Instrument Drivers for PyPi
 Every instrument driver should be an individual [PyPi](https://pypi.org/) package.\
 It is possible to create drivers that are only available locally for you. 
 > &#9888; 
@@ -27,7 +31,7 @@ It is possible to create drivers that are only available locally for you.
 > This will be changed to [PyPi.org](https://PyPi.org/) once the devices are stable.
 
 The source code of each driver can be found in [this repository](https://github.com/FAU-LAP/CAMELS_drivers).
-### 1.1. Folder structure
+## 1.1. Folder structure
 The driver should have the following folder structure
 ```
 <parent_driver_name>
@@ -41,6 +45,7 @@ The driver should have the following folder structure
 └─> pyproject.toml
 └─> README.md
 ```
+The most important files are the `<parent_driver_name>.py` and `<parent_driver_name>_ophyd.py` files. The first one contains everything that is needed by the NOMAD-CAMELS GUI. The latter contains the class that is actually used for communicating with the device.  
 The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPi ([see here for more information](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)).\
 &#9888; Most importantly the project name and version must be set in the `pyproject.toml` file.
 
@@ -80,9 +85,9 @@ dependencies = [
 
 ---
 
-### 1.2. Python files
+## 1.2. Python files
 The `<parent_driver_name>.py` file contains information about the possible instrument configurations and settings. This can be for example the current compliance of a voltage source or the integration time of a digital multimeter.
-#### 1.2.1 Simple Device Configurations
+### 1.2.1 Simple Device Configurations
 > &#9888; For **simple instruments** with only a **few settings** you do not need to write your own GUI for the settings but CAMELS can auto-generate the UI for you. \
 > An example file is displayed below:
 
@@ -150,7 +155,7 @@ class subclass_config(device_class.Simple_Config):
 
 ---
 
-#### 1.2.2 Complex Device Configurations
+### 1.2.2 Complex Device Configurations
 If the instrument is more complex CAMELS can not auto generate the UI anymore. Here you need to write your own UI using for example QT Designer. The first three class definitions are relevant for this. 
 
 ---
@@ -446,7 +451,7 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_B2912_channel):
 
 ---
 
-### 1.3. Building the Instrument Package
+## 1.3. Building the Instrument Package
 To create a new package that can be installed via pip from PyPi or testPyPi follow these steps.
 1. Make sure you have `build` and `twine` installed into your python environment with `pip install build` and `pip install twine`
 2. Go to the `<parent_driver_name>` directory of the driver. So the parent directory containing the pyproject.toml 
@@ -460,7 +465,7 @@ To create a new package that can be installed via pip from PyPi or testPyPi foll
 
 ---
 
-### 1.4. Automated Build and Upload
+## 1.4. Automated Build and Upload
 You can run the following script using microsoft PowerShell in the `$rootFolder` containing multiple instrument drivers in subdirectories.\
 It runs the `python -m build` and `python -m twine upload -r testpypi dist/nomad*` commands in each subdirectory containing a `pyproject.toml` file.
 
@@ -479,7 +484,7 @@ Get-ChildItem $rootFolder -Recurse -Directory | ForEach-Object {
 
 ---
 
-### 1.5. Install Instrument Package
+## 1.5. Install Instrument Package
 To install simply run 
 ```console
 pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<parent_driver_name>
@@ -490,7 +495,7 @@ The `--no-cache-dir` flag prevents any locally saved NOMAD-CAMELS version to be 
 > &#9888; The index-url must be changed of course when installing from PyPi &#9888;
 
 ---
-## 2. Local Instrument Drivers
+# 2. Local Instrument Drivers
 You can create and use local instrument drivers by simple creating this kind of folder structure
 
 ```
