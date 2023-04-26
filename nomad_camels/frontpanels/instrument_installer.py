@@ -244,8 +244,8 @@ class Install_Thread(QThread):
                 flags = 0
                 if os.name == 'nt':
                     flags = subprocess.CREATE_NO_WINDOW
-                ret = subprocess.Popen(['powershell',
-                                        f'{path}\\pip uninstall -y '
+                ret = subprocess.Popen([sys.executable, '-m', 'pip',
+                                        'uninstall', '-y',
                                         f'nomad-camels-driver-{device_name}'],
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT,
@@ -261,15 +261,17 @@ class Install_Thread(QThread):
                 flags = 0
                 if os.name == 'nt':
                     flags = subprocess.CREATE_NO_WINDOW
-                ret = subprocess.Popen(['powershell',
-                                        f'{path}\\pip install --no-cache-dir '
-                                        f'--index-url {pypi_url} '
-                                        '--extra-index-url https://pypi.org/simple '
+                ret = subprocess.Popen([sys.executable, '-m', 'pip',
+                                        'install', '--no-cache-dir',
+                                        '--index-url', pypi_url,
+                                        '--extra-index-url',
+                                        'https://pypi.org/simple',
                                         f'nomad-camels-driver-{device_name}'],
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT,
                                        stdin=subprocess.PIPE,
                                        creationflags=flags)
+                print(ret)
                 if ret.returncode:
                     raise OSError(f'Failed to install nomad-camels-driver-{device_name}')
             for line in iter(ret.stdout.readline, b''):
