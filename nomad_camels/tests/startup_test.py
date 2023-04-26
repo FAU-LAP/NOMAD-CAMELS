@@ -10,3 +10,5 @@ def test_startup():
         app = QApplication(sys.argv)
     main_window = nomad_camels.MainApp_v2.MainWindow()
     main_window.close()
+
+

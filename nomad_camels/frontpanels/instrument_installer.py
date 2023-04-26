@@ -59,7 +59,8 @@ def getAllDevices():
         url = f'https://raw.githubusercontent.com/{repo_part}/{branch}/{directory}/driver_list.txt'
         devices_str = requests.get(url).text
     except:
-        devices_str = ''
+        url = 'https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt'
+        devices_str = requests.get(url).text
     warned = False
     for x in devices_str.splitlines():
         try:
@@ -268,6 +269,16 @@ class Install_Thread(QThread):
             for line in iter(ret.stdout.readline, b''):
                 text = line.decode().rstrip()
                 self.info_step.emit(text)
+        getInstalledDevices(True)
+        for i, dev in enumerate(self.devs):
+            if self.uninstall and dev in installed_instr:
+                WarnPopup(self,
+                          f'Uninstall of {dev} failed!',
+                          f'Uninstall of {dev} failed!')
+            elif not self.uninstall and dev not in installed_instr:
+                WarnPopup(self,
+                          f'Installation of {dev} failed!',
+                          f'Installation of {dev} failed!')
         self.val_step.emit(100)
 
 
