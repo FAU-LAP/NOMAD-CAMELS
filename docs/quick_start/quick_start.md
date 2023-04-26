@@ -97,7 +97,7 @@ So one would need to nest different loops (one for setting teh temperature and o
 ### 2.1. Simple Start with _demo_device_
 But let's start very simple with the `demo_device` which is a pure software implementation of an instrument. 
 
-Start by clicking the large &#10133; symbol next to `Measurement Protocols`. This opens up and empty protocol window.
+Start by clicking the large &#10133; symbol next to `Measurement Protocols`. This opens up and empty protocol window.\
 ![img_9.png](img_9.png)
 
 Here you can fully configure the measurement routine you want to perform. Give the protocol a custom name using `Protocol Name`. With `Filename` you set the name of data file that is created during the measurement. You can also add a custom description to describe what your measurement protocol does.
@@ -121,7 +121,7 @@ We can now add two of the most important steps:
 ![img_12.png](img_12.png)
 
 Each device has specific `channels` which can be read and set (changed) or only read.
-Depending on the exact implementation of the instruments channels they are either 'software channels' so they themselves do not actually require device communication but store important values or settings, or they are 'instrument channels' and either `read from` or `write to` the instrument (or both). 
+Depending on the exact implementation of the instruments channels they are either 'software channels' so they themselves do not actually require device communication but store important values or settings, or they are 'instrument channels' and either _read from_ or _write to_ the instrument (or both). 
 
 Below you can see the readable and the settable channels of a single `demo_device`. 
 
@@ -246,6 +246,9 @@ Here are the other two motor channels
 We can see that the mathematical operation of adding `Count` and `Value` for `motorZ` worked.
 
 [&#8679; Back to the top &#8679;](#0-table-of-contents)
+
+---
+
 ### 2.4. Using the `Simple Sweep` functionality
 If you want to sweep and set one channel (e.g. voltage) and read any number of other channels (e.g. current and temperature) you can either use a for-loop as described [above](#23-sweeping-using-a-for-loopstep) or you can use the _Simple Sweep_ functionality which is a 'cleaner' implementation of such a sweep.
 
@@ -279,6 +282,9 @@ Now lets look at the data produced. The HDF5 file with the data is saved into th
 We can see that the set points of `motorX` are read successfully.
 
 [&#8679; Back to the top &#8679;](#0-table-of-contents)
+
+---
+
 ## 3. Manual Control
 `Manual Control` allows you to set individual instrument channels (e.g. stage in x direction or a voltage output of a SMU)
 ### 3.1. Add Manual Control
@@ -295,6 +301,9 @@ This opens the stage control.\
 Here you can set the step size and use the green arrow keys to control the selected axis. You can also jump to a specific value by using the `Go To` values.
 
 [&#8679; Back to the top &#8679;](#0-table-of-contents)
+
+---
+
 ## 4. Plots
 You can display live-plots in the measurement protocols to have a better understanding of what is going on during the measurement. 
 ### 4.1. Configure Plots
