@@ -256,8 +256,6 @@ class Install_Thread(QThread):
             else:
                 pypi_url = r'https://test.pypi.org/simple/'  # TODO Change to regular PyPi
                 device_name = dev.replace("_", "-")
-                print()
-                print(path)
                 flags = 0
                 if os.name == 'nt':
                     flags = subprocess.CREATE_NO_WINDOW
@@ -271,14 +269,12 @@ class Install_Thread(QThread):
                                        stderr=subprocess.STDOUT,
                                        stdin=subprocess.PIPE,
                                        creationflags=flags)
-                print(ret)
                 if ret.returncode:
                     raise OSError(f'Failed to install nomad-camels-driver-{device_name}')
             for line in iter(ret.stdout.readline, b''):
                 text = line.decode().rstrip()
                 self.info_step.emit(text)
         getInstalledDevices(True)
-        print(installed_instr)
         for i, dev in enumerate(self.devs):
             if self.uninstall and dev in installed_instr:
                 WarnPopup(self,
