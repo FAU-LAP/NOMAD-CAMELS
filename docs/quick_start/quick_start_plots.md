@@ -54,6 +54,6 @@ If you then run the protocol the plot is displayed and updated live.
   <a href="quick_start_manual_control.html">&larr; Back</a>
   </span>
   <span style="float:right;">
-    <a href="docs/users_guide.html">Next &rarr;</a><br>
+    <a href="../docs/users_guide.html">Next &rarr;</a><br>
   </span>
 </p>
