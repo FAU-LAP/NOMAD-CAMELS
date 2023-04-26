@@ -1,16 +1,30 @@
-def test_install_add_demo_device():
-    import time
-    from PySide6.QtCore import QItemSelectionModel, Qt
-    from PySide6.QtTest import QTest
-    from nomad_camels.frontpanels import manage_instruments
-    manager = manage_instruments.ManageInstruments()
-    installer = manager.installer
+from PySide6.QtCore import QItemSelectionModel, Qt
+
+
+def test_install_demo_device(qtbot):
+    from nomad_camels.frontpanels import instrument_installer
+    installer = instrument_installer.Instrument_Installer()
+    qtbot.addWidget(installer)
+    install_demo(qtbot, installer)
+
+def install_demo(qtbot, installer):
     for box in installer.checkboxes:
         if box.text() == 'demo_device':
             box.setChecked(True)
-    QTest.mouseClick(installer.pushButton_install_update_selected,
-                     Qt.MouseButton.LeftButton)
+            break
+    with qtbot.waitSignal(installer.instruments_updated, timeout=60000) as blocker:
+        qtbot.mouseClick(installer.pushButton_install_update_selected,
+                         Qt.MouseButton.LeftButton)
+    assert 'demo_device' in installer.installed_devs
+
+def test_add_device(qtbot):
+    from nomad_camels.frontpanels import manage_instruments
+    manager = manage_instruments.ManageInstruments()
+    installer = manager.installer
+    if 'demo_device' not in installer.installed_devs:
+        install_demo(qtbot, installer)
     conf = manager.config_widget
+    conf.build_table()
     item1 = None
     item2 = None
     for row in range(conf.tableWidget_instruments.rowCount()):
@@ -25,7 +39,11 @@ def test_install_add_demo_device():
     index2 = conf.tableWidget_instruments.indexFromItem(item2)
     conf.tableWidget_instruments.selectionModel().select(index2, QItemSelectionModel.Select)
     conf.table_click()
-    conf.add_instance()
-    instr = conf.get_config()
-    time.sleep(0.1)
-    assert 'demo_device' in instr
+    qtbot.mouseClick(conf.pushButton_add, Qt.MouseButton.LeftButton)
+
+    def check_instr_in():
+        instr = conf.get_config()
+        assert 'demo_device' in instr
+    qtbot.waitUntil(check_instr_in)
+
+    qtbot.mouseClick(conf.pushButton_remove, Qt.MouseButton.LeftButton)
