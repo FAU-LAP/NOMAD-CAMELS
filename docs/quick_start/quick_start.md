@@ -239,8 +239,37 @@ Here are the other two motor channels
 
 We can see that the mathematical operation of adding `Count` and `Value` for `motorZ` worked.
 
+### 2.4. Using the _Simple Sweep_ functionality
+If you want to sweep and set one channel (e.g. voltage) and read any number of other channels (e.g. current and temperature) you can either use a for-loop as described [above](#23-sweeping-using-a-for-loopstep) or you can use the _Simple Sweep_ functionality which is a 'cleaner' implementation of such a sweep.
 
+#### Create Step
+Start by creating a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols`in the main window. Add a `Simple Sweep` step into teh sequence.
+#### Customize Simple Sweep
+You can now configure the `Simple Sweep`. This is quite similar to configuring the `for-loop` step [above](#23-sweeping-using-a-for-loopstep). But you musts first configure the Sweep Channel, so the channel that should be changed and set. We will use the `motorX` channel for this example.
+![img_39.png](img_39.png)\
+`Data Output` configures in which Bluesky stream the sweep is run. `sub-stream` should be fine for most cases.\
+Select the `Loop-Type` and `Sweep mode` you want. 
+<p float="left">
+  <img src="img_40.png" width="30%" />
+  <img src="img_41.png" width="34.8%" /> 
+</p>
 
+Set the `Start`, `Stop` and `points` parameters. For this we can again use variables as done [above](#23-sweeping-using-a-for-loopstep). Then select which channels you want to read. We will only select the `motorX` channel. As this is the only channel that is changed.
+<p float="left">
+  <img src="img_42.png" width="70%" />
+</p>
+
+#### Run _Simple Sweep_
+Click `OK` and `run` the protocol.\
+![img_43.png](img_43.png)\
+
+#### Data File
+Now lets look at the data produced. The HDF5 file with the data is saved into the location specified by you. With a simple HDF5 viewer like [H5web](https://h5web.panosc.eu/h5wasm) you can easily read and display the data.
+<p float="left">
+  <img src="img_44.png" width="75%" />
+</p>
+
+We can see that the set points of `motorX` are read successfully.
 ## 3. Manual Control
 
 
