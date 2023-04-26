@@ -5,7 +5,7 @@ has_children: false
 nav_order: 2
 ---
 
-## Table of contents
+## 0. Table of contents
 {: .no_toc }
 
 <details open markdown="block">
@@ -83,6 +83,8 @@ After adding at least one instrument to CAMELS you now have two ways to control 
 2. [_Manual Control_](#3-manual-control) Manually change and control individual channels. This is useful for controlling stages without having to create a protocol.
 ![img_8.png](img_8.png)
 
+
+[Back to the top](#0-table-of-contents)
 ## 2. Measurement Protocols
 Measurement protocols are the main way in which CAMELS performs measurements. It can be understood as something similar to a `measurement recipe` where a step for step guide is given to different instruments to perform a measurement procedure.
 
@@ -127,6 +129,8 @@ Below you can see the readable and the settable channels of a single `demo_devic
   <img src="img_13.png" width="53%" />
   <img src="img_14.png" width="46%" /> 
 </p>
+
+[Back to the top](#0-table-of-contents)
 
 ---
 
@@ -180,6 +184,8 @@ This should build the protocol (converts your recipe to a python script that use
 This creates a HDF5 file in the location specified by the data saving location set in `Settings` and the user and sample name. This file contains all the read data and all the metadata known to CAMELS. With a simple HDF5 viewer like [H5web](https://h5web.panosc.eu/h5wasm) you can easily read and display the data.\
 ![img_26.png](img_26.png)\
 We can see that the `motorX` was set correctly to a value of 4.
+
+[Back to the top](#0-table-of-contents)
 
 ---
 
@@ -239,7 +245,8 @@ Here are the other two motor channels
 
 We can see that the mathematical operation of adding `Count` and `Value` for `motorZ` worked.
 
-### 2.4. Using the _Simple Sweep_ functionality
+[Back to the top](#0-table-of-contents)
+### 2.4. Using the `Simple Sweep` functionality
 If you want to sweep and set one channel (e.g. voltage) and read any number of other channels (e.g. current and temperature) you can either use a for-loop as described [above](#23-sweeping-using-a-for-loopstep) or you can use the _Simple Sweep_ functionality which is a 'cleaner' implementation of such a sweep.
 
 #### Create Step
@@ -270,7 +277,22 @@ Now lets look at the data produced. The HDF5 file with the data is saved into th
 </p>
 
 We can see that the set points of `motorX` are read successfully.
+
+[Back to the top](#0-table-of-contents)
 ## 3. Manual Control
+`Manual Control` allows you to set individual instrument channels (e.g. stage in x direction or a voltage output of a SMU)
+### 3.1. Add Manual Control
+To start simply click the &#10133; symbol next to `Manual Control`. You can now select which type of manual control you want to add. The options depend on the instruments you have installed. The most basic manual control is the `Stage_Control` which sets individual channels. It is mainly designed for motorized stages but can be used to control most instruments. 
+### 3.2. Configure Manual Control
+Select which axis the manual control should use. You must also select from which channel it should read the position (`readback axis`) . This is often the same channel as the `use axis`.
+![img_45.png](img_45.png)
+
+Click `OK` and `start` the manual control.\
+![img_46.png](img_46.png)
+
+This opens the stage control.\
+![img_47.png](img_47.png)\
+Here you can set the step size and use the green arrow keys to control the selected axis. You can also jump to a specific value by using the `Go To` values.
 
 
 
