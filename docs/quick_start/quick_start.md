@@ -77,8 +77,8 @@ When you are happy with the instruments settings and have added all the instrume
 
 # Using Instruments
 After adding at least one instrument to CAMELS you now have two ways to control the instrument: 
-1. [_Measurement Protocols_](#2-measurement-protocols)
-2. [_Manual Control_](#3-manual-control)
+1. [_Measurement Protocols_](#2-measurement-protocols) Use it in sophisticated measurement procedures.
+2. [_Manual Control_](#3-manual-control) Manual change individual 
 ![img_8.png](img_8.png)
 
 ## 2. Measurement Protocols
@@ -93,12 +93,94 @@ But let's start very simple with the _demo_device_ which is a pure software impl
 
 Start by clicking the large &#10133; symbol next to _Measurement Protocols_. This opens up and empty protocol window.
 ![img_9.png](img_9.png)
+
 Here you can fully configure the measurement routine you want to perform. Give the protocol a custom name using _Protocol Name_. With _Filename_ you set the name of data file that is created during the measurement. You can also add a custom description to describe what your measurement protocol does.
 
 One key part of this window is the _Sequence_ element on the left.
 Here you will configure the individual steps of the measurement procedure.
 
-Simply right click into the empty space or use the small &#10133; symbol in the top right to add a new step. 
+Simply right click into the empty space (left image below) or use the small &#10133; symbol in the top right to add a new step (right image below). 
+
+<p float="left">
+  <img src="img_10.png" width="48%" />
+  <img src="img_11.png" width="50.3%" /> 
+</p>
+
+---
+
+We can now add two of the most important steps:
+- **Set Channels**
+- **Read Channels**
+ 
+![img_12.png](img_12.png)
+
+Each device has specific _channels_ which can be read and set (changed) or only read.
+Depending on the exact implementation of the instruments channels they are either 'software channels' so they themselves do not actually require device communication but store important values or settings, or they are 'instrument channels' and either _read from_ or _write to_ the instrument (or both). 
+
+Below you can see the readable and the settable channels of a single _demo_device_. 
+
+<p float="left">
+  <img src="img_13.png" width="53%" />
+  <img src="img_14.png" width="46%" /> 
+</p>
+
+### 2.2. Single Set and Read
+Lets see how you can set and read individual cahnnels.
+#### Set
+We can now configure the protocol so that first each motor channel (`X`,`Y`,`Z`) are set to a value (in this case `1`,`2`,`3`).
+
+<p float="left">
+  <img src="img_15.png" width="49%" />
+  <img src="img_16.png" width="49%" /> 
+</p>
+
+The green background of the `value` field tells you that CAMELS understands the entry as it expects to see a number (float) here. If you enter a value which CAMELS can not convert to float it will change the background to red (see image on the right).
+
+&#9888; You can use variables instead of 'hard-coding' values.\
+&#9888; You can use most symbolic math operations in the value field to perform calculations before setting the result of the calculation.\
+For this simply add a variable on the bottom right of the protocol screen with the &#10133; symbol
+
+<p float="left">
+  <img src="img_17.png" width="49%" />
+  <img src="img_18.png" width="49%" /> 
+</p>
+
+and change the `Name` and `Value` to what ever you need. The `Data-Type` will change depending on the value you input and can be used to make sure that CAMELS correctly 'understands' the value.
+
+To use this variable in the protocol (here in `Set Channels`) simply right-click the value field and _insert_ or _append_ the desired variable you created.\
+![img_19](img_19.png)
+
+- _Insert_ will overwrite any existing value in the field 
+- _Append_ will add the string name of the variable at the end of the value field. This is useful when creating longer functions with multiple variables.
+
+You can use math notation as you would in a normal pythons script (you can use `np.*` variables; like `np.sin(1)`) to perform calculations before setting the value:\
+![img_22.png](img_22.png)\
+This should evaluate to `(1+1)*2=4`. You can also insert or append 
+- functions
+- operators 
+- channel values
+
+#### Read
+To read the channels we just set, simply configure the `Read Channels` step to read the three motor channels:\
+![img_23.png](img_23.png)\
+You can now run the protocol by confirming the configuration with `OK` and then pressing the `run` button.\
+![img_24.png](img_24.png)\
+This should build the protocol (converts your recipe to a python script that uses [Bluesky](https://blueskyproject.io/) to orchestrate the measurement) and run it; resulting in information about the run in the log on the right side of the window.\
+![img_25.png](img_25.png)\
+
+This creates a HDF5 file in the location specified by the data saving location set in `Settings` and the user and sample name. This file contains all the read data and all the metadata known to CAMELS.\
+![img_26.png](img_26.png)\
+We can see that the `motorX` was set correctly to a value of 4.
+
+
+
+
+
+
+
+
+### 2.3. Sweeping using a _For-loop_ step
+
 
 ## 3. Manual Control
 
