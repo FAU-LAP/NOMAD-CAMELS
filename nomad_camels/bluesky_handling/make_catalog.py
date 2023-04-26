@@ -24,14 +24,11 @@ def make_yml(datapath, catalog_name='CAMELS_CATALOG'):
                 '    args:\n'
                 '      paths:\n'
                 f'        - "{brokerpath}/*.msgpack"')
+    with open(fname,'r') as f:
+        print(f.readlines())
     print(os.listdir(catalog_path))
     print(brokerpath)
-    if not os.path.isdir(brokerpath):
-        os.makedirs(brokerpath)
     if catalog_name not in list(databroker.catalog):
-        databroker.catalog.force_reload()
-    if catalog_name not in list(databroker.catalog):
-        time.sleep(60)
         databroker.catalog.force_reload()
     print(list(databroker.catalog))
 

@@ -54,6 +54,8 @@ jobs:
           python -m pip install --upgrade pip
           sudo apt update
           sudo apt install libgl1-mesa-glx
+          sudo apt install libegl1-mesa libegl1
+          sudo apt install libegl1-mesa:i386 libegl1:i386
           sudo apt install libopengl0 -y
           pip install ruff pytest-md
           pip install -r requirements-dev.txt
