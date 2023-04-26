@@ -31,16 +31,16 @@ jobs:
 #          ruff --format=github --target-version=py37 .
       - name: Run tests with pytest
         run: pytest -v --md=report.md
-      - name: Add report to summary
-        if: always()
-        run: |
-          sed -i 's/# Test Report/# ${{ inputs.report-title }}/' report.md
-          if [ ${{ inputs.click-to-expand }} = true ]; then
-            sed -i '2i <details><summary>Click to expand!</summary>' report.md
-            sed -i '$a</details>' report.md
-          fi
-          cat report.md >> $GITHUB_STEP_SUMMARY
-        shell: bash
+#      - name: Add report to summary
+#        if: always()
+#        run: |
+#          sed -i 's/# Test Report/# ${{ inputs.report-title }}/' report.md
+#          if [ ${{ inputs.click-to-expand }} = true ]; then
+#            sed -i '2i <details><summary>Click to expand!</summary>' report.md
+#            sed -i '$a</details>' report.md
+#          fi
+#          cat report.md >> $GITHUB_STEP_SUMMARY
+#        shell: bash
   ubuntu_test:
     runs-on: ubuntu-latest
     steps:
@@ -51,7 +51,7 @@ jobs:
           python-version: 3.11
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          sudo python -m pip install --upgrade pip
           apt-get install python-pyside6
           pip install ruff pytest-md
           pip install -r requirements-dev.txt
@@ -63,16 +63,16 @@ jobs:
       #          ruff --format=github --target-version=py37 .
       - name: Run tests with pytest
         run: pytest -v --md=report.md
-      - name: Add report to summary
-        if: always()
-        run: |
-          sed -i 's/# Test Report/# ${{ inputs.report-title }}/' report.md
-          if [ ${{ inputs.click-to-expand }} = true ]; then
-            sed -i '2i <details><summary>Click to expand!</summary>' report.md
-            sed -i '$a</details>' report.md
-          fi
-          cat report.md >> $GITHUB_STEP_SUMMARY
-        shell: bash
+#      - name: Add report to summary
+#        if: always()
+#        run: |
+#          sed -i 's/# Test Report/# ${{ inputs.report-title }}/' report.md
+#          if [ ${{ inputs.click-to-expand }} = true ]; then
+#            sed -i '2i <details><summary>Click to expand!</summary>' report.md
+#            sed -i '$a</details>' report.md
+#          fi
+#          cat report.md >> $GITHUB_STEP_SUMMARY
+#        shell: bash
   macos_test:
     runs-on: macos-latest
     steps:
@@ -94,13 +94,13 @@ jobs:
       #          ruff --format=github --target-version=py37 .
       - name: Run tests with pytest
         run: pytest -v --md=report.md
-      - name: Add report to summary
-        if: always()
-        run: |
-          sed -i 's/# Test Report/# ${{ inputs.report-title }}/' report.md
-          if [ ${{ inputs.click-to-expand }} = true ]; then
-            sed -i '2i <details><summary>Click to expand!</summary>' report.md
-            sed -i '$a</details>' report.md
-          fi
-          cat report.md >> $GITHUB_STEP_SUMMARY
-        shell: bash
+#      - name: Add report to summary
+#        if: always()
+#        run: |
+#          sed -i 's/# Test Report/# ${{ inputs.report-title }}/' report.md
+#          if [ ${{ inputs.click-to-expand }} = true ]; then
+#            sed -i '2i <details><summary>Click to expand!</summary>' report.md
+#            sed -i '$a</details>' report.md
+#          fi
+#          cat report.md >> $GITHUB_STEP_SUMMARY
+#        shell: bash
