@@ -11,6 +11,7 @@ def make_yml(datapath, catalog_name='CAMELS_CATALOG'):
     print(catalog_path)
     if not os.path.isdir(catalog_path):
         os.makedirs(catalog_path)
+    print(os.listdir(catalog_path))
     fname = f'{catalog_path}/{catalog_name}.yml'
     brokerpath = f'{datapath}/databroker/{catalog_name}'
     with open(fname, 'w') as f:

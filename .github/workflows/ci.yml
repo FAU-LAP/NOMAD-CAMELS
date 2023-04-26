@@ -51,8 +51,8 @@ jobs:
           python-version: 3.11
       - name: Install dependencies
         run: |
-          sudo python -m pip install --upgrade pip
-          apt-get install python-pyside6
+          python -m pip install --upgrade pip
+          sudo apt-get install python-pyside6
           pip install ruff pytest-md
           pip install -r requirements-dev.txt
       - name: Lint with ruff
