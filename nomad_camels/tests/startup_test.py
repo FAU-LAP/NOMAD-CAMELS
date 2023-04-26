@@ -1,14 +1,16 @@
-def test_startup():
+def test_startup(qtbot, capfd):
     import sys
-    from PySide6.QtWidgets import QApplication
-    from PySide6.QtCore import QCoreApplication
     import nomad_camels.MainApp_v2
     from nomad_camels.utility import exception_hook
     sys.excepthook = exception_hook.exception_hook
-    app = QCoreApplication.instance()
-    if app is None:
-        app = QApplication(sys.argv)
     main_window = nomad_camels.MainApp_v2.MainWindow()
-    main_window.close()
+
+    def close_save_message():
+        main_window.close()
+        out, err = capfd.readouterr()
+        print(out)
+        assert out == 'current state saved!\n'
+
+    qtbot.waitUntil(close_save_message)
 
 

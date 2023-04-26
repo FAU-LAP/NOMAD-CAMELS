@@ -39,11 +39,9 @@ def test_add_device(qtbot):
     index2 = conf.tableWidget_instruments.indexFromItem(item2)
     conf.tableWidget_instruments.selectionModel().select(index2, QItemSelectionModel.Select)
     conf.table_click()
-    qtbot.mouseClick(conf.pushButton_add, Qt.MouseButton.LeftButton)
 
     def check_instr_in():
+        qtbot.mouseClick(conf.pushButton_add, Qt.MouseButton.LeftButton)
         instr = conf.get_config()
         assert 'demo_device' in instr
     qtbot.waitUntil(check_instr_in)
-
-    qtbot.mouseClick(conf.pushButton_remove, Qt.MouseButton.LeftButton)

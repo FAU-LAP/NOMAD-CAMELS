@@ -204,8 +204,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def close(self) -> bool:
         """Calling the save_state method when closing the window."""
         ret = super().close()
-        if self.preferences['autosave']:
-            self.save_state()
+        # if self.preferences['autosave']:
+        #     self.save_state()
         return ret
 
     def closeEvent(self, a0):
