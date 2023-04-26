@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Quick Start
-has_children: true
+title: Measurement Protocols
+parent: Quick Start
 nav_order: 2
 ---
 
@@ -17,79 +17,8 @@ nav_order: 2
 {:toc}
 </details>
 
-# Quick Start Guide
-This guide should help you get to know the main functionalities of NOMAD-CAMELS (short: CAMELS) after a successful [installation](https://fau-lap.github.io/NOMAD-CAMELS/docs/installation.html).
 
-
-
-## 1. Installing and Configuring Instruments
-### 1.1. Installing Instruments
-When you first start up NOMAD-CAMELS, you should see something like the following:  
-![Initial window on start up](img.png)
-Clicking on the "Manage Instruments" button will open a dialog where you can install available instruments from the CAMELS repository (PyPi).\
-For this tutorial we use the "demo_device".
-
-<p float="left">
-  <img src="img_1.png" width="49%" />
-  <img src="img_3.png" width="49%" /> 
-</p>
-
-On the left we can see the instrument selection window. 
-- Simply check the instruments you want to install. To follow this example simply install the `demo device`. 
-- Then click `Install / update Selected` to install the most recent version of the instrument from PyPi (this is done internally with a simple `pip install <instrument_name>`).
-
-&#9888; This means you can also use the virtual python environment `.desertenv` to manually install devices by using 
-```powershell
-pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<parent_driver_name>
-```
-
-&#9888; For this to work you must activate the correct virtual environment first!
-Run this code with the correct path in powershell to activate the virtual environment:
-```powershell
-cd \Path\to\NOMAD-CAMELS\.desertenv\Scripts\
-.\activate
-```
-
-On the right you can see the screen after successful installation of the instruments. 
-
----
-
-<img align="right" src="img_2.png" width="55%" alt="My Image">
-
-You can also filter the instruments by their name using the `Search name` field as you see here.
-
-<br/><br/><br/><br/>
-
----
-
-### 1.2. Configuring Instruments
-
-After successful installation you can switch to the "Configure Instruments" tab.\
-Here all the available instruments are listed as well as the number of instances (so 'actual' instruments) you have added of the installed instrument type.\
-For this simply select the instrument type you want to add and click the &#10133; symbol under `Configure`.
-
-<p float="left">
-  <img src="img_4.png" width="49%" />
-  <img src="img_5.png" width="49%" /> 
-</p>
-
-After adding the instrument a new instance of this instrument type is created. You can add as many instances of devices as you like by simply pushing the &#10133; symbol. This adds additional tabs with the `Custom name` you gave the instrument. By default, the naming simply increments a number after the device name.
-
----
-
-You can then change the instrument settings as you wish.\
-You can also add a plain text description of the instrument and what you are planning to do with it. This is added to the metadata of your measurement when the instrument is used. This can help you better understand what the instrument does for larger project and allows others to better understand your measurement data.
-
-<p float="left">
-  <img src="img_6.png" width="49%" />
-  <img src="img_7.png" width="49%" /> 
-</p>
-
----
-
-When you are happy with the instruments settings and have added all the instruments required for your measurements you can simply click `OK` to save all the instruments and settings to CAMELS.
-
-# Using Instruments
+# Instrument Control Options
 After adding at least one instrument to CAMELS you now have two ways to control the instrument: 
 1. [_Measurement Protocols_](#2-measurement-protocols) Use it for sophisticated measurement procedures.
 2. [_Manual Control_](#3-manual-control) Manually change and control individual channels. This is useful for controlling stages without having to create a protocol.
@@ -97,16 +26,16 @@ After adding at least one instrument to CAMELS you now have two ways to control 
 
 
 [&#8679; Back to the top &#8679;](#0-table-of-contents)
-## 2. Measurement Protocols
+# 1. Measurement Protocols
 Measurement protocols are the main way in which CAMELS performs measurements. It can be understood as something similar to a `measurement recipe` where a step for step guide is given to different instruments to perform a measurement procedure.
 
 A good example of such a measurement procedure is a temperature dependant current-voltage (IV) measurement. Here the temperature of a sample is set to a specific value with a PID controller and waits for the temperature to be stable. Then it performs an IV-sweep, so it sets a voltage and measures the accompanying current for a given range of voltage values (often something like 100 points between -1 V and +1V).\
-The temperature set-points are also varied to values in a given range (for example from 295K to 320K in 25 steps).\
+The temperature set-points are also set to values in a given range (for example from 295K to 320K in 25 steps).\
 So one would need to nest different loops (one for setting teh temperature and one for setting the voltage). This can be done quite simply using CAMELS.
 
----
 
-### 2.1. Simple Start with _demo_device_
+
+## 1.1. Simple Start with _demo_device_
 But let's start very simple with the `demo_device` which is a pure software implementation of an instrument. 
 
 Start by clicking the large &#10133; symbol next to `Measurement Protocols`. This opens up and empty protocol window.\
@@ -146,10 +75,10 @@ Below you can see the readable and the settable channels of a single `demo_devic
 
 ---
 
-### 2.2. Single Set and Read
+## 1.2. Single Set and Read
 Lets see how you can set and read individual cahnnels.
 
-#### Set
+### 1.2.1. Set Channels
 We can now configure the protocol so that first each motor channel (`X`,`Y`,`Z`) are set to a value (in this case `1`,`2`,`3`).
 
 <p float="left">
@@ -185,7 +114,7 @@ This should evaluate to `(1+1)*2=4`. You can also insert or append
 
 ---
 
-#### Read
+### 1.2.2. Read Channels
 To read the channels we just set, simply configure the `Read Channels` step to read the three motor channels:\
 ![img_23.png](img_23.png)\
 You can now run the protocol by confirming the configuration with `OK` and then pressing the `run` button.\
@@ -201,23 +130,24 @@ We can see that the `motorX` was set correctly to a value of 4.
 
 ---
 
-### 2.3. Sweeping using a `For-loop` step
+## 1.3. Sweeping using a `For-loop` step
 Start by creating a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols`in the main window.
-#### Create Steps
+### 1.3.1. Create Steps
 Create a `For Loop`step as the first step in the sequence.\
 ![img_27.png](img_27.png)
 
 Right-click the `For loop`step and click `Add Into`to add a `Set Channel`step into the for-loop. Steps within a for-loop are executed for each iteration of the loop.\
-![img_28.png](img_28.png)\
+![img_28.png](img_28.png)
+
 Then also add a `Read Channel`step by right-clicking the `Set Channels`step and using _Insert Below_.\
 ![img_29.png](img_29.png)
 
-#### Create Variables
+### 1.3.2. Create Variables
 > &#9888; This step is optional.
 
 Add these variables to make it clearer what values are used in to for-loop. This also makes maintaining the protocol easier and enables you to more easily share it with others.   
 ![img_30.png](img_30.png)
-#### Set Channels (using variables)
+### 1.3.3. Set Channels (using variables)
 Start by setting the start, stop and number of points of the `For Loop`. To do this either simply type the number you want into the field or you can use the variables created above to set these parameters. To use the variables simply right-click the field and select `Insert Variable`and then `stop`. Like this for example:
 ![img_31.png](img_31.png)
 
@@ -233,15 +163,15 @@ We set
 
 to demonstrate both of the variables and the use of mathematical operations (here `+`) in value fields.
 
-#### Read Channels
+### 1.3.4. Read Channels
 Now set which channels should be read each time the loop is iterated over. If you like you can simply select `Read All` at the top to read all available channels. You could of course select individual channels if you want read fewer. Here we are only interested in the motor channels, so we will only read these. 
 ![img_34.png](img_34.png)
 
-#### Run Sweep Protocol
+### 1.3.5. Run Sweep Protocol
 Now simply click `OK` and `run` the protocol.
 ![img_35.png](img_35.png)\
 You can already see the eleven iterations the loop makes from the console window.
-#### Sweep Data
+### 1.3.6. Sweep Data
 Now lets look at the data produced. The HDF5 file with the data is saved into the location specified by you. With a simple HDF5 viewer like [H5web](https://h5web.panosc.eu/h5wasm) you can easily read and display the data.
 <p float="left">
   <img src="img_36.png" width="62%" />
@@ -261,12 +191,12 @@ We can see that the mathematical operation of adding `Count` and `Value` for `mo
 
 ---
 
-### 2.4. Using the `Simple Sweep` functionality
+## 1.4. Using the `Simple Sweep` functionality
 If you want to sweep and set one channel (e.g. voltage) and read any number of other channels (e.g. current and temperature) you can either use a for-loop as described [above](#23-sweeping-using-a-for-loopstep) or you can use the _Simple Sweep_ functionality which is a 'cleaner' implementation of such a sweep.
 
-#### Create Step
+### 1.4.1. Create Step
 Start by creating a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols`in the main window. Add a `Simple Sweep` step into teh sequence.
-#### Customize Simple Sweep
+### 1.4.2. Customize Simple Sweep
 You can now configure the `Simple Sweep`. This is quite similar to configuring the `for-loop` step [above](#23-sweeping-using-a-for-loopstep). But you musts first configure the Sweep Channel, so the channel that should be changed and set. We will use the `motorX` channel for this example.
 ![img_39.png](img_39.png)\
 `Data Output` configures in which Bluesky stream the sweep is run. `sub-stream` should be fine for most cases.\
@@ -281,71 +211,17 @@ Set the `Start`, `Stop` and `points` parameters. For this we can again use varia
   <img src="img_42.png" width="70%" />
 </p>
 
-#### Run _Simple Sweep_
+### 1.4.3. Run _Simple Sweep_
 Click `OK` and `run` the protocol.\
 ![img_43.png](img_43.png)\
 
-#### Data File
+### 1.4.4. Data File
 Now lets look at the data produced. The HDF5 file with the data is saved into the location specified by you. With a simple HDF5 viewer like [H5web](https://h5web.panosc.eu/h5wasm) you can easily read and display the data.
 <p float="left">
   <img src="img_44.png" width="75%" />
 </p>
 
 We can see that the set points of `motorX` are read successfully.
-
-[&#8679; Back to the top &#8679;](#0-table-of-contents)
-
----
-
-## 3. Manual Control
-`Manual Control` allows you to set individual instrument channels (e.g. stage in x direction or a voltage output of a SMU)
-### 3.1. Add Manual Control
-To start simply click the &#10133; symbol next to `Manual Control`. You can now select which type of manual control you want to add. The options depend on the instruments you have installed. The most basic manual control is the `Stage_Control` which sets individual channels. It is mainly designed for motorized stages but can be used to control most instruments. 
-### 3.2. Configure Manual Control
-Select which axis the manual control should use. You must also select from which channel it should read the position (`readback axis`) . This is often the same channel as the `use axis`.
-![img_45.png](img_45.png)
-
-Click `OK` and `start` the manual control.\
-![img_46.png](img_46.png)
-
-This opens the stage control.\
-![img_47.png](img_47.png)\
-Here you can set the step size and use the green arrow keys to control the selected axis. You can also jump to a specific value by using the `Go To` values.
-
-[&#8679; Back to the top &#8679;](#0-table-of-contents)
-
----
-
-## 4. Plots
-You can display live-plots in the measurement protocols to have a better understanding of what is going on during the measurement. 
-### 4.1. Configure Plots
-To configure the plots simply click `Define Plots / Fits`. Here we bill be doing this for the for-loop measurement protocol created [here](#23-sweeping-using-a-for-loopstep)
-<p float="left">
-  <img src="img_48.png" width="75%" />
-</p>
-
-Add a new plot by clicking the &#10133; symbol and choosing a plot type.
-
-<p float="left">
-  <img src="img_49.png" width="40%" />
-</p>
-
-The `x-axis` is set by either typing the channel into the field or by simply right-clicking and adding the channel value with `Insert Channel Value`. We will be plotting the `motorZ` channel (y-axis) against `For_Loop_Count` (x-axis). Add a new y-axis with the &#10133; symbol next to `y-axes`. Enter the `motorZ` channel via right click into the `formula` field. As with most fields you can to any mathematical operation as a string in this field (see examples above for more information). Select if the y-axis should be plotted on the left or right side of the x-axis. \
-![img_50.png](img_50.png)
-
-Give the plot a `x-label` and `y-label` as well as a `title`. 
-
-A finished plot configuration (without a fit) could look like this for example
-![img_51.png](img_51.png)
-### 4.2. Run Protocol with Plots
-If you then run the protocol the plot is displayed and updated live.
-<p float="left">
-  <img src="img_52.png" width="80%" />
-</p>
-
-> &#9888; To get this plot you have to modify the protocol from [above](#23-sweeping-using-a-for-loopstep) by adding a small `Wait` time of `0.1` seconds as the internal software sweep is too fast for the plot to follow.\
-> ![img_53.png](img_53.png)
-
 
 [&#8679; Back to the top &#8679;](#0-table-of-contents)
 <p style="text-align:left;">

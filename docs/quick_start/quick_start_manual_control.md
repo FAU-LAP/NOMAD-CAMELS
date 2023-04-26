@@ -1,0 +1,44 @@
+---
+layout: default
+title: Manual Control
+parent: Quick Start
+nav_order: 3
+---
+
+## 0. Table of contents
+{: .no_toc }
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+- TOC
+{:toc}
+</details>
+
+
+# 1. Manual Control
+`Manual Control` allows you to set individual instrument channels (e.g. stage in x direction or a voltage output of a SMU)
+## 1.1. Add Manual Control
+To start simply click the &#10133; symbol next to `Manual Control`. You can now select which type of manual control you want to add. The options depend on the instruments you have installed. The most basic manual control is the `Stage_Control` which sets individual channels. It is mainly designed for motorized stages but can be used to control most instruments. 
+## 1.2. Configure Manual Control
+Select which axis the manual control should use. You must also select from which channel it should read the position (`readback axis`) . This is often the same channel as the `use axis`.
+![img_45.png](img_45.png)
+
+Click `OK` and `start` the manual control.\
+![img_46.png](img_46.png)
+
+This opens the stage control.\
+![img_47.png](img_47.png)\
+Here you can set the step size and use the green arrow keys to control the selected axis. You can also jump to a specific value by using the `Go To` values.
+
+[&#8679; Back to the top &#8679;](#0-table-of-contents)
+<p style="text-align:left;">
+  <span style="color: grey;">
+  <a href="installation.html">&larr; Back</a>
+  </span>
+  <span style="float:right;">
+    <a href="users_guide.html">Next &rarr;</a><br>
+  </span>
+</p>
