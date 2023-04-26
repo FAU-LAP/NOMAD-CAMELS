@@ -22,7 +22,7 @@ This guide should help you get to know the main functionalities of NOMAD-CAMELS 
 
 <p style="text-align:left;">
   <span style="color: grey;">
-  <a href="../docs/installation.html">&larr; Back</a>
+  <a href="../installation.html">&larr; Back</a>
   </span>
   <span style="float:right;">
     <a href="quick_start_install.html">Next &rarr;</a><br>
