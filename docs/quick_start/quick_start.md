@@ -84,7 +84,7 @@ After adding at least one instrument to CAMELS you now have two ways to control 
 ![img_8.png](img_8.png)
 
 
-[Back to the top](#0-table-of-contents)
+[&#8679; Back to the top &#8679;](#0-table-of-contents)
 ## 2. Measurement Protocols
 Measurement protocols are the main way in which CAMELS performs measurements. It can be understood as something similar to a `measurement recipe` where a step for step guide is given to different instruments to perform a measurement procedure.
 
@@ -130,7 +130,7 @@ Below you can see the readable and the settable channels of a single `demo_devic
   <img src="img_14.png" width="46%" /> 
 </p>
 
-[Back to the top](#0-table-of-contents)
+[&#8679; Back to the top &#8679;](#0-table-of-contents)
 
 ---
 
@@ -185,7 +185,7 @@ This creates a HDF5 file in the location specified by the data saving location s
 ![img_26.png](img_26.png)\
 We can see that the `motorX` was set correctly to a value of 4.
 
-[Back to the top](#0-table-of-contents)
+[&#8679; Back to the top &#8679;](#0-table-of-contents)
 
 ---
 
@@ -245,7 +245,7 @@ Here are the other two motor channels
 
 We can see that the mathematical operation of adding `Count` and `Value` for `motorZ` worked.
 
-[Back to the top](#0-table-of-contents)
+[&#8679; Back to the top &#8679;](#0-table-of-contents)
 ### 2.4. Using the `Simple Sweep` functionality
 If you want to sweep and set one channel (e.g. voltage) and read any number of other channels (e.g. current and temperature) you can either use a for-loop as described [above](#23-sweeping-using-a-for-loopstep) or you can use the _Simple Sweep_ functionality which is a 'cleaner' implementation of such a sweep.
 
@@ -278,7 +278,7 @@ Now lets look at the data produced. The HDF5 file with the data is saved into th
 
 We can see that the set points of `motorX` are read successfully.
 
-[Back to the top](#0-table-of-contents)
+[&#8679; Back to the top &#8679;](#0-table-of-contents)
 ## 3. Manual Control
 `Manual Control` allows you to set individual instrument channels (e.g. stage in x direction or a voltage output of a SMU)
 ### 3.1. Add Manual Control
@@ -294,8 +294,39 @@ This opens the stage control.\
 ![img_47.png](img_47.png)\
 Here you can set the step size and use the green arrow keys to control the selected axis. You can also jump to a specific value by using the `Go To` values.
 
+[&#8679; Back to the top &#8679;](#0-table-of-contents)
+## 4. Plots
+You can display live-plots in the measurement protocols to have a better understanding of what is going on during the measurement. 
+### 4.1. Configure Plots
+To configure the plots simply click `Define Plots / Fits`. Here we bill be doing this for the for-loop measurement protocol created [here](#23-sweeping-using-a-for-loopstep)
+<p float="left">
+  <img src="img_48.png" width="75%" />
+</p>
+
+Add a new plot by clicking the &#10133; symbol and choosing a plot type.
+
+<p float="left">
+  <img src="img_49.png" width="40%" />
+</p>
+
+The `x-axis` is set by either typing the channel into the field or by simply right-clicking and adding the channel value with `Insert Channel Value`. We will be plotting the `motorZ` channel (y-axis) against `For_Loop_Count` (x-axis). Add a new y-axis with the &#10133; symbol next to `y-axes`. Enter the `motorZ` channel via right click into the `formula` field. As with most fields you can to any mathematical operation as a string in this field (see examples above for more information). Select if the y-axis should be plotted on the left or right side of the x-axis. \
+![img_50.png](img_50.png)
+
+Give the plot a `x-label` and `y-label` as well as a `title`. 
+
+A finished plot configuration (without a fit) could look like this for example
+![img_51.png](img_51.png)
+
+If you then run the protocol the plot is displayed and updated live.
+<p float="left">
+  <img src="img_52.png" width="80%" />
+</p>
+
+> &#9888; To get this plot modify the protocol from [above](#23-sweeping-using-a-for-loopstep) by adding a small `Wait` time of `0.1` as the internat software sweep is too fast for the plot to follow.\
+> ![img_53.png](img_53.png)
 
 
+[&#8679; Back to the top &#8679;](#0-table-of-contents)
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="installation.html">&larr; Back</a>
