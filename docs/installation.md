@@ -102,6 +102,6 @@ The `.pyenv` folder and any python versions installed with pyenv are **NOT** rem
   <a href="../index.html">&larr; Back</a>
   </span>
   <span style="float:right;">
-    <a href="quick_start.html">Next &rarr;</a><br>
+    <a href="../quick_start/quick_start.html">Next &rarr;</a><br>
   </span>
 </p>
