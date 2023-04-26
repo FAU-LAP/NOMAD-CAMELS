@@ -337,13 +337,13 @@ Give the plot a `x-label` and `y-label` as well as a `title`.
 
 A finished plot configuration (without a fit) could look like this for example
 ![img_51.png](img_51.png)
-
+### 4.2. Run Protocol with Plots
 If you then run the protocol the plot is displayed and updated live.
 <p float="left">
   <img src="img_52.png" width="80%" />
 </p>
 
-> &#9888; To get this plot modify the protocol from [above](#23-sweeping-using-a-for-loopstep) by adding a small `Wait` time of `0.1` as the internat software sweep is too fast for the plot to follow.\
+> &#9888; To get this plot you have to modify the protocol from [above](#23-sweeping-using-a-for-loopstep) by adding a small `Wait` time of `0.1` seconds as the internal software sweep is too fast for the plot to follow.\
 > ![img_53.png](img_53.png)
 
 
