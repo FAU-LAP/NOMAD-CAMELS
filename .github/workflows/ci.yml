@@ -52,7 +52,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          sudo apt-get install python-pyside6
+          sudo apt update
+          sudo apt install libgl1-mesa-glx
+          sudo apt install python-pyside
           pip install ruff pytest-md
           pip install -r requirements-dev.txt
       - name: Lint with ruff
