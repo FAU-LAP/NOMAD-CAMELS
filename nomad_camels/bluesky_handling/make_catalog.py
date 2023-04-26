@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 import databroker
 
@@ -14,6 +15,8 @@ def make_yml(datapath, catalog_name='CAMELS_CATALOG'):
     print(os.listdir(catalog_path))
     fname = f'{catalog_path}/{catalog_name}.yml'
     brokerpath = f'{datapath}/databroker/{catalog_name}'
+    if not os.path.isdir(brokerpath):
+        os.makedirs(brokerpath)
     with open(fname, 'w') as f:
         f.write('sources:\n'
                 f'  {catalog_name}:\n'
@@ -22,9 +25,13 @@ def make_yml(datapath, catalog_name='CAMELS_CATALOG'):
                 '      paths:\n'
                 f'        - "{brokerpath}/*.msgpack"')
     print(os.listdir(catalog_path))
+    print(brokerpath)
     if not os.path.isdir(brokerpath):
         os.makedirs(brokerpath)
     if catalog_name not in list(databroker.catalog):
+        databroker.catalog.force_reload()
+    if catalog_name not in list(databroker.catalog):
+        time.sleep(60)
         databroker.catalog.force_reload()
     print(list(databroker.catalog))
 

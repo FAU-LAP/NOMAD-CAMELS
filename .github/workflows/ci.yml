@@ -54,6 +54,7 @@ jobs:
           python -m pip install --upgrade pip
           sudo apt update
           sudo apt install libgl1-mesa-glx
+          sudo apt install libopengl0 -y
           pip install ruff pytest-md
           pip install -r requirements-dev.txt
       - name: Lint with ruff
