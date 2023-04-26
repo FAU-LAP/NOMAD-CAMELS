@@ -1,13 +1,8 @@
-
 def test_install_add_demo_device():
-    import sys
-    from PySide6.QtWidgets import QApplication
-    from PySide6.QtCore import QCoreApplication, QItemSelectionModel, Qt
+    import time
+    from PySide6.QtCore import QItemSelectionModel, Qt
     from PySide6.QtTest import QTest
     from nomad_camels.frontpanels import manage_instruments
-    app = QCoreApplication.instance()
-    if app is None:
-        app = QApplication(sys.argv)
     manager = manage_instruments.ManageInstruments()
     installer = manager.installer
     for box in installer.checkboxes:
@@ -32,5 +27,5 @@ def test_install_add_demo_device():
     conf.table_click()
     conf.add_instance()
     instr = conf.get_config()
-    app.processEvents()
+    time.sleep(0.1)
     assert 'demo_device' in instr
