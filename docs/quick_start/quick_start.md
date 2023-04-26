@@ -35,8 +35,20 @@ For this tutorial we use the "demo_device".
 </p>
 
 On the left we can see the instrument selection window. 
-- Simply check the instruments you want to install. 
-- Then click `Install / update Selected` to install the most recent version of the instrument from PyPi via a simple `pip install <instrument_name>`
+- Simply check the instruments you want to install. To follow this example simply install the `demo device`. 
+- Then click `Install / update Selected` to install the most recent version of the instrument from PyPi (this is done internally with a simple `pip install <instrument_name>`).
+
+&#9888; This means you can also use the virtual python environment `.desertenv` to manually install devices by using 
+```powershell
+pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<parent_driver_name>
+```
+
+&#9888; For this to work you must activate the correct virtual environment first!
+Run this code with the correct path in powershell to activate the virtual environment:
+```powershell
+cd \Path\to\NOMAD-CAMELS\.desertenv\Scripts\
+.\activate
+```
 
 On the right you can see the screen after successful installation of the instruments. 
 
