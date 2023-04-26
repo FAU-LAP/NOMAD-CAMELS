@@ -201,7 +201,7 @@ We can see that the `motorX` was set correctly to a value of 4.
 
 ---
 
-### 2.3. Sweeping using a `For-loop`step
+### 2.3. Sweeping using a `For-loop` step
 Start by creating a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols`in the main window.
 #### Create Steps
 Create a `For Loop`step as the first step in the sequence.\
