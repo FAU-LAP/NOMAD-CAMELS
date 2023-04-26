@@ -36,9 +36,9 @@ Here you can set the step size and use the green arrow keys to control the selec
 [&#8679; Back to the top &#8679;](#0-table-of-contents)
 <p style="text-align:left;">
   <span style="color: grey;">
-  <a href="installation.html">&larr; Back</a>
+  <a href="quick_start_protocols.html">&larr; Back</a>
   </span>
   <span style="float:right;">
-    <a href="users_guide.html">Next &rarr;</a><br>
+    <a href="quick_start_plots.html">Next &rarr;</a><br>
   </span>
 </p>

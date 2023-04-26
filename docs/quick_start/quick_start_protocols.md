@@ -24,8 +24,6 @@ After adding at least one instrument to CAMELS you now have two ways to control 
 2. [_Manual Control_](#3-manual-control) Manually change and control individual channels. This is useful for controlling stages without having to create a protocol.
 ![img_8.png](img_8.png)
 
-
-[&#8679; Back to the top &#8679;](#0-table-of-contents)
 # 1. Measurement Protocols
 Measurement protocols are the main way in which CAMELS performs measurements. It can be understood as something similar to a `measurement recipe` where a step for step guide is given to different instruments to perform a measurement procedure.
 
@@ -35,7 +33,7 @@ So one would need to nest different loops (one for setting teh temperature and o
 
 
 
-## 1.1. Simple Start with _demo_device_
+## 1.1. Simple Start with a `demo_device`
 But let's start very simple with the `demo_device` which is a pure software implementation of an instrument. 
 
 Start by clicking the large &#10133; symbol next to `Measurement Protocols`. This opens up and empty protocol window.\
@@ -46,14 +44,14 @@ Here you can fully configure the measurement routine you want to perform. Give t
 One key part of this window is the `Sequence` element on the left.
 Here you will configure the individual steps of the measurement procedure.
 
-Simply right click into the empty space (left image below) or use the small &#10133; symbol in the top right to add a new step (right image below). 
+Simply right click into the empty space (first image below) or use the small &#10133; symbol in the top right to add a new step (second image below). 
 
 <p float="left">
-  <img src="img_10.png" width="48%" />
-  <img src="img_11.png" width="50.3%" /> 
+  <img src="img_10.png" width="75%" />
+  <img src="img_11.png" width="75%" /> 
 </p>
 
----
+### 1.1.1. Add Set and Read Steps
 
 We can now add two of the most important steps:
 - **Set Channels**
@@ -75,7 +73,7 @@ Below you can see the readable and the settable channels of a single `demo_devic
 
 ---
 
-## 1.2. Single Set and Read
+## 1.2. Use Single Set and Read
 Lets see how you can set and read individual cahnnels.
 
 ### 1.2.1. Set Channels
@@ -88,8 +86,11 @@ We can now configure the protocol so that first each motor channel (`X`,`Y`,`Z`)
 
 The green background of the `value` field tells you that CAMELS understands the entry as it expects to see a number (float) here. If you enter a value which CAMELS can not convert to float it will change the background to red (see image on the right).
 
-&#9888; You can use variables instead of 'hard-coding' values.\
-&#9888; You can use most symbolic math operations in the value field to perform calculations before setting the result of the calculation.\
+### 1.2.2. Use Variables
+
+> &#9888; You can use variables instead of 'hard-coding' values.\
+> &#9888; You can use most symbolic math operations in the value field to perform calculations before setting the result of the calculation.\
+
 For this simply add a variable on the bottom right of the protocol screen with the &#10133; symbol
 
 <p float="left">
@@ -114,7 +115,7 @@ This should evaluate to `(1+1)*2=4`. You can also insert or append
 
 ---
 
-### 1.2.2. Read Channels
+### 1.2.3. Read Channels
 To read the channels we just set, simply configure the `Read Channels` step to read the three motor channels:\
 ![img_23.png](img_23.png)\
 You can now run the protocol by confirming the configuration with `OK` and then pressing the `run` button.\
@@ -145,7 +146,7 @@ Then also add a `Read Channel`step by right-clicking the `Set Channels`step and 
 ### 1.3.2. Create Variables
 > &#9888; This step is optional.
 
-Add these variables to make it clearer what values are used in to for-loop. This also makes maintaining the protocol easier and enables you to more easily share it with others.   
+Add these variables to make it clearer what values are used in the `For Loop`. This also makes maintaining the protocol easier and enables you to more easily share it with others.   
 ![img_30.png](img_30.png)
 ### 1.3.3. Set Channels (using variables)
 Start by setting the start, stop and number of points of the `For Loop`. To do this either simply type the number you want into the field or you can use the variables created above to set these parameters. To use the variables simply right-click the field and select `Insert Variable`and then `stop`. Like this for example:
@@ -226,9 +227,9 @@ We can see that the set points of `motorX` are read successfully.
 [&#8679; Back to the top &#8679;](#0-table-of-contents)
 <p style="text-align:left;">
   <span style="color: grey;">
-  <a href="installation.html">&larr; Back</a>
+  <a href="quick_start_install.html">&larr; Back</a>
   </span>
   <span style="float:right;">
-    <a href="users_guide.html">Next &rarr;</a><br>
+    <a href="quick_start_manual_control.html">Next &rarr;</a><br>
   </span>
 </p>

@@ -51,7 +51,7 @@ If you then run the protocol the plot is displayed and updated live.
 [&#8679; Back to the top &#8679;](#0-table-of-contents)
 <p style="text-align:left;">
   <span style="color: grey;">
-  <a href="installation.html">&larr; Back</a>
+  <a href="quick_start_manual_control.html">&larr; Back</a>
   </span>
   <span style="float:right;">
     <a href="users_guide.html">Next &rarr;</a><br>

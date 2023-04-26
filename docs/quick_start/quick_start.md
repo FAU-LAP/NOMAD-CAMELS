@@ -25,6 +25,6 @@ This guide should help you get to know the main functionalities of NOMAD-CAMELS 
   <a href="installation.html">&larr; Back</a>
   </span>
   <span style="float:right;">
-    <a href="users_guide.html">Next &rarr;</a><br>
+    <a href="quick_start_install.html">Next &rarr;</a><br>
   </span>
 </p>

@@ -51,7 +51,7 @@ On the right you can see the screen after successful installation of the instrum
 
 ---
 
-<img align="right" src="img_2.png" width="55%" alt="My Image">
+<img align="right" src="img_2.png" width="65%" alt="My Image">
 
 You can also filter the instruments by their name using the `Search name` field as you see here.
 
@@ -59,7 +59,7 @@ You can also filter the instruments by their name using the `Search name` field 
 
 ---
 
-### 1.2. Configuring Instruments
+## 1.2. Configuring Instruments
 
 After successful installation you can switch to the "Configure Instruments" tab.\
 Here all the available instruments are listed as well as the number of instances (so 'actual' instruments) you have added of the installed instrument type.\
@@ -70,12 +70,11 @@ For this simply select the instrument type you want to add and click the &#10133
   <img src="img_5.png" width="49%" /> 
 </p>
 
-After adding the instrument a new instance of this instrument type is created. You can add as many instances of devices as you like by simply pushing the &#10133; symbol. This adds additional tabs with the `Custom name` you gave the instrument. By default, the naming simply increments a number after the device name.
+After adding the instrument a new instance of this instrument type is created. You can add as many instances of instruments as you like by simply pushing the &#10133; symbol. This adds additional tabs with the `Custom name` you gave the instrument. By default, the naming simply increments a number after the device name.
 
----
-
+## 1.3 Change Instrument Settings
 You can then change the instrument settings as you wish.\
-You can also add a plain text description of the instrument and what you are planning to do with it. This is added to the metadata of your measurement when the instrument is used. This can help you better understand what the instrument does for larger project and allows others to better understand your measurement data.
+You can add a plain text description of the instrument and what you are planning to do with it. This is added to the **metadata** of your measurement when the instrument is used. This can help you better understand what the instrument does for larger project and allows others to better understand your measurement data.
 
 <p float="left">
   <img src="img_6.png" width="49%" />
@@ -91,9 +90,9 @@ When you are happy with the instruments settings and have added all the instrume
 [&#8679; Back to the top &#8679;](#0-table-of-contents)
 <p style="text-align:left;">
   <span style="color: grey;">
-  <a href="installation.html">&larr; Back</a>
+  <a href="quick_start.html">&larr; Back</a>
   </span>
   <span style="float:right;">
-    <a href="users_guide.html">Next &rarr;</a><br>
+    <a href="quick_start_protocols.html">Next &rarr;</a><br>
   </span>
 </p>
