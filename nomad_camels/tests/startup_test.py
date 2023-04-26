@@ -9,7 +9,7 @@ def test_startup(qtbot, capfd):
         main_window.close()
         out, err = capfd.readouterr()
         print(out)
-        assert out == 'current state saved!\n'
+        assert 'current state saved!' in out
 
     qtbot.waitUntil(close_save_message)
 

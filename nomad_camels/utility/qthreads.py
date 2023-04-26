@@ -76,10 +76,13 @@ class Run_Protocol(QThread):
         provided, it will update the completed-percentage with each starting
         loopstep."""
         cmd = ['.desertenv/Scripts/pythonw', '-c', "from IPython import embed; embed()"]
+        flags = 0
+        if os.name == 'nt':
+            flags = subprocess.CREATE_NO_WINDOW
         self.popen = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
                                       stdin=subprocess.PIPE, bufsize=1,
-                                      creationflags=subprocess.CREATE_NO_WINDOW)
+                                      creationflags=flags)
         self.write_to_console('%gui qt5')
         self.write_to_console('import sys')
         self.write_to_console('import importlib')
@@ -276,12 +279,15 @@ class Run_IOC(QThread):
         self.curr_last = -1
 
     def run(self):
+        flags = 0
+        if os.name == 'nt':
+            flags = subprocess.CREATE_NO_WINDOW
         self.popen = subprocess.Popen(['wsl', './EPICS_handling/run_ioc.cmd',
                                        self.ioc_name],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
                                       stdin=subprocess.PIPE, bufsize=1,
-                                      creationflags=subprocess.CREATE_NO_WINDOW)
+                                      creationflags=flags)
         for line in iter(self.popen.stdout.readline, b''):
             text = line.decode().rstrip()
             self.info_step.emit(text)

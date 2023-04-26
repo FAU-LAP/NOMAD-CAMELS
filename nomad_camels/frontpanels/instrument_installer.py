@@ -241,13 +241,16 @@ class Install_Thread(QThread):
             self.val_step.emit(i / n * 100)
             if self.uninstall:
                 device_name = dev.replace("_", "-")
+                flags = 0
+                if os.name == 'nt':
+                    flags = subprocess.CREATE_NO_WINDOW
                 ret = subprocess.Popen(['powershell',
                                         f'{path}\\pip uninstall -y '
                                         f'nomad-camels-driver-{device_name}'],
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT,
                                        stdin=subprocess.PIPE,
-                                       creationflags=subprocess.CREATE_NO_WINDOW)
+                                       creationflags=flags)
                 if ret.returncode:
                     raise OSError(f'Failed to uninstall nomad-camels-driver-{device_name}')
             else:
@@ -255,6 +258,9 @@ class Install_Thread(QThread):
                 device_name = dev.replace("_", "-")
                 print()
                 print(path)
+                flags = 0
+                if os.name == 'nt':
+                    flags = subprocess.CREATE_NO_WINDOW
                 ret = subprocess.Popen(['powershell',
                                         f'{path}\\pip install --no-cache-dir '
                                         f'--index-url {pypi_url} '
@@ -263,13 +269,14 @@ class Install_Thread(QThread):
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT,
                                        stdin=subprocess.PIPE,
-                                       creationflags=subprocess.CREATE_NO_WINDOW)
+                                       creationflags=flags)
                 if ret.returncode:
                     raise OSError(f'Failed to install nomad-camels-driver-{device_name}')
             for line in iter(ret.stdout.readline, b''):
                 text = line.decode().rstrip()
                 self.info_step.emit(text)
         getInstalledDevices(True)
+        print(installed_instr)
         for i, dev in enumerate(self.devs):
             if self.uninstall and dev in installed_instr:
                 WarnPopup(self,
