@@ -56,7 +56,7 @@ On the right you can see the screen after successful installation of the instrum
 
 <img align="right" src="img_2.png" width="55%" alt="My Image">
 
-You can also filter the instruments by their name using the `Search name` field as you see here in the right image.
+You can also filter the instruments by their name using the `Search name` field as you see here.
 
 <br/><br/><br/><br/>
 
