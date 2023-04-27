@@ -99,7 +99,8 @@ Each type requires a different set of parameters from this list :\
 Before you start the sweep measurement you have to set the required parameters to the desired value in a _'Set Channels step'_. 
 
 E.g. for a linear stair sweep from `start=0` to `stop=1` with `step size=0.1`. `Bias delay` and `range` are set in the instrument config page.\
-&#9888; You **MUST set the sweep type** here as well using the `keithley_237_setSweep_Type` channel: `1 = linear stair`
+&#9888; You **MUST set the sweep type** using the `keithley_237_setSweep_Type` channel:\
+Here we want the linear sweep so we set the value to `1` as this corresponds to the linear sweep (see list of 5 sweep types [above](#using-internal-sweeps))\
 ![img_4.png](img_4.png)
 
 ### Starting the Sweep
