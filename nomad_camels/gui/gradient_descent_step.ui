@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Grad_Desc</class>
+ <widget class="QWidget" name="Grad_Desc">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="8" column="2">
+    <widget class="QLabel" name="label_12">
+     <property name="text">
+      <string>Max Number of Steps</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="Variable_Box" name="lineEdit_learning_rate"/>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Minimum Value</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Extremum-Type:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>Momentum</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Optimization Function:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Smallest Step</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QLabel" name="label_11">
+     <property name="text">
+      <string>Largest Step</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Output-Channel:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="2">
+    <widget class="Variable_Box" name="lineEdit_opt_func"/>
+   </item>
+   <item row="5" column="2">
+    <widget class="Variable_Box" name="lineEdit_max_val"/>
+   </item>
+   <item row="4" column="2">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Maximum Value</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="3">
+    <widget class="QCheckBox" name="checkBox_plot_steps">
+     <property name="text">
+      <string>Plot Steps</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="Variable_Box" name="lineEdit_min_val"/>
+   </item>
+   <item row="5" column="0">
+    <widget class="Variable_Box" name="lineEdit_starting_val"/>
+   </item>
+   <item row="7" column="2">
+    <widget class="Variable_Box" name="lineEdit_momentum"/>
+   </item>
+   <item row="9" column="1">
+    <widget class="Variable_Box" name="lineEdit_largest_step"/>
+   </item>
+   <item row="6" column="1">
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>Threshold</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="Variable_Box" name="lineEdit_threshold"/>
+   </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QComboBox" name="comboBox_output_channel"/>
+   </item>
+   <item row="9" column="0">
+    <widget class="Variable_Box" name="lineEdit_smallest_step"/>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QComboBox" name="comboBox_extremum_type"/>
+   </item>
+   <item row="9" column="2">
+    <widget class="Variable_Box" name="lineEdit_max_n_steps"/>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Starting Value</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Learning Rate</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Variable_Box</class>
+   <extends>QLineEdit</extends>
+   <header>nomad_camels.ui_widgets.variable_tool_tip_box</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>comboBox_extremum_type</tabstop>
+  <tabstop>comboBox_output_channel</tabstop>
+  <tabstop>lineEdit_opt_func</tabstop>
+  <tabstop>checkBox_plot_steps</tabstop>
+  <tabstop>lineEdit_starting_val</tabstop>
+  <tabstop>lineEdit_min_val</tabstop>
+  <tabstop>lineEdit_max_val</tabstop>
+  <tabstop>lineEdit_learning_rate</tabstop>
+  <tabstop>lineEdit_threshold</tabstop>
+  <tabstop>lineEdit_momentum</tabstop>
+  <tabstop>lineEdit_smallest_step</tabstop>
+  <tabstop>lineEdit_largest_step</tabstop>
+  <tabstop>lineEdit_max_n_steps</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

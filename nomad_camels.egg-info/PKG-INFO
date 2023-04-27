@@ -1,3 +1,17 @@
+Metadata-Version: 2.1
+Name: nomad-camels
+Version: 0.1.15
+Summary: CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics.
+Author-email: FAIRmat - HU Berlin <nomad-camels@fau.de>
+Project-URL: GitHub Page, https://github.com/FAU-LAP/NOMAD-CAMELS
+Project-URL: Documentation, https://fau-lap.github.io/NOMAD-CAMELS/
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)
+Classifier: Operating System :: Microsoft :: Windows
+Requires-Python: >=3.9.6
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+
 # NOMAD-CAMELS  
 
 ## Configurable Application for Measurements, Experiments and Laboratory-Systems  

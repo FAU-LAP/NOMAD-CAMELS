@@ -1,8 +1,0 @@
-{
-	"name": "PID controller",
-	"directory": "PID_controller",
-	"tags": ["PID", "controller"],
-	"requirements": [],
-	"files": [],
-	"virtual": true
-}
