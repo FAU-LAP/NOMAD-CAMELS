@@ -18,9 +18,9 @@ nav_order: 4
 </details>
 
 
-# 1. Custom Installation MacOS
+# Custom macOS Installation 
 
-## 1.1. Pyenv and Python Installation
+## 1. Pyenv and Python Installation
 This uses `homebrew` to install pyenv ([see here](https://brew.sh/) for more information).\
 - Run
   ```bash
@@ -36,7 +36,7 @@ This uses `homebrew` to install pyenv ([see here](https://brew.sh/) for more inf
   ```bash
   brew install openssl readline sqlite3 xz zlib
   ```  
-## 1.2. Python Installation
+## 2. Python Installation
 - Restart terminal
 - Type in to the terminal 
   ```
@@ -45,7 +45,7 @@ This uses `homebrew` to install pyenv ([see here](https://brew.sh/) for more inf
   for example `pyenv install 3.11.3`.\
 `<python_version>` is the python version you want to install (3.11.3 or higher is suggested for NOMAD-CAMELS).  
 
-## 1.3. Install CAMELS
+## 3. Install CAMELS
 - Create a folder where you want to install CAMELS (e.g. `\NOMAD-CAMELS\`)
 - Type in your powershell `cd \NOMAD-CAMELS\;pyenv local <python_version> `
 - If you have a working python environment (`python -V` in `/NOMAD-CAMELS/` returns `<python_version>`) then you can continue to install CAMELS.
@@ -56,7 +56,7 @@ This uses `homebrew` to install pyenv ([see here](https://brew.sh/) for more inf
   pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels 
   ```
   to install CAMELS.
-## 1.4. Run CAMELS
+## 4. Run CAMELS
 Go to `/.desertenv/Lib/site-packages/nomad_camels/` and run CAMELS using
 ```bash
 python CAMELS_start.py

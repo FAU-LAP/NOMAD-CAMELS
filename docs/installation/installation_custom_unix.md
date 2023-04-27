@@ -18,9 +18,9 @@ nav_order: 3
 </details>
 
 
-# 1. Custom Installation UNIX
+# Custom UNIX Installation
 
-## 1.1. Pyenv Installation
+## 1. Pyenv Installation
 See the [official Pyenv installation guide](https://github.com/pyenv/pyenv#installation) for more details and the most recent version.
 
 - Install pyenv to install the necessary python version (you do not need to do this if you already have the correct python version installed):
@@ -57,14 +57,14 @@ Stock Bash startup files vary widely between distributions in which of them sour
   ```
 - Install Python [build dependencies](https://github.com/pyenv/pyenv/wiki#suggested-build-environment) before attempting to install a new Python version.
 - **You can now begin using Pyenv.**
-## 1.2. Python Installation
+## 2. Python Installation
 - Type in to the terminal 
   ```
   pyenv install <python_version>
   ``` 
   for example `pyenv install 3.11.3`.\
 `<python_version>` is the python version you want to install (3.11.3 or higher is suggested for NOMAD-CAMELS).
-## 1.3. Install CAMELS
+## 3. Install CAMELS
 - Create a folder where you want to install CAMELS (e.g. `\NOMAD-CAMELS\`)
 - Type in your powershell `cd \NOMAD-CAMELS\;pyenv local <python_version> `
 - If you have a working python environment (`python -V` in `/NOMAD-CAMELS/` returns `<python_version>`) then you can continue to install CAMELS.
@@ -75,7 +75,7 @@ Stock Bash startup files vary widely between distributions in which of them sour
 pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels 
 ```
    to install CAMELS.
-## 1.4. Run CAMELS
+## 4. Run CAMELS
 Go to `/.desertenv/Lib/site-packages/nomad_camels/` and run CAMELS using
 ```bash
 python CAMELS_start.py

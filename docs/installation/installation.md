@@ -24,9 +24,9 @@ It installs CAMELS as a python package into your package library (`\*env*\Lib\si
 
 [comment]: <> (# Installing on Windows)
 
-If you do not have python installed on your machine or a clean python environment you have two options:
-1. [Using the installer](./installation_installer.html) (**RECOMENDED**, Windows only)
-2. Custom installation for Windows, macOS, and UNIX
+If you do not have python installed on your machine or a clean python environment you have several options:
+1. [Using the installer](./installation_installer.html) (**RECOMMENDED when using Windows**!)
+2. Custom installation for [Windows](https://fau-lap.github.io/NOMAD-CAMELS/docs/installation/installation_custom_windows.html), [UNIX](https://fau-lap.github.io/NOMAD-CAMELS/docs/installation/installation_custom_unix.html), and [macOS](https://fau-lap.github.io/NOMAD-CAMELS/docs/installation/installation_custom_macos.html)
 
 
 
