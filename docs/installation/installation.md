@@ -18,7 +18,7 @@ If you do not have python installed on your machine or a clean python environmen
 
 <p style="text-align:left;">
   <span style="color: grey;">
-  <a href="../index.html">&larr; Back</a>
+  <a href="../../index.html">&larr; Back</a>
   </span>
   <span style="float:right;">
     <a href="./installation_installer.html">Next &rarr;</a><br>
