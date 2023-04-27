@@ -32,7 +32,7 @@ For this tutorial we use the "demo_device".
 </p>
 
 On the left we can see the instrument selection window. 
-- Simply check the instruments you want to install. To follow this example simply install the `demo device`. 
+- Check the instruments you want to install. To follow this example  install the `demo device`. 
 - Then click `Install / update Selected` to install the most recent version of the instrument from PyPi (this is done internally with a simple `pip install <instrument_name>`).
 
 &#9888; This means you can also use the virtual python environment `.desertenv` to manually install devices by using 
@@ -63,14 +63,14 @@ You can also filter the instruments by their name using the `Search name` field 
 
 After successful installation you can switch to the "Configure Instruments" tab.\
 Here all the available instruments are listed as well as the number of instances (so 'actual' instruments) you have added of the installed instrument type.\
-For this simply select the instrument type you want to add and click the &#10133; symbol under `Configure`.
+For this  select the instrument type you want to add and click the &#10133; symbol under `Configure`.
 
 <p float="left">
   <img src="img_4.png" width="49%" />
   <img src="img_5.png" width="49%" /> 
 </p>
 
-After adding the instrument a new instance of this instrument type is created. You can add as many instances of instruments as you like by simply pushing the &#10133; symbol. This adds additional tabs with the `Custom name` you gave the instrument. By default, the naming simply increments a number after the device name.
+After adding the instrument a new instance of this instrument type is created. You can add as many instances of instruments as you like by  pushing the &#10133; symbol. This adds additional tabs with the `Custom name` you gave the instrument. By default, the naming  increments a number after the device name.
 
 ## 1.3 Change Instrument Settings
 You can then change the instrument settings as you wish.\
@@ -83,7 +83,7 @@ You can add a plain text description of the instrument and what you are planning
 
 ---
 
-When you are happy with the instruments settings and have added all the instruments required for your measurements you can simply click `OK` to save all the instruments and settings to CAMELS.
+When you are happy with the instruments settings and have added all the instruments required for your measurements you can  click `OK` to save all the instruments and settings to CAMELS.
 
 
 

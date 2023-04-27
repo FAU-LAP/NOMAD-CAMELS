@@ -34,7 +34,7 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv
 - Create a folder where you want to install CAMELS (e.g. `\NOMAD-CAMELS\`)
 - Type in your powershell `cd \NOMAD-CAMELS\;pyenv local <python_version> `
 - If you have a working python environment (`python -V` in `/NOMAD-CAMELS/` returns `<python_version>`) then you can continue to install CAMELS.
-- Now simply run the command `python -m venv .desertenv` in this folder to create a virtual python environment (using the python version given by `pyenv local <python_version>`)
+- Now  run the command `python -m venv .desertenv` in this folder to create a virtual python environment (using the python version given by `pyenv local <python_version>`)
 - Activate the environment with `.\.desertenv\Scripts\activate`
 - Now type
   ```bash

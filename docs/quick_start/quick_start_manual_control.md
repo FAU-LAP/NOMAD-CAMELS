@@ -21,7 +21,7 @@ nav_order: 3
 # 1. Manual Control
 `Manual Control` allows you to set individual instrument channels (e.g. stage in x direction or a voltage output of a SMU)
 ## 1.1. Add Manual Control
-To start simply click the &#10133; symbol next to `Manual Control`. You can now select which type of manual control you want to add. The options depend on the instruments you have installed. The most basic manual control is the `Stage_Control` which sets individual channels. It is mainly designed for motorized stages but can be used to control most instruments. 
+To start  click the &#10133; symbol next to `Manual Control`. You can now select which type of manual control you want to add. The options depend on the instruments you have installed. The most basic manual control is the `Stage_Control` which sets individual channels. It is mainly designed for motorized stages but can be used to control most instruments. 
 ## 1.2. Configure Manual Control
 Select which axis the manual control should use. You must also select from which channel it should read the position (`readback axis`) . This is often the same channel as the `use axis`.
 ![img_45.png](img_45.png)

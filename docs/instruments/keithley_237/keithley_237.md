@@ -28,7 +28,7 @@ Find the instrument under the _Install Instrument_ tab. Then click _Install/Upda
 ## Add Instrument to CAMELS
 ![img_1.png](k237_img_1.png)\
 Then go to the _Configure Instrument_ tab and click the &#10133; icon to add a new Keithley 237 instrument.\
-You can add as many of the same instrument type as you want by simply clicking the &#10133; additional times if you want to use more than one of the same instruments. 
+You can add as many of the same instrument type as you want by  clicking the &#10133; additional times if you want to use more than one of the same instruments. 
 
 ---
 ## Configure Device Settings
@@ -42,9 +42,9 @@ The communication settings (baud rate, terminators, etc.) can be changed as well
 There are **four basic usage types** of the Keithley 237:
 
 1. Source voltage, read current
-2. Sweep voltage, read current and voltage (simply reads the set value of the voltage, does not actually measure it)
+2. Sweep voltage, read current and voltage ( reads the set value of the voltage, does not actually measure it)
 3. Source current, read voltage
-4. Sweep current, read voltage and current (simply reads the set value of the current, does not actually measure it)
+4. Sweep current, read voltage and current ( reads the set value of the current, does not actually measure it)
 
 > &#9888; The source type of your Keithley 237 must be set in the device configuration window (see image above)
 

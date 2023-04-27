@@ -29,7 +29,7 @@ Measurement protocols are the main way in which CAMELS performs measurements. It
 
 A good example of such a measurement procedure is a temperature dependant current-voltage (IV) measurement. Here the temperature of a sample is set to a specific value with a PID controller and waits for the temperature to be stable. Then it performs an IV-sweep, so it sets a voltage and measures the accompanying current for a given range of voltage values (often something like 100 points between -1 V and +1V).\
 The temperature set-points are also set to values in a given range (for example from 295K to 320K in 25 steps).\
-So one would need to nest different loops (one for setting teh temperature and one for setting the voltage). This can be done quite simply using CAMELS.
+So one would need to nest different loops (one for setting teh temperature and one for setting the voltage). This can be done quite  using CAMELS.
 
 
 
@@ -44,7 +44,7 @@ Here you can fully configure the measurement routine you want to perform. Give t
 One key part of this window is the `Sequence` element on the left.
 Here you will configure the individual steps of the measurement procedure.
 
-Simply right click into the empty space (first image below) or use the small &#10133; symbol in the top right to add a new step (second image below). 
+Right click into the empty space (first image below) or use the small &#10133; symbol in the top right to add a new step (second image below). 
 
 <p float="left">
   <img src="img_10.png" width="75%" />
@@ -100,7 +100,7 @@ For this simply add a variable on the bottom right of the protocol screen with t
 
 and change the `Name` and `Value` to what ever you need. The `Data-Type` will change depending on the value you input and can be used to make sure that CAMELS correctly 'understands' the value.
 
-To use this variable in the protocol (here in `Set Channels`) simply right-click the value field and `insert` or `append` the desired variable you created.\
+To use this variable in the protocol (here in `Set Channels`)  right-click the value field and `insert` or `append` the desired variable you created.\
 ![img_19](img_19.png)
 
 - `Insert` will overwrite any existing value in the field 
@@ -116,7 +116,7 @@ This should evaluate to `(1+1)*2=4`. You can also insert or append
 ---
 
 ### 1.2.3. Read Channels
-To read the channels we just set, simply configure the `Read Channels` step to read the three motor channels:\
+To read the channels we just set,  configure the `Read Channels` step to read the three motor channels:\
 ![img_23.png](img_23.png)\
 You can now run the protocol by confirming the configuration with `OK` and then pressing the `run` button.\
 ![img_24.png](img_24.png)\
@@ -149,7 +149,7 @@ Then also add a `Read Channel`step by right-clicking the `Set Channels`step and 
 Add these variables to make it clearer what values are used in the `For Loop`. This also makes maintaining the protocol easier and enables you to more easily share it with others.   
 ![img_30.png](img_30.png)
 ### 1.3.3. Set Channels (using variables)
-Start by setting the start, stop and number of points of the `For Loop`. To do this either simply type the number you want into the field or you can use the variables created above to set these parameters. To use the variables simply right-click the field and select `Insert Variable`and then `stop`. Like this for example:
+Start by setting the start, stop and number of points of the `For Loop`. To do this either  type the number you want into the field or you can use the variables created above to set these parameters. To use the variables  right-click the field and select `Insert Variable`and then `stop`. Like this for example:
 ![img_31.png](img_31.png)
 
 When you entered the three relevant parameters you should see a list of points appear on the right side showing you which value the points you created will have.\
@@ -165,11 +165,11 @@ We set
 to demonstrate both of the variables and the use of mathematical operations (here `+`) in value fields.
 
 ### 1.3.4. Read Channels
-Now set which channels should be read each time the loop is iterated over. If you like you can simply select `Read All` at the top to read all available channels. You could of course select individual channels if you want read fewer. Here we are only interested in the motor channels, so we will only read these. 
+Now set which channels should be read each time the loop is iterated over. If you like you can  select `Read All` at the top to read all available channels. You could of course select individual channels if you want read fewer. Here we are only interested in the motor channels, so we will only read these. 
 ![img_34.png](img_34.png)
 
 ### 1.3.5. Run Sweep Protocol
-Now simply click `OK` and `run` the protocol.
+Now  click `OK` and `run` the protocol.
 ![img_35.png](img_35.png)\
 You can already see the eleven iterations the loop makes from the console window.
 ### 1.3.6. Sweep Data

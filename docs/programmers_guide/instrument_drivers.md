@@ -485,7 +485,7 @@ Get-ChildItem $rootFolder -Recurse -Directory | ForEach-Object {
 ---
 
 ## 1.5. Install Instrument Package
-To install simply run 
+To install  run 
 ```console
 pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<parent_driver_name>
 ```

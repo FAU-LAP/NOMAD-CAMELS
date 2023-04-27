@@ -20,7 +20,7 @@ nav_order: 4
 # 1. Plots
 You can display live-plots in the measurement protocols to have a better understanding of what is going on during the measurement. 
 ## 1.1. Configure Plots
-To configure the plots simply click `Define Plots / Fits`. Here we bill be doing this for the for-loop measurement protocol created [here](#23-sweeping-using-a-for-loopstep)
+To configure the plots  click `Define Plots / Fits`. Here we bill be doing this for the for-loop measurement protocol created [here](#23-sweeping-using-a-for-loopstep)
 <p float="left">
   <img src="img_48.png" width="75%" />
 </p>
@@ -31,7 +31,7 @@ Add a new plot by clicking the &#10133; symbol and choosing a plot type.
   <img src="img_49.png" width="40%" />
 </p>
 
-The `x-axis` is set by either typing the channel into the field or by simply right-clicking and adding the channel value with `Insert Channel Value`. We will be plotting the `motorZ` channel (y-axis) against `For_Loop_Count` (x-axis). Add a new y-axis with the &#10133; symbol next to `y-axes`. Enter the `motorZ` channel via right click into the `formula` field. As with most fields you can to any mathematical operation as a string in this field (see examples above for more information). Select if the y-axis should be plotted on the left or right side of the x-axis. \
+The `x-axis` is set by either typing the channel into the field or by  right-clicking and adding the channel value with `Insert Channel Value`. We will be plotting the `motorZ` channel (y-axis) against `For_Loop_Count` (x-axis). Add a new y-axis with the &#10133; symbol next to `y-axes`. Enter the `motorZ` channel via right click into the `formula` field. As with most fields you can to any mathematical operation as a string in this field (see examples above for more information). Select if the y-axis should be plotted on the left or right side of the x-axis. \
 ![img_50.png](img_50.png)
 
 Give the plot a `x-label` and `y-label` as well as a `title`. 
