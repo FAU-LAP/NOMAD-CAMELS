@@ -292,6 +292,6 @@ class Ui_Form(object):
         self.checkBox_refX.setText(QCoreApplication.translate("Form", u"x", None))
         self.pushButton_ref.setText(QCoreApplication.translate("Form", u"Find Reference", None))
         self.pushButton_position.setText("")
-        self.label_7.setText(QCoreApplication.translate("Form", u"Read Frequency:", None))
+        self.label_7.setText(QCoreApplication.translate("Form", u"Time between readings (s)", None))
     # retranslateUi
 
