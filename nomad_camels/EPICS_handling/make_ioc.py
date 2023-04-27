@@ -1,3 +1,6 @@
+# CAUTION!!!!!!!!!!
+# This file is not used by CAMELS at the moment and may be deprecated
+
 import subprocess
 import os
 from nomad_camels.utility import variables_handling

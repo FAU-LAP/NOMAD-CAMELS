@@ -144,7 +144,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.run_engine = RunEngine()
         bec = BestEffortCallback()
         self.run_engine.subscribe(bec)
-        self.databroker_catalog = databroker.catalog["CAMELS_CATALOG"]
+        self.change_catalog_name()
+        try:
+            self.databroker_catalog = databroker.catalog[self.preferences['databroker_catalog_name']]
+        except KeyError:
+            print('Could not find databroker catalog, using temporary')
+            self.databroker_catalog = databroker.temp()
         self.run_engine.subscribe(self.databroker_catalog.v1.insert)
         self.run_engine.subscribe(self.protocol_finished, 'stop')
         self.re_subs = []
@@ -152,7 +157,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_savepath = ''
         self.running_protocol = None
 
-        self.show()
+        # self.show()
         self.adjustSize()
 
     def with_or_without_instruments(self):
@@ -199,8 +204,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def close(self) -> bool:
         """Calling the save_state method when closing the window."""
         ret = super().close()
-        if self.preferences['autosave']:
-            self.save_state()
+        # if self.preferences['autosave']:
+        #     self.save_state()
         return ret
 
     def closeEvent(self, a0):
@@ -381,6 +386,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 catalog_name = self.preferences['databroker_catalog_name']
             from nomad_camels.bluesky_handling import make_catalog
             make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name)
+            databroker.catalog.force_reload()
+        try:
+            self.databroker_catalog = databroker.catalog[catalog_name]
+        except KeyError:
+            print('Could not find databroker catalog, using temporary')
+            self.databroker_catalog = databroker.temp()
+
 
 
     def change_preferences(self):
@@ -775,7 +787,9 @@ if __name__ == '__main__':
     if app is None:
         app = QApplication(sys.argv)
     file_dir = os.path.dirname(__file__)
-    with open(f'{file_dir}/packages.txt', 'w') as f:
+    appdata_path = f'{os.getenv("LOCALAPPDATA")}/nomad_camels'
+    package_file = f'{appdata_path}/startup_packages.txt'
+    with open(package_file, 'w') as f:
         for i, (mod_name, mod) in enumerate(sys.modules.items()):
             if mod_name.startswith('_') or mod is None:
                 continue

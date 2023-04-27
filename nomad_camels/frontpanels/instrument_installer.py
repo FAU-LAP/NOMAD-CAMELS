@@ -59,7 +59,8 @@ def getAllDevices():
         url = f'https://raw.githubusercontent.com/{repo_part}/{branch}/{directory}/driver_list.txt'
         devices_str = requests.get(url).text
     except:
-        devices_str = ''
+        url = 'https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt'
+        devices_str = requests.get(url).text
     warned = False
     for x in devices_str.splitlines():
         try:
@@ -240,34 +241,49 @@ class Install_Thread(QThread):
             self.val_step.emit(i / n * 100)
             if self.uninstall:
                 device_name = dev.replace("_", "-")
-                ret = subprocess.Popen(['powershell',
-                                        f'{path}\\pip uninstall -y '
+                flags = 0
+                if os.name == 'nt':
+                    flags = subprocess.CREATE_NO_WINDOW
+                ret = subprocess.Popen([sys.executable, '-m', 'pip',
+                                        'uninstall', '-y',
                                         f'nomad-camels-driver-{device_name}'],
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT,
                                        stdin=subprocess.PIPE,
-                                       creationflags=subprocess.CREATE_NO_WINDOW)
+                                       creationflags=flags)
                 if ret.returncode:
                     raise OSError(f'Failed to uninstall nomad-camels-driver-{device_name}')
             else:
                 pypi_url = r'https://test.pypi.org/simple/'  # TODO Change to regular PyPi
                 device_name = dev.replace("_", "-")
-                print()
-                print(path)
-                ret = subprocess.Popen(['powershell',
-                                        f'{path}\\pip install --no-cache-dir '
-                                        f'--index-url {pypi_url} '
-                                        '--extra-index-url https://pypi.org/simple '
+                flags = 0
+                if os.name == 'nt':
+                    flags = subprocess.CREATE_NO_WINDOW
+                ret = subprocess.Popen([sys.executable, '-m', 'pip',
+                                        'install', '--no-cache-dir',
+                                        '--index-url', pypi_url,
+                                        '--extra-index-url',
+                                        'https://pypi.org/simple',
                                         f'nomad-camels-driver-{device_name}'],
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT,
                                        stdin=subprocess.PIPE,
-                                       creationflags=subprocess.CREATE_NO_WINDOW)
+                                       creationflags=flags)
                 if ret.returncode:
                     raise OSError(f'Failed to install nomad-camels-driver-{device_name}')
             for line in iter(ret.stdout.readline, b''):
                 text = line.decode().rstrip()
                 self.info_step.emit(text)
+        getInstalledDevices(True)
+        for i, dev in enumerate(self.devs):
+            if self.uninstall and dev in installed_instr:
+                WarnPopup(self,
+                          f'Uninstall of {dev} failed!',
+                          f'Uninstall of {dev} failed!')
+            elif not self.uninstall and dev not in installed_instr:
+                WarnPopup(self,
+                          f'Installation of {dev} failed!',
+                          f'Installation of {dev} failed!')
         self.val_step.emit(100)
 
 

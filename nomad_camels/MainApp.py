@@ -226,7 +226,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.run_engine = RunEngine()
         bec = BestEffortCallback()
         self.run_engine.subscribe(bec)
-        self.databroker_catalog = databroker.catalog["CAMELS_CATALOG"]
+        self.databroker_catalog = databroker.catalog[self.preferences['databroker_catalog_name']]
         self.run_engine.subscribe(self.databroker_catalog.v1.insert)
         self.run_engine.subscribe(self.protocol_finished, 'stop')
         self.re_subs = []
@@ -456,6 +456,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if 'databroker_catalog_name' in self.preferences:
                 catalog_name = self.preferences['databroker_catalog_name']
             make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name)
+        self.databroker_catalog = databroker.catalog[self.preferences['databroker_catalog_name']]
 
     def launch_device_builder(self):
         from nomad_camels.tools import VISA_device_builder

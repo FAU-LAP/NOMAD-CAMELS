@@ -106,5 +106,6 @@ if __name__ == '__main__':
     sys.excepthook = exception_hook.exception_hook
     main_window = MainApp_v2.MainWindow()
     loading_screen.hide()
+    main_window.show()
 
     app.exec()
