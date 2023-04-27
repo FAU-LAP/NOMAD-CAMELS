@@ -31,7 +31,8 @@ Click `OK` and `start` the manual control.\
 
 This opens the stage control.\
 ![img_47.png](img_47.png)\
-Here you can set the step size and use the green arrow keys to control the selected axis. You can also jump to a specific value by using the `Go To` values.
+Here you can set the step size and use the green arrow keys to control the selected axis. You can also jump to a specific value by entering values below the `Go To` button and then pressing the button.
+> &#9888; The value of `Time between readings` is the time in seconds after which the axis is read (using the set `readback axis` channel).
 
 [&#8679; Back to the top &#8679;](#table-of-contents)
 <p style="text-align:left;">
