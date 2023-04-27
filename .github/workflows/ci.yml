@@ -4,10 +4,12 @@ on:
     branches:
       - development
       - main
+      - testing
   pull_request:
     branches:
       - development
       - main
+      - testing
 
 jobs:
   windows_test:
