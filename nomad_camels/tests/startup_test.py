@@ -9,6 +9,7 @@ def test_startup(qtbot, capfd):
     main_window = nomad_camels.MainApp_v2.MainWindow()
 
     def close_save_message():
+        main_window.change_catalog_name()
         main_window.close()
         out, err = capfd.readouterr()
         print(out)

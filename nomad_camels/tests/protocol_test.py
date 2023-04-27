@@ -1,7 +1,10 @@
 import importlib
 import os.path
 import sys
+import databroker
 from nomad_camels.frontpanels import protocol_config
+from nomad_camels.bluesky_handling import make_catalog
+
 
 def test_change_dev_config(qtbot):
     pass
@@ -60,8 +63,8 @@ def test_wait(qtbot, tmp_path):
     prot = conf.protocol
     assert 'Wait (Wait)' in prot.loop_step_dict
     assert prot.loop_steps[0].wait_time == '1.0'
+    make_catalog.make_yml(tmp_path, 'test_catalog')
     run_test_protocol(tmp_path, prot)
-
 
 
 
@@ -71,7 +74,7 @@ def run_test_protocol(tmp_path, protocol):
     protocol.name = 'test_wait_protocol'
     file = tmp_path / (protocol.name + '.py')
     savepath = tmp_path / (protocol.name + '.h5')
-    protocol_builder.build_protocol(protocol, file, savepath)
+    protocol_builder.build_protocol(protocol, file, savepath, 'test_catalog')
     sys.path.append(str(tmp_path))
     py_package = importlib.import_module(protocol.name)
     py_package.main()

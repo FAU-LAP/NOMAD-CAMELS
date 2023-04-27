@@ -387,11 +387,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             from nomad_camels.bluesky_handling import make_catalog
             make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name)
             databroker.catalog.force_reload()
-        try:
+        # try:
             self.databroker_catalog = databroker.catalog[catalog_name]
-        except KeyError:
-            print('Could not find databroker catalog, using temporary')
-            self.databroker_catalog = databroker.temp()
+        # except KeyError:
+        #     print('Could not find databroker catalog, using temporary')
+        #     self.databroker_catalog = databroker.temp()
 
 
 
