@@ -21,7 +21,7 @@ nav_order: 4
 # Custom macOS Installation 
 
 ## 1. Pyenv and Python Installation
-This uses `homebrew` to install pyenv ([see here](https://brew.sh/) for more information).\
+This uses `homebrew` to install pyenv ([see here](https://brew.sh/) for more information on `homebrew`).
 - Run
   ```bash
   brew update
