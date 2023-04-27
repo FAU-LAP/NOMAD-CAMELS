@@ -5,7 +5,7 @@ parent: Quick Start
 nav_order: 4
 ---
 
-## 0. Table of contents
+## Table of contents
 {: .no_toc }
 
 <details open markdown="block">
@@ -40,6 +40,7 @@ A finished plot configuration (without a fit) could look like this for example
 ![img_51.png](img_51.png)
 ## 1.2. Run Protocol with Plots
 If you then run the protocol the plot is displayed and updated live.
+
 <p float="left">
   <img src="img_52.png" width="80%" />
 </p>
@@ -48,7 +49,8 @@ If you then run the protocol the plot is displayed and updated live.
 > ![img_53.png](img_53.png)
 
 
-[&#8679; Back to the top &#8679;](#0-table-of-contents)
+[&#8679; Back to the top &#8679;](#table-of-contents)
+
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="quick_start_manual_control.html">&larr; Back</a>

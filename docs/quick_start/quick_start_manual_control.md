@@ -5,7 +5,7 @@ parent: Quick Start
 nav_order: 3
 ---
 
-## 0. Table of contents
+## Table of contents
 {: .no_toc }
 
 <details open markdown="block">
@@ -33,7 +33,7 @@ This opens the stage control.\
 ![img_47.png](img_47.png)\
 Here you can set the step size and use the green arrow keys to control the selected axis. You can also jump to a specific value by using the `Go To` values.
 
-[&#8679; Back to the top &#8679;](#0-table-of-contents)
+[&#8679; Back to the top &#8679;](#table-of-contents)
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="quick_start_protocols.html">&larr; Back</a>

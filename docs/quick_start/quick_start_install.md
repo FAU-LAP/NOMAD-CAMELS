@@ -5,7 +5,7 @@ parent: Quick Start
 nav_order: 1
 ---
 
-## 0. Table of contents
+## Table of contents
 {: .no_toc }
 
 <details open markdown="block">
@@ -87,7 +87,7 @@ When you are happy with the instruments settings and have added all the instrume
 
 
 
-[&#8679; Back to the top &#8679;](#0-table-of-contents)
+[&#8679; Back to the top &#8679;](#table-of-contents)
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="quick_start.html">&larr; Back</a>

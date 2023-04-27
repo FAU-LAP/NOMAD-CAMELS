@@ -5,7 +5,7 @@ has_children: true
 nav_order: 2
 ---
 
-## 0. Table of contents
+## Table of contents
 {: .no_toc }
 
 <details open markdown="block">

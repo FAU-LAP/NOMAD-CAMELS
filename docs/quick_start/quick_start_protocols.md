@@ -5,7 +5,7 @@ parent: Quick Start
 nav_order: 2
 ---
 
-## 0. Table of contents
+## Table of contents
 {: .no_toc }
 
 <details open markdown="block">
@@ -69,7 +69,7 @@ Below you can see the readable and the settable channels of a single `demo_devic
   <img src="img_14.png" width="46%" /> 
 </p>
 
-[&#8679; Back to the top &#8679;](#0-table-of-contents)
+[&#8679; Back to the top &#8679;](#table-of-contents)
 
 ---
 
@@ -127,7 +127,7 @@ This creates a HDF5 file in the location specified by the data saving location s
 ![img_26.png](img_26.png)\
 We can see that the `motorX` was set correctly to a value of 4.
 
-[&#8679; Back to the top &#8679;](#0-table-of-contents)
+[&#8679; Back to the top &#8679;](#table-of-contents)
 
 ---
 
@@ -188,7 +188,7 @@ Here are the other two motor channels
 
 We can see that the mathematical operation of adding `Count` and `Value` for `motorZ` worked.
 
-[&#8679; Back to the top &#8679;](#0-table-of-contents)
+[&#8679; Back to the top &#8679;](#table-of-contents)
 
 ---
 
@@ -224,7 +224,7 @@ Now lets look at the data produced. The HDF5 file with the data is saved into th
 
 We can see that the set points of `motorX` are read successfully.
 
-[&#8679; Back to the top &#8679;](#0-table-of-contents)
+[&#8679; Back to the top &#8679;](#table-of-contents)
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="quick_start_install.html">&larr; Back</a>
