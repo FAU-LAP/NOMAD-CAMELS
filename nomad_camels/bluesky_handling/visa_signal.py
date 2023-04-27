@@ -112,6 +112,7 @@ class VISA_Signal_Read(SignalRO):
                     pass
         if self.process_read_function:
             val = self.process_read_function(val)
+
         self._readback = val
         return super().get()
 

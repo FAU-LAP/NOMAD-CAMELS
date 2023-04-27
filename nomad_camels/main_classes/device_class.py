@@ -599,6 +599,7 @@ class Simple_Config_Sub(Device_Config_Sub):
         self.layout().setContentsMargins(0,0,0,0)
         comboBoxes = comboBoxes or {}
         config_types = config_types or {}
+        labels = labels or {}
         self.setting_checks = {}
         self.setting_floats = {}
         self.setting_strings = {}
@@ -613,7 +614,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 self.setting_combos[name].setCurrentText(val)
             elif name in config_types:
                 if config_types[name] == 'bool':
-                    self.setting_checks[name] = QCheckBox(name)
+                    self.setting_checks[name] = QCheckBox(labels[name] if name in labels else name)
                     if isinstance(val, bool):
                         self.setting_checks[name].setChecked(val)
                 elif config_types[name] == 'float':
@@ -623,7 +624,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 else:
                     raise Exception(f'Named config_type {config_types[name]} of {name} is not supported in Simple_Device_Config!')
             elif isinstance(val, bool):
-                self.setting_checks[name] = QCheckBox(name)
+                self.setting_checks[name] = QCheckBox(labels[name] if name in labels else name)
                 self.setting_checks[name].setChecked(val)
             elif isinstance(val, float) or isinstance(val, int):
                 self.setting_floats[name] = QLineEdit(str(val))
@@ -642,7 +643,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 self.config_combos[name].setCurrentText(val)
             elif name in config_types:
                 if config_types[name] == 'bool':
-                    self.config_checks[name] = QCheckBox(name)
+                    self.config_checks[name] = QCheckBox(labels[name] if name in labels else name)
                     if isinstance(val, bool):
                         self.config_checks[name].setChecked(val)
                 elif config_types[name] == 'float':
@@ -652,7 +653,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 else:
                     raise Exception(f'Named config_type {config_types[name]} of {name} is not supported in Simple_Device_Config!')
             elif isinstance(val, bool):
-                self.config_checks[name] = QCheckBox(name)
+                self.config_checks[name] = QCheckBox(labels[name] if name in labels else name)
                 self.config_checks[name].setChecked(val)
             elif isinstance(val, float) or isinstance(val, int):
                 self.config_floats[name] = QLineEdit(str(val))
@@ -674,6 +675,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 self.layout().addWidget(QLabel(labels[name]), row, col)
             else:
                 self.layout().addWidget(QLabel(name), row, col)
+
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
@@ -684,6 +686,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 self.layout().addWidget(QLabel(labels[name]), row, col)
             else:
                 self.layout().addWidget(QLabel(name), row, col)
+
             self.layout().addWidget(widge, row, col+1)
             col += 2
             if col == 4:
