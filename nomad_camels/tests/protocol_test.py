@@ -63,7 +63,7 @@ def test_wait(qtbot, tmp_path):
     prot = conf.protocol
     assert 'Wait (Wait)' in prot.loop_step_dict
     assert prot.loop_steps[0].wait_time == '1.0'
-    qtbot.wait_until(ensure_catalog)
+    qtbot.wait_until(lambda x=None: ensure_catalog(tmp_path))
     run_test_protocol(tmp_path, prot)
 
 
