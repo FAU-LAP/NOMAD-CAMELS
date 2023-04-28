@@ -95,13 +95,9 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
     if not isinstance(runs, list):
         runs = [runs]
     for run in runs:
-        if isinstance(run, databroker.v1.Header):
-            meta_start = dict(run.start)
-            meta_stop = dict(run.stop)
-        else:
-            metadata = run.metadata
-            meta_start = dict(metadata['start'])
-            meta_stop = dict(metadata['stop'])
+        metadata = run.metadata
+        meta_start = dict(metadata['start'])
+        meta_stop = dict(metadata['stop'])
         st_time = meta_start.pop('time')
         start_time = timestamp_to_ISO8601(st_time)
         end_time = timestamp_to_ISO8601(meta_stop.pop('time'))

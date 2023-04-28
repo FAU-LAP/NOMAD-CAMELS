@@ -241,7 +241,7 @@ def build_protocol(protocol, file_path,
     protocol_string += '\texcept KeyError:\n'
     protocol_string += '\t\timport warnings\n'
     protocol_string += '\t\twarnings.warn("Could not find databroker catalog, using temporary catalog. If data is not transferred, it might get lost.")\n'
-    protocol_string += '\t\tcatalog = databroker.temp()\n'
+    protocol_string += '\t\tcatalog = databroker.temp().v2\n'
     protocol_string += '\tRE.subscribe(catalog.v1.insert)\n\n'
     protocol_string += '\tfrom nomad_camels.utility import tqdm_progress_bar\n'
     protocol_string += f'\ttqdm_bar = tqdm_progress_bar.ProgressBar({protocol.get_total_steps()})\n\n'

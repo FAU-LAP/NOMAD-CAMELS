@@ -149,7 +149,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.databroker_catalog = databroker.catalog[self.preferences['databroker_catalog_name']]
         except KeyError:
             print('Could not find databroker catalog, using temporary')
-            self.databroker_catalog = databroker.temp()
+            self.databroker_catalog = databroker.temp().v2
         self.run_engine.subscribe(self.databroker_catalog.v1.insert)
         self.run_engine.subscribe(self.protocol_finished, 'stop')
         self.re_subs = []
