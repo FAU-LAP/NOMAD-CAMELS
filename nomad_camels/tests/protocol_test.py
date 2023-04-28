@@ -1,6 +1,7 @@
 import importlib
 import os.path
 import sys
+import databroker
 from nomad_camels.frontpanels import protocol_config
 from nomad_camels.bluesky_handling import make_catalog
 from nomad_camels.frontpanels import instrument_installer
@@ -8,8 +9,25 @@ from nomad_camels.utility import variables_handling
 from PySide6.QtCore import Qt
 
 
-def test_change_dev_config(qtbot):
-    pass
+def test_change_dev_config(qtbot, tmp_path):
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import change_device_config
+    conf = protocol_config.Protocol_Config()
+    qtbot.addWidget(conf)
+    action = get_action_from_name(conf.add_actions, 'Change Device Config')
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge,
+                      change_device_config.Change_DeviceConf_Config)
+    conf_widge.comboBox_device.setCurrentText('demo_device')
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.name = 'test_change_dev_config_protocol'
+    assert 'Change Device Config (Change_Device_Config)' in prot.loop_step_dict
+    assert prot.loop_steps[0].device == 'demo_device'
+    catalog_maker(tmp_path)
+    run_test_protocol(tmp_path, prot)
 
 def test_for_loop():
     pass
@@ -21,9 +39,6 @@ def test_if():
     pass
 
 def test_nd_sweep():
-    pass
-
-def test_prompt():
     pass
 
 def test_read_channels(qtbot, tmp_path):
@@ -45,16 +60,13 @@ def test_read_channels(qtbot, tmp_path):
     prot.name = 'test_read_channels_protocol'
     assert 'Read Channels (Read_Channels)' in prot.loop_step_dict
     assert prot.loop_steps[0].channel_list == ['demo_device_detectorX']
-    make_catalog.make_yml(tmp_path, 'test_catalog')
+    catalog_maker(tmp_path)
     run_test_protocol(tmp_path, prot)
 
 def test_run_subprotocol():
     pass
 
 def test_set_channels():
-    pass
-
-def test_set_value_popup():
     pass
 
 def test_set_variables():
@@ -85,7 +97,7 @@ def test_wait(qtbot, tmp_path):
     prot.name = 'test_wait_protocol'
     assert 'Wait (Wait)' in prot.loop_step_dict
     assert prot.loop_steps[0].wait_time == '1.0'
-    make_catalog.make_yml(tmp_path, 'test_catalog')
+    catalog_maker(tmp_path)
     run_test_protocol(tmp_path, prot)
 
 
@@ -112,6 +124,9 @@ def ensure_demo_in_devices():
             variables_handling.channels.update({channel: dev.channels[channel]})
 
 
+def catalog_maker(tmp_path):
+    if 'test_catalog' not in list(databroker.catalog):
+        make_catalog.make_yml(tmp_path, 'test_catalog')
 
 def run_test_protocol(tmp_path, protocol):
     from nomad_camels.bluesky_handling import protocol_builder
