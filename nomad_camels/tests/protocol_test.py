@@ -66,8 +66,28 @@ def test_read_channels(qtbot, tmp_path):
 def test_run_subprotocol():
     pass
 
-def test_set_channels():
-    pass
+def test_set_channels(qtbot, tmp_path):
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import set_channels
+    conf = protocol_config.Protocol_Config()
+    qtbot.addWidget(conf)
+    action = get_action_from_name(conf.add_actions, 'Set Channels')
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge,
+                      set_channels.Set_Channels_Config)
+    table = conf_widge.sub_widget.tableWidget_channels
+    row = get_row_from_channel_table('demo_device_motorX', table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+    table.item(row, 2).setText('1')
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.name = 'test_set_channels_protocol'
+    assert 'Set Channels (Set_Channels)' in prot.loop_step_dict
+    assert prot.loop_steps[0].channels_values == {'Channels': ['demo_device_motorX'], 'Values': ['1']}
+    catalog_maker(tmp_path)
+    run_test_protocol(tmp_path, prot)
 
 def test_set_variables():
     pass
