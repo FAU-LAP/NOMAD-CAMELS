@@ -34,7 +34,6 @@ def test_for_loop(qtbot, tmp_path):
     ensure_demo_in_devices()
     from nomad_camels.loop_steps import for_while_loops
     conf = protocol_config.Protocol_Config()
-    conf.show()
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, 'For Loop')
     action.trigger()
@@ -67,8 +66,36 @@ def test_for_loop(qtbot, tmp_path):
     catalog_maker(tmp_path)
     run_test_protocol(tmp_path, prot)
 
-def test_gradient_descent():
-    pass
+def test_gradient_descent(qtbot, tmp_path):
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import gradient_descent
+    conf = protocol_config.Protocol_Config()
+    qtbot.addWidget(conf)
+    action = get_action_from_name(conf.add_actions, 'Gradient Descent')
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge,
+                      gradient_descent.Gradient_Descent_Config)
+    conf_widge.sub_widget.lineEdit_momentum.setText('1')
+    conf_widge.sub_widget.lineEdit_threshold.setText('1e-3')
+    conf_widge.sub_widget.lineEdit_max_val.setText('1')
+    conf_widge.sub_widget.lineEdit_min_val.setText('1')
+    conf_widge.sub_widget.lineEdit_opt_func.setText('demo_device_detectorY')
+    conf_widge.sub_widget.lineEdit_max_n_steps.setText('25')
+    conf_widge.sub_widget.lineEdit_largest_step.setText('1')
+    conf_widge.sub_widget.lineEdit_smallest_step.setText('0.01')
+    conf_widge.sub_widget.lineEdit_learning_rate.setText('1')
+    conf_widge.sub_widget.lineEdit_starting_val.setText('0')
+    conf_widge.sub_widget.comboBox_extremum_type.setCurrentText('Maximum')
+    conf_widge.sub_widget.comboBox_output_channel.setCurrentText('demo_device_motorY')
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.loop_steps[0].read_channels.append('demo_device_detectorY')
+    prot.name = 'test_gradient_descent_protocol'
+    assert 'Gradient Descent (Gradient_Descent)' in prot.loop_step_dict
+    catalog_maker(tmp_path)
+    run_test_protocol(tmp_path, prot)
 
 def test_if():
     pass
