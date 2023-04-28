@@ -1,11 +1,8 @@
-from PySide6.QtWidgets import QWidget, QTableWidgetItem, QLabel, QComboBox, QTableWidget, QGridLayout, QLineEdit, QMenu
-from PySide6.QtCore import Qt, QModelIndex
+from PySide6.QtWidgets import QWidget, QTableWidgetItem, QLabel,  QTableWidget, QGridLayout, QLineEdit, QMenu
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QFont
-from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
-from nomad_camels.gui.read_channels import Ui_read_channels_config
-
-from nomad_camels.utility import variables_handling, fit_variable_renaming
+from nomad_camels.utility import variables_handling
 
 
 class Channels_Check_Table(QWidget):

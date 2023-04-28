@@ -42,7 +42,7 @@ def test_add_device(qtbot):
         item2 = conf.tableWidget_instruments.item(row, 1)
         if item1.text() == 'demo_device':
             break
-    assert item1 is not None # demo_device should be in the installed table
+    assert item1 is not None  # demo_device should be in the installed table
     assert item2 is not None
     index1 = conf.tableWidget_instruments.indexFromItem(item1)
     conf.tableWidget_instruments.selectionModel().select(index1, QItemSelectionModel.Select)

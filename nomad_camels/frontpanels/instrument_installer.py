@@ -1,5 +1,6 @@
 import re
 import subprocess
+import importlib
 
 from nomad_camels.gui.device_installer import Ui_Form
 from PySide6.QtWidgets import QWidget, QTableWidgetItem, QCheckBox, QMessageBox
@@ -39,6 +40,9 @@ def getInstalledDevices(force=False, return_packages=False):
     packages = device_handling.load_local_packages()
     for package in packages:
         installed_instr[package] = 'local'
+    for instr in installed_instr:
+        if instr not in packages:
+            packages[instr] = importlib.import_module(f'nomad_camels_driver_{instr}.{instr}')
     if return_packages:
         return installed_instr, packages
     return installed_instr
@@ -254,23 +258,8 @@ class Install_Thread(QThread):
                 if ret.returncode:
                     raise OSError(f'Failed to uninstall nomad-camels-driver-{device_name}')
             else:
-                pypi_url = r'https://test.pypi.org/simple/'  # TODO Change to regular PyPi
                 device_name = dev.replace("_", "-")
-                flags = 0
-                if os.name == 'nt':
-                    flags = subprocess.CREATE_NO_WINDOW
-                ret = subprocess.Popen([sys.executable, '-m', 'pip',
-                                        'install', '--no-cache-dir',
-                                        '--index-url', pypi_url,
-                                        '--extra-index-url',
-                                        'https://pypi.org/simple',
-                                        f'nomad-camels-driver-{device_name}'],
-                                       stdout=subprocess.PIPE,
-                                       stderr=subprocess.STDOUT,
-                                       stdin=subprocess.PIPE,
-                                       creationflags=flags)
-                if ret.returncode:
-                    raise OSError(f'Failed to install nomad-camels-driver-{device_name}')
+                ret = install_instrument(device_name)
             for line in iter(ret.stdout.readline, b''):
                 text = line.decode().rstrip()
                 self.info_step.emit(text)
@@ -285,6 +274,26 @@ class Install_Thread(QThread):
                           f'Installation of {dev} failed!',
                           f'Installation of {dev} failed!')
         self.val_step.emit(100)
+
+
+def install_instrument(device_name):
+    pypi_url = r'https://test.pypi.org/simple/'  # TODO Change to regular PyPi
+    flags = 0
+    if os.name == 'nt':
+        flags = subprocess.CREATE_NO_WINDOW
+    ret = subprocess.Popen([sys.executable, '-m', 'pip',
+                            'install', '--no-cache-dir',
+                            '--index-url', pypi_url,
+                            '--extra-index-url',
+                            'https://pypi.org/simple',
+                            f'nomad-camels-driver-{device_name}'],
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT,
+                           stdin=subprocess.PIPE,
+                           creationflags=flags)
+    if ret.returncode:
+        raise OSError(f'Failed to install nomad-camels-driver-{device_name}')
+    return ret
 
 
 if __name__ == '__main__':
