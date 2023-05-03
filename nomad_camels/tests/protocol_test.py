@@ -97,7 +97,6 @@ def test_gradient_descent(qtbot, tmp_path):
 def test_if_and_set_variables(qtbot, tmp_path):
     from nomad_camels.loop_steps import set_variables
     conf = protocol_config.Protocol_Config()
-    conf.show()
     prot = conf.protocol
     qtbot.addWidget(conf)
     qtbot.mouseClick(conf.general_settings.pushButton_add_variable,
@@ -184,8 +183,44 @@ def test_set_channels(qtbot, tmp_path):
 def test_simple_sweep():
     pass
 
-def test_trigger_channels():
-    pass
+def test_trigger_and_read_channels(qtbot, tmp_path):
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import read_channels
+    conf = protocol_config.Protocol_Config()
+    qtbot.addWidget(conf)
+    prot = conf.protocol
+    variables_handling.current_protocol = prot
+    action = get_action_from_name(conf.add_actions, 'Read Channels')
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge,
+                      read_channels.Read_Channels_Config)
+    conf_widge.sub_widget.checkBox_split_trigger.setChecked(True)
+    conf_widge.sub_widget.checkBox_read_all.setChecked(True)
+
+    action = get_action_from_name(conf.add_actions, 'Trigger Channels')
+    action.trigger()
+    select_step_by_name(conf, 'Trigger Channels (Trigger_Channels)')
+    conf.tree_click_sequence()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge,
+                      read_channels.Trigger_Channels_Config)
+
+    def wait_for_move():
+        qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
+        assert isinstance(prot.loop_steps[0], read_channels.Trigger_Channels_Step)
+    qtbot.waitUntil(wait_for_move)
+
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot.name = 'test_read_channels_protocol'
+    assert 'Read Channels (Read_Channels)' in prot.loop_step_dict
+    assert prot.loop_steps[1].read_all
+    assert 'Trigger Channels (Trigger_Channels)' in prot.loop_step_dict
+    assert prot.loop_steps[0].read_step == 'Read Channels (Read_Channels)'
+
+    catalog_maker(tmp_path)
+    run_test_protocol(tmp_path, prot)
 
 def test_while_loop():
     pass

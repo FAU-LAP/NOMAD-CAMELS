@@ -126,7 +126,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         self.setupUi(self)
         self.loop_step = loop_step
         self.checkBox_read_all.stateChanged.connect(self.read_type_changed)
-        self.checkBox_split_trigger.clicked.connect(self.use_trigger)
+        self.checkBox_split_trigger.stateChanged.connect(self.use_trigger)
         # self.comboBox_readType.addItems(['read all', 'read selected'])
         # self.comboBox_readType.currentTextChanged.connect(self.read_type_changed)
         self.load_data()
@@ -149,18 +149,19 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
     def use_trigger(self):
         self.loop_step.split_trigger = self.checkBox_split_trigger.isChecked()
 
-    def checkbox_toggle(self):
-        """When a checkbox is (un-)checked, the new value is stored
-        inside the loop_step."""
-        self.loop_step.use_set_val = self.checkBox_use_set.isChecked()
-        self.loop_step.save_data = self.checkBox_save.isChecked()
-        self.loop_step.plot_data = self.checkBox_plot.isChecked()
+    # def checkbox_toggle(self):
+    #     """When a checkbox is (un-)checked, the new value is stored
+    #     inside the loop_step."""
+    #     self.loop_step.use_set_val = self.checkBox_use_set.isChecked()
+    #     self.loop_step.save_data = self.checkBox_save.isChecked()
+    #     self.loop_step.plot_data = self.checkBox_plot.isChecked()
 
     def read_type_changed(self):
         """If the read-all checkbox is checked, disables the table, if
         not, enables it."""
         read_all = self.checkBox_read_all.isChecked()
-        self.read_table.setEnabled(not read_all)
+        if hasattr(self, 'read_table'):
+            self.read_table.setEnabled(not read_all)
         # if read_all:
         #     self.tableWidget_channels.setEnabled(False)
         #     self.checkBox_use_set.setEnabled(True)
