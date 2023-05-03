@@ -213,7 +213,7 @@ def test_trigger_and_read_channels(qtbot, tmp_path):
 
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
-    prot.name = 'test_read_channels_protocol'
+    prot.name = 'test_trigger_protocol'
     assert 'Read Channels (Read_Channels)' in prot.loop_step_dict
     assert prot.loop_steps[1].read_all
     assert 'Trigger Channels (Trigger_Channels)' in prot.loop_step_dict
@@ -222,8 +222,35 @@ def test_trigger_and_read_channels(qtbot, tmp_path):
     catalog_maker(tmp_path)
     run_test_protocol(tmp_path, prot)
 
-def test_while_loop():
-    pass
+def test_while_loop(qtbot, tmp_path):
+    from nomad_camels.loop_steps import for_while_loops
+    conf = protocol_config.Protocol_Config()
+    qtbot.addWidget(conf)
+    action = get_action_from_name(conf.add_actions, 'While Loop')
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge,
+                      for_while_loops.While_Loop_Step_Config)
+    conf_widge.sub_widget.lineEdit_condition.setText('While_Loop_Count < 5')
+
+    action = get_action_from_name(conf.add_actions, 'Wait')
+    action.trigger()
+    prot = conf.protocol
+
+    select_step_by_name(conf, 'Wait (Wait)')
+
+    def wait_for_move_in():
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        assert len(prot.loop_steps) == 1
+    qtbot.waitUntil(wait_for_move_in)
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot.name = 'test_while_loop_protocol'
+    assert 'While Loop (While_Loop)' in prot.loop_step_dict
+    assert prot.loop_steps[0].has_children
+    assert prot.loop_steps[0].children[0].full_name == 'Wait (Wait)'
+    catalog_maker(tmp_path)
+    run_test_protocol(tmp_path, prot)
 
 def test_wait(qtbot, tmp_path):
     from nomad_camels.loop_steps import wait_loop_step
