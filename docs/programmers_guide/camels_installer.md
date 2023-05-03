@@ -51,4 +51,23 @@ The shortcuts execute the NOMAD-CAMELS.exe which is a simple exe convertion of t
 ### 2.3. Changes to the supporting folders
 For this you must modify the `.iss` file.\
 The installer creates the folder `%localappdata%\nomad_camels\Presets\Backup` where all the settings presets (user info, sample info, used devices, etc.) are saved. Change the entry under `[Dirs]` to change the location of this folder.
+## 3. Code Signing
+To prevent an `Unknown Publisher` error when executing the `NOMAD-CAMELS_installer.exe` one has to sign the `exe` before publishing (pushing to the GitHub repo).
+### 3.1. Using Windows Signtool
+You can use Windows Signtool from the Windows SDK to sign your executables. 
+
+You will need a `.pfx` certificate and the corresponding password (called `<your_pfx_password>` below).
+
+You should `cd` into the folder where the `signtool.exe` is located. This is often in a path similar to `C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64`. 
+> If you do not have a `signtool.exe` then you must install it from the [Windows SDK installer](https://developer.microsoft.com/de-de/windows/downloads/windows-sdk/). 
+
+If you have the `signtool.exe` and are in its folder then run this in your PowerShell with **admin rights**:
+
+```powershell
+.\signtool.exe sign /f "/path/to/certificate/certificate.pfx" /p "<your_pfx_password>" /fd sha256 /t http://timestamp.sectigo.com "/path/to/NOMAD-CAMELS/installer/NOMAD-CAMELS_installer.exe"
+```
+
+For more information on the options look [here](https://learn.microsoft.com/en-us/dotnet/framework/tools/signtool-exe#sign).
+
+The executable should now be signed and you are ready to publish the new version.
 
