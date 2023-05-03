@@ -97,8 +97,73 @@ def test_gradient_descent(qtbot, tmp_path):
     catalog_maker(tmp_path)
     run_test_protocol(tmp_path, prot)
 
-def test_if():
-    pass
+def test_if(qtbot, tmp_path):
+    from nomad_camels.loop_steps import if_step
+    conf = protocol_config.Protocol_Config()
+    qtbot.addWidget(conf)
+    qtbot.mouseClick(conf.general_settings.pushButton_add_variable,
+                     Qt.MouseButton.LeftButton)
+    conf.general_settings.variable_model.item(0, 0).setText('condition')
+    conf.general_settings.variable_model.item(0, 1).setText('1')
+    action = get_action_from_name(conf.add_actions, 'If')
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge,
+                      if_step.If_Step_Config)
+    conf_widge.sub_widget.lineEdit_condition.setText('condition != 1')
+    conf_widge.sub_widget.elif_table.add('condition == 1')
+    conf_widge.sub_widget.checkBox_use_else.setChecked(True)
+    action = get_action_from_name(conf.add_actions, 'Prompt')
+    action.trigger()
+    prot = conf.protocol
+    model = conf.treeView_protocol_sequence.model()
+    conf.treeView_protocol_sequence.selectionModel().clearSelection()
+    index = getItemIndex(model, 'Prompt (Prompt)')
+    conf.treeView_protocol_sequence.selectionModel().select(index, QItemSelectionModel.Select)
+
+    def wait_for_move():
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_out, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        assert len(prot.loop_steps) == 1
+    qtbot.waitUntil(wait_for_move)
+
+    action = get_action_from_name(conf.add_actions, 'Wait')
+    action.trigger()
+    conf.treeView_protocol_sequence.selectionModel().clearSelection()
+    index = getItemIndex(model, 'Wait (Wait)')
+    conf.treeView_protocol_sequence.selectionModel().select(index, QItemSelectionModel.Select)
+
+    def wait_for_move():
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_out, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        assert len(prot.loop_steps) == 1
+    qtbot.waitUntil(wait_for_move)
+
+    action = get_action_from_name(conf.add_actions, 'Prompt')
+    action.trigger()
+    conf.treeView_protocol_sequence.selectionModel().clearSelection()
+    index = getItemIndex(model, 'Prompt (Prompt_1)')
+    conf.treeView_protocol_sequence.selectionModel().select(index, QItemSelectionModel.Select)
+
+    def wait_for_move():
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        assert len(prot.loop_steps) == 1
+    qtbot.waitUntil(wait_for_move)
+
+
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    assert 'If (If)' in prot.loop_step_dict
+    assert 'If_Sub (If_condition != 1)' in prot.loop_step_dict
+    assert 'Elif_Sub (If_condition == 1)' in prot.loop_step_dict
+    assert 'Else_Sub (If_Else)' in prot.loop_step_dict
+    catalog_maker(tmp_path)
+    run_test_protocol(tmp_path, prot)
 
 def test_nd_sweep():
     pass
