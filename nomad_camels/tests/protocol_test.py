@@ -180,8 +180,44 @@ def test_set_channels(qtbot, tmp_path):
     catalog_maker(tmp_path)
     run_test_protocol(tmp_path, prot)
 
-def test_simple_sweep():
-    pass
+def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import simple_sweep
+    from nomad_camels.frontpanels import plot_definer
+    conf = protocol_config.Protocol_Config()
+    qtbot.addWidget(conf)
+    action = get_action_from_name(conf.add_actions, 'Simple Sweep')
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge,
+                      simple_sweep.Simple_Sweep_Config)
+    conf_widge.sweep_widget.lineEdit_start.setText('-10')
+    conf_widge.sweep_widget.lineEdit_stop.setText('10')
+    conf_widge.sweep_widget.lineEdit_n_points.setText('21')
+    conf_widge.comboBox_sweep_channel.setCurrentText('demo_device_motorY')
+    conf_widge.checkBox_use_own_plots.setChecked(True)
+
+    table = conf_widge.read_table.tableWidget_channels
+    row = get_row_from_channel_table('demo_device_detectorY', table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+    row = get_row_from_channel_table('demo_device_motorY', table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+
+    fit = plot_definer.Fit_Info(True, 'Gaussian', x='demo_device_motorY',
+                                y='demo_device_detectorY')
+    plot = plot_definer.Plot_Info(x_axis='demo_device_motorY',
+                                  y_axes={'formula': '"demo_device_detectorY"',
+                                          'axis': 1},
+                                  fits=[fit])
+    conf_widge.plot_widge.plot_data = [plot]
+
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.name = 'test_simple_sweep_protocol'
+    assert 'Simple Sweep (Simple_Sweep)' in prot.loop_step_dict
+    catalog_maker(tmp_path)
+    run_test_protocol(tmp_path, prot)
 
 def test_trigger_and_read_channels(qtbot, tmp_path):
     ensure_demo_in_devices()
