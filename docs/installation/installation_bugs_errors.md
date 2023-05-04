@@ -9,15 +9,18 @@ nav_order: 5
 As CAMELS is currently under development errors and bugs can occur. We are working hard to keep the number of bugs small.\
 Here are some Errors and ways you might be able to fix them
 
-- **Install fails randomly**\
-If your installation fails randomly (setup of python environment takes less than a few seconds) and you can't run CAMELS with the created shortcuts then it is poissible that your pyenv PATH variables are not set correctly. Open powershell and  see if the `pyenv` command works.\
+- **Windows Installer fails randomly**\
+If your installation fails randomly (setup of python environment takes less than a few seconds) and you can't run CAMELS with the created shortcuts then it is possible that your pyenv PATH variables are not set correctly. Open powershell and  see if the `pyenv` command works.\
 Set the correct PATH variables for pyenv and retry the installation again.\
 **Alternative:**\
-You can remove pyenv by deleting the `/.pyenv/` folder or running 
-    ```powershell
+Remove pyenv by deleting the `/.pyenv/` folder or by running 
+    ```bash
     .\install-pyenv-win.ps1 -uninstall
-    ``` 
-  The `install-pyenv-win.ps1` script is located in `/.pyenv/pyenv-win/`.
+    ```
+  in the terminal. The `install-pyenv-win.ps1` script is located in `/.pyenv/pyenv-win/`.
+
+  Remove the `/NOMAD-CAMELS/` folder as well and restart the installer.
+
 
 ## Fixed
 _Fixed issues. Kept for completeness._
