@@ -20,8 +20,10 @@ nav_order: 2
 
 # Instrument Control Options
 After adding at least one instrument to CAMELS you now have two ways to control the instrument: 
-1. [_Measurement Protocols_](#2-measurement-protocols) Use it for sophisticated measurement procedures.
-2. [_Manual Control_](#3-manual-control) Manually change and control individual channels. This is useful for controlling stages without having to create a protocol.
+1. [_Measurement Protocols_](#2-measurement-protocols)\
+  Use it for sophisticated measurement procedures.
+2. [_Manual Control_](#3-manual-control)\
+  Manually change and control individual channels. This is useful for controlling stages without having to create a protocol.
 ![img_8.png](img_8.png)
 
 # 1. Measurement Protocols
@@ -59,8 +61,8 @@ We can now add two of the most important steps:
  
 ![img_12.png](img_12.png)
 
-Each device has specific `channels` which can be read and set (changed) or only read.
-Depending on the exact implementation of the instruments channels they are either 'software channels' so they themselves do not actually require device communication but store important values or settings, or they are 'instrument channels' and either _read from_ or _write to_ the instrument (or both). 
+Each instrument has specific `channels` which can be read and set (changed) or only read.
+Depending on the exact implementation of the instruments channels they are either 'software channels' so they themselves do not actually require communication with the actual instrument but store important values or settings, or they are 'instrument channels' and either _read from_ or _write to_ the instrument (or both). 
 
 Below you can see the readable and the settable channels of a single `demo_device`. 
 
@@ -89,7 +91,7 @@ The green background of the `value` field tells you that CAMELS understands the 
 ### 1.2.2. Use Variables
 
 > &#9888; You can use variables instead of 'hard-coding' values.\
-> &#9888; You can use most symbolic math operations in the value field to perform calculations before setting the result of the calculation.\
+> &#9888; You can use most symbolic math operations the same way you would in regular python code in the value field to perform calculations before setting the result of the calculation.
 
 For this simply add a variable on the bottom right of the protocol screen with the &#10133; symbol
 
@@ -131,16 +133,16 @@ We can see that the `motorX` was set correctly to a value of 4.
 
 ---
 
-## 1.3. Sweeping using a `For-loop` step
+## 1.3. Sweeping using a `For loop` step
 Start by creating a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols`in the main window.
 ### 1.3.1. Create Steps
-Create a `For Loop`step as the first step in the sequence.\
+Create a `For Loop ` step as the first step in the sequence.\
 ![img_27.png](img_27.png)
 
-Right-click the `For loop`step and click `Add Into`to add a `Set Channel`step into the for-loop. Steps within a for-loop are executed for each iteration of the loop.\
+Right-click the `For loop`step and click `Add Into` to add a `Set Channel` step into the for-loop. Steps within a for-loop are executed for each iteration of the loop.\
 ![img_28.png](img_28.png)
 
-Then also add a `Read Channel`step by right-clicking the `Set Channels`step and using _Insert Below_.\
+Then also add a `Read Channel` step by right-clicking the `Set Channels` step and using _Insert Below_.\
 ![img_29.png](img_29.png)
 
 ### 1.3.2. Create Variables
@@ -149,13 +151,13 @@ Then also add a `Read Channel`step by right-clicking the `Set Channels`step and 
 Add these variables to make it clearer what values are used in the `For Loop`. This also makes maintaining the protocol easier and enables you to more easily share it with others.   
 ![img_30.png](img_30.png)
 ### 1.3.3. Set Channels (using variables)
-Start by setting the start, stop and number of points of the `For Loop`. To do this either  type the number you want into the field or you can use the variables created above to set these parameters. To use the variables  right-click the field and select `Insert Variable`and then `stop`. Like this for example:
+Start by setting the start, stop and number of points of the `For Loop`. To do this either  type the number you want into the field or you can use the variables created above to set these parameters. To use the variables  right-click the field and select `Insert Variable` and then `stop`. Like this for example:
 ![img_31.png](img_31.png)
 
 When you entered the three relevant parameters you should see a list of points appear on the right side showing you which value the points you created will have.\
 ![img_32.png](img_32.png)
 
-Now go to `Set Channels`and set the three motor channels of the `demo_device` to the value you want. For demonstration purposes we will set each channel to a function that uses either `For_Loop_Count` or `For_Loop_Value`. Where `Count` is the number of iteration of the for-loop; here for example it starts with `1` goes to `11`, increasing by `1` for each iteration. This can be used to count and keep track of your iterations. `Value` is the value belonging to the iteration count; here it would go from `0` to `1` in steps of `0.2`.   The name of these two variables changes if you rename the `for-loop`step to `<name_for_loop>_Count` and `<name_for_loop>_Value`.
+Now go to `Set Channels` and set the three motor channels of the `demo_device` to the value you want. For demonstration purposes we will set each channel to a function that uses either `For_Loop_Count` or `For_Loop_Value`. Where `Count` is the number of iteration of the for-loop; here for example it starts with `1` goes to `11`, increasing by `1` for each iteration. This can be used to count and keep track of your iterations. `Value` is the value belonging to the iteration count; here it would go from `0` to `1` in steps of `0.2`.   The name of these two variables changes if you rename the `For loop` step to `<name_for_loop>_Count` and `<name_for_loop>_Value`.
 ![img_33.png](img_33.png)\
 We set 
 - `motorX` to `For_Loop_Count`
@@ -198,7 +200,7 @@ If you want to sweep and set one channel (e.g. voltage) and read any number of o
 ### 1.4.1. Create Step
 Start by creating a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols`in the main window. Add a `Simple Sweep` step into teh sequence.
 ### 1.4.2. Customize Simple Sweep
-You can now configure the `Simple Sweep`. This is quite similar to configuring the `for-loop` step [above](#23-sweeping-using-a-for-loopstep). But you musts first configure the Sweep Channel, so the channel that should be changed and set. We will use the `motorX` channel for this example.
+You can now configure the `Simple Sweep`. This is quite similar to configuring the `For loop` step [above](#23-sweeping-using-a-for-loopstep). But you musts first configure the Sweep Channel, so the channel that should be changed and set. We will use the `motorX` channel for this example.
 ![img_39.png](img_39.png)\
 `Data Output` configures in which Bluesky stream the sweep is run. `sub-stream` should be fine for most cases.\
 Select the `Loop-Type` and `Sweep mode` you want. 
