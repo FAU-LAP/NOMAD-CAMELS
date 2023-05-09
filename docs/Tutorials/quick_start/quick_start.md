@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: listing
 title: Getting Started
 parent: Tutorials
 has_children: true
