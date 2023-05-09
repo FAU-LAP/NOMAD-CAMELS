@@ -1,12 +1,11 @@
 ---
 layout: default
 title: Plots in Protocols
-parent: Quick Start
+parent: Getting Started
 nav_order: 4
 ---
 
-## Table of contents
-{: .no_toc }
+
 
 <details open markdown="block">
   <summary>

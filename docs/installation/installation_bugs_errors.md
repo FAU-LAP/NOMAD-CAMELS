@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Errors and Bugs during Installation
+title: Troubleshooting
 parent: Installation
 nav_order: 5
 ---

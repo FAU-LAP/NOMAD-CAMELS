@@ -1,12 +1,12 @@
 ---
 layout: default
-title: Quick Start
+title: Getting Started
+parent: Tutorials
 has_children: true
-nav_order: 2
+nav_order: 1
 ---
 
-## Table of contents
-{: .no_toc }
+
 
 <details open markdown="block">
   <summary>

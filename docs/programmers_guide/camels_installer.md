@@ -5,8 +5,7 @@ parent: Programmer's Guide
 nav_order: 2
 ---
 
-## Table of contents
-{: .no_toc }
+
 
 <details open markdown="block">
   <summary>

@@ -1,12 +1,11 @@
 ---
 layout: default
 title: Install and Configure Instruments
-parent: Quick Start
+parent: Getting Started
 nav_order: 1
 ---
 
-## Table of contents
-{: .no_toc }
+
 
 <details open markdown="block">
   <summary>

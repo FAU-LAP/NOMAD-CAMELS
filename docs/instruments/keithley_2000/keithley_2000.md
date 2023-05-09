@@ -3,8 +3,7 @@ layout: default
 title: Keithley 2000
 parent: Instruments
 ---
-## Table of contents
-{: .no_toc }
+
 
 <details open markdown="block">
   <summary>

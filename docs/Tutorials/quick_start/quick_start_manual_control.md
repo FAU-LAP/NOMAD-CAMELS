@@ -1,12 +1,11 @@
 ---
 layout: default
 title: Manual Control
-parent: Quick Start
+parent: Getting Started
 nav_order: 3
 ---
 
-## Table of contents
-{: .no_toc }
+
 
 <details open markdown="block">
   <summary>

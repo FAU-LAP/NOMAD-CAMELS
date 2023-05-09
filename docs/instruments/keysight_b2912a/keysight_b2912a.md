@@ -3,8 +3,7 @@ layout: default
 title: Keysight B2912A
 parent: Instruments
 ---
-## Table of contents
-{: .no_toc }
+
 
 <details open markdown="block">
   <summary>
