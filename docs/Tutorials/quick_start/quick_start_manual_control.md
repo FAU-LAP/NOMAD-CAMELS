@@ -2,6 +2,7 @@
 layout: default
 title: Manual Control
 parent: Getting Started
+grand_parent: Tutorials
 nav_order: 3
 ---
 

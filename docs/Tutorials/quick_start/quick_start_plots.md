@@ -2,6 +2,7 @@
 layout: default
 title: Plots in Protocols
 parent: Getting Started
+grand_parent: Tutorials
 nav_order: 4
 ---
 

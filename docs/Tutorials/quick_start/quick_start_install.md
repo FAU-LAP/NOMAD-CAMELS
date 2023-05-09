@@ -2,6 +2,7 @@
 layout: default
 title: Install and Configure Instruments
 parent: Getting Started
+grand_parent: Tutorials
 nav_order: 1
 ---
 
