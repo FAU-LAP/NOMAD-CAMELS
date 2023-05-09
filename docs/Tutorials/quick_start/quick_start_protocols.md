@@ -2,7 +2,7 @@
 layout: default
 title: Measurement Protocols
 parent: Getting Started
-grand_parent: Tutorialsgg
+grand_parent: Tutorials
 nav_order: 2
 ---
 
