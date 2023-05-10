@@ -23,7 +23,7 @@ def load_local_packages(tell_local=False):
         if os.path.isdir(full_path):
             package_path = ''
             for p in os.listdir(full_path):
-                if p.startswith('camels_driver_'):
+                if p.startswith('nomad_camels_driver_'):
                     package_path = f'{p}.{f}'
                     break
             if not package_path:
