@@ -17,9 +17,9 @@ nav_order: 4
 {:toc}
 </details>
 
-# 1. Plots
+# Plots
 You can display live-plots in the measurement protocols to have a better understanding of what is going on during the measurement. 
-## 1.1. Configure Plots
+## 1. Configure Plots
 To configure the plots  click `Define Plots / Fits`. Here we bill be doing this for the for-loop measurement protocol created [here](#23-sweeping-using-a-for-loopstep)
 <p float="left">
   <img src="img_48.png" width="75%" />
@@ -38,7 +38,7 @@ Give the plot a `x-label` and `y-label` as well as a `title`.
 
 A finished plot configuration (without a fit) could look like this for example
 ![img_51.png](img_51.png)
-## 1.2. Run Protocol with Plots
+## 2. Run Protocol with Plots
 If you then run the protocol the plot is displayed and updated live.
 
 <p float="left">

@@ -85,7 +85,9 @@ You can add a plain text description of the instrument and what you are planning
 
 When you are happy with the instruments settings and have added all the instruments required for your measurements you can  click `OK` to save all the instruments and settings to CAMELS.
 
+---
 
+Continue to the next page to learn how to use the instrument you just implemented in a measurement protocol.
 
 [&#8679; Back to the top &#8679;](#table-of-contents)
 <p style="text-align:left;">
