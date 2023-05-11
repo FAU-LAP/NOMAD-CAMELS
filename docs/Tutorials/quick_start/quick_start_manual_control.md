@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Manual Control
+title: Using Manual Controls
 parent: Getting Started
 grand_parent: Tutorials
 nav_order: 3
@@ -18,8 +18,8 @@ nav_order: 3
 </details>
 
 
-# Manual Control
-`Manual Control` allows you to set individual instrument channels (e.g. stage in x direction or a voltage output of a SMU)
+# Using Manual Controls
+`Manual Control` functionality allows you to set individual instrument channels (e.g. stage in x direction or a voltage output of a SMU)
 ## 1. Add Manual Control
 To start  click the &#10133; symbol next to `Manual Control`. You can now select which type of manual control you want to add. The options depend on the instruments you have installed. The most basic manual control is the `Stage_Control` which sets individual channels. It is mainly designed for motorized stages but can be used to control most instruments. 
 ## 2. Configure Manual Control

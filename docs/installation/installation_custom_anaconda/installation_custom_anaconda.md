@@ -1,6 +1,6 @@
 ---
 layout: default
-title: How to install CAMELS using Anaconda
+title: Installation of CAMELS Using Anaconda
 parent: Installation
 nav_order: 2
 ---
@@ -16,7 +16,7 @@ nav_order: 2
 {:toc}
 </details>
 
-# How to install CAMELS using Anaconda
+# Installation of CAMELS Using Anaconda
 This How-to-guide will teach how to install CAMELS if you already have installed [Anaconda](https://www.anaconda.com/) on your machine or want to use Anaconda to install the python environment needed for CAMELS. 
 
 This guide is also useful if `pyenv` does not work on your machine due to restrictions set by your facility (package-filters, rights-problems, etc.). 

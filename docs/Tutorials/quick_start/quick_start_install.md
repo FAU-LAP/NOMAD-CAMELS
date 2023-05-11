@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Install and Configure Instruments
+title: Installation and Configuration of a Demo Instrument
 parent: Getting Started
 grand_parent: Tutorials
 nav_order: 1
@@ -18,7 +18,7 @@ nav_order: 1
 </details>
 
 
-# Installing and Configuring a Demo Instrument
+# Installation and Configuration of a Demo Instrument
 This page should help you learn how to use CAMELS, especially if this is your first time using CAMELS. It shows you how to add (install) a new instrument (`demo device`) to CAMELS, how to configure it, and how to set and measure the `demo device`.
 ## 1. Installation of Demo Device
 When you first start up NOMAD-CAMELS, you should see something like the following:  

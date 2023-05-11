@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Plots in Protocols
+title: Setting Up Plots in Protocols
 parent: Getting Started
 grand_parent: Tutorials
 nav_order: 4
@@ -17,7 +17,7 @@ nav_order: 4
 {:toc}
 </details>
 
-# Plots
+# Setting Up Plots in Protocols
 You can display live-plots in the measurement protocols to have a better understanding of what is going on during the measurement. 
 ## 1. Configure Plots
 To configure the plots  click `Define Plots / Fits`. Here we bill be doing this for the for-loop measurement protocol created [here](#23-sweeping-using-a-for-loopstep)
