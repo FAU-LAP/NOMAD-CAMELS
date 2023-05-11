@@ -24,7 +24,7 @@ class Change_DeviceConf(Loop_Step):
         dev_name = self.device
         device = variables_handling.devices[dev_name]
         dev_type = device.name
-        py_package = importlib.import_module(f'{dev_type}.{dev_type}')
+        py_package = importlib.import_module(f'nomad_camels_driver_{dev_type}.{dev_type}')
         dev_instance = py_package.subclass()
         dev_instance.config = self.config_dict
         config_dict = dev_instance.get_config()
@@ -60,9 +60,11 @@ class Change_DeviceConf_Config(Loop_Step_Config):
 
     def device_changed(self):
         dev_name = self.comboBox_device.currentText()
+        if not dev_name:
+            return
         device = variables_handling.devices[dev_name]
         dev_type = device.name
-        py_package = importlib.import_module(f'{dev_type}.{dev_type}')
+        py_package = importlib.import_module(f'nomad_camels_driver_{dev_type}.{dev_type}')
         if dev_name == self.loop_step.device:
             settings = self.loop_step.settings_dict
             config = self.loop_step.config_dict
