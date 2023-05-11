@@ -26,7 +26,7 @@ After adding at least one instrument to CAMELS you now have two ways to control 
   Manually change and control individual channels. This is useful for controlling stages without having to create a protocol. How to use this functionality is explained in more detail [here](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_manual_control.html).
 ![img_8.png](img_8.png)
 
-# 1. Measurement Protocols
+# Measurement Protocols
 Measurement protocols are the main way in which CAMELS performs measurements. It can be understood as something similar to a `measurement recipe` where a step for step guide is given to different instruments to perform a measurement procedure.
 
 A good example of such a measurement procedure is a temperature dependant current-voltage (IV) measurement. Here the temperature of a sample is set to a specific value with a PID controller and waits for the temperature to be stable. Then it performs an IV-sweep, so it sets a voltage and measures the accompanying current for a given range of voltage values (often something like 100 points between -1 V and +1V).\
@@ -35,7 +35,7 @@ So one would need to nest different loops (one for setting teh temperature and o
 
 
 
-## 1.1. Simple Start with a `demo_device`
+## 1. Simple Start with a `demo_device`
 But let's start very simple with the `demo_device` which is a pure software implementation of an instrument. 
 
 Start by clicking the large &#10133; symbol next to `Measurement Protocols`. This opens up and empty protocol window.\
@@ -56,7 +56,7 @@ or use the small &#10133; symbol in the top right to add a new step.
   <img src="img_11.png" width="75%" /> 
 </p>
 
-### 1.1.1. Add Set and Read Steps
+### 1.1. Add Set and Read Steps
 
 We can now add two of the most important steps:
 - **Set Channels**
@@ -78,10 +78,10 @@ Below you can see the readable and the settable channels of the `demo_device`.
 
 ---
 
-## 1.2. Use Single Set and Read
+## 2. Use Single Set and Read
 Let's see how you can set and read individual channels.
 
-### 1.2.1. Set Channels
+### 2.1. Set Channels
 We can now configure the protocol so that first each motor channel (`X`,`Y`,`Z`) are set to a value (in this case `1`,`2`,`3`).
 
 <p float="left">
@@ -92,7 +92,7 @@ We can now configure the protocol so that first each motor channel (`X`,`Y`,`Z`)
 > The green background of the `value` field tells you that CAMELS understands the entry as it expects to see a number (float) here.\
 > &#9888; If you enter a value which CAMELS can not convert to float it will **change the background to red** (see image on the right).
 
-### 1.2.2. Use Variables
+### 2.2. Use Variables
 
 > &#9888; You can use variables instead of 'hard-coding' values.\
 > &#9888; You can use most symbolic math operations the same way you would in regular python code in the value field to perform calculations before setting the result of the calculation.
@@ -121,7 +121,7 @@ This should evaluate to `(1+1)*2=4`. You can also insert or append
 
 ---
 
-### 1.2.3. Read Channels
+### 2.3. Read Channels
 To read the channels we just set,  configure the `Read Channels` step to read the three motor channels:\
 ![img_23.png](img_23.png)\
 You can now run the protocol by confirming the configuration with `OK` and then pressing the `run` button.\
@@ -137,9 +137,9 @@ We can see that the `motorX` was set correctly to a value of 4.
 
 ---
 
-## 1.3. Sweeping using a `For loop` step
+## 3. Sweeping using a `For loop` step
 Start by creating a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols`in the main window.
-### 1.3.1. Create Steps
+### 3.1. Create Steps
 Create a `For Loop ` step as the first step in the sequence.\
 ![img_27.png](img_27.png)
 
@@ -149,12 +149,12 @@ Right-click the `For loop`step and click `Add Into` to add a `Set Channel` step 
 Then also add a `Read Channel` step by right-clicking the `Set Channels` step and using _Insert Below_.\
 ![img_29.png](img_29.png)
 
-### 1.3.2. Create Variables
+### 3.2. Create Variables
 > &#9888; This step is optional.
 
 Add these variables to make it clearer what values are used in the `For Loop`. This also makes maintaining the protocol easier and enables you to more easily share it with others.   
 ![img_30.png](img_30.png)
-### 1.3.3. Set Channels (using variables)
+### 3.3. Set Channels (using variables)
 Start by setting the start, stop and number of points of the `For Loop`. To do this either  type the number you want into the field or you can use the variables created above to set these parameters. To use the variables  right-click the field and select `Insert Variable` and then `stop`. Like this for example:
 ![img_31.png](img_31.png)
 
@@ -170,15 +170,15 @@ We set
 
 to demonstrate both of the variables and the use of mathematical operations (here `+`) in value fields.
 
-### 1.3.4. Read Channels
+### 3.4. Read Channels
 Now set which channels should be read each time the loop is iterated over. If you like you can  select `Read All` at the top to read all available channels. You could of course select individual channels if you want read fewer. Here we are only interested in the motor channels, so we will only read these. 
 ![img_34.png](img_34.png)
 
-### 1.3.5. Run Sweep Protocol
+### 3.5. Run Sweep Protocol
 Now  click `OK` and `run` the protocol.
 ![img_35.png](img_35.png)\
 You can already see the eleven iterations the loop makes from the console window.
-### 1.3.6. Sweep Data
+### 3.6. Sweep Data
 Now lets look at the data produced. The HDF5 file with the data is saved into the location specified by you. With a simple HDF5 viewer like [H5web](https://h5web.panosc.eu/h5wasm) you can easily read and display the data.
 <p float="left">
   <img src="img_36.png" width="62%" />
@@ -198,12 +198,12 @@ We can see that the mathematical operation of adding `Count` and `Value` for `mo
 
 ---
 
-## 1.4. Using the `Simple Sweep` functionality
+## 4. Using the `Simple Sweep` functionality
 If you want to sweep and set one channel (e.g. voltage) and read any number of other channels (e.g. current and temperature) you can either use a for-loop as described [above](#23-sweeping-using-a-for-loopstep) or you can use the _Simple Sweep_ functionality which is a 'cleaner' implementation of such a sweep.
 
-### 1.4.1. Create Step
+### 4.1. Create Step
 Start by creating a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols`in the main window. Add a `Simple Sweep` step into teh sequence.
-### 1.4.2. Customize Simple Sweep
+### 4.2. Customize Simple Sweep
 You can now configure the `Simple Sweep`. This is quite similar to configuring the `For loop` step [above](#23-sweeping-using-a-for-loopstep). But you musts first configure the Sweep Channel, so the channel that should be changed and set. We will use the `motorX` channel for this example.
 ![img_39.png](img_39.png)\
 `Data Output` configures in which Bluesky stream the sweep is run. `sub-stream` should be fine for most cases.\
@@ -218,11 +218,11 @@ Set the `Start`, `Stop` and `points` parameters. For this we can again use varia
   <img src="img_42.png" width="70%" />
 </p>
 
-### 1.4.3. Run _Simple Sweep_
+### 4.3. Run _Simple Sweep_
 Click `OK` and `run` the protocol.\
 ![img_43.png](img_43.png)\
 
-### 1.4.4. Data File
+### 4.4. Data File
 Now lets look at the data produced. The HDF5 file with the data is saved into the location specified by you. With a simple HDF5 viewer like [H5web](https://h5web.panosc.eu/h5wasm) you can easily read and display the data.
 <p float="left">
   <img src="img_44.png" width="75%" />
