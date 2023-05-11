@@ -20,7 +20,7 @@ nav_order: 2
 
 # Setting Up Measurement Protocols
 After adding at least one instrument to CAMELS you now have two ways to control the instrument: 
-1. [_Measurement Protocols_](#2-measurement-protocols)\
+1. [_Measurement Protocols_](#Measurement-Protocol)\
   Use it for measurement procedures. How to set up and use protocols is explained on this page.
 2. [_Manual Control_](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_manual_control.html)\
   Manually change and control individual channels. This is useful for controlling stages without having to create a protocol. How to use this functionality is explained in more detail [here](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_manual_control.html).
@@ -74,7 +74,7 @@ Below you can see the readable and the settable channels of the `demo_device`.
   <img src="img_14.png" width="46%" /> 
 </p>
 
-[&#8679; Back to the top &#8679;](#table-of-contents)
+[&#8679; Back to the top &#8679;](#Setting-Up-Measurement-Protocols)
 
 ---
 
@@ -133,7 +133,7 @@ This creates a HDF5 file in the location specified by the data saving location s
 ![img_26.png](img_26.png)\
 We can see that the `motorX` was set correctly to a value of 4.
 
-[&#8679; Back to the top &#8679;](#table-of-contents)
+[&#8679; Back to the top &#8679;](#Setting-Up-Measurement-Protocols)
 
 ---
 
@@ -194,17 +194,17 @@ Here are the other two motor channels
 
 We can see that the mathematical operation of adding `Count` and `Value` for `motorZ` worked.
 
-[&#8679; Back to the top &#8679;](#table-of-contents)
+[&#8679; Back to the top &#8679;](#Setting-Up-Measurement-Protocols)
 
 ---
 
 ## 4. Using the `Simple Sweep` functionality
-If you want to sweep and set one channel (e.g. voltage) and read any number of other channels (e.g. current and temperature) you can either use a for-loop as described [above](#23-sweeping-using-a-for-loopstep) or you can use the _Simple Sweep_ functionality which is a 'cleaner' implementation of such a sweep.
+If you want to sweep and set one channel (e.g. voltage) and read any number of other channels (e.g. current and temperature) you can either use a for-loop as described [above](#3-sweeping-using-a-for-loop-step) or you can use the _Simple Sweep_ functionality which is a 'cleaner' implementation of such a sweep.
 
 ### 4.1. Create Step
 Start by creating a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols`in the main window. Add a `Simple Sweep` step into teh sequence.
 ### 4.2. Customize Simple Sweep
-You can now configure the `Simple Sweep`. This is quite similar to configuring the `For loop` step [above](#23-sweeping-using-a-for-loopstep). But you musts first configure the Sweep Channel, so the channel that should be changed and set. We will use the `motorX` channel for this example.
+You can now configure the `Simple Sweep`. This is quite similar to configuring the `For loop` step [above](#3-sweeping-using-a-for-loopstep). But you musts first configure the Sweep Channel, so the channel that should be changed and set. We will use the `motorX` channel for this example.
 ![img_39.png](img_39.png)\
 `Data Output` configures in which Bluesky stream the sweep is run. `sub-stream` should be fine for most cases.\
 Select the `Loop-Type` and `Sweep mode` you want. 
@@ -213,7 +213,7 @@ Select the `Loop-Type` and `Sweep mode` you want.
   <img src="img_41.png" width="34.8%" /> 
 </p>
 
-Set the `Start`, `Stop` and `points` parameters. For this we can again use variables as done [above](#23-sweeping-using-a-for-loopstep). Then select which channels you want to read. We will only select the `motorX` channel. As this is the only channel that is changed.
+Set the `Start`, `Stop` and `points` parameters. For this we can again use variables as done [above](#3-sweeping-using-a-for-loopstep). Then select which channels you want to read. We will only select the `motorX` channel. As this is the only channel that is changed.
 <p float="left">
   <img src="img_42.png" width="70%" />
 </p>
@@ -230,7 +230,7 @@ Now lets look at the data produced. The HDF5 file with the data is saved into th
 
 We can see that the set points of `motorX` are read successfully.
 
-[&#8679; Back to the top &#8679;](#table-of-contents)
+[&#8679; Back to the top &#8679;](#Setting-Up-Measurement-Protocols)
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="quick_start_install.html">&larr; Back</a>

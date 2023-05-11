@@ -89,7 +89,7 @@ When you are happy with the instruments settings and have added all the instrume
 
 Continue to the next page to learn how to use the instrument you just implemented in a measurement protocol.
 
-[&#8679; Back to the top &#8679;](#table-of-contents)
+[&#8679; Back to the top &#8679;](#Setting-Up-Measurement-Protocols)
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="quick_start.html">&larr; Back</a>
