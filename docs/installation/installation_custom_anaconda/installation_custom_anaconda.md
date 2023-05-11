@@ -33,7 +33,7 @@ Now set up the correct python environment for CAMELS using Anaconda. For this op
 Run 
 
 ```bash
-conda create --name desertenv python=3.11.3 
+conda create -y --name desertenv python=3.11.3 
 ```
 and then activate the environment you just created using
 
