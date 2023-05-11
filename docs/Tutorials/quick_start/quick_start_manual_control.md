@@ -34,7 +34,7 @@ This opens the stage control.\
 Here you can set the step size and use the green arrow keys to control the selected axis. You can also jump to a specific value by entering values below the `Go To` button and then pressing the button.
 > &#9888; The value of `Time between readings` is the time in seconds after which the axis is read (using the set `readback axis` channel).
 
-[&#8679; Back to the top &#8679;](#Setting-Up-Measurement-Protocols)
+[&#8679; Back to the top &#8679;](#using-manual-controls)
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="quick_start_protocols.html">&larr; Back</a>

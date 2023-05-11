@@ -49,7 +49,7 @@ If you then run the protocol the plot is displayed and updated live.
 > ![img_53.png](img_53.png)
 
 
-[&#8679; Back to the top &#8679;](#Setting-Up-Measurement-Protocols)
+[&#8679; Back to the top &#8679;](#setting-up-plots-in-protocols)
 
 <p style="text-align:left;">
   <span style="color: grey;">

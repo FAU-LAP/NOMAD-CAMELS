@@ -74,7 +74,7 @@ Below you can see the readable and the settable channels of the `demo_device`.
   <img src="img_14.png" width="46%" /> 
 </p>
 
-[&#8679; Back to the top &#8679;](#Setting-Up-Measurement-Protocols)
+[&#8679; Back to the top &#8679;](#setting-up-measurement-protocols)
 
 ---
 
@@ -133,7 +133,7 @@ This creates a HDF5 file in the location specified by the data saving location s
 ![img_26.png](img_26.png)\
 We can see that the `motorX` was set correctly to a value of 4.
 
-[&#8679; Back to the top &#8679;](#Setting-Up-Measurement-Protocols)
+[&#8679; Back to the top &#8679;](#setting-up-measurement-protocols)
 
 ---
 
@@ -194,7 +194,7 @@ Here are the other two motor channels
 
 We can see that the mathematical operation of adding `Count` and `Value` for `motorZ` worked.
 
-[&#8679; Back to the top &#8679;](#Setting-Up-Measurement-Protocols)
+[&#8679; Back to the top &#8679;](#setting-up-measurement-protocols)
 
 ---
 
@@ -230,7 +230,8 @@ Now lets look at the data produced. The HDF5 file with the data is saved into th
 
 We can see that the set points of `motorX` are read successfully.
 
-[&#8679; Back to the top &#8679;](#Setting-Up-Measurement-Protocols)
+
+[&#8679; Back to the top &#8679;](#setting-up-measurement-protocols)
 <p style="text-align:left;">
   <span style="color: grey;">
   <a href="quick_start_install.html">&larr; Back</a>
