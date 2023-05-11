@@ -64,6 +64,8 @@ def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
                      max_val, stream_name='gradient_descent', learning_rate=0.05,
                      momentum=0.8, max_step_for_diff=None):
 
+    if set_channel not in read_channels:
+        read_channels += [set_channel]
     def obj_func(set_val):
         yield from bps.checkpoint()
         yield from bps.abs_set(set_channel, set_val, group='A')

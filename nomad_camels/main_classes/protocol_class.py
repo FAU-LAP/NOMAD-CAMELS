@@ -398,7 +398,11 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         unique, if not change its name and raise an error.
         If value changed: re-evaluate the data-type.
         Update the protocol afterwards."""
-        ind = self.tableView_variables.selectedIndexes()[0]
+        ind = self.tableView_variables.selectedIndexes()
+        if ind:
+            ind = ind[0]
+        else:
+            return
         item = self.variable_model.itemFromIndex(ind)
         if ind.column() == 0 and item.text() in self.protocol.variables:
             new_name = self.get_unique_name(item.text())

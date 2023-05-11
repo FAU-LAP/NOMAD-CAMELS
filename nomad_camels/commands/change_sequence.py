@@ -21,6 +21,9 @@ class CommandMoveStep(QUndoCommand):
                 self.item_model_sequence.insertRow(self.ind.row() + self.up_down, row)
             elif self.in_out > 0 and self.ind.row() > 0:
                 above = self.item_model_sequence.item(self.ind.row()-1, 0)
+                step = self.loop_step_dict[above.data()]
+                if step.step_type == 'If':
+                    above = above.child(above.rowCount()-1, 0)
                 if self.loop_step_dict[above.data()].has_children:
                     row = self.item_model_sequence.takeRow(self.ind.row())
                     above.insertRow(above.rowCount(), row)

@@ -18,7 +18,10 @@ class Set_Variables(Loop_Step):
         protocol_string = super().get_protocol_string(n_tabs)
         for i, variable in enumerate(self.variables_values['Variable']):
             val = variables_handling.get_write_from_data_type(self.variables_values['Value'][i])
-            protocol_string += f'{tabs}{variable} = eva.eval({val})\n'
+            if isinstance(val, str):
+                protocol_string += f'{tabs}{variable} = eva.eval({val})\n'
+            else:
+                protocol_string += f'{tabs}{variable} = {val}\n'
             protocol_string += f'{tabs}namespace["{variable}"] = {variable}\n'
         return protocol_string
 

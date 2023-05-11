@@ -362,6 +362,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             self.copy_loop_step(variables_handling.copied_step.full_name)
         new_ind = treeView_functions.getItemIndex(self.item_model_sequence, step.full_name)
         self.treeView_protocol_sequence.selectionModel().select(new_ind, QItemSelectionModel.Select)
+        self.tree_click_sequence()
 
     def remove_loop_step(self, ask=True):
         """After updating the loop_step order in the protocol, the

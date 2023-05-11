@@ -149,7 +149,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.databroker_catalog = databroker.catalog[self.preferences['databroker_catalog_name']]
         except KeyError:
             print('Could not find databroker catalog, using temporary')
-            self.databroker_catalog = databroker.temp()
+            self.databroker_catalog = databroker.temp().v2
         self.run_engine.subscribe(self.databroker_catalog.v1.insert)
         self.run_engine.subscribe(self.protocol_finished, 'stop')
         self.re_subs = []
@@ -387,11 +387,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             from nomad_camels.bluesky_handling import make_catalog
             make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name)
             databroker.catalog.force_reload()
-        try:
-            self.databroker_catalog = databroker.catalog[catalog_name]
-        except KeyError:
-            print('Could not find databroker catalog, using temporary')
-            self.databroker_catalog = databroker.temp()
+            try:
+                self.databroker_catalog = databroker.catalog[catalog_name]
+            except KeyError:
+                import warnings
+                warnings.warn('Could not find databroker catalog, using temporary catalog. If data is not transferred, it might get lost.')
+                self.databroker_catalog = databroker.temp()
 
 
 

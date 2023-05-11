@@ -1,5 +1,3 @@
-import serial.tools.list_ports
-
 from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox,\
     QFrame, QCheckBox, QTextEdit
 from PySide6.QtGui import QFont
@@ -9,7 +7,7 @@ from ophyd import EpicsSignalRO
 from ophyd import Device as OphydDevice
 from ophyd.signal import SignalRO
 
-from nomad_camels.bluesky_handling import EpicsFieldSignalRO
+from nomad_camels.bluesky_handling.EpicsFieldSignal import EpicsFieldSignalRO
 
 from nomad_camels.main_classes.measurement_channel import Measurement_Channel
 
@@ -768,6 +766,7 @@ class Simple_Config_Sub(Device_Config_Sub):
 
 
 def get_ports():
+    import serial.tools.list_ports
     ports = serial.tools.list_ports.comports()
     port_dict = {}
     for port, desc, hwid in sorted(ports):

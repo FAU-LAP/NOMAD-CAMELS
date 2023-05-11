@@ -1,8 +1,11 @@
-from PySide6.QtWidgets import QWidget
-from PySide6.QtGui import QScreen
+import sys
+
+from PySide6.QtWidgets import QWidget, QApplication
 from PySide6.QtCore import QCoreApplication
 
 app = QCoreApplication.instance()
+if app is None:
+    app = QApplication(sys.argv)
 screens = app.screens()
 
 current_screen = 0

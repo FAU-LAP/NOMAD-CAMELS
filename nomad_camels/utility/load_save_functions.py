@@ -92,7 +92,7 @@ def save_preset(path:str, preset_data:dict):
         json.dump(preset_data, json_file, indent=2)
     autosave_preset(preset_name, preset_data)
 
-def save_dictionary(path:str, dictionary:dict):
+def save_dictionary(path, dictionary:dict):
     """Saves the given `dictionary` as json to the given `path`."""
     save_dict = {}
     for key, val in dictionary.items():
