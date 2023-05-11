@@ -1,6 +1,7 @@
 import sys
 import os
 import importlib
+import re
 
 from nomad_camels.utility import variables_handling
 from nomad_camels.bluesky_handling import helper_functions
@@ -19,18 +20,12 @@ def load_local_packages(tell_local=False):
         return local_packages
     sys.path.append(local_instr_path)
     for f in os.listdir(local_instr_path):
-        full_path = f'{local_instr_path}/{f}'
-        if os.path.isdir(full_path):
-            package_path = ''
-            for p in os.listdir(full_path):
-                if p.startswith('nomad_camels_driver_'):
-                    package_path = f'{p}.{f}'
-                    break
-            if not package_path:
-                package_path = f'{f}.{f}'
+        match = re.match(r'^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$', f)
+        if match:
+            package_path = f'{local_instr_path}/{f}'
             try:
-                sys.path.append(f'{local_instr_path}/{f}')
-                package = importlib.import_module(package_path)
+                sys.path.append(package_path)
+                package = importlib.import_module(match.group(2))
                 device = package.subclass()
                 if tell_local:
                     local_packages[f'local {device.name}'] = package
