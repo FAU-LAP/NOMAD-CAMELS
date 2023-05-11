@@ -192,7 +192,11 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
                         group[coord] = dataset[coord]
                 stream_meta = run[stream].metadata
                 for col in dataset:
-                    group[col] = dataset[col]
+                    # Enables CAMELS to read strings from channels
+                    if str(dataset[col].dtype).startswith('<U'):
+                        group[col] = dataset[col].astype(bytes)
+                    else:
+                        group[col] = dataset[col]
                 if 'descriptors' in stream_meta:
                     dat = stream_meta['descriptors'][0]['data_keys']
                     for key, val in dat.items():
