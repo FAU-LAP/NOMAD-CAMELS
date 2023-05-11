@@ -46,10 +46,13 @@ Here you can fully configure the measurement routine you want to perform. Give t
 One key part of this window is the `Sequence` element on the left.
 Here you will configure the individual steps of the measurement procedure.
 
-Right click into the empty space (first image below) or use the small &#10133; symbol in the top right to add a new step (second image below). 
+Right click into the empty space to add a new step
 
 <p float="left">
   <img src="img_10.png" width="75%" />
+</p>
+or use the small &#10133; symbol in the top right to add a new step.
+<p float="left">
   <img src="img_11.png" width="75%" /> 
 </p>
 
@@ -62,9 +65,9 @@ We can now add two of the most important steps:
 ![img_12.png](img_12.png)
 
 Each instrument has specific `channels` which can be read and set (changed) or only read.
-Depending on the exact implementation of the instruments channels they are either 'software channels' so they themselves do not actually require communication with the actual instrument but store important values or settings, or they are 'instrument channels' and either _read from_ or _write to_ the instrument (or both). 
+Depending on the exact implementation of the instruments channels they are either 'software channels' so they themselves do not actually require communication with the actual instrument but store important values or settings, or they are _instrument channels_ and either _read from_ or _write to_ the instrument (or both). 
 
-Below you can see the readable and the settable channels of a single `demo_device`. 
+Below you can see the readable and the settable channels of the `demo_device`. 
 
 <p float="left">
   <img src="img_13.png" width="53%" />
@@ -76,7 +79,7 @@ Below you can see the readable and the settable channels of a single `demo_devic
 ---
 
 ## 1.2. Use Single Set and Read
-Lets see how you can set and read individual cahnnels.
+Let's see how you can set and read individual channels.
 
 ### 1.2.1. Set Channels
 We can now configure the protocol so that first each motor channel (`X`,`Y`,`Z`) are set to a value (in this case `1`,`2`,`3`).
@@ -86,7 +89,8 @@ We can now configure the protocol so that first each motor channel (`X`,`Y`,`Z`)
   <img src="img_16.png" width="49%" /> 
 </p>
 
-The green background of the `value` field tells you that CAMELS understands the entry as it expects to see a number (float) here. If you enter a value which CAMELS can not convert to float it will change the background to red (see image on the right).
+> The green background of the `value` field tells you that CAMELS understands the entry as it expects to see a number (float) here.\
+> &#9888; If you enter a value which CAMELS can not convert to float it will **change the background to red** (see image on the right).
 
 ### 1.2.2. Use Variables
 
