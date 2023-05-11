@@ -45,7 +45,7 @@ If you then run the protocol the plot is displayed and updated live.
   <img src="img_52.png" width="80%" />
 </p>
 
-> &#9888; To get this plot you have to modify the protocol from [before](#23-sweeping-using-a-for-loopstep) by adding a small `Wait` time of `0.1` seconds as the internal software sweep is too fast for the plot to follow.\
+> &#9888; To get this plot you have to modify the protocol from [before](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_protocols.html#13-sweeping-using-a-for-loop-step) by adding a small `Wait` time of `0.1` seconds as the internal software sweep is too fast for the plot to follow.\
 > ![img_53.png](img_53.png)
 
 
