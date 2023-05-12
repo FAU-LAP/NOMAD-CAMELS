@@ -206,8 +206,8 @@ class subclass_config(device_class.Simple_Config):
                       "Averages": ["1", "2", "4", "8", "16", "32"],
                       'Integration_time': ["20ms", "4ms", "0.4ms"],
                       }
-        # Creates text fields in to which the user can write. 
-        # It knows what type of field (bool, number, ...) it is from the default value above.
+        # Optional
+        # Creates labels for each of the self.config elements. This is useful to add units to the settings. 
         labels = {'Source_Type': 'Source type',
                   'Current_compliance_range': 'Compliance range (A)',
                   'Voltage_compliance_range': 'Compliance range (V)',
