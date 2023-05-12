@@ -524,8 +524,10 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_B2912_channel):
 
 ---
 
-## Building the Instrument Package
-To create a new package that can be installed via pip from PyPi or testPyPi follow these steps.
+# How to Upload Driver to PyPi
+
+## Build the Instrument Package
+To create a new package that can be installed via pip from _PyPi_ or _testPyPi_ follow these steps.
 1. Make sure you have `build` and `twine` installed into your python environment with `pip install build` and `pip install twine`
 2. Go to the `<instrument_name>` directory of the driver. So the parent directory containing the pyproject.toml 
 3. Set the correct version number and metadata in your `pyproject.toml` file
