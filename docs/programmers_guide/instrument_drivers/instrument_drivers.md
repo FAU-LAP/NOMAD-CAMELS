@@ -23,40 +23,76 @@ This page should help you create new instrument drivers that can be used in NOMA
 {:toc}
 </details>
 
-# Local Instrument Drivers
-You can create and use local instrument drivers by creating this kind of folder structure
+# How to Create Local Instrument Drivers
+## Change CAMELS Settings
+If you want to implement a new instrument you need to write a custom instrument driver. The easiest way is to create this instrument driver in folder and set the path for local instrument drivers in CAMELS under `File/Settings` and then `Local drivers path`.
+
+The naming and structure of the driver is important for CAMELS to correctly find and import the local driver. 
+
+## Folder Structure
+You can use local instrument drivers by creating this kind of folder structure in the `Local drivers path` specified above.
 
 ```
-nomad_camels_driver_<parent_driver_name> (contains the actual device communication files)
-└─> <parent_driver_name>.py
-└─> <parent_driver_name>_ophyd.py
+nomad_camels_driver_<instrument_name> (contains the actual device communication files)
+└─> <instrument_name>.py
+└─> <instrument_name>_ophyd.py
 ```
-and giving the path to the parent folder in the CAMELS settings.
+CAMELS searches the given `Local drivers path` for folder starting with `nomad_camels_driver_` and extracts the instrument name from the text following this.
 
-CAMELS then searches the given path for folder starting with `nomad_camels_driver_` and extracts the device name from the text following this.\
-For more details on how the .py and ophyd.py files should look like you can go to the code examples in [Section 1.2.](#12-python-files)
+## Driver Naming Best-Practice
+If you want to create a driver for a new instrument you must create a folder called `nomad_camels_driver_<instrument_name>`, where `<instrument_name>` is a unique and concise name for the instrument you want to implement. 
 
-## File Templates
+The name should be completely lower-case and should not contain spaces or dashes, only underscores to indicate spaces. 
+
+If we consider for example a waveform generator called `Agilent 33220A` this would lead to an instrument name of `agilent_33220a`.
+
+## Using File Templates to Create New Instrument
+The easiest way to create a new driver is using file templates for the `*.py` and `*_ophyd.py` files. For more details on how the .py and ophyd.py files should look like you can go to the code examples in the [Sections](#221-simple-device-configurations) below.
+
 You can find templates for a new instrument driver [here](https://github.com/FAU-LAP/CAMELS_drivers/tree/main/empty_instrument_driver).
 
----
+1. Download or copy-and-paste the code of the `empty.py` and `empty_ophyd.py` file.
+2. Rename the files to `<instrument_name>.py` and `<instrument_name>_ophyd.py`.\
+For example: `agilent_33220a.py` and `agilent_33220a_ophyd.py`
+3. Open **both** files with any text editor and search and replace `instrument_name` with the actual name of the instrument you want. Example images below are using Notepad++.
+![img.png](img.png)
+![img_1.png](img_1.png)
 
-### Advanced Driver Information
+## File Content
+### Read and Write Components
+To write the actual instrument communication using VISA you create a class inheriting from `nomad_camels.bluesky_handling.visa_signal.VISA_Device` and add components (Cpt) from `ophyd.Components` to this class.
+
+These components are called _channels_ in CAMELS. Components inheriting from `VISA_Signal_Write` or `VISA_Signal_Read` are accessible with the `Read-Channels` and `Set_Channels` step in measurement protocols and can be used by the `Manual Control` functionality.
+
+### Configuration Components
+Components that are a `Custom_Function_Signal` with the parameter `kind='config'` are used in the configuration of the instrument (`Managa Instruments` and then `Configure Instruments` in the GUI).
+
+To configure the instrument settings you need to create a UI for these settings. You can either do this your self using QtDesigner for example or you can automatically generate a  `Configure Instruments`-UI using the `device_class.Simple_Config` class. 
+
+> For complicated instruments with many settings or multiple channels you must write your own UI.
+
+> For simple instruments you can use the automatically generated settings UI. 
+
+Refer to the `empty.py` file from [here](https://github.com/FAU-LAP/CAMELS_drivers/blob/main/empty_instrument_driver/empty.py) to learn how to use the automatic UI generation.
+
+
+## Advanced Driver Information
 
 **Regarding the `*.py` file.**
 
-It should include a class `subclass` which inherits from `main_classes.device_class.Device`.
+It should include a class `subclass` which inherits from `nomad_camels.main_classes.device_class.Device`.
 The arguments here should be set in the __init__ by the subclass (following) the documentation of the Device class.
 For most devices, nothing further should be necessary in this class.
 
-The `subclass_config`, inheriting from `main_classes.device_class.Device_Config` should provide the necessary configuration for the device and put this information into the device's `config`, `settings` and `ioc_settings` attributes.
+The `subclass_config`, inheriting from `nomad_camels.main_classes.device_class.Device_Config` should provide the necessary configuration for the device and put this information into the device's `config`, `settings` and `ioc_settings` attributes.
 
 **Regarding the `*ophyd.py` file.**
 
-This should include a class (meaningfully named) inheriting from `ophyd.Device`.
+For VISA devices this should include a class (meaningfully named) inheriting from `nomad_camels.bluesky_handling.visa_signal`.
 Here you may set all the components the device has. \
 Components that are created with kind='normal' (or not specified) will appear as channels inside CAMELS. Channels can be set and read and are the main way CAMELS communicates with devices during measurements. \
-Components with kind='config' should be part of the configuration-widget.
+Components with `kind='config'` are part of the configuration-widget.
+
 
 ---
 
@@ -71,18 +107,18 @@ The source code of each driver can be found in [this repository](https://github.
 ## 1. Folder structure
 The driver should have the following folder structure
 ```
-<parent_driver_name>
+<instrument_name>
 └─> dist (this is automatically created by python -m build)
-    └─> nomad_camels_driver_<parent_driver_name>-X.Y.Z.tar.gz
-    └─> nomad_camels_driver_<parent_driver_name>-X.Y.Z-py3-none-any.whl
-└─> nomad_camels_driver_<parent_driver_name> (contains the actual device communication files)
-    └─> <parent_driver_name>.py
-    └─> <parent_driver_name>_ophyd.py
+    └─> nomad_camels_driver_<instrument_name>-X.Y.Z.tar.gz
+    └─> nomad_camels_driver_<instrument_name>-X.Y.Z-py3-none-any.whl
+└─> nomad_camels_driver_<instrument_name> (contains the actual device communication files)
+    └─> <instrument_name>.py
+    └─> <instrument_name>_ophyd.py
 └─> LICENSE.txt
 └─> pyproject.toml
 └─> README.md
 ```
-The most important files are the `<parent_driver_name>.py` and `<parent_driver_name>_ophyd.py` files. The first one contains everything that is needed by the NOMAD-CAMELS GUI. The latter contains the class that is actually used for communicating with the device.  
+The most important files are the `<instrument_name>.py` and `<instrument_name>_ophyd.py` files. The first one contains everything that is needed by the NOMAD-CAMELS GUI. The latter contains the class that is actually used for communicating with the device.  
 The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPi ([see here for more information](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)).\
 &#9888; Most importantly the project name and version must be set in the `pyproject.toml` file.
 
@@ -123,7 +159,7 @@ dependencies = [
 ---
 
 ## 2. Python files
-The `<parent_driver_name>.py` file contains information about the possible instrument configurations and settings. This can be for example the current compliance of a voltage source or the integration time of a digital multimeter.
+The `<instrument_name>.py` file contains information about the possible instrument configurations and settings. This can be for example the current compliance of a voltage source or the integration time of a digital multimeter.
 ### 2.2.1 Simple Device Configurations
 > &#9888; For **simple instruments** with only a **few settings** you do not need to write your own GUI for the settings but CAMELS can auto-generate the UI for you. \
 > An example file is displayed below:
@@ -491,7 +527,7 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_B2912_channel):
 ## 3. Building the Instrument Package
 To create a new package that can be installed via pip from PyPi or testPyPi follow these steps.
 1. Make sure you have `build` and `twine` installed into your python environment with `pip install build` and `pip install twine`
-2. Go to the `<parent_driver_name>` directory of the driver. So the parent directory containing the pyproject.toml 
+2. Go to the `<instrument_name>` directory of the driver. So the parent directory containing the pyproject.toml 
 3. Set the correct version number and metadata in your `pyproject.toml` file
 4. Run the build command : `python -m build`. This creates the `dist/` folder and the distributions to upload to PyPi
 5. Upload to testPyPi (PyPi) with 
@@ -524,9 +560,9 @@ Get-ChildItem $rootFolder -Recurse -Directory | ForEach-Object {
 ## 5. Install Instrument Package
 To install  run 
 ```console
-pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<parent_driver_name>
+pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<instrument_name>
 ```
-where `nomad_camels_driver_<parent_driver_name>` is the driver name you gave your folder and project.\
+where `nomad_camels_driver_<instrument_name>` is the driver name you gave your folder and project.\
 The `--extra-index-url` flag allows dependencies to be installed from PyPi.\
 The `--no-cache-dir` flag prevents any locally saved NOMAD-CAMELS version to be installed instead of the most recent remote version.\
 > &#9888; The index-url must be changed of course when installing from PyPi &#9888;
