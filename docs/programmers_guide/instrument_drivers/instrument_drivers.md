@@ -104,7 +104,7 @@ It is possible to create drivers that are only available locally for you.
 > This will be changed to [PyPi.org](https://PyPi.org/) once the devices are stable.
 
 The source code of each driver can be found in [this repository](https://github.com/FAU-LAP/CAMELS_drivers).
-## 1. Folder structure
+## Folder structure
 The driver should have the following folder structure
 ```
 <instrument_name>
@@ -123,7 +123,7 @@ The `pyproject.toml` file contains most of the relevant information concerning t
 &#9888; Most importantly the project name and version must be set in the `pyproject.toml` file.
 
 ---
-
+## Code Example .toml
 <details>
   <summary>Code example: pyproject.toml file for the  Keithley 237</summary>
 
@@ -158,9 +158,9 @@ dependencies = [
 
 ---
 
-## 2. Python files
+# Python files
 The `<instrument_name>.py` file contains information about the possible instrument configurations and settings. This can be for example the current compliance of a voltage source or the integration time of a digital multimeter.
-### 2.2.1 Simple Device Configurations
+## Simple Device Configurations
 > &#9888; For **simple instruments** with only a **few settings** you do not need to write your own GUI for the settings but CAMELS can auto-generate the UI for you. \
 > An example file is displayed below:
 
@@ -228,7 +228,7 @@ class subclass_config(device_class.Simple_Config):
 
 ---
 
-### 2.2.2 Complex Device Configurations
+## Complex Device Configurations
 If the instrument is more complex CAMELS can not auto generate the UI anymore. Here you need to write your own UI using for example QT Designer. The first three class definitions are relevant for this. 
 
 ---
@@ -524,7 +524,7 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_B2912_channel):
 
 ---
 
-## 3. Building the Instrument Package
+## Building the Instrument Package
 To create a new package that can be installed via pip from PyPi or testPyPi follow these steps.
 1. Make sure you have `build` and `twine` installed into your python environment with `pip install build` and `pip install twine`
 2. Go to the `<instrument_name>` directory of the driver. So the parent directory containing the pyproject.toml 
@@ -538,7 +538,7 @@ To create a new package that can be installed via pip from PyPi or testPyPi foll
 
 ---
 
-## 4. Automated Build and Upload
+## Automated Build and Upload
 You can run the following script using microsoft PowerShell in the `$rootFolder` containing multiple instrument drivers in subdirectories.\
 It runs the `python -m build` and `python -m twine upload -r testpypi dist/nomad*` commands in each subdirectory containing a `pyproject.toml` file.
 
@@ -557,7 +557,7 @@ Get-ChildItem $rootFolder -Recurse -Directory | ForEach-Object {
 
 ---
 
-## 5. Install Instrument Package
+## Install Instrument Package
 To install  run 
 ```console
 pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<instrument_name>
