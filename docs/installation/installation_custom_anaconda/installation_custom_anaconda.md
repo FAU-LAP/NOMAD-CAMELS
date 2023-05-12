@@ -22,9 +22,9 @@ This How-to-guide will teach how to install CAMELS if you already have installed
 This guide is also useful if `pyenv` does not work on your machine due to restrictions set by your facility (package-filters, rights-problems, etc.). 
 
 ## 1. Anaconda Installation
-Download [Anaconda](https://www.anaconda.com/download) and install. 
+Download [Anaconda](https://www.anaconda.com/download) and install it. 
 ## 2. Create Environment
-Now set up the correct python environment for CAMELS using Anaconda. For this open the `Anaconda Prompt` terminal (use Windows search to find it). 
+Now set up the correct python environment for CAMELS using Anaconda. For this open the `Anaconda Prompt` terminal (use for example the Windows search to find it). 
 
 <p float="left">
   <img src="img.png" width="40%" />
