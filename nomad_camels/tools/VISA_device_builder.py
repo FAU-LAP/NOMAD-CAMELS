@@ -13,7 +13,7 @@ from pkg_resources import resource_filename
 
 class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__()
         self.setupUi(self)
 
         if os.path.isdir('graphics'):

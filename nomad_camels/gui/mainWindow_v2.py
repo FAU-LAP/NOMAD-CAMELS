@@ -76,6 +76,8 @@ class Ui_MainWindow(object):
         self.actionReport_Bug.setObjectName(u"actionReport_Bug")
         self.actionVISA_device_builder = QAction(MainWindow)
         self.actionVISA_device_builder.setObjectName(u"actionVISA_device_builder")
+        self.actionEPICS_driver_builder = QAction(MainWindow)
+        self.actionEPICS_driver_builder.setObjectName(u"actionEPICS_driver_builder")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout_5 = QGridLayout(self.centralwidget)
@@ -358,6 +360,7 @@ class Ui_MainWindow(object):
         self.menuHelp.addAction(self.actionReport_Bug)
         self.menuTools.addAction(self.actionUpdate_CAMELS)
         self.menuTools.addAction(self.actionVISA_device_builder)
+        self.menuTools.addAction(self.actionEPICS_driver_builder)
 
         self.retranslateUi(MainWindow)
 
@@ -389,6 +392,7 @@ class Ui_MainWindow(object):
         self.actionDocumentation.setText(QCoreApplication.translate("MainWindow", u"Documentation", None))
         self.actionReport_Bug.setText(QCoreApplication.translate("MainWindow", u"Report Bug", None))
         self.actionVISA_device_builder.setText(QCoreApplication.translate("MainWindow", u"VISA-device builder", None))
+        self.actionEPICS_driver_builder.setText(QCoreApplication.translate("MainWindow", u"EPICS-driver-builder", None))
         self.pushButton_pause.setText(QCoreApplication.translate("MainWindow", u"Pause", None))
         self.label_arrow.setText("")
         self.pushButton_stop.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
@@ -396,7 +400,7 @@ class Ui_MainWindow(object):
         self.label_no_instruments.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">You are currently using no instruments.</span></p><p><span style=\" font-size:12pt; font-weight:600;\">Click &quot;Manage Instruments&quot; to configure your</span></p><p><span style=\" font-size:12pt; font-weight:600;\">first instrument and start with NOMAD-CAMELS!</span></p></body></html>", None))
         self.label_logo.setText("")
         self.label.setText(QCoreApplication.translate("MainWindow", u"User:", None))
-        self.pushButton_manage_instr.setText(QCoreApplication.translate("MainWindow", u"Mangage\n"
+        self.pushButton_manage_instr.setText(QCoreApplication.translate("MainWindow", u"Manage\n"
 "Instruments", None))
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"Sample:", None))
         self.pushButton_editSampleInfo.setText(QCoreApplication.translate("MainWindow", u"Edit Sample-Information", None))

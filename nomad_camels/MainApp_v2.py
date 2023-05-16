@@ -118,6 +118,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionNew_Preset.triggered.connect(self.new_preset)
         self.actionLoad_Backup_Preset.triggered.connect(self.load_backup_preset)
         self.actionVISA_device_builder.triggered.connect(self.launch_device_builder)
+        self.actionEPICS_driver_builder.triggered.connect(self.launch_epics_builder)
         self.actionReport_Bug.triggered.connect(lambda x: os.startfile(f'{camels_github}/issues'))
         self.actionDocumentation.triggered.connect(lambda x: os.startfile(camels_github_pages))
         self.actionUpdate_CAMELS.triggered.connect(lambda x: update_camels.question_message_box(self))
@@ -778,6 +779,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def launch_device_builder(self):
         from nomad_camels.tools import VISA_device_builder
         device_builder = VISA_device_builder.VISA_Device_Builder(self)
+        device_builder.show()
+
+    def launch_epics_builder(self):
+        from nomad_camels.tools import EPICS_driver_builder
+        device_builder = EPICS_driver_builder.EPICS_Driver_Builder(self)
         device_builder.show()
 
 

@@ -322,6 +322,8 @@ class Device_Config(QWidget):
             self.connector = USB_Serial_Config()
         elif self.comboBox_connection_type.currentText() == 'EPICS: LAN':
             self.connector = LAN_Config()
+        elif self.comboBox_connection_type.currentText() == 'EPICS':
+            self.connector = Connection_Config()
         elif self.comboBox_connection_type.currentText() == 'Local VISA':
             self.connector = Local_VISA()
         self.layout().replaceWidget(conn_old, self.connector)

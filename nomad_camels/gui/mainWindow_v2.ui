@@ -194,7 +194,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Mangage
+          <string>Manage
 Instruments</string>
          </property>
         </widget>
@@ -516,6 +516,7 @@ Instruments</string>
     </property>
     <addaction name="actionUpdate_CAMELS"/>
     <addaction name="actionVISA_device_builder"/>
+    <addaction name="actionEPICS_driver_builder"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
@@ -641,6 +642,11 @@ Instruments</string>
   <action name="actionVISA_device_builder">
    <property name="text">
     <string>VISA-device builder</string>
+   </property>
+  </action>
+  <action name="actionEPICS_driver_builder">
+   <property name="text">
+    <string>EPICS-driver-builder</string>
    </property>
   </action>
  </widget>

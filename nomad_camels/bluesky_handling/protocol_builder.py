@@ -155,7 +155,7 @@ def build_protocol(protocol, file_path,
         if ioc_settings:
             devices_string += f'\t\tioc_settings = {ioc_settings}\n'
         devices_string += f'\t\tadditional_info = {additional_info}\n'
-        devices_string += f'\t\t{dev} = {classname}("{ioc_name}:{dev}:", name="{dev}", '
+        devices_string += f'\t\t{dev} = {classname}("{dev}:", name="{dev}", '
         for key, value in extra_settings.items():
             devices_string += f'{key}={value}, '
         devices_string += '**settings)\n'
