@@ -119,6 +119,7 @@ nomad_camels/tests/__init__.py
 nomad_camels/tests/instrument_management_test.py
 nomad_camels/tests/protocol_test.py
 nomad_camels/tests/startup_test.py
+nomad_camels/tools/EPICS_driver_builder.py
 nomad_camels/tools/VISA_builder.py
 nomad_camels/tools/VISA_device_builder.py
 nomad_camels/tools/__init__.py
