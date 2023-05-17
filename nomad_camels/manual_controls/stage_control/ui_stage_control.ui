@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>424</width>
+    <height>279</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="3" column="5" colspan="3">
+    <spacer name="horizontalSpacer_4">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="4">
+    <widget class="QPushButton" name="pushButton_right">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QPushButton" name="pushButton_up">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3">
+    <widget class="QPushButton" name="pushButton_down">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
+    <widget class="QPushButton" name="pushButton_stop">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QPushButton" name="pushButton_left">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="10">
+    <widget class="QLineEdit" name="lineEdit_stepZ"/>
+   </item>
+   <item row="2" column="8">
+    <widget class="QLabel" name="label">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="text">
+      <string>x</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="10">
+    <widget class="QLineEdit" name="lineEdit_stepY"/>
+   </item>
+   <item row="4" column="6">
+    <widget class="QPushButton" name="pushButton_zDown">
+     <property name="text">
+      <string>z</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="6">
+    <widget class="QPushButton" name="pushButton_zUp">
+     <property name="text">
+      <string>z</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="7">
+    <spacer name="horizontalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0" colspan="3">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="10" column="8" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_goZ"/>
+   </item>
+   <item row="7" column="8" colspan="3">
+    <widget class="QPushButton" name="pushButton_go_to">
+     <property name="text">
+      <string>Go To</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="8" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_goX"/>
+   </item>
+   <item row="3" column="8">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>y</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="8">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>z</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="8" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_goY"/>
+   </item>
+   <item row="0" column="10">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="11" rowspan="4">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="13" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_currentX">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="13" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_currentZ">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="10">
+    <widget class="QLineEdit" name="lineEdit_stepX"/>
+   </item>
+   <item row="7" column="13" colspan="2">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>current pos.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="10">
+    <widget class="QLabel" name="label_4">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Step Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="13" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_currentY">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="3">
+    <spacer name="horizontalSpacer_7">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="11" column="2" colspan="5">
+    <widget class="QCheckBox" name="checkBox_manualActive">
+     <property name="text">
+      <string>active</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="2" colspan="5">
+    <widget class="QLabel" name="label_5">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Manual Movement Speeds</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="2" colspan="5">
+    <widget class="QLineEdit" name="lineEdit_manualY"/>
+   </item>
+   <item row="3" column="1">
+    <spacer name="horizontalSpacer_6">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="10" column="2" colspan="5">
+    <widget class="QLineEdit" name="lineEdit_manualZ"/>
+   </item>
+   <item row="7" column="7" rowspan="5">
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="4" colspan="2">
+    <spacer name="horizontalSpacer_5">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="8" column="2" colspan="5">
+    <widget class="QLineEdit" name="lineEdit_manualX"/>
+   </item>
+   <item row="3" column="12">
+    <widget class="QCheckBox" name="checkBox_refY">
+     <property name="text">
+      <string>y</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="12">
+    <widget class="QCheckBox" name="checkBox_refZ">
+     <property name="text">
+      <string>z</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="12">
+    <widget class="QCheckBox" name="checkBox_refX">
+     <property name="text">
+      <string>x</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="12" colspan="3">
+    <widget class="QPushButton" name="pushButton_ref">
+     <property name="text">
+      <string>Find Reference</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="11" colspan="2">
+    <widget class="QPushButton" name="pushButton_position">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="13" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_read_frequ"/>
+   </item>
+   <item row="11" column="8" colspan="5">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Time between readings (s)</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="15">
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

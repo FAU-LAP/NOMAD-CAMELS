@@ -1,0 +1,93 @@
+from PySide6.QtCore import QItemSelectionModel, Qt
+
+
+def test_install_demo_device(qtbot):
+    """This test tries to install the demo device, using the
+    instrument_installer widget.
+
+    Parameters
+    ----------
+    qtbot :
+        
+
+    Returns
+    -------
+
+    """
+    from nomad_camels.frontpanels import instrument_installer
+    installer = instrument_installer.Instrument_Installer()
+    qtbot.addWidget(installer)  # used to run the qt-app and close the widget after the test
+    install_demo(qtbot, installer)
+
+def install_demo(qtbot, installer):
+    """A helper function, used by `test_install_demo_device` and also by
+    `test_add_device`, if the device is not yet installed
+
+    Parameters
+    ----------
+    qtbot :
+        
+    installer :
+        
+
+    Returns
+    -------
+
+    """
+    for box in installer.checkboxes:
+        if box.text() == 'demo_device':
+            box.setChecked(True)
+            break
+    with qtbot.waitSignal(installer.instruments_updated, timeout=60000) as blocker:
+        qtbot.mouseClick(installer.pushButton_install_update_selected,
+                         Qt.MouseButton.LeftButton)
+        # the instruments_updated signal is being waited for, after clicking on
+        # the install/update button
+    assert 'demo_device' in installer.installed_devs
+
+def test_add_device(qtbot):
+    """Going through the instrument management, if demo_device is not installed,
+    it will be. Then the config widget is used to add a demo_device.
+    In the end there is a check whether it is in the list of devices.
+
+    Parameters
+    ----------
+    qtbot :
+        
+
+    Returns
+    -------
+
+    """
+    from nomad_camels.frontpanels import manage_instruments
+    manager = manage_instruments.ManageInstruments()
+    qtbot.addWidget(manager)
+    installer = manager.installer
+    if 'demo_device' not in installer.installed_devs:
+        install_demo(qtbot, installer)  # install if not there
+    conf = manager.config_widget
+    conf.build_table()
+    item1 = None
+    item2 = None
+    for row in range(conf.tableWidget_instruments.rowCount()):
+        item1 = conf.tableWidget_instruments.item(row, 0)
+        item2 = conf.tableWidget_instruments.item(row, 1)
+        if item1.text() == 'demo_device':
+            break
+    assert item1 is not None  # demo_device should be in the installed table
+    assert item2 is not None
+    index1 = conf.tableWidget_instruments.indexFromItem(item1)
+    conf.tableWidget_instruments.selectionModel().select(index1, QItemSelectionModel.Select)
+    index2 = conf.tableWidget_instruments.indexFromItem(item2)
+    conf.tableWidget_instruments.selectionModel().select(index2, QItemSelectionModel.Select)
+    # two items need to be selected, since with a real click, the selection also
+    # returns a list
+    conf.table_click()  # select
+
+    def check_instr_in():
+        """ """
+        # clicking on an added device, check whether it is actually added
+        qtbot.mouseClick(conf.pushButton_add, Qt.MouseButton.LeftButton)
+        instr = conf.get_config()
+        assert 'demo_device' in instr
+    qtbot.waitUntil(check_instr_in)  # wait for the qt event loops

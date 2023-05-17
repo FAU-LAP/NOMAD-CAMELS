@@ -1,0 +1,1 @@
+echo $1 | sudo -S chmod a+rwx $2

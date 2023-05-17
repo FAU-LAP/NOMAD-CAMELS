@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nomad_camels"
+version = "0.1.16"
+authors = [
+    { name="FAIRmat - HU Berlin", email="nomad-camels@fau.de" }
+]
+description = "CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics."
+readme = "README.md"
+requires-python = ">=3.9.6"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",
+    "Operating System :: Microsoft :: Windows",
+]
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies= {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+exclude = [".desertenv",".git",".idea",".gitignore"]  # exclude packages matching these glob patterns (empty by default)
+
+[project.urls]
+"GitHub Page" = "https://github.com/FAU-LAP/NOMAD-CAMELS"
+"Documentation" = "https://fau-lap.github.io/NOMAD-CAMELS/"
