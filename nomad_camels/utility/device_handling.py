@@ -117,9 +117,9 @@ def instantiate_devices(device_list):
             ophyd_device.device_run_count += 1
         else:
             if not classname.endswith('_EPICS') and hasattr(device, 'ophyd_class_no_epics'):
-                ophyd_device = device.ophyd_class_no_epics(f'{ioc_name}:{dev}', name=dev, **extra_settings)
+                ophyd_device = device.ophyd_class_no_epics(f'{dev}:', name=dev, **extra_settings)
             else:
-                ophyd_device = device.ophyd_class(f'{ioc_name}:{dev}', name=dev, **extra_settings)
+                ophyd_device = device.ophyd_class(f'{dev}:', name=dev, **extra_settings)
             ophyd_device.device_run_count = 1
             running_devices[dev] = ophyd_device
         print(f"connecting {dev}")
