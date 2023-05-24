@@ -35,6 +35,8 @@ jobs:
           ref: 'documentation'
           path: './docbranch'
       - run: rm -rf ./docs/
+      - run: ls
+      - run: cd ./docbranch; ls
       - run: cp ./docbranch/docs ./docs
       - run: rm -rf ./docbranch/
       - uses: actions/setup-python@v4
