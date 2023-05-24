@@ -45,9 +45,8 @@ jobs:
         run: |
           sudo apt install libgl1-mesa-glx libegl1-mesa libegl1 libopengl0 libpulse0
           python -m pip install --upgrade pip
-          pip install ruff
-          pip install -r requirements-dev.txt
-          pip install pytest-xvfb
+          pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton
+          pip install -r requirements.txt
           export QT_DEBUG_PLUGINS=1
       - name: Sphinx build
         run: |
