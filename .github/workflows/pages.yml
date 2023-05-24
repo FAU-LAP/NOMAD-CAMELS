@@ -32,13 +32,11 @@ jobs:
           ref: 'main'
       - uses: actions/checkout@v3
         with:
-          ref: 'main'
+          ref: 'doucmentation'
           path: './docbranch'
-      - run: rm -rf ./docs
-      - run: ls
-      - run: cd ./docbranch
-      - run: ls
+      - run: rm -rf ./docs/
       - run: cp ./docbranch/docs ./docs
+      - run: rm -rf ./docbranch/
       - uses: actions/setup-python@v4
       - name: Install dependencies
         run: |
