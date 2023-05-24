@@ -32,7 +32,7 @@ jobs:
           ref: 'main'
       - uses: actions/checkout@v3
         with:
-          ref: 'doucmentation'
+          ref: 'documentation'
           path: './docbranch'
       - run: rm -rf ./docs/
       - run: cp ./docbranch/docs ./docs
