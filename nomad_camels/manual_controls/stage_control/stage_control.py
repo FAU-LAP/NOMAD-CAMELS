@@ -11,6 +11,7 @@ from .ui_stage_control import Ui_Form
 
 
 class Stage_Control(Manual_Control, Ui_Form):
+    """ """
     def __init__(self, parent=None, control_data=None):
         control_data = control_data or {}
         if 'name' in control_data:
@@ -145,6 +146,7 @@ class Stage_Control(Manual_Control, Ui_Form):
 
 
     def line_change(self):
+        """ """
         for i, line in enumerate(self.lines):
             try:
                 self.control_data[self.line_names[i]] = float(line.text())
@@ -158,25 +160,66 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.move_thread.move_speeds = [manual_X, manual_Y, manual_Z]
 
     def check_change(self):
+        """ """
         for i, check in enumerate(self.checks):
             self.control_data[self.check_names[i]] = check.isChecked()
 
     def update_readback(self, x, y, z):
+        """
+
+        Parameters
+        ----------
+        x :
+            
+        y :
+            
+        z :
+            
+
+        Returns
+        -------
+
+        """
         self.lineEdit_currentX.setText(number_formatting.format_number(x))
         self.lineEdit_currentY.setText(number_formatting.format_number(y))
         self.lineEdit_currentZ.setText(number_formatting.format_number(z))
 
     def close(self) -> bool:
+        """ """
         self.read_thread.still_running = False
         self.move_thread.still_running = False
         return super().close()
 
     def closeEvent(self, a0) -> None:
+        """
+
+        Parameters
+        ----------
+        a0 :
+            
+
+        Returns
+        -------
+
+        """
         self.read_thread.still_running = False
         self.move_thread.still_running = False
         return super().closeEvent(a0)
 
     def step_axis(self, axis, up=True):
+        """
+
+        Parameters
+        ----------
+        axis :
+            
+        up :
+             (Default value = True)
+
+        Returns
+        -------
+
+        """
         ax_names = ['X', 'Y', 'Z']
         step_size = self.control_data[f'stepSize_{ax_names[axis]}']
         if not up:
@@ -185,26 +228,41 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.set_channels[axis].put(before + step_size)
 
     def reference_drive(self):
+        """ """
         checks = [self.checkBox_refX, self.checkBox_refY, self.checkBox_refZ]
         for i, channel in self.ref_channels:
             if checks[i].isChecked():
                 channel.put(self.control_data['ref_vals'][i])
 
     def stop_moving(self):
+        """ """
         for i, channel in self.stop_channels:
             channel.put(self.control_data['stop_vals'][i])
 
     def input_position(self):
+        """ """
         self.lineEdit_goX.setText(self.lineEdit_currentX.text())
         self.lineEdit_goY.setText(self.lineEdit_currentY.text())
         self.lineEdit_goZ.setText(self.lineEdit_currentZ.text())
 
     def move_to_position(self):
+        """ """
         self.set_channels[0].put(self.control_data['go_to_X'])
         self.set_channels[1].put(self.control_data['go_to_Y'])
         self.set_channels[2].put(self.control_data['go_to_Z'])
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
+        """
+
+        Parameters
+        ----------
+        a0: QKeyEvent :
+            
+
+        Returns
+        -------
+
+        """
         if not self.checkBox_manualActive.isChecked() or a0.modifiers() != Qt.ControlModifier:
             return super().keyPressEvent(a0)
         if a0.key() == Qt.Key_Left:
@@ -229,6 +287,17 @@ class Stage_Control(Manual_Control, Ui_Form):
             super().keyPressEvent(a0)
 
     def keyReleaseEvent(self, a0: QKeyEvent) -> None:
+        """
+
+        Parameters
+        ----------
+        a0: QKeyEvent :
+            
+
+        Returns
+        -------
+
+        """
         if a0.key() == Qt.Key_Left:
             self.move_thread.movers[0] = False
         elif a0.key() == Qt.Key_Right:
@@ -247,6 +316,7 @@ class Stage_Control(Manual_Control, Ui_Form):
 
 
 class Move_Thread(QThread):
+    """ """
     def __init__(self, parent=None, channels=None, move_speeds=None):
         super().__init__(parent=parent)
         self.channels = channels or []
@@ -258,6 +328,7 @@ class Move_Thread(QThread):
         self.last_set = [np.nan, np.nan, np.nan]
 
     def run(self) -> None:
+        """ """
         while self.still_running:
             move = False
             for i, mover in enumerate(self.movers):
@@ -274,6 +345,17 @@ class Move_Thread(QThread):
                 time.sleep(0.1)
 
     def move(self, ax):
+        """
+
+        Parameters
+        ----------
+        ax :
+            
+
+        Returns
+        -------
+
+        """
         before = self.last_set[ax]
         now = time.time()
         step_size = self.move_speeds[ax] * (now - self.move_starts[ax])
@@ -287,6 +369,7 @@ class Move_Thread(QThread):
 
 
 class Readback_Thread(QThread):
+    """ """
     data_sig = Signal(float, float, float)
 
     def __init__(self, parent=None, channels=None, read_time=np.inf):
@@ -296,6 +379,7 @@ class Readback_Thread(QThread):
         self.still_running = True
 
     def run(self):
+        """ """
         self.do_reading()
         accum = 0
         while self.still_running:
@@ -312,6 +396,7 @@ class Readback_Thread(QThread):
             self.do_reading()
 
     def do_reading(self):
+        """ """
         vals = []
         for channel in self.channels:
             if channel:
@@ -323,6 +408,7 @@ class Readback_Thread(QThread):
 
 
 class Stage_Control_Config(Manual_Control_Config):
+    """ """
     def __init__(self, parent=None, control_data=None):
         super().__init__(parent=parent, control_data=control_data,
                          title='Stage Control Config',
@@ -414,6 +500,7 @@ class Stage_Control_Config(Manual_Control_Config):
         self.change_usage()
 
     def change_usage(self):
+        """ """
         for i, box in enumerate(self.axis_checkboxes):
             able = box.isChecked()
             readback = self.read_checkboxes[i].isChecked()
@@ -426,6 +513,7 @@ class Stage_Control_Config(Manual_Control_Config):
             self.stop_vals[i].setEnabled(able)
 
     def accept(self):
+        """ """
         self.control_data['use_axis'] = []
         self.control_data['axis_channel'] = []
         self.control_data['read_axis'] = []

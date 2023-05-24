@@ -41,7 +41,15 @@ non_addables = {'If_Sub': [if_step.If_Sub_Step, if_step.Sub_Step_Config],
 
 def get_device_steps():
     """Goes through all the devices and checks, whether they provide
-    their own types of loop-steps."""
+    their own types of loop-steps.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     device_steps = {}
     for devname, device in sorted(variables_handling.devices.items(), key=lambda x: x[0].lower()):
         device_steps.update(device.get_special_steps())
@@ -51,7 +59,21 @@ def get_device_steps():
 def make_step(step_type, step_info=None, children=None):
     """Checks whether the given `step_type` is supported, if yes, then a
     step of that type with the given info and children will be created,
-    otherwise a new step is made."""
+    otherwise a new step is made.
+
+    Parameters
+    ----------
+    step_type :
+        
+    step_info :
+         (Default value = None)
+    children :
+         (Default value = None)
+
+    Returns
+    -------
+
+    """
     dev_steps = get_device_steps()
     if step_type in step_type_config:
         if step_info is None:
@@ -74,7 +96,17 @@ def make_step(step_type, step_info=None, children=None):
     return Loop_Step(name='fail')
 
 def get_config(step:Loop_Step):
-    """Returns the Loop_Step_Config belonging to the given step."""
+    """Returns the Loop_Step_Config belonging to the given step.
+
+    Parameters
+    ----------
+    step:Loop_Step :
+        
+
+    Returns
+    -------
+
+    """
     step_type = step.step_type
     dev_steps = get_device_steps()
     if step_type in step_type_config:

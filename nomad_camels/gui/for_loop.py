@@ -23,7 +23,19 @@ from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.ui_widgets.variable_tool_tip_box import Variable_Box
 
 class Ui_for_loop_config(object):
+    """ """
     def setupUi(self, for_loop_config):
+        """
+
+        Parameters
+        ----------
+        for_loop_config :
+            
+
+        Returns
+        -------
+
+        """
         if not for_loop_config.objectName():
             for_loop_config.setObjectName(u"for_loop_config")
         for_loop_config.resize(380, 476)
@@ -200,6 +212,17 @@ class Ui_for_loop_config(object):
     # setupUi
 
     def retranslateUi(self, for_loop_config):
+        """
+
+        Parameters
+        ----------
+        for_loop_config :
+            
+
+        Returns
+        -------
+
+        """
         for_loop_config.setWindowTitle(QCoreApplication.translate("for_loop_config", u"Form", None))
         self.pushButton_add_point.setText(QCoreApplication.translate("for_loop_config", u"+", None))
         self.label_9.setText(QCoreApplication.translate("for_loop_config", u"Points:", None))

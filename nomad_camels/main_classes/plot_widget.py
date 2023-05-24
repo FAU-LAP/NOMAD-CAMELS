@@ -38,13 +38,19 @@ def activate_dark_mode():
 
 
 class MPLwidget(FigureCanvasQTAgg):
-    """
-    Custom QT widget for displaying matplotlib plots.
-
+    """Custom QT widget for displaying matplotlib plots.
+    
     This class inherits from matplotlib's FigureCanvasQTAgg to create a custom
     QT widget for displaying matplotlib plots. In the init method, a new figure
     and axes are created using matplotlib.pyplot.subplots(). The grid is then
     displayed on the axes.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
     """
     def __init__(self):
         fig, ax = plt.subplots()
@@ -53,8 +59,7 @@ class MPLwidget(FigureCanvasQTAgg):
         super().__init__(fig)
 
 class PlotWidget(QWidget):
-    """
-    Class for creating a plot widget.
+    """Class for creating a plot widget.
 
     Parameters
     ----------
@@ -89,6 +94,9 @@ class PlotWidget(QWidget):
         Whether to show the plot, by default True
     **kwargs : Any, optional
         Additional keyword arguments to pass to `MultiLivePlot`
+
+    Returns
+    -------
 
     Attributes
     ----------
@@ -216,6 +224,7 @@ class PlotWidget(QWidget):
         place_widget(self)
 
     def change_maxlen(self):
+        """ """
         text = self.lineEdit_n_data.text()
         if not text:
             maxlen = np.inf
@@ -228,7 +237,15 @@ class PlotWidget(QWidget):
 
     def clear_plot(self):
         """Clear the plot by removing the data from the plot and clearing all
-        fit plots."""
+        fit plots.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         self.livePlot.clear_plot()
         for fit_plot in self.liveFitPlots:
             fit_plot.clear_plot()
@@ -239,9 +256,15 @@ class PlotWidget(QWidget):
         self.ax.figure.canvas.draw_idle()
 
     def show_options(self):
-        """
-        Show or hide the options for the plot.
+        """Show or hide the options for the plot.
         Toggles between 'Show Options' and 'Hide Options' on the button press.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
         """
         if self.options_open:
             self.pushButton_show_options.setText('Show Options')
@@ -254,36 +277,32 @@ class PlotWidget(QWidget):
         self.adjustSize()
 
     def closeEvent(self, a0):
+        """
+
+        Parameters
+        ----------
+        a0 :
+            
+
+        Returns
+        -------
+
+        """
         self.closing.emit()
         super().closeEvent(a0)
 
 
 class LiveFit_Eva(LiveFit):
-    """
-    LiveFit_Eva is a subclass of LiveFit that adds the ability to evaluate the
+    """LiveFit_Eva is a subclass of LiveFit that adds the ability to evaluate the
     independent variables before fitting. It uses the given evaluator for that.
 
     Parameters
     ----------
-    model : lmfit.Model
-        The model to be fitted
-    y : str
-        The expression for the y data
-    evaluator : Evaluator
-        An object that can evaluate expressions
-    independent_vars : dict
-        Dictionary with keys being the independent variable name and value being
-        the data source
-    init_guess : dict, optional
-        A dictionary of initial guess values for the model's parameters. If not
-        provided, the model's default initial guesses will be used.
-    name : str, optional
-        The name of the fit, used for the saving of the data.
-    params : lmfit.Parameters, optional
-        The parameter set to use for the fit. If not provided, the model's
-        default parameter set will be used.
-    stream_name : str, optional
-        The name of the stream, defaults to 'primary'
+
+    Returns
+    -------
+
+    
     """
 
     def __init__(self, model, y, independent_vars, evaluator, init_guess=None,
@@ -312,21 +331,23 @@ class LiveFit_Eva(LiveFit):
         self.read_ready = Fit_Signal(f'{self.name}_read_ready')
 
     def _reset(self):
-        """
-        Resets the fit, also sets the `ready_to_read` to False.
-        """
+        """Resets the fit, also sets the `ready_to_read` to False."""
         super()._reset()
         self.ready_to_read = False
 
     def event(self, doc):
-        """
-        Handles new events received by the fit. Evaluates the independent variables using the evaluator
+        """Handles new events received by the fit. Evaluates the independent variables using the evaluator
         and updates the fit with the new data.
 
         Parameters
         ----------
-        doc : dict
-            The event data
+        doc :
+            
+
+        Returns
+        -------
+
+        
         """
         idv = {}
         for k, v in self.independent_vars.items():
@@ -353,15 +374,12 @@ class LiveFit_Eva(LiveFit):
         self.__stale = True
 
     def get_ready(self):
-        """
-        This function is used to set the ready_to_read attribute to True.
-        """
+        """This function is used to set the ready_to_read attribute to True."""
         self.ready_to_read = True
 
     def update_fit(self):
-        """
-        Update the fit by evaluating the model with the current data.
-
+        """Update the fit by evaluating the model with the current data.
+        
         This method updates the fit by evaluating the current data using the
         model defined by the user. The method uses the `params` attribute, if
         available, to pass on the parameters to the fitting method. If the fit
@@ -371,6 +389,13 @@ class LiveFit_Eva(LiveFit):
         updated data. It also calls the `fit_has_result` method on the parent
         plot.
         Before doing anything, it will wait for `ready_to_read` to be True.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
         """
         while not self.ready_to_read:
             yield from bps.sleep(0.1)
@@ -393,39 +418,20 @@ class LiveFit_Eva(LiveFit):
 
 
 class Fit_Signal(SignalRO):
-    """
-    A subclass of ophyd.SignalRO for storing fit results
-
+    """A subclass of ophyd.SignalRO for storing fit results
+    
     This class is a subclass of ophyd.SignalRO, which is used to store the
     results of a fit.
     It has an additional method `update_data` that updates the readback value
     and timestamp metadata of the signal.
-    
+
     Parameters
     ----------
-    name : str
-        name of the signal
-    value : float, optional
-        initial value of the signal, by default 0.
-    timestamp : float, optional
-        The timestamp associated with the initial value. Defaults to the
-        current local time.
-    parent : Device, optional
-        The parent Device holding this signal
-    labels : list, optional
-        labels of the signal, by default None
-    kind : str, optional
-        signal kind, by default 'hinted'
-    tolerance : any, optional
-        The absolute tolerance associated with the value
-    rtolerance : any, optional
-        The relative tolerance associated with the value, used as in ophyd.Signal
-    metadata : dict, optional
-        metadata of the signal, by default None
-    cl : namespace, optional
-        Control Layer.  Must provide 'get_pv' and 'thread_class'
-    attr_name : str, optional
-        The parent Device attribute name that corresponds to this Signal
+
+    Returns
+    -------
+
+    
     """
     def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None,
                  kind='hinted', tolerance=None, rtolerance=None, metadata=None,
@@ -437,35 +443,33 @@ class Fit_Signal(SignalRO):
 
     def update_data(self, result, timestamp):
         """Updates the readback value and timestamp metadata of the signal.
-        Called by the parent's `update_data` function."""
+        Called by the parent's `update_data` function.
+
+        Parameters
+        ----------
+        result :
+            
+        timestamp :
+            
+
+        Returns
+        -------
+
+        """
         self._readback = result
         self._metadata['timestamp'] = timestamp
 
 class Fit_Ophyd(Device):
-    """
-    A device that extends the functionality of the Device class from Ophyd.
+    """A device that extends the functionality of the Device class from Ophyd.
     It is included in the LiveFit_Eva class.
 
     Parameters
     ----------
-    prefix : str
-       The prefix for the device
-    name : str
-        The name of the device (as will be reported via read()
-    kind : str, optional
-       The kind of the device, default is 'normal'
-    read_attrs : sequence of attribute names
-        DEPRECATED: the components to include in a normal reading
-        (i.e., in ``read()``)
-    configuration_attrs : sequence of attribute names
-        DEPRECATED: the components to be read less often (i.e., in
-        ``read_configuration()``) and to adjust via ``configure()``
-    parent : Device, optional
-        The instance of the parent device, if applicable
-    params : dict, optional
-       The parameters used in the fit
-    parent_fit : LiveFit_Eva, optional
-       The parent fit, used to notify on update
+
+    Returns
+    -------
+
+    
     """
     a = Component(Fit_Signal, name='a')
     b = Component(Fit_Signal, name='b')
@@ -505,16 +509,20 @@ class Fit_Ophyd(Device):
         self.parent_fit = parent_fit
 
     def update_data(self, result, timestamp):
-        """
-        Update the data of all the components.
+        """Update the data of all the components.
         For each fit parameter, the corresponding component is updated.
 
         Parameters
         ----------
-        result : lmfit.ModelResult
-            Result of the fit.
-        timestamp : float
-            Timestamp of the data.
+        result :
+            
+        timestamp :
+            
+
+        Returns
+        -------
+
+        
         """
         self.used_comps = [self.covar]
         for i, comp in enumerate(self.params):
@@ -526,16 +534,16 @@ class Fit_Ophyd(Device):
             self.covar.update_data(result.covar, timestamp)
 
     def read(self):
-        """
-        Overwrites the `read` method from `Device`.
+        """Overwrites the `read` method from `Device`.
         Stops reading, as soon as the number of parameters is reached.
+
+        Parameters
+        ----------
 
         Returns
         -------
-        res : OrderedDict
-            The results of the reading.
-            The keys must be strings and the values must be dict-like
-            with the keys ``{'value', 'timestamp'}``
+
+        
         """
         res = BlueskyInterface.read(self)
         i = 1
@@ -549,27 +557,7 @@ class Fit_Ophyd(Device):
 
 
 class Fit_Plot_No_Init_Guess(LiveFitPlot):
-    """
-    A subclass of LiveFitPlot that doesn't plot the initial guess for the fit.
-
-    Parameters
-    ----------
-    livefit : LiveFit_Eva
-        an instance of ``LiveFit``
-    num_points : int, optional
-        number of points to sample when evaluating the model; default 100
-    legend_keys : list, optional
-        The list of keys to extract from the RunStart document and format
-        in the legend of the plot. The legend will always show the
-        scan_id followed by a colon ("1: ").  Each
-    xlim : tuple, optional
-        passed to Axes.set_xlim
-    ylim : tuple, optional
-        passed to Axes.set_ylim
-    ax : Axes, optional
-        matplotib Axes; if none specified, new figure and axes are made.
-    All additional keyword arguments are passed through to ``Axes.plot``.
-    """
+    """A subclass of LiveFitPlot that doesn't plot the initial guess for the fit."""
     def __init__(self, livefit, *, num_points=100, legend_keys=None, xlim=None,
                  ylim=None, ax=None, **kwargs):
         super().__init__(livefit, num_points=num_points, legend_keys=legend_keys,
@@ -590,9 +578,17 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         self.x = None
 
     def start(self, doc):
-        """
-        Overwrites the `start` method of LiveFitPlot to not display the
+        """Overwrites the `start` method of LiveFitPlot to not display the
         init_guess_line.
+
+        Parameters
+        ----------
+        doc :
+            
+
+        Returns
+        -------
+
         """
         LivePlot.start(self, doc)
         self.livefit.start(doc)
@@ -604,22 +600,34 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         self.ax.legend(loc=0, title='')
 
     def get_ready(self):
-        """
-        Passes the command to the `_livefit`
-        """
+        """Passes the command to the `_livefit`"""
         self._livefit.get_ready()
 
     def event(self, doc):
-        """
-        Passes the event to the `livefit`
+        """Passes the event to the `livefit`
+
+        Parameters
+        ----------
+        doc :
+            
+
+        Returns
+        -------
+
         """
         self.livefit.event(doc)
 
     def fit_has_result(self):
-        """
-        If the `livefit` has a result, a resulting line is calculated, and the
+        """If the `livefit` has a result, a resulting line is calculated, and the
         plot is updated.
         Called by LiveFit_Eva.update_fit().
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
         """
         if self.livefit.result is not None:
             # Evaluate the model function at equally-spaced points.
@@ -641,22 +649,19 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         # Intentionally override LivePlot.event. Do not call super().
 
     def clear_plot(self):
-        """
-        Empties the data of the current plot line.
-        """
+        """Empties the data of the current plot line."""
         if self.current_line:
             self.current_line.set_data([], [])
 
     def update_plot(self):
-        """
-        Sets the current x and y data, then calls the `parent_plot` to update.
-        """
+        """Sets the current x and y data, then calls the `parent_plot` to update."""
         self.current_line.set_data(self.x_data, self.y_data)
         self.parent_plot.update_plot()
 
 
 
 class Plot_Options(Ui_Plot_Options, QWidget):
+    """ """
     def __init__(self, parent=None, ax=None, livePlot=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -677,6 +682,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.linestyle_dict = {}
 
     def setup_table(self):
+        """ """
         self.tableWidget.setColumnCount(5)
         self.tableWidget.setMinimumWidth(400)
         self.tableWidget.setHorizontalHeaderLabels(['Name', 'marker',
@@ -721,6 +727,17 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.tableWidget.resizeColumnsToContents()
 
     def change_linestyle(self, row):
+        """
+
+        Parameters
+        ----------
+        row :
+            
+
+        Returns
+        -------
+
+        """
         linestyle = self.linestyle_widges[row].currentText()
         name = self.ax.lines[row].get_label()
         self.livePlot.current_lines[name].set_linestyle(self.linestyle_dict[linestyle])
@@ -728,6 +745,17 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.ax.figure.canvas.draw_idle()
 
     def change_marker(self, row):
+        """
+
+        Parameters
+        ----------
+        row :
+            
+
+        Returns
+        -------
+
+        """
         marker = self.marker_widges[row].currentText()
         name = self.ax.lines[row].get_label()
         self.livePlot.current_lines[name].set_marker(self.marker_dict[marker])
@@ -735,6 +763,17 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.ax.figure.canvas.draw_idle()
 
     def change_color(self, row):
+        """
+
+        Parameters
+        ----------
+        row :
+            
+
+        Returns
+        -------
+
+        """
         color = QColorDialog.getColor()
         if color.isValid():
             self.color_widges[row].setText(color.name())
@@ -745,6 +784,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
             self.ax.figure.canvas.draw_idle()
 
     def set_log(self):
+        """ """
         x = self.checkBox_log_x.isChecked()
         x_scale = 'log' if x else 'linear'
         self.checkBox_use_abs_x.setEnabled(x)
@@ -761,6 +801,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
 
 
 class MultiLivePlot(LivePlot, QObject):
+    """ """
     new_data = Signal()
     setup_done = Signal()
 
@@ -786,6 +827,7 @@ class MultiLivePlot(LivePlot, QObject):
             ys = [ys]
 
         def setup():
+            """ """
             # Run this code in start() so that it runs on the correct thread.
             nonlocal ys, x, legend_keys, xlim, ylim, ax, epoch, kwargs, xlabel,\
                 ylabel, title
@@ -839,6 +881,17 @@ class MultiLivePlot(LivePlot, QObject):
         self.legend = None
 
     def change_maxlen(self, maxlen):
+        """
+
+        Parameters
+        ----------
+        maxlen :
+            
+
+        Returns
+        -------
+
+        """
         self.maxlen = maxlen
         if maxlen < np.inf:
             self.x_data = deque(self.x_data, maxlen=maxlen)
@@ -850,6 +903,17 @@ class MultiLivePlot(LivePlot, QObject):
                 self.y_data[y] = list(self.y_data[y])
 
     def start(self, doc):
+        """
+
+        Parameters
+        ----------
+        doc :
+            
+
+        Returns
+        -------
+
+        """
         self.__setup()
         # The doc is not used; we just use the signal that a new run began.
         self._epoch_offset = doc['time']  # used if self.x == 'time'
@@ -883,6 +947,17 @@ class MultiLivePlot(LivePlot, QObject):
         self.setup_done.emit()
 
     def descriptor(self, doc):
+        """
+
+        Parameters
+        ----------
+        doc :
+            
+
+        Returns
+        -------
+
+        """
         if doc['name'] == self.stream_name:
             self.desc.append(doc['uid'])
         elif doc['name'].startswith(f'{self.stream_name}_fits_readying_'):
@@ -893,12 +968,23 @@ class MultiLivePlot(LivePlot, QObject):
             self.desc.append(doc['uid'])
 
     def clear_plot(self):
+        """ """
         self.x_data.clear()
         for y in self.y_data:
             self.y_data[y].clear()
 
     def event(self, doc):
-        """Unpack data from the event and call self.update_plot()."""
+        """Unpack data from the event and call self.update_plot().
+
+        Parameters
+        ----------
+        doc :
+            
+
+        Returns
+        -------
+
+        """
         # This outer try/except block is needed because multiple event
         # streams will be emitted by the RunEngine and not all event
         # streams will have the keys we want.
@@ -941,11 +1027,25 @@ class MultiLivePlot(LivePlot, QObject):
         # super().event(doc)
 
     def update_caches(self, x, ys):
+        """
+
+        Parameters
+        ----------
+        x :
+            
+        ys :
+            
+
+        Returns
+        -------
+
+        """
         for y in ys:
             self.y_data[y].append(ys[y])
         self.x_data.append(x)
 
     def update_plot(self):
+        """ """
         for y, line in self.current_lines.items():
             xdat = np.abs(self.x_data) if self.use_abs['x'] else self.x_data
             ydat = np.abs(self.y_data[y]) if self.use_abs['y'] else self.y_data[y]
@@ -957,6 +1057,17 @@ class MultiLivePlot(LivePlot, QObject):
         self.new_data.emit(None)
 
     def stop(self, doc):
+        """
+
+        Parameters
+        ----------
+        doc :
+            
+
+        Returns
+        -------
+
+        """
         if not self.x_data:
             print('MultiLivePlot did not get any data that corresponds to the '
                   'x axis. {}'.format(self.x))
@@ -973,6 +1084,7 @@ class MultiLivePlot(LivePlot, QObject):
 
 
 class PlotWidget_NoBluesky(QWidget):
+    """ """
     def __init__(self, xlabel='', ylabel='', parent=None, title='', ylabel2='',
                  y_axes=None, labels=(), first_hidden=None, show_plot=True):
         app = QCoreApplication.instance()
@@ -1015,6 +1127,7 @@ class PlotWidget_NoBluesky(QWidget):
         self.show()
 
     def change_maxlen(self):
+        """ """
         text = self.lineEdit_n_data.text()
         if not text:
             maxlen = np.inf
@@ -1028,15 +1141,25 @@ class PlotWidget_NoBluesky(QWidget):
 
     def clear_plot(self):
         """Clear the plot by removing the data from the plot and clearing all
-        fit plots."""
+        fit plots.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         self.plot.clear_plot()
 
     def autoscale(self):
+        """ """
         self.ax.autoscale()
         self.plot.ax2.autoscale()
         self.ax.figure.canvas.draw_idle()
 
     def show_options(self):
+        """ """
         if self.options_open:
             self.pushButton_show_options.setText('Show Options')
             self.options_open = False
@@ -1050,6 +1173,7 @@ class PlotWidget_NoBluesky(QWidget):
 
 
 class MultiPlot_NoBluesky(QObject):
+    """ """
     new_data = Signal()
     setup_done = Signal()
 
@@ -1072,6 +1196,21 @@ class MultiPlot_NoBluesky(QObject):
         self.use_abs = {'x': False, 'y': False, 'y2': False}
 
     def add_data(self, x, ys, add=True):
+        """
+
+        Parameters
+        ----------
+        x :
+            
+        ys :
+            
+        add :
+             (Default value = True)
+
+        Returns
+        -------
+
+        """
         if not self.current_lines:
             if len(self.labels) != len(ys):
                 self.labels = list(ys.keys())
@@ -1112,6 +1251,17 @@ class MultiPlot_NoBluesky(QObject):
             self.update_plot()
 
     def change_maxlen(self, maxlen):
+        """
+
+        Parameters
+        ----------
+        maxlen :
+            
+
+        Returns
+        -------
+
+        """
         self.maxlen = maxlen
         if maxlen < np.inf:
             self.xdata = deque(self.xdata, maxlen=maxlen)
@@ -1124,6 +1274,7 @@ class MultiPlot_NoBluesky(QObject):
 
 
     def update_plot(self):
+        """ """
         for y, line in self.current_lines.items():
             xdat = np.abs(self.xdata) if self.use_abs['x'] else self.xdata
             ydat = np.abs(self.ydata[y]) if self.use_abs['y'] else self.ydata[y]
@@ -1136,6 +1287,7 @@ class MultiPlot_NoBluesky(QObject):
         self.new_data.emit()
 
     def clear_plot(self):
+        """ """
         self.xdata.clear()
         for y in self.ydata:
             self.ydata[y].clear()

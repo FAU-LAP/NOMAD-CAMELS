@@ -20,7 +20,19 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogBu
     QWidget)
 
 class Ui_Pass_Ask(object):
+    """ """
     def setupUi(self, Pass_Ask):
+        """
+
+        Parameters
+        ----------
+        Pass_Ask :
+            
+
+        Returns
+        -------
+
+        """
         if not Pass_Ask.objectName():
             Pass_Ask.setObjectName(u"Pass_Ask")
         Pass_Ask.resize(400, 106)
@@ -58,6 +70,17 @@ class Ui_Pass_Ask(object):
     # setupUi
 
     def retranslateUi(self, Pass_Ask):
+        """
+
+        Parameters
+        ----------
+        Pass_Ask :
+            
+
+        Returns
+        -------
+
+        """
         Pass_Ask.setWindowTitle(QCoreApplication.translate("Pass_Ask", u"Dialog", None))
         self.label_2.setText(QCoreApplication.translate("Pass_Ask", u"Password:", None))
         self.label.setText(QCoreApplication.translate("Pass_Ask", u"Enter sudo-password for the Ubuntu-user \"epics\":", None))

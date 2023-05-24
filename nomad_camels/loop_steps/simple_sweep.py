@@ -11,6 +11,7 @@ from nomad_camels.frontpanels.plot_definer import Plot_Button_Overview
 from nomad_camels.loop_steps.for_while_loops import For_Loop_Step_Config_Sub, For_Loop_Step
 
 class Simple_Sweep(For_Loop_Step):
+    """ """
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
         super().__init__(name, children, parent_step, step_info, **kwargs)
@@ -33,6 +34,7 @@ class Simple_Sweep(For_Loop_Step):
         self.guess_fit_params = step_info['guess_fit_params'] if 'guess_fit_params' in step_info else True
 
     def update_used_devices(self):
+        """ """
         self.used_devices = []
         set_device = variables_handling.channels[self.sweep_channel].device
         self.used_devices.append(set_device)
@@ -43,6 +45,7 @@ class Simple_Sweep(For_Loop_Step):
                     self.used_devices.append(device)
 
     def update_variables(self):
+        """ """
         variables = {}
         stream = f'{self.name}'
         for plot in self.plots:
@@ -53,12 +56,14 @@ class Simple_Sweep(For_Loop_Step):
 
 
     def get_outer_string(self):
+        """ """
         if self.use_own_plots:
             return builder_helper_functions.plot_creator(self.plots,
                                                          f'create_plots_{self.name}')[0]
         return ''
 
     def get_add_main_string(self):
+        """ """
         stream = f'"{self.name}"'
         if self.data_output == 'main stream':
             stream = '"primary"'
@@ -68,7 +73,17 @@ class Simple_Sweep(For_Loop_Step):
         return add_main_string
 
     def get_protocol_string(self, n_tabs=1):
-        """The loop is enumerating over the selected points."""
+        """The loop is enumerating over the selected points.
+
+        Parameters
+        ----------
+        n_tabs :
+             (Default value = 1)
+
+        Returns
+        -------
+
+        """
         tabs = '\t'*n_tabs
         # if self.loop_type in ['start - stop', 'start - min - max - stop',
         #                       'start - max - min - stop']:
@@ -118,6 +133,17 @@ class Simple_Sweep(For_Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
+        """
+
+        Parameters
+        ----------
+        n_tabs :
+             (Default value = 0)
+
+        Returns
+        -------
+
+        """
         short_string = super().get_protocol_short_string(n_tabs)
         tabs = '\t' * n_tabs
         short_string += f'{tabs}Sweep: {self.sweep_channel}, Read: {self.read_channels}\n'
@@ -126,6 +152,7 @@ class Simple_Sweep(For_Loop_Step):
 
 
 class Simple_Sweep_Config(Loop_Step_Config):
+    """ """
     def __init__(self, loop_step:Simple_Sweep, parent=None):
         super().__init__(parent, loop_step)
         self.loop_step = loop_step
@@ -253,6 +280,7 @@ class Simple_Sweep_Config(Loop_Step_Config):
         # load_save_functions.save_preferences(prefs)
 
     def use_plot_change(self):
+        """ """
         use_plots = self.checkBox_use_own_plots.isChecked()
         self.plot_widge.setEnabled(use_plots)
 
@@ -260,6 +288,7 @@ class Simple_Sweep_Config(Loop_Step_Config):
 
 
     def update_step_config(self):
+        """ """
         super().update_step_config()
         self.loop_step.use_own_plots = self.checkBox_use_own_plots.isChecked()
         self.loop_step.plots = self.plot_widge.plot_data

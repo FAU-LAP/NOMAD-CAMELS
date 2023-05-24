@@ -7,6 +7,7 @@ import sys
 
 
 class Error_Writer(io.StringIO):
+    """ """
     def __init__(self, textEdit, use_old_stderr=False):
         super().__init__()
         self.textEdit = textEdit
@@ -14,6 +15,19 @@ class Error_Writer(io.StringIO):
         self.use_old_stderr = use_old_stderr
 
     def write(self, *args, **kwargs):
+        """
+
+        Parameters
+        ----------
+        *args :
+            
+        **kwargs :
+            
+
+        Returns
+        -------
+
+        """
         text = args[0]
         if self.use_old_stderr:
             self.old_stderr.write(text)
@@ -23,6 +37,7 @@ class Error_Writer(io.StringIO):
 
 
 class Text_Writer(io.StringIO):
+    """ """
     def __init__(self, textEdit, use_old_stdout=False):
         super().__init__()
         self.textEdit = textEdit
@@ -30,6 +45,19 @@ class Text_Writer(io.StringIO):
         self.use_old_stdout = use_old_stdout
 
     def write(self, *args, **kwargs):
+        """
+
+        Parameters
+        ----------
+        *args :
+            
+        **kwargs :
+            
+
+        Returns
+        -------
+
+        """
         text = args[0]
         if self.use_old_stdout:
             self.old_stdout.write(text)
@@ -40,6 +68,7 @@ class Text_Writer(io.StringIO):
 
 
 class Console_TextEdit(QTextEdit):
+    """ """
     def __init__(self, parent):
         super().__init__(parent)
         use_old = not sys.executable.endswith('pythonw.exe')

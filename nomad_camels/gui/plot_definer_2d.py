@@ -21,7 +21,19 @@ from PySide6.QtWidgets import (QApplication, QGridLayout, QLabel, QLineEdit,
 from nomad_camels.ui_widgets.variable_tool_tip_box import Variable_Box
 
 class Ui_Plot_Definer_2D(object):
+    """ """
     def setupUi(self, Plot_Definer_2D):
+        """
+
+        Parameters
+        ----------
+        Plot_Definer_2D :
+            
+
+        Returns
+        -------
+
+        """
         if not Plot_Definer_2D.objectName():
             Plot_Definer_2D.setObjectName(u"Plot_Definer_2D")
         Plot_Definer_2D.resize(400, 222)
@@ -128,6 +140,17 @@ class Ui_Plot_Definer_2D(object):
     # setupUi
 
     def retranslateUi(self, Plot_Definer_2D):
+        """
+
+        Parameters
+        ----------
+        Plot_Definer_2D :
+            
+
+        Returns
+        -------
+
+        """
         Plot_Definer_2D.setWindowTitle(QCoreApplication.translate("Plot_Definer_2D", u"Form", None))
         self.label_5.setText(QCoreApplication.translate("Plot_Definer_2D", u"x-axis:", None))
         self.label_6.setText(QCoreApplication.translate("Plot_Definer_2D", u"y-axis:", None))

@@ -13,7 +13,15 @@ from nomad_camels.utility import treeView_functions, variables_handling
 
 def getInstalledDevices():
     """Goes through the given device_driver_path and returns a list of
-    the available devices."""
+    the available devices.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     device_driver_path = variables_handling.device_driver_path
     device_list = {}
     sys.path.append(device_driver_path)
@@ -30,7 +38,15 @@ def getInstalledDevices():
 
 def getAllDevices():
     """So far only returns the installed devices, should in future work
-    with the online repository of drivers."""
+    with the online repository of drivers.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     # TODO online stuff?
     return getInstalledDevices()
 
@@ -42,11 +58,12 @@ class AddDeviceDialog(Ui_Dialog_Add_Device, QDialog):
 
     Parameters
     ----------
-    active_devices_dict : dict
-        The dictionary with active devices. This may be changed and
-        returned by the Dialog.
-    parent : QWidget
-        handed over to QDialog."""
+
+    Returns
+    -------
+
+    
+    """
     def __init__(self, active_devices_dict=None, parent=None):
         self.device_dict = getInstalledDevices()
         super(AddDeviceDialog, self).__init__(parent=parent)
@@ -96,7 +113,15 @@ class AddDeviceDialog(Ui_Dialog_Add_Device, QDialog):
 
     def tree_click(self):
         """Called when clicking the treeView_devices. Sets the
-        add/remove button to the correct state."""
+        add/remove button to the correct state.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         index = self.treeView_devices.selectedIndexes()[0]
         dat = self.item_model.itemFromIndex(index).data()
         if dat is None:
@@ -114,7 +139,15 @@ class AddDeviceDialog(Ui_Dialog_Add_Device, QDialog):
     def de_activate_device(self):
         """The currently selected device in the treeView is either
         removed (if activated) or added. If the added device is already
-        present, a second, numbered one is added."""
+        present, a second, numbered one is added.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         ind = self.treeView_devices.selectedIndexes()[0]
         dat = self.item_model.itemFromIndex(ind).data()
         if dat.startswith('inst:'):
@@ -140,7 +173,17 @@ class AddDeviceDialog(Ui_Dialog_Add_Device, QDialog):
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
         """Overwrites the keyPressEvent of the QDialog so that it does
-        not close when pressing Enter/Return."""
+        not close when pressing Enter/Return.
+
+        Parameters
+        ----------
+        a0: QKeyEvent :
+            
+
+        Returns
+        -------
+
+        """
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)
@@ -148,14 +191,30 @@ class AddDeviceDialog(Ui_Dialog_Add_Device, QDialog):
     def search_by_name(self):
         """Called on pressing return inside the lineEdit_search_name.
         Calls the build_tree method with the text inside the lineEdit as
-        `search_text`."""
+        `search_text`.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         text = self.lineEdit_search_name.text()
         self.build_tree(search_text=text)
 
     def search_by_tag(self):
         """Called on pressing return inside the lineEdit_search_tags.
         Calls the build_tree method with the text inside the lineEdit as
-        `search_tag`."""
+        `search_tag`.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         tag = self.lineEdit_search_tags.text()
         self.build_tree(search_tag=tag)
 
@@ -166,7 +225,19 @@ class AddDeviceDialog(Ui_Dialog_Add_Device, QDialog):
         If search_text is given, only devices whose name includes the
         string in search_text are added to the tree.
         If search_tag is given, only devices that have the exact tag
-        given by search_tag are added to the tree."""
+        given by search_tag are added to the tree.
+
+        Parameters
+        ----------
+        search_text :
+             (Default value = '')
+        search_tag :
+             (Default value = '')
+
+        Returns
+        -------
+
+        """
         for i in range(5):
             item = self.item_model.item(i,0)
             while item.rowCount() > 0:

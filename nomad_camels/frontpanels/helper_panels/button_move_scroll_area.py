@@ -3,10 +3,22 @@ from PySide6.QtGui import QDrag
 from PySide6.QtCore import Qt, QMimeData, Signal
 
 class DragButton(QPushButton):
+    """ """
     def __init__(self, text):
         super().__init__(text)
 
     def mouseMoveEvent(self, event):
+        """
+
+        Parameters
+        ----------
+        event :
+            
+
+        Returns
+        -------
+
+        """
         if event.buttons() == Qt.LeftButton:
             mimeData = QMimeData()
             drag = QDrag(self)
@@ -14,6 +26,7 @@ class DragButton(QPushButton):
             drag.exec_(Qt.MoveAction)
 
 class BidirectionalDict:
+    """ """
     def __init__(self):
         self._forward = {}
         self._reverse = {}
@@ -36,21 +49,57 @@ class BidirectionalDict:
         return iter(self._forward)
 
     def items(self):
+        """ """
         return self._forward.items()
 
     def keys(self):
+        """ """
         return self._forward.keys()
 
     def values(self):
+        """ """
         return self._forward.values()
 
     def get_key(self, value):
+        """
+
+        Parameters
+        ----------
+        value :
+            
+
+        Returns
+        -------
+
+        """
         return self._reverse[value]
 
     def get_value(self, key):
+        """
+
+        Parameters
+        ----------
+        key :
+            
+
+        Returns
+        -------
+
+        """
         return self._forward[key]
 
     def pop(self, key):
+        """
+
+        Parameters
+        ----------
+        key :
+            
+
+        Returns
+        -------
+
+        """
         val = self._forward.pop(key)
         self._reverse.pop(val)
         return val
@@ -62,6 +111,7 @@ class BidirectionalDict:
 
 
 class DropArea(QWidget):
+    """ """
     order_changed = Signal(list)
 
     def __init__(self, button_wdith:int):
@@ -81,9 +131,31 @@ class DropArea(QWidget):
 
 
     def dragEnterEvent(self, event):
+        """
+
+        Parameters
+        ----------
+        event :
+            
+
+        Returns
+        -------
+
+        """
         event.accept()
 
     def dropEvent(self, event):
+        """
+
+        Parameters
+        ----------
+        event :
+            
+
+        Returns
+        -------
+
+        """
         event.setDropAction(Qt.MoveAction)
         event.accept()
 
@@ -110,6 +182,17 @@ class DropArea(QWidget):
         self.order_changed.emit(self.button_order)
 
     def get_drop_position(self, pos):
+        """
+
+        Parameters
+        ----------
+        pos :
+            
+
+        Returns
+        -------
+
+        """
         rect = self.rect()
         center = rect.center()
         width = self.width()
@@ -123,6 +206,7 @@ class DropArea(QWidget):
 
 
     def updateLayout(self):
+        """ """
         width = self.width()
 
         # calculate number of columns based on current width
@@ -137,6 +221,7 @@ class DropArea(QWidget):
 
 
 class Drop_Scroll_Area(QScrollArea):
+    """ """
     order_changed = Signal(list)
 
     def __init__(self, parent=None, button_width=120, button_height=120):
@@ -152,28 +237,78 @@ class Drop_Scroll_Area(QScrollArea):
         self.drop_area.order_changed.connect(self.order_changed.emit)
 
     def resizeEvent(self, a0):
+        """
+
+        Parameters
+        ----------
+        a0 :
+            
+
+        Returns
+        -------
+
+        """
         super().resizeEvent(a0)
         self.updateLayout()
 
     def updateLayout(self):
+        """ """
         self.drop_area.updateLayout()
 
     def add_button(self, button, name):
+        """
+
+        Parameters
+        ----------
+        button :
+            
+        name :
+            
+
+        Returns
+        -------
+
+        """
         button.setFixedSize(self.button_width, self.button_height)
         self.drop_area.buttons[name] = button
         self.drop_area.button_order.append(name)
         self.drop_area.updateLayout()
 
     def remove_button(self, name):
+        """
+
+        Parameters
+        ----------
+        name :
+            
+
+        Returns
+        -------
+
+        """
         button = self.drop_area.buttons.pop(name)
         self.drop_area.button_order.remove(name)
         self.drop_area.updateLayout()
         button.deleteLater()
 
     def get_button_order(self):
+        """ """
         return self.drop_area.button_order
 
     def rename_button(self, old_name, new_name):
+        """
+
+        Parameters
+        ----------
+        old_name :
+            
+        new_name :
+            
+
+        Returns
+        -------
+
+        """
         button = self.drop_area.buttons.pop(old_name)
         self.drop_area.buttons[new_name] = button
         ind = self.drop_area.button_order.index(old_name)
@@ -183,18 +318,42 @@ class Drop_Scroll_Area(QScrollArea):
         return button
 
     def disable_run_buttons(self):
+        """ """
         for button in self.drop_area.buttons.values():
             button.small_button.setEnabled(False)
 
     def enable_run_buttons(self):
+        """ """
         for button in self.drop_area.buttons.values():
             button.small_button.setEnabled(True)
 
     def disable_single_run(self, name):
+        """
+
+        Parameters
+        ----------
+        name :
+            
+
+        Returns
+        -------
+
+        """
         if name in self.drop_area.buttons:
             self.drop_area.buttons[name].small_button.setEnabled(False)
 
     def enable_single_run(self, name):
+        """
+
+        Parameters
+        ----------
+        name :
+            
+
+        Returns
+        -------
+
+        """
         if name in self.drop_area.buttons:
             self.drop_area.buttons[name].small_button.setEnabled(True)
 

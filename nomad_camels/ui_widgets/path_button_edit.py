@@ -7,7 +7,15 @@ import os
 
 class Path_Button_Edit(QWidget):
     """This class provides QLineEdit with a QPushButton, used to select
-    a file-path, that is then displayed in the LineEdit."""
+    a file-path, that is then displayed in the LineEdit.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     path_changed = Signal(str)
 
     def __init__(self, parent=None, path='', default_dir='', file_extension='',
@@ -30,12 +38,25 @@ class Path_Button_Edit(QWidget):
         self.select_directory = select_directory
 
     def get_path(self):
+        """ """
         return self.line.text()
 
     def set_path(self, path):
+        """
+
+        Parameters
+        ----------
+        path :
+            
+
+        Returns
+        -------
+
+        """
         self.line.setText(path)
 
     def choose_path(self):
+        """ """
         try:
             direc = os.path.dirname(self.get_path()) or self.default_dir
         except OSError:
@@ -51,4 +72,5 @@ class Path_Button_Edit(QWidget):
             self.line.setText(path)
 
     def changed(self):
+        """ """
         self.path_changed.emit(self.get_path())

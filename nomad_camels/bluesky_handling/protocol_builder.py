@@ -80,18 +80,23 @@ def build_protocol(protocol, file_path,
 
     Parameters
     ----------
-    protocol : Measurement_Protocol
-        The protocol that should be build
-    file_path : str, path
-        The path, where the python file should be put
-    save_path : str, default "test.h5"
-        Path, where the datafile of the protocol should be put
-    catalog : str, default "CAMELS_CATALOG"
-        Name of the databroker-catalog that should be used
-    userdata : dict, default None
-        Should contain information about the user
-    sampledata : dict, default None
-        Should contain information about the sample
+    protocol :
+        
+    file_path :
+        
+    save_path :
+         (Default value = 'test.h5')
+    catalog :
+         (Default value = 'CAMELS_CATALOG')
+    userdata :
+         (Default value = None)
+    sampledata :
+         (Default value = None)
+
+    Returns
+    -------
+
+    
     """
     if not isinstance(save_path, pathlib.Path):
         save_path = pathlib.Path(save_path)
@@ -266,7 +271,19 @@ def build_protocol(protocol, file_path,
 
 
 def user_sample_string(userdata, sampledata):
-    """Returns the string adding userdata and sampledata to the md."""
+    """Returns the string adding userdata and sampledata to the md.
+
+    Parameters
+    ----------
+    userdata :
+        
+    sampledata :
+        
+
+    Returns
+    -------
+
+    """
     u_s_string = f'\tmd["user"] = {userdata}\n'
     u_s_string += f'\tmd["sample"] = {sampledata}\n'
     return u_s_string

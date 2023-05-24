@@ -20,7 +20,19 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
     QSpacerItem, QWidget)
 
 class Ui_Fit_Definer(object):
+    """ """
     def setupUi(self, Fit_Definer):
+        """
+
+        Parameters
+        ----------
+        Fit_Definer :
+            
+
+        Returns
+        -------
+
+        """
         if not Fit_Definer.objectName():
             Fit_Definer.setObjectName(u"Fit_Definer")
         Fit_Definer.resize(287, 243)
@@ -78,6 +90,17 @@ class Ui_Fit_Definer(object):
     # setupUi
 
     def retranslateUi(self, Fit_Definer):
+        """
+
+        Parameters
+        ----------
+        Fit_Definer :
+            
+
+        Returns
+        -------
+
+        """
         Fit_Definer.setWindowTitle(QCoreApplication.translate("Fit_Definer", u"Form", None))
         self.radioButton_custom_func.setText(QCoreApplication.translate("Fit_Definer", u"Custom function", None))
         self.checkBox_guess.setText(QCoreApplication.translate("Fit_Definer", u"guess initial parameters", None))

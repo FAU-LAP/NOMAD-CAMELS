@@ -13,6 +13,7 @@ from pkg_resources import resource_filename
 
 
 class Values_List_Plot(QtAwareCallback, QWidget):
+    """ """
     closing = Signal()
 
     def __init__(self, value_list, *, epoch='run', namespace=None, title='',
@@ -51,14 +52,47 @@ class Values_List_Plot(QtAwareCallback, QWidget):
         place_widget(self)
 
     def descriptor(self, doc):
+        """
+
+        Parameters
+        ----------
+        doc :
+            
+
+        Returns
+        -------
+
+        """
         if doc['name'] == self.stream_name:
             self.desc = doc['uid']
 
     def start(self, doc):
+        """
+
+        Parameters
+        ----------
+        doc :
+            
+
+        Returns
+        -------
+
+        """
         self.epoch_offset = doc['time']
         super().start(doc)
 
     def event(self, doc):
+        """
+
+        Parameters
+        ----------
+        doc :
+            
+
+        Returns
+        -------
+
+        """
         if isinstance(doc, QEvent):
             return QWidget.event(self, doc)
         if doc['descriptor'] != self.desc:
@@ -81,5 +115,16 @@ class Values_List_Plot(QtAwareCallback, QWidget):
         self.show()
 
     def closeEvent(self, a0):
+        """
+
+        Parameters
+        ----------
+        a0 :
+            
+
+        Returns
+        -------
+
+        """
         self.closing.emit()
         super().closeEvent(a0)

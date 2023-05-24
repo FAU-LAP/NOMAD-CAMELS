@@ -6,6 +6,19 @@ import databroker
 from nomad_camels.utility import load_save_functions
 
 def make_yml(datapath, catalog_name='CAMELS_CATALOG'):
+    """
+
+    Parameters
+    ----------
+    datapath :
+        
+    catalog_name :
+         (Default value = 'CAMELS_CATALOG')
+
+    Returns
+    -------
+
+    """
     catalog_path = databroker.catalog_search_path()[0]
     if not isinstance(datapath, pathlib.Path):
         datapath = pathlib.Path(datapath)

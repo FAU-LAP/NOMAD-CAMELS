@@ -2,6 +2,19 @@ from nomad_camels.frontpanels.plot_definer import Plot_Info, Fit_Info
 
 
 def load_plots(plots:list, plot_data):
+    """
+
+    Parameters
+    ----------
+    plots:list :
+        
+    plot_data :
+        
+
+    Returns
+    -------
+
+    """
     plots.clear()
     for plot_dict in plot_data:
         plot = Plot_Info()

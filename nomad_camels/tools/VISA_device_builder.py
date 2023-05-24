@@ -12,6 +12,7 @@ from pkg_resources import resource_filename
 
 
 class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
+    """ """
     def __init__(self, parent=None):
         super().__init__()
         self.setupUi(self)
@@ -62,6 +63,7 @@ class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
         self.resize(600, 700)
 
     def build_device(self):
+        """ """
         dev_name = fit_variable_renaming.replace_name(self.lineEdit_name.text())
         ophyd_name = fit_variable_renaming.replace_name(self.lineEdit_ophyd_name.text())
         read_term = fit_variable_renaming.replace_name(self.lineEdit_read_term.text())
@@ -136,6 +138,17 @@ class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
 
 
     def closeEvent(self, a0: QCloseEvent) -> None:
+        """
+
+        Parameters
+        ----------
+        a0: QCloseEvent :
+            
+
+        Returns
+        -------
+
+        """
         discard_dialog = QMessageBox.question(self, 'Discard Changes?',
                                               f'All changes will be lost!',
                                               QMessageBox.Yes | QMessageBox.No)

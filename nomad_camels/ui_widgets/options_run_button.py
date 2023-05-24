@@ -6,6 +6,7 @@ from nomad_camels.utility.variables_handling import get_color
 
 
 class SimpleWrapLabel(QLabel):
+    """ """
     def __init__(self, text='', parent=None):
         if ' ' not in text:
             text = text.replace('_', ' ')
@@ -14,6 +15,17 @@ class SimpleWrapLabel(QLabel):
 
 
     def setText(self, a0: str) -> None:
+        """
+
+        Parameters
+        ----------
+        a0: str :
+            
+
+        Returns
+        -------
+
+        """
         if ' ' not in a0:
             a0 = a0.replace('_', ' ')
             a0 = a0.replace('-', ' ')
@@ -21,6 +33,7 @@ class SimpleWrapLabel(QLabel):
 
 
 class Dots_Button(QPushButton):
+    """ """
     def __init__(self, parent=None, size=100):
         super().__init__(parent)
         self.setFixedSize(size, size)
@@ -30,6 +43,17 @@ class Dots_Button(QPushButton):
         # self.setStyleSheet("QPushButton {text-align: left; font-weight: bold; font-size: 10pt; padding-bottom: -60px; font-family: Calibri; }")
 
     def paintEvent(self, event):
+        """
+
+        Parameters
+        ----------
+        event :
+            
+
+        Returns
+        -------
+
+        """
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
@@ -46,10 +70,12 @@ class Dots_Button(QPushButton):
         super().paintEvent(event)
 
     def sizeHint(self):
+        """ """
         return self.minimumSizeHint()
 
 
 class Options_Run_Button(QFrame):
+    """ """
     build_asked = Signal()
     external_asked = Signal()
     del_asked = Signal()
@@ -82,6 +108,7 @@ class Options_Run_Button(QFrame):
         self.protocol_options = protocol_options
 
     def update_functions(self):
+        """ """
         if self.config_function is not None:
             self.button.clicked.connect(self.config_function)
         if self.run_function is not None:
@@ -94,6 +121,17 @@ class Options_Run_Button(QFrame):
             self.del_asked.connect(self.del_function)
 
     def options_menu(self, pos):
+        """
+
+        Parameters
+        ----------
+        pos :
+            
+
+        Returns
+        -------
+
+        """
         menu = QMenu()
         actions = []
         if self.protocol_options:
@@ -109,6 +147,7 @@ class Options_Run_Button(QFrame):
         menu.exec_(self.mapToGlobal(pos))
 
     def delete_button(self):
+        """ """
         del_dialog = QMessageBox.question(self, f'Delete {self.label.text()}?',
                                           f'{self.label.text()} will be removed completely',
                                           QMessageBox.Yes | QMessageBox.No)
@@ -116,6 +155,17 @@ class Options_Run_Button(QFrame):
             self.del_asked.emit()
 
     def mouseMoveEvent(self, event):
+        """
+
+        Parameters
+        ----------
+        event :
+            
+
+        Returns
+        -------
+
+        """
         if event.buttons() == Qt.LeftButton:
             mimeData = QMimeData()
             drag = QDrag(self)
@@ -123,6 +173,17 @@ class Options_Run_Button(QFrame):
             drag.exec_(Qt.MoveAction)
 
     def rename(self, new_name):
+        """
+
+        Parameters
+        ----------
+        new_name :
+            
+
+        Returns
+        -------
+
+        """
         self.label.setText(new_name)
         if self.config_function is not None:
             self.button.clicked.disconnect(self.config_function)

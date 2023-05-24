@@ -13,7 +13,15 @@ from nomad_camels.utility import variables_handling
 
 class Variable_Box(QLineEdit):
     """QLineEdit that checks its contents for validity and then color-
-    codes the background."""
+    codes the background.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setToolTip('test')
@@ -23,6 +31,17 @@ class Variable_Box(QLineEdit):
         self.check_string()
 
     def setEnabled(self, a0: bool) -> None:
+        """
+
+        Parameters
+        ----------
+        a0: bool :
+            
+
+        Returns
+        -------
+
+        """
         if a0:
             self.check_string()
         else:
@@ -39,13 +58,24 @@ class Variable_Box(QLineEdit):
             self.setStyleSheet(f'background-color: rgb{variables_handling.get_color("red", True)}')
 
     def get_value(self):
+        """ """
         return variables_handling.get_eval(self.text())
 
 
     def context_menu(self, pos):
         """Generates the right-click-menu.
         There are entries for inserting (replace) and appending the
-        variables, channels, functions and operators."""
+        variables, channels, functions and operators.
+
+        Parameters
+        ----------
+        pos :
+            
+
+        Returns
+        -------
+
+        """
         menu = self.createStandardContextMenu()
         # putting the returned actions somewhere is necessary, otherwise
         # there will be none inside the single menus
@@ -67,9 +97,29 @@ class Variable_Box(QLineEdit):
         menu.exec_(self.mapToGlobal(pos))
 
     def append_variable(self, variable):
-        """Used for the single actions of the context menu."""
+        """Used for the single actions of the context menu.
+
+        Parameters
+        ----------
+        variable :
+            
+
+        Returns
+        -------
+
+        """
         self.setText(self.text() + f'{variable}')
 
     def insert_variable(self, variable):
-        """Used for the single actions of the context menu."""
+        """Used for the single actions of the context menu.
+
+        Parameters
+        ----------
+        variable :
+            
+
+        Returns
+        -------
+
+        """
         self.setText(f'{variable}')

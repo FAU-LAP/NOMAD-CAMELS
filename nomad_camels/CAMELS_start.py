@@ -13,6 +13,7 @@ from pkg_resources import resource_filename
 
 # Create a new form for the loading screen
 class LoadingScreen(QDialog):
+    """ """
     def __init__(self):
         super().__init__()
         self.setWindowTitle("NOMAD-CAMELS - Loading...")
@@ -38,9 +39,31 @@ class LoadingScreen(QDialog):
 
     # A function to update the progress bar
     def set_progress(self, value):
+        """
+
+        Parameters
+        ----------
+        value :
+            
+
+        Returns
+        -------
+
+        """
         self.progress_bar.setValue(value)
 
     def set_text(self, text):
+        """
+
+        Parameters
+        ----------
+        text :
+            
+
+        Returns
+        -------
+
+        """
         self.label.setText(text)
 
 
@@ -70,10 +93,12 @@ if __name__ == '__main__':
     # Create a thread to import the packages
 
     class ImportThread(QThread):
+        """ """
         update_progress = Signal(int)
         update_text = Signal(str)
 
         def run(self):
+            """ """
             # Import your packages here
             for i, package in enumerate(package_list):
                 self.update_progress.emit(int(i / n * 100))

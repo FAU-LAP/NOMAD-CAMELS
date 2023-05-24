@@ -11,6 +11,7 @@ from nomad_camels.utility import variables_handling
 
 
 class Instrument_Config(Ui_Form, QWidget):
+    """ """
     def __init__(self, active_instruments=None, parent=None):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
@@ -44,6 +45,7 @@ class Instrument_Config(Ui_Form, QWidget):
         self.pushButton_remove.clicked.connect(self.remove_instance)
 
     def table_click(self):
+        """ """
         ind = self.tableWidget_instruments.selectedIndexes()[0]
         instr = self.tableWidget_instruments.item(ind.row(), 0).text()
         self.get_current_config()
@@ -72,6 +74,17 @@ class Instrument_Config(Ui_Form, QWidget):
 
 
     def name_config_changed(self, new_name):
+        """
+
+        Parameters
+        ----------
+        new_name :
+            
+
+        Returns
+        -------
+
+        """
         current_tab = self.config_tabs.currentIndex()
         conf = self.config_tabs.widget(current_tab)
         ind = self.tableWidget_instruments.selectedIndexes()[0]
@@ -83,6 +96,7 @@ class Instrument_Config(Ui_Form, QWidget):
 
 
     def get_config(self):
+        """ """
         self.get_current_config()
         instruments = {}
         for instr in self.active_instruments:
@@ -91,6 +105,7 @@ class Instrument_Config(Ui_Form, QWidget):
         return instruments
 
     def get_current_config(self):
+        """ """
         for i in range(self.config_tabs.count()):
             tab = self.config_tabs.widget(i)
             if not hasattr(tab, 'data'):
@@ -104,7 +119,15 @@ class Instrument_Config(Ui_Form, QWidget):
     def update_channels(self):
         """Called when the active devices change.
         The channels in variables_handling are updated with the ones
-        provided by the active devices."""
+        provided by the active devices.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         variables_handling.channels.clear()
         instruments = {}
         for instr in self.active_instruments:
@@ -115,6 +138,7 @@ class Instrument_Config(Ui_Form, QWidget):
                 variables_handling.channels.update({channel: dev.channels[channel]})
 
     def add_instance(self):
+        """ """
         ind = self.tableWidget_instruments.selectedIndexes()[0]
         instr = self.tableWidget_instruments.item(ind.row(), 0).text()
         pack = self.packages[instr]
@@ -142,6 +166,7 @@ class Instrument_Config(Ui_Form, QWidget):
         self.tableWidget_instruments.item(ind.row(), 1).setText(str(len(self.active_instruments[instr])))
 
     def get_all_names(self):
+        """ """
         names = []
         for instr in self.active_instruments:
             names += [x.custom_name for x in self.active_instruments[instr]]
@@ -149,6 +174,7 @@ class Instrument_Config(Ui_Form, QWidget):
 
 
     def remove_instance(self):
+        """ """
         ind = self.config_tabs.currentIndex()
         name = self.config_tabs.tabText(ind)
         remove_dialog = QMessageBox.question(self, 'Remove instrument?',
@@ -167,6 +193,7 @@ class Instrument_Config(Ui_Form, QWidget):
 
 
     def build_table(self):
+        """ """
         search_text = self.lineEdit_search.text()
         self.installed_instr = getInstalledDevices()
         self.tableWidget_instruments.clear()

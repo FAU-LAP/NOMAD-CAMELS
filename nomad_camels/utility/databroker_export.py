@@ -12,7 +12,19 @@ import xarray
 
 
 def recourse_entry_dict(entry, metadata):
-    """Recoursively makes the metadata to a dictionary."""
+    """Recoursively makes the metadata to a dictionary.
+
+    Parameters
+    ----------
+    entry :
+        
+    metadata :
+        
+
+    Returns
+    -------
+
+    """
     # TODO check if actually necessary
     for key, val in metadata.items():
         if isinstance(val, databroker.core.Start) or isinstance(val, databroker.core.Stop):
@@ -48,7 +60,21 @@ def recourse_entry_dict(entry, metadata):
 
 def broker_to_hdf5(runs, filename, additional_data=None):
     """Puts the given `runs` into `filename`, containing the run's
-    metadata and the dataset."""
+    metadata and the dataset.
+
+    Parameters
+    ----------
+    runs :
+        
+    filename :
+        
+    additional_data :
+         (Default value = None)
+
+    Returns
+    -------
+
+    """
     if not os.path.isdir(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
     if not isinstance(runs, list):
@@ -90,6 +116,29 @@ def broker_to_hdf5(runs, filename, additional_data=None):
 
 def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
                  session_name='', export_to_csv=False, export_to_json=False):
+    """
+
+    Parameters
+    ----------
+    runs :
+        
+    filename :
+        
+    plot_data :
+         (Default value = None)
+    additional_data :
+         (Default value = None)
+    session_name :
+         (Default value = '')
+    export_to_csv :
+         (Default value = False)
+    export_to_json :
+         (Default value = False)
+
+    Returns
+    -------
+
+    """
     if not os.path.isdir(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
     if not isinstance(runs, list):
@@ -271,6 +320,17 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
 
 
 def get_param_dict(param_values):
+    """
+
+    Parameters
+    ----------
+    param_values :
+        
+
+    Returns
+    -------
+
+    """
     p_s = {}
     for vals in param_values:
         for k in vals:
@@ -282,6 +342,19 @@ def get_param_dict(param_values):
 
 
 def sort_by_list(sort_list, other_lists):
+    """
+
+    Parameters
+    ----------
+    sort_list :
+        
+    other_lists :
+        
+
+    Returns
+    -------
+
+    """
     s_list = sorted(zip(sort_list, *other_lists), key=lambda x: x[0])
     return zip(*s_list)
 
@@ -289,7 +362,19 @@ def sort_by_list(sort_list, other_lists):
 
 
 def broker_to_dict(runs, to_iso_time=True):
-    """Puts the runs into a dictionary."""
+    """Puts the runs into a dictionary.
+
+    Parameters
+    ----------
+    runs :
+        
+    to_iso_time :
+         (Default value = True)
+
+    Returns
+    -------
+
+    """
     dicts = []
     if not isinstance(runs, list):
         runs = [runs]
@@ -312,5 +397,16 @@ def broker_to_dict(runs, to_iso_time=True):
 
 
 def timestamp_to_ISO8601(timestamp):
+    """
+
+    Parameters
+    ----------
+    timestamp :
+        
+
+    Returns
+    -------
+
+    """
     from_stamp = dt.fromtimestamp(timestamp)
     return from_stamp.astimezone().isoformat()

@@ -20,7 +20,19 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogBu
     QWidget)
 
 class Ui_EnterTextDialog(object):
+    """ """
     def setupUi(self, EnterTextDialog):
+        """
+
+        Parameters
+        ----------
+        EnterTextDialog :
+            
+
+        Returns
+        -------
+
+        """
         if not EnterTextDialog.objectName():
             EnterTextDialog.setObjectName(u"EnterTextDialog")
         EnterTextDialog.resize(278, 106)
@@ -57,6 +69,17 @@ class Ui_EnterTextDialog(object):
     # setupUi
 
     def retranslateUi(self, EnterTextDialog):
+        """
+
+        Parameters
+        ----------
+        EnterTextDialog :
+            
+
+        Returns
+        -------
+
+        """
         EnterTextDialog.setWindowTitle(QCoreApplication.translate("EnterTextDialog", u"Dialog", None))
         self.label.setText(QCoreApplication.translate("EnterTextDialog", u"Task name:", None))
     # retranslateUi

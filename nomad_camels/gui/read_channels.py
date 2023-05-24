@@ -19,7 +19,19 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QGridLayout, QSizePolicy
     QWidget)
 
 class Ui_read_channels_config(object):
+    """ """
     def setupUi(self, read_channels_config):
+        """
+
+        Parameters
+        ----------
+        read_channels_config :
+            
+
+        Returns
+        -------
+
+        """
         if not read_channels_config.objectName():
             read_channels_config.setObjectName(u"read_channels_config")
         read_channels_config.resize(400, 300)
@@ -43,6 +55,17 @@ class Ui_read_channels_config(object):
     # setupUi
 
     def retranslateUi(self, read_channels_config):
+        """
+
+        Parameters
+        ----------
+        read_channels_config :
+            
+
+        Returns
+        -------
+
+        """
         read_channels_config.setWindowTitle(QCoreApplication.translate("read_channels_config", u"Form", None))
         self.checkBox_read_all.setText(QCoreApplication.translate("read_channels_config", u"Read All", None))
         self.checkBox_split_trigger.setText(QCoreApplication.translate("read_channels_config", u"Split trigger and read", None))
