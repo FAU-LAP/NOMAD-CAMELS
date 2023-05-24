@@ -1,11 +1,13 @@
 name: Sphinx Docs
 on:
   push:
-    - main
-    - documentation
+    branches:
+      - main
+      - documentation
   pull_request:
-    - main
-    - documentation
+    branches:
+      - main
+      - documentation
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
