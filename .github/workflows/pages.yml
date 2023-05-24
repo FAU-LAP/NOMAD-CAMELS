@@ -1,5 +1,11 @@
 name: Sphinx Docs
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    - main
+    - documentation
+  pull_request:
+    - main
+    - documentation
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -20,6 +26,14 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: 'main'
+      - uses: actions/checkout@v3
+        with:
+          ref: 'main'
+          path: './docbranch'
+      - run: rm -rf ./docs
+      - run: cp ./docbranch/docs ./docs
       - uses: actions/setup-python@v4
       - name: Install dependencies
         run: |
