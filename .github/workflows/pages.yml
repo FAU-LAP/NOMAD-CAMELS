@@ -35,6 +35,9 @@ jobs:
           ref: 'main'
           path: './docbranch'
       - run: rm -rf ./docs
+      - run: ls
+      - run: cd ./docbranch
+      - run: ls
       - run: cp ./docbranch/docs ./docs
       - uses: actions/setup-python@v4
       - name: Install dependencies
