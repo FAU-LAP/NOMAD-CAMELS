@@ -72,6 +72,18 @@ class EPICS_Driver_Builder(QDialog):
         path = variables_handling.device_driver_path or  QFileDialog.getExistingDirectory(self, "Select directory for drivers")
         if not path:
             return
+
+        def check_builtin(pv):
+            if pv in vars(__builtins__):
+                raise Exception(f'PV-name "{pv}" resembles python builtin function or variable!\nDefine another name!\nYou may change the PV-name later in the code, see the documentation for more information.')
+        for name in inputs['PV-Name']:
+            check_builtin(name)
+        for name in outputs['PV-Name']:
+            check_builtin(name)
+        for name in configs['PV-Name']:
+            check_builtin(name)
+        for name in configs_in['PV-Name']:
+            check_builtin(name)
         directory = f'{path}/nomad_camels_driver_{dev_name}'
         sys.path.append(directory)
         fname = f'{directory}/{dev_name}.py'
