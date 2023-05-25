@@ -245,6 +245,7 @@ class Measurement_Protocol:
 
     def get_plan_string(self):
         """Get the string for the protocol-plan, including the loopsteps."""
+        variables_handling.current_protocol = self
         plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, runEngine=None, stream_name="primary"):\n'
         if variables_handling.protocol_variables:
             plan_string += '\tglobal '

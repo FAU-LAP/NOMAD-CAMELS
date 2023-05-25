@@ -340,6 +340,8 @@ class Trigger_Channels_Step(Loop_Step):
         """
         tabs = '\t' * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
+        if self.read_step not in variables_handling.current_protocol.loop_step_dict:
+            raise Exception(f'Trying to trigger channels for read_channels "{self.read_step}" but it is not there.\n{self.full_name}')
         read_step = variables_handling.current_protocol.loop_step_dict[self.read_step]
         protocol_string += read_step.get_channels_string(tabs)
         step_name = read_step.variable_name()

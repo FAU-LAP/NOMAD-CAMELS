@@ -1017,28 +1017,32 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         from nomad_camels.utility import device_handling
         self.button_area_meas.disable_run_buttons()
-        self.build_protocol(protocol_name, ask_file=False)
-        self.setCursor(Qt.WaitCursor)
-        protocol = self.protocols_dict[protocol_name]
-        path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
-        name = os.path.basename(path)[:-3]
-        spec = importlib.util.spec_from_file_location(name, path)
-        self.protocol_module = importlib.util.module_from_spec(spec)
-        sys.modules[spec.name] = self.protocol_module
-        spec.loader.exec_module(self.protocol_module)
-        self.protocol_module.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
-        plots, subs, _ = self.protocol_module.create_plots(self.run_engine)
-        for plot in plots:
-            self.add_to_plots(plot)
-        device_list = protocol.get_used_devices()
-        devs, dev_data = device_handling.instantiate_devices(device_list)
-        self.current_protocol_device_list = device_list
-        additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
-        if 'plots' in additionals:
-            for plot in additionals['plots']:
+        try:
+            self.build_protocol(protocol_name, ask_file=False)
+            self.setCursor(Qt.WaitCursor)
+            protocol = self.protocols_dict[protocol_name]
+            path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
+            name = os.path.basename(path)[:-3]
+            spec = importlib.util.spec_from_file_location(name, path)
+            self.protocol_module = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = self.protocol_module
+            spec.loader.exec_module(self.protocol_module)
+            self.protocol_module.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
+            plots, subs, _ = self.protocol_module.create_plots(self.run_engine)
+            for plot in plots:
                 self.add_to_plots(plot)
-        self.re_subs += subs
-        self.add_subs_from_dict(additionals)
+            device_list = protocol.get_used_devices()
+            devs, dev_data = device_handling.instantiate_devices(device_list)
+            self.current_protocol_device_list = device_list
+            additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
+            if 'plots' in additionals:
+                for plot in additionals['plots']:
+                    self.add_to_plots(plot)
+            self.re_subs += subs
+            self.add_subs_from_dict(additionals)
+        except Exception as e:
+            self.protocol_finished()
+            raise e
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
         self.pushButton_stop.setEnabled(True)
