@@ -89,10 +89,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.open_windows = []
         self.current_protocol_device_list = []
 
-        self.with_or_without_instruments()
-        self.populate_meas_buttons()
-        self.populate_manuals_buttons()
-        self.adjustSize()
         self.button_area_meas.order_changed.connect(self.protocol_order_changed)
 
         self.active_controls = {}
@@ -587,12 +583,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         file = QFileDialog.getOpenFileName(self, 'Open Preset',
                                            f'{load_save_functions.preset_path}',
                                            '*.preset')[0]
-        if not len(file):
+        if not file:
             return
-        preset_name = file.split('_')[-1][:-7]
+        # preset_name = file.split('_')[-1][:-7]
         # preset = f'Backup/{file.split("/")[-2]}/{file.split("/")[-1][:-7]}'
         self.save_state()
-        self._current_preset[0] = preset_name
+        # self._current_preset[0] = preset_name
         self.load_preset(file)
 
 
@@ -623,8 +619,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
 
     def load_preset(self, preset):
-        """Called when the comboBox_device_preset is changed
-        (or when loading the last state). Opens the given preset.
+        """Called when loading a preset (e.g. when loading the last state).
+        Opens the given preset.
 
         Parameters
         ----------
@@ -651,6 +647,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self._current_preset[0] = 'empty_preset'
         self.update_channels()
         variables_handling.preset = self._current_preset[0]
+        self.with_or_without_instruments()
+        self.populate_meas_buttons()
+        self.populate_manuals_buttons()
+        self.adjustSize()
 
     def make_save_dict(self):
         """ """
@@ -817,6 +817,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def populate_manuals_buttons(self):
         """ """
+        self.button_area_manual.clear_area()
         if not self.manual_controls:
             self.button_area_manual.setHidden(True)
         else:
@@ -996,6 +997,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def populate_meas_buttons(self):
         """ """
+        self.button_area_meas.clear_area()
         if not self.protocols_dict:
             self.button_area_meas.setHidden(True)
         else:

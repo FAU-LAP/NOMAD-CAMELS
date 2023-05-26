@@ -107,6 +107,9 @@ class BidirectionalDict:
     def __repr__(self):
         return f"BidirectionalDict({self._forward})"
 
+    def clear(self):
+        self._forward.clear()
+        self._reverse.clear()
 
 
 
@@ -290,6 +293,12 @@ class Drop_Scroll_Area(QScrollArea):
         self.drop_area.button_order.remove(name)
         self.drop_area.updateLayout()
         button.deleteLater()
+
+    def clear_area(self):
+        for button in self.drop_area.buttons:
+            self.drop_area.buttons[button].deleteLater()
+        self.drop_area.buttons.clear()
+        self.drop_area.button_order.clear()
 
     def get_button_order(self):
         """ """
