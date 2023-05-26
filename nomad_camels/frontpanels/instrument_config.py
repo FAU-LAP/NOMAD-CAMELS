@@ -9,8 +9,6 @@ from nomad_camels.frontpanels.instrument_installer import getInstalledDevices
 
 from nomad_camels.utility import variables_handling
 
-from nomad_camels.ui_widgets.warn_popup import WarnPopup
-
 
 class Instrument_Config(Ui_Form, QWidget):
     """ """
@@ -91,7 +89,6 @@ class Instrument_Config(Ui_Form, QWidget):
         conf = self.config_tabs.widget(current_tab)
         ind = self.tableWidget_instruments.selectedIndexes()[0]
         instr = self.tableWidget_instruments.item(ind.row(), 0).text()
-
         if hasattr(conf, 'data') and new_name not in self.get_all_names():
             self.active_instruments[instr][current_tab].custom_name = new_name
             conf.data = new_name
@@ -113,10 +110,6 @@ class Instrument_Config(Ui_Form, QWidget):
             tab = self.config_tabs.widget(i)
             if not hasattr(tab, 'data'):
                 continue
-            cust_name = self.active_instruments[self.current_instr][i].custom_name
-            given_name = tab.lineEdit_custom_name.text()
-            if given_name != cust_name:
-                WarnPopup(self, f'Instrument name "{given_name}" is either already in use or not allowed (e.g. the instrument`s class is named that way). Using "{cust_name}" instead.', 'Instrument name not possible')
             self.active_instruments[self.current_instr][i].settings = tab.get_settings()
             self.active_instruments[self.current_instr][i].config = tab.get_config()
             self.active_instruments[self.current_instr][i].ioc_settings = tab.get_ioc_settings()
@@ -176,9 +169,7 @@ class Instrument_Config(Ui_Form, QWidget):
         """ """
         names = []
         for instr in self.active_instruments:
-            if self.active_instruments[instr]:
-                names += [x.custom_name for x in self.active_instruments[instr]]
-                names += [self.active_instruments[instr][0].ophyd_class_name]
+            names += [x.custom_name for x in self.active_instruments[instr]]
         return names
 
 
