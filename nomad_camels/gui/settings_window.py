@@ -23,7 +23,19 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QComboB
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 
 class Ui_settings_window(object):
+    """ """
     def setupUi(self, settings_window):
+        """
+
+        Parameters
+        ----------
+        settings_window :
+            
+
+        Returns
+        -------
+
+        """
         if not settings_window.objectName():
             settings_window.setObjectName(u"settings_window")
         settings_window.resize(549, 505)
@@ -263,6 +275,17 @@ class Ui_settings_window(object):
     # setupUi
 
     def retranslateUi(self, settings_window):
+        """
+
+        Parameters
+        ----------
+        settings_window :
+            
+
+        Returns
+        -------
+
+        """
         settings_window.setWindowTitle(QCoreApplication.translate("settings_window", u"Dialog", None))
         self.checkBox_autosave.setText(QCoreApplication.translate("settings_window", u"Autosave on closing", None))
         self.checkBox_play_camel_on_error.setText(QCoreApplication.translate("settings_window", u"Play Camel-Roar on error", None))

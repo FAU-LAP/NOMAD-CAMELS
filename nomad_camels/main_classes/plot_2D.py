@@ -19,6 +19,7 @@ from pkg_resources import resource_filename
 stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 class PlotWidget_2D(QWidget):
+    """ """
     closing = Signal()
 
     def __init__(self, x_name, y_name, z_name, *, xlim=None, ylim=None,
@@ -54,18 +55,32 @@ class PlotWidget_2D(QWidget):
         place_widget(self)
 
     def autoscale(self):
+        """ """
         self.ax.autoscale()
         self.ax.figure.canvas.draw_idle()
 
     def clear_plot(self):
+        """ """
         self.livePlot.clear_plot()
 
     def closeEvent(self, a0):
+        """
+
+        Parameters
+        ----------
+        a0 :
+            
+
+        Returns
+        -------
+
+        """
         self.closing.emit()
         super().closeEvent(a0)
 
 
 class LivePlot_2D(LiveScatter, QObject):
+    """ """
     new_data = Signal()
 
     def __init__(self, x, y, z, *, xlim=None, ylim=None, zlim=None,
@@ -80,6 +95,7 @@ class LivePlot_2D(LiveScatter, QObject):
         self._xdata, self._ydata, self._Idata = [], [], []
 
         def setup():
+            """ """
             # Run this code in start() so that it runs on the correct thread.
             nonlocal x, y, z, xlim, ylim, zlim, cmap, ax, kwargs  # noqa: E741
             with self.__setup_lock:
@@ -127,6 +143,17 @@ class LivePlot_2D(LiveScatter, QObject):
         self.desc = ''
 
     def start(self, doc):
+        """
+
+        Parameters
+        ----------
+        doc :
+            
+
+        Returns
+        -------
+
+        """
         self.__setup()
         self._xdata.clear()
         self._ydata.clear()
@@ -139,10 +166,32 @@ class LivePlot_2D(LiveScatter, QObject):
         self.cb.set_label(self.zlabel or self.I)
 
     def descriptor(self, doc):
+        """
+
+        Parameters
+        ----------
+        doc :
+            
+
+        Returns
+        -------
+
+        """
         if doc['name'] == self.stream_name:
             self.desc = doc['uid']
 
     def event(self, doc):
+        """
+
+        Parameters
+        ----------
+        doc :
+            
+
+        Returns
+        -------
+
+        """
         if doc['descriptor'] != self.desc:
             return
         try:
@@ -170,6 +219,21 @@ class LivePlot_2D(LiveScatter, QObject):
         self.new_data.emit()
 
     def update(self, x, y, I):  # noqa: E741
+        """
+
+        Parameters
+        ----------
+        x :
+            
+        y :
+            
+        I :
+            
+
+        Returns
+        -------
+
+        """
         # if one is None all are
         if self._minx is None:
             self._minx = x
@@ -198,6 +262,7 @@ class LivePlot_2D(LiveScatter, QObject):
         self.ax.figure.canvas.draw_idle()
 
     def clear_plot(self):
+        """ """
         self._xdata.clear()
         self._ydata.clear()
         self._Idata.clear()

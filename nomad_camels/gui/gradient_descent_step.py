@@ -21,7 +21,19 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
 from nomad_camels.ui_widgets.variable_tool_tip_box import Variable_Box
 
 class Ui_Grad_Desc(object):
+    """ """
     def setupUi(self, Grad_Desc):
+        """
+
+        Parameters
+        ----------
+        Grad_Desc :
+            
+
+        Returns
+        -------
+
+        """
         if not Grad_Desc.objectName():
             Grad_Desc.setObjectName(u"Grad_Desc")
         Grad_Desc.resize(400, 300)
@@ -172,6 +184,17 @@ class Ui_Grad_Desc(object):
     # setupUi
 
     def retranslateUi(self, Grad_Desc):
+        """
+
+        Parameters
+        ----------
+        Grad_Desc :
+            
+
+        Returns
+        -------
+
+        """
         Grad_Desc.setWindowTitle(QCoreApplication.translate("Grad_Desc", u"Form", None))
         self.label_12.setText(QCoreApplication.translate("Grad_Desc", u"Max Number of Steps", None))
         self.label_5.setText(QCoreApplication.translate("Grad_Desc", u"Minimum Value", None))

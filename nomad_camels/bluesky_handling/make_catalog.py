@@ -6,6 +6,19 @@ import databroker
 from nomad_camels.utility import load_save_functions
 
 def make_yml(datapath, catalog_name='CAMELS_CATALOG'):
+    """
+
+    Parameters
+    ----------
+    datapath :
+        
+    catalog_name :
+         (Default value = 'CAMELS_CATALOG')
+
+    Returns
+    -------
+
+    """
     catalog_path = databroker.catalog_search_path()[0]
     if not isinstance(datapath, pathlib.Path):
         datapath = pathlib.Path(datapath)
@@ -17,7 +30,7 @@ def make_yml(datapath, catalog_name='CAMELS_CATALOG'):
     brokerpath = datapath / 'databroker' / catalog_name
     if not os.path.isdir(brokerpath):
         os.makedirs(brokerpath)
-    with open(fname, 'w') as f:
+    with open(fname, 'w', encoding='utf-8') as f:
         f.write('sources:\n'
                 f'  {catalog_name}:\n'
                 '    driver: "bluesky-msgpack-catalog"\n'

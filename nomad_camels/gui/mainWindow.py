@@ -26,7 +26,19 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
 from nomad_camels.ui_widgets.console_redirect import Console_TextEdit
 
 class Ui_MainWindow(object):
+    """ """
     def setupUi(self, MainWindow):
+        """
+
+        Parameters
+        ----------
+        MainWindow :
+            
+
+        Returns
+        -------
+
+        """
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(994, 819)
@@ -634,6 +646,17 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
+        """
+
+        Parameters
+        ----------
+        MainWindow :
+            
+
+        Returns
+        -------
+
+        """
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.actionPresets.setText(QCoreApplication.translate("MainWindow", u"Device-Presets", None))
         self.actionOptions.setText(QCoreApplication.translate("MainWindow", u"Options", None))

@@ -20,7 +20,19 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout,
     QSpacerItem, QWidget)
 
 class Ui_Form(object):
+    """ """
     def setupUi(self, Form):
+        """
+
+        Parameters
+        ----------
+        Form :
+            
+
+        Returns
+        -------
+
+        """
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(424, 279)
@@ -271,6 +283,17 @@ class Ui_Form(object):
     # setupUi
 
     def retranslateUi(self, Form):
+        """
+
+        Parameters
+        ----------
+        Form :
+            
+
+        Returns
+        -------
+
+        """
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.pushButton_right.setText("")
         self.pushButton_up.setText("")

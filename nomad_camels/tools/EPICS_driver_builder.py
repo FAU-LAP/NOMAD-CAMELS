@@ -72,6 +72,18 @@ class EPICS_Driver_Builder(QDialog):
         path = variables_handling.device_driver_path or  QFileDialog.getExistingDirectory(self, "Select directory for drivers")
         if not path:
             return
+
+        def check_builtin(pv):
+            if pv in __builtins__:
+                raise Exception(f'PV-name "{pv}" resembles python builtin function or variable!\nDefine another name!\nYou may change the PV-name later in the code, see the documentation for more information.')
+        for name in inputs['PV-Name']:
+            check_builtin(name)
+        for name in outputs['PV-Name']:
+            check_builtin(name)
+        for name in configs['PV-Name']:
+            check_builtin(name)
+        for name in configs_in['PV-Name']:
+            check_builtin(name)
         directory = f'{path}/nomad_camels_driver_{dev_name}'
         sys.path.append(directory)
         fname = f'{directory}/{dev_name}.py'
@@ -82,11 +94,11 @@ class EPICS_Driver_Builder(QDialog):
         if not os.path.isdir(directory):
             os.mkdir(directory)
 
-        class_string = f'from nomad_camels_driver_{dev_name}.{dev_name}_ophyd import {dev_name}\n\n'
+        class_string = f'from nomad_camels_driver_{dev_name}.{dev_name}_ophyd import {dev_name}_Ophyd\n\n'
         class_string += 'from nomad_camels.main_classes import device_class\n\n'
         class_string += 'class subclass(device_class.Device):\n'
         class_string += '\tdef __init__(self, **kwargs):\n'
-        class_string += f'\t\tsuper().__init__(name="{dev_name}", virtual=False, directory="{dev_name}", ophyd_device={dev_name}, ophyd_class_name="{dev_name}", **kwargs)\n'
+        class_string += f'\t\tsuper().__init__(name="{dev_name}", virtual=False, directory="{dev_name}", ophyd_device={dev_name}_Ophyd, ophyd_class_name="{dev_name}_Ophyd", **kwargs)\n'
         for i, name in enumerate(configs['PV-Name']):
             if configs['Datatype'][i] == 'str':
                 class_string += f'\t\tself.config["{name}"] = ""\n'
@@ -102,7 +114,7 @@ class EPICS_Driver_Builder(QDialog):
 
         ophyd_string = 'from ophyd import Component as Cpt\n\n'
         ophyd_string += 'from ophyd import Device, EpicsSignal, EpicsSignalRO\n\n'
-        ophyd_string += f'class {dev_name}(Device):\n'
+        ophyd_string += f'class {dev_name}_Ophyd(Device):\n'
         for i, name in enumerate(inputs['PV-Name']):
             ophyd_string += f'\t{name} = Cpt(EpicsSignalRO, "{name}")\n'
         for i, name in enumerate(outputs['PV-Name']):
@@ -115,15 +127,16 @@ class EPICS_Driver_Builder(QDialog):
         ophyd_string += f'\n\tdef __init__(self, prefix="", *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, **kwargs):\n'
         ophyd_string += f'\t\tsuper().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, **kwargs)'
 
-        with open(f'{directory}/{dev_name}.py', 'w') as f:
+        with open(f'{directory}/{dev_name}.py', 'w', encoding='utf-8') as f:
             f.write(class_string)
-        with open(f'{directory}/{dev_name}_ophyd.py', 'w') as f:
+        with open(f'{directory}/{dev_name}_ophyd.py', 'w', encoding='utf-8') as f:
             f.write(ophyd_string)
         # with open(f'{directory}/__init__.py', 'w') as f:
         #     f.write(ophyd_string)
 
         QMessageBox.information(self, 'Build finished!',
                                 f'The instrument-driver {dev_name} has been built!')
+        self.accept()
 
 
     def closeEvent(self, a0: QCloseEvent) -> None:

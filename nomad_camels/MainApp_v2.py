@@ -89,10 +89,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.open_windows = []
         self.current_protocol_device_list = []
 
-        self.with_or_without_instruments()
-        self.populate_meas_buttons()
-        self.populate_manuals_buttons()
-        self.adjustSize()
         self.button_area_meas.order_changed.connect(self.protocol_order_changed)
 
         self.active_controls = {}
@@ -162,6 +158,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.adjustSize()
 
     def with_or_without_instruments(self):
+        """ """
         available = False
         if self.active_instruments:
             available = True
@@ -177,6 +174,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.label_no_instruments.setHidden(available)
 
     def manage_instruments(self):
+        """ """
         self.setCursor(Qt.WaitCursor)
         from nomad_camels.frontpanels.manage_instruments import ManageInstruments
         dialog = ManageInstruments(active_instruments=self.active_instruments,
@@ -188,15 +186,38 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.with_or_without_instruments()
 
     def add_to_open_windows(self, window):
+        """
+
+        Parameters
+        ----------
+        window :
+            
+
+        Returns
+        -------
+
+        """
         self.open_windows.append(window)
         window.closing.connect(lambda x=window: self.open_windows.remove(x))
 
     def add_to_plots(self, plot):
+        """
+
+        Parameters
+        ----------
+        plot :
+            
+
+        Returns
+        -------
+
+        """
         self.open_plots.append(plot)
         plot.closing.connect(lambda x=plot: self.open_plots.remove(x))
         self.add_to_open_windows(plot)
 
     def close_plots(self):
+        """ """
         for plot in self.open_plots:
             plot.close()
     # --------------------------------------------------
@@ -210,7 +231,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         return ret
 
     def closeEvent(self, a0):
-        """Calling the save_state method when closing the window."""
+        """Calling the save_state method when closing the window.
+
+        Parameters
+        ----------
+        a0 :
+            
+
+        Returns
+        -------
+
+        """
         for window in self.open_windows:
             window.close()
         if self.open_windows:
@@ -226,11 +257,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def edit_user_info(self):
         """Calls dialog for user-information when
         pushButton_editUserInfo is clicked.
-
+        
         The opened AddRemoveDialoge contains columns for Name, E-Mail,
         Affiliation, Address, ORCID and Phone of the user.
         If the dialog is canceled, nothing is changed, otherwise the new
         data will be written into self.userdata.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
         """
         import pandas as pd
         from nomad_camels.ui_widgets import add_remove_table
@@ -258,7 +296,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def save_user_data(self):
         """Calling the save_dictionary function with the savefile as
-        %localappdata%/userdata.json and self.userdata as dictionary."""
+        %localappdata%/userdata.json and self.userdata as dictionary.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         self.active_user = self.comboBox_user.currentText()
         userdic = {'active_user': self.active_user}
         userdic.update(self.userdata)
@@ -266,10 +312,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def load_user_data(self):
         """Loading the dictionary from %localappdata%/userdata.json,
-        selecting the active user and saving the rest into self.userdata."""
+        selecting the active user and saving the rest into self.userdata.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         userdat = {}
         if os.path.isfile(f'{load_save_functions.appdata_path}/userdata.json'):
-            with open(f'{load_save_functions.appdata_path}/userdata.json', 'r') as f:
+            with open(f'{load_save_functions.appdata_path}/userdata.json', 'r', encoding='utf-8') as f:
                 string_dict = json.load(f)
             load_save_functions.load_save_dict(string_dict, userdat, update_missing_key=True)
         if 'active_user' in userdat:
@@ -283,11 +337,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def edit_sample_info(self):
         """Calls dialog for user-information when
         pushButton_editSampleInfo is clicked.
-
+        
         The opened AddRemoveDialoge contains columns for Name,
         Identifier, and Preparation-Info.
         If the dialog is canceled, nothing is changed, otherwise the new
         data will be written into self.userdata.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
         """
         import pandas as pd
         from nomad_camels.ui_widgets import add_remove_table
@@ -310,7 +371,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def save_sample_data(self):
         """Calling the save_dictionary function with the savefile as
-        %localappdata%/sampledata.json and self.sampledata as dictionary."""
+        %localappdata%/sampledata.json and self.sampledata as dictionary.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         self.active_sample = self.comboBox_sample.currentText()
         sampledic = {'active_sample': self.active_sample}
         sampledic.update(self.sampledata)
@@ -318,10 +387,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def load_sample_data(self):
         """Loading the dictionary from %localappdata%/sampledata.json,
-        selecting the active sample and saving the rest into self.sampledata."""
+        selecting the active sample and saving the rest into self.sampledata.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         sampledat = {}
         if os.path.isfile(f'{load_save_functions.appdata_path}/sampledata.json'):
-            with open(f'{load_save_functions.appdata_path}/sampledata.json', 'r') as f:
+            with open(f'{load_save_functions.appdata_path}/sampledata.json', 'r', encoding='utf-8') as f:
                 string_dict = json.load(f)
             load_save_functions.load_save_dict(string_dict, sampledat, update_missing_key=True)
         if 'active_sample' in sampledat:
@@ -341,17 +418,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Those may contain:
         - autosave: turn on / off autosave on closing the program.
         - dark_mode: turning dark-mode on / off.
-        - number_format: the number format for display, can be either
-            "mixed", "plain" or "scientific".
-        - mixed_from: the exponent from where to switch to
-            scientific format, if number_format is "mixed".
+        - number_format: the number format for display, can be either "mixed", "plain" or "scientific".
+        - mixed_from: the exponent from where to switch to scientific format, if number_format is "mixed".
         - n_decimals: the number of displayed decimals of a number.
-        - py_files_path: the path, where python files (e.g. protocols)
-            are created.
+        - py_files_path: the path, where python files (e.g. protocols) are created.
         - meas_files_path: the path, where measurement data is stored.
-        - device_driver_path: the path, where NOMAD-CAMELS can find the
-            installed devices.
+        - device_driver_path: the path, where NOMAD-CAMELS can find the installed devices.
         - databroker_catalog_name: the name of the databroker catalog
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
         """
         self.preferences = load_save_functions.get_preferences()
         variables_handling.preferences = self.preferences
@@ -365,6 +445,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         variables_handling.meas_files_path = self.preferences['meas_files_path']
 
     def change_theme(self):
+        """ """
         theme = self.preferences['graphic_theme']
         if 'material_theme' in self.preferences:
             material_theme = self.preferences['material_theme']
@@ -376,11 +457,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def toggle_dark_mode(self):
         """Turning dark mode on / off, called whenever the settigns are
-        changed. Using qdarkstyle to provide the stylesheets."""
+        changed. Using qdarkstyle to provide the stylesheets.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         dark = self.preferences['dark_mode']
         variables_handling.dark_mode = dark
 
     def change_catalog_name(self):
+        """ """
         if 'meas_files_path' in self.preferences:
             catalog_name = 'CATALOG_NAME'
             if 'databroker_catalog_name' in self.preferences:
@@ -400,7 +490,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def change_preferences(self):
         """Called when any preferences are changed. Makes the dictionary
          of preferences and calls save_preferences from the
-         load_save_functions module."""
+         load_save_functions module.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         from nomad_camels.frontpanels.settings_window import Settings_Window
         settings_dialog = Settings_Window(parent=self, settings=self.preferences)
         if settings_dialog.exec():
@@ -414,7 +512,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.change_theme()
 
     def save_state(self, fromload=False):
-        """Saves the current states of both presets."""
+        """Saves the current states of both presets.
+
+        Parameters
+        ----------
+        fromload :
+             (Default value = False)
+
+        Returns
+        -------
+
+        """
         self.make_save_dict()
         load_save_functions.autosave_preset(self._current_preset[0], self.__save_dict__)
         if fromload:
@@ -441,7 +549,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def save_preset_as(self):
         """Opens a QFileDialog to save the device preset.
-        A backup / autosave of the preset is made automatically."""
+        A backup / autosave of the preset is made automatically.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         file = QFileDialog.getSaveFileName(self, 'Save Preset',
                                            load_save_functions.preset_path,
                                            '*.preset')[0]
@@ -455,16 +571,24 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def load_backup_preset(self):
         """Opens a QFileDialog in the Backup-folder of the presets.
-        If a backup is selected, the current preset is put into backup."""
+        If a backup is selected, the current preset is put into backup.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         file = QFileDialog.getOpenFileName(self, 'Open Preset',
                                            f'{load_save_functions.preset_path}',
                                            '*.preset')[0]
-        if not len(file):
+        if not file:
             return
-        preset_name = file.split('_')[-1][:-7]
+        # preset_name = file.split('_')[-1][:-7]
         # preset = f'Backup/{file.split("/")[-2]}/{file.split("/")[-1][:-7]}'
         self.save_state()
-        self._current_preset[0] = preset_name
+        # self._current_preset[0] = preset_name
         self.load_preset(file)
 
 
@@ -478,20 +602,40 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def change_preset(self, preset):
         """saves the old device preset,
-        then changes to / loads the new preset."""
+        then changes to / loads the new preset.
+
+        Parameters
+        ----------
+        preset :
+            
+
+        Returns
+        -------
+
+        """
         self.save_state()
         self._current_preset[0] = preset
         self.load_preset(preset)
 
 
     def load_preset(self, preset):
-        """Called when the comboBox_device_preset is changed
-        (or when loading the last state). Opens the given preset."""
+        """Called when loading a preset (e.g. when loading the last state).
+        Opens the given preset.
+
+        Parameters
+        ----------
+        preset :
+            
+
+        Returns
+        -------
+
+        """
         try:
-            with open(f'{load_save_functions.preset_path}{preset}.preset', 'r') as f:
+            with open(f'{load_save_functions.preset_path}{preset}.preset', 'r', encoding='utf-8') as f:
                 preset_dict = json.load(f)
         except:
-            with open(preset, 'r') as f:
+            with open(preset, 'r', encoding='utf-8') as f:
                 preset_dict = json.load(f)
         try:
             load_save_functions.load_save_dict(preset_dict, self.preset_save_dict)
@@ -503,8 +647,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self._current_preset[0] = 'empty_preset'
         self.update_channels()
         variables_handling.preset = self._current_preset[0]
+        self.with_or_without_instruments()
+        self.populate_meas_buttons()
+        self.populate_manuals_buttons()
+        self.adjustSize()
 
     def make_save_dict(self):
+        """ """
         self.preset_save_dict = {'_current_preset': self._current_preset,
                                  'active_instruments': self.active_instruments,
                                  'protocols_dict': self.protocols_dict,
@@ -517,7 +666,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def update_channels(self):
         """Called when the active devices change.
         The channels in variables_handling are updated with the ones
-        provided by the active devices."""
+        provided by the active devices.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         variables_handling.channels.clear()
         for key, dev in self.active_instruments.items():
             for channel in dev.get_channels():
@@ -528,9 +685,21 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
 
     def manual_control_order_changed(self, order):
+        """
+
+        Parameters
+        ----------
+        order :
+            
+
+        Returns
+        -------
+
+        """
         self.manual_controls = OrderedDict(sorted(self.manual_controls.items(), key=lambda x: order.index(x[0])))
 
     def add_manual_control(self):
+        """ """
         from nomad_camels.manual_controls.get_manual_controls import New_Manual_Control_Dialog
         dialog = New_Manual_Control_Dialog(self)
         if dialog.exec():
@@ -540,23 +709,69 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 self.add_manual_control_to_data(options.control_data)
 
     def add_manual_control_to_data(self, control_data):
+        """
+
+        Parameters
+        ----------
+        control_data :
+            
+
+        Returns
+        -------
+
+        """
         self.manual_controls[control_data['name']] = control_data
         self.add_button_to_manuals(control_data['name'])
         self.button_area_manual.setHidden(False)
 
     def remove_manual_control(self, control_name):
+        """
+
+        Parameters
+        ----------
+        control_name :
+            
+
+        Returns
+        -------
+
+        """
         self.manual_controls.pop(control_name)
         self.button_area_manual.remove_button(control_name)
         if not self.manual_controls:
             self.button_area_manual.setHidden(True)
 
     def update_man_cont_data(self, control_data, old_name):
+        """
+
+        Parameters
+        ----------
+        control_data :
+            
+        old_name :
+            
+
+        Returns
+        -------
+
+        """
         self.manual_controls.pop(old_name)
         self.manual_controls[control_data['name']] = control_data
         button = self.button_area_manual.rename_button(old_name, control_data['name'])
         self.add_functions_to_manual_button(button, control_data['name'])
 
     def open_manual_control_config(self, control_name):
+        """
+
+        Parameters
+        ----------
+        control_name :
+            
+
+        Returns
+        -------
+
+        """
         from nomad_camels.manual_controls.get_manual_controls import get_control_by_type_name
         control_data = self.manual_controls[control_name]
         config_cls = get_control_by_type_name(control_data['control_type'])[1]
@@ -565,18 +780,44 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.update_man_cont_data(dialog.control_data, control_name)
 
     def add_button_to_manuals(self, name):
+        """
+
+        Parameters
+        ----------
+        name :
+            
+
+        Returns
+        -------
+
+        """
         button = options_run_button.Options_Run_Button(name, small_text='Start',
                                                        protocol_options=False)
         self.button_area_manual.add_button(button, name)
         self.add_functions_to_manual_button(button, name)
 
     def add_functions_to_manual_button(self, button, name):
+        """
+
+        Parameters
+        ----------
+        button :
+            
+        name :
+            
+
+        Returns
+        -------
+
+        """
         button.config_function = lambda state=None, x=name: self.open_manual_control_config(x)
         button.run_function = lambda state=None, x=name: self.start_manual_control(x)
         button.del_function = lambda x=name: self.remove_manual_control(x)
         button.update_functions()
 
     def populate_manuals_buttons(self):
+        """ """
+        self.button_area_manual.clear_area()
         if not self.manual_controls:
             self.button_area_manual.setHidden(True)
         else:
@@ -585,6 +826,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.add_button_to_manuals(control)
 
     def start_manual_control(self, name):
+        """
+
+        Parameters
+        ----------
+        name :
+            
+
+        Returns
+        -------
+
+        """
         from nomad_camels.manual_controls.get_manual_controls import get_control_by_type_name
         control_data = self.manual_controls[name]
         control_type = control_data['control_type']
@@ -595,6 +847,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.button_area_manual.disable_single_run(name)
 
     def close_manual_control(self, control, name):
+        """
+
+        Parameters
+        ----------
+        control :
+            
+        name :
+            
+
+        Returns
+        -------
+
+        """
         self.open_windows.remove(control)
         self.button_area_manual.enable_single_run(name)
 
@@ -602,9 +867,21 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # protocols
     # --------------------------------------------------
     def protocol_order_changed(self, order):
+        """
+
+        Parameters
+        ----------
+        order :
+            
+
+        Returns
+        -------
+
+        """
         self.protocols_dict = OrderedDict(sorted(self.protocols_dict.items(), key=lambda x: order.index(x[0])))
 
     def add_measurement_protocol(self):
+        """ """
         from nomad_camels.frontpanels.protocol_config import Protocol_Config
         dialog = Protocol_Config()
         dialog.show()
@@ -612,23 +889,69 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.add_to_open_windows(dialog)
 
     def add_prot_to_data(self, protocol):
+        """
+
+        Parameters
+        ----------
+        protocol :
+            
+
+        Returns
+        -------
+
+        """
         self.protocols_dict[protocol.name] = protocol
         self.add_button_to_meas(protocol.name)
         self.button_area_meas.setHidden(False)
 
     def remove_protocol(self, prot_name):
+        """
+
+        Parameters
+        ----------
+        prot_name :
+            
+
+        Returns
+        -------
+
+        """
         self.protocols_dict.pop(prot_name)
         self.button_area_meas.remove_button(prot_name)
         if not self.protocols_dict:
             self.button_area_meas.setHidden(True)
 
     def update_prot_data(self, protocol, old_name):
+        """
+
+        Parameters
+        ----------
+        protocol :
+            
+        old_name :
+            
+
+        Returns
+        -------
+
+        """
         self.protocols_dict.pop(old_name)
         self.protocols_dict[protocol.name] = protocol
         button = self.button_area_meas.rename_button(old_name, protocol.name)
         self.add_functions_to_meas_button(button, protocol.name)
 
     def open_protocol_config(self, prot_name):
+        """
+
+        Parameters
+        ----------
+        prot_name :
+            
+
+        Returns
+        -------
+
+        """
         from nomad_camels.frontpanels.protocol_config import Protocol_Config
         dialog = Protocol_Config(self.protocols_dict[prot_name])
         dialog.show()
@@ -636,11 +959,35 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.add_to_open_windows(dialog)
 
     def add_button_to_meas(self, name):
+        """
+
+        Parameters
+        ----------
+        name :
+            
+
+        Returns
+        -------
+
+        """
         button = options_run_button.Options_Run_Button(name)
         self.button_area_meas.add_button(button, name)
         self.add_functions_to_meas_button(button, name)
 
     def add_functions_to_meas_button(self, button, name):
+        """
+
+        Parameters
+        ----------
+        button :
+            
+        name :
+            
+
+        Returns
+        -------
+
+        """
         button.config_function = lambda state=None, x=name: self.open_protocol_config(x)
         button.run_function = lambda state=None, x=name: self.run_protocol(x)
         button.build_function = lambda x=name: self.build_protocol(x)
@@ -649,6 +996,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         button.update_functions()
 
     def populate_meas_buttons(self):
+        """ """
+        self.button_area_meas.clear_area()
         if not self.protocols_dict:
             self.button_area_meas.setHidden(True)
         else:
@@ -657,30 +1006,45 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.add_button_to_meas(prot)
 
     def run_protocol(self, protocol_name):
+        """
+
+        Parameters
+        ----------
+        protocol_name :
+            
+
+        Returns
+        -------
+
+        """
         from nomad_camels.utility import device_handling
         self.button_area_meas.disable_run_buttons()
-        self.build_protocol(protocol_name, ask_file=False)
-        self.setCursor(Qt.WaitCursor)
-        protocol = self.protocols_dict[protocol_name]
-        path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
-        name = os.path.basename(path)[:-3]
-        spec = importlib.util.spec_from_file_location(name, path)
-        self.protocol_module = importlib.util.module_from_spec(spec)
-        sys.modules[spec.name] = self.protocol_module
-        spec.loader.exec_module(self.protocol_module)
-        self.protocol_module.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
-        plots, subs, _ = self.protocol_module.create_plots(self.run_engine)
-        for plot in plots:
-            self.add_to_plots(plot)
-        device_list = protocol.get_used_devices()
-        devs, dev_data = device_handling.instantiate_devices(device_list)
-        self.current_protocol_device_list = device_list
-        additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
-        if 'plots' in additionals:
-            for plot in additionals['plots']:
+        try:
+            self.build_protocol(protocol_name, ask_file=False)
+            self.setCursor(Qt.WaitCursor)
+            protocol = self.protocols_dict[protocol_name]
+            path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
+            name = os.path.basename(path)[:-3]
+            spec = importlib.util.spec_from_file_location(name, path)
+            self.protocol_module = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = self.protocol_module
+            spec.loader.exec_module(self.protocol_module)
+            self.protocol_module.protocol_step_information['protocol_stepper_signal'] = self.protocol_stepper_signal
+            plots, subs, _ = self.protocol_module.create_plots(self.run_engine)
+            for plot in plots:
                 self.add_to_plots(plot)
-        self.re_subs += subs
-        self.add_subs_from_dict(additionals)
+            device_list = protocol.get_used_devices()
+            devs, dev_data = device_handling.instantiate_devices(device_list)
+            self.current_protocol_device_list = device_list
+            additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
+            if 'plots' in additionals:
+                for plot in additionals['plots']:
+                    self.add_to_plots(plot)
+            self.re_subs += subs
+            self.add_subs_from_dict(additionals)
+        except Exception as e:
+            self.protocol_finished()
+            raise e
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
         self.pushButton_stop.setEnabled(True)
@@ -697,6 +1061,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_stepper_signal.emit(100)
 
     def add_subs_from_dict(self, dictionary):
+        """
+
+        Parameters
+        ----------
+        dictionary :
+            
+
+        Returns
+        -------
+
+        """
         for k, v in dictionary.items():
             if k == 'subs':
                 self.re_subs += v
@@ -704,25 +1079,39 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 self.add_subs_from_dict(v)
 
     def pause_protocol(self):
+        """ """
         if self.run_engine.state == 'running':
             self.run_engine.request_pause()
             self.pushButton_resume.setEnabled(True)
             self.pushButton_pause.setEnabled(False)
 
     def stop_protocol(self):
+        """ """
         if self.run_engine.state != 'idle':
             self.run_engine.abort('Aborted by user')
         # self.protocol_finished()
 
     def resume_protocol(self):
+        """ """
         if self.run_engine.state == 'paused':
             self.pushButton_resume.setEnabled(False)
             self.pushButton_pause.setEnabled(True)
             self.run_engine.resume()
 
     def protocol_finished(self, *args):
+        """
+
+        Parameters
+        ----------
+        *args :
+            
+
+        Returns
+        -------
+
+        """
         from nomad_camels.utility import databroker_export, device_handling
-        if self.protocol_module and self.protocol_module.uids:
+        if self.protocol_module and hasattr(self.protocol_module, 'uids') and self.protocol_module.uids:
             runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
             databroker_export.broker_to_NX(runs, self.protocol_savepath,
                                            self.protocol_module.plots,
@@ -742,7 +1131,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def build_protocol(self, protocol_name, ask_file=True):
         """Calls the build_protocol from nomad_camels.bluesky_handling.protocol_builder
         for the selected protocol and provides it with a savepath and
-        user- and sample-data."""
+        user- and sample-data.
+
+        Parameters
+        ----------
+        protocol_name :
+            
+        ask_file :
+             (Default value = True)
+
+        Returns
+        -------
+
+        """
         self.progressBar_protocols.setValue(0)
         protocol = self.protocols_dict[protocol_name]
         protocol.session_name = self.lineEdit_session.text()
@@ -768,6 +1169,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.progressBar_protocols.setValue(100 if ask_file else 1)
 
     def open_protocol(self, protocol_name):
+        """
+
+        Parameters
+        ----------
+        protocol_name :
+            
+
+        Returns
+        -------
+
+        """
         path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
         if not os.path.isfile(path):
             self.build_protocol(protocol_name, False)
@@ -777,6 +1189,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # tools
     # --------------------------------------------------
     def launch_device_builder(self):
+        """ """
         from nomad_camels.tools import VISA_device_builder
         device_builder = VISA_device_builder.VISA_Device_Builder(self)
         device_builder.show()
@@ -796,7 +1209,7 @@ if __name__ == '__main__':
     file_dir = os.path.dirname(__file__)
     appdata_path = f'{os.getenv("LOCALAPPDATA")}/nomad_camels'
     package_file = f'{appdata_path}/startup_packages.txt'
-    with open(package_file, 'w') as f:
+    with open(package_file, 'w', encoding='utf-8') as f:
         for i, (mod_name, mod) in enumerate(sys.modules.items()):
             if mod_name.startswith('_') or mod is None:
                 continue

@@ -22,6 +22,23 @@ dark_palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
 dark_palette.setColor(QPalette.HighlightedText, QColorConstants.Black)
 
 def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
+    """
+
+    Parameters
+    ----------
+    theme :
+        
+    main_app :
+         (Default value = None)
+    material_theme :
+         (Default value = None)
+    dark_mode :
+         (Default value = False)
+
+    Returns
+    -------
+
+    """
     if main_app is None:
         main_app = QApplication.instance()
         if main_app is None:

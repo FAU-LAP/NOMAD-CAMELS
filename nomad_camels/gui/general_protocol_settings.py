@@ -20,7 +20,19 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QGridLayout, QHeaderView
     QTableView, QWidget)
 
 class Ui_Protocol_Settings(object):
+    """ """
     def setupUi(self, Protocol_Settings):
+        """
+
+        Parameters
+        ----------
+        Protocol_Settings :
+            
+
+        Returns
+        -------
+
+        """
         if not Protocol_Settings.objectName():
             Protocol_Settings.setObjectName(u"Protocol_Settings")
         Protocol_Settings.resize(397, 668)
@@ -129,6 +141,17 @@ class Ui_Protocol_Settings(object):
     # setupUi
 
     def retranslateUi(self, Protocol_Settings):
+        """
+
+        Parameters
+        ----------
+        Protocol_Settings :
+            
+
+        Returns
+        -------
+
+        """
         Protocol_Settings.setWindowTitle(QCoreApplication.translate("Protocol_Settings", u"Form", None))
         self.label_title.setText(QCoreApplication.translate("Protocol_Settings", u"General Configuration", None))
         self.lineEdit_filename.setText(QCoreApplication.translate("Protocol_Settings", u"Datafile", None))

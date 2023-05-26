@@ -9,6 +9,7 @@ manual_controls = {'Stage_Control': [stage_control.Stage_Control,
 
 
 class New_Manual_Control_Dialog(QDialog):
+    """ """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         layout = QGridLayout()
@@ -40,6 +41,7 @@ class New_Manual_Control_Dialog(QDialog):
 
 
     def accept(self):
+        """ """
         name = self.selection_box.currentText()
         if name in self.std_controls:
             self.selected_control = self.std_controls[name]
@@ -50,6 +52,7 @@ class New_Manual_Control_Dialog(QDialog):
 
 
 def get_instrument_controls():
+    """ """
     controls = {}
     for name, instr in sorted(variables_handling.devices.items(),
                               key=lambda x: x[0].lower()):
@@ -58,6 +61,17 @@ def get_instrument_controls():
     return controls
 
 def get_control_by_type_name(name):
+    """
+
+    Parameters
+    ----------
+    name :
+        
+
+    Returns
+    -------
+
+    """
     if name in manual_controls:
         return manual_controls[name]
     instr_controls = get_instrument_controls()

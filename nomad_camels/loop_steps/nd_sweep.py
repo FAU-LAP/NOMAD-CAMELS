@@ -14,6 +14,7 @@ from nomad_camels.loop_steps.for_while_loops import For_Loop_Step_Config_Sub, Fo
 
 
 class ND_Sweep(Loop_Step):
+    """ """
     def __init__(self, name='', parent_step=None, step_info=None,
                  **kwargs):
         super().__init__(name=name, parent_step=parent_step, step_info=step_info,
@@ -28,6 +29,7 @@ class ND_Sweep(Loop_Step):
         self.sweep_values = step_info['sweep_values'] if 'sweep_values' in step_info else []
 
     def update_used_devices(self):
+        """ """
         self.used_devices = []
         for channel in self.read_channels:
             if channel in variables_handling.channels:
@@ -41,11 +43,13 @@ class ND_Sweep(Loop_Step):
                     self.used_devices.append(device)
 
     def get_outer_string(self):
+        """ """
         if self.plots:
             return builder_helper_functions.plot_creator(self.plots, f'create_plots_{self.name}')[0]
         return ''
 
     def get_add_main_string(self):
+        """ """
         stream = f'"{self.name}"'
         if self.data_output == 'main stream':
             stream = '"primary"'
@@ -56,7 +60,17 @@ class ND_Sweep(Loop_Step):
 
 
     def get_protocol_string(self, n_tabs=1):
-        """The loop is enumerating over the selected points."""
+        """The loop is enumerating over the selected points.
+
+        Parameters
+        ----------
+        n_tabs :
+             (Default value = 1)
+
+        Returns
+        -------
+
+        """
         tabs = '\t'*n_tabs
 
         stream = f'"{self.name}"'
@@ -99,6 +113,7 @@ class ND_Sweep(Loop_Step):
 
 
 class Sweep_Step(For_Loop_Step):
+    """ """
     def __init__(self, step_info=None):
         step_info = step_info or {}
         super().__init__(step_info=step_info)
@@ -107,6 +122,17 @@ class Sweep_Step(For_Loop_Step):
         self.wait_time = step_info['wait_time'] if 'wait_time' in step_info else ''
 
     def get_protocol_string(self, n_tabs=1):
+        """
+
+        Parameters
+        ----------
+        n_tabs :
+             (Default value = 1)
+
+        Returns
+        -------
+
+        """
         tabs = '\t'*n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         name = variables_handling.channels[self.sweep_channel].name
@@ -124,6 +150,7 @@ class Sweep_Step(For_Loop_Step):
 
 
 class ND_Sweep_Config(Loop_Step_Config):
+    """ """
     def __init__(self, loop_step:ND_Sweep, parent=None):
         super().__init__(parent, loop_step)
         self.loop_step = loop_step
@@ -163,12 +190,24 @@ class ND_Sweep_Config(Loop_Step_Config):
         self.layout().addWidget(self.tab_widget, 11, 0, 1, 5)
 
     def remove_sweep_channel(self):
+        """ """
         ind = self.tab_widget.currentIndex()
         self.tab_widget.removeTab(ind)
         self.tabs.pop(ind)
         self.change_tab_name()
 
     def add_sweep_channel(self, sweep_info=None):
+        """
+
+        Parameters
+        ----------
+        sweep_info :
+             (Default value = None)
+
+        Returns
+        -------
+
+        """
         if isinstance(sweep_info, Sweep_Step):
             sweep_step = sweep_info
         else:
@@ -183,6 +222,7 @@ class ND_Sweep_Config(Loop_Step_Config):
         self.change_tab_name()
 
     def change_tab_name(self):
+        """ """
         for i, tab in enumerate(self.tabs):
             if i == 0:
                 pos = 'outer'
@@ -194,12 +234,24 @@ class ND_Sweep_Config(Loop_Step_Config):
             self.tab_widget.setTabText(i, name)
 
     def move_tab(self, direction=1):
+        """
+
+        Parameters
+        ----------
+        direction :
+             (Default value = 1)
+
+        Returns
+        -------
+
+        """
         ind = self.tab_widget.currentIndex()
         self.tab_widget.tabBar().moveTab(ind, ind + direction)
         self.tabs[ind + direction], self.tabs[ind] = self.tabs[ind], self.tabs[ind + direction]
         self.change_tab_name()
 
     def update_step_config(self):
+        """ """
         self.loop_step.sweep_values = []
         self.loop_step.sweep_channels = []
         for tab in self.tabs:
@@ -219,6 +271,7 @@ class ND_Sweep_Config(Loop_Step_Config):
 
 
 class Single_Sweep_Tab(QWidget):
+    """ """
     signal_remove = Signal()
     signal_move_left = Signal()
     signal_move_right = Signal()
@@ -263,6 +316,17 @@ class Single_Sweep_Tab(QWidget):
         self.setLayout(layout)
 
     def get_name(self, pos):
+        """
+
+        Parameters
+        ----------
+        pos :
+            
+
+        Returns
+        -------
+
+        """
         self.moveLeftButton.setEnabled(True)
         self.moveRightButton.setEnabled(True)
         if pos == 'outer':
@@ -274,6 +338,7 @@ class Single_Sweep_Tab(QWidget):
 
 
     def get_info(self):
+        """ """
         self.loop_step.sweep_channel = self.comboBox_sweep_channel.currentText()
         self.loop_step.wait_time = self.lineEdit_wait_time.text()
         return self.loop_step

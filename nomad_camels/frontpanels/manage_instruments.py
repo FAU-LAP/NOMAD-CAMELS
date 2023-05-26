@@ -6,6 +6,7 @@ from nomad_camels.frontpanels import instrument_installer, instrument_config
 
 
 class ManageInstruments(QDialog):
+    """ """
     def __init__(self, active_instruments=None, parent=None):
         super().__init__(parent=parent)
         self.buttonBox = QDialogButtonBox()
@@ -39,10 +40,22 @@ class ManageInstruments(QDialog):
         layout.addWidget(self.buttonBox, 1, 0)
 
     def accept(self) -> None:
+        """ """
         self.active_instruments = self.config_widget.get_config()
         super().accept()
 
     def closeEvent(self, a0: QCloseEvent) -> None:
+        """
+
+        Parameters
+        ----------
+        a0: QCloseEvent :
+            
+
+        Returns
+        -------
+
+        """
         discard_dialog = QMessageBox.question(self, 'Discard Changes?',
                                               f'All changes to instrument configurations will be lost!',
                                               QMessageBox.Yes | QMessageBox.No)
@@ -53,7 +66,17 @@ class ManageInstruments(QDialog):
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
         """Overwrites the keyPressEvent of the QDialog so that it does
-        not close when pressing Enter/Return."""
+        not close when pressing Enter/Return.
+
+        Parameters
+        ----------
+        a0: QKeyEvent :
+            
+
+        Returns
+        -------
+
+        """
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)

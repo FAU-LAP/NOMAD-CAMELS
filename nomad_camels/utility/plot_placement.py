@@ -18,6 +18,17 @@ vertical_margin = 5
 
 
 def place_widget(widget:QWidget):
+    """
+
+    Parameters
+    ----------
+    widget:QWidget :
+        
+
+    Returns
+    -------
+
+    """
     global max_height_in_row, current_screen, current_pos, iteration
     widget.show()
     c = current_pos

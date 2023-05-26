@@ -80,18 +80,23 @@ def build_protocol(protocol, file_path,
 
     Parameters
     ----------
-    protocol : Measurement_Protocol
-        The protocol that should be build
-    file_path : str, path
-        The path, where the python file should be put
-    save_path : str, default "test.h5"
-        Path, where the datafile of the protocol should be put
-    catalog : str, default "CAMELS_CATALOG"
-        Name of the databroker-catalog that should be used
-    userdata : dict, default None
-        Should contain information about the user
-    sampledata : dict, default None
-        Should contain information about the sample
+    protocol :
+        
+    file_path :
+        
+    save_path :
+         (Default value = 'test.h5')
+    catalog :
+         (Default value = 'CAMELS_CATALOG')
+    userdata :
+         (Default value = None)
+    sampledata :
+         (Default value = None)
+
+    Returns
+    -------
+
+    
     """
     if not isinstance(save_path, pathlib.Path):
         save_path = pathlib.Path(save_path)
@@ -208,7 +213,7 @@ def build_protocol(protocol, file_path,
     userdata = userdata or {'name': 'default_user'}
     protocol_string += user_sample_string(userdata, sampledata)
     protocol_string += f'\tmd["protocol_overview"] = "{protocol.get_short_string().encode("unicode_escape").decode()}"\n'
-    protocol_string += '\twith open(__file__, "r") as f:\n'
+    protocol_string += '\twith open(__file__, "r", encoding="utf-8") as f:\n'
     protocol_string += '\t\tmd["python_script"] = f.read()\n'
     protocol_string += '\tmd["variables"] = namespace\n'
     protocol_string += '\tRE.subscribe(uid_collector, "start")\n'
@@ -255,7 +260,7 @@ def build_protocol(protocol, file_path,
     protocol_string += standard_start_string3
     if not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
-    with open(file_path, 'w+') as file:
+    with open(file_path, 'w', encoding='utf-8') as file:
         file.write(protocol_string)
     protocol_dict = load_save_functions.get_save_str(protocol)
     if not isinstance(file_path, pathlib.Path):
@@ -266,7 +271,19 @@ def build_protocol(protocol, file_path,
 
 
 def user_sample_string(userdata, sampledata):
-    """Returns the string adding userdata and sampledata to the md."""
+    """Returns the string adding userdata and sampledata to the md.
+
+    Parameters
+    ----------
+    userdata :
+        
+    sampledata :
+        
+
+    Returns
+    -------
+
+    """
     u_s_string = f'\tmd["user"] = {userdata}\n'
     u_s_string += f'\tmd["sample"] = {sampledata}\n'
     return u_s_string

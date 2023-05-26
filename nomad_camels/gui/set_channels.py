@@ -18,7 +18,19 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QSizePolicy, QWidget)
 
 class Ui_Form(object):
+    """ """
     def setupUi(self, Form):
+        """
+
+        Parameters
+        ----------
+        Form :
+            
+
+        Returns
+        -------
+
+        """
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(400, 300)
@@ -29,6 +41,17 @@ class Ui_Form(object):
     # setupUi
 
     def retranslateUi(self, Form):
+        """
+
+        Parameters
+        ----------
+        Form :
+            
+
+        Returns
+        -------
+
+        """
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
     # retranslateUi
 

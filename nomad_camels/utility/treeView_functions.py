@@ -9,12 +9,14 @@ def getItemIndex(item_model, data:str, starts_with=False):
     data : str
         the data which the looked-for item has
     starts_with : bool, default False
-        also return an item, if it only starts with the searched data
+        also return an item, if it only starts with the searched data (Default value = False)
+    data:str :
+        
 
     Returns
     -------
-    ind : QModelIndex
-        index of the item with the corresponding data
+
+    
     """
     rows = item_model.rowCount()
     cols = item_model.columnCount()
@@ -45,14 +47,12 @@ def iterItem(item, data, startWith=False):
     data : str
         the data which the looked-for item has
     startWith : bool, default False
-        also return an item, if it only starts with the searched data
+        also return an item, if it only starts with the searched data (Default value = False)
 
     Returns
     -------
-    found : bool
-        whether the searched item could be found
-    ind : QModelIndex
-        index of the item with the corresponding data, None if not found
+
+    
     """
     rows = item.rowCount()
     cols = item.columnCount()
@@ -76,7 +76,17 @@ def iterItem(item, data, startWith=False):
 
 
 def get_substeps(parent):
-    """Helper function, to get the substeps of loop_step with children."""
+    """Helper function, to get the substeps of loop_step with children.
+
+    Parameters
+    ----------
+    parent :
+        
+
+    Returns
+    -------
+
+    """
     steps = []
     for i in range(parent.rowCount()):
         item = parent.child(i, 0)

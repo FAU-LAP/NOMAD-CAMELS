@@ -2,6 +2,7 @@ from PySide6.QtCore import QItemSelectionModel
 from PySide6.QtGui import QUndoCommand
 
 class CommandMoveStep(QUndoCommand):
+    """ """
     def __init__(self, treeView, item_model, up_down, in_out, loop_step_dict, update_func):
         super().__init__()
         self.treeView_protocol_sequence = treeView
@@ -14,6 +15,7 @@ class CommandMoveStep(QUndoCommand):
         self.update_func = update_func
 
     def redo(self):
+        """ """
         parent = self.item.parent()
         if parent is None:
             if self.up_down != 0 and (self.ind.row() > 0 or self.up_down > 0) and (self.ind.row() < self.item_model_sequence.rowCount()-1 or self.up_down < 0):
@@ -49,6 +51,7 @@ class CommandMoveStep(QUndoCommand):
         self.update_func()
 
     def undo(self):
+        """ """
         parent = self.item.parent()
         up_down = - self.up_down
         in_out = - self.in_out

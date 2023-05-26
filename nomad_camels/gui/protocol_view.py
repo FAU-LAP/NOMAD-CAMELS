@@ -20,7 +20,19 @@ from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHeaderView,
     QToolButton, QTreeView, QWidget)
 
 class Ui_Protocol_View(object):
+    """ """
     def setupUi(self, Protocol_View):
+        """
+
+        Parameters
+        ----------
+        Protocol_View :
+            
+
+        Returns
+        -------
+
+        """
         if not Protocol_View.objectName():
             Protocol_View.setObjectName(u"Protocol_View")
         Protocol_View.resize(617, 522)
@@ -123,6 +135,17 @@ class Ui_Protocol_View(object):
     # setupUi
 
     def retranslateUi(self, Protocol_View):
+        """
+
+        Parameters
+        ----------
+        Protocol_View :
+            
+
+        Returns
+        -------
+
+        """
         Protocol_View.setWindowTitle(QCoreApplication.translate("Protocol_View", u"Form", None))
         self.pushButton_remove_step.setText(QCoreApplication.translate("Protocol_View", u"-", None))
         self.toolButton_add_step.setText(QCoreApplication.translate("Protocol_View", u"+", None))

@@ -12,6 +12,17 @@ local_packages = {}
 running_devices = {}
 
 def load_local_packages(tell_local=False):
+    """
+
+    Parameters
+    ----------
+    tell_local :
+         (Default value = False)
+
+    Returns
+    -------
+
+    """
     global local_packages
     if local_packages:
         return local_packages
@@ -37,6 +48,17 @@ def load_local_packages(tell_local=False):
 
 
 def get_channel_from_string(channel):
+    """
+
+    Parameters
+    ----------
+    channel :
+        
+
+    Returns
+    -------
+
+    """
     dev, chan = channel.split('.')
     if dev not in running_devices:
         raise Exception(f'Device {dev} is needed, but not yet instantiated!')
@@ -44,6 +66,17 @@ def get_channel_from_string(channel):
     return getattr(device, chan)
 
 def get_channels_from_string_list(channel_list):
+    """
+
+    Parameters
+    ----------
+    channel_list :
+        
+
+    Returns
+    -------
+
+    """
     channels = []
     for channel in channel_list:
         chan = channel
@@ -57,6 +90,19 @@ def get_channels_from_string_list(channel_list):
 
 
 def connection_check(ioc_settings, settings):
+    """
+
+    Parameters
+    ----------
+    ioc_settings :
+        
+    settings :
+        
+
+    Returns
+    -------
+
+    """
     if 'connection' not in ioc_settings:
         return
     conn = ioc_settings['connection']
@@ -71,6 +117,17 @@ def connection_check(ioc_settings, settings):
         ioc_settings.clear()
 
 def start_devices_from_channel_list(channel_list):
+    """
+
+    Parameters
+    ----------
+    channel_list :
+        
+
+    Returns
+    -------
+
+    """
     dev_list = set()
     for channel in channel_list:
         dev_list.add(variables_handling.channels[channel].device)
@@ -79,6 +136,17 @@ def start_devices_from_channel_list(channel_list):
     return devs, dev_data
 
 def instantiate_devices(device_list):
+    """
+
+    Parameters
+    ----------
+    device_list :
+        
+
+    Returns
+    -------
+
+    """
     device_config = {}
     devices = {}
     for dev in device_list:
@@ -137,6 +205,17 @@ def instantiate_devices(device_list):
     return devices, device_config
 
 def close_devices(device_list):
+    """
+
+    Parameters
+    ----------
+    device_list :
+        
+
+    Returns
+    -------
+
+    """
     for dev in device_list:
         if dev not in running_devices:
             raise Warning(f'Trying to close device {dev}, but it is not even running!')
