@@ -116,7 +116,7 @@ class Instrument_Config(Ui_Form, QWidget):
             cust_name = self.active_instruments[self.current_instr][i].custom_name
             given_name = tab.lineEdit_custom_name.text()
             if given_name != cust_name:
-                raise Warning(f'Instrument name "{given_name}" is either already in use or not allowed (e.g. the instrument`s class is named that way). Using "{cust_name}" instead.')
+                WarnPopup(self, f'Instrument name "{given_name}" is either already in use or not allowed (e.g. the instrument`s class is named that way). Using "{cust_name}" instead.', 'Instrument name not possible')
             self.active_instruments[self.current_instr][i].settings = tab.get_settings()
             self.active_instruments[self.current_instr][i].config = tab.get_config()
             self.active_instruments[self.current_instr][i].ioc_settings = tab.get_ioc_settings()
