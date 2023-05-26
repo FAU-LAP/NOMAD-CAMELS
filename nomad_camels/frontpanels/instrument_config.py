@@ -9,7 +9,7 @@ from nomad_camels.frontpanels.instrument_installer import getInstalledDevices
 
 from nomad_camels.utility import variables_handling
 
-# from nomad_camels.ui_widgets.warn_popup import WarnPopup
+from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
 
 class Instrument_Config(Ui_Form, QWidget):
@@ -29,9 +29,9 @@ class Instrument_Config(Ui_Form, QWidget):
         for k in self.installed_instr:
             if k not in self.active_instruments:
                 self.active_instruments[k] = []
-        # for k in self.active_instruments:
-        #     if k not in self.installed_instr:
-        #         raise Warning(f'Instrument type "{k}" in active instruments, but is not installed!')
+        for k in self.active_instruments:
+            if k not in self.installed_instr:
+                raise Warning(f'Instrument type "{k}" in active instruments, but is not installed!')
         self.tableWidget_instruments.setColumnCount(2)
 
         self.tableWidget_instruments.verticalHeader().setHidden(True)
@@ -176,9 +176,9 @@ class Instrument_Config(Ui_Form, QWidget):
         """ """
         names = []
         for instr in self.active_instruments:
-            # if self.active_instruments[instr]:
-            names += [x.custom_name for x in self.active_instruments[instr]]
-                # names += [self.active_instruments[instr][0].ophyd_class_name]
+            if self.active_instruments[instr]:
+                names += [x.custom_name for x in self.active_instruments[instr]]
+                names += [self.active_instruments[instr][0].ophyd_class_name]
         return names
 
 
