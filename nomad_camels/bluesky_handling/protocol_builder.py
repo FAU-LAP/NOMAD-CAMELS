@@ -213,7 +213,7 @@ def build_protocol(protocol, file_path,
     userdata = userdata or {'name': 'default_user'}
     protocol_string += user_sample_string(userdata, sampledata)
     protocol_string += f'\tmd["protocol_overview"] = "{protocol.get_short_string().encode("unicode_escape").decode()}"\n'
-    protocol_string += '\twith open(__file__, "r") as f:\n'
+    protocol_string += '\twith open(__file__, "r", encoding="utf-8") as f:\n'
     protocol_string += '\t\tmd["python_script"] = f.read()\n'
     protocol_string += '\tmd["variables"] = namespace\n'
     protocol_string += '\tRE.subscribe(uid_collector, "start")\n'
@@ -260,7 +260,7 @@ def build_protocol(protocol, file_path,
     protocol_string += standard_start_string3
     if not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
-    with open(file_path, 'w+') as file:
+    with open(file_path, 'w', encoding='utf-8') as file:
         file.write(protocol_string)
     protocol_dict = load_save_functions.get_save_str(protocol)
     if not isinstance(file_path, pathlib.Path):

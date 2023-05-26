@@ -90,7 +90,7 @@ def autosave_preset(preset:str, preset_data):
     preset_file = f'{preset}.preset'
     if not os.path.isdir(preset_path):
         makedirs(preset_path)
-    with open(f'{preset_path}{preset_file}', 'w') as json_file:
+    with open(f'{preset_path}{preset_file}', 'w', encoding='utf-8') as json_file:
         json.dump(preset_data, json_file, indent=2)
     make_backup(preset_file)
 
@@ -112,7 +112,7 @@ def save_preset(path:str, preset_data:dict):
 
     """
     preset_name = path.split('/')[-1][:-7]
-    with open(path, 'w') as json_file:
+    with open(path, 'w', encoding='utf-8') as json_file:
         json.dump(preset_data, json_file, indent=2)
     autosave_preset(preset_name, preset_data)
 
@@ -135,7 +135,7 @@ def save_dictionary(path, dictionary:dict):
         add_string = get_save_str(val)
         if add_string is not None:
             save_dict[key] = add_string
-    with open(path, 'w') as file:
+    with open(path, 'w', encoding='utf-8') as file:
         json.dump(save_dict, file, indent=2)
 
 def make_backup(preset_file:str):
@@ -303,7 +303,7 @@ def load_protocol(path):
     prot_name = os.path.basename(path)[:-6]
     if not os.path.isfile(path):
         return
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf-8') as f:
         preset_dict = json.load(f)
     prot_string_dict = {prot_name: preset_dict}
     sub_protocol = {}
@@ -454,9 +454,9 @@ def get_preferences():
 
     """
     if 'preferences.json' not in os.listdir(appdata_path):
-        with open(f'{appdata_path}/preferences.json', 'w') as file:
+        with open(f'{appdata_path}/preferences.json', 'w', encoding='utf-8') as file:
             json.dump(standard_pref, file, indent=2)
-    with open(f'{appdata_path}/preferences.json', 'r') as file:
+    with open(f'{appdata_path}/preferences.json', 'r', encoding='utf-8') as file:
         prefs = json.load(file)
     for key, value in standard_pref.items():
         if key not in prefs:
@@ -475,5 +475,5 @@ def save_preferences(prefs:dict):
     -------
 
     """
-    with open(f'{appdata_path}/preferences.json', 'w') as file:
+    with open(f'{appdata_path}/preferences.json', 'w', encoding='utf-8') as file:
         json.dump(prefs, file, indent=2)

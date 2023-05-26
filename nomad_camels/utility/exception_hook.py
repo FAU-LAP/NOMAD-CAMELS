@@ -15,7 +15,7 @@ from nomad_camels.utility import variables_handling
 from pkg_resources import resource_filename
 
 if not os.path.isfile(f'{appdata_path}/logging.log'):
-    with open(f'{appdata_path}/logging.log', 'w'):
+    with open(f'{appdata_path}/logging.log', 'w', encoding='utf-8'):
         pass
 logging.basicConfig(filename=f'{appdata_path}/logging.log', level=logging.DEBUG)
 

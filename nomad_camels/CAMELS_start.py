@@ -83,7 +83,7 @@ if __name__ == '__main__':
     package_file = f'{appdata_path}/startup_packages.txt'
     # package_file = f'{file_dir}/packages.txt'
     if os.path.isfile(package_file):
-        with open(package_file, 'r') as f:
+        with open(package_file, 'r', encoding='utf-8') as f:
             package_list = [x.rstrip() for x in f.readlines()]
     else:
         package_list = []
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     thread.start()
     while thread.isRunning():
         app.processEvents()
-    with open(package_file, 'w') as f:
+    with open(package_file, 'w', encoding='utf-8') as f:
         for i, (mod_name, mod) in enumerate(sys.modules.items()):
             if mod_name.startswith('_') or mod is None:
                 continue

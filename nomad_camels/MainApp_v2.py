@@ -323,7 +323,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         userdat = {}
         if os.path.isfile(f'{load_save_functions.appdata_path}/userdata.json'):
-            with open(f'{load_save_functions.appdata_path}/userdata.json', 'r') as f:
+            with open(f'{load_save_functions.appdata_path}/userdata.json', 'r', encoding='utf-8') as f:
                 string_dict = json.load(f)
             load_save_functions.load_save_dict(string_dict, userdat, update_missing_key=True)
         if 'active_user' in userdat:
@@ -398,7 +398,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         sampledat = {}
         if os.path.isfile(f'{load_save_functions.appdata_path}/sampledata.json'):
-            with open(f'{load_save_functions.appdata_path}/sampledata.json', 'r') as f:
+            with open(f'{load_save_functions.appdata_path}/sampledata.json', 'r', encoding='utf-8') as f:
                 string_dict = json.load(f)
             load_save_functions.load_save_dict(string_dict, sampledat, update_missing_key=True)
         if 'active_sample' in sampledat:
@@ -632,10 +632,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         """
         try:
-            with open(f'{load_save_functions.preset_path}{preset}.preset', 'r') as f:
+            with open(f'{load_save_functions.preset_path}{preset}.preset', 'r', encoding='utf-8') as f:
                 preset_dict = json.load(f)
         except:
-            with open(preset, 'r') as f:
+            with open(preset, 'r', encoding='utf-8') as f:
                 preset_dict = json.load(f)
         try:
             load_save_functions.load_save_dict(preset_dict, self.preset_save_dict)
@@ -1111,7 +1111,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         """
         from nomad_camels.utility import databroker_export, device_handling
-        if self.protocol_module and self.protocol_module.uids:
+        if self.protocol_module and hasattr(self.protocol_module, 'uids') and self.protocol_module.uids:
             runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
             databroker_export.broker_to_NX(runs, self.protocol_savepath,
                                            self.protocol_module.plots,
@@ -1209,7 +1209,7 @@ if __name__ == '__main__':
     file_dir = os.path.dirname(__file__)
     appdata_path = f'{os.getenv("LOCALAPPDATA")}/nomad_camels'
     package_file = f'{appdata_path}/startup_packages.txt'
-    with open(package_file, 'w') as f:
+    with open(package_file, 'w', encoding='utf-8') as f:
         for i, (mod_name, mod) in enumerate(sys.modules.items()):
             if mod_name.startswith('_') or mod is None:
                 continue

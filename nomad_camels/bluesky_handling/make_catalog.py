@@ -30,7 +30,7 @@ def make_yml(datapath, catalog_name='CAMELS_CATALOG'):
     brokerpath = datapath / 'databroker' / catalog_name
     if not os.path.isdir(brokerpath):
         os.makedirs(brokerpath)
-    with open(fname, 'w') as f:
+    with open(fname, 'w', encoding='utf-8') as f:
         f.write('sources:\n'
                 f'  {catalog_name}:\n'
                 '    driver: "bluesky-msgpack-catalog"\n'

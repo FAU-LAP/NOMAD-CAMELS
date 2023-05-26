@@ -82,7 +82,7 @@ class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
 
         sys.path.append(directory)
         if not os.path.isfile(f'{directory}/__init__.py'):
-            with open(f'{directory}/__init__.py', 'w') as f:
+            with open(f'{directory}/__init__.py', 'w', encoding='utf-8') as f:
                 pass
         fdir = f'{directory}/{dev_name}'
         fname = f'{fdir}/{dev_name}.py'
@@ -126,11 +126,11 @@ class VISA_Device_Builder(QDialog, Ui_VISA_Device_Builder):
         ophyd_string += f'\n\tdef __init__(self, prefix="", *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, resource_name="", write_termination="{write_term}", read_termination="{read_term}", baud_rate={baud_rate}, **kwargs):\n'
         ophyd_string += f'\t\tsuper().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, resource_name=resource_name, baud_rate=baud_rate, read_termination=read_termination, write_termination=write_termination, **kwargs)'
 
-        with open(f'{fdir}/{dev_name}_camels.py', 'w') as f:
+        with open(f'{fdir}/{dev_name}_camels.py', 'w', encoding='utf-8') as f:
             f.write(class_string)
-        with open(f'{fdir}/{dev_name}_ophyd.py', 'w') as f:
+        with open(f'{fdir}/{dev_name}_ophyd.py', 'w', encoding='utf-8') as f:
             f.write(ophyd_string)
-        with open(f'{fdir}/__init__.py', 'w') as f:
+        with open(f'{fdir}/__init__.py', 'w', encoding='utf-8') as f:
             f.write(ophyd_string)
 
         QMessageBox.information(self, 'Build finished!',

@@ -127,9 +127,9 @@ class EPICS_Driver_Builder(QDialog):
         ophyd_string += f'\n\tdef __init__(self, prefix="", *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, **kwargs):\n'
         ophyd_string += f'\t\tsuper().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, **kwargs)'
 
-        with open(f'{directory}/{dev_name}.py', 'w') as f:
+        with open(f'{directory}/{dev_name}.py', 'w', encoding='utf-8') as f:
             f.write(class_string)
-        with open(f'{directory}/{dev_name}_ophyd.py', 'w') as f:
+        with open(f'{directory}/{dev_name}_ophyd.py', 'w', encoding='utf-8') as f:
             f.write(ophyd_string)
         # with open(f'{directory}/__init__.py', 'w') as f:
         #     f.write(ophyd_string)
