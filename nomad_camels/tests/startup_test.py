@@ -17,7 +17,7 @@ def test_startup(qtbot, capfd):
     import sys
     import nomad_camels.MainApp_v2
     from nomad_camels.utility import exception_hook
-    sys.excepthook = exception_hook.exception_hook
+    # sys.excepthook = exception_hook.exception_hook
     main_window = nomad_camels.MainApp_v2.MainWindow()
 
     def close_save_message():
