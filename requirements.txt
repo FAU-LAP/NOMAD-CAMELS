@@ -1,4 +1,4 @@
-PySide6>=6.5.0
+PySide6==6.5.0
 bluesky>=1.8.3
 ophyd>=1.6.4
 databroker>=1.2.5
@@ -21,7 +21,7 @@ Pillow>=9.1.1
 toolz>=0.11.2
 pymongo>=4.1.1
 partd>=1.2.0
-dask==2023.4.0
+dask>=2023.4.0
 fsspec>=2022.5.0
 packaging>=21.3
 cloudpickle>=2.1.0
