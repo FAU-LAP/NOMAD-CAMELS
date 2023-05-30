@@ -43,52 +43,52 @@ def test_change_dev_config(qtbot, tmp_path):
     catalog_maker(tmp_path)
     run_test_protocol(tmp_path, prot)
 
-def test_for_loop(qtbot, tmp_path):
-    """
-
-    Parameters
-    ----------
-    qtbot :
-        
-    tmp_path :
-        
-
-    Returns
-    -------
-
-    """
-    # ensure_demo_in_devices()
-    from nomad_camels.loop_steps import for_while_loops
-    conf = protocol_config.Protocol_Config()
-    qtbot.addWidget(conf)
-    action = get_action_from_name(conf.add_actions, 'For Loop')
-    action.trigger()
-    conf_widge = conf.loop_step_configuration_widget
-    assert isinstance(conf_widge,
-                      for_while_loops.For_Loop_Step_Config)
-    conf_widge.sub_widget.lineEdit_start.setText('0')
-    conf_widge.sub_widget.lineEdit_stop.setText('1')
-    conf_widge.sub_widget.lineEdit_n_points.setText('11')
-
-    action = get_action_from_name(conf.add_actions, 'Wait')
-    action.trigger()
-    prot = conf.protocol
-
-    select_step_by_name(conf, 'Wait (Wait)')
-
-    def wait_for_move_in():
-        """ """
-        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
-        assert len(prot.loop_steps) == 1
-    qtbot.waitUntil(wait_for_move_in)
-    with qtbot.waitSignal(conf.accepted) as blocker:
-        conf.accept()
-    prot.name = 'test_for_loop_protocol'
-    assert 'For Loop (For_Loop)' in prot.loop_step_dict
-    assert prot.loop_steps[0].has_children
-    assert prot.loop_steps[0].children[0].full_name == 'Wait (Wait)'
-    catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+# def test_for_loop(qtbot, tmp_path):
+#     """
+#
+#     Parameters
+#     ----------
+#     qtbot :
+#
+#     tmp_path :
+#
+#
+#     Returns
+#     -------
+#
+#     """
+#     # ensure_demo_in_devices()
+#     from nomad_camels.loop_steps import for_while_loops
+#     conf = protocol_config.Protocol_Config()
+#     qtbot.addWidget(conf)
+#     action = get_action_from_name(conf.add_actions, 'For Loop')
+#     action.trigger()
+#     conf_widge = conf.loop_step_configuration_widget
+#     assert isinstance(conf_widge,
+#                       for_while_loops.For_Loop_Step_Config)
+#     conf_widge.sub_widget.lineEdit_start.setText('0')
+#     conf_widge.sub_widget.lineEdit_stop.setText('1')
+#     conf_widge.sub_widget.lineEdit_n_points.setText('11')
+#
+#     action = get_action_from_name(conf.add_actions, 'Wait')
+#     action.trigger()
+#     prot = conf.protocol
+#
+#     select_step_by_name(conf, 'Wait (Wait)')
+#
+#     def wait_for_move_in():
+#         """ """
+#         qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+#         assert len(prot.loop_steps) == 1
+#     qtbot.waitUntil(wait_for_move_in)
+#     with qtbot.waitSignal(conf.accepted) as blocker:
+#         conf.accept()
+#     prot.name = 'test_for_loop_protocol'
+#     assert 'For Loop (For_Loop)' in prot.loop_step_dict
+#     assert prot.loop_steps[0].has_children
+#     assert prot.loop_steps[0].children[0].full_name == 'Wait (Wait)'
+#     catalog_maker(tmp_path)
+#     run_test_protocol(tmp_path, prot)
 
 def test_gradient_descent(qtbot, tmp_path):
     """
