@@ -3,7 +3,7 @@
 CAMELS - Configurable Application for Measurements, Experiments and Laboratory Systems
 ======================================================================================
 
-NOMAD-CAMELS (from now on only CAMELS) is an open-source measurement software, targeted towards the requirements of experimental physics. Ease of use, rich metadata and FAIR-compliant data is at the heart of CAMELS
+NOMAD-CAMELS (from now on only CAMELS) is an open-source measurement software, targeted towards the requirements of experimental physics. Ease of use, rich metadata and FAIR-compliant data are at the heart of CAMELS design.
 
 CAMELS provides a graphical user interface (GUI) that can be used to setup instrument control and measurement protocols. The GUI then generates Python code that interfaces with `Bluesky <https://blueskyproject.io/>`_ to communicate with the instruments and orchestrate the measurement. CAMELS can also be used to communicate with large-scale, distributed systems implemented with `EPICS <https://epics-controls.org/>`_.
 
@@ -14,8 +14,8 @@ As CAMELS takes care of saving all available metadata, you can share understanda
 
 CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_.
 
-The CAMELS software can be viewed here
-https://github.com/FAU-LAP/CAMELS.
+| The CAMELS software can be viewed here https://github.com/FAU-LAP/CAMELS. We invite you to open issues on GitHub if you encounter any problems or bugs.
+| You can also reach the development team of CAMELS via e-mail at nomad-camels@fau.de if you have any questions or feedback.
 
 .. toctree::
    :maxdepth: 2
