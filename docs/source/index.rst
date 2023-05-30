@@ -3,13 +3,19 @@
 CAMELS - Configurable Application for Measurements, Experiments and Laboratory Systems
 ======================================================================================
 
-CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics. Here many experiments utilize a multitude of measurement devices used in dynamically changing setups. CAMELS will allow to define instrument control and measurement protocols using a graphical user interface (GUI). This provides a low entry threshold enabling the creation of new measurement protocols without programming knowledge or a deeper understanding of device communication.
+NOMAD-CAMELS (from now on only CAMELS) is an open-source measurement software, targeted towards the requirements of experimental physics. Ease of use, rich metadata and FAIR-compliant data is at the heart of CAMELS
 
-The GUI generates python code that interfaces with instruments and allows users to modify the code for specific applications and implementations of arbitrary devices if necessary. Even large-scale, distributed systems can be implemented. CAMELS is well suited to generate FAIR-compliant output data. NeXus standards, immediate NOMAD integration and hence a FAIRmat compliant data pipeline can be readily implemented.
+CAMELS provides a graphical user interface (GUI) that can be used to setup instrument control and measurement protocols. The GUI then generates Python code that interfaces with `Bluesky <https://blueskyproject.io/>`_ to communicate with the instruments and orchestrate the measurement. CAMELS can also be used to communicate with large-scale, distributed systems implemented with `EPICS <https://epics-controls.org/>`_.
 
-To learn more about NOMAD and FAIRmat visit the websites linked at the bottom or on the left.
+In experimental physics many experiments utilize a multitude of different measurement devices used in dynamically changing setups where changing measurement procedures or adding new devices is often cumbersome and difficult as it often requires advanced programming knowledge. CAMELS will allow you to define instrument control and measurement protocols using a graphical user interface (GUI) where each measurement step can be added with the click of a button. This provides a low entry-threshold enabling the creation of new and sophisticated measurement protocols without programming knowledge or a deeper understanding of device communication.
 
-https://github.com/FAU-LAP/CAMELS
+CAMELS is suited for any researcher not wanting to deal with measurement orchestration and device communication while still having full control and sophisticated data and metadata saving. Implementing new instruments can be done by any one and can be shared with the community.
+As CAMELS takes care of saving all available metadata, you can share understandable measurement data with colleagues and other researchers with just a few clicks.
+
+CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_.
+
+The CAMELS software can be viewed here
+https://github.com/FAU-LAP/CAMELS.
 
 .. toctree::
    :maxdepth: 2
