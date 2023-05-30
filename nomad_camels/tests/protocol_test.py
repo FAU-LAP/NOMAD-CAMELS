@@ -57,7 +57,7 @@ def test_for_loop(qtbot, tmp_path):
     -------
 
     """
-    ensure_demo_in_devices()
+    # ensure_demo_in_devices()
     from nomad_camels.loop_steps import for_while_loops
     conf = protocol_config.Protocol_Config()
     qtbot.addWidget(conf)
