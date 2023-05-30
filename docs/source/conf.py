@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath('../../'))
 sys.path.insert(0, os.path.abspath('../../nomad_camels'))
 
 project = 'NOMAD-CAMELS'
-copyright = '2021, FAIRmat'
+# copyright = '2021, FAIRmat'
 author = 'jl'
 
 # -- General configuration ---------------------------------------------------
