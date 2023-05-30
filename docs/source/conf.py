@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath('../../nomad_camels'))
 
 project = 'NOMAD-CAMELS'
 # copyright = '2021, FAIRmat'
-author = 'jl'
+author = 'FAIRmat'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -28,6 +28,8 @@ source_suffix = ['.rst', '.md']
 master_doc = 'index'
 
 html_favicon = 'assets/CAMELS.ico'
+
+html_show_copyright = False
 
 html_logo = 'assets/camels_horizontal.png'
 # html_theme_options = {
