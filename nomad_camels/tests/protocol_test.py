@@ -448,213 +448,213 @@ def test_change_dev_config(qtbot, tmp_path):
 #
 #
 #
-# def single_variable_if(qtbot, conf, wait_in=1, n_prompt=0, n_if=0, len_prot=0):
-#     """
-#
-#     Parameters
-#     ----------
-#     qtbot :
-#
-#     conf :
-#
-#     wait_in :
-#          (Default value = 1)
-#     n_prompt :
-#          (Default value = 0)
-#     n_if :
-#          (Default value = 0)
-#     len_prot :
-#          (Default value = 0)
-#
-#     Returns
-#     -------
-#
-#     """
-#     from nomad_camels.loop_steps import if_step
-#     action = get_action_from_name(conf.add_actions, 'If')
-#     action.trigger()
-#
-#     def wait_selection():
-#         """ """
-#         if n_if:
-#             select_step_by_name(conf, f'If (If_{n_if})')
-#         else:
-#             select_step_by_name(conf, f'If (If)')
-#         conf.tree_click_sequence()
-#         assert isinstance(conf.loop_step_configuration_widget,
-#                           if_step.If_Step_Config)
-#     qtbot.waitUntil(wait_selection)
-#     conf_widge = conf.loop_step_configuration_widget
-#     conf_widge.sub_widget.lineEdit_condition.setText('condition != 1')
-#     conf_widge.sub_widget.elif_table.add('condition == 1')
-#     conf_widge.sub_widget.checkBox_use_else.setChecked(True)
-#     nam = 'Prompt' if 0 != wait_in else 'Wait'
-#     action = get_action_from_name(conf.add_actions, nam)
-#     action.trigger()
-#     prot = conf.protocol
-#
-#     if n_prompt > 0 and nam == 'Prompt':
-#         select_step_by_name(conf, f'{nam} ({nam}_{n_prompt})')
-#         n_prompt += 1
-#     elif nam == 'Wait' and n_if:
-#         select_step_by_name(conf, f'{nam} ({nam}_{n_if})')
-#     else:
-#         select_step_by_name(conf, f'{nam} ({nam})')
-#
-#     def wait_for_move():
-#         """ """
-#         qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
-#         qtbot.mouseClick(conf.pushButton_move_step_out, Qt.MouseButton.LeftButton)
-#         qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
-#         qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
-#         qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
-#         assert len(prot.loop_steps) == 1 + len_prot
-#     qtbot.waitUntil(wait_for_move)
-#
-#
-#     nam = 'Prompt' if 1 != wait_in else 'Wait'
-#     action = get_action_from_name(conf.add_actions, nam)
-#     action.trigger()
-#     if n_prompt > 0 and nam == 'Prompt':
-#         select_step_by_name(conf, f'{nam} ({nam}_{n_prompt})')
-#         n_prompt += 1
-#     elif nam == 'Wait' and n_if:
-#         select_step_by_name(conf, f'{nam} ({nam}_{n_if})')
-#     else:
-#         select_step_by_name(conf, f'{nam} ({nam})')
-#
-#     def wait_for_move():
-#         """ """
-#         qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
-#         qtbot.mouseClick(conf.pushButton_move_step_out, Qt.MouseButton.LeftButton)
-#         qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
-#         qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
-#         assert len(prot.loop_steps) == 1 + len_prot
-#     qtbot.waitUntil(wait_for_move)
-#
-#     action = get_action_from_name(conf.add_actions, 'Prompt')
-#     action.trigger()
-#     if n_prompt == 0:
-#         n_prompt += 1
-#     select_step_by_name(conf, f'Prompt (Prompt_{n_prompt})')
-#
-#     def wait_for_move():
-#         """ """
-#         qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
-#         assert len(prot.loop_steps) == 1 + len_prot
-#     qtbot.waitUntil(wait_for_move)
-#
-#
-# def select_step_by_name(conf, name):
-#     """
-#
-#     Parameters
-#     ----------
-#     conf :
-#
-#     name :
-#
-#
-#     Returns
-#     -------
-#
-#     """
-#     model = conf.treeView_protocol_sequence.model()
-#     conf.treeView_protocol_sequence.selectionModel().clearSelection()
-#     index = getItemIndex(model, name)
-#     conf.treeView_protocol_sequence.selectionModel().select(index, QItemSelectionModel.Select)
-#
-#
-# def get_row_from_channel_table(name, table):
-#     """
-#
-#     Parameters
-#     ----------
-#     name :
-#
-#     table :
-#
-#
-#     Returns
-#     -------
-#
-#     """
-#     for i in range(table.rowCount()):
-#         row_name = table.item(i, 1).text()
-#         if name == row_name:
-#             return i
-#
-#
-# def ensure_demo_in_devices():
-#     """ """
-#     instr, packs = instrument_installer.getInstalledDevices(True, True)
-#     if 'demo_device' not in instr:
-#         instrument_installer.install_instrument('demo_device')
-#         instr, packs = instrument_installer.getInstalledDevices(True, True)
-#         assert 'demo_device' in instr
-#     if 'demo_device' not in variables_handling.devices:
-#         inst = packs['demo_device'].subclass()
-#         variables_handling.devices['demo_device'] = inst
-#     assert 'demo_device' in variables_handling.devices
-#     variables_handling.channels.clear()
-#     for key, dev in variables_handling.devices.items():
-#         for channel in dev.get_channels():
-#             variables_handling.channels.update({channel: dev.channels[channel]})
-#
-#
-# def catalog_maker(tmp_path):
-#     """
-#
-#     Parameters
-#     ----------
-#     tmp_path :
-#
-#
-#     Returns
-#     -------
-#
-#     """
-#     if 'test_catalog' not in list(databroker.catalog):
-#         make_catalog.make_yml(tmp_path, 'test_catalog')
-#
-# def run_test_protocol(tmp_path, protocol):
-#     """
-#
-#     Parameters
-#     ----------
-#     tmp_path :
-#
-#     protocol :
-#
-#
-#     Returns
-#     -------
-#
-#     """
-#     from nomad_camels.bluesky_handling import protocol_builder
-#     file = tmp_path / (protocol.name + '.py')
-#     savepath = tmp_path / (protocol.name + '.h5')
-#     protocol_builder.build_protocol(protocol, file, savepath, 'test_catalog')
-#     sys.path.append(str(tmp_path))
-#     py_package = importlib.import_module(protocol.name)
-#     py_package.main()
-#     assert os.path.isfile(savepath)
-#
-# def get_action_from_name(actions, name):
-#     """
-#
-#     Parameters
-#     ----------
-#     actions :
-#
-#     name :
-#
-#
-#     Returns
-#     -------
-#
-#     """
-#     for act in actions:
-#         if act.text() == name:
-#             return act
-#     return None
+def single_variable_if(qtbot, conf, wait_in=1, n_prompt=0, n_if=0, len_prot=0):
+    """
+
+    Parameters
+    ----------
+    qtbot :
+
+    conf :
+
+    wait_in :
+         (Default value = 1)
+    n_prompt :
+         (Default value = 0)
+    n_if :
+         (Default value = 0)
+    len_prot :
+         (Default value = 0)
+
+    Returns
+    -------
+
+    """
+    from nomad_camels.loop_steps import if_step
+    action = get_action_from_name(conf.add_actions, 'If')
+    action.trigger()
+
+    def wait_selection():
+        """ """
+        if n_if:
+            select_step_by_name(conf, f'If (If_{n_if})')
+        else:
+            select_step_by_name(conf, f'If (If)')
+        conf.tree_click_sequence()
+        assert isinstance(conf.loop_step_configuration_widget,
+                          if_step.If_Step_Config)
+    qtbot.waitUntil(wait_selection)
+    conf_widge = conf.loop_step_configuration_widget
+    conf_widge.sub_widget.lineEdit_condition.setText('condition != 1')
+    conf_widge.sub_widget.elif_table.add('condition == 1')
+    conf_widge.sub_widget.checkBox_use_else.setChecked(True)
+    nam = 'Prompt' if 0 != wait_in else 'Wait'
+    action = get_action_from_name(conf.add_actions, nam)
+    action.trigger()
+    prot = conf.protocol
+
+    if n_prompt > 0 and nam == 'Prompt':
+        select_step_by_name(conf, f'{nam} ({nam}_{n_prompt})')
+        n_prompt += 1
+    elif nam == 'Wait' and n_if:
+        select_step_by_name(conf, f'{nam} ({nam}_{n_if})')
+    else:
+        select_step_by_name(conf, f'{nam} ({nam})')
+
+    def wait_for_move():
+        """ """
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_out, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        assert len(prot.loop_steps) == 1 + len_prot
+    qtbot.waitUntil(wait_for_move)
+
+
+    nam = 'Prompt' if 1 != wait_in else 'Wait'
+    action = get_action_from_name(conf.add_actions, nam)
+    action.trigger()
+    if n_prompt > 0 and nam == 'Prompt':
+        select_step_by_name(conf, f'{nam} ({nam}_{n_prompt})')
+        n_prompt += 1
+    elif nam == 'Wait' and n_if:
+        select_step_by_name(conf, f'{nam} ({nam}_{n_if})')
+    else:
+        select_step_by_name(conf, f'{nam} ({nam})')
+
+    def wait_for_move():
+        """ """
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_out, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        assert len(prot.loop_steps) == 1 + len_prot
+    qtbot.waitUntil(wait_for_move)
+
+    action = get_action_from_name(conf.add_actions, 'Prompt')
+    action.trigger()
+    if n_prompt == 0:
+        n_prompt += 1
+    select_step_by_name(conf, f'Prompt (Prompt_{n_prompt})')
+
+    def wait_for_move():
+        """ """
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        assert len(prot.loop_steps) == 1 + len_prot
+    qtbot.waitUntil(wait_for_move)
+
+
+def select_step_by_name(conf, name):
+    """
+
+    Parameters
+    ----------
+    conf :
+
+    name :
+
+
+    Returns
+    -------
+
+    """
+    model = conf.treeView_protocol_sequence.model()
+    conf.treeView_protocol_sequence.selectionModel().clearSelection()
+    index = getItemIndex(model, name)
+    conf.treeView_protocol_sequence.selectionModel().select(index, QItemSelectionModel.Select)
+
+
+def get_row_from_channel_table(name, table):
+    """
+
+    Parameters
+    ----------
+    name :
+
+    table :
+
+
+    Returns
+    -------
+
+    """
+    for i in range(table.rowCount()):
+        row_name = table.item(i, 1).text()
+        if name == row_name:
+            return i
+
+
+def ensure_demo_in_devices():
+    """ """
+    instr, packs = instrument_installer.getInstalledDevices(True, True)
+    if 'demo_device' not in instr:
+        instrument_installer.install_instrument('demo_device')
+        instr, packs = instrument_installer.getInstalledDevices(True, True)
+        assert 'demo_device' in instr
+    if 'demo_device' not in variables_handling.devices:
+        inst = packs['demo_device'].subclass()
+        variables_handling.devices['demo_device'] = inst
+    assert 'demo_device' in variables_handling.devices
+    variables_handling.channels.clear()
+    for key, dev in variables_handling.devices.items():
+        for channel in dev.get_channels():
+            variables_handling.channels.update({channel: dev.channels[channel]})
+
+
+def catalog_maker(tmp_path):
+    """
+
+    Parameters
+    ----------
+    tmp_path :
+
+
+    Returns
+    -------
+
+    """
+    if 'test_catalog' not in list(databroker.catalog):
+        make_catalog.make_yml(tmp_path, 'test_catalog')
+
+def run_test_protocol(tmp_path, protocol):
+    """
+
+    Parameters
+    ----------
+    tmp_path :
+
+    protocol :
+
+
+    Returns
+    -------
+
+    """
+    from nomad_camels.bluesky_handling import protocol_builder
+    file = tmp_path / (protocol.name + '.py')
+    savepath = tmp_path / (protocol.name + '.h5')
+    protocol_builder.build_protocol(protocol, file, savepath, 'test_catalog')
+    sys.path.append(str(tmp_path))
+    py_package = importlib.import_module(protocol.name)
+    py_package.main()
+    assert os.path.isfile(savepath)
+
+def get_action_from_name(actions, name):
+    """
+
+    Parameters
+    ----------
+    actions :
+
+    name :
+
+
+    Returns
+    -------
+
+    """
+    for act in actions:
+        if act.text() == name:
+            return act
+    return None
