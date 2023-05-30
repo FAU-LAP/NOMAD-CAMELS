@@ -1,5 +1,13 @@
 name: Sphinx Docs
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    branches:
+      - main
+      - documentation
+  pull_request:
+    branches:
+      - main
+      - documentation
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -20,12 +28,29 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: 'main'
+      - uses: actions/checkout@v3
+        with:
+          ref: 'documentation'
+          path: './docbranch'
+      - run: rm -rf ./docs/
+      - run: cp -r ./docbranch/docs ./docs
+      - run: rm -rf ./docbranch/
       - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - uses: tlambert03/setup-qt-libs@v1
       - name: Install dependencies
         run: |
+          sudo apt install libgl1-mesa-glx libegl1-mesa libegl1 libopengl0 libpulse0
+          python -m pip install --upgrade pip
           pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton
+          pip install -r requirements.txt
+          export QT_DEBUG_PLUGINS=1
       - name: Sphinx build
         run: |
+          sphinx-apidoc -f -o ./docs/source/ ./nomad_camels/
           sphinx-build -b html ./docs/source/ ./docs/html_out/
       - name: Setup Pages
         uses: actions/configure-pages@v3
