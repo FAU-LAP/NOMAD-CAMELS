@@ -50,6 +50,7 @@ jobs:
           pip install -r requirements-dev.txt
           pip install pytest-xvfb
           export QT_DEBUG_PLUGINS=1
+      - run: pip list
       - name: Lint with ruff
         run: |
           # stop the build if there are Python syntax errors or undefined names
