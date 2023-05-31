@@ -1,5 +1,4 @@
 from keithley_237.keithley_237_ophyd import Keithley_237
-
 from main_classes import device_class
 
 class subclass(device_class.Device):
