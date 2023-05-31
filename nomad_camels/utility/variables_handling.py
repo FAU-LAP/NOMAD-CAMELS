@@ -5,8 +5,9 @@ from PySide6.QtGui import QColor, QAction
 
 import numpy as np
 # from nomad_camels.utility import simpleeval
+from nomad_camels.bluesky_handling import evaluation_helper
 
-from bluesky_widgets.models import utils
+# from bluesky_widgets.models import utils
 
 preset = ''
 device_driver_path = ''
@@ -16,7 +17,7 @@ CAMELS_path = ''
 preferences = {}
 
 protocols = {}
-protocol_variables = {}
+protocol_variables = {'StartTime': 1, 'ElapsedTime': 1}
 channels = {}
 loop_step_variables = {}
 devices = {}
@@ -54,6 +55,7 @@ def get_output_channels():
 #                              'arcsinh': np.arcsinh,
 #                              'arccosh': np.arccosh,
 #                              'arctanh': np.arctanh})
+
 
 evaluation_functions_names = {
     'randint()': 'randint(x) - random integer below x',
@@ -239,14 +241,15 @@ def check_eval(s):
 
     """
     try:
-        namespace = dict(utils._base_namespace)
+        namespace = dict(evaluation_helper.base_namespace)
         namespace.update(protocol_variables)
         namespace.update(loop_step_variables)
         for channel in channels:
             namespace.update({channel: 1})
-        utils.call_or_eval_one(s, namespace)
+        # utils.call_or_eval_one(s, namespace)
+        evaluation_helper.get_eval(s, namespace)
         return True
-    except Exception as e:
+    except Exception:
         return False
 
 def get_eval(s):
@@ -262,12 +265,12 @@ def get_eval(s):
 
     """
     try:
-        namespace = dict(utils._base_namespace)
+        namespace = dict(evaluation_helper.base_namespace)
         namespace.update(protocol_variables)
         namespace.update(loop_step_variables)
         for channel in channels:
             namespace.update({channel: 1})
-        return utils.call_or_eval_one(s, namespace)
+        return evaluation_helper.get_eval(s, namespace)
     except:
         return np.nan
 
