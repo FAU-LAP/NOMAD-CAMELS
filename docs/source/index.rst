@@ -12,10 +12,12 @@ In experimental physics many experiments utilize a multitude of different measur
 CAMELS is suited for any researcher not wanting to deal with measurement orchestration and device communication while still having full control and sophisticated data and metadata saving. Implementing new instruments can be done by any one and can be shared with the community.
 As CAMELS takes care of saving all available metadata, you can share understandable measurement data with colleagues and other researchers with just a few clicks.
 
+To get started with CAMELS and learn how to use it you can head `here <>`_.
+
 CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_.
 
 | The CAMELS software can be viewed here https://github.com/FAU-LAP/CAMELS. We invite you to open issues on GitHub if you encounter any problems or bugs.
-| You can also reach the development team of CAMELS via e-mail at nomad-camels@fau.de if you have any questions or feedback.
+| If you have any questions or feedback you can reach the development team of CAMELS via e-mail at nomad-camels@fau.de.
 
 .. toctree::
    :maxdepth: 2

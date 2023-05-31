@@ -72,7 +72,7 @@ We can now configure the protocol so that first each motor channel (`X`,`Y`,`Z`)
 ### 2.2. Use Variables
 
 > &#9888; You can use variables instead of 'hard-coding' values.\
-> &#9888; You can use most symbolic math operations the same way you would in regular python code in the value field to perform calculations before setting the result of the calculation.
+> &#9888; You can use most symbolic math operations the same way you would in regular Python code in the value field to perform calculations before setting the result of the calculation.
 
 For this simply add a variable on the bottom right of the protocol screen with the &#10133; symbol
 
@@ -91,7 +91,7 @@ To use this variable in the protocol (here in `Set Channels`)  right-click the v
 - `Insert` will overwrite any existing value in the field 
 - `Append` will add the string name of the variable at the end of the value field. This is useful when creating longer functions with multiple variables.
 
-You can use math notation as you would in a normal pythons script (you can use `np.*` variables; like `np.sin(1)`) to perform calculations before setting the value:\
+You can use math notation as you would in a normal Pythons script (you can use `np.*` variables; like `np.sin(1)`) to perform calculations before setting the value:\
 ![img_22.png](img_22.png)\
 This should evaluate to `(1+1)*2=4`. You can also insert or append 
 - functions
@@ -105,7 +105,7 @@ To read the channels we just set,  configure the `Read Channels` step to read th
 ![img_23.png](img_23.png)\
 You can now run the protocol by confirming the configuration with `OK` and then pressing the `run` button.\
 ![img_24.png](img_24.png)\
-This should build the protocol (converts your recipe to a python script that uses [Bluesky](https://blueskyproject.io/) to orchestrate the measurement) and run it; resulting in information about the run in the log on the right side of the window.\
+This should build the protocol (converts your recipe to a Python script that uses [Bluesky](https://blueskyproject.io/) to orchestrate the measurement) and run it; resulting in information about the run in the log on the right side of the window.\
 ![img_25.png](img_25.png)
 
 This creates a HDF5 file in the location specified by the data saving location set in `Settings` and the user and sample name. This file contains all the read data and all the metadata known to CAMELS. With a simple HDF5 viewer like [H5web](https://h5web.panosc.eu/h5wasm) you can easily read and display the data.\

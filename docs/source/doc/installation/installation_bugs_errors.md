@@ -3,7 +3,7 @@ As CAMELS is currently under development errors and bugs can occur. We are worki
 Here are some Errors and ways you might be able to fix them
 
 - **Windows Installer fails randomly**\
-If your installation fails randomly (setup of python environment takes less than a few seconds) and you can't run CAMELS with the created shortcuts then it is possible that your pyenv PATH variables are not set correctly. Open powershell and  see if the `pyenv` command works.\
+If your installation fails randomly (setup of Python environment takes less than a few seconds) and you can't run CAMELS with the created shortcuts then it is possible that your pyenv PATH variables are not set correctly. Open powershell and  see if the `pyenv` command works.\
 Set the correct PATH variables for pyenv and retry the installation again.\
 **Alternative:**\
 Remove pyenv by deleting the `/.pyenv/` folder or by running 

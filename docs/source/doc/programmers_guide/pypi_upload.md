@@ -34,7 +34,7 @@ The `MANIFEST.in` file contains information about static non-python files that s
 4. The new version should then be available on https://test.pypi.org/project/nomad-camels/
 
 ## Install
-To install the most recent version of NOMAD-CAMELS into your python environment run
+To install the most recent version of NOMAD-CAMELS into your Python environment run
 ```bash
     pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels
 ```

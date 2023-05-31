@@ -3,7 +3,7 @@
 ## 1. Pyenv Installation
 See the [official Pyenv installation guide](https://github.com/pyenv/pyenv#installation) for more details and the most recent version.
 
-- Install pyenv to install the necessary python version (you do not need to do this if you already have the correct python version installed):
+- Install pyenv to install the necessary Python version (you do not need to do this if you already have the correct Python version installed):
   ```bash
   sudo apt-get install git
   curl https://pyenv.run | bash
@@ -47,8 +47,8 @@ Stock Bash startup files vary widely between distributions in which of them sour
 ## 3. Install CAMELS
 - Create a folder where you want to install CAMELS (e.g. `\NOMAD-CAMELS\`)
 - Type in your powershell `cd \NOMAD-CAMELS\;pyenv local <python_version> `
-- If you have a working python environment (`python -V` in `/NOMAD-CAMELS/` returns `<python_version>`) then you can continue to install CAMELS.
-- Now  run the command `python -m venv .desertenv` in this folder to create a virtual python environment (using the python version given by `pyenv local <python_version>`)
+- If you have a working Python environment (`python -V` in `/NOMAD-CAMELS/` returns `<python_version>`) then you can continue to install CAMELS.
+- Now  run the command `python -m venv .desertenv` in this folder to create a virtual Python environment (using the Python version given by `pyenv local <python_version>`)
 - Now  activate the environment with `.\.desertenv\Scripts\activate`
 - Now type
 ```bash
