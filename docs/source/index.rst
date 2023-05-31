@@ -31,6 +31,8 @@ CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <http
 
 The CAMELS software can be viewed here https://github.com/FAU-LAP/CAMELS. We invite you to open issues on GitHub if you encounter any problems or bugs.
 
+Contact
+_______
 If you have any questions or feedback you can reach the development team of CAMELS via e-mail at nomad-camels@fau.de.
 
 .. toctree::
