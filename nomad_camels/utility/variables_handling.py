@@ -17,7 +17,7 @@ CAMELS_path = ''
 preferences = {}
 
 protocols = {}
-protocol_variables = {'StartTime': 1, 'ElapsedTime': 1}
+protocol_variables = {}
 channels = {}
 loop_step_variables = {}
 devices = {}
@@ -177,6 +177,8 @@ def get_menus(connect_function, pretext='Insert'):
     #     action.triggered.connect(lambda state=None, x=variable: connect_function(x))
     #     actions.append(action)
     add_actions_from_dict(loop_step_variables, actions, connect_function)
+    add_actions_from_dict({'StartTime': 1, 'ElapsedTime': 1}, actions,
+                          connect_function)
     # for variable in sorted(loop_step_variables, key=lambda x: x.lower()):
     #     action = QAction(variable)
     #     action.triggered.connect(lambda state=None, x=variable: connect_function(x))
