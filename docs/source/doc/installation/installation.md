@@ -1,6 +1,6 @@
 # CAMELS Installation
 
-As CAMELS is written in Python it requires a working Python environment to run properly.
+As CAMELS is written in Python it requires a correct Python environment to run properly.
 
 If you do not have Python installed on your machine or a clean Python environment you have several options:
 1. [Using the installer](installation_installer.md) (**RECOMMENDED when using Windows**!)
