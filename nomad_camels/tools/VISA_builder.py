@@ -19,7 +19,19 @@ from PySide6.QtWidgets import (QApplication, QGridLayout, QLabel, QLineEdit,
     QSizePolicy, QWidget)
 
 class Ui_VISA_Device_Builder(object):
+    """ """
     def setupUi(self, VISA_Device_Builder):
+        """
+
+        Parameters
+        ----------
+        VISA_Device_Builder :
+            
+
+        Returns
+        -------
+
+        """
         if not VISA_Device_Builder.objectName():
             VISA_Device_Builder.setObjectName(u"VISA_Device_Builder")
         VISA_Device_Builder.resize(400, 300)
@@ -102,6 +114,17 @@ class Ui_VISA_Device_Builder(object):
     # setupUi
 
     def retranslateUi(self, VISA_Device_Builder):
+        """
+
+        Parameters
+        ----------
+        VISA_Device_Builder :
+            
+
+        Returns
+        -------
+
+        """
         VISA_Device_Builder.setWindowTitle(QCoreApplication.translate("VISA_Device_Builder", u"Form", None))
         self.label.setText(QCoreApplication.translate("VISA_Device_Builder", u"Name:", None))
         self.label_5.setText(QCoreApplication.translate("VISA_Device_Builder", u"Search-Tags:", None))

@@ -12,7 +12,15 @@ from nomad_camels.utility import variables_handling
 
 class Measurement_Protocol:
     """Class for the measurement protocols. It mainly contains
-    loop_steps and plots."""
+    loop_steps and plots.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     def __init__(self, loop_steps=None, plots=None, channels=None, name='',
                  channel_metadata=None, metadata=None, use_nexus=False,
                  config_metadata=None, **kwargs):
@@ -53,7 +61,15 @@ class Measurement_Protocol:
 
     def get_nexus_paths(self):
         """Get a dictionary containing the paths used for the output
-        NeXus-file."""
+        NeXus-file.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         paths = {}
         for i, name in enumerate(self.metadata['Name']):
             paths[self.metadata['NeXus-path'][i]] = f'metadata_start/{name}'
@@ -80,16 +96,19 @@ class Measurement_Protocol:
 
         Parameters
         ----------
-        loop_step : Loop_Step
-            The loop_step object to be added.
-        position : int, default -1
-            the position where to add it to the list / parent,
-            if -1 appends the loopstep to the end
-        parent_step_name : str, None, default None
-            name of the parent loop_step. If specified, the loop_step is
-            added to the parrent instead of the main sequence
-        model : QStandardItemModel
-            if specified, the loop_step is also added to that model
+        loop_step :
+            
+        position :
+             (Default value = -1)
+        parent_step_name :
+             (Default value = None)
+        model :
+             (Default value = None)
+
+        Returns
+        -------
+
+        
         """
         if parent_step_name is None:
             if position < 0:
@@ -106,7 +125,23 @@ class Measurement_Protocol:
     def add_loop_step_rec(self, loop_step, model=None, parent_step_name=None, position=-1):
         """Recursively adds the loop_step and all its children to the
         protocol. Steps are added to the list if they have no parent,
-        otherwise to the parent. All are added to the dictionary."""
+        otherwise to the parent. All are added to the dictionary.
+
+        Parameters
+        ----------
+        loop_step :
+            
+        model :
+             (Default value = None)
+        parent_step_name :
+             (Default value = None)
+        position :
+             (Default value = -1)
+
+        Returns
+        -------
+
+        """
         if parent_step_name is None:
             self.add_loop_step(loop_step, model=model, parent_step_name=parent_step_name, position=position)
         else:
@@ -121,7 +156,17 @@ class Measurement_Protocol:
 
     def remove_loop_step(self, loop_step_name):
         """Removes the step with the given name from the sequence-list
-        (or parent) and from the dictionary."""
+        (or parent) and from the dictionary.
+
+        Parameters
+        ----------
+        loop_step_name :
+            
+
+        Returns
+        -------
+
+        """
         step = self.loop_step_dict.pop(loop_step_name)
         if step.parent_step is not None:
             self.loop_step_dict[step.parent_step].remove_child(step)
@@ -131,7 +176,19 @@ class Measurement_Protocol:
 
     def load_loop_steps(self, loop_steps, model=None):
         """Takes a list of loop_steps, creates them (with the input data
-        of each step) and adds them to the specified model."""
+        of each step) and adds them to the specified model.
+
+        Parameters
+        ----------
+        loop_steps :
+            
+        model :
+             (Default value = None)
+
+        Returns
+        -------
+
+        """
         for step in loop_steps:
             loop_step = self.make_step(step)
             self.add_loop_step_rec(loop_step, model=model)
@@ -139,7 +196,17 @@ class Measurement_Protocol:
     def make_step(self, step_info):
         """Creates the step specified with step_info (including the
         children), 'step_type' gives which subclass of Loop_Step shall
-        be created."""
+        be created.
+
+        Parameters
+        ----------
+        step_info :
+            
+
+        Returns
+        -------
+
+        """
         # children = None
         # if step_info['has_children']:
         children = []
@@ -156,7 +223,17 @@ class Measurement_Protocol:
         """Takes a list of loopsteps, each entry consisting of a tuple
         of the loopstep name and its children, which is recursively the
         same kind of list. Re-populates the loop_step_dict and then puts
-        the loop_steps in the correct order."""
+        the loop_steps in the correct order.
+
+        Parameters
+        ----------
+        step_list :
+            
+
+        Returns
+        -------
+
+        """
         self.loop_step_dict = {}
         for step in self.loop_steps:
             update_all_children(self.loop_step_dict, step)
@@ -168,32 +245,39 @@ class Measurement_Protocol:
 
     def get_plan_string(self):
         """Get the string for the protocol-plan, including the loopsteps."""
-        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, runEngine=None, stream_name="primary"):\n'
-        if variables_handling.protocol_variables:
+        variables_handling.current_protocol = self
+        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, eva=None, stream_name="primary"):\n'
+        prot_vars = dict(variables_handling.protocol_variables)
+        if 'StartTime' in prot_vars:
+            prot_vars.pop('StartTime')
+            prot_vars.pop('ElapsedTime')
+        if prot_vars:
             plan_string += '\tglobal '
-            for i, var in enumerate(variables_handling.protocol_variables.keys()):
+            for i, var in enumerate(prot_vars.keys()):
                 if i > 0:
                     plan_string += ', '
                 plan_string += var
             plan_string += '\n'
-        plan_string += '\teva = Evaluator(namespace=namespace)\n'
-        plan_string += '\trunEngine.subscribe(eva)\n'
         for step in self.loop_steps:
             plan_string += step.get_protocol_string(n_tabs=1)
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
+        plan_string += '\teva = Evaluator(namespace=namespace)\n'
+        plan_string += '\trunEngine.subscribe(eva)\n'
         plan_string += '\tyield from bps.open_run(md=md)\n'
-        plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, runEngine, stream_name)\n'
+        plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name)\n'
         plan_string += '\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n'
         plan_string += '\tyield from bps.close_run()\n'
         return plan_string
 
     def get_short_string(self):
+        """ """
         short_string = ''
         for step in self.loop_steps:
             short_string += step.get_protocol_short_string()
         return short_string
 
     def get_add_main_string(self):
+        """ """
         add_main_string = 'def steps_add_main(RE, devs):\n'
         add_main_string += '\treturner = {}\n'
         for step in self.loop_steps:
@@ -202,6 +286,7 @@ class Measurement_Protocol:
         return add_main_string
 
     def get_total_steps(self):
+        """ """
         total = 0
         for step in self.loop_steps:
             step.update_time_weight()
@@ -209,6 +294,7 @@ class Measurement_Protocol:
         return total
 
     def get_outer_string(self):
+        """ """
         outer_string = ''
         for step in self.loop_steps:
             outer_string += step.get_outer_string()
@@ -231,7 +317,21 @@ class Measurement_Protocol:
 def append_all_children(child_list, step, step_dict):
     """Takes a list of the kind specified in rearrange_loop_steps, does
     the same as the other function, but recursively for all the
-    (grand-)children."""
+    (grand-)children.
+
+    Parameters
+    ----------
+    child_list :
+        
+    step :
+        
+    step_dict :
+        
+
+    Returns
+    -------
+
+    """
     for child, grandchildren in child_list:
         child_step = step_dict[child]
         child_step.children = []
@@ -241,7 +341,19 @@ def append_all_children(child_list, step, step_dict):
 
 def update_all_children(step_dict, step):
     """Similar to append_all_children, but only updating the step_dict
-    with all the children."""
+    with all the children.
+
+    Parameters
+    ----------
+    step_dict :
+        
+    step :
+        
+
+    Returns
+    -------
+
+    """
     step_dict.update({step.full_name: step})
     # if step.has_children:
     for child in step.children:
@@ -250,7 +362,15 @@ def update_all_children(step_dict, step):
 
 class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
     """Widget for the configuration of the general protocol settings.
-    Here plots may be defined and variables added to the protocol."""
+    Here plots may be defined and variables added to the protocol.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     name_changed = Signal()
 
     def __init__(self, parent=None, protocol=Measurement_Protocol()):
@@ -329,7 +449,15 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
     def enable_nexus(self):
         """When the checkBox_NeXus is clicked, enables / disables the
-        other widgets for the nexus-definition."""
+        other widgets for the nexus-definition.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         nx = self.checkBox_NeXus.isChecked()
         self.table_channel_NX_paths.setHidden(not nx)
         self.table_metadata.setHidden(not nx)
@@ -338,7 +466,17 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
     def get_unique_name(self, name='name'):
         """Checks whether name already exists in the variables of the
-        protocol and returns a unique name (with added _i)."""
+        protocol and returns a unique name (with added _i).
+
+        Parameters
+        ----------
+        name :
+             (Default value = 'name')
+
+        Returns
+        -------
+
+        """
         i = 1
         while name in self.protocol.variables:
             if '_' not in name:
@@ -350,13 +488,33 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
     def add_variable(self):
         """Add a variable to the list, given a unique name, then updates
-        the protocol."""
+        the protocol.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         self.append_variable(self.get_unique_name('name'))
         self.update_variables()
 
     def append_variable(self, name='name', value='value'):
         """Append the variable with name and value to the item_model,
-        also add an item that shows the datatype of the value."""
+        also add an item that shows the datatype of the value.
+
+        Parameters
+        ----------
+        name :
+             (Default value = 'name')
+        value :
+             (Default value = 'value')
+
+        Returns
+        -------
+
+        """
         name_item = QStandardItem(name)
         value_item = QStandardItem(value)
         type_item = QStandardItem(variables_handling.check_data_type(value))
@@ -389,7 +547,15 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
     def load_variables(self):
         """Called when starting, loads the variables from the protocol
-        into the table."""
+        into the table.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         for var in sorted(self.protocol.variables):
             self.append_variable(var, str(self.protocol.variables[var]))
 
@@ -397,8 +563,20 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         """If name of variable changed: check whether the variable is
         unique, if not change its name and raise an error.
         If value changed: re-evaluate the data-type.
-        Update the protocol afterwards."""
-        ind = self.tableView_variables.selectedIndexes()[0]
+        Update the protocol afterwards.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
+        ind = self.tableView_variables.selectedIndexes()
+        if ind:
+            ind = ind[0]
+        else:
+            return
         item = self.variable_model.itemFromIndex(ind)
         if ind.column() == 0 and item.text() in self.protocol.variables:
             new_name = self.get_unique_name(item.text())
@@ -418,6 +596,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             self.protocol.variables.update({name: value})
 
     def name_change(self):
+        """ """
         name = self.lineEdit_protocol_name.text()
         self.label_title.setText(f'{name} - General Configuration')
         self.protocol.name = name

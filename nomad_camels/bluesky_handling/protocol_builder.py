@@ -2,6 +2,8 @@ import os.path
 import copy
 
 # from nomad_camels.main_classes.protocol_class import Measurement_Protocol
+import pathlib
+
 from nomad_camels.utility import variables_handling, device_handling, load_save_functions
 
 from nomad_camels.bluesky_handling.builder_helper_functions import plot_creator
@@ -78,19 +80,28 @@ def build_protocol(protocol, file_path,
 
     Parameters
     ----------
-    protocol : Measurement_Protocol
-        The protocol that should be build
-    file_path : str, path
-        The path, where the python file should be put
-    save_path : str, default "test.h5"
-        Path, where the datafile of the protocol should be put
-    catalog : str, default "CAMELS_CATALOG"
-        Name of the databroker-catalog that should be used
-    userdata : dict, default None
-        Should contain information about the user
-    sampledata : dict, default None
-        Should contain information about the sample
+    protocol :
+        
+    file_path :
+        
+    save_path :
+         (Default value = 'test.h5')
+    catalog :
+         (Default value = 'CAMELS_CATALOG')
+    userdata :
+         (Default value = None)
+    sampledata :
+         (Default value = None)
+
+    Returns
+    -------
+
+    
     """
+    if not isinstance(save_path, pathlib.Path):
+        save_path = pathlib.Path(save_path)
+    if isinstance(save_path, pathlib.WindowsPath):
+        save_path = save_path.as_posix()
     variables_handling.read_channel_names.clear()
     variables_handling.read_channel_sets.clear()
     device_import_string = '\n'
@@ -149,7 +160,7 @@ def build_protocol(protocol, file_path,
         if ioc_settings:
             devices_string += f'\t\tioc_settings = {ioc_settings}\n'
         devices_string += f'\t\tadditional_info = {additional_info}\n'
-        devices_string += f'\t\t{dev} = {classname}("{ioc_name}:{dev}:", name="{dev}", '
+        devices_string += f'\t\t{dev} = {classname}("{dev}:", name="{dev}", '
         for key, value in extra_settings.items():
             devices_string += f'{key}={value}, '
         devices_string += '**settings)\n'
@@ -198,9 +209,11 @@ def build_protocol(protocol, file_path,
     protocol_string += additional_string_devices
     # if plotting:
     #     protocol_string += '\t\tplot_etc = create_plots(RE)\n'
+    sampledata = sampledata or {'name': 'default_sample'}
+    userdata = userdata or {'name': 'default_user'}
     protocol_string += user_sample_string(userdata, sampledata)
     protocol_string += f'\tmd["protocol_overview"] = "{protocol.get_short_string().encode("unicode_escape").decode()}"\n'
-    protocol_string += '\twith open(__file__, "r") as f:\n'
+    protocol_string += '\twith open(__file__, "r", encoding="utf-8") as f:\n'
     protocol_string += '\t\tmd["python_script"] = f.read()\n'
     protocol_string += '\tmd["variables"] = namespace\n'
     protocol_string += '\tRE.subscribe(uid_collector, "start")\n'
@@ -228,7 +241,12 @@ def build_protocol(protocol, file_path,
 
     # protocol_string += standard_save_string
     protocol_string += standard_start_string
-    protocol_string += f'\tcatalog = databroker.catalog["{catalog}"]\n'
+    protocol_string += '\ttry:\n'
+    protocol_string += f'\t\tcatalog = databroker.catalog["{catalog}"]\n'
+    protocol_string += '\texcept KeyError:\n'
+    protocol_string += '\t\timport warnings\n'
+    protocol_string += '\t\twarnings.warn("Could not find databroker catalog, using temporary catalog. If data is not transferred, it might get lost.")\n'
+    protocol_string += '\t\tcatalog = databroker.temp().v2\n'
     protocol_string += '\tRE.subscribe(catalog.v1.insert)\n\n'
     protocol_string += '\tfrom nomad_camels.utility import tqdm_progress_bar\n'
     protocol_string += f'\ttqdm_bar = tqdm_progress_bar.ProgressBar({protocol.get_total_steps()})\n\n'
@@ -242,15 +260,30 @@ def build_protocol(protocol, file_path,
     protocol_string += standard_start_string3
     if not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
-    with open(file_path, 'w+') as file:
+    with open(file_path, 'w', encoding='utf-8') as file:
         file.write(protocol_string)
     protocol_dict = load_save_functions.get_save_str(protocol)
-    load_save_functions.save_dictionary(f'{file_path[:-3]}.cprot', protocol_dict)
+    if not isinstance(file_path, pathlib.Path):
+        file_path = pathlib.Path(file_path)
+    load_save_functions.save_dictionary(file_path.with_suffix('.cprot'),
+                                        protocol_dict)
 
 
 
 def user_sample_string(userdata, sampledata):
-    """Returns the string adding userdata and sampledata to the md."""
+    """Returns the string adding userdata and sampledata to the md.
+
+    Parameters
+    ----------
+    userdata :
+        
+    sampledata :
+        
+
+    Returns
+    -------
+
+    """
     u_s_string = f'\tmd["user"] = {userdata}\n'
     u_s_string += f'\tmd["sample"] = {sampledata}\n'
     return u_s_string

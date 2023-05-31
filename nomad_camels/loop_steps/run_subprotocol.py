@@ -11,6 +11,7 @@ from nomad_camels.bluesky_handling import protocol_builder, builder_helper_funct
 
 
 class Run_Subprotocol(Loop_Step):
+    """ """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Run Subprotocol'
@@ -24,6 +25,17 @@ class Run_Subprotocol(Loop_Step):
 
 
     def get_protocol_string(self, n_tabs=1):
+        """
+
+        Parameters
+        ----------
+        n_tabs :
+             (Default value = 1)
+
+        Returns
+        -------
+
+        """
         tabs = '\t' * n_tabs
         prot_name = os.path.basename(self.prot_path)[:-6]
         protocol_string = super().get_protocol_string(n_tabs)
@@ -34,17 +46,29 @@ class Run_Subprotocol(Loop_Step):
         stream = prot_name
         if self.data_output == 'main stream':
             stream = 'primary'
-        protocol_string += f'{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, runEngine, "{stream}")\n'
+        protocol_string += f'{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, eva, "{stream}")\n'
         for i, var in enumerate(self.vars_out['Variable']):
             protocol_string += f'{tabs}namespace["{self.vars_out["Write to name"][i]}"] = {prot_name}_mod.namespace["{var}"]\n'
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
+        """
+
+        Parameters
+        ----------
+        n_tabs :
+             (Default value = 0)
+
+        Returns
+        -------
+
+        """
         short_string = super().get_protocol_short_string(n_tabs)
         short_string = f'{short_string[:-1]} - {self.prot_path}'
         return short_string
 
     def get_outer_string(self):
+        """ """
         prot_name = os.path.basename(self.prot_path)[:-6]
         py_file = f'{self.prot_path[:-6]}.py'
         if not os.path.isfile(py_file):
@@ -57,6 +81,7 @@ class Run_Subprotocol(Loop_Step):
         return outer_string
 
     def get_add_main_string(self):
+        """ """
         prot_name = os.path.basename(self.prot_path)[:-6]
         stream = f'"{prot_name}"'
         if self.data_output == 'main stream':
@@ -69,10 +94,12 @@ class Run_Subprotocol(Loop_Step):
         return add_main_string
 
     def update_used_devices(self):
+        """ """
         sub_protocol = load_save_functions.load_protocol(self.prot_path)
         self.used_devices = sub_protocol.get_used_devices()
 
     def update_time_weight(self):
+        """ """
         super().update_time_weight()
         sub_protocol = load_save_functions.load_protocol(self.prot_path)
         self.time_weight += sub_protocol.get_total_steps()
@@ -80,6 +107,7 @@ class Run_Subprotocol(Loop_Step):
 
 
 class Run_Subprotocol_Config(Loop_Step_Config):
+    """ """
     def __init__(self, loop_step:Run_Subprotocol, parent=None):
         super().__init__(parent, loop_step)
         label = QLabel('Select Protocol:')
@@ -122,6 +150,7 @@ class Run_Subprotocol_Config(Loop_Step_Config):
         self.path_button.path_changed.connect(self.update_sub_vars)
 
     def update_sub_vars(self):
+        """ """
         self.load_sub_vars()
         comboBoxes = {'Variable': self.sub_vars.keys()}
         self.input_table.comboBoxes = comboBoxes
@@ -130,6 +159,7 @@ class Run_Subprotocol_Config(Loop_Step_Config):
         self.output_table.load_table_data()
 
     def load_sub_vars(self):
+        """ """
         self.sub_vars = {}
         prot_path = self.path_button.get_path()
         sub_protocol = load_save_functions.load_protocol(prot_path)
@@ -137,6 +167,7 @@ class Run_Subprotocol_Config(Loop_Step_Config):
             self.sub_vars = sub_protocol.variables
 
     def update_step_config(self):
+        """ """
         super().update_step_config()
         self.loop_step.prot_path = self.path_button.get_path()
         self.loop_step.vars_in = self.input_table.update_table_data()

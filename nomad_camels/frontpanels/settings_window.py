@@ -105,6 +105,7 @@ class Settings_Window(Ui_settings_window, QDialog):
 
 
     def change_theme(self):
+        """ """
         theme = self.comboBox_theme.currentText()
         mat = theme == 'qt-material'
         self.comboBox_material_theme.setEnabled(mat)
@@ -114,7 +115,15 @@ class Settings_Window(Ui_settings_window, QDialog):
 
     def get_settings(self):
         """Reading all the UI-elements to get the selected settings,
-        then returning those as a dictionary."""
+        then returning those as a dictionary.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         if self.radioButton_plain_numbers.isChecked():
             numbers = 'plain'
         elif self.radioButton_scientific.isChecked():
@@ -142,7 +151,17 @@ class Settings_Window(Ui_settings_window, QDialog):
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
         """Overwrites the keyPressEvent of the QDialog so that it does
-        not close when pressing Enter/Return."""
+        not close when pressing Enter/Return.
+
+        Parameters
+        ----------
+        a0: QKeyEvent :
+            
+
+        Returns
+        -------
+
+        """
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)

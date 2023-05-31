@@ -11,14 +11,11 @@ class TriggerEpicsSignalRO(EpicsSignalRO):
 
     Parameters
     ----------
-    read_pv : str
-        the name of the PV that shall be read
-    name : str
-        name of the Signal (usually the same as the variable-name)
-    no_mdel : bool, default False
-        set to True if the MDEL field of the corresponding record is not
-        set to "-1". The status returned from the trigger function is
-        then directly set to finished
+
+    Returns
+    -------
+
+    
     """
     def __init__(self, read_pv, *, timeout=10, string=False, name=None,
                  no_mdel=False, **kwargs):
@@ -32,7 +29,17 @@ class TriggerEpicsSignalRO(EpicsSignalRO):
 
     def callback_method(self, **kwargs):
         """If there is a status object from the trigger-method, it will
-        be set to finished."""
+        be set to finished.
+
+        Parameters
+        ----------
+        **kwargs :
+            
+
+        Returns
+        -------
+
+        """
         if self.stat is not None and not self.no_mdel and self.triggering:
             self.stat.set_finished()
             # self.stat = None
@@ -40,7 +47,15 @@ class TriggerEpicsSignalRO(EpicsSignalRO):
     def trigger(self):
         """Returns a status object that will be set to finished, when
         the PV-value is updated. Sets the trigger-PV to 1, thus
-        triggering the process of the original PV."""
+        triggering the process of the original PV.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         self.stat = Status(self, timeout=self.timeout)
         if self.triggering:
             self.trigger_pv.put(1)

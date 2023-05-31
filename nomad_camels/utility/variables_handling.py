@@ -5,8 +5,9 @@ from PySide6.QtGui import QColor, QAction
 
 import numpy as np
 # from nomad_camels.utility import simpleeval
+from nomad_camels.bluesky_handling import evaluation_helper
 
-from bluesky_widgets.models import utils
+# from bluesky_widgets.models import utils
 
 preset = ''
 device_driver_path = ''
@@ -30,6 +31,7 @@ read_channel_names = []
 
 
 def get_output_channels():
+    """ """
     outputs = []
     for channel in channels:
         if channels[channel].output:
@@ -53,6 +55,7 @@ def get_output_channels():
 #                              'arcsinh': np.arcsinh,
 #                              'arccosh': np.arccosh,
 #                              'arctanh': np.arctanh})
+
 
 evaluation_functions_names = {
     'randint()': 'randint(x) - random integer below x',
@@ -95,7 +98,19 @@ operator_names = {
 
 def get_color(color='', string=False):
     """Returns the respective QColor or rgb-code(if `string`) for
-    `color`, taking dark-mode into account."""
+    `color`, taking dark-mode into account.
+
+    Parameters
+    ----------
+    color :
+         (Default value = '')
+    string :
+         (Default value = False)
+
+    Returns
+    -------
+
+    """
     if color == 'red' or color == 'r':
         rgb = (255, 180, 180)
         if dark_mode:
@@ -130,7 +145,19 @@ def get_color(color='', string=False):
 
 def get_menus(connect_function, pretext='Insert'):
     """Providing QMenus with the `connect_function` for each action,
-    containing all the variables, channels, functions and operators."""
+    containing all the variables, channels, functions and operators.
+
+    Parameters
+    ----------
+    connect_function :
+        
+    pretext :
+         (Default value = 'Insert')
+
+    Returns
+    -------
+
+    """
     variable_menu = QMenu(f'{pretext} Variable')
     channel_menu = QMenu(f'{pretext} Channel-Value')
     function_menu = QMenu(f'{pretext} Function')
@@ -150,6 +177,8 @@ def get_menus(connect_function, pretext='Insert'):
     #     action.triggered.connect(lambda state=None, x=variable: connect_function(x))
     #     actions.append(action)
     add_actions_from_dict(loop_step_variables, actions, connect_function)
+    add_actions_from_dict({'StartTime': 1, 'ElapsedTime': 1}, actions,
+                          connect_function)
     # for variable in sorted(loop_step_variables, key=lambda x: x.lower()):
     #     action = QAction(variable)
     #     action.triggered.connect(lambda state=None, x=variable: connect_function(x))
@@ -174,6 +203,23 @@ def get_menus(connect_function, pretext='Insert'):
     return menus, actions
 
 def add_actions_from_dict(dictionary, actions, connect_function, add_string=''):
+    """
+
+    Parameters
+    ----------
+    dictionary :
+        
+    actions :
+        
+    connect_function :
+        
+    add_string :
+         (Default value = '')
+
+    Returns
+    -------
+
+    """
     for var in sorted(dictionary, key=lambda x: x.lower()):
         if isinstance(dictionary[var], dict):
             add_actions_from_dict(dictionary[var], actions, connect_function,
@@ -185,32 +231,64 @@ def add_actions_from_dict(dictionary, actions, connect_function, add_string=''):
             actions.append(action)
 
 def check_eval(s):
-    """Checks, whether the string `s` can be evaluated."""
+    """Checks, whether the string `s` can be evaluated.
+
+    Parameters
+    ----------
+    s :
+        
+
+    Returns
+    -------
+
+    """
     try:
-        namespace = dict(utils._base_namespace)
+        namespace = dict(evaluation_helper.base_namespace)
         namespace.update(protocol_variables)
         namespace.update(loop_step_variables)
         for channel in channels:
             namespace.update({channel: 1})
-        utils.call_or_eval_one(s, namespace)
+        # utils.call_or_eval_one(s, namespace)
+        evaluation_helper.get_eval(s, namespace)
         return True
-    except Exception as e:
+    except Exception:
         return False
 
 def get_eval(s):
+    """
+
+    Parameters
+    ----------
+    s :
+        
+
+    Returns
+    -------
+
+    """
     try:
-        namespace = dict(utils._base_namespace)
+        namespace = dict(evaluation_helper.base_namespace)
         namespace.update(protocol_variables)
         namespace.update(loop_step_variables)
         for channel in channels:
             namespace.update({channel: 1})
-        return utils.call_or_eval_one(s, namespace)
+        return evaluation_helper.get_eval(s, namespace)
     except:
         return np.nan
 
 
 def get_data(s):
-    """Returns the evaluated data of s."""
+    """Returns the evaluated data of s.
+
+    Parameters
+    ----------
+    s :
+        
+
+    Returns
+    -------
+
+    """
     if not s:
         return ''
     try:
@@ -222,7 +300,17 @@ def get_data(s):
     return lit
 
 def check_data_type(s):
-    """Returns the datatype of the string-evaluation of s."""
+    """Returns the datatype of the string-evaluation of s.
+
+    Parameters
+    ----------
+    s :
+        
+
+    Returns
+    -------
+
+    """
     if not isinstance(s, str):
         return str(type(s))
     if not s:
@@ -236,6 +324,17 @@ def check_data_type(s):
     return str(type(lit))
 
 def get_write_from_data_type(s):
+    """
+
+    Parameters
+    ----------
+    s :
+        
+
+    Returns
+    -------
+
+    """
     t = check_data_type(s)
     if t == 'String':
         return f'"{s}"'

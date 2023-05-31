@@ -1,5 +1,6 @@
 import re
 import subprocess
+import importlib
 
 from nomad_camels.gui.device_installer import Ui_Form
 from PySide6.QtWidgets import QWidget, QTableWidgetItem, QCheckBox, QMessageBox
@@ -25,7 +26,19 @@ installed_instr = {}
 
 def getInstalledDevices(force=False, return_packages=False):
     """Goes through the given device_driver_path and returns a list of
-    the available devices."""
+    the available devices.
+
+    Parameters
+    ----------
+    force :
+         (Default value = False)
+    return_packages :
+         (Default value = False)
+
+    Returns
+    -------
+
+    """
     global installed_instr
     if installed_instr and not force and not return_packages:
         return installed_instr
@@ -39,6 +52,9 @@ def getInstalledDevices(force=False, return_packages=False):
     packages = device_handling.load_local_packages()
     for package in packages:
         installed_instr[package] = 'local'
+    for instr in installed_instr:
+        if instr not in packages:
+            packages[instr] = importlib.import_module(f'nomad_camels_driver_{instr}.{instr}')
     if return_packages:
         return installed_instr, packages
     return installed_instr
@@ -46,7 +62,15 @@ def getInstalledDevices(force=False, return_packages=False):
 
 def getAllDevices():
     """So far only returns the installed devices, should in future work
-    with the online repository of drivers."""
+    with the online repository of drivers.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     global all_instr
     if all_instr:
         return all_instr
@@ -81,6 +105,7 @@ bold_font.setBold(True)
 
 
 class Instrument_Installer(Ui_Form, QWidget):
+    """ """
     instruments_updated = Signal()
 
     """
@@ -121,6 +146,17 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.pushButton_update_drivers.clicked.connect(self.update_installed)
 
     def checkBox_change(self, row):
+        """
+
+        Parameters
+        ----------
+        row :
+            
+
+        Returns
+        -------
+
+        """
         for i in range(3):
             checked = self.device_table.cellWidget(row, 0).isChecked()
             item = self.device_table.item(row, i)
@@ -128,6 +164,17 @@ class Instrument_Installer(Ui_Form, QWidget):
             item.setBackground(brush)
 
     def get_checked_devs(self, ignore_version=False):
+        """
+
+        Parameters
+        ----------
+        ignore_version :
+             (Default value = False)
+
+        Returns
+        -------
+
+        """
         devs = []
         for box in self.checkboxes:
             if not box.isChecked():
@@ -147,6 +194,7 @@ class Instrument_Installer(Ui_Form, QWidget):
         return devs
 
     def update_installed(self):
+        """ """
         devs = []
         for dev, version in self.installed_devs.items():
             if version != self.all_devs[dev]:
@@ -160,9 +208,21 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.install_thread.start()
 
     def uninstall_selected(self):
+        """ """
         self.install_selected(True)
 
     def install_selected(self, uninstall=False):
+        """
+
+        Parameters
+        ----------
+        uninstall :
+             (Default value = False)
+
+        Returns
+        -------
+
+        """
         self.textEdit_device_info.clear()
         devs = self.get_checked_devs(uninstall)
         self.install_thread = Install_Thread(devs, uninstall, self)
@@ -175,6 +235,7 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.install_thread.start()
 
     def thread_done(self):
+        """ """
         for c in self.disables:
             c.setEnabled(True)
         self.setCursor(Qt.ArrowCursor)
@@ -184,14 +245,17 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.instruments_updated.emit()
 
     def select_all(self):
+        """ """
         for box in self.checkboxes:
             box.setChecked(True)
 
     def select_none(self):
+        """ """
         for box in self.checkboxes:
             box.setChecked(False)
 
     def build_table(self):
+        """ """
         search_text = self.lineEdit_search_name.text()
         self.checkboxes.clear()
         self.device_table.clear()
@@ -226,6 +290,7 @@ class Instrument_Installer(Ui_Form, QWidget):
 
 
 class Install_Thread(QThread):
+    """ """
     info_step = Signal(str)
     val_step = Signal(int)
 
@@ -235,6 +300,7 @@ class Install_Thread(QThread):
         self.uninstall = uninstall
 
     def run(self):
+        """ """
         n = len(self.devs)
         path = os.path.dirname(sys.executable)
         for i, dev in enumerate(self.devs):
@@ -254,23 +320,8 @@ class Install_Thread(QThread):
                 if ret.returncode:
                     raise OSError(f'Failed to uninstall nomad-camels-driver-{device_name}')
             else:
-                pypi_url = r'https://test.pypi.org/simple/'  # TODO Change to regular PyPi
                 device_name = dev.replace("_", "-")
-                flags = 0
-                if os.name == 'nt':
-                    flags = subprocess.CREATE_NO_WINDOW
-                ret = subprocess.Popen([sys.executable, '-m', 'pip',
-                                        'install', '--no-cache-dir',
-                                        '--index-url', pypi_url,
-                                        '--extra-index-url',
-                                        'https://pypi.org/simple',
-                                        f'nomad-camels-driver-{device_name}'],
-                                       stdout=subprocess.PIPE,
-                                       stderr=subprocess.STDOUT,
-                                       stdin=subprocess.PIPE,
-                                       creationflags=flags)
-                if ret.returncode:
-                    raise OSError(f'Failed to install nomad-camels-driver-{device_name}')
+                ret = install_instrument(device_name)
             for line in iter(ret.stdout.readline, b''):
                 text = line.decode().rstrip()
                 self.info_step.emit(text)
@@ -285,6 +336,37 @@ class Install_Thread(QThread):
                           f'Installation of {dev} failed!',
                           f'Installation of {dev} failed!')
         self.val_step.emit(100)
+
+
+def install_instrument(device_name):
+    """
+
+    Parameters
+    ----------
+    device_name :
+        
+
+    Returns
+    -------
+
+    """
+    pypi_url = r'https://test.pypi.org/simple/'  # TODO Change to regular PyPi
+    flags = 0
+    if os.name == 'nt':
+        flags = subprocess.CREATE_NO_WINDOW
+    ret = subprocess.Popen([sys.executable, '-m', 'pip',
+                            'install', '--no-cache-dir',
+                            '--index-url', pypi_url,
+                            '--extra-index-url',
+                            'https://pypi.org/simple',
+                            f'nomad-camels-driver-{device_name}'],
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT,
+                           stdin=subprocess.PIPE,
+                           creationflags=flags)
+    if ret.returncode:
+        raise OSError(f'Failed to install nomad-camels-driver-{device_name}')
+    return ret
 
 
 if __name__ == '__main__':

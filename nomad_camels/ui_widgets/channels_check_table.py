@@ -1,14 +1,12 @@
-from PySide6.QtWidgets import QWidget, QTableWidgetItem, QLabel, QComboBox, QTableWidget, QGridLayout, QLineEdit, QMenu
-from PySide6.QtCore import Qt, QModelIndex
+from PySide6.QtWidgets import QWidget, QTableWidgetItem, QLabel,  QTableWidget, QGridLayout, QLineEdit, QMenu
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QFont
-from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
-from nomad_camels.gui.read_channels import Ui_read_channels_config
-
-from nomad_camels.utility import variables_handling, fit_variable_renaming
+from nomad_camels.utility import variables_handling
 
 
 class Channels_Check_Table(QWidget):
+    """ """
     def __init__(self, parent, headerLabels=None, only_output=False,
                  info_dict=None, checkstrings=None, title='', channels=None):
         super().__init__(parent)
@@ -53,7 +51,17 @@ class Channels_Check_Table(QWidget):
     def context_menu(self, pos):
         """Generates the right-click-menu.
         There are entries for inserting (replace) and appending the
-        variables, channels, functions and operators."""
+        variables, channels, functions and operators.
+
+        Parameters
+        ----------
+        pos :
+            
+
+        Returns
+        -------
+
+        """
         menu = QMenu()
         # putting the returned actions somewhere is necessary, otherwise
         # there will be none inside the single menus
@@ -73,20 +81,51 @@ class Channels_Check_Table(QWidget):
         menu.exec_(self.mapToGlobal(pos))
 
     def append_variable(self, val):
-        """Used for the single actions of the context menu."""
+        """Used for the single actions of the context menu.
+
+        Parameters
+        ----------
+        val :
+            
+
+        Returns
+        -------
+
+        """
         ind = self.tableWidget_channels.selectedIndexes()[0]
         item = self.tableWidget_channels.itemFromIndex(ind)
         text = item.text()
         item.setText(f'{text}{val}')
 
     def insert_variable(self, val):
-        """Used for the single actions of the context menu."""
+        """Used for the single actions of the context menu.
+
+        Parameters
+        ----------
+        val :
+            
+
+        Returns
+        -------
+
+        """
         ind = self.tableWidget_channels.selectedIndexes()[0]
         item = self.tableWidget_channels.itemFromIndex(ind)
         item.setText(f'{val}')
 
 
     def check_change(self, pos):
+        """
+
+        Parameters
+        ----------
+        pos :
+            
+
+        Returns
+        -------
+
+        """
         c = pos.column()
         if c != 0:
             return
@@ -100,16 +139,28 @@ class Channels_Check_Table(QWidget):
         self.tableWidget_channels.item(r, c+1).setBackground(QBrush(color))
 
     def change_search(self):
+        """ """
         self.update_info()
         self.build_channels_table()
 
     def get_info(self):
+        """ """
         self.update_info()
         return self.info_dict
 
     def check_string(self, item):
         """If an element is part of the checkstrings, the item becomes
-        green if valid, red otherwise and white if empty."""
+        green if valid, red otherwise and white if empty.
+
+        Parameters
+        ----------
+        item :
+            
+
+        Returns
+        -------
+
+        """
         if item.column() not in self.checkstrings:
             return
         if self.tableWidget_channels.item(item.row(), 0).checkState() == Qt.CheckState.Unchecked and item.text() == '':
@@ -121,6 +172,7 @@ class Channels_Check_Table(QWidget):
         item.setBackground(QBrush(color))
 
     def update_info(self):
+        """ """
         channel_list = self.info_dict['channel']
         for i in range(self.tableWidget_channels.rowCount()):
             name = self.tableWidget_channels.item(i, 1).text()
@@ -148,6 +200,7 @@ class Channels_Check_Table(QWidget):
 
 
     def build_channels_table(self):
+        """ """
         self.tableWidget_channels.clear()
         self.tableWidget_channels.setColumnCount(len(self.headerLabels))
         self.tableWidget_channels.setRowCount(0)

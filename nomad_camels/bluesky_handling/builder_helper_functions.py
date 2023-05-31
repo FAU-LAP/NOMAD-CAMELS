@@ -13,6 +13,21 @@ standard_plot_string += '\t\tplot_widget.activate_dark_mode()\n'
 
 
 def get_plot_add_string(name, stream, subprotocol=False):
+    """
+
+    Parameters
+    ----------
+    name :
+        
+    stream :
+        
+    subprotocol :
+         (Default value = False)
+
+    Returns
+    -------
+
+    """
     add_main_string = '\tif "subs" not in returner:\n'
     add_main_string += '\t\treturner["subs"] = []\n'
     add_main_string += '\tif "plots" not in returner:\n'
@@ -28,6 +43,21 @@ def get_plot_add_string(name, stream, subprotocol=False):
 
 
 def plot_creator(plot_data, func_name='create_plots', multi_stream=False):
+    """
+
+    Parameters
+    ----------
+    plot_data :
+        
+    func_name :
+         (Default value = 'create_plots')
+    multi_stream :
+         (Default value = False)
+
+    Returns
+    -------
+
+    """
     plot_string = f'\ndef {func_name}(RE, stream="primary"):\n'
     plot_string += standard_plot_string
     plot_string += '\tsubs = []\n'

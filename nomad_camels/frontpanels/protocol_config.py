@@ -15,6 +15,7 @@ from pkg_resources import resource_filename
 
 
 class Protocol_Config(Ui_Protocol_View, QWidget):
+    """ """
     accepted = Signal(Measurement_Protocol)
     closing = Signal()
 
@@ -82,7 +83,15 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
     def update_add_step_actions(self):
         """Called when the devices change, updating the possible
-        loopsteps to include new device steps."""
+        loopsteps to include new device steps.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         self.add_actions.clear()
         self.device_actions.clear()
         for stp in sorted(make_step_of_type.step_type_config.keys(), key=lambda x: x.lower()):
@@ -100,7 +109,17 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
 
     def tree_click_sequence(self, general=False):
-        """Called when clicking the treeView_protocol_sequence."""
+        """Called when clicking the treeView_protocol_sequence.
+
+        Parameters
+        ----------
+        general :
+             (Default value = False)
+
+        Returns
+        -------
+
+        """
         self.update_loop_step_order()
         self.get_step_config()
         self.protocol.update_variables()
@@ -130,7 +149,15 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
     def build_protocol_sequence(self):
         """Shows / builds the protocol sequence in the treeView
-        dependent on the loop_steps in the current_protocol."""
+        dependent on the loop_steps in the current_protocol.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         ind_seq = self.treeView_protocol_sequence.selectedIndexes()
         sel_data = ''
         if ind_seq:
@@ -149,6 +176,17 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 self.treeView_protocol_sequence.selectionModel().select(new_index, QItemSelectionModel.Select)
 
     def enable_step_move(self, enable):
+        """
+
+        Parameters
+        ----------
+        enable :
+            
+
+        Returns
+        -------
+
+        """
         self.pushButton_move_step_in.setEnabled(enable)
         self.pushButton_move_step_out.setEnabled(enable)
         self.pushButton_move_step_up.setEnabled(enable)
@@ -156,7 +194,15 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
     def change_step_name(self):
         """Called when a loop_step changes its name, then updates the
-        shown sequence, and also the protocol-data."""
+        shown sequence, and also the protocol-data.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         self.build_protocol_sequence()
         self.update_loop_step_order()
 
@@ -169,7 +215,17 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
     def sequence_right_click(self, pos):
         """Opens a specific Menu on right click in the protocol-sequence.
         If selection is not on a loop_step, it consists only of Add Step,
-        otherwise it consists of Delete Step."""
+        otherwise it consists of Delete Step.
+
+        Parameters
+        ----------
+        pos :
+            
+
+        Returns
+        -------
+
+        """
         # TODO other actions
         # TODO more beautiful?
         menu = QMenu()
@@ -276,6 +332,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         menu.exec_(self.treeView_protocol_sequence.viewport().mapToGlobal(pos))
 
     def paste_shortcut(self):
+        """ """
         if variables_handling.copied_step is None:
             return
         inds = self.treeView_protocol_sequence.selectedIndexes()
@@ -294,6 +351,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.add_loop_step(copied_step=True, position=pos, parent=parent)
 
     def cut_shortcut(self):
+        """ """
         inds = self.treeView_protocol_sequence.selectedIndexes()
         if not inds:
             return
@@ -301,6 +359,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.cut_loop_step(item.data())
 
     def copy_shortcut(self):
+        """ """
         inds = self.treeView_protocol_sequence.selectedIndexes()
         if not inds:
             return
@@ -308,13 +367,33 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.copy_loop_step(item.data())
 
     def cut_loop_step(self, step_name):
-        """Copies the given step, then removes it."""
+        """Copies the given step, then removes it.
+
+        Parameters
+        ----------
+        step_name :
+            
+
+        Returns
+        -------
+
+        """
         self.copy_loop_step(step_name)
         self.remove_loop_step(ask=False)
 
     def copy_loop_step(self, step_name):
         """Makes a deepcopy of the given step and stores it in
-        copied_loop_step."""
+        copied_loop_step.
+
+        Parameters
+        ----------
+        step_name :
+            
+
+        Returns
+        -------
+
+        """
         variables_handling.copied_step = deepcopy(self.protocol.loop_step_dict[step_name])
 
     def move_loop_step(self, up_down=0, in_out=0):
@@ -323,11 +402,15 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
         Parameters
         ----------
-        up_down : int
-            moves up if negative (lower row-number), down if positive
-            (default is 0)
-        in_out : int
-            moves in if positive, out if negative, (default 0)
+        up_down :
+             (Default value = 0)
+        in_out :
+             (Default value = 0)
+
+        Returns
+        -------
+
+        
         """
         move_command = change_sequence.CommandMoveStep(self.treeView_protocol_sequence, self.item_model_sequence, up_down, in_out, self.protocol.loop_step_dict, self.update_loop_step_order)
         self.undo_stack.push(move_command)
@@ -339,16 +422,19 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
         Parameters
         ----------
-        step_type : str
-            gives the type of step to be added
-        position : int, optional
-            where to add the step, (default -1, append to the end)
-        parent : Loop_Step, optional
-            parent, where to add the new step, (default None, the step
-            is added to the outermost layer of the protocol)
-        copied_step : bool, optional
-            if False, a new step of type step_type will be created,
-            otherwise copied_loop_step will be inserted
+        step_type :
+             (Default value = '')
+        position :
+             (Default value = -1)
+        parent :
+             (Default value = None)
+        copied_step :
+             (Default value = False)
+
+        Returns
+        -------
+
+        
         """
 
         self.update_loop_step_order()
@@ -362,10 +448,21 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             self.copy_loop_step(variables_handling.copied_step.full_name)
         new_ind = treeView_functions.getItemIndex(self.item_model_sequence, step.full_name)
         self.treeView_protocol_sequence.selectionModel().select(new_ind, QItemSelectionModel.Select)
+        self.tree_click_sequence()
 
     def remove_loop_step(self, ask=True):
         """After updating the loop_step order in the protocol, the
-        selected loop step is deleted (if the messagebox is accepted)."""
+        selected loop step is deleted (if the messagebox is accepted).
+
+        Parameters
+        ----------
+        ask :
+             (Default value = True)
+
+        Returns
+        -------
+
+        """
         self.update_loop_step_order()
         ind = self.treeView_protocol_sequence.selectedIndexes()[0]
         name = self.item_model_sequence.itemFromIndex(ind).data()
@@ -381,7 +478,15 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
     def update_loop_step_order(self):
         """Goes through all the loop_steps in the sequence, then
-        rearranges them in the protocol."""
+        rearranges them in the protocol.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         self.general_settings.update_step_config()
         loop_steps = []
         for i in range(self.item_model_sequence.rowCount()):
@@ -391,6 +496,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.protocol.rearrange_loop_steps(loop_steps)
 
     def accept(self) -> None:
+        """ """
         self.update_loop_step_order()
         self.get_step_config()
         self.check_protocol_name()
@@ -399,11 +505,23 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.close()
 
     def check_protocol_name(self):
+        """ """
         name = self.general_settings.lineEdit_protocol_name.text()
         if name in variables_handling.protocols and name != self.old_name:
             raise Exception(f'Protocol name "{name}" already in use!')
 
     def closeEvent(self, a0: QCloseEvent) -> None:
+        """
+
+        Parameters
+        ----------
+        a0: QCloseEvent :
+            
+
+        Returns
+        -------
+
+        """
         name = self.general_settings.lineEdit_protocol_name.text()
         if not self.is_accepted:
             discard_dialog = QMessageBox.question(self, f'{name} - Discard Changes?',
@@ -417,11 +535,22 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.closing.emit()
 
     def change_name(self):
+        """ """
         self.setWindowTitle(f'{self.protocol.name} - Measurement Protocol - NOMAD-CAMELS')
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
         """Overwrites the keyPressEvent of the QDialog so that it does
-        not close when pressing Enter/Return."""
+        not close when pressing Enter/Return.
+
+        Parameters
+        ----------
+        a0: QKeyEvent :
+            
+
+        Returns
+        -------
+
+        """
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)

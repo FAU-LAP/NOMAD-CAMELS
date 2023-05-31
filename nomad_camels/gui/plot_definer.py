@@ -22,7 +22,19 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout,
 from nomad_camels.ui_widgets.variable_tool_tip_box import Variable_Box
 
 class Ui_Plot_Definer(object):
+    """ """
     def setupUi(self, Plot_Definer):
+        """
+
+        Parameters
+        ----------
+        Plot_Definer :
+            
+
+        Returns
+        -------
+
+        """
         if not Plot_Definer.objectName():
             Plot_Definer.setObjectName(u"Plot_Definer")
         Plot_Definer.resize(470, 350)
@@ -155,6 +167,17 @@ class Ui_Plot_Definer(object):
     # setupUi
 
     def retranslateUi(self, Plot_Definer):
+        """
+
+        Parameters
+        ----------
+        Plot_Definer :
+            
+
+        Returns
+        -------
+
+        """
         Plot_Definer.setWindowTitle(QCoreApplication.translate("Plot_Definer", u"Form", None))
         self.label_5.setText(QCoreApplication.translate("Plot_Definer", u"x-axis:", None))
         self.checkBox_plot.setText(QCoreApplication.translate("Plot_Definer", u"plot?", None))

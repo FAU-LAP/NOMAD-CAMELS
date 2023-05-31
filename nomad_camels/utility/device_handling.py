@@ -1,6 +1,7 @@
 import sys
 import os
 import importlib
+import re
 
 from nomad_camels.utility import variables_handling
 from nomad_camels.bluesky_handling import helper_functions
@@ -11,6 +12,17 @@ local_packages = {}
 running_devices = {}
 
 def load_local_packages(tell_local=False):
+    """
+
+    Parameters
+    ----------
+    tell_local :
+         (Default value = False)
+
+    Returns
+    -------
+
+    """
     global local_packages
     if local_packages:
         return local_packages
@@ -19,18 +31,12 @@ def load_local_packages(tell_local=False):
         return local_packages
     sys.path.append(local_instr_path)
     for f in os.listdir(local_instr_path):
-        full_path = f'{local_instr_path}/{f}'
-        if os.path.isdir(full_path):
-            package_path = ''
-            for p in os.listdir(full_path):
-                if p.startswith('camels_driver_'):
-                    package_path = f'{p}.{f}'
-                    break
-            if not package_path:
-                package_path = f'{f}.{f}'
+        match = re.match(r'^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$', f)
+        if match:
+            package_path = f'{local_instr_path}/{f}'
             try:
-                sys.path.append(f'{local_instr_path}/{f}')
-                package = importlib.import_module(package_path)
+                sys.path.append(package_path)
+                package = importlib.import_module(match.group(2))
                 device = package.subclass()
                 if tell_local:
                     local_packages[f'local {device.name}'] = package
@@ -42,6 +48,17 @@ def load_local_packages(tell_local=False):
 
 
 def get_channel_from_string(channel):
+    """
+
+    Parameters
+    ----------
+    channel :
+        
+
+    Returns
+    -------
+
+    """
     dev, chan = channel.split('.')
     if dev not in running_devices:
         raise Exception(f'Device {dev} is needed, but not yet instantiated!')
@@ -49,6 +66,17 @@ def get_channel_from_string(channel):
     return getattr(device, chan)
 
 def get_channels_from_string_list(channel_list):
+    """
+
+    Parameters
+    ----------
+    channel_list :
+        
+
+    Returns
+    -------
+
+    """
     channels = []
     for channel in channel_list:
         chan = channel
@@ -62,6 +90,19 @@ def get_channels_from_string_list(channel_list):
 
 
 def connection_check(ioc_settings, settings):
+    """
+
+    Parameters
+    ----------
+    ioc_settings :
+        
+    settings :
+        
+
+    Returns
+    -------
+
+    """
     if 'connection' not in ioc_settings:
         return
     conn = ioc_settings['connection']
@@ -76,6 +117,17 @@ def connection_check(ioc_settings, settings):
         ioc_settings.clear()
 
 def start_devices_from_channel_list(channel_list):
+    """
+
+    Parameters
+    ----------
+    channel_list :
+        
+
+    Returns
+    -------
+
+    """
     dev_list = set()
     for channel in channel_list:
         dev_list.add(variables_handling.channels[channel].device)
@@ -84,6 +136,17 @@ def start_devices_from_channel_list(channel_list):
     return devs, dev_data
 
 def instantiate_devices(device_list):
+    """
+
+    Parameters
+    ----------
+    device_list :
+        
+
+    Returns
+    -------
+
+    """
     device_config = {}
     devices = {}
     for dev in device_list:
@@ -122,9 +185,9 @@ def instantiate_devices(device_list):
             ophyd_device.device_run_count += 1
         else:
             if not classname.endswith('_EPICS') and hasattr(device, 'ophyd_class_no_epics'):
-                ophyd_device = device.ophyd_class_no_epics(f'{ioc_name}:{dev}', name=dev, **extra_settings)
+                ophyd_device = device.ophyd_class_no_epics(f'{dev}:', name=dev, **extra_settings)
             else:
-                ophyd_device = device.ophyd_class(f'{ioc_name}:{dev}', name=dev, **extra_settings)
+                ophyd_device = device.ophyd_class(f'{dev}:', name=dev, **extra_settings)
             ophyd_device.device_run_count = 1
             running_devices[dev] = ophyd_device
         print(f"connecting {dev}")
@@ -142,6 +205,17 @@ def instantiate_devices(device_list):
     return devices, device_config
 
 def close_devices(device_list):
+    """
+
+    Parameters
+    ----------
+    device_list :
+        
+
+    Returns
+    -------
+
+    """
     for dev in device_list:
         if dev not in running_devices:
             raise Warning(f'Trying to close device {dev}, but it is not even running!')

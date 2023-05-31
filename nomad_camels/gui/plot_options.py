@@ -19,7 +19,19 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QGridLayout, QHeaderView
     QSizePolicy, QTableWidget, QTableWidgetItem, QWidget)
 
 class Ui_Plot_Options(object):
+    """ """
     def setupUi(self, Plot_Options):
+        """
+
+        Parameters
+        ----------
+        Plot_Options :
+            
+
+        Returns
+        -------
+
+        """
         if not Plot_Options.objectName():
             Plot_Options.setObjectName(u"Plot_Options")
         Plot_Options.resize(400, 283)
@@ -70,6 +82,17 @@ class Ui_Plot_Options(object):
     # setupUi
 
     def retranslateUi(self, Plot_Options):
+        """
+
+        Parameters
+        ----------
+        Plot_Options :
+            
+
+        Returns
+        -------
+
+        """
         Plot_Options.setWindowTitle(QCoreApplication.translate("Plot_Options", u"Form", None))
         self.checkBox_log_y2.setText(QCoreApplication.translate("Plot_Options", u"Y-Axis 2 logarithmic", None))
         self.checkBox_use_abs_x.setText(QCoreApplication.translate("Plot_Options", u"Use Absolute", None))

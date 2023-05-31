@@ -20,7 +20,19 @@ from PySide6.QtWidgets import (QApplication, QGridLayout, QHeaderView, QLabel,
     QTableWidget, QTableWidgetItem, QTextEdit, QWidget)
 
 class Ui_Form(object):
+    """ """
     def setupUi(self, Form):
+        """
+
+        Parameters
+        ----------
+        Form :
+            
+
+        Returns
+        -------
+
+        """
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(679, 481)
@@ -103,6 +115,17 @@ class Ui_Form(object):
     # setupUi
 
     def retranslateUi(self, Form):
+        """
+
+        Parameters
+        ----------
+        Form :
+            
+
+        Returns
+        -------
+
+        """
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.pushButton_update_drivers.setText(QCoreApplication.translate("Form", u"Update all installed drivers", None))
         self.pushButton_install_update_selected.setText(QCoreApplication.translate("Form", u"Install / Update Selected", None))

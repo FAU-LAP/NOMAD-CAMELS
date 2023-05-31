@@ -7,6 +7,7 @@ from nomad_camels.main_classes.device_class import Device_Config_Sub
 from nomad_camels.utility import variables_handling
 
 class Change_DeviceConf(Loop_Step):
+    """ """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Change Device Config'
@@ -17,14 +18,26 @@ class Change_DeviceConf(Loop_Step):
         self.settings_dict = step_info['settings_dict'] if 'settings_dict' in step_info else {}
 
     def update_used_devices(self):
+        """ """
         self.used_devices = [self.device]
 
     def get_protocol_string(self, n_tabs=1):
+        """
+
+        Parameters
+        ----------
+        n_tabs :
+             (Default value = 1)
+
+        Returns
+        -------
+
+        """
         tabs = '\t' * n_tabs
         dev_name = self.device
         device = variables_handling.devices[dev_name]
         dev_type = device.name
-        py_package = importlib.import_module(f'{dev_type}.{dev_type}')
+        py_package = importlib.import_module(f'nomad_camels_driver_{dev_type}.{dev_type}')
         dev_instance = py_package.subclass()
         dev_instance.config = self.config_dict
         config_dict = dev_instance.get_config()
@@ -34,12 +47,24 @@ class Change_DeviceConf(Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
+        """
+
+        Parameters
+        ----------
+        n_tabs :
+             (Default value = 0)
+
+        Returns
+        -------
+
+        """
         short_string = super().get_protocol_short_string(n_tabs)
         short_string = f'{short_string[:-1]} - {self.device}\n'
         return short_string
 
 
 class Change_DeviceConf_Config(Loop_Step_Config):
+    """ """
     def __init__(self, loop_step:Change_DeviceConf, parent=None):
         super().__init__(parent, loop_step)
         self.loop_step = loop_step
@@ -59,10 +84,13 @@ class Change_DeviceConf_Config(Loop_Step_Config):
         self.device_changed()
 
     def device_changed(self):
+        """ """
         dev_name = self.comboBox_device.currentText()
+        if not dev_name:
+            return
         device = variables_handling.devices[dev_name]
         dev_type = device.name
-        py_package = importlib.import_module(f'{dev_type}.{dev_type}')
+        py_package = importlib.import_module(f'nomad_camels_driver_{dev_type}.{dev_type}')
         if dev_name == self.loop_step.device:
             settings = self.loop_step.settings_dict
             config = self.loop_step.config_dict
@@ -80,6 +108,7 @@ class Change_DeviceConf_Config(Loop_Step_Config):
         self.config_widget = config_widge
 
     def update_step_config(self):
+        """ """
         super().update_step_config()
         self.loop_step.device = self.comboBox_device.currentText()
         self.loop_step.config_dict = self.config_widget.get_config()

@@ -1,5 +1,3 @@
-import serial.tools.list_ports
-
 from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox,\
     QFrame, QCheckBox, QTextEdit
 from PySide6.QtGui import QFont
@@ -9,18 +7,24 @@ from ophyd import EpicsSignalRO
 from ophyd import Device as OphydDevice
 from ophyd.signal import SignalRO
 
-from nomad_camels.bluesky_handling import EpicsFieldSignalRO
+from nomad_camels.bluesky_handling.EpicsFieldSignal import EpicsFieldSignalRO
 
 from nomad_camels.main_classes.measurement_channel import Measurement_Channel
 
 
 class Device:
     """General class for all devices
-
+    
     The subclasses of this class should all be called "subclass", they
     are imported via importlib in that way.
     Any derived device should also provide the name of its ophyd-class
     as a string self.ophyd_class_name.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
 
     Attributes
     ----------
@@ -117,36 +121,78 @@ class Device:
         self.controls = {}
 
     def get_necessary_devices(self):
+        """ """
         return []
 
     def get_controls(self):
+        """ """
         return self.controls
 
     def get_finalize_steps(self):
+        """ """
         return ''
 
     def get_passive_config(self):
+        """ """
         return self.passive_config
 
     def get_config(self):
         """returns self.config, should be overwritten for special
-        purposes (e.g. leaving out some keys of the dictionary)"""
+        purposes (e.g. leaving out some keys of the dictionary)
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         return self.config
 
     def get_settings(self):
         """returns self.settings, should be overwritten for special
-        purposes (e.g. leaving out some keys of the dictionary)"""
+        purposes (e.g. leaving out some keys of the dictionary)
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         return self.settings
 
     def get_ioc_settings(self):
         """returns self.ioc_settings, should be overwritten for special
-        purposes (e.g. leaving out some keys of the dictionary)"""
+        purposes (e.g. leaving out some keys of the dictionary)
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         return self.ioc_settings
 
     def get_additional_info(self):
+        """ """
         return self.additional_info
 
     def get_substitutions_string(self, ioc_name:str, communication:str):
+        """
+
+        Parameters
+        ----------
+        ioc_name:str :
+            
+        communication:str :
+            
+
+        Returns
+        -------
+
+        """
         substring = f'file "db/{self.name}.db" {{\n'
         substring += f'    {{SETUP = "{ioc_name}", device = "{self.custom_name}", COMM = "{communication}"}}\n'
         substring += '}'
@@ -154,7 +200,15 @@ class Device:
 
     def get_channels(self):
         """returns self.channels, should be overwritten for special
-        purposes (e.g. leaving out some keys of the dictionary)"""
+        purposes (e.g. leaving out some keys of the dictionary)
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         self.channels = {}
         outputs = get_outputs(self.ophyd_instance)
         for chan in get_channels(self.ophyd_instance):
@@ -166,13 +220,29 @@ class Device:
 
     def get_additional_string(self):
         """returns a string that will be added into the protocol after
-        connecting to the device."""
+        connecting to the device.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         return ''
 
     def get_special_steps(self):
         """returns a dictionary containing containing device-specific
         loopsteps. The key is the loopstep's name, the value a list
-        containing the Class of the step, and its config-widget."""
+        containing the Class of the step, and its config-widget.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         return {}
 
 def check_output(cls) -> bool:
@@ -184,7 +254,17 @@ def check_output(cls) -> bool:
 
 def get_outputs(dev:OphydDevice):
     """walks through the components of an ophyd-device and checks
-    whether they can be written"""
+    whether they can be written
+
+    Parameters
+    ----------
+    dev:OphydDevice :
+        
+
+    Returns
+    -------
+
+    """
     outputs = []
     for comp in dev.walk_components():
         cls = comp.item.cls
@@ -195,7 +275,17 @@ def get_outputs(dev:OphydDevice):
 
 def get_channels(dev:OphydDevice):
     """returns the components of an ophyd-device that are not listed in
-    the configuration"""
+    the configuration
+
+    Parameters
+    ----------
+    dev:OphydDevice :
+        
+
+    Returns
+    -------
+
+    """
     channels = []
     for comp in dev.walk_components():
         name = comp.item.attr
@@ -207,7 +297,15 @@ def get_channels(dev:OphydDevice):
 
 class Device_Config(QWidget):
     """Parent class for the configuration-widgets
-    (shown on the frontpanel) of the devices."""
+    (shown on the frontpanel) of the devices.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     ioc_change = Signal()
     name_change = Signal(str)
 
@@ -302,6 +400,7 @@ class Device_Config(QWidget):
         self.load_settings()
 
     def ioc_set_changed(self):
+        """ """
         loc = self.checkBox_use_local_ioc.isChecked()
         self.label_ioc_name.setEnabled(not loc)
         self.lineEdit_ioc_name.setEnabled(not loc)
@@ -311,7 +410,15 @@ class Device_Config(QWidget):
     def connection_type_changed(self):
         """Called when the comboBox_connection_type is changed. Switches
         to another connector-widget to specify things like the Address
-        of the device."""
+        of the device.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         comboText = self.comboBox_connection_type.currentText()
         ep = comboText.startswith('EPICS:')
         conn_old = self.connector
@@ -324,6 +431,8 @@ class Device_Config(QWidget):
             self.connector = USB_Serial_Config()
         elif self.comboBox_connection_type.currentText() == 'EPICS: LAN':
             self.connector = LAN_Config()
+        elif self.comboBox_connection_type.currentText() == 'EPICS':
+            self.connector = Connection_Config()
         elif self.comboBox_connection_type.currentText() == 'Local VISA':
             self.connector = Local_VISA()
         self.layout().replaceWidget(conn_old, self.connector)
@@ -333,6 +442,7 @@ class Device_Config(QWidget):
             self.ioc_change.emit()
 
     def get_ioc_settings(self):
+        """ """
         # if not self.no_ioc_connection:
         self.ioc_settings.update({'use_local_ioc': self.checkBox_use_local_ioc.isChecked(),
                                   'ioc_name': self.lineEdit_ioc_name.text()})
@@ -344,7 +454,15 @@ class Device_Config(QWidget):
         """Updates the settings_dict with the current settings.
         Overwrite this function for each device to specify the settings.
         It is recommended to still call the super() method for the
-        connection-settings."""
+        connection-settings.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         # if not self.no_ioc_connection:
         self.settings_dict.update({'connection': {'type': self.comboBox_connection_type.currentText()}})
         self.settings_dict['connection'].update(self.connector.get_settings())
@@ -354,7 +472,15 @@ class Device_Config(QWidget):
         """Loads the settings from the settings_dict. Depending on the
         connection-type, the correct widget is set and the settings
         entered. Overwrite this function (and call it) for the specific
-        settings."""
+        settings.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         self.connection_type_changed()
         no_choice = self.comboBox_connection_type.count() < 2
         self.label_connection.setHidden(no_choice)
@@ -365,15 +491,25 @@ class Device_Config(QWidget):
 
     def get_config(self):
         """Returns the config_dict of the device. Overwrite this
-        function for each device to specify the config."""
+        function for each device to specify the config.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
         return self.config_dict
 
     def get_info(self):
+        """ """
         self.additional_info['description'] = self.textEdit_desc.toPlainText()
         return self.additional_info
 
 
 class Device_Config_Sub(QWidget):
+    """ """
     def __init__(self, settings_dict=None, parent=None, config_dict=None):
         super().__init__()
         self.settings_dict = settings_dict or {}
@@ -383,15 +519,25 @@ class Device_Config_Sub(QWidget):
             self.layout().addWidget(QLabel('Nothing to configure!'))
 
     def get_config(self):
+        """ """
         return self.config_dict
 
     def get_settings(self):
+        """ """
         return self.settings_dict
 
 
 class Connection_Config(QWidget):
     """Base Class for the widgets used to specify the connection of a
-    given device."""
+    given device.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     connection_change = Signal()
 
     def __init__(self, parent=None):
@@ -406,14 +552,32 @@ class Connection_Config(QWidget):
 
     def load_settings(self, settings_dict):
         """Overwrite to load the connection-specific settings from
-        `settings_dict`."""
+        `settings_dict`.
+
+        Parameters
+        ----------
+        settings_dict :
+            
+
+        Returns
+        -------
+
+        """
         pass
 
 
 
 class Prologix_Config(Connection_Config):
     """Widget for the settings when the connection is via a Prologix
-    GPIB-Ethernet adapter."""
+    GPIB-Ethernet adapter.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = self.layout()
@@ -436,7 +600,17 @@ class Prologix_Config(Connection_Config):
 
     def load_settings(self, settings_dict):
         """Loads the settings_dict, specifically the IP-Address and the
-        GPIB-Address."""
+        GPIB-Address.
+
+        Parameters
+        ----------
+        settings_dict :
+            
+
+        Returns
+        -------
+
+        """
         if 'IP-Address' in settings_dict:
             self.lineEdit_ip.setText(settings_dict['IP-Address'])
         if 'GPIB-Address' in settings_dict:
@@ -444,6 +618,7 @@ class Prologix_Config(Connection_Config):
 
 
 class LAN_Config(Connection_Config):
+    """ """
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = self.layout()
@@ -460,13 +635,24 @@ class LAN_Config(Connection_Config):
 
     def load_settings(self, settings_dict):
         """Loads the settings_dict, specifically the IP-Address and the
-        GPIB-Address."""
+        GPIB-Address.
+
+        Parameters
+        ----------
+        settings_dict :
+            
+
+        Returns
+        -------
+
+        """
         if 'IP-Address' in settings_dict:
             self.lineEdit_ip.setText(settings_dict['IP-Address'])
 
 
 
 class USB_Serial_Config(Connection_Config):
+    """ """
     def __init__(self, parent=None):
         super().__init__(parent)
         label_port = QLabel('COM-Port:')
@@ -487,6 +673,7 @@ class USB_Serial_Config(Connection_Config):
         self.change_desc()
 
     def change_desc(self):
+        """ """
         port = self.comboBox_port.currentText()
         desc = self.ports[port]['description']
         hwid = self.ports[port]['hardware']
@@ -494,15 +681,28 @@ class USB_Serial_Config(Connection_Config):
         self.label_hwid.setText(hwid)
 
     def get_settings(self):
+        """ """
         return {'Port': self.comboBox_port.currentText()}
 
     def load_settings(self, settings_dict):
+        """
+
+        Parameters
+        ----------
+        settings_dict :
+            
+
+        Returns
+        -------
+
+        """
         if 'Port' in settings_dict and settings_dict['Port'] in self.ports.keys():
             self.comboBox_port.setCurrentText(settings_dict['Port'])
 
 
 
 class Local_VISA(Connection_Config):
+    """ """
     def __init__(self, parent=None):
         super().__init__(parent)
         label_port = QLabel('Resource-Name:')
@@ -547,12 +747,24 @@ class Local_VISA(Connection_Config):
     #     self.label_hwid.setText(hwid)
 
     def get_settings(self):
+        """ """
         return {'resource_name': self.comboBox_port.currentText(),
                 'baud_rate': int(self.lineEdit_baud.text()),
                 'read_termination': self.lineEdit_in_term.text().replace('\\r', '\r').replace('\\n', '\n'),
                 'write_termination': self.lineEdit_out_term.text().replace('\\r', '\r').replace('\\n', '\n')}
 
     def load_settings(self, settings_dict):
+        """
+
+        Parameters
+        ----------
+        settings_dict :
+            
+
+        Returns
+        -------
+
+        """
         if 'resource_name' in settings_dict and settings_dict['resource_name'] in self.ports:
             self.comboBox_port.setCurrentText(settings_dict['resource_name'])
         if 'baud_rate' in settings_dict:
@@ -565,6 +777,7 @@ class Local_VISA(Connection_Config):
 
 
 class Simple_Config(Device_Config):
+    """ """
     def __init__(self, parent=None, device_name='', data='', settings_dict=None,
                  config_dict=None, ioc_dict=None, additional_info=None,
                  comboBoxes=None, config_types=None, labels=None):
@@ -582,15 +795,18 @@ class Simple_Config(Device_Config):
         self.load_settings()
 
     def get_settings(self):
+        """ """
         self.sub_widget.get_settings()
         return super().get_settings()
 
     def get_config(self):
+        """ """
         self.sub_widget.get_config()
         return super().get_config()
 
 
 class Simple_Config_Sub(Device_Config_Sub):
+    """ """
     def __init__(self, settings_dict=None, parent=None, config_dict=None,
                  comboBoxes=None, config_types=None, labels=None):
         super().__init__(settings_dict=settings_dict, parent=parent,
@@ -740,6 +956,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 row += 1
 
     def get_settings(self):
+        """ """
         for name, widge in self.setting_checks.items():
             self.settings_dict[name] = widge.isChecked()
         for name, widge in self.setting_combos.items():
@@ -751,6 +968,7 @@ class Simple_Config_Sub(Device_Config_Sub):
         return super().get_settings()
 
     def get_config(self):
+        """ """
         for name, widge in self.config_checks.items():
             self.config_dict[name] = widge.isChecked()
         for name, widge in self.config_combos.items():
@@ -768,6 +986,8 @@ class Simple_Config_Sub(Device_Config_Sub):
 
 
 def get_ports():
+    """ """
+    import serial.tools.list_ports
     ports = serial.tools.list_ports.comports()
     port_dict = {}
     for port, desc, hwid in sorted(ports):

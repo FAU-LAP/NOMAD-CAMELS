@@ -13,6 +13,7 @@ from pkg_resources import resource_filename
 
 # Create a new form for the loading screen
 class LoadingScreen(QDialog):
+    """ """
     def __init__(self):
         super().__init__()
         self.setWindowTitle("NOMAD-CAMELS - Loading...")
@@ -38,9 +39,31 @@ class LoadingScreen(QDialog):
 
     # A function to update the progress bar
     def set_progress(self, value):
+        """
+
+        Parameters
+        ----------
+        value :
+            
+
+        Returns
+        -------
+
+        """
         self.progress_bar.setValue(value)
 
     def set_text(self, text):
+        """
+
+        Parameters
+        ----------
+        text :
+            
+
+        Returns
+        -------
+
+        """
         self.label.setText(text)
 
 
@@ -60,7 +83,7 @@ if __name__ == '__main__':
     package_file = f'{appdata_path}/startup_packages.txt'
     # package_file = f'{file_dir}/packages.txt'
     if os.path.isfile(package_file):
-        with open(package_file, 'r') as f:
+        with open(package_file, 'r', encoding='utf-8') as f:
             package_list = [x.rstrip() for x in f.readlines()]
     else:
         package_list = []
@@ -70,10 +93,12 @@ if __name__ == '__main__':
     # Create a thread to import the packages
 
     class ImportThread(QThread):
+        """ """
         update_progress = Signal(int)
         update_text = Signal(str)
 
         def run(self):
+            """ """
             # Import your packages here
             for i, package in enumerate(package_list):
                 self.update_progress.emit(int(i / n * 100))
@@ -96,7 +121,7 @@ if __name__ == '__main__':
     thread.start()
     while thread.isRunning():
         app.processEvents()
-    with open(package_file, 'w') as f:
+    with open(package_file, 'w', encoding='utf-8') as f:
         for i, (mod_name, mod) in enumerate(sys.modules.items()):
             if mod_name.startswith('_') or mod is None:
                 continue
