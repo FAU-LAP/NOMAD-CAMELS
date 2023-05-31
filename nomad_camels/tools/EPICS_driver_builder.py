@@ -1,5 +1,6 @@
 import sys
 import os
+import ast
 
 from PySide6.QtWidgets import QDialog, QLabel, QPushButton, QFileDialog, QMessageBox, QLineEdit, QGridLayout
 from PySide6.QtGui import QIcon, QCloseEvent
@@ -74,7 +75,11 @@ class EPICS_Driver_Builder(QDialog):
             return
 
         def check_builtin(pv):
-            if pv in __builtins__:
+            if pv in vars(__builtins__):
+                raise Exception(f'PV-name "{pv}" resembles python builtin function or variable!\nDefine another name!\nYou may change the PV-name later in the code, see the documentation for more information.')
+            try:
+                ast.parse(f'{pv} = None')
+            except (ValueError, SyntaxError, TypeError):
                 raise Exception(f'PV-name "{pv}" resembles python builtin function or variable!\nDefine another name!\nYou may change the PV-name later in the code, see the documentation for more information.')
         for name in inputs['PV-Name']:
             check_builtin(name)
