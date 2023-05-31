@@ -90,7 +90,7 @@ class Evaluator(CallbackBase):
         """
         self.namespace['time'] = doc['time']
         self.namespace.update(doc['data'])
-        self.update_namespace()
+        # self.update_namespace()
         self.last_update = doc['time']
 
     def update_namespace(self):
