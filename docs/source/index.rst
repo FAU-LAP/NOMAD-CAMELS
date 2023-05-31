@@ -45,12 +45,15 @@ If you have any questions or feedback you can reach the development team of CAME
    User's Guide <doc/users_guide.md>
    Programmer's Guide <doc/programmers_guide/programmers_guide.md>
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Instruments
 
+   Available Instruments <doc/instruments/instruments.md>
 
 .. toctree::
    :maxdepth: 2
    :caption: Code Reference
-
 
    nomad-camels <nomad_camels.rst>
    genindex
