@@ -9,7 +9,7 @@ If you do not have python installed on your machine or a clean python environmen
 
 
 ```{toctree}
-
+:caption: Contents
 
 installation_installer
 installation_custom_windows
