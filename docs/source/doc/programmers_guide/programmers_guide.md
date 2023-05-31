@@ -3,7 +3,7 @@
 ```{toctree}
 :maxdepth: 2
 
-CAMELS Installer <camels_installer.md>
-Instrument Drivers <instrument_drivers.md>
+Changing the CAMELS Installer <camels_installer.md>
+Create New Instrument Drivers <instrument_drivers.md>
 PyPI Upload <pypi_upload.md>
 ```

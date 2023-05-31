@@ -1,4 +1,4 @@
-# Instrument Drivers
+# Create New Instrument Drivers
 This page should help you create new instrument drivers that can be used in NOMAD-CAMELS.
 
 ## Local Instrument Drivers
