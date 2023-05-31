@@ -53,7 +53,6 @@ If you have any questions or feedback you can reach the development team of CAME
    nomad-camels <nomad_camels.rst>
    genindex
 
-
 .. toctree::
    :caption: Links
 
