@@ -179,6 +179,7 @@ class Instrument_Config(Ui_Form, QWidget):
             if self.active_instruments[instr]:
                 names += [x.custom_name for x in self.active_instruments[instr]]
                 names += [self.active_instruments[instr][0].ophyd_class_name]
+                names += ['numpy', 'np', 'StartTime', 'ElapsedTime']
         return names
 
 

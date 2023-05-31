@@ -49,15 +49,15 @@ def test_for_loop(qtbot, tmp_path):
     Parameters
     ----------
     qtbot :
-        
+
     tmp_path :
-        
+
 
     Returns
     -------
 
     """
-    ensure_demo_in_devices()
+    # ensure_demo_in_devices()
     from nomad_camels.loop_steps import for_while_loops
     conf = protocol_config.Protocol_Config()
     qtbot.addWidget(conf)
@@ -96,9 +96,9 @@ def test_gradient_descent(qtbot, tmp_path):
     Parameters
     ----------
     qtbot :
-        
+
     tmp_path :
-        
+
 
     Returns
     -------
@@ -140,9 +140,9 @@ def test_if_and_set_variables(qtbot, tmp_path):
     Parameters
     ----------
     qtbot :
-        
+
     tmp_path :
-        
+
 
     Returns
     -------
@@ -193,9 +193,9 @@ def test_read_channels(qtbot, tmp_path):
     Parameters
     ----------
     qtbot :
-        
+
     tmp_path :
-        
+
 
     Returns
     -------
@@ -232,9 +232,9 @@ def test_set_channels(qtbot, tmp_path):
     Parameters
     ----------
     qtbot :
-        
+
     tmp_path :
-        
+
 
     Returns
     -------
@@ -268,9 +268,9 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
     Parameters
     ----------
     qtbot :
-        
+
     tmp_path :
-        
+
 
     Returns
     -------
@@ -320,9 +320,9 @@ def test_trigger_and_read_channels(qtbot, tmp_path):
     Parameters
     ----------
     qtbot :
-        
+
     tmp_path :
-        
+
 
     Returns
     -------
@@ -373,9 +373,9 @@ def test_while_loop(qtbot, tmp_path):
     Parameters
     ----------
     qtbot :
-        
+
     tmp_path :
-        
+
 
     Returns
     -------
@@ -417,9 +417,9 @@ def test_wait(qtbot, tmp_path):
     Parameters
     ----------
     qtbot :
-        
+
     tmp_path :
-        
+
 
     Returns
     -------
@@ -454,9 +454,9 @@ def single_variable_if(qtbot, conf, wait_in=1, n_prompt=0, n_if=0, len_prot=0):
     Parameters
     ----------
     qtbot :
-        
+
     conf :
-        
+
     wait_in :
          (Default value = 1)
     n_prompt :
@@ -551,9 +551,9 @@ def select_step_by_name(conf, name):
     Parameters
     ----------
     conf :
-        
+
     name :
-        
+
 
     Returns
     -------
@@ -571,9 +571,9 @@ def get_row_from_channel_table(name, table):
     Parameters
     ----------
     name :
-        
+
     table :
-        
+
 
     Returns
     -------
@@ -608,7 +608,7 @@ def catalog_maker(tmp_path):
     Parameters
     ----------
     tmp_path :
-        
+
 
     Returns
     -------
@@ -623,9 +623,9 @@ def run_test_protocol(tmp_path, protocol):
     Parameters
     ----------
     tmp_path :
-        
+
     protocol :
-        
+
 
     Returns
     -------
@@ -646,9 +646,9 @@ def get_action_from_name(actions, name):
     Parameters
     ----------
     actions :
-        
+
     name :
-        
+
 
     Returns
     -------
