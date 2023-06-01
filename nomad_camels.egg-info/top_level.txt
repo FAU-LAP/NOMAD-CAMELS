@@ -1,3 +1,0 @@
-devices
-dist
-nomad_camels
