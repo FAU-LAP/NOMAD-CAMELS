@@ -347,7 +347,7 @@ def check_variable_name(name, raise_not_warn=False, parent=None):
     except:
         built_check = name in __builtins__
     if built_check:
-        text = f'The name {name} is a python builtin function! Please use another name.'
+        text = f'The name "{name}" is a python builtin function! Please use another name.'
         if raise_not_warn:
             raise Exception(text)
         WarnPopup(parent, text, 'Invalid Name')
@@ -355,7 +355,7 @@ def check_variable_name(name, raise_not_warn=False, parent=None):
     try:
         parse(f'{name} = None')
     except (ValueError, SyntaxError, TypeError):
-        text = f'The name {name} is not a valid name! Remove e.g. spaces or special characters.'
+        text = f'The name "{name}" is not a valid name! Remove e.g. spaces or special characters.'
         if raise_not_warn:
             raise Exception(text)
         WarnPopup(parent, text, 'Invalid Name')
