@@ -146,7 +146,7 @@ class Simple_Sweep(For_Loop_Step):
         """
         short_string = super().get_protocol_short_string(n_tabs)
         tabs = '\t' * n_tabs
-        short_string += f'{tabs}Sweep: {self.sweep_channel}, Read: {self.read_channels}\n'
+        short_string += f'{tabs}Sweep: {self.sweep_channel}, Read: {self.read_channels}\n, Values: {self.val_list}'
         return short_string
 
 

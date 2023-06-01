@@ -174,6 +174,9 @@ class Channels_Check_Table(QWidget):
     def update_info(self):
         """ """
         channel_list = self.info_dict['channel']
+        for k in self.info_dict:
+            if k != 'channel':
+                self.info_dict[k].clear()
         for i in range(self.tableWidget_channels.rowCount()):
             name = self.tableWidget_channels.item(i, 1).text()
             if name not in channel_list and self.tableWidget_channels.item(i, 0).checkState() != Qt.CheckState.Unchecked:
