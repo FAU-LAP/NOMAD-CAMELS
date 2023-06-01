@@ -72,6 +72,13 @@ class While_Loop_Step(Loop_Step_Container):
         super().update_time_weight()
         self.time_weight *= self.expected_interations + 5
 
+    def get_protocol_short_string(self, n_tabs=0):
+        tabs = '\t' * n_tabs
+        short_string = f'{tabs}while {self.condition}:\n'
+        for child in self.children:
+            short_string += child.get_protocol_short_string(n_tabs+1)
+        return short_string
+
 
 class While_Loop_Step_Config(Loop_Step_Config):
     """Configuration-Widget for the while-loop step."""
@@ -234,6 +241,23 @@ class For_Loop_Step(Loop_Step_Container):
         """ """
         super().update_time_weight()
         self.time_weight = (self.time_weight - 1) * self.n_iterations + 1
+
+    def get_protocol_short_string(self, n_tabs=0):
+        tabs = '\t' * n_tabs
+        if self.loop_type == 'Value-List':
+            vals = self.val_list
+        elif self.loop_type in ['start - stop', 'start - min - max - stop',
+                                'start - max - min - stop']:
+            vals = f'(start: {self.start_val}, stop: {self.stop_val}, '
+            if 'max' in self.loop_type:
+                vals += f'min: {self.min_val}, max: {self.max_val}, '
+            vals += f'points: {self.n_points})'
+        else:
+            vals = self.file_path
+        short_string = f'{tabs}for {vals}:\n'
+        for child in self.children:
+            short_string += child.get_protocol_short_string(n_tabs+1)
+        return short_string
 
 
 class For_Loop_Step_Config(Loop_Step_Config):

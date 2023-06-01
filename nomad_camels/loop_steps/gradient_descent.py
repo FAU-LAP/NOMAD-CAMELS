@@ -100,7 +100,10 @@ class Gradient_Descent_Step(Loop_Step):
         protocol_string += f'{tabs}yield from helper_functions.gradient_descent(eva.eval("{self.n_steps}"), eva.eval("{self.threshold}"), eva.eval("{self.start_val}"), {func_text}, eva, {setter}, channels, eva.eval("{self.min_step}"), eva.eval("{self.max_step}"), eva.eval("{self.min_val}"), eva.eval("{self.max_val}"), "{self.name}", eva.eval("{self.learning_rate}"), eva.eval("{self.momentum}"))\n'
         return protocol_string
 
-
+    def get_protocol_short_string(self, n_tabs=0):
+        short_string = super().get_protocol_short_string(n_tabs)[:-1]
+        short_string += f' - {self.extremum} of {self.opt_func} via {self.out_channel}\n'
+        return short_string
 
 
 class Gradient_Descent_Config(Loop_Step_Config):

@@ -578,7 +578,8 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         else:
             return
         item = self.variable_model.itemFromIndex(ind)
-        variables_handling.check_variable_name(item.text(), parent=self)
+        if ind.column() == 0:
+            variables_handling.check_variable_name(item.text(), parent=self)
         if ind.column() == 0 and item.text() in self.protocol.variables:
             new_name = self.get_unique_name(item.text())
             item.setText(new_name)
