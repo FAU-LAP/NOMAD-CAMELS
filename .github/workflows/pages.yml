@@ -36,9 +36,9 @@ jobs:
         with:
           ref: 'documentation'
           path: './docbranch'
-      - run: rmdir  /s /q .\docs\
+      - run: rmdir /s /q .\docs\
       - run: Xcopy /E /I .\docbranch\docs\ .\docs\
-      - run: rmdir  /s /q .\docbranch\
+      - run: rmdir /s /q .\docbranch\
       - uses: actions/setup-python@v4
         with:
           python-version: 3.11
