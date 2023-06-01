@@ -114,6 +114,16 @@ def broker_to_hdf5(runs, filename, additional_data=None):
                                 group[key].attrs[k] = v
 
 
+def export_run(filename, run_number=-1, plot_data=None, additional_data=None,
+               session_name='', export_to_csv=False, export_to_json=False,
+               catalog_name='CAMELS_CATALOG'):
+    """ TODO """
+    catalog = databroker.catalog[catalog_name]
+    run = catalog[run_number]
+    broker_to_NX([run], filename, plot_data, additional_data,
+                 session_name, export_to_csv, export_to_json)
+
+
 def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
                  session_name='', export_to_csv=False, export_to_json=False):
     """
