@@ -22,7 +22,7 @@ As CAMELS takes care of saving all available metadata, you can share understanda
 
 How to get started?
 ===================
-To get started with CAMELS first `install <doc/installation/installation.html>`_ it and learn how to use it with our "Getting started" `tutorial <doc/tutorials/quick_start.html>`_.
+To get started with CAMELS first `install <doc/installation/installation.md>`_ it and learn how to use it with our "Getting started" `tutorial <doc/tutorials/quick_start.md>`_.
 
 
 Project and Community
