@@ -19,7 +19,7 @@ class Path_Button_Edit(QWidget):
     path_changed = Signal(str)
 
     def __init__(self, parent=None, path='', default_dir='', file_extension='',
-                 select_directory=False):
+                 select_directory=False, save_file=False):
         super().__init__(parent)
         layout = QGridLayout()
         self.setLayout(layout)
@@ -36,6 +36,7 @@ class Path_Button_Edit(QWidget):
         self.line.textChanged.connect(self.changed)
         self.file_extension = file_extension
         self.select_directory = select_directory
+        self.save_file = save_file
 
     def get_path(self):
         """ """
@@ -64,6 +65,10 @@ class Path_Button_Edit(QWidget):
         if self.select_directory:
             path = QFileDialog.getExistingDirectory(self, 'Select Directory',
                                                     dir=direc)
+        elif self.save_file:
+            path = QFileDialog.getSaveFileName(self, 'Choose Filename',
+                                               dir=direc,
+                                               filter=self.file_extension)[0]
         else:
             path = QFileDialog.getOpenFileName(self, 'Select File',
                                                dir=direc,

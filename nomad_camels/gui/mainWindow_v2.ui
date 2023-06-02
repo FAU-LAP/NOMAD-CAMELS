@@ -542,6 +542,7 @@ Instruments</string>
      <string>Tools</string>
     </property>
     <addaction name="actionUpdate_CAMELS"/>
+    <addaction name="actionExport_from_databroker"/>
     <addaction name="actionVISA_device_builder"/>
     <addaction name="actionEPICS_driver_builder"/>
    </widget>
@@ -674,6 +675,11 @@ Instruments</string>
   <action name="actionEPICS_driver_builder">
    <property name="text">
     <string>EPICS-driver-builder</string>
+   </property>
+  </action>
+  <action name="actionExport_from_databroker">
+   <property name="text">
+    <string>Export from databroker</string>
    </property>
   </action>
  </widget>

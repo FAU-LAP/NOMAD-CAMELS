@@ -115,6 +115,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionLoad_Backup_Preset.triggered.connect(self.load_backup_preset)
         self.actionVISA_device_builder.triggered.connect(self.launch_device_builder)
         self.actionEPICS_driver_builder.triggered.connect(self.launch_epics_builder)
+        self.actionExport_from_databroker.triggered.connect(self.launch_data_exporter)
         self.actionReport_Bug.triggered.connect(lambda x: os.startfile(f'{camels_github}/issues'))
         self.actionDocumentation.triggered.connect(lambda x: os.startfile(camels_github_pages))
         self.actionUpdate_CAMELS.triggered.connect(lambda x: update_camels.question_message_box(self))
@@ -1198,6 +1199,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         from nomad_camels.tools import EPICS_driver_builder
         device_builder = EPICS_driver_builder.EPICS_Driver_Builder(self)
         device_builder.show()
+
+    def launch_data_exporter(self):
+        from nomad_camels.tools import databroker_exporter
+        exporter = databroker_exporter.Datbroker_Exporter(self)
+        exporter.show()
 
 
 

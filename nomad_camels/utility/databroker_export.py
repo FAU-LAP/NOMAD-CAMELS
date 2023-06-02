@@ -326,7 +326,7 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
                         group.attrs['auxiliary_signals'] = signals[1:]
                 group.attrs['axes'] = axes
                 group.attrs['NX_class'] = 'NXdata'
-    print('Successfully saved protocol data!')
+    # print('Successfully saved protocol data!')
 
 
 def get_param_dict(param_values):
