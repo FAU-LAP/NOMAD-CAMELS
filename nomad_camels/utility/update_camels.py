@@ -52,14 +52,16 @@ def question_message_box(parent=None):
     if update_dialog != QMessageBox.Yes:
         return
     update_camels()
-    restart_dialog = QMessageBox.question(parent, 'Restart NOMAD-CAMELS now?',
-                                          'Do you want to restart NOMAD-CAMELS now?',
-                                          QMessageBox.Yes | QMessageBox.No)
-    if restart_dialog == QMessageBox.Yes:
-        restart_camels()
+    restart_camels(parent)
 
-def restart_camels():
+def restart_camels(parent=None, ask_restart=True):
     """ """
+    if ask_restart:
+        restart_dialog = QMessageBox.question(parent, 'Restart NOMAD-CAMELS now?',
+                                              'Do you want to restart NOMAD-CAMELS now?',
+                                              QMessageBox.Yes | QMessageBox.No)
+        if restart_dialog != QMessageBox.Yes:
+            return
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 def check_up_to_date():

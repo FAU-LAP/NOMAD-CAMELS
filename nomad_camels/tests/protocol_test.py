@@ -615,7 +615,7 @@ def catalog_maker(tmp_path):
 
     """
     if 'test_catalog' not in list(databroker.catalog):
-        make_catalog.make_yml(tmp_path, 'test_catalog')
+        make_catalog.make_yml(tmp_path, 'test_catalog', True)
 
 def run_test_protocol(tmp_path, protocol):
     """
