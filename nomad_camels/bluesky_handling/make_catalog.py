@@ -5,7 +5,7 @@ import databroker
 
 from nomad_camels.utility import load_save_functions
 
-def make_yml(datapath, catalog_name='CAMELS_CATALOG', restart_fail=False):
+def make_yml(datapath, catalog_name='CAMELS_CATALOG'):
     """
 
     Parameters
@@ -14,9 +14,6 @@ def make_yml(datapath, catalog_name='CAMELS_CATALOG', restart_fail=False):
         
     catalog_name :
          (Default value = 'CAMELS_CATALOG')
-
-    restart_fail :
-        (Default value = False)
 
     Returns
     -------
@@ -42,9 +39,6 @@ def make_yml(datapath, catalog_name='CAMELS_CATALOG', restart_fail=False):
                 f'        - "{brokerpath.as_posix()}/*.msgpack"')
     if catalog_name not in list(databroker.catalog):
         databroker.catalog.force_reload()
-    if catalog_name not in list(databroker.catalog) and restart_fail:
-        from nomad_camels.utility import update_camels
-        update_camels.restart_camels(ask_restart=False)
 
 
 if __name__ == '__main__':
