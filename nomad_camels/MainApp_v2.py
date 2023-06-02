@@ -476,7 +476,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             if 'databroker_catalog_name' in self.preferences:
                 catalog_name = self.preferences['databroker_catalog_name']
             from nomad_camels.bluesky_handling import make_catalog
-            make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name)
+            make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name, ask_restart=True)
             databroker.catalog.force_reload()
             try:
                 self.databroker_catalog = databroker.catalog[catalog_name]
