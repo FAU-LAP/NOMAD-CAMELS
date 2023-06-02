@@ -119,6 +119,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - removed unneccessarry buttons if no instruments ([145a25e](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/145a25e48f1c2ceb550236c93ca4375b89bf8b6a) by Jo-Leh).
 - removed header text ([4c8be0f](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/4c8be0f3fc50f9e2eae2dc59d19a86b91635db01) by A-D-Fuchs).
 
+### Merged
+
+- Merge branch 'development' of https://github.com/FAU-LAP/NOMAD-CAMELS into development ([0dba25d](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/0dba25d2046cf691ee70aa36e60b9aeb6586fca1) by Jo-Leh).
+- Merge branch 'development' of https://github.com/FAU-LAP/CAMELS into development ([465305d](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/465305de8498e62de76fc9d3dc45755a367167f1) by A-D-Fuchs).
+- Merge branch 'documentation' into development ([65d9971](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/65d99718930bbb032b2b3606a3e156f167c5fbf3) by Jo-Leh).
+- Merge pull request #33 from FAU-LAP/testing ([b33a343](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/b33a34350436097a691d4b6cdf5a365800c6979c) by Jo-Leh).
+- Merge branch 'main' into development ([1afa99f](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/1afa99fdac67303b06915ec9872b11e016a2b9c4) by A-D-Fuchs).
+- Merge branch 'documentation' of https://github.com/FAU-LAP/NOMAD-CAMELS into documentation ([3d69992](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/3d699926a8cabaee4e0a29bb1544be7148a18c60) by A-D-Fuchs).
+- Merge branch 'documentation' of https://github.com/FAU-LAP/CAMELS into documentation ([9f8196e](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/9f8196e90badf194e53a1025f46686aae0aedc9d) by Jo-Leh).
+
 ## [v0.1.8](https://github.com/FAU-LAP/NOMAD-CAMELS/releases/tag/v0.1.8) - 2023-04-14
 
 <small>[Compare with first commit](https://github.com/FAU-LAP/NOMAD-CAMELS/compare/d9f5b9051c351031b9c3e5fad624e304aa3fc22f...v0.1.8)</small>
@@ -240,4 +250,39 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - removed ophyd_fit from LiveFit_Eva, since it was no longer needed ([e221f9a](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/e221f9ad87b85ad12c7c1ac446aed171d466de93) by Jo-Leh).
 - removed unneccessary images ([ccbcda1](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/ccbcda1b6b76210cdd4aa9e08c3c57ae3ebcfab7) by Jo-Leh).
 - removed junk word file ([f4d258d](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/f4d258d741344b3dfc43eedc4be0bedfb29c4385) by A-D-Fuchs).
+
+### Merged
+
+- Merge branch 'development' ([b874aed](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/b874aed420710cf478d388ea47b186b602f17465) by Jo-Leh).
+- Merge branch 'development' of https://github.com/FAU-LAP/CAMELS into development ([3f26ba0](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/3f26ba0b9cb1190c02fbe5b0450c26f72e4319ee) by Jo-Leh).
+- Merge pull request #27 from FAU-LAP/pyside_switch ([5c7217d](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/5c7217dadaf0e28335fa978f83c26520e1ddad1f) by Jo-Leh).
+- Merge pull request #26 from FAU-LAP/stage_control ([8f0f4ec](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/8f0f4ec38e9101f4c133ad8e442780dded5e38db) by Jo-Leh).
+- Merge pull request #25 from FAU-LAP/development ([ca4f4ff](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/ca4f4ff8f45eb01b1cec96c75162b933670585a0) by Jo-Leh).
+- Merge pull request #24 from FAU-LAP/new_device_management ([1eaef47](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/1eaef47933f32e6d5a4ae68c07f7b7207267b36e) by Jo-Leh).
+- Merge branch 'stage_control' of https://github.com/FAU-LAP/CAMELS into development ([04fa287](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/04fa287e496d64f842123fa8fe91a7fb67051ec9) by Jo-Leh).
+- Merge pull request #22 from FAU-LAP/new_device_management ([4985b93](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/4985b9380cfd4ca6ed331f07e23f51e9ea23ed0d) by Jo-Leh).
+- Merge pull request #21 from FAU-LAP/k237_dev ([88fc1b8](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/88fc1b883aa83f918ce89e3052560a817ebb444a) by Jo-Leh).
+- Merge branch 'main' into k237_dev ([f2d2321](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/f2d2321c24c0c9f8cb01a669497d3165bb93a933) by Jo-Leh).
+- Merge pull request #19 from FAU-LAP/development ([a345be4](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/a345be467d46f9498373ab744cb9eb1327917057) by A-D-Fuchs).
+- Merge pull request #18 from FAU-LAP/gap_burner_4_CAMELS ([e95139d](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/e95139de6dfa83540fb45e7afbcaad962835729f) by Jo-Leh).
+- Merge pull request #17 from FAU-LAP/gap_burner_4_CAMELS ([b6f3664](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/b6f366434c580b71ee7b3b794d750baec5f1b88e) by Jo-Leh).
+- Merge branch 'k237_dev' of https://github.com/FAU-LAP/CAMELS into k237_dev ([b780cf6](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/b780cf672e00508231a416f289a4c9186a5fd281) by A-D-Fuchs).
+- Merge branch 'gap_burner_4_CAMELS' of https://github.com/FAU-LAP/CAMELS into gap_burner_4_CAMELS ([eae1f49](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/eae1f498626dcc219a86ae879d090523ebdf4ab2) by Jo-Leh).
+- Merge pull request #16 from FAU-LAP/main ([eb1daa7](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/eb1daa7e22d0b12aae690b3b1162191303ae06e1) by Jo-Leh).
+- Merge pull request #14 from FAU-LAP/e5270b_dev ([b1da37a](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/b1da37a305acbfef70aa184c8aa8dc7475a2777a) by Jo-Leh).
+- Merge pull request #13 from FAU-LAP/development ([f74d81a](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/f74d81a2db933b025a3aae43162fc2b31425fc98) by Jo-Leh).
+- Merge pull request #12 from FAU-LAP/main ([55f91d8](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/55f91d884cd223c8734477c568e55ccc612355b8) by Jo-Leh).
+- Merge pull request #11 from FAU-LAP/threading_development ([bbd3aa1](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/bbd3aa125a8a98962486d1a5edc8202594834a5c) by Jo-Leh).
+- Merge pull request #9 from FAU-LAP/measurement_developement ([c2fe75f](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/c2fe75fae5b1fce56cd3cb94c9b56b1c98413348) by Jo-Leh).
+- Merge pull request #8 from FAU-LAP/main ([f5850af](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/f5850afb4c4e2cb382ce107143042bc2cd0a00f3) by Jo-Leh).
+- Merge branch 'main' of https://github.com/FAU-LAP/CAMELS ([dcd8340](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/dcd834018b70c3c8498c96a9b166711fe7a0bea2) by Jo-Leh).
+- Merge pull request #7 from FAU-LAP/device_developement ([f99d6ae](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/f99d6ae231f81a3695a9b7c88b3ee67864af0a11) by Jo-Leh).
+- Merge pull request #6 from FAU-LAP/main ([f6d269e](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/f6d269ed74c0461a669dde76ec94e932912eed55) by Jo-Leh).
+- Merge pull request #5 from FAU-LAP/measurement_developement ([af50825](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/af508252d1571bd580636a3660bce433276ec177) by Jo-Leh).
+- Merge pull request #4 from FAU-LAP/measurement_developement ([cbfedc1](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/cbfedc165b60a17cafba5c7f86830ac44749e636) by Jo-Leh).
+- Merge pull request #3 from FAU-LAP/measurement_developement ([a80fd00](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/a80fd003438bcd6cc1ec8fcecdb459e607e2474c) by Jo-Leh).
+
+### Documented
+
+- docs test ([629f0c3](https://github.com/FAU-LAP/NOMAD-CAMELS/commit/629f0c34bafb2e8fc7d4a39e3d30ad3341cc6321) by Jo-Leh).
 
