@@ -218,7 +218,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def close_plots(self):
         """ """
-        for plot in self.open_plots:
+        for plot in list(self.open_plots):
             plot.close()
     # --------------------------------------------------
     # Overwriting parent-methods
@@ -242,7 +242,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
-        for window in self.open_windows:
+        for window in list(self.open_windows):
             window.close()
         if self.open_windows:
             a0.ignore()
