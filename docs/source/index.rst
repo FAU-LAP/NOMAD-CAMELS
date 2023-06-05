@@ -66,6 +66,7 @@ If you have any questions or feedback you can reach the development team of CAME
    Find us on GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS>
    NOMAD Website <https://nomad-lab.eu/nomad-lab/>
    FAIRmat Website <https://www.fairmat-nfdi.eu/fairmat>
+   FAU/LAP Website <https://www.lap.physik.nat.fau.eu/>
 
 .. toctree::
    :caption: Imprint
