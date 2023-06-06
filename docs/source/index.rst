@@ -71,8 +71,9 @@ If you have any questions or feedback you can reach the development team of CAME
    FAU/LAP Website <https://www.lap.physik.nat.fau.eu/>
 
 .. toctree::
-   :caption: Imprint
+   :caption: Imprint/Contact
    :maxdepth: 1
 
-   Imprint/Contact <https://www.lap.physik.nat.fau.de/impressum/>
+   Imprint <https://www.lap.physik.nat.fau.de/impressum/>
+   Contact <contact.md>
    Data Privacy <data_privacy.md>
