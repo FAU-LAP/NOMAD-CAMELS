@@ -104,12 +104,7 @@ class Device:
         if non_epics_class:
             self.ophyd_class_no_epics = non_epics_class
         self.ophyd_instance = ophyd_device(name='test')
-        outputs = get_outputs(self.ophyd_instance)
-        for chan in get_channels(self.ophyd_instance):
-            is_out = chan in outputs
-            channel = Measurement_Channel(name=f'{self.custom_name}.{chan}',
-                                          output=is_out,device=self.custom_name)
-            self.channels.update({f'{self.custom_name}_{chan}': channel})
+        self.get_channels()
         for comp in self.ophyd_instance.walk_components():
             name = comp.item.attr
             cls = comp.item.cls
@@ -211,10 +206,13 @@ class Device:
         """
         self.channels = {}
         outputs = get_outputs(self.ophyd_instance)
-        for chan in get_channels(self.ophyd_instance):
+        for chan_info in get_channels(self.ophyd_instance,
+                                      include_metadata=True):
+            chan, metadata = chan_info
             is_out = chan in outputs
             channel = Measurement_Channel(name=f'{self.custom_name}.{chan}',
-                                          output=is_out,device=self.custom_name)
+                                          output=is_out,device=self.custom_name,
+                                          metadata=metadata)
             self.channels.update({f'{self.custom_name}_{chan}': channel})
         return self.channels
 
@@ -273,14 +271,15 @@ def get_outputs(dev:OphydDevice):
             outputs.append(name)
     return outputs
 
-def get_channels(dev:OphydDevice):
+def get_channels(dev:OphydDevice, include_metadata=False):
     """returns the components of an ophyd-device that are not listed in
     the configuration
 
     Parameters
     ----------
     dev:OphydDevice :
-        
+
+    include_metadata: bool
 
     Returns
     -------
@@ -290,7 +289,14 @@ def get_channels(dev:OphydDevice):
     for comp in dev.walk_components():
         name = comp.item.attr
         if name not in dev.configuration_attrs:
-            channels.append(name)
+            if include_metadata:
+                if hasattr(comp.item, 'kwargs') and 'metadata' in comp.item.kwargs:
+                    metadata = comp.item.kwargs['metadata']
+                else:
+                    metadata = {}
+                channels.append((name, metadata))
+            else:
+                channels.append(name)
     return channels
 
 
