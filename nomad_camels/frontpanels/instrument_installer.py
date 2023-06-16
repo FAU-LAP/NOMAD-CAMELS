@@ -49,7 +49,7 @@ def getInstalledDevices(force=False, return_packages=False):
         camels_driver_regex = r'^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$'
         if re.match(camels_driver_regex, name):
             installed_instr[name[20:].replace('-', '_')] = version
-    packages = device_handling.load_local_packages()
+    packages = dict(device_handling.load_local_packages())
     for package in packages:
         installed_instr[package] = 'local'
     for instr in installed_instr:
