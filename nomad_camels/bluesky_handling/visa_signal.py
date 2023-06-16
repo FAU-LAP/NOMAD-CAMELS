@@ -138,19 +138,19 @@ class VISA_Signal_Read(SignalRO):
         else:
             val = self.visa_instrument.query(self.query_text)
         self.visa_instrument.currently_reading = False
-        try:
-            val = float(val)
-        except:
-            if self.match_return:
-                try:
-                    match = re.search(r".*?([-+eE\d.]+).*", val)
-                    gr = match.group(1)
-                    val = float(gr)
-                except:
-                    pass
         if self.process_read_function:
             val = self.process_read_function(val)
-
+        else:
+            try:
+                val = float(val)
+            except:
+                if self.match_return:
+                    try:
+                        match = re.search(r".*?([-+eE\d.]+).*", val)
+                        gr = match.group(1)
+                        val = float(gr)
+                    except:
+                        pass
         self._readback = val
         return super().get()
 
