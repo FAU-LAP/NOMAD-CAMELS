@@ -510,6 +510,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             load_save_functions.save_preferences(self.preferences)
             variables_handling.device_driver_path = self.preferences['device_driver_path']
             variables_handling.meas_files_path = self.preferences['meas_files_path']
+            variables_handling.preferences = self.preferences
         self.change_theme()
 
     def save_state(self, fromload=False):

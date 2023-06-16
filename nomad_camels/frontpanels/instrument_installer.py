@@ -22,6 +22,9 @@ else:
 
 all_instr = {}
 installed_instr = {}
+last_repo = ''
+last_branch = ''
+last_dir = ''
 
 
 def getInstalledDevices(force=False, return_packages=False):
@@ -71,14 +74,15 @@ def getAllDevices():
     -------
 
     """
-    global all_instr
-    if all_instr:
+    global all_instr, last_repo, last_branch, last_dir
+    repo = variables_handling.preferences['driver_repository']
+    branch = variables_handling.preferences['repo_branch']
+    directory = variables_handling.preferences['repo_directory']
+    if all_instr and last_repo == repo and branch == last_branch and directory == last_dir:
         return all_instr
+    last_repo, last_branch, last_dir = repo, branch, directory
     all_instr = {}
     try:
-        repo = variables_handling.preferences['driver_repository']
-        branch = variables_handling.preferences['repo_branch']
-        directory = variables_handling.preferences['repo_directory']
         repo_part = repo.split('.com/')[1].split('.git')[0]
         url = f'https://raw.githubusercontent.com/{repo_part}/{branch}/{directory}/driver_list.txt'
         devices_str = requests.get(url).text
