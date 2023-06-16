@@ -75,9 +75,12 @@ def getAllDevices():
 
     """
     global all_instr, last_repo, last_branch, last_dir
-    repo = variables_handling.preferences['driver_repository']
-    branch = variables_handling.preferences['repo_branch']
-    directory = variables_handling.preferences['repo_directory']
+    try:
+        repo = variables_handling.preferences['driver_repository']
+        branch = variables_handling.preferences['repo_branch']
+        directory = variables_handling.preferences['repo_directory']
+    except:
+        repo, branch, directory = '', '', ''
     if all_instr and last_repo == repo and branch == last_branch and directory == last_dir:
         return all_instr
     last_repo, last_branch, last_dir = repo, branch, directory
