@@ -65,12 +65,12 @@ class Channels_Check_Table(QWidget):
         menu = QMenu()
         # putting the returned actions somewhere is necessary, otherwise
         # there will be none inside the single menus
-        (channel_menu, variable_menu, operator_menu, function_menu), _ = \
+        (channel_menu, variable_menu, function_menu), _ = \
             variables_handling.get_menus(self.insert_variable)
         menu.addMenu(variable_menu)
         menu.addMenu(channel_menu)
         menu.addMenu(function_menu)
-        menu.addMenu(operator_menu)
+        # menu.addMenu(operator_menu)
         menu.addSeparator()
         (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ = \
             variables_handling.get_menus(self.append_variable, 'Append')
