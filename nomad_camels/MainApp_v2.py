@@ -543,8 +543,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         load_save_functions.save_preset(file, {'_current_preset': [preset_name],
                                                'active_instruments': {},
                                                'protocols_dict': OrderedDict()})
-        self.comboBox_preset.addItem(preset_name)
-        self.comboBox_preset.setCurrentText(preset_name)
         self._current_preset[0] = preset_name
 
 

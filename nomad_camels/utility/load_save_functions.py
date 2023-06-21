@@ -38,7 +38,6 @@ standard_pref = {'autosave': True,
                  'py_files_path': f'{appdata_path}/python_files'.replace('\\','/'),
                  'meas_files_path': os.path.expanduser('~/NOMAD_CAMELS_data').replace('\\','/'),
                  'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/'),
-                 # 'autostart_ioc': False,
                  'databroker_catalog_name': 'CAMELS_CATALOG',
                  'driver_repository': 'https://github.com/FAU-LAP/CAMELS_drivers',
                  'repo_branch': 'main',
@@ -405,8 +404,6 @@ def load_devices_dict(string_dict, devices_dict):
             dev.requirements = dev_data['requirements']
         if 'settings' in dev_data:
             dev.settings = dev_data['settings'] or dev.settings
-        if 'ioc_settings' in dev_data:
-            dev.ioc_settings = dev_data['ioc_settings']
         if 'config' in dev_data:
             dev.config = dev_data['config'] or dev.config
         if 'custom_name' in dev_data:

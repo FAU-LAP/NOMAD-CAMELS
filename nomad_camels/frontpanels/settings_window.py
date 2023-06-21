@@ -78,10 +78,6 @@ class Settings_Window(Ui_settings_window, QDialog):
         self.pathButton_py_files.select_directory = True
         self.pathButton_meas_files.select_directory = True
         self.pathButton_device_path.select_directory = True
-        # if 'autostart_ioc' in settings:
-        #     self.checkBox_autostart_ioc.setChecked(settings['autostart_ioc'])
-        # else:
-        #     self.checkBox_autostart_ioc.setChecked(standard_pref['autostart_ioc'])
         if 'databroker_catalog_name' in settings:
             self.lineEdit_catalog_name.setText(settings['databroker_catalog_name'])
         else:
@@ -141,7 +137,6 @@ class Settings_Window(Ui_settings_window, QDialog):
                 'py_files_path': self.pathButton_py_files.get_path(),
                 'meas_files_path': self.pathButton_meas_files.get_path(),
                 'device_driver_path': self.pathButton_device_path.get_path(),
-                # 'autostart_ioc': self.checkBox_autostart_ioc.isChecked(),
                 'databroker_catalog_name': self.lineEdit_catalog_name.text(),
                 'driver_repository': self.lineEdit_repo.text(),
                 'repo_branch': self.lineEdit_branch.text(),

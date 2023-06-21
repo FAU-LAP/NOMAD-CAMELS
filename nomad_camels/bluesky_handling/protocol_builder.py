@@ -19,7 +19,7 @@ standard_string += 'import databroker\n'
 # standard_string += 'from bluesky_widgets.qt.threading import wait_for_workers_to_quit\n'
 standard_string += 'from PySide6.QtWidgets import QApplication, QMessageBox\n'
 standard_string += 'from PySide6.QtCore import QCoreApplication, QThread\n'
-standard_string += 'from epics import caput\n'
+# standard_string += 'from epics import caput\n'
 standard_string += 'import datetime\n'
 standard_string += 'from nomad_camels.main_classes import plot_widget, list_plot, plot_2D\n'
 standard_string += 'from nomad_camels.utility.databroker_export import broker_to_hdf5, broker_to_dict, broker_to_NX\n'
@@ -131,7 +131,6 @@ def build_protocol(protocol, file_path,
         classname = device.ophyd_class_name
         config = copy.deepcopy(device.get_config())
         settings = copy.deepcopy(device.get_settings())
-        ioc_settings = copy.deepcopy(device.get_ioc_settings())
         additional_info = copy.deepcopy(device.get_additional_info())
         if 'connection' in settings:
             settings.pop('connection')
@@ -145,20 +144,11 @@ def build_protocol(protocol, file_path,
                 non_strings.append(key)
         for s in non_strings:
             settings.pop(s)
-        if not ioc_settings or ioc_settings['use_local_ioc']:
-            ioc_name = variables_handling.preset
-        else:
-            ioc_name = ioc_settings['ioc_name']
-        device_handling.connection_check(ioc_settings, settings)
-        if not ioc_settings and classname.endswith('_EPICS'):
-            classname = classname[:-6]
         additional_info['device_class_name'] = classname
         if 'description' in additional_info:
             desc = additional_info['description'].replace('\n', '\n\t\t')
             devices_string += f'\t\t"""{dev} ({classname}):\n\t\t{desc}"""\n'
         devices_string += f'\t\tsettings = {settings}\n'
-        if ioc_settings:
-            devices_string += f'\t\tioc_settings = {ioc_settings}\n'
         devices_string += f'\t\tadditional_info = {additional_info}\n'
         devices_string += f'\t\t{dev} = {classname}("{dev}:", name="{dev}", '
         for key, value in extra_settings.items():
@@ -171,8 +161,6 @@ def build_protocol(protocol, file_path,
         devices_string += f'\t\tdevice_config["{dev}"] = {{}}\n'
         devices_string += f'\t\tdevice_config["{dev}"].update(helper_functions.simplify_configs_dict(configs))\n'
         devices_string += f'\t\tdevice_config["{dev}"].update(settings)\n'
-        if ioc_settings:
-            devices_string += f'\t\tdevice_config["{dev}"]["ioc_settings"] = ioc_settings\n'
         devices_string += f'\t\tdevice_config["{dev}"].update(additional_info)\n'
         devices_string += f'\t\tdevs.update({{"{dev}": {dev}}})\n'
         device_import_string += f'from nomad_camels_driver_{device.name}.{device.name}_ophyd import {classname}\n'
@@ -181,7 +169,7 @@ def build_protocol(protocol, file_path,
     devices_string += '\t\tprint("devices connected")\n'
     devices_string += f'\t\tmd = {{"devices": device_config, "description": "{protocol.description}"}}\n'
     # devices_string += '\t\tmd.update({"program": "CAMELS", "version": "0.1"})\n'
-    devices_string += '\t\tmd.update({"versions": {"NOMAD-CAMELS": "0.1", "EPICS": "7.0.6.2", "bluesky": bluesky.__version__, "ophyd": ophyd.__version__}})\n'
+    # devices_string += '\t\tmd.update({"versions": {"NOMAD-CAMELS": "0.1", "EPICS": "7.0.6.2", "bluesky": bluesky.__version__, "ophyd": ophyd.__version__}})\n'
     if protocol.use_nexus:
         md_dict = {}
         for i, name in enumerate(protocol.metadata['Name']):
