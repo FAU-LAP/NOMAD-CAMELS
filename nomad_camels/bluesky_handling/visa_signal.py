@@ -42,7 +42,7 @@ class VISA_Signal(Signal):
         parse_return_type : str, class or None
             (Default = None)
             If `parse` is a string or None, the returned string (either from the instrument or from `parse`) will be converted to the given class.
-            Supported strings for class names are: 'str', 'float', 'int'.
+            Supported strings for class names are: 'str', 'float', 'int', 'bool'.
             If `parse_return_type` and `parse` is not None, the value will become the readback for this Signal. Otherwise the value given with put becomes the readback.
         """
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent,
@@ -57,6 +57,8 @@ class VISA_Signal(Signal):
             self.parse_return_type = float
         elif parse_return_type == 'int':
             self.parse_return_type = int
+        elif parse_return_type == 'bool':
+            self.parse_return_type = bool
         else:
             self.parse_return_type = parse_return_type
 
@@ -155,11 +157,10 @@ class VISA_Signal_RO(SignalRO):
             If function, it will take the returned string and the new value will be the value returned from this function.
             If `parse` is not None, a query to the instrument will be executed, instead of a simple write. If it is used to just clear the buffer, it could be an empty string.
 
-        parse_return_type : str, class or None
+        parse_return_type : str, class
             (Default = 'float')
             If `parse` is a string or None, the returned string (either from the instrument or from `parse`) will be converted to the given class.
-            Supported strings for class names are: 'str', 'float', 'int'.
-            If `parse_return_type` and `parse` is not None, the value will become the readback for this Signal. Otherwise the value given with put becomes the readback.
+            Supported strings for class names are: 'str', 'float', 'int', 'bool'.
         """
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
         self.visa_instrument = None
@@ -171,6 +172,8 @@ class VISA_Signal_RO(SignalRO):
             self.parse_return_type = float
         elif parse_return_type == 'int':
             self.parse_return_type = int
+        elif parse_return_type == 'bool':
+            self.parse_return_type = bool
         else:
             self.parse_return_type = parse_return_type
 
