@@ -16,26 +16,15 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
-    QHeaderView, QLabel, QPushButton, QSizePolicy,
-    QSpacerItem, QTableWidget, QTableWidgetItem, QWidget)
+    QHeaderView, QLabel, QLineEdit, QPushButton,
+    QSizePolicy, QSpacerItem, QTableWidget, QTableWidgetItem,
+    QWidget)
 
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.ui_widgets.variable_tool_tip_box import Variable_Box
 
 class Ui_for_loop_config(object):
-    """ """
     def setupUi(self, for_loop_config):
-        """
-
-        Parameters
-        ----------
-        for_loop_config :
-            
-
-        Returns
-        -------
-
-        """
         if not for_loop_config.objectName():
             for_loop_config.setObjectName(u"for_loop_config")
         for_loop_config.resize(380, 476)
@@ -103,8 +92,9 @@ class Ui_for_loop_config(object):
 
         self.gridLayout_2.addWidget(self.lineEdit_max, 6, 1, 1, 1)
 
-        self.lineEdit_point_distance = Variable_Box(self.sweep_widget)
+        self.lineEdit_point_distance = QLineEdit(self.sweep_widget)
         self.lineEdit_point_distance.setObjectName(u"lineEdit_point_distance")
+        self.lineEdit_point_distance.setEnabled(False)
 
         self.gridLayout_2.addWidget(self.lineEdit_point_distance, 9, 1, 1, 1)
 
@@ -212,17 +202,6 @@ class Ui_for_loop_config(object):
     # setupUi
 
     def retranslateUi(self, for_loop_config):
-        """
-
-        Parameters
-        ----------
-        for_loop_config :
-            
-
-        Returns
-        -------
-
-        """
         for_loop_config.setWindowTitle(QCoreApplication.translate("for_loop_config", u"Form", None))
         self.pushButton_add_point.setText(QCoreApplication.translate("for_loop_config", u"+", None))
         self.label_9.setText(QCoreApplication.translate("for_loop_config", u"Points:", None))

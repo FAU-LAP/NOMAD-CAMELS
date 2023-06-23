@@ -168,7 +168,11 @@
        <widget class="Variable_Box" name="lineEdit_max"/>
       </item>
       <item row="9" column="1">
-       <widget class="Variable_Box" name="lineEdit_point_distance"/>
+       <widget class="QLineEdit" name="lineEdit_point_distance">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item row="3" column="1">
        <widget class="QLabel" name="label_3">

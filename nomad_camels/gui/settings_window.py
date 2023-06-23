@@ -23,29 +23,12 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QComboB
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 
 class Ui_settings_window(object):
-    """ """
     def setupUi(self, settings_window):
-        """
-
-        Parameters
-        ----------
-        settings_window :
-            
-
-        Returns
-        -------
-
-        """
         if not settings_window.objectName():
             settings_window.setObjectName(u"settings_window")
         settings_window.resize(549, 505)
         self.gridLayout = QGridLayout(settings_window)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.checkBox_autosave = QCheckBox(settings_window)
-        self.checkBox_autosave.setObjectName(u"checkBox_autosave")
-
-        self.gridLayout.addWidget(self.checkBox_autosave, 1, 1, 1, 3)
-
         self.line_6 = QFrame(settings_window)
         self.line_6.setObjectName(u"line_6")
         self.line_6.setFrameShadow(QFrame.Raised)
@@ -261,6 +244,21 @@ class Ui_settings_window(object):
 
         self.gridLayout.addWidget(self.pathButton_meas_files, 17, 2, 1, 2)
 
+        self.checkBox_autosave = QCheckBox(settings_window)
+        self.checkBox_autosave.setObjectName(u"checkBox_autosave")
+
+        self.gridLayout.addWidget(self.checkBox_autosave, 1, 1, 1, 1)
+
+        self.checkBox_autosave_run = QCheckBox(settings_window)
+        self.checkBox_autosave_run.setObjectName(u"checkBox_autosave_run")
+
+        self.gridLayout.addWidget(self.checkBox_autosave_run, 1, 2, 1, 1)
+
+        self.checkBox_backup_before_run = QCheckBox(settings_window)
+        self.checkBox_backup_before_run.setObjectName(u"checkBox_backup_before_run")
+
+        self.gridLayout.addWidget(self.checkBox_backup_before_run, 1, 3, 1, 1)
+
         self.checkBox_auto_check_updates = QCheckBox(settings_window)
         self.checkBox_auto_check_updates.setObjectName(u"checkBox_auto_check_updates")
 
@@ -275,19 +273,7 @@ class Ui_settings_window(object):
     # setupUi
 
     def retranslateUi(self, settings_window):
-        """
-
-        Parameters
-        ----------
-        settings_window :
-            
-
-        Returns
-        -------
-
-        """
         settings_window.setWindowTitle(QCoreApplication.translate("settings_window", u"Dialog", None))
-        self.checkBox_autosave.setText(QCoreApplication.translate("settings_window", u"Autosave on closing", None))
         self.checkBox_play_camel_on_error.setText(QCoreApplication.translate("settings_window", u"Play Camel-Roar on error", None))
         self.radioButton_mixed.setText(QCoreApplication.translate("settings_window", u"Scientific from 1e...", None))
         self.label_14.setText(QCoreApplication.translate("settings_window", u"Branch / Directory", None))
@@ -308,6 +294,9 @@ class Ui_settings_window(object):
         self.label.setText(QCoreApplication.translate("settings_window", u"Saving", None))
         self.label_4.setText(QCoreApplication.translate("settings_window", u"# decimals:", None))
         self.label_10.setText(QCoreApplication.translate("settings_window", u"Databroker catalog-name", None))
-        self.checkBox_auto_check_updates.setText(QCoreApplication.translate("settings_window", u"Automatically search for updates", None))
+        self.checkBox_autosave.setText(QCoreApplication.translate("settings_window", u"autosave on closing", None))
+        self.checkBox_autosave_run.setText(QCoreApplication.translate("settings_window", u"autosave before run", None))
+        self.checkBox_backup_before_run.setText(QCoreApplication.translate("settings_window", u"backup before run", None))
+        self.checkBox_auto_check_updates.setText(QCoreApplication.translate("settings_window", u"automatically search for updates", None))
     # retranslateUi
 
