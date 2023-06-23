@@ -30,6 +30,8 @@ save_dict_skip = [QWidget, QSplitter, QLabel, QPushButton, QMenu, QMenuBar,
 
 
 standard_pref = {'autosave': True,
+                 'autosave_run': True,
+                 'backup_before_run': True,
                  'dark_mode': False,
                  'graphic_theme': 'Fusion',
                  'n_decimals': 3,
@@ -71,7 +73,7 @@ def get_preset_list():
         makedirs(preset_path)
         return get_preset_list()
 
-def autosave_preset(preset:str, preset_data):
+def autosave_preset(preset:str, preset_data, do_backup=True):
     """Saves the given preset and makes a backup of the former one in
     the backup-folder.
 
@@ -80,6 +82,8 @@ def autosave_preset(preset:str, preset_data):
     preset:str :
         
     preset_data :
+
+    do_backup :
         
 
     Returns
@@ -92,7 +96,8 @@ def autosave_preset(preset:str, preset_data):
         makedirs(preset_path)
     with open(f'{preset_path}{preset_file}', 'w', encoding='utf-8') as json_file:
         json.dump(preset_data, json_file, indent=2)
-    make_backup(preset_file)
+    if do_backup:
+        make_backup(preset_file)
 
 def save_preset(path:str, preset_data:dict):
     """Saves the given preset_data under the specified path.

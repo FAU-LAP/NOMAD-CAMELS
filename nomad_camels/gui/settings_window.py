@@ -286,7 +286,7 @@ class Ui_settings_window(object):
         self.label_11.setText(QCoreApplication.translate("settings_window", u"Sounds", None))
         self.label_7.setText(QCoreApplication.translate("settings_window", u"Measurement-Data Path", None))
         self.lineEdit_branch.setPlaceholderText(QCoreApplication.translate("settings_window", u"branch", None))
-        self.label_3.setText(QCoreApplication.translate("settings_window", u"Number-Formatting", None))
+        self.label_3.setText(QCoreApplication.translate("settings_window", u"Number-Formatting (only visual)", None))
         self.label_5.setText(QCoreApplication.translate("settings_window", u"Files", None))
         self.label_12.setText(QCoreApplication.translate("settings_window", u"Driver Repository URL", None))
         self.label_8.setText(QCoreApplication.translate("settings_window", u"Local drivers path", None))

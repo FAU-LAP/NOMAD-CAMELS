@@ -208,7 +208,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Number-Formatting</string>
+      <string>Number-Formatting (only visual)</string>
      </property>
     </widget>
    </item>

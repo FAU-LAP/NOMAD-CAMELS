@@ -513,7 +513,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             variables_handling.preferences = self.preferences
         self.change_theme()
 
-    def save_state(self, fromload=False):
+    def save_state(self, fromload=False, do_backup=True):
         """Saves the current states of both presets.
 
         Parameters
@@ -521,12 +521,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         fromload :
              (Default value = False)
 
+        do_backup :
+            (Default value = True)
+
         Returns
         -------
 
         """
         self.make_save_dict()
-        load_save_functions.autosave_preset(self._current_preset[0], self.__save_dict__)
+        load_save_functions.autosave_preset(self._current_preset[0],
+                                            self.__save_dict__,
+                                            do_backup)
         if fromload:
             return
         self.save_user_data()
@@ -1020,6 +1025,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         """
         from nomad_camels.utility import device_handling
+        if 'autosave_run' in self.preferences and self.preferences['autosave_run']:
+            self.save_state(do_backup=self.preferences['backup_before_run'])
         self.button_area_meas.disable_run_buttons()
         try:
             self.build_protocol(protocol_name, ask_file=False)
