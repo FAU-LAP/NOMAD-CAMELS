@@ -18,6 +18,7 @@ import ophyd
 from nomad_camels.main_classes import protocol_class, device_class
 from nomad_camels.utility.load_save_helper_functions import load_plots
 from nomad_camels.utility.device_handling import load_local_packages
+from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
 appdata_path = f'{getenv("LOCALAPPDATA")}/nomad_camels'
 if not isdir(appdata_path):
@@ -393,7 +394,9 @@ def load_devices_dict(string_dict, devices_dict):
                 try:
                     dev_lib = importlib.import_module(f'{name}.{name}')
                 except Exception as e2:
-                    raise Exception(f'Could not import device module {name}\n{e}\n{e2}')
+                    WarnPopup(text=f'Could not import instrument module "{name}"\n{e}\n{e2}', title='instrument import failed')
+                    continue
+                    # raise Exception(f'Could not import device module {name}\n{e}\n{e2}')
         dev = dev_lib.subclass()
         dev.name = name
         if 'connection' in dev_data:
