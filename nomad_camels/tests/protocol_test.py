@@ -301,8 +301,8 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
     fit = plot_definer.Fit_Info(True, 'Gaussian', x='demo_device_motorY',
                                 y='demo_device_detectorY')
     plot = plot_definer.Plot_Info(x_axis='demo_device_motorY',
-                                  y_axes={'formula': '"demo_device_detectorY"',
-                                          'axis': 1},
+                                  y_axes={'formula': ["demo_device_detectorY"],
+                                          'axis': ['left']},
                                   fits=[fit])
     conf_widge.plot_widge.plot_data = [plot]
 
