@@ -1,3 +1,10 @@
+"""
+This module provides functions that are often used when building a protocol.
+It is not inside the `protocol_builder` module, since these functions are also
+called by the classes of the single protocol-steps.
+"""
+
+
 import copy
 
 standard_plot_string = '\tapp = QCoreApplication.instance()\n'
@@ -14,18 +21,27 @@ standard_plot_string += '\t\tplot_widget.activate_dark_mode()\n'
 
 def get_plot_add_string(name, stream, subprotocol=False):
     """
+    This function generates the necessary lines for the "steps_add_main"
+    function in the protocol-script to open the plots of a sub-step of the
+    protocol.
 
     Parameters
     ----------
-    name :
+    name : str
+        The name of the calling protocol-step.
         
-    stream :
+    stream : str
+        The bluesky-stream on which the plots should react.
         
     subprotocol :
          (Default value = False)
+         If True, the create_plots function will be called from the
+         subprotocol's module.
 
     Returns
     -------
+    add_main_string
+        The string to be added.
 
     """
     add_main_string = '\tif "subs" not in returner:\n'
@@ -44,18 +60,31 @@ def get_plot_add_string(name, stream, subprotocol=False):
 
 def plot_creator(plot_data, func_name='create_plots', multi_stream=False):
     """
+    Creates the `create_plots` function for the protocol.
 
     Parameters
     ----------
-    plot_data :
+    plot_data : list[Plot_Info]
+        A list of Plot_Info objects with all information for the plots.
         
-    func_name :
+    func_name : str
          (Default value = 'create_plots')
+         The name of the function in the protocol-script.
+
     multi_stream :
          (Default value = False)
+         Passes the multi_stream keyword to the plot-widgets. This is used if
+         the plot should not only react to the stream that's specified exactly.
 
     Returns
     -------
+    plot_string
+        The string containing the function for the protocol-script.
+
+    plotting
+        True if there actually was a plot. Otherwise the function will not be
+        created in the script at all.
+
 
     """
     plot_string = f'\ndef {func_name}(RE, stream="primary"):\n'
