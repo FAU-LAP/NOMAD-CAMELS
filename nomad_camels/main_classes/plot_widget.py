@@ -132,7 +132,7 @@ class PlotWidget(QWidget):
     def __init__(self, x_name, y_names, *, legend_keys=None, xlim=None,
                  ylim=None, epoch='run', parent=None, namespace=None, ylabel='',
                  xlabel='', title='', stream_name='primary', fits=None,
-                 do_plot=True, multi_stream=False, **kwargs):
+                 do_plot=True, multi_stream=False, y_axes=None, **kwargs):
         super().__init__(parent=parent)
         canvas = MPLwidget()
         if isinstance(y_names, str):
@@ -145,6 +145,7 @@ class PlotWidget(QWidget):
         self.liveFits = []
         self.liveFitPlots = []
         eva = Evaluator(namespace=namespace)
+        self.ax2 = self.ax.twinx() if y_axes and 2 in y_axes.values() else None
         for fit in self.fits:
             if fit["use_custom_func"]:
                 model = lmfit.models.ExpressionModel(fit["custom_func"])
@@ -179,15 +180,28 @@ class PlotWidget(QWidget):
                                   additional_data=add_data,
                                   params=params, stream_name=stream_name)
             self.liveFits.append(livefit)
-            self.liveFitPlots.append(Fit_Plot_No_Init_Guess(livefit, ax=self.ax,
-                                                            legend_keys=[name]))
+            if y_axes and y_axes[fit["y"]] == 2:
+                ax = self.ax2
+                ax_is2 = True
+            else:
+                ax = self.ax
+                ax_is2 = False
+            if fit["y"] in y_names:
+                col = stdCols[y_names.index(fit["y"])]
+            else:
+                col = 'black'
+            self.liveFitPlots.append(Fit_Plot_No_Init_Guess(livefit, ax=ax,
+                                                            legend_keys=[name],
+                                                            ax_is2=ax_is2,
+                                                            color=col))
         self.livePlot = MultiLivePlot(y_names, x_name, legend_keys=legend_keys,
                                       xlim=xlim, ylim=ylim, epoch=epoch,
                                       ax=canvas.axes, evaluator=eva,
                                       xlabel=xlabel, ylabel=ylabel, title=title,
                                       stream_name=stream_name, do_plot=do_plot,
-                                      fitPlots=self.liveFitPlots,
-                                      multi_stream=multi_stream, **kwargs)
+                                      fitPlots=self.liveFitPlots, y_axes=y_axes,
+                                      multi_stream=multi_stream, ax2=self.ax2,
+                                      **kwargs)
         self.livePlot.new_data.connect(self.show)
         self.toolbar = NavigationToolbar2QT(canvas, self)
 
@@ -198,10 +212,10 @@ class PlotWidget(QWidget):
         self.pushButton_autoscale.clicked.connect(self.autoscale)
         self.pushButton_clear = QPushButton('Clear Plot')
         self.pushButton_clear.clicked.connect(self.clear_plot)
-        self.plot_options = Plot_Options(self, self.ax, self.livePlot)
+        self.plot_options = Plot_Options(self, self.ax, self.livePlot, self.ax2)
         label_n_data = QLabel('# data points:')
         self.lineEdit_n_data = QLineEdit(str(np.inf))
-        self.lineEdit_n_data.textChanged.connect(self.change_maxlen)
+        self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
 
         layout = QGridLayout()
         layout.addWidget(canvas, 0, 1, 1, 6)
@@ -559,12 +573,44 @@ class Fit_Ophyd(Device):
 class Fit_Plot_No_Init_Guess(LiveFitPlot):
     """A subclass of LiveFitPlot that doesn't plot the initial guess for the fit."""
     def __init__(self, livefit, *, num_points=100, legend_keys=None, xlim=None,
-                 ylim=None, ax=None, **kwargs):
-        super().__init__(livefit, num_points=num_points, legend_keys=legend_keys,
-                         xlim=xlim, ylim=ylim, ax=ax, **kwargs)
+                 ylim=None, ax=None, ax_is2=False, **kwargs):
+        # super().__init__(livefit, num_points=num_points, legend_keys=legend_keys,
+        #                  xlim=xlim, ylim=ylim, ax=ax, **kwargs)
+        self.__setup_lock = threading.Lock()
+        self.__setup_event = threading.Event()
         if len(livefit.independent_vars) != 1:
             raise NotImplementedError("LiveFitPlot supports models with one "
                                       "independent variable only.")
+
+        def setup():
+            # Run this code in start() so that it runs on the correct thread.
+            nonlocal legend_keys, xlim, ylim, ax, kwargs, livefit
+            with self.__setup_lock:
+                if self.__setup_event.is_set():
+                    return
+                self.__setup_event.set()
+            self.ax = ax
+            # if legend_keys is None:
+            #     legend_keys = []
+            # self.legend_keys = ['scan_id'] + legend_keys
+            x, = livefit.independent_vars.values()
+            if x is not None:
+                self.x, *others = get_obj_fields([x])
+            else:
+                self.x = 'seq_num'
+            y = livefit.y
+            self.y, *others = get_obj_fields([y])
+            if xlim is not None:
+                self.ax.set_xlim(*xlim)
+            if ylim is not None:
+                self.ax.set_ylim(*ylim)
+            # self.ax.margins(.1)
+            self.kwargs = kwargs
+            self.lines = []
+            # self.legend = None
+            # self.legend_title = " :: ".join([name for name in self.legend_keys])
+            # self._epoch_offset = None  # used if x == 'time'
+            # self._epoch = epoch
         self.__x_key, = livefit.independent_vars.keys()  # this never changes
         # x, = livefit.independent_vars.values()  # this may change
         self.num_points = num_points
@@ -576,6 +622,9 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         self.y_data = []
         self.current_line = None
         self.x = None
+        self.ax_is2 = ax_is2
+        self.__setup = setup
+
 
     def start(self, doc):
         """Overwrites the `start` method of LiveFitPlot to not display the
@@ -590,14 +639,34 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         -------
 
         """
-        LivePlot.start(self, doc)
+        # LivePlot.start(self, doc)
+        self.__setup()
+        # The doc is not used; we just use the signal that a new run began.
+        # self._epoch_offset = doc['time']  # used if self.x == 'time'
+        self.x_data, self.y_data = [], []
+        self.current_line, = self.ax.plot([], [], **self.kwargs)
+        self.lines.append(self.current_line)
+        # legend = self.ax.legend(loc=0, title=self.legend_title)
+        # try:
+        #     # matplotlib v3.x
+        #     self.legend = legend.set_draggable(True)
+        # except AttributeError:
+        #     # matplotlib v2.x (warns in 3.x)
+        #     self.legend = legend.draggable(True)
         self.livefit.start(doc)
         self.x, = self.livefit.independent_vars.keys()  # in case it changed
         # Put fit above other lines (default 2) but below text (default 3).
         [line.set_zorder(2.5) for line in self.lines]
-        if self.legend_keys:
-            self.current_line.set_label(self.legend_keys[-1])
-        self.ax.legend(loc=0, title='')
+        # if self.legend_keys:
+        #     self.current_line.set_label(self.legend_keys[-1])
+        # legend = self.ax.legend(loc=0, title='')
+        # if not self.ax_is2:
+        #     try:
+        #         legend.set_draggable(True)
+        #     except AttributeError:
+        #         legend.draggable(True)
+        # else:
+        #     self.ax.get_legend().remove()
 
     def get_ready(self):
         """Passes the command to the `_livefit`"""
@@ -662,10 +731,11 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
 
 class Plot_Options(Ui_Plot_Options, QWidget):
     """ """
-    def __init__(self, parent=None, ax=None, livePlot=None):
+    def __init__(self, parent=None, ax=None, livePlot=None, ax2=None):
         super().__init__(parent)
         self.setupUi(self)
         self.ax = ax
+        self.ax2 = ax2
         self.livePlot = livePlot
         self.livePlot.setup_done.connect(self.setup_table)
         self.checkBox_log_x.clicked.connect(self.set_log)
@@ -790,12 +860,15 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.checkBox_use_abs_x.setEnabled(x)
         y = self.checkBox_log_y.isChecked()
         y_scale = 'log' if y else 'linear'
-        self.checkBox_use_abs_y.setEnabled(y)
+        y2 = self.checkBox_log_y2.isChecked()
+        y2_scale = 'log' if y2 else 'linear'
+        self.checkBox_use_abs_y2.setEnabled(y2)
         self.ax.set_xscale(x_scale)
         self.ax.set_yscale(y_scale)
+        self.ax2.set_yscale(y2_scale)
         self.livePlot.use_abs = {'x': self.checkBox_use_abs_x.isChecked() and x,
                                  'y': self.checkBox_use_abs_y.isChecked() and y,
-                                 'y2': self.checkBox_use_abs_y2.isChecked()}
+                                 'y2': self.checkBox_use_abs_y2.isChecked() and y2}
         self.livePlot.update_plot()
 
 
@@ -808,7 +881,8 @@ class MultiLivePlot(LivePlot, QObject):
     def __init__(self, ys=(), x=None, *, legend_keys=None, xlim=None, ylim=None,
                  ax=None, epoch='run', xlabel='', ylabel='', evaluator=None,
                  title='', stream_name='primary', do_plot=True, fitPlots=None,
-                 multi_stream=False, **kwargs):
+                 multi_stream=False, y_axes=None, ax2=None, ylabel2='',
+                 **kwargs):
         LivePlot.__init__(self, y=ys[0], x=x, legend_keys=legend_keys,
                           xlim=xlim, ylim=ylim, ax=ax, epoch=epoch, **kwargs)
         QObject.__init__(self)
@@ -821,6 +895,8 @@ class MultiLivePlot(LivePlot, QObject):
         self.do_plot = do_plot
         self.multi_stream = multi_stream
         self.fitPlots = fitPlots or []
+        self.y_axes = y_axes or {}
+        self.ax2 = ax2
         for fit in self.fitPlots:
             fit.parent_plot = self
         if isinstance(ys, str):
@@ -867,6 +943,7 @@ class MultiLivePlot(LivePlot, QObject):
 
         self.xlabel = xlabel
         self.ylabel = ylabel
+        self.ylabel2 = ylabel2
         self.__setup = setup
         self._epoch_offset = 0
         self.x_data = []
@@ -927,9 +1004,18 @@ class MultiLivePlot(LivePlot, QObject):
         self.current_lines = {}
         for i, y in enumerate(self.ys):
             try:
-                self.current_lines[y], = self.ax.plot([], [],
-                                                      label=self.legend_keys[i],
-                                                      **kwargs)
+                if y in self.y_axes and self.y_axes[y] == 2:
+                    self.current_lines[y], = self.ax2.plot([], [],
+                                                          label=self.legend_keys[i],
+                                                           color=stdCols[i],
+                                                          **kwargs)
+                    self.ax.plot([], [], label=self.legend_keys[i],
+                                 color=stdCols[i], **kwargs)
+                else:
+                    self.current_lines[y], = self.ax.plot([], [],
+                                                          label=self.legend_keys[i],
+                                                          color=stdCols[i],
+                                                          **kwargs)
             except Exception as e:
                 print(e)
         self.lines.append(self.current_lines)
@@ -944,7 +1030,9 @@ class MultiLivePlot(LivePlot, QObject):
             fit.start(doc)
         self.ax.set_xlabel(self.xlabel)
         self.ax.set_ylabel(self.ylabel)
-        self.setup_done.emit()
+        if self.ax2:
+            self.ax2.set_ylabel(self.ylabel2)
+        self.setup_done.emit(None)
 
     def descriptor(self, doc):
         """
@@ -1053,6 +1141,9 @@ class MultiLivePlot(LivePlot, QObject):
         # Rescale and redraw.
         self.ax.relim(visible_only=True)
         self.ax.autoscale_view(tight=True)
+        if self.ax2:
+            self.ax2.relim(visible_only=True)
+            self.ax2.autoscale_view(tight=True)
         self.ax.figure.canvas.draw_idle()
         self.new_data.emit(None)
 
@@ -1106,7 +1197,7 @@ class PlotWidget_NoBluesky(QWidget):
         self.plot_options = Plot_Options(self, self.ax, self.plot)
         label_n_data = QLabel('# data points:')
         self.lineEdit_n_data = QLineEdit(str(np.inf))
-        self.lineEdit_n_data.textChanged.connect(self.change_maxlen)
+        self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
 
         self.setWindowTitle(title or f'{xlabel} vs. {ylabel}')
         self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
