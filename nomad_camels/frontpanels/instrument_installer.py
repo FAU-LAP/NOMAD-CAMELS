@@ -350,15 +350,15 @@ def install_instrument(device_name):
     -------
 
     """
-    pypi_url = r'https://test.pypi.org/simple/'  # TODO Change to regular PyPi
+    # pypi_url = r'https://test.pypi.org/simple/'  # TODO Change to regular PyPi
     flags = 0
     if os.name == 'nt':
         flags = subprocess.CREATE_NO_WINDOW
-    ret = subprocess.Popen([sys.executable, '-m', 'pip',
-                            'install', '--no-cache-dir',
-                            '--index-url', pypi_url,
-                            '--extra-index-url',
-                            'https://pypi.org/simple',
+    ret = subprocess.Popen([sys.executable, '-m', 'pip', 'install',
+                            # '--no-cache-dir',
+                            # '--index-url', pypi_url,
+                            # '--extra-index-url',
+                            # 'https://pypi.org/simple',
                             f'nomad-camels-driver-{device_name}'],
                            stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT,
