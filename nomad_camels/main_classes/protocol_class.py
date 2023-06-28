@@ -407,8 +407,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             allconf = []
             allconf += list(device.get_passive_config().keys())
             allconf += list(device.get_config().keys())
-            # allconf += list(device.get_config().keys())
-            allconf += list(device.get_ioc_settings().keys())
             for key in allconf:
                 configs.append(f'{device.name}_{key}')
         comboBoxes = {'Configuration': configs}
@@ -578,6 +576,8 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         else:
             return
         item = self.variable_model.itemFromIndex(ind)
+        if ind.column() == 0:
+            variables_handling.check_variable_name(item.text(), parent=self)
         if ind.column() == 0 and item.text() in self.protocol.variables:
             new_name = self.get_unique_name(item.text())
             item.setText(new_name)

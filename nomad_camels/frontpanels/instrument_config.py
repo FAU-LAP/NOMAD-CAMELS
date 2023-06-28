@@ -68,7 +68,6 @@ class Instrument_Config(Ui_Form, QWidget):
                                                   data=name,
                                                   settings_dict=instrument.settings,
                                                   config_dict=instrument.config,
-                                                  ioc_dict=instrument.ioc_settings,
                                                   additional_info=instrument.additional_info)
                 self.config_tabs.addTab(inst_widge, name)
                 inst_widge.name_change.connect(self.name_config_changed)
@@ -117,9 +116,10 @@ class Instrument_Config(Ui_Form, QWidget):
             given_name = tab.lineEdit_custom_name.text()
             if given_name != cust_name:
                 WarnPopup(self, f'Instrument name "{given_name}" is either already in use or not allowed (e.g. the instrument`s class is named that way). Using "{cust_name}" instead.', 'Instrument name not possible')
+            variables_handling.check_variable_name(cust_name, parent=self,
+                                                   raise_not_warn=True)
             self.active_instruments[self.current_instr][i].settings = tab.get_settings()
             self.active_instruments[self.current_instr][i].config = tab.get_config()
-            self.active_instruments[self.current_instr][i].ioc_settings = tab.get_ioc_settings()
             self.active_instruments[self.current_instr][i].additional_info = tab.get_info()
         self.update_channels()
 
@@ -166,7 +166,6 @@ class Instrument_Config(Ui_Form, QWidget):
         single_widge = pack.subclass_config(data=name,
                                             settings_dict=instr_instance.settings,
                                             config_dict=instr_instance.config,
-                                            ioc_dict=instr_instance.ioc_settings,
                                             additional_info=instr_instance.additional_info)
         self.config_tabs.addTab(single_widge, name)
         single_widge.name_change.connect(self.name_config_changed)

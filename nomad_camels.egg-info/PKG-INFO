@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: nomad-camels
-Version: 0.1.20
+Version: 0.1.22
 Summary: CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics.
 Author-email: FAIRmat - HU Berlin <nomad-camels@fau.de>
 Project-URL: GitHub Page, https://github.com/FAU-LAP/NOMAD-CAMELS

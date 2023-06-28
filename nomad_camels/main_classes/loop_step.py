@@ -3,7 +3,7 @@ from PySide6.QtCore import Qt, QSize, Signal
 from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QTextEdit
 
 
-from nomad_camels.utility import treeView_functions
+from nomad_camels.utility import treeView_functions, variables_handling
 
 
 
@@ -365,6 +365,7 @@ class Loop_Step_Config(QWidget):
         """
         # self.loop_step.update_variables()
         self.name_widget.change_name()
+        variables_handling.check_variable_name(self.loop_step.name, True, self)
         self.loop_step.description = self.textEdit_desc.toPlainText()
 
 class Loop_Step_Name_Widget(QWidget):

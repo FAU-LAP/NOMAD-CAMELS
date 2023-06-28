@@ -114,6 +114,16 @@ def broker_to_hdf5(runs, filename, additional_data=None):
                                 group[key].attrs[k] = v
 
 
+def export_run(filename, run_number=-1, plot_data=None, additional_data=None,
+               session_name='', export_to_csv=False, export_to_json=False,
+               catalog_name='CAMELS_CATALOG'):
+    """ TODO """
+    catalog = databroker.catalog[catalog_name]
+    run = catalog[run_number]
+    broker_to_NX([run], filename, plot_data, additional_data,
+                 session_name, export_to_csv, export_to_json)
+
+
 def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
                  session_name='', export_to_csv=False, export_to_json=False):
     """
@@ -274,11 +284,11 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
                                     signals.append(y)
                         if not hasattr(plot, 'liveFits') or not plot.liveFits:
                             continue
-                        fit_group = group.create_group('fits')
+                        fit_group = group.require_group('fits')
                         for fit in plot.liveFits:
                             if not fit.results:
                                 continue
-                            fg = fit_group.create_group(fit.name)
+                            fg = fit_group.require_group(fit.name)
                             param_names = []
                             param_values = []
                             covars = []
@@ -316,7 +326,7 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
                         group.attrs['auxiliary_signals'] = signals[1:]
                 group.attrs['axes'] = axes
                 group.attrs['NX_class'] = 'NXdata'
-    print('Successfully saved protocol data!')
+    # print('Successfully saved protocol data!')
 
 
 def get_param_dict(param_values):

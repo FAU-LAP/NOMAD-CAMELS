@@ -110,6 +110,18 @@ class ND_Sweep(Loop_Step):
         self.update_time_weight()
         return protocol_string
 
+    def get_protocol_short_string(self, n_tabs=0):
+        short_string = super().get_protocol_short_string(n_tabs)
+        tabs = '\t' * (n_tabs+1)
+        short_string += f'{tabs}Read: {self.read_channels}\n'
+        for i, channel in enumerate(self.sweep_channels):
+            sweep = self.sweep_values[i]
+            if not isinstance(sweep, Sweep_Step):
+                sweep = Sweep_Step(sweep)
+            short_string += f'{tabs}Sweep {i}: {channel}\n{tabs}Values {i}: {sweep.get_protocol_short_string()}\n'
+        return short_string
+
+
 
 
 class Sweep_Step(For_Loop_Step):
@@ -146,6 +158,8 @@ class Sweep_Step(For_Loop_Step):
             protocol_string += f'{tabs}\tyield from bps.sleep(eva.eval("{self.wait_time}"))\n'
         return protocol_string
 
+    def get_protocol_short_string(self, n_tabs=0):
+        return super().get_protocol_short_string(n_tabs)[n_tabs+3:-1]
 
 
 

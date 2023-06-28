@@ -33,13 +33,13 @@ def test_change_dev_config(qtbot, tmp_path):
     conf_widge = conf.loop_step_configuration_widget
     assert isinstance(conf_widge,
                       change_device_config.Change_DeviceConf_Config)
-    conf_widge.comboBox_device.setCurrentText('demo_device')
+    conf_widge.comboBox_device.setCurrentText('demo_instrument')
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
     prot = conf.protocol
     prot.name = 'test_change_dev_config_protocol'
     assert 'Change Device Config (Change_Device_Config)' in prot.loop_step_dict
-    assert prot.loop_steps[0].device == 'demo_device'
+    assert prot.loop_steps[0].device == 'demo_instrument'
     catalog_maker(tmp_path)
     run_test_protocol(tmp_path, prot)
 
@@ -117,18 +117,18 @@ def test_gradient_descent(qtbot, tmp_path):
     conf_widge.sub_widget.lineEdit_threshold.setText('1e-3')
     conf_widge.sub_widget.lineEdit_max_val.setText('1')
     conf_widge.sub_widget.lineEdit_min_val.setText('1')
-    conf_widge.sub_widget.lineEdit_opt_func.setText('demo_device_detectorY')
+    conf_widge.sub_widget.lineEdit_opt_func.setText('demo_instrument_detectorY')
     conf_widge.sub_widget.lineEdit_max_n_steps.setText('25')
     conf_widge.sub_widget.lineEdit_largest_step.setText('1')
     conf_widge.sub_widget.lineEdit_smallest_step.setText('0.01')
     conf_widge.sub_widget.lineEdit_learning_rate.setText('1')
     conf_widge.sub_widget.lineEdit_starting_val.setText('0')
     conf_widge.sub_widget.comboBox_extremum_type.setCurrentText('Maximum')
-    conf_widge.sub_widget.comboBox_output_channel.setCurrentText('demo_device_motorY')
+    conf_widge.sub_widget.comboBox_output_channel.setCurrentText('demo_instrument_motorY')
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
     prot = conf.protocol
-    prot.loop_steps[0].read_channels.append('demo_device_detectorY')
+    prot.loop_steps[0].read_channels.append('demo_instrument_detectorY')
     prot.name = 'test_gradient_descent_protocol'
     assert 'Gradient Descent (Gradient_Descent)' in prot.loop_step_dict
     catalog_maker(tmp_path)
@@ -211,14 +211,14 @@ def test_read_channels(qtbot, tmp_path):
     assert isinstance(conf_widge,
                       read_channels.Read_Channels_Config)
     table = conf_widge.sub_widget.read_table.tableWidget_channels
-    row = get_row_from_channel_table('demo_device_detectorX', table)
+    row = get_row_from_channel_table('demo_instrument_detectorX', table)
     table.item(row, 0).setCheckState(Qt.CheckState.Checked)
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
     prot = conf.protocol
     prot.name = 'test_read_channels_protocol'
     assert 'Read Channels (Read_Channels)' in prot.loop_step_dict
-    assert prot.loop_steps[0].channel_list == ['demo_device_detectorX']
+    assert prot.loop_steps[0].channel_list == ['demo_instrument_detectorX']
     catalog_maker(tmp_path)
     run_test_protocol(tmp_path, prot)
 
@@ -250,7 +250,7 @@ def test_set_channels(qtbot, tmp_path):
     assert isinstance(conf_widge,
                       set_channels.Set_Channels_Config)
     table = conf_widge.sub_widget.tableWidget_channels
-    row = get_row_from_channel_table('demo_device_motorX', table)
+    row = get_row_from_channel_table('demo_instrument_motorX', table)
     table.item(row, 0).setCheckState(Qt.CheckState.Checked)
     table.item(row, 2).setText('1')
     with qtbot.waitSignal(conf.accepted) as blocker:
@@ -258,7 +258,7 @@ def test_set_channels(qtbot, tmp_path):
     prot = conf.protocol
     prot.name = 'test_set_channels_protocol'
     assert 'Set Channels (Set_Channels)' in prot.loop_step_dict
-    assert prot.loop_steps[0].channels_values == {'Channels': ['demo_device_motorX'], 'Values': ['1']}
+    assert prot.loop_steps[0].channels_values == {'Channels': ['demo_instrument_motorX'], 'Values': ['1']}
     catalog_maker(tmp_path)
     run_test_protocol(tmp_path, prot)
 
@@ -289,20 +289,20 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
     conf_widge.sweep_widget.lineEdit_start.setText('-10')
     conf_widge.sweep_widget.lineEdit_stop.setText('10')
     conf_widge.sweep_widget.lineEdit_n_points.setText('21')
-    conf_widge.comboBox_sweep_channel.setCurrentText('demo_device_motorY')
+    conf_widge.comboBox_sweep_channel.setCurrentText('demo_instrument_motorY')
     conf_widge.checkBox_use_own_plots.setChecked(True)
 
     table = conf_widge.read_table.tableWidget_channels
-    row = get_row_from_channel_table('demo_device_detectorY', table)
+    row = get_row_from_channel_table('demo_instrument_detectorY', table)
     table.item(row, 0).setCheckState(Qt.CheckState.Checked)
-    row = get_row_from_channel_table('demo_device_motorY', table)
+    row = get_row_from_channel_table('demo_instrument_motorY', table)
     table.item(row, 0).setCheckState(Qt.CheckState.Checked)
 
-    fit = plot_definer.Fit_Info(True, 'Gaussian', x='demo_device_motorY',
-                                y='demo_device_detectorY')
-    plot = plot_definer.Plot_Info(x_axis='demo_device_motorY',
-                                  y_axes={'formula': '"demo_device_detectorY"',
-                                          'axis': 1},
+    fit = plot_definer.Fit_Info(True, 'Gaussian', x='demo_instrument_motorY',
+                                y='demo_instrument_detectorY')
+    plot = plot_definer.Plot_Info(x_axis='demo_instrument_motorY',
+                                  y_axes={'formula': ["demo_instrument_detectorY"],
+                                          'axis': ['left']},
                                   fits=[fit])
     conf_widge.plot_widge.plot_data = [plot]
 
@@ -588,14 +588,14 @@ def get_row_from_channel_table(name, table):
 def ensure_demo_in_devices():
     """ """
     instr, packs = instrument_installer.getInstalledDevices(True, True)
-    if 'demo_device' not in instr:
-        instrument_installer.install_instrument('demo_device')
+    if 'demo_instrument' not in instr:
+        instrument_installer.install_instrument('demo_instrument')
         instr, packs = instrument_installer.getInstalledDevices(True, True)
-        assert 'demo_device' in instr
-    if 'demo_device' not in variables_handling.devices:
-        inst = packs['demo_device'].subclass()
-        variables_handling.devices['demo_device'] = inst
-    assert 'demo_device' in variables_handling.devices
+        assert 'demo_instrument' in instr
+    if 'demo_instrument' not in variables_handling.devices:
+        inst = packs['demo_instrument'].subclass()
+        variables_handling.devices['demo_instrument'] = inst
+    assert 'demo_instrument' in variables_handling.devices
     variables_handling.channels.clear()
     for key, dev in variables_handling.devices.items():
         for channel in dev.get_channels():
@@ -614,6 +614,8 @@ def catalog_maker(tmp_path):
     -------
 
     """
+    if tmp_path is None:
+        tmp_path = ''
     if 'test_catalog' not in list(databroker.catalog):
         make_catalog.make_yml(tmp_path, 'test_catalog')
 

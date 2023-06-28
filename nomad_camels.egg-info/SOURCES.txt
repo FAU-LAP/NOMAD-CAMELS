@@ -4,10 +4,7 @@ MANIFEST.in
 README.md
 pyproject.toml
 requirements.txt
-devices/devices_drivers/keithley_237/keithley_237.py
-devices/devices_drivers/keithley_237/keithley_237_ophyd.py
 nomad_camels/CAMELS_start.py
-nomad_camels/MainApp.py
 nomad_camels/MainApp_v2.py
 nomad_camels/__init__.py
 nomad_camels.egg-info/PKG-INFO
@@ -102,7 +99,6 @@ nomad_camels/loop_steps/wait_loop_step.py
 nomad_camels/main_classes/__init__.py
 nomad_camels/main_classes/camels_installer.py
 nomad_camels/main_classes/device_class.py
-nomad_camels/main_classes/general_plot.py
 nomad_camels/main_classes/list_plot.py
 nomad_camels/main_classes/loop_step.py
 nomad_camels/main_classes/manual_control.py

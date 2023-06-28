@@ -3,9 +3,10 @@ import pathlib
 
 import databroker
 
-from nomad_camels.utility import load_save_functions
+from nomad_camels.utility import load_save_functions, update_camels
+from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
-def make_yml(datapath, catalog_name='CAMELS_CATALOG'):
+def make_yml(datapath, catalog_name='CAMELS_CATALOG', ask_restart=False):
     """
 
     Parameters
@@ -39,6 +40,9 @@ def make_yml(datapath, catalog_name='CAMELS_CATALOG'):
                 f'        - "{brokerpath.as_posix()}/*.msgpack"')
     if catalog_name not in list(databroker.catalog):
         databroker.catalog.force_reload()
+    if ask_restart and catalog_name not in list(databroker.catalog):
+        WarnPopup('Could not load the databroker catalog, you might have to restart CAMELS', 'Databroker catalog not loaded')
+        update_camels.restart_camels(ask_restart=True)
 
 
 if __name__ == '__main__':

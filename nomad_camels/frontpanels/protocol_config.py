@@ -509,6 +509,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         name = self.general_settings.lineEdit_protocol_name.text()
         if name in variables_handling.protocols and name != self.old_name:
             raise Exception(f'Protocol name "{name}" already in use!')
+        variables_handling.check_variable_name(name, True, self)
 
     def closeEvent(self, a0: QCloseEvent) -> None:
         """

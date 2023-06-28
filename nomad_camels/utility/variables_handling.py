@@ -1,11 +1,11 @@
-# import numpy as np
-from ast import literal_eval
+from ast import literal_eval, parse
 from PySide6.QtWidgets import QMenu
 from PySide6.QtGui import QColor, QAction
 
 import numpy as np
 # from nomad_camels.utility import simpleeval
 from nomad_camels.bluesky_handling import evaluation_helper
+from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
 # from bluesky_widgets.models import utils
 
@@ -198,8 +198,12 @@ def get_menus(connect_function, pretext='Insert'):
     variable_menu.addActions(actions)
     operator_menu.addActions(operator_actions)
     function_menu.addActions(function_actions)
-    menus = [channel_menu, variable_menu, operator_menu, function_menu]
-    actions = [channel_actions, actions, operator_actions, function_actions]
+    if pretext == 'Insert':
+        menus = [channel_menu, variable_menu, function_menu]
+        actions = [channel_actions, actions, function_actions]
+    else:
+        menus = [channel_menu, variable_menu, operator_menu, function_menu]
+        actions = [channel_actions, actions, operator_actions, function_actions]
     return menus, actions
 
 def add_actions_from_dict(dictionary, actions, connect_function, add_string=''):
@@ -339,3 +343,27 @@ def get_write_from_data_type(s):
     if t == 'String':
         return f'"{s}"'
     return s
+
+
+def check_variable_name(name, raise_not_warn=False, parent=None):
+    try:
+        built_check = name in vars(__builtins__)
+    except:
+        built_check = name in __builtins__
+    if built_check:
+        text = f'The name "{name}" is a python builtin function! Please use another name.'
+        if raise_not_warn:
+            raise Exception(text)
+        WarnPopup(parent, text, 'Invalid Name')
+        return False
+    try:
+        parse(f'{name} = None')
+    except (ValueError, SyntaxError, TypeError):
+        text = f'The name "{name}" is not a valid name! Remove e.g. spaces or special characters.'
+        if raise_not_warn:
+            raise Exception(text)
+        WarnPopup(parent, text, 'Invalid Name')
+        return False
+    return True
+
+

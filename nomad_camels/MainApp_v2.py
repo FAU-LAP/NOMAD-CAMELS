@@ -113,8 +113,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionSave_Preset.triggered.connect(self.save_state)
         self.actionNew_Preset.triggered.connect(self.new_preset)
         self.actionLoad_Backup_Preset.triggered.connect(self.load_backup_preset)
-        self.actionVISA_device_builder.triggered.connect(self.launch_device_builder)
+        self.actionVISA_driver_builder.triggered.connect(self.launch_device_builder)
         self.actionEPICS_driver_builder.triggered.connect(self.launch_epics_builder)
+        self.actionExport_from_databroker.triggered.connect(self.launch_data_exporter)
         self.actionReport_Bug.triggered.connect(lambda x: os.startfile(f'{camels_github}/issues'))
         self.actionDocumentation.triggered.connect(lambda x: os.startfile(camels_github_pages))
         self.actionUpdate_CAMELS.triggered.connect(lambda x: update_camels.question_message_box(self))
@@ -167,8 +168,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_pause.setHidden(not available)
         self.pushButton_stop.setHidden(not available)
         self.progressBar_protocols.setHidden(not available)
-        self.textEdit_console_output.setHidden(not available)
-        self.pushButton_clear_log.setHidden(not available)
+        # self.textEdit_console_output.setHidden(not available)
+        # self.pushButton_clear_log.setHidden(not available)
         self.pushButton_close_plots.setHidden(not available)
         self.label_arrow.setHidden(available)
         self.label_no_instruments.setHidden(available)
@@ -218,7 +219,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def close_plots(self):
         """ """
-        for plot in self.open_plots:
+        for plot in list(self.open_plots):
             plot.close()
     # --------------------------------------------------
     # Overwriting parent-methods
@@ -242,7 +243,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
-        for window in self.open_windows:
+        for window in list(self.open_windows):
             window.close()
         if self.open_windows:
             a0.ignore()
@@ -476,7 +477,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             if 'databroker_catalog_name' in self.preferences:
                 catalog_name = self.preferences['databroker_catalog_name']
             from nomad_camels.bluesky_handling import make_catalog
-            make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name)
+            make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name, ask_restart=True)
             databroker.catalog.force_reload()
             try:
                 self.databroker_catalog = databroker.catalog[catalog_name]
@@ -509,9 +510,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             load_save_functions.save_preferences(self.preferences)
             variables_handling.device_driver_path = self.preferences['device_driver_path']
             variables_handling.meas_files_path = self.preferences['meas_files_path']
+            variables_handling.preferences = self.preferences
         self.change_theme()
 
-    def save_state(self, fromload=False):
+    def save_state(self, fromload=False, do_backup=True):
         """Saves the current states of both presets.
 
         Parameters
@@ -519,12 +521,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         fromload :
              (Default value = False)
 
+        do_backup :
+            (Default value = True)
+
         Returns
         -------
 
         """
         self.make_save_dict()
-        load_save_functions.autosave_preset(self._current_preset[0], self.__save_dict__)
+        load_save_functions.autosave_preset(self._current_preset[0],
+                                            self.__save_dict__,
+                                            do_backup)
         if fromload:
             return
         self.save_user_data()
@@ -542,8 +549,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         load_save_functions.save_preset(file, {'_current_preset': [preset_name],
                                                'active_instruments': {},
                                                'protocols_dict': OrderedDict()})
-        self.comboBox_preset.addItem(preset_name)
-        self.comboBox_preset.setCurrentText(preset_name)
         self._current_preset[0] = preset_name
 
 
@@ -1018,6 +1023,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         """
         from nomad_camels.utility import device_handling
+        if 'autosave_run' in self.preferences and self.preferences['autosave_run']:
+            self.save_state(do_backup=self.preferences['backup_before_run'])
         self.button_area_meas.disable_run_buttons()
         try:
             self.build_protocol(protocol_name, ask_file=False)
@@ -1190,14 +1197,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
     def launch_device_builder(self):
         """ """
-        from nomad_camels.tools import VISA_device_builder
-        device_builder = VISA_device_builder.VISA_Device_Builder(self)
+        from nomad_camels.tools import VISA_driver_builder
+        device_builder = VISA_driver_builder.VISA_Driver_Builder(self)
         device_builder.show()
 
     def launch_epics_builder(self):
         from nomad_camels.tools import EPICS_driver_builder
         device_builder = EPICS_driver_builder.EPICS_Driver_Builder(self)
         device_builder.show()
+
+    def launch_data_exporter(self):
+        from nomad_camels.tools import databroker_exporter
+        exporter = databroker_exporter.Datbroker_Exporter(self)
+        exporter.show()
 
 
 
