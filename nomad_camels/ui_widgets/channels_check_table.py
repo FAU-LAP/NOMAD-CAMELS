@@ -65,12 +65,12 @@ class Channels_Check_Table(QWidget):
         menu = QMenu()
         # putting the returned actions somewhere is necessary, otherwise
         # there will be none inside the single menus
-        (channel_menu, variable_menu, operator_menu, function_menu), _ = \
+        (channel_menu, variable_menu, function_menu), _ = \
             variables_handling.get_menus(self.insert_variable)
         menu.addMenu(variable_menu)
         menu.addMenu(channel_menu)
         menu.addMenu(function_menu)
-        menu.addMenu(operator_menu)
+        # menu.addMenu(operator_menu)
         menu.addSeparator()
         (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ = \
             variables_handling.get_menus(self.append_variable, 'Append')
@@ -214,6 +214,7 @@ class Channels_Check_Table(QWidget):
         for i, channel in enumerate(sorted(self.channels, key=lambda x: x.lower())):
             if searchtext not in channel or (not isinstance(self.channels, list) and self.only_output and not self.channels[channel].output):
                 continue
+            metadata = self.channels[channel].get_meta_str()
             self.tableWidget_channels.setRowCount(n+1)
             item = QTableWidgetItem()
             item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
@@ -221,9 +222,13 @@ class Channels_Check_Table(QWidget):
                 item.setCheckState(Qt.CheckState.Checked)
             else:
                 item.setCheckState(Qt.CheckState.Unchecked)
+            if metadata:
+                item.setToolTip(metadata)
             self.tableWidget_channels.setItem(n, 0, item)
             item = QTableWidgetItem(channel)
             item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+            if metadata:
+                item.setToolTip(metadata)
             self.tableWidget_channels.setItem(n, 1, item)
             pos = self.tableWidget_channels.model().createIndex(n, 0)
             self.check_change(pos)
@@ -236,5 +241,7 @@ class Channels_Check_Table(QWidget):
                 item = QTableWidgetItem(vals[j] if vals else '')
                 self.tableWidget_channels.setItem(n, j+2, item)
                 self.check_string(item)
+                if metadata:
+                    item.setToolTip(metadata)
             n += 1
         self.tableWidget_channels.resizeColumnsToContents()

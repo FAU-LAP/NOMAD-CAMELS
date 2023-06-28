@@ -18,6 +18,7 @@ import ophyd
 from nomad_camels.main_classes import protocol_class, device_class
 from nomad_camels.utility.load_save_helper_functions import load_plots
 from nomad_camels.utility.device_handling import load_local_packages
+from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
 appdata_path = f'{getenv("LOCALAPPDATA")}/nomad_camels'
 if not isdir(appdata_path):
@@ -30,6 +31,8 @@ save_dict_skip = [QWidget, QSplitter, QLabel, QPushButton, QMenu, QMenuBar,
 
 
 standard_pref = {'autosave': True,
+                 'autosave_run': True,
+                 'backup_before_run': True,
                  'dark_mode': False,
                  'graphic_theme': 'Fusion',
                  'n_decimals': 3,
@@ -70,7 +73,7 @@ def get_preset_list():
         makedirs(preset_path)
         return get_preset_list()
 
-def autosave_preset(preset:str, preset_data):
+def autosave_preset(preset:str, preset_data, do_backup=True):
     """Saves the given preset and makes a backup of the former one in
     the backup-folder.
 
@@ -79,6 +82,8 @@ def autosave_preset(preset:str, preset_data):
     preset:str :
         
     preset_data :
+
+    do_backup :
         
 
     Returns
@@ -91,7 +96,8 @@ def autosave_preset(preset:str, preset_data):
         makedirs(preset_path)
     with open(f'{preset_path}{preset_file}', 'w', encoding='utf-8') as json_file:
         json.dump(preset_data, json_file, indent=2)
-    make_backup(preset_file)
+    if do_backup:
+        make_backup(preset_file)
 
 def save_preset(path:str, preset_data:dict):
     """Saves the given preset_data under the specified path.
@@ -387,7 +393,9 @@ def load_devices_dict(string_dict, devices_dict):
                 try:
                     dev_lib = importlib.import_module(f'{name}.{name}')
                 except Exception as e2:
-                    raise Exception(f'Could not import device module {name}\n{e}\n{e2}')
+                    WarnPopup(text=f'Could not import instrument module "{name}"\n{e}\n{e2}', title='instrument import failed')
+                    continue
+                    # raise Exception(f'Could not import device module {name}\n{e}\n{e2}')
         dev = dev_lib.subclass()
         dev.name = name
         if 'connection' in dev_data:

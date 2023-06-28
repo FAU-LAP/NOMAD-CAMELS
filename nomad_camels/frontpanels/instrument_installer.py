@@ -22,6 +22,9 @@ else:
 
 all_instr = {}
 installed_instr = {}
+last_repo = ''
+last_branch = ''
+last_dir = ''
 
 
 def getInstalledDevices(force=False, return_packages=False):
@@ -49,7 +52,7 @@ def getInstalledDevices(force=False, return_packages=False):
         camels_driver_regex = r'^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$'
         if re.match(camels_driver_regex, name):
             installed_instr[name[20:].replace('-', '_')] = version
-    packages = device_handling.load_local_packages()
+    packages = dict(device_handling.load_local_packages())
     for package in packages:
         installed_instr[package] = 'local'
     for instr in installed_instr:
@@ -71,14 +74,18 @@ def getAllDevices():
     -------
 
     """
-    global all_instr
-    if all_instr:
-        return all_instr
-    all_instr = {}
+    global all_instr, last_repo, last_branch, last_dir
     try:
         repo = variables_handling.preferences['driver_repository']
         branch = variables_handling.preferences['repo_branch']
         directory = variables_handling.preferences['repo_directory']
+    except:
+        repo, branch, directory = '', '', ''
+    if all_instr and last_repo == repo and branch == last_branch and directory == last_dir:
+        return all_instr
+    last_repo, last_branch, last_dir = repo, branch, directory
+    all_instr = {}
+    try:
         repo_part = repo.split('.com/')[1].split('.git')[0]
         url = f'https://raw.githubusercontent.com/{repo_part}/{branch}/{directory}/driver_list.txt'
         devices_str = requests.get(url).text

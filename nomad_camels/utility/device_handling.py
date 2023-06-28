@@ -11,6 +11,7 @@ import pathlib
 
 local_packages = {}
 running_devices = {}
+last_path = ''
 
 def load_local_packages(tell_local=False):
     """
@@ -24,10 +25,14 @@ def load_local_packages(tell_local=False):
     -------
 
     """
-    global local_packages
-    if local_packages:
-        return local_packages
+    global local_packages, last_path
     local_instr_path = variables_handling.device_driver_path
+    if local_instr_path == last_path:
+        if local_packages:
+            return local_packages
+    else:
+        last_path = local_instr_path
+        local_packages.clear()
     if not os.path.isdir(local_instr_path):
         return local_packages
     sys.path.append(local_instr_path)

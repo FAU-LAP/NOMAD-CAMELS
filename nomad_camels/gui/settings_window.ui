@@ -14,13 +14,6 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="1" colspan="3">
-    <widget class="QCheckBox" name="checkBox_autosave">
-     <property name="text">
-      <string>Autosave on closing</string>
-     </property>
-    </widget>
-   </item>
    <item row="19" column="1" colspan="3">
     <widget class="Line" name="line_6">
      <property name="frameShadow">
@@ -215,7 +208,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Number-Formatting</string>
+      <string>Number-Formatting (only visual)</string>
      </property>
     </widget>
    </item>
@@ -362,10 +355,31 @@
    <item row="17" column="2" colspan="2">
     <widget class="Path_Button_Edit" name="pathButton_meas_files" native="true"/>
    </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="checkBox_autosave">
+     <property name="text">
+      <string>autosave on closing</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QCheckBox" name="checkBox_autosave_run">
+     <property name="text">
+      <string>autosave before run</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QCheckBox" name="checkBox_backup_before_run">
+     <property name="text">
+      <string>backup before run</string>
+     </property>
+    </widget>
+   </item>
    <item row="2" column="1" colspan="3">
     <widget class="QCheckBox" name="checkBox_auto_check_updates">
      <property name="text">
-      <string>Automatically search for updates</string>
+      <string>automatically search for updates</string>
      </property>
     </widget>
    </item>

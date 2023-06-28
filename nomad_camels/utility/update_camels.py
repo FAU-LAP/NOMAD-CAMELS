@@ -19,7 +19,7 @@ def get_version():
 
 def update_camels():
     """ """
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install',
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade',
                            '--no-cache-dir', '--index-url', pypi_url,
                            '--extra-index-url', 'https://pypi.org/simple',
                            'nomad-camels', '--upgrade'])

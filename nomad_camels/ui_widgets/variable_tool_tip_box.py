@@ -79,13 +79,13 @@ class Variable_Box(QLineEdit):
         menu = self.createStandardContextMenu()
         # putting the returned actions somewhere is necessary, otherwise
         # there will be none inside the single menus
-        (channel_menu, variable_menu, operator_menu, function_menu), _ =\
+        (channel_menu, variable_menu, function_menu), _ =\
             variables_handling.get_menus(self.insert_variable)
         first_act = menu.actions()[0]
         menu.insertMenu(first_act, channel_menu)
         menu.insertMenu(first_act, variable_menu)
         menu.insertMenu(first_act, function_menu)
-        menu.insertMenu(first_act, operator_menu)
+        # menu.insertMenu(first_act, operator_menu)
         menu.insertSeparator(first_act)
         (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ =\
             variables_handling.get_menus(self.append_variable, 'Append')

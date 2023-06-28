@@ -11,10 +11,11 @@ class Measurement_Channel:
     -------
 
     """
-    def __init__(self, name='', output=False, device=None):
+    def __init__(self, name='', output=False, device=None, metadata=None):
         self.name = name
         self.output = output
         self.device = device
+        self.metadata = metadata or {}
 
     def get_bluesky_name(self):
         """ """
@@ -24,6 +25,14 @@ class Measurement_Channel:
         """Returns the name of the corresponding EPICS PV."""
         name = f'{variables_handling.preset}:{self.device}:{self.name.split(".")[-1]}'
         return name
+
+    def get_meta_str(self):
+        meta_str = ''
+        for i, (k, v) in enumerate(self.metadata.items()):
+            if i > 0:
+                meta_str += '\n'
+            meta_str += f'{k}: {v}'
+        return meta_str
 
 
 def from_pv_name(pv_name):

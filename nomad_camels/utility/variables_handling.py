@@ -198,8 +198,12 @@ def get_menus(connect_function, pretext='Insert'):
     variable_menu.addActions(actions)
     operator_menu.addActions(operator_actions)
     function_menu.addActions(function_actions)
-    menus = [channel_menu, variable_menu, operator_menu, function_menu]
-    actions = [channel_actions, actions, operator_actions, function_actions]
+    if pretext == 'Insert':
+        menus = [channel_menu, variable_menu, function_menu]
+        actions = [channel_actions, actions, function_actions]
+    else:
+        menus = [channel_menu, variable_menu, operator_menu, function_menu]
+        actions = [channel_actions, actions, operator_actions, function_actions]
     return menus, actions
 
 def add_actions_from_dict(dictionary, actions, connect_function, add_string=''):

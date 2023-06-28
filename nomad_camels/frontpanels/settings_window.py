@@ -42,6 +42,14 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.checkBox_autosave.setChecked(settings['autosave'])
         else:
             self.checkBox_autosave.setChecked(standard_pref['autosave'])
+        if 'autosave_run' in settings:
+            self.checkBox_autosave_run.setChecked(settings['autosave_run'])
+        else:
+            self.checkBox_autosave_run.setChecked(standard_pref['autosave_run'])
+        if 'backup_before_run' in settings:
+            self.checkBox_backup_before_run.setChecked(settings['backup_before_run'])
+        else:
+            self.checkBox_backup_before_run.setChecked(standard_pref['backup_before_run'])
         if 'auto_check_updates' in settings:
             self.checkBox_auto_check_updates.setChecked(settings['auto_check_updates'])
         else:
@@ -99,6 +107,21 @@ class Settings_Window(Ui_settings_window, QDialog):
         else:
             self.lineEdit_branch.setText(standard_pref['repo_branch'])
 
+        self.radioButton_mixed.clicked.connect(self.number_change)
+        self.radioButton_plain_numbers.clicked.connect(self.number_change)
+        self.radioButton_scientific.clicked.connect(self.number_change)
+
+
+    def autosave_run_change(self):
+        on = self.checkBox_autosave_run.isChecked()
+        self.checkBox_backup_before_run.setEnabled(on)
+
+
+    def number_change(self):
+        mixed = self.radioButton_mixed.isChecked()
+        self.spinBox_n_decimals.setEnabled(mixed)
+
+
 
     def change_theme(self):
         """ """
@@ -127,6 +150,8 @@ class Settings_Window(Ui_settings_window, QDialog):
         else:
             numbers = 'mixed'
         return {'autosave': self.checkBox_autosave.isChecked(),
+                'autosave_run': self.checkBox_autosave_run.isChecked(),
+                'backup_before_run': self.checkBox_backup_before_run.isChecked(),
                 'dark_mode': self.checkBox_dark.isChecked(),
                 'auto_check_updates': self.checkBox_auto_check_updates.isChecked(),
                 'graphic_theme': self.comboBox_theme.currentText(),

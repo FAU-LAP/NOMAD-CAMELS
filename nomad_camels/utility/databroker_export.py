@@ -284,11 +284,11 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
                                     signals.append(y)
                         if not hasattr(plot, 'liveFits') or not plot.liveFits:
                             continue
-                        fit_group = group.create_group('fits')
+                        fit_group = group.require_group('fits')
                         for fit in plot.liveFits:
                             if not fit.results:
                                 continue
-                            fg = fit_group.create_group(fit.name)
+                            fg = fit_group.require_group(fit.name)
                             param_names = []
                             param_values = []
                             covars = []
