@@ -8,7 +8,6 @@ from nomad_camels.ui_widgets import warn_popup
 
 from PySide6.QtWidgets import QMessageBox
 
-pypi_url = 'https://test.pypi.org/simple/'
 
 def get_version():
     """ """
@@ -20,9 +19,7 @@ def get_version():
 def update_camels():
     """ """
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade',
-                           '--no-cache-dir', '--index-url', pypi_url,
-                           '--extra-index-url', 'https://pypi.org/simple',
-                           'nomad-camels', '--upgrade'])
+                           '--no-cache-dir', 'nomad-camels'])
 
 def question_message_box(parent=None):
     """
