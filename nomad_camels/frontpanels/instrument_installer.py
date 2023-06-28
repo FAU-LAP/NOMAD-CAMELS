@@ -335,13 +335,15 @@ class Install_Thread(QThread):
         getInstalledDevices(True)
         for i, dev in enumerate(self.devs):
             if self.uninstall and dev in installed_instr:
-                WarnPopup(self.parent(),
-                          f'Uninstall of {dev} failed!',
-                          f'Uninstall of {dev} failed!')
+                raise Warning(f'Uninstall of {dev} failed!')
+                # WarnPopup(self.parent(),
+                #           f'Uninstall of {dev} failed!',
+                #           f'Uninstall of {dev} failed!')
             elif not self.uninstall and dev not in installed_instr:
-                WarnPopup(self.parent(),
-                          f'Installation of {dev} failed!',
-                          f'Installation of {dev} failed!')
+                raise Warning(f'Installation of {dev} failed!')
+                # WarnPopup(self.parent(),
+                #           f'Installation of {dev} failed!',
+                #           f'Installation of {dev} failed!')
         self.val_step.emit(100)
 
 
