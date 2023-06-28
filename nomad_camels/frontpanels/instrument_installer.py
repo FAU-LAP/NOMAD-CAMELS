@@ -335,13 +335,15 @@ class Install_Thread(QThread):
         getInstalledDevices(True)
         for i, dev in enumerate(self.devs):
             if self.uninstall and dev in installed_instr:
-                WarnPopup(self,
-                          f'Uninstall of {dev} failed!',
-                          f'Uninstall of {dev} failed!')
+                raise Warning(f'Uninstall of {dev} failed!')
+                # WarnPopup(self.parent(),
+                #           f'Uninstall of {dev} failed!',
+                #           f'Uninstall of {dev} failed!')
             elif not self.uninstall and dev not in installed_instr:
-                WarnPopup(self,
-                          f'Installation of {dev} failed!',
-                          f'Installation of {dev} failed!')
+                raise Warning(f'Installation of {dev} failed!')
+                # WarnPopup(self.parent(),
+                #           f'Installation of {dev} failed!',
+                #           f'Installation of {dev} failed!')
         self.val_step.emit(100)
 
 
@@ -357,15 +359,15 @@ def install_instrument(device_name):
     -------
 
     """
-    pypi_url = r'https://test.pypi.org/simple/'  # TODO Change to regular PyPi
+    # pypi_url = r'https://test.pypi.org/simple/'  # TODO Change to regular PyPi
     flags = 0
     if os.name == 'nt':
         flags = subprocess.CREATE_NO_WINDOW
-    ret = subprocess.Popen([sys.executable, '-m', 'pip',
-                            'install', '--no-cache-dir',
-                            '--index-url', pypi_url,
-                            '--extra-index-url',
-                            'https://pypi.org/simple',
+    ret = subprocess.Popen([sys.executable, '-m', 'pip', 'install',
+                            # '--no-cache-dir',
+                            # '--index-url', pypi_url,
+                            # '--extra-index-url',
+                            # 'https://pypi.org/simple',
                             f'nomad-camels-driver-{device_name}'],
                            stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT,

@@ -8,57 +8,8 @@ from PySide6.QtCore import QThread, Signal
 
 import subprocess
 
-from nomad_camels.EPICS_handling import make_ioc
 from nomad_camels.utility import variables_handling
 
-import importlib
-import sys
-
-
-class Make_Ioc(QThread):
-    """Called from the MainApp.
-    It runs the steps from the make_ioc package to create a
-    fully operational IOC.
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-
-    """
-    sig_step = Signal(int)
-    info_step = Signal(str)
-
-    def __init__(self, ioc_name='Default', device_data=None):
-        """
-
-        Parameters
-        ----------
-        ioc_name : str, default "Default"
-            The name of the IOC. When calling from the function in
-            MainApp, it is the name of the device-preset.
-        device_data : dict, default None
-            The data-dictionary for the devices (including settings etc.)
-        """
-        if device_data is None:
-            device_data = {}
-        super(Make_Ioc, self).__init__()
-        self.ioc_name = ioc_name
-        self.device_data = device_data
-
-    def run(self):
-        """ """
-        self.sig_step.emit(0)
-        info = make_ioc.clean_up_ioc(self.ioc_name)
-        self.info_step.emit(info)
-        self.sig_step.emit(1)
-        info = make_ioc.change_devices(self.device_data, self.ioc_name)
-        self.info_step.emit(info)
-        self.sig_step.emit(10)
-        info = make_ioc.make_ioc(self.ioc_name, self.info_step, self.sig_step)
-        # self.info_step.emit(info)
-        self.sig_step.emit(100)
 
 
 class Run_Protocol(QThread):
@@ -328,92 +279,13 @@ class Run_Protocol_test(QThread):
 
 
 
-class Run_IOC(QThread):
-    """Runs the given IOC in the background.
-
-    Parameters
-    ----------
-    ioc_name : str, optional
-        The name of the IOC to run, by default 'Default'
-
-    Returns
-    -------
-
-    Attributes
-    ----------
-    info_step : Signal
-        A signal that is emitted when there is a new step to be shown
-    popen : Popen
-        A Popen object representing the subprocess running the IOC
-    last_inputs : list
-        A list of the last inputs received by the IOC
-    curr_last : int
-        The index of the last input received by the IOC
-    """
-    info_step = Signal(str)
-
-    def __init__(self, ioc_name='Default'):
-        super().__init__()
-        self.ioc_name = ioc_name
-        self.popen = None
-        self.last_inputs = []
-        self.curr_last = -1
-
-    def run(self):
-        """ """
-        flags = 0
-        if os.name == 'nt':
-            flags = subprocess.CREATE_NO_WINDOW
-        self.popen = subprocess.Popen(['wsl', './EPICS_handling/run_ioc.cmd',
-                                       self.ioc_name],
-                                      stdout=subprocess.PIPE,
-                                      stderr=subprocess.STDOUT,
-                                      stdin=subprocess.PIPE, bufsize=1,
-                                      creationflags=flags)
-        for line in iter(self.popen.stdout.readline, b''):
-            text = line.decode().rstrip()
-            self.info_step.emit(text)
-        # while True:
-        #     line = self.popen.stdout.readline()
-        #     text = line.decode().rstrip()
-        #     self.info_step.emit(text)
-
-    def write_to_ioc(self, msg):
-        """
-
-        Parameters
-        ----------
-        msg :
-            
-
-        Returns
-        -------
-
-        """
-        if 'exit' in msg:
-            raise Exception('Please stop the IOC only using the button!\n(The command "exit" is not allowed!)')
-        self.last_inputs.append(msg)
-        if self.popen is not None:
-            self.popen.stdin.write(bytes(f'{msg}\n', 'utf-8'))
-            self.popen.stdin.flush()
-
-
-    def terminate(self) -> None:
-        """ """
-        if self.popen is not None:
-            self.popen.communicate(input=b'exit')
-        super().terminate()
 
 
 class Manual_Device_Thread(QThread):
     """ """
     def __init__(self, device, ophyd_class):
         super().__init__()
-        if device.ioc_settings['use_local_ioc']:
-            ioc = variables_handling.preset
-        else:
-            ioc = device.ioc_settings['ioc_name']
-        self.device = ophyd_class(f'{ioc}:{device.custom_name}:',
+        self.device = ophyd_class(f'{device.custom_name}:',
                                   name=f'manual_{device.custom_name}',
                                   **device.get_settings())
         self.device.wait_for_connection()

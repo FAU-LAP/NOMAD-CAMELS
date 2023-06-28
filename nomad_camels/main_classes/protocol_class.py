@@ -407,8 +407,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             allconf = []
             allconf += list(device.get_passive_config().keys())
             allconf += list(device.get_config().keys())
-            # allconf += list(device.get_config().keys())
-            allconf += list(device.get_ioc_settings().keys())
             for key in allconf:
                 configs.append(f'{device.name}_{key}')
         comboBoxes = {'Configuration': configs}

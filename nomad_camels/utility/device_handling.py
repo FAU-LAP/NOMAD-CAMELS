@@ -7,6 +7,7 @@ from nomad_camels.utility import variables_handling
 from nomad_camels.bluesky_handling import helper_functions
 
 import copy
+import pathlib
 
 local_packages = {}
 running_devices = {}
@@ -35,13 +36,12 @@ def load_local_packages(tell_local=False):
     if not os.path.isdir(local_instr_path):
         return local_packages
     sys.path.append(local_instr_path)
-    for f in os.listdir(local_instr_path):
-        match = re.match(r'^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$', f)
+    for f in pathlib.Path(local_instr_path).rglob('*'):
+        match = re.match(r'^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$', f.name)
         if match:
-            package_path = f'{local_instr_path}/{f}'
             try:
-                sys.path.append(package_path)
-                package = importlib.import_module(match.group(2))
+                sys.path.append(str(f.parent))
+                package = importlib.import_module(f'.{match.group(2)}', match.group(0))
                 device = package.subclass()
                 if tell_local:
                     local_packages[f'local {device.name}'] = package
@@ -93,34 +93,6 @@ def get_channels_from_string_list(channel_list):
         channels.append(get_channel_from_string(chan.name))
     return channels
 
-
-def connection_check(ioc_settings, settings):
-    """
-
-    Parameters
-    ----------
-    ioc_settings :
-        
-    settings :
-        
-
-    Returns
-    -------
-
-    """
-    if 'connection' not in ioc_settings:
-        return
-    conn = ioc_settings['connection']
-    connTyp = conn['type']
-    if connTyp == 'Local VISA':
-        settings['resource_name'] = conn['resource_name']
-        settings['baud_rate'] = conn['baud_rate']
-        settings['read_termination'] = conn['read_termination']
-        settings['write_termination'] = conn['write_termination']
-        ioc_settings.clear()
-    elif connTyp == '':
-        ioc_settings.clear()
-
 def start_devices_from_channel_list(channel_list):
     """
 
@@ -160,7 +132,6 @@ def instantiate_devices(device_list):
         classname = device.ophyd_class_name
         config = copy.deepcopy(device.get_config())
         settings = copy.deepcopy(device.get_settings())
-        ioc_settings = copy.deepcopy(device.get_ioc_settings())
         additional_info = copy.deepcopy(device.get_additional_info())
         if 'connection' in settings:
             settings.pop('connection')
@@ -174,13 +145,6 @@ def instantiate_devices(device_list):
                 non_strings.append(key)
         for s in non_strings:
             settings.pop(s)
-        if not ioc_settings or ioc_settings['use_local_ioc']:
-            ioc_name = variables_handling.preset
-        else:
-            ioc_name = ioc_settings['ioc_name']
-        connection_check(ioc_settings, settings)
-        if not ioc_settings and classname.endswith('_EPICS'):
-            classname = classname[:-6]
         additional_info['device_class_name'] = classname
         extra_settings.update(settings)
 
@@ -189,10 +153,7 @@ def instantiate_devices(device_list):
             ophyd_device = running_devices[dev]
             ophyd_device.device_run_count += 1
         else:
-            if not classname.endswith('_EPICS') and hasattr(device, 'ophyd_class_no_epics'):
-                ophyd_device = device.ophyd_class_no_epics(f'{dev}:', name=dev, **extra_settings)
-            else:
-                ophyd_device = device.ophyd_class(f'{dev}:', name=dev, **extra_settings)
+            ophyd_device = device.ophyd_class(f'{dev}:', name=dev, **extra_settings)
             ophyd_device.device_run_count = 1
             running_devices[dev] = ophyd_device
         print(f"connecting {dev}")
@@ -204,8 +165,6 @@ def instantiate_devices(device_list):
         device_config[dev] = {}
         device_config[dev].update(helper_functions.simplify_configs_dict(configs))
         device_config[dev].update(settings)
-        if ioc_settings:
-            device_config[dev]["ioc_settings"] = ioc_settings
         device_config[dev].update(additional_info)
     return devices, device_config
 
