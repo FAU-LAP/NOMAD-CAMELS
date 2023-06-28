@@ -12,8 +12,6 @@ nomad_camels.egg-info/SOURCES.txt
 nomad_camels.egg-info/dependency_links.txt
 nomad_camels.egg-info/requires.txt
 nomad_camels.egg-info/top_level.txt
-nomad_camels/EPICS_handling/__init__.py
-nomad_camels/EPICS_handling/make_ioc.py
 nomad_camels/bluesky_handling/EpicsFieldSignal.py
 nomad_camels/bluesky_handling/TriggerEpicsSignalRO.py
 nomad_camels/bluesky_handling/__init__.py
@@ -71,7 +69,6 @@ nomad_camels/gui/general_protocol_settings.py
 nomad_camels/gui/gradient_descent_step.py
 nomad_camels/gui/installer_window.py
 nomad_camels/gui/instrument_config.py
-nomad_camels/gui/mainWindow.py
 nomad_camels/gui/mainWindow_v2.py
 nomad_camels/gui/pass_ask.py
 nomad_camels/gui/plot_definer.py
@@ -117,8 +114,9 @@ nomad_camels/tests/protocol_test.py
 nomad_camels/tests/startup_test.py
 nomad_camels/tools/EPICS_driver_builder.py
 nomad_camels/tools/VISA_builder.py
-nomad_camels/tools/VISA_device_builder.py
+nomad_camels/tools/VISA_driver_builder.py
 nomad_camels/tools/__init__.py
+nomad_camels/tools/databroker_exporter.py
 nomad_camels/ui_widgets/__init__.py
 nomad_camels/ui_widgets/add_remove_table.py
 nomad_camels/ui_widgets/channels_check_table.py
