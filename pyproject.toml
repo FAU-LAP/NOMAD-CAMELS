@@ -14,7 +14,6 @@ requires-python = ">=3.9.6"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",
-    "Operating System :: Microsoft :: Windows",
 ]
 dynamic = ["dependencies"]
 
