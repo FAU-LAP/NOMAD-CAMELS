@@ -1,3 +1,6 @@
+"""The functions in this module may be used inside a protocol. It is much
+simpler to use these than writing them as a string into the protocol-file."""
+
 import numpy as np
 from bluesky import plan_stubs as bps
 
@@ -13,17 +16,15 @@ from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
 def trigger_multi(devices, grp=None):
     """
+    This function triggers mutliple devices
 
     Parameters
     ----------
-    devices :
+    devices : list[ophyd.Device]
+        List of the devices that should be triggered.
         
-    grp :
-         (Default value = None)
-
-    Returns
-    -------
-
+    grp : string (or any hashable object), optional
+        identifier used by 'wait'; None by default
     """
     for obj in devices:
         if hasattr(obj, 'trigger'):
@@ -31,15 +32,18 @@ def trigger_multi(devices, grp=None):
 
 def read_wo_trigger(devices, grp=None, stream='primary'):
     """
+    Used if not reading by trigger_and_read, but splitting both. This function
+    only reads, without triggering.
 
     Parameters
     ----------
-    devices :
-        
-    grp :
-         (Default value = None)
-    stream :
-         (Default value = 'primary')
+    devices : list[ophyd.Device]
+        List of the devices that should be read.
+    grp : string (or any hashable object), optional
+        identifier used by 'wait'; None by default
+    stream : string, optional
+        event stream name, a convenient human-friendly identifier; default
+        name is 'primary'
 
     Returns
     -------
@@ -58,15 +62,19 @@ def read_wo_trigger(devices, grp=None, stream='primary'):
 
 def simplify_configs_dict(configs):
     """
+    Returns a simplified version of the given dictionary `configs` by returning
+    confs[key] = configs[key]['value'].
 
     Parameters
     ----------
-    configs :
+    configs : dict
+        The dictionary to be simplified.
         
 
     Returns
     -------
-
+    confs : dict
+        The simplified dictionary.
     """
     confs = {}
     for key, value in configs.items():
@@ -78,21 +86,22 @@ def simplify_configs_dict(configs):
 
 def get_fit_results(fits, namespace, yielding=False, stream='primary'):
     """
+    Updates and reads all the fits that correspond to the given stream and
+    resets the fits in the end.
 
     Parameters
     ----------
-    fits :
-        
-    namespace :
-        
-    yielding :
+    fits : dict
+        Dictionary of all the fits to take into account.
+    namespace : dict
+        Namespace dictionary where to write the fit results.
+    yielding : bool, optional
          (Default value = False)
-    stream :
+         If True, the fits will be triggered and updated.
+    stream : str, optional
          (Default value = 'primary')
-
-    Returns
-    -------
-
+         The stream on which the regarded fits should run. Only the fits which
+         have `stream_name` equal to `stream` will be used.
     """
     for name, fit in fits.items():
         if yielding and fit.stream_name == stream:
@@ -111,17 +120,15 @@ def get_fit_results(fits, namespace, yielding=False, stream='primary'):
 
 def clear_plots(plots, stream='primary'):
     """
+    Clears all given plots if they correspond to the given stream.
 
     Parameters
     ----------
-    plots :
-        
-    stream :
+    plots : list
+        List of the plots to be cleared.
+    stream : str
          (Default value = 'primary')
-
-    Returns
-    -------
-
+         The stream to which the plots that should be cleared correspond.
     """
     for plot in plots:
         if plot.stream_name == stream or plot.stream_name.startswith(f'{stream}_fits_'):
@@ -133,47 +140,66 @@ def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
                      max_val, stream_name='gradient_descent', learning_rate=0.05,
                      momentum=0.8, max_step_for_diff=None):
     """
+    Helper function for the gradient descent protocol-step.
+    It follows a simple gradient descent algorithm to find an optimum.
 
     Parameters
     ----------
-    max_iterations :
-        
-    threshold :
-        
-    w_init :
-        
-    func_text :
-        
-    evaluator :
-        
+    max_iterations : int
+        The maximum number of iterations until the algorithm should stop if it
+        did not arrive at the threshold yet.
+    threshold : float
+        If the difference between two measurements is smaller than this
+        threshold, the algorithm recognizes the value as the optimum and stops.
+    w_init : float
+        The initial set-value from where the algorithm should start.
+    func_text : str
+        This string is evaluated by the given evaluator to give the target
+        function.
+    evaluator : Evaluator
+        Used to evaluate the read values.
     set_channel :
-        
+        The channel wich is used for the optimization.
     read_channels :
-        
-    min_step :
-        
-    max_step :
-        
-    min_val :
-        
-    max_val :
-        
-    stream_name :
+        A list of all the channels which are read for the optimization.
+    min_step : float
+        The minimum step size.
+    max_step : float
+        The maximum step size.
+    min_val : float
+        The minimum value that should be given to the `set_channel`.
+    max_val : float
+        The maximum value that should be given to the `set_channel`.
+    stream_name : str
          (Default value = 'gradient_descent')
-    learning_rate :
+         The bluesky stream in which everything should run.
+    learning_rate : float
          (Default value = 0.05)
-    momentum :
+         A weight for the learning of the gradient descent.
+         The next shift `delta_w` is calculated as:
+         delta_w = -learning_rate * <current_gradient> + momentum * <last_delta_w>
+    momentum : float
          (Default value = 0.8)
-    max_step_for_diff :
-         (Default value = None)
+         A momentum to keep up the last direction.
+         The next shift `delta_w` is calculated as:
+         delta_w = -learning_rate * <current_gradient> + momentum * <last_delta_w>
+    max_step_for_diff : float, None
+        If none, max_step_for_diff = 10 * min_step
+        Only if the last step was smaller than `max_step_for_diff`, the
+        algorithm breaks if the threshold is reached.
 
     Returns
     -------
+    w_history :
+        The history of values of set_channel
+    f_history :
+        The history of evaluated values
 
     """
 
     if set_channel not in read_channels:
         read_channels += [set_channel]
+
     def obj_func(set_val):
         """
 
@@ -254,6 +280,7 @@ def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
             sort_f.pop(0)
             sort_w.pop(0)
     return w_history,f_history
+
 
 def get_range(evaluator, start, stop, points, min_val=np.nan, max_val=np.nan,
               loop_type='start - stop', sweep_mode='linear', endpoint=True):
