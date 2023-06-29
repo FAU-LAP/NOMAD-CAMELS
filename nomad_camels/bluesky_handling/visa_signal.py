@@ -133,7 +133,7 @@ class VISA_Signal(Signal):
         """ """
         info = super().describe()
         info[self.name]['source'] = 'VISA'
-        info[self.name].update(self.metadata)
+        # info[self.name].update(self.metadata)
         return info
 
 
@@ -207,7 +207,7 @@ class VISA_Signal_RO(SignalRO):
         """ """
         info = super().describe()
         info[self.name]['source'] = 'VISA'
-        info[self.name].update(self.metadata)
+        # info[self.name].update(self.metadata)
         return info
 
 
