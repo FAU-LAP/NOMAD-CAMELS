@@ -335,6 +335,7 @@ class Device_Config(QWidget):
         conn_old = self.connector
         if self.comboBox_connection_type.currentText() == 'Local VISA':
             self.connector = Local_VISA()
+        self.connector.load_settings(self.settings_dict)
         self.layout().replaceWidget(conn_old, self.connector)
         conn_old.deleteLater()
 
@@ -633,6 +634,8 @@ class Local_VISA(Connection_Config):
         -------
 
         """
+        if 'connection' in settings_dict:
+            settings_dict = settings_dict['connection']
         if 'resource_name' in settings_dict and settings_dict['resource_name'] in self.ports:
             self.comboBox_port.setCurrentText(settings_dict['resource_name'])
         if 'baud_rate' in settings_dict:

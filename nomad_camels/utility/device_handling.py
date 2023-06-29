@@ -134,7 +134,10 @@ def instantiate_devices(device_list):
         settings = copy.deepcopy(device.get_settings())
         additional_info = copy.deepcopy(device.get_additional_info())
         if 'connection' in settings:
-            settings.pop('connection')
+            conn = settings.pop('connection')
+            if 'type' in conn:
+                conn.pop('type')
+            settings.update(conn)
         if 'idn' in settings:
             settings.pop('idn')
         extra_settings = {}
