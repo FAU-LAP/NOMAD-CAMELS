@@ -32,12 +32,14 @@ class ManageInstruments(QDialog):
         self.config_widget = instrument_config.Instrument_Config(active_instruments)
         self.tabs.addTab(self.config_widget, 'Configure Instruments')
 
-        settab = 1 if instrument_installer.getInstalledDevices() else 0
-        self.tabs.setCurrentIndex(settab)
         self.installer.instruments_updated.connect(self.config_widget.build_table)
 
         layout.addWidget(self.tabs, 0, 0)
         layout.addWidget(self.buttonBox, 1, 0)
+
+        self.show()
+        settab = 1 if instrument_installer.getInstalledDevices() else 0
+        self.tabs.setCurrentIndex(settab)
 
     def accept(self) -> None:
         """ """
