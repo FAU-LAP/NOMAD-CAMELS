@@ -15,10 +15,10 @@ class EPICS_Driver_Builder(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        if os.path.isdir('graphics'):
+        try:
             self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
-        else:
-            self.setWindowIcon(QIcon('../graphics/CAMELS.svg'))
+        except:
+            pass
         self.setWindowTitle('NOMAD-CAMELS - EPICS-driver-builder')
 
         label_name = QLabel('Instrument Name:')

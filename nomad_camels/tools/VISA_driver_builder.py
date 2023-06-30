@@ -17,10 +17,10 @@ class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
         super().__init__(parent=parent)
         self.setupUi(self)
 
-        if os.path.isdir('graphics'):
+        try:
             self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
-        else:
-            self.setWindowIcon(QIcon('../graphics/CAMELS.svg'))
+        except:
+            pass
         self.setWindowTitle('NOMAD-CAMELS - VISA-driver-builder')
 
         label_in = QLabel('Input Channels')
