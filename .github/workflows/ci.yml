@@ -83,3 +83,17 @@ jobs:
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
         run: pytest -v
+  changelog:
+    needs: [ubuntu_test, macos_test, windows_test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Python 3
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Install dependency
+        run: pip install git-changelog
+      - name: add to log
+        run: git-changelog -Tio changelog.md -s add,fix,change,remove,merge,doc
+
