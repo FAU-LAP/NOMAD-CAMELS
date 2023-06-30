@@ -1,18 +1,20 @@
+(local_drivers)=
 # Local Instrument Drivers
 You can create and use local instrument drivers by creating this kind of folder structure
 
 ```
-nomad_camels_driver_<parent_driver_name> (contains the actual device communication files)
-└─> <parent_driver_name>.py
-└─> <parent_driver_name>_ophyd.py
+nomad_camels_driver_<driver_name> (contains the actual device communication files)
+└─> <driver_name>.py
+└─> <driver_name>_ophyd.py
 ```
 and giving the path to the parent folder in the CAMELS settings.
 
-CAMELS then searches the given path for folder starting with `nomad_camels_driver_` and extracts the device name from the text following this.\
-For more details on how the .py and ophyd.py files should look like you can go to the code examples in [Section 1.2.](python_files)
+CAMELS then searches the given path for folders starting with `nomad_camels_driver_` and extracts the instrument name from the text following this.\
+For more details on how the .py and ophyd.py files should look like you can go to the code examples in [Writing New Drivers, Section 2.](python_files)
 
 ## File Templates
 You can find templates for a new instrument driver on [GitHub](https://github.com/FAU-LAP/CAMELS_drivers/tree/main/empty_instrument_driver).
+These templates include VISA-communication, which is explained in more detail 
 
 ---
 
@@ -20,11 +22,11 @@ You can find templates for a new instrument driver on [GitHub](https://github.co
 
 **Regarding the `*.py` file.**
 
-It should include a class `subclass` which inherits from `main_classes.device_class.Device`.
-The arguments here should be set in the __init__ by the subclass (following) the documentation of the Device class.
-For most devices, nothing further should be necessary in this class.
+It should include a class `subclass` which inherits from `nomad_camels.main_classes.device_class.Device`.
+The arguments here should be set in the `__init__` function by the subclass, following the documentation of the Device class.
+For most instruments, nothing further should be necessary in this class.
 
-The `subclass_config`, inheriting from `main_classes.device_class.Device_Config` should provide the necessary configuration for the device and put this information into the device's `config`, `settings` and `ioc_settings` attributes.
+The `subclass_config`, inheriting from `main_classes.device_class.Device_Config` should provide the necessary configuration for the device and put this information into the instrument's `config` and `settings` attributes.
 
 **Regarding the `*ophyd.py` file.**
 

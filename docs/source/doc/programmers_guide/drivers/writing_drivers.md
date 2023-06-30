@@ -1,25 +1,24 @@
-
-# Writing New Instrument Drivers for PyPi
-Every instrument driver should be an individual [PyPi](https://pypi.org/) package.\
-It is possible to create drivers that are only available locally for you.
+# Writing New Instrument Drivers
+In genereal, every instrument driver should be an individual [PyPi](https://pypi.org/) package.\
+It is possible to create drivers that are [only available locally](local_drivers) for you.
 
 The source code of each driver can be found in [this repository](https://github.com/FAU-LAP/CAMELS_drivers).
 ## 1. Folder structure
 The driver should have the following folder structure
 ```
-<parent_driver_name>
+<driver_name>
 └─> dist (this is automatically created by python -m build)
-    └─> nomad_camels_driver_<parent_driver_name>-X.Y.Z.tar.gz
-    └─> nomad_camels_driver_<parent_driver_name>-X.Y.Z-py3-none-any.whl
-└─> nomad_camels_driver_<parent_driver_name> (contains the actual device communication files)
-    └─> <parent_driver_name>.py
-    └─> <parent_driver_name>_ophyd.py
+    └─> nomad_camels_driver_<driver_name>-X.Y.Z.tar.gz
+    └─> nomad_camels_driver_<driver_name>-X.Y.Z-py3-none-any.whl
+└─> nomad_camels_driver_<driver_name> (contains the actual device communication files)
+    └─> <driver_name>.py
+    └─> <driver_name>_ophyd.py
 └─> LICENSE.txt
 └─> pyproject.toml
 └─> README.md
 ```
-The most important files are the `<parent_driver_name>.py` and `<parent_driver_name>_ophyd.py` files. The first one contains everything that is needed by the NOMAD-CAMELS GUI. The latter contains the class that is actually used for communicating with the device.  
-The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPi ([see here for more information](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)).\
+The most important files are the `<driver_name>.py` and `<driver_name>_ophyd.py` files. The first one contains everything that is needed by the NOMAD-CAMELS GUI. The latter contains the class that is actually used for communicating with the instrument.  
+The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPi (see the [setuptools page](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)).\
 &#9888; Most importantly the project name and version must be set in the `pyproject.toml` file.
 
 ---
@@ -38,7 +37,7 @@ version = "0.1.4"
 authors = [
     { name="FAIRmat - HU Berlin", email="nomad-camels@fau.de" }
 ]
-description = "Device driver for the Keithley 237 SMU."
+description = "Instrument driver for the Keithley 237 SMU."
 readme = "README.md"
 requires-python = ">=3.9.6"
 classifiers = [
@@ -48,6 +47,7 @@ classifiers = [
 ]
 dependencies = [
     "pyvisa",
+    "pyvisa-py"
 ]
 [project.urls]
 "GitHub Page" = "https://github.com/FAU-LAP/NOMAD-CAMELS"
@@ -60,8 +60,8 @@ dependencies = [
 
 (python_files)=
 ## 2. Python files
-The `<parent_driver_name>.py` file contains information about the possible instrument configurations and settings. This can be for example the current compliance of a voltage source or the integration time of a digital multimeter.
-### 2.2.1 Simple Device Configurations
+The `<driver_name>.py` file contains information about the possible instrument configurations and settings. This can be for example the current compliance of a voltage source or the integration time of a digital multimeter.
+### 2.1 Simple Configurations
 > &#9888; For **simple instruments** with only a **few settings** you do not need to write your own GUI for the settings but CAMELS can auto-generate the UI for you. \
 > An example file is displayed below:
 
@@ -129,7 +129,7 @@ class subclass_config(device_class.Simple_Config):
 
 ---
 
-### 2.2.2 Complex Device Configurations
+### 2.2 Complex Configurations
 If the instrument is more complex CAMELS can not auto generate the UI anymore. Here you need to write your own UI using for example QT Designer. The first three class definitions are relevant for this.
 
 ---
@@ -427,10 +427,61 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_B2912_channel):
 
 ---
 
+### 2.3 Ophyd File
+The `<driver_name>_ophyd.py` file should contain a class inheriting from ophyd.Device (or one of its subclasses).
+Each component with `kind='normal'` or `'hinted'` (or unspecified) of the defined device will appear as a channel in CAMELS. Components with `kind='config'` should be managed in the instrument settings in the UI.  
+A quick way to get started is using the `custom_function_signal` module. These Signals inherit from ophyd's Signal and provide a way to use any python function for setting / reading the channel.  
+The example below shows, how to use these. A function can be passed to the component directly, while a class method needs to be passed in the constructor.
+
+
+<details>
+  <summary>Code example for an ophyd file</summary>
+
+```python
+from ophyd import Device
+from ophyd import Component as Cpt
+from nomad_camels.bluesky_handling.custom_function_signal import Custom_Function_Signal, Custom_Function_SignalRO
+
+
+def my_read_function():
+    # do reading
+
+def my_config_function(value):
+    # do something
+
+
+class Instrument_Name(Device):
+    # This is an example for a channel that can only be read
+    get_value = Cpt(Custom_Function_SignalRO, name='get_value',
+                    metadata={'units': 'A'}, read_function=my_read_function)
+    # Example of a set channel
+    set_value = Cpt(Custom_Function_Signal, name='set_value',
+                    metadata={'units': 'V'})
+
+    # Example for a configuration attribute
+    config_value = Cpt(Custom_Function_Signal, name='config_value',
+                       kind='config', put_function=my_config_function)
+    
+    
+    def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
+                 configuration_attrs=None, parent=None, **kwargs):
+       super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
+                        configuration_attrs=configuration_attrs, parent=parent, **kwargs)
+       self.get_value.read_function = my_read_function
+       self.set_value.put_function = self.my_set_method
+       self.config_value.put_function = my_config_function
+    
+    def my_set_method(self):
+        # do setting
+    
+```
+</details>
+
+
 ## 3. Building the Instrument Package
 To create a new package that can be installed via pip from PyPi or testPyPi follow these steps.
 1. Make sure you have `build` and `twine` installed into your python environment with `pip install build` and `pip install twine`
-2. Go to the `<parent_driver_name>` directory of the driver. So the parent directory containing the pyproject.toml
+2. Go to the `<driver_name>` directory of the driver. So the parent directory containing the pyproject.toml
 3. Set the correct version number and metadata in your `pyproject.toml` file
 4. Run the build command : `python -m build`. This creates the `dist/` folder and the distributions to upload to PyPi
 5. Upload to PyPi with
@@ -462,7 +513,7 @@ Get-ChildItem $rootFolder -Recurse -Directory | ForEach-Object {
 ## 5. Install Instrument Package
 To install  run
 ```console
-pip install nomad_camels_driver_<parent_driver_name>
+pip install nomad_camels_driver_<driver_name>
 ```
-where `nomad_camels_driver_<parent_driver_name>` is the driver name you gave your folder and project.\
+where `nomad_camels_driver_<driver_name>` is the driver name you gave your folder and project.\
 
