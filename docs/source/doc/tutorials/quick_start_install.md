@@ -80,7 +80,7 @@ After adding at least one instrument to CAMELS you now have two ways to control 
 1. [_Measurement Protocols_](quick_start_protocols.md)\
    Use it for measurement procedures. How to set up and use protocols is explained on this page.
 2. [_Manual Control_](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_manual_control.html)\
-   Manually change and control individual channels. This is useful for controlling stages without having to create a protocol. How to use this functionality is explained in more detail [here](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_manual_control.html).
+   Manually change and control individual channels. This is useful for controlling stages without having to create a protocol. How to use this functionality is explained in more detail in the [Tutorial](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_manual_control.html).
    ![img_8.png](img_8.png)
 
 [&#8679; Back to the top &#8679;](top-link)

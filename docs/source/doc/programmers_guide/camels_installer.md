@@ -5,13 +5,13 @@ Find more on it at [its own GitHub](https://github.com/A-D-Fuchs/CAMELS_installe
 
 ## 1. Workflow
 Brief description of the workflow when the installer should be updated.
-1. Change python code in `/Python_code/setup_camels.py` (see [here](changes-to-python-or-environment))
+1. Change python code in `/Python_code/setup_camels.py` (see [below](changes-to-python-or-environment))
 2. Create .exe file from the python code. To do this run following code in `/Python_code/`
     ```bash
     pyinstaller --onefile --nowindow setup.py
     ```
    This creates the `setup_camels.exe` file under `/Python_code/dist/`
-3. Change `"\run\runCamels.bat"` to change the way CAMELS is launched (see [here](22-changes-to-the-way-camels-is-started-via-shortcuts))
+3. Change `"\run\runCamels.bat"` to change the way CAMELS is launched (see [below](22-changes-to-the-way-camels-is-started-via-shortcuts))
 4. Convert the bat file to an exe file (using for example [Bat To Exe Converter](https://bat-to-exe-converter-x64.de.softonic.com/))
 5. Open the `CAMELS_installer.iss` file and perform any required changes. Then compile the exe.\
 The final file `NOMAD-CAMELS_installer.exe` can be found under `/Output/`
@@ -49,7 +49,7 @@ If you have the `signtool.exe` and are in its folder then run this in your Power
 .\signtool.exe sign /f "/path/to/certificate/certificate.pfx" /p "<your_pfx_password>" /fd sha256 /t http://timestamp.sectigo.com "/path/to/NOMAD-CAMELS/installer/NOMAD-CAMELS_installer.exe"
 ```
 
-For more information on the options look [here](https://learn.microsoft.com/en-us/dotnet/framework/tools/signtool-exe#sign).
+For more information on the options, see the [signtool website](https://learn.microsoft.com/en-us/dotnet/framework/tools/signtool-exe#sign).
 
 The executable should now be signed and you are ready to publish the new version.
 

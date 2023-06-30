@@ -12,7 +12,7 @@ CAMELS then searches the given path for folder starting with `nomad_camels_drive
 For more details on how the .py and ophyd.py files should look like you can go to the code examples in [Section 1.2.](python_files)
 
 ## File Templates
-You can find templates for a new instrument driver [here](https://github.com/FAU-LAP/CAMELS_drivers/tree/main/empty_instrument_driver).
+You can find templates for a new instrument driver on [GitHub](https://github.com/FAU-LAP/CAMELS_drivers/tree/main/empty_instrument_driver).
 
 ---
 
