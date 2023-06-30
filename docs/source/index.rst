@@ -52,7 +52,7 @@ If you have any questions or feedback you can reach the development team of CAME
    :caption: Instruments
 
    Available Instruments <doc/instruments/instruments.md>
-   Create New Instrument Driver <doc/programmers_guide/instrument_drivers.md>
+   Create New Instrument Drivers <doc/programmers_guide/instrument_drivers.md>
 
 .. toctree::
    :maxdepth: 2
