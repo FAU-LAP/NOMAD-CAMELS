@@ -81,14 +81,17 @@ class EPICS_Driver_Builder(QDialog):
                 ast.parse(f'{pv} = None')
             except (ValueError, SyntaxError, TypeError):
                 raise Exception(f'PV-name "{pv}" resembles python builtin function or variable!\nDefine another name!\nYou may change the PV-name later in the code, see the documentation for more information.')
+        all_good = True
         for name in inputs['PV-Name']:
-            check_builtin(name)
+            all_good = all_good and variables_handling.check_variable_name(name, parent=self)
         for name in outputs['PV-Name']:
-            check_builtin(name)
+            all_good = all_good and variables_handling.check_variable_name(name, parent=self)
         for name in configs['PV-Name']:
-            check_builtin(name)
+            all_good = all_good and variables_handling.check_variable_name(name, parent=self)
         for name in configs_in['PV-Name']:
-            check_builtin(name)
+            all_good = all_good and variables_handling.check_variable_name(name, parent=self)
+        if not all_good:
+            raise Exception(f'Some PV-name resemble python builtin function or variable!\nDefine another name!\nYou may change the PV-name later in the code, see the documentation for more information.')
         directory = f'{path}/nomad_camels_driver_{dev_name}'
         sys.path.append(directory)
         fname = f'{directory}/{dev_name}.py'
