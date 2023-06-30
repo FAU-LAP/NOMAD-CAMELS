@@ -19,7 +19,7 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv
 - Activate the environment with `.\.desertenv\Scripts\activate`
 - Now type
   ```bash
-  pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels 
+  pip install nomad-camels 
   ```
    to install CAMELS.
 ## 4. Run CAMELS

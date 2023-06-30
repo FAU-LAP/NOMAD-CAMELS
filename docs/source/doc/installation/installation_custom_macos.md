@@ -33,7 +33,7 @@ This uses `homebrew` to install pyenv ([see here](https://brew.sh/) for more inf
 - Now  activate the environment with `.\.desertenv\Scripts\activate`
 - Now type
   ```bash
-  pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels 
+  pip install nomad-camels 
   ```
   to install CAMELS.
 ## 4. Run CAMELS

@@ -40,10 +40,7 @@ Components with kind='config' should be part of the configuration-widget.
 
 ## Writing New Instrument Drivers for PyPi
 Every instrument driver should be an individual [PyPi](https://pypi.org/) package.\
-It is possible to create drivers that are only available locally for you. 
-> &#9888; 
-> Currently the drivers are located in [testPyPi.org](https://testPyPi.org/). &#9888;\
-> This will be changed to [PyPi.org](https://PyPi.org/) once the devices are stable.
+It is possible to create drivers that are only available locally for you.  
 
 The source code of each driver can be found in [this repository](https://github.com/FAU-LAP/CAMELS_drivers).
 ### 1. Folder structure
@@ -475,17 +472,16 @@ To create a new package that can be installed via pip from PyPi or testPyPi foll
 2. Go to the `<parent_driver_name>` directory of the driver. So the parent directory containing the pyproject.toml 
 3. Set the correct version number and metadata in your `pyproject.toml` file
 4. Run the build command : `python -m build`. This creates the `dist/` folder and the distributions to upload to PyPi
-5. Upload to testPyPi (PyPi) with 
+5. Upload to PyPi with 
     ```console
-    python -m twine upload --repository testpypi dist/nomad*
+    python -m twine upload dist/nomad*
     ```
-   &#9888; Change the repository used after the `--repository` flag to `pypi` to upload to PyPi
 
 ---
 
 ### 4. Automated Build and Upload
 You can run the following script using microsoft PowerShell in the `$rootFolder` containing multiple instrument drivers in subdirectories.\
-It runs the `python -m build` and `python -m twine upload -r testpypi dist/nomad*` commands in each subdirectory containing a `pyproject.toml` file.
+It runs the `python -m build` and `python -m twine upload dist/nomad*` commands in each subdirectory containing a `pyproject.toml` file.
 
 ```powershell
 $rootFolder = "C:\Path\To\Root\Folder"
@@ -493,7 +489,7 @@ Get-ChildItem $rootFolder -Recurse -Directory | ForEach-Object {
     if (Test-Path "$($_.FullName)\pyproject.toml") {
         Push-Location $_.FullName
         python -m build
-        python -m twine upload -r testpypi dist/nomad*
+        python -m twine upload dist/nomad*
         Pop-Location
     }
 }
@@ -505,12 +501,9 @@ Get-ChildItem $rootFolder -Recurse -Directory | ForEach-Object {
 ### 5. Install Instrument Package
 To install  run 
 ```console
-pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<parent_driver_name>
+pip install nomad_camels_driver_<parent_driver_name>
 ```
 where `nomad_camels_driver_<parent_driver_name>` is the driver name you gave your folder and project.\
-The `--extra-index-url` flag allows dependencies to be installed from PyPi.\
-The `--no-cache-dir` flag prevents any locally saved NOMAD-CAMELS version to be installed instead of the most recent remote version.\
-> &#9888; The index-url must be changed of course when installing from PyPi &#9888;
 
 
 ## EPICS instrument-drivers

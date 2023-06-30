@@ -6,11 +6,7 @@ This guide is also useful if `pyenv` does not work on your machine due to restri
 ## 1. Anaconda Installation
 Download [Anaconda](https://www.anaconda.com/download) and install. 
 ## 2. Create Environment
-Now set up the correct python environment for CAMELS using Anaconda. For this open the `Anaconda Prompt` terminal (use Windows search to find it). 
-
-```{image} img.png
-:width: 40%
-```
+Now set up the correct python environment for CAMELS using Anaconda. For this open the `Anaconda Prompt` terminal. 
 
 Run 
 
@@ -31,7 +27,7 @@ indicating that you are currently using the `desertenv` python environment.
 Now run the following command to install CAMELS from PyPi (currently from testPyPi, this will be changed in the future).
 
 ```bash
-pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad-camels
+pip install nomad-camels
 ```
 
 ## 4. Run CAMELS
