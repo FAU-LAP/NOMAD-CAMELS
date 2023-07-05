@@ -14,7 +14,24 @@ from nomad_camels.loop_steps.for_while_loops import For_Loop_Step_Config_Sub, Fo
 
 
 class ND_Sweep(Loop_Step):
-    """ """
+    """
+    An n-dimensional sweep with the read values. Usefull for e.g. an xy-scan.
+
+    Attributes
+    ----------
+    sweep_channels : list[str]
+        From outer to inner sweep, the names of the channels that should be
+        sweeped through.
+    data_output : str
+        Whether the data is put into its own stream('sub-stream') or the primary
+        stream ('main-stream').
+    plots : list[Plot_Info]
+        List of the plots that should be created for the sweep.
+    read_channels : list[str]
+        List of the channels that should be read during the sweep.
+    sweep_values : list[Sweep_Step]
+        List of sub-steps containing the information about the sweeps.
+    """
     def __init__(self, name='', parent_step=None, step_info=None,
                  **kwargs):
         super().__init__(name=name, parent_step=parent_step, step_info=step_info,

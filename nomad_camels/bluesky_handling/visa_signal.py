@@ -207,17 +207,15 @@ class VISA_Device(Device):
     ----------
     resource_name : str
         The name of the VISA-resource.
-
     read_termination : str
+        (Default = '\\r\\n')
         The line termination for reading from the instrument.
-        (Default = '\r\n')
-
     write_termination : str
+        (Default = '\\r\\n')
         The line termination for writing to the instrument.
-        (Default = '\r\n')
-
     baud_rate : int
-        The communication baud rate. (Default = 9600)
+        (Default = 9600)
+        The communication baud rate.
     """
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, resource_name='',
@@ -241,11 +239,3 @@ class VISA_Device(Device):
             it = comp.item
             it.visa_instrument = self.visa_instrument
 
-
-
-# if __name__ == '__main__':
-#     print(list_resources())
-#     tester = 'USB0::0x0957::0x8E18::MY51140626::INSTR'
-#     # testsig = VISA_Signal_Write('testsig', write_termination='\r\n', resource_name=tester)
-#     testsigR = VISA_Signal_Read('testsigR', read_termination='\r\n', write_termination='\r\n', resource_name=tester, query_text='MEAS:VOLT:DC?')
-#     print(testsigR.get())
