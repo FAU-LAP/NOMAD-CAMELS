@@ -8,14 +8,11 @@ def trigger_and_read_devices(devices, name='primary'):
 
     Parameters
     ----------
-    devices :
-        
-    name :
-         (Default value = 'primary')
-
-    Returns
-    -------
-
+    devices : list[ophyd.Device]
+        List of the devices that should be triggered and read
+    name : str
+        (Default value = 'primary')
+        Name of the stream where to save the data
     """
     split_devices = []
     for dev in devices:
