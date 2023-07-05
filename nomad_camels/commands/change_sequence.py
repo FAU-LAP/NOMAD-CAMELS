@@ -2,7 +2,28 @@ from PySide6.QtCore import QItemSelectionModel
 from PySide6.QtGui import QUndoCommand
 
 class CommandMoveStep(QUndoCommand):
-    """ """
+    """
+    Using a command for moving a step inside the protocol treeView to be able to
+    reverse the action.
+
+    Parameters
+    ----------
+    treeView : QTreeView
+        The TreeView displaying the protocol sequence
+    item_model : QStandardItemModel
+        The treeview's item model
+    up_down : int
+        The direction in which to move the step, if positive it moves down, if
+        negative it moves up.
+    in_out : int
+        The step is moved into the step above it, if positive, if negative it is
+        moved out one layer.
+    loop_step_dict : dict
+        The dictionary of the loopsteps, used to find the parent steps
+    update_func : function
+        This function is called, when the command is finished, usually used to
+        update the order of the steps in the protocol data.
+    """
     def __init__(self, treeView, item_model, up_down, in_out, loop_step_dict, update_func):
         super().__init__()
         self.treeView_protocol_sequence = treeView
@@ -15,7 +36,7 @@ class CommandMoveStep(QUndoCommand):
         self.update_func = update_func
 
     def redo(self):
-        """ """
+        """Performs moving the step."""
         parent = self.item.parent()
         if parent is None:
             if self.up_down != 0 and (self.ind.row() > 0 or self.up_down > 0) and (self.ind.row() < self.item_model_sequence.rowCount()-1 or self.up_down < 0):
@@ -51,7 +72,7 @@ class CommandMoveStep(QUndoCommand):
         self.update_func()
 
     def undo(self):
-        """ """
+        """Moves the step back to its original position."""
         parent = self.item.parent()
         up_down = - self.up_down
         in_out = - self.in_out
