@@ -158,9 +158,9 @@ def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
         function.
     evaluator : Evaluator
         Used to evaluate the read values.
-    set_channel :
+    set_channel : ophyd.Signal
         The channel wich is used for the optimization.
-    read_channels :
+    read_channels : list
         A list of all the channels which are read for the optimization.
     min_step : float
         The minimum step size.
