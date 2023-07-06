@@ -603,7 +603,12 @@ class Local_VISA(Connection_Config):
         label_baud = QLabel('Baud-Rate:')
         self.lineEdit_baud = QLineEdit('9600')
         self.layout().addWidget(label_baud, 1, 0)
-        self.layout().addWidget(self.lineEdit_baud, 1, 1, 1, 4)
+        self.layout().addWidget(self.lineEdit_baud, 1, 1)
+
+        label_timeout = QLabel('Timeout (ms):')
+        self.lineEdit_timeout = QLineEdit('2000')
+        self.layout().addWidget(label_timeout, 1, 2)
+        self.layout().addWidget(self.lineEdit_timeout, 1, 3)
 
         label_in_term = QLabel('In-Terminator:')
         self.lineEdit_in_term = QLineEdit('\\r\\n')
@@ -619,6 +624,7 @@ class Local_VISA(Connection_Config):
         """ """
         return {'resource_name': self.comboBox_port.currentText(),
                 'baud_rate': int(self.lineEdit_baud.text()),
+                'timeout': int(self.lineEdit_timeout.text()),
                 'read_termination': self.lineEdit_in_term.text().replace('\\r', '\r').replace('\\n', '\n'),
                 'write_termination': self.lineEdit_out_term.text().replace('\\r', '\r').replace('\\n', '\n')}
 
@@ -640,6 +646,8 @@ class Local_VISA(Connection_Config):
             self.comboBox_port.setCurrentText(settings_dict['resource_name'])
         if 'baud_rate' in settings_dict:
             self.lineEdit_baud.setText(str(settings_dict['baud_rate']))
+        if 'timeout' in settings_dict:
+            self.lineEdit_timeout.setText(str(settings_dict['timeout']))
         if 'read_termination' in settings_dict:
             self.lineEdit_in_term.setText(settings_dict['read_termination'].replace('\r', '\\r').replace('\n', '\\n'))
         if 'write_termination' in settings_dict:
