@@ -1,7 +1,7 @@
 """This module provides the functionalities needed for CAMELS to produce a
 running python script for its protocols.
 
-The overview of the protocol-file looks like this:
+The overview of the protocol-file looks like this:\n
 - import sys
 - add path_to_camels, path_to_camels/nomad_camels, path to instruments to path
 - `standard_string`
@@ -21,22 +21,22 @@ The overview of the protocol-file looks like this:
 - `final_string`
 - `standard_start_string3`
 
-giving shortly:
-* imports/variables...
-* def protocol_plan_inner
-* def protocol_plan
-* def create_plots
-* def steps_add_main (plots of steps, etc.)
-* def uid_collector
-* def run_protocol_main
-* def main
-* if __name__ == "__main__"
+giving shortly:\n
+- imports/variables...
+- def protocol_plan_inner
+- def protocol_plan
+- def create_plots
+- def steps_add_main (plots of steps, etc.)
+- def uid_collector
+- def run_protocol_main
+- def main
+- if __name__ == "__main__"
 
-With the calls as follows:
-if --> main
-main --> create_plots, steps_add_main, run_protocol_main
-run_protocol_main --> uid_collector, protocol_plan
-protocol_plan --> protocol_plan_inner
+With the call chain as follows:\n
+- if --> main
+- main --> create_plots, steps_add_main, run_protocol_main
+- run_protocol_main --> uid_collector, protocol_plan
+- protocol_plan --> protocol_plan_inner
 """
 
 import os.path

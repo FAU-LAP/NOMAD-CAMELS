@@ -220,7 +220,7 @@ class VISA_Device(Device):
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, resource_name='',
                  read_termination='\r\n', write_termination='\r\n',
-                 baud_rate=9600, **kwargs):
+                 baud_rate=9600, timeout=2000, **kwargs):
         super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
                          configuration_attrs=configuration_attrs, parent=parent, **kwargs)
         self.visa_instrument = None
@@ -234,6 +234,7 @@ class VISA_Device(Device):
             self.visa_instrument.read_termination = read_termination
             self.visa_instrument.baud_rate = baud_rate
             self.visa_instrument.currently_reading = False
+            self.visa_instrument.timeout = timeout
 
         for comp in self.walk_signals():
             it = comp.item

@@ -46,7 +46,7 @@ class ND_Sweep(Loop_Step):
         self.sweep_values = step_info['sweep_values'] if 'sweep_values' in step_info else []
 
     def update_used_devices(self):
-        """ """
+        """Includes the devices from the read_channels and the sweep_channels"""
         self.used_devices = []
         for channel in self.read_channels:
             if channel in variables_handling.channels:
@@ -60,13 +60,13 @@ class ND_Sweep(Loop_Step):
                     self.used_devices.append(device)
 
     def get_outer_string(self):
-        """ """
+        """Gives the string to create the plots of the sweeps"""
         if self.plots:
             return builder_helper_functions.plot_creator(self.plots, f'create_plots_{self.name}')[0]
         return ''
 
     def get_add_main_string(self):
-        """ """
+        """Calling the plot_creator from steps_add_main"""
         stream = f'"{self.name}"'
         if self.data_output == 'main stream':
             stream = '"primary"'
