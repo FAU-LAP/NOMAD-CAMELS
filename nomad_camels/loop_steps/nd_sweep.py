@@ -77,17 +77,8 @@ class ND_Sweep(Loop_Step):
 
 
     def get_protocol_string(self, n_tabs=1):
-        """The loop is enumerating over the selected points.
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """The channels to be read are set up. Then a for loop for each sweep is
+        started, with the channels each being set inside it."""
         tabs = '\t'*n_tabs
 
         stream = f'"{self.name}"'
@@ -128,6 +119,7 @@ class ND_Sweep(Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
+        """The read channels and the sweeps are specified."""
         short_string = super().get_protocol_short_string(n_tabs)
         tabs = '\t' * (n_tabs+1)
         short_string += f'{tabs}Read: {self.read_channels}\n'
@@ -142,7 +134,17 @@ class ND_Sweep(Loop_Step):
 
 
 class Sweep_Step(For_Loop_Step):
-    """ """
+    """
+    One single sweep for the ND sweep. Inherits from For_Loop_Step regarding the
+    steps of the sweep.
+
+    Attributes
+    ----------
+    sweep_channel : str
+        The channel which is used in this sweep-part.
+    wait_time : str, float
+        The time in seconds, how long to wait after setting the channel.
+    """
     def __init__(self, step_info=None):
         step_info = step_info or {}
         super().__init__(step_info=step_info)
@@ -151,17 +153,8 @@ class Sweep_Step(For_Loop_Step):
         self.wait_time = step_info['wait_time'] if 'wait_time' in step_info else ''
 
     def get_protocol_string(self, n_tabs=1):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """Creates a for loop over the sweep_channel and waits for wait_time
+        after setting the channel."""
         tabs = '\t'*n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         name = variables_handling.channels[self.sweep_channel].name
@@ -176,6 +169,7 @@ class Sweep_Step(For_Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
+        """Specifies the same way as the foor loop."""
         return super().get_protocol_short_string(n_tabs)[n_tabs+3:-1]
 
 
