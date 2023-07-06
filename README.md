@@ -14,3 +14,15 @@ NOMAD-CAMELS is a configurable measurement software, targeted towards the requir
 ## Documentation
 
 For more information and documentation visit [this page](https://fau-lap.github.io/NOMAD-CAMELS/).
+
+# Changelog
+
+
+## 0.1.4
+Added a timeout setting to all VISA instruments. Setting the timeout determines how long the instrument 
+
+## 0.1.3
+First stable and working release
+
+## 0.1.0 to 0.1.2 
+&#9888; Broken releases due to minor bugs that were fixed in 0.1.3
