@@ -17,6 +17,8 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 # Changelog
 
+## 0.1.5
+Fixed the 'Update CAMELS' tool.
 
 ## 0.1.4
 Added a timeout setting to all VISA instruments. Setting the timeout determines how long the instrument 
