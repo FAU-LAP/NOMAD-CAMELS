@@ -9,7 +9,21 @@ from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
 
 class Read_Channels(Loop_Step):
-    """This step represents the bluesky plan stub `trigger_and_read`."""
+    """
+    This step represents the bluesky plan stub `trigger_and_read`. It may also
+    be split into an additional step for triggering, then doing something else
+    and then reading.
+
+    Attributes
+    ----------
+    read_all : bool
+        If True, the step will read all available channels.
+    split_trigger : bool
+        If True, an additional trigger channels step may be used. This read step
+        will then not use `trigger_and_read`, but only read the channels.
+    channel_list : list[str]
+        The list of channels that should be read in this step.
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Read Channels'
@@ -33,7 +47,8 @@ class Read_Channels(Loop_Step):
                     self.used_devices.append(device)
 
     def get_channels_set(self):
-        """ """
+        """Provides a set of `self.channel_list` to remove possible duplicates.
+        Includes all available channels if `self.read_all`."""
         chan_list = []
         if self.read_all:
             for channel in variables_handling.channels:
@@ -44,15 +59,13 @@ class Read_Channels(Loop_Step):
 
     def get_channels_string(self, tabs):
         """
+        Gives a string of the channels that should be read. This may also be
+        used by the Trigger_Channels step.
 
         Parameters
         ----------
-        tabs :
-            
-
-        Returns
-        -------
-
+        tabs : str
+            A string including the tabs for intendation.
         """
         channel_string = f'{tabs}channels_{self.variable_name()} = ['
         if not self.read_all and not self.channel_list:
@@ -67,23 +80,18 @@ class Read_Channels(Loop_Step):
         return channel_string
 
     def variable_name(self):
-        """ """
+        """Returns the name of this step as a valid variable name, to specify
+        the channels for this read."""
         return fit_variable_renaming.replace_name(self.name)
 
     def get_protocol_string(self, n_tabs=1):
         """In the protocol, at first a list `channels` is defined,
         including all the channels, that are selected to be read. Then
-        bps.trigger_and_read is called on these channels.
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        `bps.trigger_and_read` (or `helper_functions.read_wo_trigger`) is called
+        on these channels.
+        The stream in which the data is written will be numbered if there are
+        other read_channels that are reading different channels, since bluesky
+        only allows reading the same channels inside one stream."""
         # checking compatibility with other readings
         chan_list = self.get_channels_set()
         if set(chan_list) in variables_handling.read_channel_sets:
@@ -106,32 +114,20 @@ class Read_Channels(Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 0)
-
-        Returns
-        -------
-
-        """
+        """Includes the channel list in the string."""
         short_string = super().get_protocol_short_string(n_tabs)
         short_string = f'{short_string[:-1]} - {self.channel_list}\n'
         return short_string
 
 def get_channel_string(channel):
     """
+    Gives the string of a channel in the way it is written inside the
+    protocol, i.e. "devs["<device_name>"].<component/channel_name>".
 
     Parameters
     ----------
-    channel :
-        
-
-    Returns
-    -------
-
+    channel : str
+        The channel that should be converted.
     """
     name = variables_handling.channels[channel].name
     if '.' in name:
@@ -315,7 +311,15 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
 
 
 class Trigger_Channels_Step(Loop_Step):
-    """ """
+    """
+    This step provides a split between triggering and reading channels.
+
+    Attributes
+    ----------
+    read_step : str
+        The name of the Read Channels step, for which this step should do the
+        triggering.
+    """
 
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
@@ -327,17 +331,7 @@ class Trigger_Channels_Step(Loop_Step):
     def get_protocol_string(self, n_tabs=1):
         """In the protocol, at first a list `channels` is defined,
         including all the channels, that are selected to be read. Then
-        bps.trigger_and_read is called on these channels.
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        these channels are triggered with `helper_functions.trigger_multi`."""
         tabs = '\t' * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.read_step not in variables_handling.current_protocol.loop_step_dict:
@@ -350,17 +344,7 @@ class Trigger_Channels_Step(Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 0)
-
-        Returns
-        -------
-
-        """
+        """The corresponding read step is displayed."""
         short_string = super().get_protocol_short_string(n_tabs)
         read_step = variables_handling.current_protocol.loop_step_dict[self.read_step]
         short_string = f'{short_string[:-1]} - {read_step.channel_list}\n'

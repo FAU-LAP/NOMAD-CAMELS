@@ -4,7 +4,21 @@ from PySide6.QtWidgets import QWidget, QLabel, QGridLayout, QLineEdit, QTextEdit
 from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
 class Prompt_Loop_Step(Loop_Step):
-    """ """
+    """
+    This step displays a prompt (QMessageBox) at runtime and pauses the
+    execution of the protocol until the user clicks "ok" in the prompt. This may
+    be used for example to prompt the user to do something at the setup.
+
+    Attributes
+    ----------
+    short_test : str
+        This will be the window title of the prompt.
+    long_test : str
+        This will be the full text, displayed inside the window.
+    icon : str
+        If 'Error', the `QMessagebox.Critical` icon is desplayed, if 'Warning',
+        then `QMessagebox.Warning` is used, otherwise `QMessagebox.Information`.
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Prompt'
@@ -15,17 +29,8 @@ class Prompt_Loop_Step(Loop_Step):
         self.icon = step_info['icon'] if 'icon' in step_info else 'Info'
 
     def get_protocol_string(self, n_tabs=1):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """Sets the prompt's `done` to False, then starts execution of the
+        prompt and waits until it is done."""
         tabs = '\t' * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}boxes["prompt_{self.name}"].done = False\n'
@@ -35,7 +40,8 @@ class Prompt_Loop_Step(Loop_Step):
         return protocol_string
 
     def get_add_main_string(self):
-        """ """
+        """Adds the setup of the box to the `steps_add_main` function of the
+        protocol."""
         long_text = self.long_text.replace("\n", "\\n")
         add_main_string = super().get_add_main_string()
         add_main_string += f'\tboxes["prompt_{self.name}"] = helper_functions.Prompt_Box("{self.icon}", "{long_text}", "{self.short_text}")\n'
