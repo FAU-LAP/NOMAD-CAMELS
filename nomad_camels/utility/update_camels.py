@@ -18,8 +18,8 @@ def get_version():
 
 def update_camels():
     """ """
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade',
-                           '--no-cache-dir', 'nomad-camels'])
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install',
+                           '--no-cache-dir', 'nomad-camels', '--upgrade',])
 
 def question_message_box(parent=None):
     """
