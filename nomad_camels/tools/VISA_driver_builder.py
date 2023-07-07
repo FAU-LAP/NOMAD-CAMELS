@@ -23,10 +23,10 @@ class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
             pass
         self.setWindowTitle('NOMAD-CAMELS - VISA-driver-builder')
 
-        label_in = QLabel('Input Channels')
-        label_out = QLabel('Output Channels')
+        label_in = QLabel('Read Channels')
+        label_out = QLabel('Set Channels')
         label_config = QLabel('Config Channels')
-        label_config_in = QLabel('Config Channels - Input Only')
+        label_config_in = QLabel('Config Channels - Read Only')
         label_in.setStyleSheet("font-weight: bold")
         label_out.setStyleSheet("font-weight: bold")
         label_config.setStyleSheet("font-weight: bold")
