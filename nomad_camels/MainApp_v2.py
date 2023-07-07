@@ -14,7 +14,7 @@ from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from pkg_resources import resource_filename
 
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
-from nomad_camels.utility import load_save_functions, variables_handling, number_formatting, theme_changing, update_camels
+from nomad_camels.utility import load_save_functions, variables_handling, number_formatting, theme_changing, update_camels, logging_settings
 from nomad_camels.ui_widgets import options_run_button, warn_popup
 
 from collections import OrderedDict
@@ -435,15 +435,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         """
         self.preferences = load_save_functions.get_preferences()
-        variables_handling.preferences = self.preferences
+        self.update_preference_settings()
+
+    def update_preference_settings(self):
         number_formatting.preferences = self.preferences
-        # if 'dark_mode' in self.preferences:
-        #     self.toggle_dark_mode()
+        variables_handling.preferences = self.preferences
+        variables_handling.device_driver_path = self.preferences['device_driver_path']
+        variables_handling.meas_files_path = self.preferences['meas_files_path']
         if 'graphic_theme' in self.preferences:
             self.change_theme()
         self.change_catalog_name()
-        variables_handling.device_driver_path = self.preferences['device_driver_path']
-        variables_handling.meas_files_path = self.preferences['meas_files_path']
+        logging_settings.update_log_settings()
+
 
     def change_theme(self):
         """ """
@@ -504,14 +507,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         settings_dialog = Settings_Window(parent=self, settings=self.preferences)
         if settings_dialog.exec():
             self.preferences = settings_dialog.get_settings()
-            number_formatting.preferences = self.preferences
-            # self.toggle_dark_mode()
-            self.change_catalog_name()
             load_save_functions.save_preferences(self.preferences)
-            variables_handling.device_driver_path = self.preferences['device_driver_path']
-            variables_handling.meas_files_path = self.preferences['meas_files_path']
-            variables_handling.preferences = self.preferences
-        self.change_theme()
+        self.update_preference_settings()
 
     def save_state(self, fromload=False, do_backup=True):
         """Saves the current states of both presets.

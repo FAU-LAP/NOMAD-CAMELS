@@ -1,4 +1,3 @@
-import os.path
 from traceback import print_tb
 from PySide6.QtWidgets import QMessageBox
 from PySide6.QtCore import QUrl
@@ -7,17 +6,14 @@ from PySide6.QtMultimedia import QSoundEffect
 
 import logging
 
-from nomad_camels.utility.load_save_functions import appdata_path
-
 from bluesky.utils import RunEngineInterrupted
 
 from nomad_camels.utility import variables_handling
 from pkg_resources import resource_filename
 
-if not os.path.isfile(f'{appdata_path}/logging.log'):
-    with open(f'{appdata_path}/logging.log', 'w', encoding='utf-8'):
-        pass
-logging.basicConfig(filename=f'{appdata_path}/logging.log', level=logging.DEBUG)
+from nomad_camels.utility import logging_settings
+
+
 
 
 class ErrorMessage(QMessageBox):
@@ -51,7 +47,7 @@ def exception_hook(*exc_info):
         return
     elif issubclass(exc_info[0], RunEngineInterrupted):
         return
-    logging.exception(str(exc_info))
+    logging.exception(f'{exc_info[1]} - {print_tb(exc_info[2])}')
     if variables_handling.preferences['play_camel_on_error']:
         effect = QSoundEffect()
         effect.setSource(QUrl.fromLocalFile(resource_filename('nomad_camels','graphics/Camel-Groan-2-QuickSounds.com.wav')))

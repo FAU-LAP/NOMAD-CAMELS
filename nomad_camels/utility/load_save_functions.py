@@ -46,7 +46,10 @@ standard_pref = {'autosave': True,
                  'repo_branch': 'main',
                  'repo_directory': '',
                  'play_camel_on_error': False,
-                 'auto_check_updates': False}
+                 'auto_check_updates': False,
+                 'log_level': 'Warning',
+                 'logfile_size': 1,
+                 'logfile_backups': 1}
 
 def get_preset_list():
     """returns a two list of available presets, once for devices, once

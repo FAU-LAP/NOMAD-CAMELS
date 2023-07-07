@@ -183,7 +183,7 @@ def close_devices(device_list):
     -------
 
     """
-    for dev in device_list:
+    for dev in reversed(device_list):
         if dev not in running_devices:
             raise Warning(f'Trying to close device {dev}, but it is not even running!')
         ophyd_dev = running_devices[dev]

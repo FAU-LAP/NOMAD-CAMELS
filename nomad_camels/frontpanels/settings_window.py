@@ -6,6 +6,7 @@ import qt_material
 from nomad_camels.gui.settings_window import Ui_settings_window
 from nomad_camels.utility.load_save_functions import standard_pref
 from nomad_camels.utility.theme_changing import change_theme
+from nomad_camels.utility.logging_settings import log_levels
 
 class Settings_Window(Ui_settings_window, QDialog):
     """Dialog to change the settings used in CAMELS."""
@@ -107,6 +108,21 @@ class Settings_Window(Ui_settings_window, QDialog):
         else:
             self.lineEdit_branch.setText(standard_pref['repo_branch'])
 
+        for level in log_levels:
+            self.comboBox_log_level.addItem(level)
+        if 'log_level' in settings:
+            self.comboBox_log_level.setCurrentText(settings['log_level'])
+        else:
+            self.comboBox_log_level.setCurrentText(standard_pref['log_level'])
+        if 'logfile_size' in settings:
+            self.spinBox_logfile_size.setValue(settings['logfile_size'])
+        else:
+            self.spinBox_logfile_size.setValue(standard_pref['logfile_size'])
+        if 'logfile_backups' in settings:
+            self.spinBox_logfile_number.setValue(settings['logfile_backups'])
+        else:
+            self.spinBox_logfile_number.setValue(standard_pref['logfile_backups'])
+
         self.radioButton_mixed.clicked.connect(self.number_change)
         self.radioButton_plain_numbers.clicked.connect(self.number_change)
         self.radioButton_scientific.clicked.connect(self.number_change)
@@ -166,7 +182,10 @@ class Settings_Window(Ui_settings_window, QDialog):
                 'driver_repository': self.lineEdit_repo.text(),
                 'repo_branch': self.lineEdit_branch.text(),
                 'repo_directory': self.lineEdit_directory.text(),
-                'play_camel_on_error': self.checkBox_play_camel_on_error.isChecked()}
+                'play_camel_on_error': self.checkBox_play_camel_on_error.isChecked(),
+                'log_level': self.comboBox_log_level.currentText(),
+                'logfile_size': self.spinBox_logfile_size.value(),
+                'logfile_backups': self.spinBox_logfile_number.value()}
 
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
