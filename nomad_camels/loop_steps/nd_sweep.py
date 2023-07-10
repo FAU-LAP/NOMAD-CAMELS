@@ -59,6 +59,15 @@ class ND_Sweep(Loop_Step):
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
+    def update_variables(self):
+        """Adds the fit variables from the plots."""
+        variables = {}
+        stream = f'{self.name}'
+        for plot in self.plots:
+            variables.update(plot.get_fit_vars(stream))
+        variables_handling.loop_step_variables.update(variables)
+        super().update_variables()
+
     def get_outer_string(self):
         """Gives the string to create the plots of the sweeps"""
         if self.plots:
