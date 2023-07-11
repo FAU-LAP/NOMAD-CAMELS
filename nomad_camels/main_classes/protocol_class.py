@@ -14,12 +14,45 @@ class Measurement_Protocol:
     """Class for the measurement protocols. It mainly contains
     loop_steps and plots.
 
-    Parameters
+    Attributes
     ----------
-
-    Returns
-    -------
-
+    description : str
+        A string describing the protocol.
+    export_csv : bool
+        If True, the data will be exported to a csv file in the end.
+    export_json : bool
+        If True, the metadata will be exported to a json file in the end.
+    session_name : str
+        This name is appended to the entry in the hdf5-file, or used for the
+        filenames of csv / json to make it easier for the user to recognize
+        their measurements
+    loop_steps : list[Loop_Step]
+        A list of the steps performed by the protocol. This list also represents
+        the order, in which the steps should be performed. The step's children
+        steps are not included in this list.
+    loop_step_dict : dict
+        Keys are the steps' names with the steps being the value. The sub-steps
+        are included here.
+    plots : list[Plot_Info]
+        Contains the information for the protocol's plots.
+    filename : str
+        The name of the produced datafile.
+    variables : dict
+        Name-value pairs of the protocol variables
+    loop_step_variables : dict
+        Name-value pairs of the variables provided by the steps (e.g. for loop)
+    channels : dict
+        Dictionary of the channel-names and channels used inside the protocol
+    name : str
+        The name of the protocol. This also appears in the main UI
+    channel_metadata : dict
+        Currently deprecated. Only used for specific nexus output.
+    config_metadata : dict
+        Currently deprecated. Only used for specific nexus output.
+    metadata : dict
+        Currently deprecated. Only used for specific nexus output.
+    use_nexus : bool
+        Currently deprecated. Only used for specific nexus output.
     """
     def __init__(self, loop_steps=None, plots=None, channels=None, name='',
                  channel_metadata=None, metadata=None, use_nexus=False,
@@ -61,15 +94,7 @@ class Measurement_Protocol:
 
     def get_nexus_paths(self):
         """Get a dictionary containing the paths used for the output
-        NeXus-file.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        """
+        NeXus-file. Currently deprecated."""
         paths = {}
         for i, name in enumerate(self.metadata['Name']):
             paths[self.metadata['NeXus-path'][i]] = f'metadata_start/{name}'
@@ -96,19 +121,19 @@ class Measurement_Protocol:
 
         Parameters
         ----------
-        loop_step :
-            
-        position :
-             (Default value = -1)
-        parent_step_name :
-             (Default value = None)
-        model :
-             (Default value = None)
-
-        Returns
-        -------
-
-        
+        loop_step : Loop_Step
+            The step that should be added
+        position : int
+            (Default value = -1)
+            Where in the list to add the step
+        parent_step_name : str, None
+            (Default value = None)
+            If the step is not in the outermost layer, its parent's name. Then
+            `position` will not be for the protocol's list, but the parent's
+            children-list.
+        model : QAbstractItemModel, None
+            (Default value = None)
+            The item model that is used to display the steps.
         """
         if parent_step_name is None:
             if position < 0:
@@ -129,18 +154,19 @@ class Measurement_Protocol:
 
         Parameters
         ----------
-        loop_step :
-            
-        model :
-             (Default value = None)
-        parent_step_name :
-             (Default value = None)
-        position :
-             (Default value = -1)
-
-        Returns
-        -------
-
+        loop_step : Loop_Step
+            The step that should be added
+        model : QAbstractItemModel, None
+            (Default value = None)
+            The item model that is used to display the steps.
+        parent_step_name : str
+            (Default value = None)
+            If the step is not in the outermost layer, its parent's name. Then
+            `position` will not be for the protocol's list, but the parent's
+            children-list.
+        position : int
+            (Default value = -1)
+            Where in the list to add the step
         """
         if parent_step_name is None:
             self.add_loop_step(loop_step, model=model, parent_step_name=parent_step_name, position=position)
@@ -150,7 +176,6 @@ class Measurement_Protocol:
             if loop_step not in self.loop_step_dict[parent_step_name].children:
                 self.loop_step_dict[parent_step_name].add_child(loop_step, position)
             self.loop_step_dict.update({loop_step.full_name: loop_step})
-        # if loop_step.has_children:
         for child in loop_step.children:
             self.add_loop_step_rec(child, parent_step_name=loop_step.full_name, model=model)
 
@@ -160,12 +185,8 @@ class Measurement_Protocol:
 
         Parameters
         ----------
-        loop_step_name :
-            
-
-        Returns
-        -------
-
+        loop_step_name : str
+            The name of the step that is to be removed.
         """
         step = self.loop_step_dict.pop(loop_step_name)
         if step.parent_step is not None:
@@ -180,14 +201,12 @@ class Measurement_Protocol:
 
         Parameters
         ----------
-        loop_steps :
-            
-        model :
-             (Default value = None)
-
-        Returns
-        -------
-
+        loop_steps : list
+            A list containing all the information (as dictionary) for creating
+            the single steps.
+        model : QAbstractItemModel, None
+            (Default value = None)
+            The item model that is used to display the steps.
         """
         for step in loop_steps:
             loop_step = self.make_step(step)
@@ -200,12 +219,16 @@ class Measurement_Protocol:
 
         Parameters
         ----------
-        step_info :
+        step_info : dict
+            This dictionary should hold all information needed to create the
+            step. Specifically there should be "step_type" to decide on the
+            class of step and "full_name" to give the step its name.
             
 
         Returns
         -------
-
+        st : Loop_Step
+            The created step
         """
         # children = None
         # if step_info['has_children']:
@@ -227,12 +250,11 @@ class Measurement_Protocol:
 
         Parameters
         ----------
-        step_list :
-            
-
-        Returns
-        -------
-
+        step_list : list[(str, [list(str, ...)])]
+            Contains tuples with the first entry being the names of the steps in
+            the order they should be arranged to and the second entry being a
+            list of the steps' children. That list should be structured the same
+            way as this `step_list`.
         """
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -270,14 +292,16 @@ class Measurement_Protocol:
         return plan_string
 
     def get_short_string(self):
-        """ """
+        """Goes through all steps and creates an overview of what is happening
+        in the protocol."""
         short_string = ''
         for step in self.loop_steps:
             short_string += step.get_protocol_short_string()
         return short_string
 
     def get_add_main_string(self):
-        """ """
+        """Gets all the steps that should be executed in the protocol's main
+        function."""
         add_main_string = 'def steps_add_main(RE, devs):\n'
         add_main_string += '\treturner = {}\n'
         for step in self.loop_steps:
@@ -286,7 +310,7 @@ class Measurement_Protocol:
         return add_main_string
 
     def get_total_steps(self):
-        """ """
+        """Returns the total number of steps (including repetitions for loops)"""
         total = 0
         for step in self.loop_steps:
             step.update_time_weight()
@@ -294,7 +318,8 @@ class Measurement_Protocol:
         return total
 
     def get_outer_string(self):
-        """ """
+        """Strings outside of all other functions of the script, e.g. more
+        functions to create step-specific plots."""
         outer_string = ''
         for step in self.loop_steps:
             outer_string += step.get_outer_string()
@@ -321,16 +346,15 @@ def append_all_children(child_list, step, step_dict):
 
     Parameters
     ----------
-    child_list :
-        
-    step :
-        
-    step_dict :
-        
-
-    Returns
-    -------
-
+    child_list : list[(str, [list(str, ...)])]
+        Contains tuples with the first entry being the names of the steps in
+        the order they should be arranged to and the second entry being a
+        list of the steps' children. That list should be structured the same
+        way as this `child_list`.
+    step : Loop_Step_Container
+        The step to which the children should be appended.
+    step_dict : dict
+        A dictionary containing (among others) the steps of `child_list`.
     """
     for child, grandchildren in child_list:
         child_step = step_dict[child]
@@ -341,18 +365,15 @@ def append_all_children(child_list, step, step_dict):
 
 def update_all_children(step_dict, step):
     """Similar to append_all_children, but only updating the step_dict
-    with all the children.
+    with all the children, i.e. writing them into the dictionary.
 
     Parameters
     ----------
-    step_dict :
-        
-    step :
-        
-
-    Returns
-    -------
-
+    step_dict : dict
+        Dictionary, where to write all the steps
+    step : Loop_Step
+        The step to be added to the dictionary. If it has child-steps, all of
+        them will be added to the dictionary recursively.
     """
     step_dict.update({step.full_name: step})
     # if step.has_children:
