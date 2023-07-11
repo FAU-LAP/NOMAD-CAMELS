@@ -8,7 +8,25 @@ from pkg_resources import resource_filename
 
 
 class Manual_Control(QWidget):
-    """ """
+    """
+    Parent class for manual controls.
+
+    This class provides the core functionality of a manual control in CAMELS.
+    The parameters `device`, `device_list` and `ophyd_device` may or may not be
+    used by the child class.
+
+    Attributes
+    ----------
+    name : str
+        The name of the manual control. It also determines the window title.
+    device : str, None
+        The device the manual control is using
+    device_list : list
+        A list of the devices, used. The specific implementation lies in the
+        child classes.
+    ophyd_device : ophyd.Device
+        The device's representation in ophyd.
+    """
     closing = Signal()
 
     def __init__(self, parent=None, title='Manual Control', control_data=None):
@@ -31,33 +49,15 @@ class Manual_Control(QWidget):
     #     return super().close()
 
     def closeEvent(self, a0: QCloseEvent) -> None:
-        """
-
-        Parameters
-        ----------
-        a0: QCloseEvent :
-            
-
-        Returns
-        -------
-
-        """
+        """Overwritten, so that `self.closing` is emitted, telling the main UI
+        window that this manual control is no longer opened."""
         device_handling.close_devices(self.device_list)
         self.closing.emit()
         return super().closeEvent(a0)
 
     def start_device(self, device_name):
-        """
-
-        Parameters
-        ----------
-        device_name :
-            
-
-        Returns
-        -------
-
-        """
+        """Returns self.device as the corresponding device to `device_name`.
+        If it is not None, it will be instantiated."""
         self.device = variables_handling.devices[device_name]
         if self.device:
             self.device_list = self.device.get_necessary_devices()
