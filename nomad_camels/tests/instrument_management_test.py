@@ -3,17 +3,7 @@ from PySide6.QtCore import QItemSelectionModel, Qt
 
 def test_install_demo_instrument(qtbot):
     """This test tries to install the demo device, using the
-    instrument_installer widget.
-
-    Parameters
-    ----------
-    qtbot :
-        
-
-    Returns
-    -------
-
-    """
+    instrument_installer widget."""
     from nomad_camels.frontpanels import instrument_installer
     installer = instrument_installer.Instrument_Installer()
     qtbot.addWidget(installer)  # used to run the qt-app and close the widget after the test
@@ -21,19 +11,7 @@ def test_install_demo_instrument(qtbot):
 
 def install_demo(qtbot, installer):
     """A helper function, used by `test_install_demo_instrument` and also by
-    `test_add_device`, if the device is not yet installed
-
-    Parameters
-    ----------
-    qtbot :
-        
-    installer :
-        
-
-    Returns
-    -------
-
-    """
+    `test_add_device`, if the device is not yet installed"""
     for box in installer.checkboxes:
         if box.text() == 'demo_instrument':
             box.setChecked(True)
@@ -48,17 +26,7 @@ def install_demo(qtbot, installer):
 def test_add_device(qtbot):
     """Going through the instrument management, if demo_instrument is not installed,
     it will be. Then the config widget is used to add a demo_instrument.
-    In the end there is a check whether it is in the list of devices.
-
-    Parameters
-    ----------
-    qtbot :
-        
-
-    Returns
-    -------
-
-    """
+    In the end there is a check whether it is in the list of devices."""
     from nomad_camels.frontpanels import manage_instruments
     manager = manage_instruments.ManageInstruments()
     qtbot.addWidget(manager)
