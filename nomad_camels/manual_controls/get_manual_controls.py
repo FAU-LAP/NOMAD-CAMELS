@@ -1,3 +1,7 @@
+"""This package provides access to all classes of Manual_Control that
+can be used by CAMELS, including device specific ones."""
+
+
 from PySide6.QtWidgets import QDialog, QGridLayout, QDialogButtonBox, QComboBox, QLabel
 from PySide6.QtCore import Qt
 
@@ -9,7 +13,8 @@ manual_controls = {'Stage_Control': [stage_control.Stage_Control,
 
 
 class New_Manual_Control_Dialog(QDialog):
-    """ """
+    """A dialog that provides the user with a selection of available manual
+    controls."""
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         layout = QGridLayout()
@@ -41,7 +46,7 @@ class New_Manual_Control_Dialog(QDialog):
 
 
     def accept(self):
-        """ """
+        """Writes the control that was selected into `self.selected_control`."""
         name = self.selection_box.currentText()
         if name in self.std_controls:
             self.selected_control = self.std_controls[name]
@@ -52,7 +57,14 @@ class New_Manual_Control_Dialog(QDialog):
 
 
 def get_instrument_controls():
-    """ """
+    """Goes through all configured instruments and checks them for manual
+    controls. If there are any, they will be added to a dictionary.
+
+    Returns
+    -------
+    controls : dict{'<name>': (Manual_Control, Manual_Control_Config)}
+        Dictionary with the manual controls and there config widgets.
+    """
     controls = {}
     for name, instr in sorted(variables_handling.devices.items(),
                               key=lambda x: x[0].lower()):
@@ -62,15 +74,16 @@ def get_instrument_controls():
 
 def get_control_by_type_name(name):
     """
+    Returns a tuple/list of the specified control's class / config-class.
 
     Parameters
     ----------
-    name :
-        
+    name : str
+        Name of the manual control (could be CAMELS-main or instrument specific)
 
     Returns
     -------
-
+    tuple(Manual_Control, Manual_Control_Config)
     """
     if name in manual_controls:
         return manual_controls[name]
