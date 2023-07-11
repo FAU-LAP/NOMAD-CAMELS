@@ -2,12 +2,24 @@ import importlib
 import os.path
 import sys
 import databroker
+import pytest
+
+from PySide6.QtCore import Qt, QItemSelectionModel
+from PySide6.QtWidgets import QMessageBox
+
 from nomad_camels.frontpanels import protocol_config
 from nomad_camels.bluesky_handling import make_catalog
 from nomad_camels.frontpanels import instrument_installer
 from nomad_camels.utility import variables_handling
 from nomad_camels.utility.treeView_functions import getItemIndex
-from PySide6.QtCore import Qt, QItemSelectionModel
+
+
+
+@pytest.fixture(autouse=True)
+def mock_message_box(monkeypatch):
+    def mock_question(*args, **kwargs):
+        return QMessageBox.Yes
+    monkeypatch.setattr(QMessageBox, 'question', mock_question)
 
 
 def test_change_dev_config(qtbot, tmp_path):
