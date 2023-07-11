@@ -4,7 +4,14 @@ from nomad_camels.main_classes.loop_step import Loop_Step_Config, Loop_Step
 from nomad_camels.ui_widgets.variable_tool_tip_box import Variable_Box
 
 class Wait_Loop_Step(Loop_Step):
-    """A loopstep to simply wait some defined time."""
+    """
+    A loopstep to simply wait some defined time.
+
+    Attributes
+    ----------
+    wait_time : str, float
+        The how long the protocol execution should pause in seconds.
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Wait'
@@ -13,34 +20,15 @@ class Wait_Loop_Step(Loop_Step):
         self.wait_time = step_info['wait_time'] if 'wait_time' in step_info else 0.0
 
     def get_protocol_string(self, n_tabs=1):
-        """The protocol just calls `bps.wait(`wait_time`)`.
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """The protocol just calls `bps.wait(`wait_time`)`, where `wait_time` is
+        evaluated by the protocol's evaluator."""
         tabs = '\t' * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}yield from bps.sleep(eva.eval("{self.wait_time}"))\n'
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 0)
-
-        Returns
-        -------
-
-        """
+        """Tells the wait time."""
         short_string = super().get_protocol_short_string(n_tabs)
         short_string = f'{short_string[:-1]} - {self.wait_time} s\n'
         return short_string
