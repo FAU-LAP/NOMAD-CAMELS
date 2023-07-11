@@ -290,7 +290,6 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
     conf_widge.sweep_widget.lineEdit_stop.setText('10')
     conf_widge.sweep_widget.lineEdit_n_points.setText('21')
     conf_widge.comboBox_sweep_channel.setCurrentText('demo_instrument_motorY')
-    conf_widge.checkBox_use_own_plots.setChecked(True)
 
     table = conf_widge.read_table.tableWidget_channels
     row = get_row_from_channel_table('demo_instrument_detectorY', table)
