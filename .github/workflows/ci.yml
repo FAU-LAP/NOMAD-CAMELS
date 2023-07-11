@@ -100,22 +100,16 @@ jobs:
           python-version: 3.11
       - name: Install dependency
         run: pip install git-changelog
-      - name: add to log
+      - name: add to log and commit
         run: |
           previous_content="$(cat changelog.md 2>/dev/null)"
           git-changelog -Tio changelog.md -s add,fix,change,remove,merge,doc
           updated_content="$(cat changelog.md 2>/dev/null)"
           if [ "$updated_content" != "$previous_content" ]; then
-            echo "::set-output name=commit_changes::true"
-          else
-            echo "::set-output name=commit_changes::false"
-          fi
-      - name: Commit Changes
-          if: steps.update.outputs.commit_changes == 'true'
-          run: |
             git config user.name "NOMAD-CAMELS Team"
             git config user.email "lap-nomad-camels@fau.de"
             git add changelog.md
             git commit -m "Update changelog"
             git push
+          fi
 
