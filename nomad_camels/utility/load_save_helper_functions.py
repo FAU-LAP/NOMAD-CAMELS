@@ -1,19 +1,25 @@
+"""Helping functions for loading/saving. These are not in `load_save_functions`,
+so they may also be imported by modules that are imported by `load_save_functions`."""
+
 from nomad_camels.frontpanels.plot_definer import Plot_Info, Fit_Info
 
 
 def load_plots(plots:list, plot_data):
     """
+    Loads the data from `plot_data` into `Plot_Info` objects. Then adds them to
+    the `plots` list.
 
     Parameters
     ----------
-    plots:list :
-        
-    plot_data :
-        
+    plots : list
+        the list, where to add the plot information
+    plot_data : list[dict]
+        list of dictionaries containing the necessary information for Plot_Info
 
     Returns
     -------
-
+    plots : list
+        the modified list with the loaded plots added
     """
     plots.clear()
     for plot_dict in plot_data:
