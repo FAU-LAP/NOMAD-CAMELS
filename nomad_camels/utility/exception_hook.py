@@ -11,13 +11,25 @@ from bluesky.utils import RunEngineInterrupted
 from nomad_camels.utility import variables_handling
 from pkg_resources import resource_filename
 
+# imported, so that it is run once, before the logging in
+# `exception_hook` is connected
 from nomad_camels.utility import logging_settings
 
 
 
 
 class ErrorMessage(QMessageBox):
-    """A popUp-box describing the Error."""
+    """A popUp-box describing an Error.
+
+    Parameters
+    ----------
+    msg : str
+        the error message
+    info_text : str
+        A longer text, explaining the error (usually traceback)
+    parent : QWidget
+        The parent widget of this Messagebox
+    """
     def __init__(self, msg, info_text='', parent=None):
         super().__init__(parent)
         self.setWindowTitle('ERROR')
@@ -31,17 +43,15 @@ class ErrorMessage(QMessageBox):
 
 
 def exception_hook(*exc_info):
-    """Use to overwrite sys.excepthook, so that an exception does not
-        terminate the program, but simply shows a Message with the exception.
+    """Used to overwrite sys.excepthook, so that an exception does not
+    terminate the program, but simply shows a Message with the exception.
+    If the Exception is a KeyboardInterrupt, it does nothing, so that the
+    interrupt may actually stop the program execution.
 
     Parameters
     ----------
-    *exc_info :
-        
-
-    Returns
-    -------
-
+    *exc_info : tuple(class, Exception, traceback)
+        The information for the exception.
     """
     if issubclass(exc_info[0], KeyboardInterrupt):
         return
