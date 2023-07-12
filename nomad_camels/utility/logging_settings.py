@@ -1,3 +1,8 @@
+"""This module takes care of all the settings regarding logging to a logfile.
+The logfile is put into the `appdata_path`, a filehandler with specific
+formatting is added to logging's app_log"""
+
+
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -22,6 +27,9 @@ app_log = logging.getLogger('root')
 app_log.addHandler(my_handler)
 
 def update_log_settings():
+    """Reads the logging settings from the current preferences and sets them for
+    the logfile-handler. Including: the level of logging, the maximum size for
+    the logfile, the number of old logfiles, when one is full. """
     prefs = variables_handling.preferences
     if 'log_level' in prefs and prefs['log_level']:
         log_level = prefs['log_level']
