@@ -1,3 +1,24 @@
+"""This module helps to place the plots on the screen without too much
+overlap between the plots. The positions are saved into the global variables,
+since this module may be imported by several other modules.
+
+Attributes
+----------
+    current_screen : int
+        the number of the currently used screen to place plots
+    current_pos : list[int, int]
+        the x and y coordinates of the current placement
+    max_height_in_row : int
+        the maximum height a plot window has within the currently populated row
+    iteration : int
+        if the screens were full once, it is increased and the next plots are
+        slightly shifted
+    horizontal_margin : int
+        the horizontal distance between the plot windows
+    vertical_margin : int
+        the vertical distance between the plot windows
+"""
+
 import sys
 
 from PySide6.QtWidgets import QWidget, QApplication
@@ -19,15 +40,17 @@ vertical_margin = 5
 
 def place_widget(widget:QWidget):
     """
+    This function places the given `widget` on the next free spot on the screen.
+    First all widgets are placed next to each other in a row, until one would be
+    outside the screen, then the next row is started. If it would "flow out" the
+    bottom of the screen, a second screen (if available) is used. If all
+    available screens are full, it restarts on the first screen, slightly
+    shifting the widgets in comparison to the first ones.
 
     Parameters
     ----------
-    widget:QWidget :
-        
-
-    Returns
-    -------
-
+    widget : QWidget
+        the widget that should be placed
     """
     global max_height_in_row, current_screen, current_pos, iteration
     widget.show()
