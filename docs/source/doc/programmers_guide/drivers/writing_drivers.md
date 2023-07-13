@@ -1,5 +1,5 @@
 # Writing New Instrument Drivers
-In genereal, every instrument driver should be an individual [PyPi](https://pypi.org/) package.\
+CAMELS is an open-source community driven project, so it is ideal if every instrument driver is an individual [PyPi](https://pypi.org/) package. \
 It is possible to create drivers that are [only available locally](local_drivers) for you.
 
 The source code of each driver can be found in [this repository](https://github.com/FAU-LAP/CAMELS_drivers).
