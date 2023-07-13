@@ -1,13 +1,53 @@
+"""This module helps to synchronize information between different modules. To
+this aim, it holds several variables that may be read from different places.
+Furthermore, some functions to work with those variables are provided.
+
+Attributes
+----------
+preset : str
+    The name of the currently used preset of CAMELS.
+device_driver_path : str, path
+    The path, where to find local drivers.
+meas_files_path : str, path
+    The path, where to write the measurement files, i.e. data.
+CAMELS_path : str, path
+    The path to the current installation of CAMELS.
+preferences : dict
+    The currently used preferences.
+protocols : dict{"<protocol_name>": protocol}
+    The available protocols.
+protocol_variables : dict{"<name>": <value>}
+    The variables provided by the currently viewed protocol.
+channels : dict{"<name>": channel}
+    All available channels provided by the configured instruments.
+loop_step_variables : dict{"<name>": <value>}
+    The variables provided by the steps of the currently viewed protocol.
+devices : dict
+    All configured instruments/devices.
+current_protocol = Measurement_Protocol
+    The protocol, that is currently being used.
+dark_mode : bool
+    Whether dark-mode is currently active.
+copied_step : Loop_Step
+    The last step, that was copied.
+read_channel_sets : list[set]
+    Sets of the different channel-compositions for read-channels. Used to distinguish different reads with different channels for bluesky
+read_channel_names : list[str]
+    Names of the different read-channel steps in use. Used to distinguish the different reads.
+
+evaluation_functions_names
+
+operator_names
+"""
+
 from ast import literal_eval, parse
 from PySide6.QtWidgets import QMenu
 from PySide6.QtGui import QColor, QAction
 
 import numpy as np
-# from nomad_camels.utility import simpleeval
 from nomad_camels.bluesky_handling import evaluation_helper
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
-# from bluesky_widgets.models import utils
 
 preset = ''
 device_driver_path = ''
@@ -28,34 +68,6 @@ copied_step = None
 
 read_channel_sets = []
 read_channel_names = []
-
-
-def get_output_channels():
-    """ """
-    outputs = []
-    for channel in channels:
-        if channels[channel].output:
-            outputs.append(channel)
-    return outputs
-
-# evaluation_functions = simpleeval.DEFAULT_FUNCTIONS.copy()
-# evaluation_functions.update({'exp': np.exp,
-#                              'log': np.log,
-#                              'sqrt': np.sqrt,
-#                              'round': round,
-#                              'sin': np.sin,
-#                              'cos': np.cos,
-#                              'sinh': np.sinh,
-#                              'cosh': np.cosh,
-#                              'sinc': np.sinc,
-#                              'tan': np.tan,
-#                              'arctan': np.arctan,
-#                              'arcsin': np.arcsin,
-#                              'arccos': np.arccos,
-#                              'arcsinh': np.arcsinh,
-#                              'arccosh': np.arccosh,
-#                              'arctanh': np.arctanh})
-
 
 evaluation_functions_names = {
     'randint()': 'randint(x) - random integer below x',
@@ -95,6 +107,15 @@ operator_names = {
     'or': 'logical OR',
     'not': 'logical negation'
 }
+
+
+def get_output_channels():
+    """ """
+    outputs = []
+    for channel in channels:
+        if channels[channel].output:
+            outputs.append(channel)
+    return outputs
 
 def get_color(color='', string=False):
     """Returns the respective QColor or rgb-code(if `string`) for
@@ -167,33 +188,13 @@ def get_menus(connect_function, pretext='Insert'):
     actions = []
     function_actions = []
     add_actions_from_dict(channels, channel_actions, connect_function)
-    # for channel in sorted(channels, key=lambda x: x.lower()):
-    #     action = QAction(channel)
-    #     action.triggered.connect(lambda state=None, x=channel: connect_function(x))
-    #     channel_actions.append(action)
     add_actions_from_dict(protocol_variables, actions, connect_function)
-    # for variable in sorted(protocol_variables, key=lambda x: x.lower()):
-    #     action = QAction(variable)
-    #     action.triggered.connect(lambda state=None, x=variable: connect_function(x))
-    #     actions.append(action)
     add_actions_from_dict(loop_step_variables, actions, connect_function)
     add_actions_from_dict({'StartTime': 1, 'ElapsedTime': 1}, actions,
                           connect_function)
-    # for variable in sorted(loop_step_variables, key=lambda x: x.lower()):
-    #     action = QAction(variable)
-    #     action.triggered.connect(lambda state=None, x=variable: connect_function(x))
-    #     actions.append(action)
     add_actions_from_dict(operator_names, operator_actions, connect_function)
-    # for op in operator_names:
-    #     action = QAction(f'{op}\t{operator_names[op]}')
-    #     action.triggered.connect(lambda state=None, x=op: connect_function(x))
-    #     operator_actions.append(action)
     add_actions_from_dict(evaluation_functions_names, function_actions,
                           connect_function)
-    # for foo in sorted(evaluation_functions_names, key=lambda x: x.lower()):
-    #     action = QAction(evaluation_functions_names[foo])
-    #     action.triggered.connect(lambda state=None, x=foo: connect_function(x))
-    #     function_actions.append(action)
     channel_menu.addActions(channel_actions)
     variable_menu.addActions(actions)
     operator_menu.addActions(operator_actions)

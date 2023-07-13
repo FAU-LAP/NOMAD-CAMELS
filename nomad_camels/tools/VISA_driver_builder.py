@@ -117,8 +117,8 @@ class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
             elif configs['Input-Type'][i] == 'bool':
                 class_string += f'\t\tself.config["{name}"] = False\n'
         class_string += '\n\nclass subclass_config(device_class.Simple_Config):\n'
-        class_string += '\tdef __init__(self, parent=None, data="", settings_dict=None, config_dict=None, ioc_dict=None, additional_info=None):\n'
-        class_string += f'\t\tsuper().__init__(parent, "{dev_name}", data, settings_dict, config_dict, ioc_dict, additional_info)\n'
+        class_string += '\tdef __init__(self, parent=None, data="", settings_dict=None, config_dict=None, additional_info=None):\n'
+        class_string += f'\t\tsuper().__init__(parent, "{dev_name}", data, settings_dict, config_dict, additional_info)\n'
         class_string += '\t\tself.comboBox_connection_type.addItem("Local VISA")\n'
         class_string += '\t\tself.load_settings()\n'
 
