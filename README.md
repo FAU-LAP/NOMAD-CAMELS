@@ -17,7 +17,7 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 # Changelog
 
-## 0.1.5 (COMING SOON)
+## 0.1.5
 Fixed the 'Update CAMELS' tool.\
 Renamed input and output to read and set in the 'Update CAMELS' tool.\
 Small fix to the VISA device builder.
