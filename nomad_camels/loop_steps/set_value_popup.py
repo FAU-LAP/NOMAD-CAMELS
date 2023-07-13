@@ -7,7 +7,22 @@ from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
 
 class Set_Value_Popup(Loop_Step):
-    """ """
+    """
+    This step provides the possibility for the user to set a channel or variable
+    to a specific value at runtime with a popup. The protocol execution is
+    paused until the user is finished.
+
+    Attributes
+    ----------
+    variables : list[str]
+        A list of the variables that should be set by the user.
+    channels : list[str]
+        A list of the channels that should be set by the user.
+    free_variables : bool
+        If True, the user has the possibility to set any variable freely.
+    free_channels : bool
+        If True, the user has the possibility to set any channel freely.
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Set Value Popup'
@@ -19,17 +34,9 @@ class Set_Value_Popup(Loop_Step):
         self.free_channels = step_info['free_channels'] if 'free_channels' in step_info else False
 
     def get_protocol_string(self, n_tabs=1):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """The value popup box is executed. The protocol waits until its
+        completion. Then all the variables and then the channels are set to the
+        given values."""
         tabs = '\t' * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}boxes["values_{self.name}"].done = False\n'
@@ -46,7 +53,7 @@ class Set_Value_Popup(Loop_Step):
         return protocol_string
 
     def get_add_main_string(self):
-        """ """
+        """Adds the setup of the box."""
         add_main_string = super().get_add_main_string()
         add_main_string += f'\tboxes["values_{self.name}"] = helper_functions.Value_Box("", "Set Values!", {self.variables}, {self.channels}, {self.free_variables}, {self.free_channels}, devs=devs)\n'
         return add_main_string

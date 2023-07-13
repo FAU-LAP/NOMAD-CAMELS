@@ -8,11 +8,11 @@ rm = pyvisa.ResourceManager()
 open_resources = {}
 
 def list_resources():
-    """ """
+    """Gives the results of `ResourceManager.list_resources`."""
     return rm.list_resources()
 
 def close_resources():
-    """ """
+    """Goes throug all the opened resources and closes them."""
     for res in open_resources:
         open_resources[res].close()
     open_resources.clear()
@@ -64,15 +64,12 @@ class VISA_Signal(Signal):
 
     def change_instrument(self, resource_name):
         """
+        Changes the visa_instrument to the one with the given `resource_name`.
 
         Parameters
         ----------
-        resource_name :
-            
-
-        Returns
-        -------
-
+        resource_name : str
+            Name of the new instrument to be used.
         """
         if resource_name:
             if resource_name in open_resources:
@@ -84,25 +81,10 @@ class VISA_Signal(Signal):
     def put(self, value, *, timestamp=None, force=False, metadata=None,
             **kwargs):
         """
-
-        Parameters
-        ----------
-        value :
-            
-        * :
-            
-        timestamp :
-             (Default value = None)
-        force :
-             (Default value = False)
-        metadata :
-             (Default value = None)
-        **kwargs :
-            
-
-        Returns
-        -------
-
+        Overwrites `ophyd.Signal.put`. The value is converted to a string, using
+        `self.write`. If `self.parse` is not None, a query instead of a simple
+        write is being performed, in that case, the value given to super().put
+        is the returned value from the query.
         """
         if not self.write:
             write_text = str(value)
@@ -130,10 +112,10 @@ class VISA_Signal(Signal):
         super().put(value, timestamp=timestamp, force=force, metadata=metadata, **kwargs)
 
     def describe(self):
-        """ """
+        """Adding "VISA" as the source for the description."""
         info = super().describe()
         info[self.name]['source'] = 'VISA'
-        info[self.name].update(self.metadata)
+        # info[self.name].update(self.metadata)
         return info
 
 
@@ -178,7 +160,11 @@ class VISA_Signal_RO(SignalRO):
             self.parse_return_type = parse_return_type
 
     def get(self):
-        """ """
+        """
+        Overwrites `ophyd.SignalRO.get`, performing a query to the instrument.
+        The returned string is parsed regarding `self.parse` and converted to
+        the datatype specified by `self.parse_return_type`.
+        """
         while self.visa_instrument.currently_reading:
             time.sleep(0.1)
         self.visa_instrument.currently_reading = True
@@ -204,38 +190,37 @@ class VISA_Signal_RO(SignalRO):
         return super().get()
 
     def describe(self):
-        """ """
+        """Adding "VISA" as the source for the description."""
         info = super().describe()
         info[self.name]['source'] = 'VISA'
-        info[self.name].update(self.metadata)
+        # info[self.name].update(self.metadata)
         return info
 
 
 
 class VISA_Device(Device):
-    """Subclasses ophyd's `Device` class. Automatically opens the specified VISA
-     resource."""
+    """
+    Subclasses ophyd's `Device` class. Automatically opens the specified VISA
+    resource.
+
+    Parameters
+    ----------
+    resource_name : str
+        The name of the VISA-resource.
+    read_termination : str
+        (Default = '\\r\\n')
+        The line termination for reading from the instrument.
+    write_termination : str
+        (Default = '\\r\\n')
+        The line termination for writing to the instrument.
+    baud_rate : int
+        (Default = 9600)
+        The communication baud rate.
+    """
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, resource_name='',
                  read_termination='\r\n', write_termination='\r\n',
-                 baud_rate=9600, **kwargs):
-        """
-        Parameters
-        ----------
-        resource_name : str
-            The name of the VISA-resource.
-
-        read_termination : str
-            The line termination for reading from the instrument.
-            (Default = '\r\n')
-
-        write_termination : str
-            The line termination for writing to the instrument.
-            (Default = '\r\n')
-
-        baud_rate : int
-            The communication baud rate. (Default = 9600)
-        """
+                 baud_rate=9600, timeout=2000, **kwargs):
         super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
                          configuration_attrs=configuration_attrs, parent=parent, **kwargs)
         self.visa_instrument = None
@@ -249,16 +234,9 @@ class VISA_Device(Device):
             self.visa_instrument.read_termination = read_termination
             self.visa_instrument.baud_rate = baud_rate
             self.visa_instrument.currently_reading = False
+            self.visa_instrument.timeout = timeout
 
         for comp in self.walk_signals():
             it = comp.item
             it.visa_instrument = self.visa_instrument
 
-
-
-# if __name__ == '__main__':
-#     print(list_resources())
-#     tester = 'USB0::0x0957::0x8E18::MY51140626::INSTR'
-#     # testsig = VISA_Signal_Write('testsig', write_termination='\r\n', resource_name=tester)
-#     testsigR = VISA_Signal_Read('testsigR', read_termination='\r\n', write_termination='\r\n', resource_name=tester, query_text='MEAS:VOLT:DC?')
-#     print(testsigR.get())

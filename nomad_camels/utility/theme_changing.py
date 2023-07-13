@@ -1,3 +1,6 @@
+"""This module is used to change the UI-theme of CAMELS. It provides some
+default color palettes `light_palette` and `dark_palette`."""
+
 from PySide6.QtWidgets import QApplication, QMainWindow, QStyleFactory
 from PySide6.QtGui import QPalette, QColor, QColorConstants
 from qt_material import apply_stylesheet
@@ -26,18 +29,20 @@ def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
 
     Parameters
     ----------
-    theme :
-        
-    main_app :
-         (Default value = None)
-    material_theme :
-         (Default value = None)
-    dark_mode :
-         (Default value = False)
-
-    Returns
-    -------
-
+    theme : str
+        The name of the used theme. Possible values are the themes from
+        QStyleFactory and "qt-material".
+    main_app : QMainWindow
+        (Default value = None)
+        The main UI-window. If it is None, it is looked for with
+        `QApplication.instance()`.
+    material_theme : str
+        (Default value = None)
+        If `theme=="qt-material"`, the qt-material color palette is chosen with
+        this theme name.
+    dark_mode : bool
+        (Default value = False)
+        If True, the color palettes are switched to dark mode.
     """
     if main_app is None:
         main_app = QApplication.instance()
@@ -50,7 +55,7 @@ def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
             palette = dark_palette
         else:
             palette = light_palette
-        if theme == 'windowsvista':# in QStyleFactory.keys():
+        if theme == 'windowsvista':
             main_app.setStyle(QStyleFactory.create('windowsvista'))
         main_app.setPalette(palette)
         main_app.setStyle(QStyleFactory.create(theme))

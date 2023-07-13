@@ -8,7 +8,17 @@ from nomad_camels.utility import treeView_functions, variables_handling
 
 
 class Loop_Step:
-    """Main Class for all Loop_Steps."""
+    """Main Class for all Loop_Steps.
+
+    Parameters
+    ----------
+    name : str
+        The custom name of the step.
+    parent_step : Loop_Step, default None
+        The step containing this step. If None, this step is in the outer layer.
+    step_info : dict, default None
+        Dictionary containing all the relevant information of the step.
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         self.step_type = 'Default'
         self.__save_dict__ = {}
@@ -34,14 +44,11 @@ class Loop_Step:
 
         Parameters
         ----------
-        item_model :
-            
-        parent :
-             (Default value = None)
-
-        Returns
-        -------
-
+        item_model : QStandardItemModel
+            The item model that manages the view of the steps.
+        parent : QStandardItem
+            (Default value = None)
+            The parent of the step inside the item modle
         """
         if parent is None:
             parent = item_model
@@ -72,12 +79,14 @@ class Loop_Step:
 
         Parameters
         ----------
-        n_tabs :
-             (Default value = 1)
+        n_tabs : int
+            (Default value = 1)
+            Number of tabs for indentation inside the script
 
         Returns
         -------
-
+        protocol_string : str
+            The string representing the step
         """
         tabs = '\t'*n_tabs
         desc = self.description.replace("\n", f"\n{tabs}")
@@ -90,15 +99,19 @@ class Loop_Step:
 
     def get_protocol_short_string(self, n_tabs=0):
         """
+        Gives a short overview of the step to quickly understand what the
+        protocol does.
 
         Parameters
         ----------
-        n_tabs :
-             (Default value = 0)
+        n_tabs : int
+            (Default value = 0)
+            Number of tabs for indentation inside the overview
 
         Returns
         -------
-
+        short_string : str
+            The string representing the step
         """
         tabs = '\t' * n_tabs
         short_string = f'{tabs}{self.step_type}\n'
@@ -106,24 +119,18 @@ class Loop_Step:
 
 
     def get_outer_string(self):
-        """ """
+        """Returns the string for the protocol, where for example special plots
+        for the step are created."""
         return ''
 
     def get_add_main_string(self):
-        """ """
+        """Adds for example a call to the protocol function to the
+        steps_add_main function of the script."""
         return ''
 
     def update_variables(self):
         """Should update the variables_handling, if the loopstep
-        provides variables.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        """
+        provides variables."""
         pass
 
     def update_used_devices(self):
@@ -131,7 +138,8 @@ class Loop_Step:
         pass
 
     def update_time_weight(self):
-        """The time_weight of the children is included."""
+        """The number of calls for this step. It is used to set the scaling for
+        the progress bar of the protocol."""
         self.time_weight = 1
 
 
@@ -140,12 +148,6 @@ class Loop_Step_Container(Loop_Step):
     (like e.g. a for-loop).
 
     Parameters
-    ----------
-
-    Returns
-    -------
-
-    Attributes
     ----------
     children : list of Loop_Step
         A list of the children inside this step (in the order, they are
@@ -161,19 +163,7 @@ class Loop_Step_Container(Loop_Step):
 
     def append_to_model(self, item_model:QStandardItemModel, parent=None):
         """Overwrites this function to additionally append all children
-        to the model.
-
-        Parameters
-        ----------
-        item_model:QStandardItemModel :
-            
-        parent :
-             (Default value = None)
-
-        Returns
-        -------
-
-        """
+        to the model."""
         item = super().append_to_model(item_model, parent)
         item.setDropEnabled(True)
         item.setEditable(False)
@@ -187,14 +177,11 @@ class Loop_Step_Container(Loop_Step):
 
         Parameters
         ----------
-        child :
-            
-        position :
-             (Default value = -1)
-
-        Returns
-        -------
-
+        child : Loop_Step
+            The child to be added.
+        position : int
+            (Default value = -1)
+            The position, where to insert the child.
         """
         if position < 0:
             self.children.append(child)
@@ -206,12 +193,8 @@ class Loop_Step_Container(Loop_Step):
 
         Parameters
         ----------
-        child :
-            
-
-        Returns
-        -------
-
+        child : Loop_Step
+            Child step to be removed.
         """
         self.children.remove(child)
 
@@ -220,15 +203,6 @@ class Loop_Step_Container(Loop_Step):
         make use of the time_weight and status bar, it should start with
         printing, that the loop_step starts.
         Here it is overwritten to include the strings of the children.
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
         """
         protocol_string = super().get_protocol_string(n_tabs)
         # protocol_string += self.get_children_strings(n_tabs+1)
@@ -236,31 +210,21 @@ class Loop_Step_Container(Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 0)
-
-        Returns
-        -------
-
-        """
+        """This is overwritten to include the strings from the children"""
         short_string = super().get_protocol_short_string(n_tabs)
         for child in self.children:
             short_string += child.get_protocol_short_string(n_tabs+1)
         return short_string
 
     def get_outer_string(self):
-        """ """
+        """This is overwritten to include the strings from the children"""
         outer_string = ''
         for child in self.children:
             outer_string += child.get_outer_string()
         return outer_string
 
     def get_add_main_string(self):
-        """ """
+        """This is overwritten to include the strings from the children"""
         add_main_string = ''
         for child in self.children:
             add_main_string += child.get_add_main_string()
@@ -279,12 +243,14 @@ class Loop_Step_Container(Loop_Step):
 
         Parameters
         ----------
-        n_tabs :
-             (Default value = 1)
+        n_tabs : int
+            (Default value = 1)
+            Number of tabs for indentation inside the script
 
         Returns
         -------
-
+        child_string : str
+            The string of all children's protocol strings.
         """
         child_string = ''
         for child in self.children:

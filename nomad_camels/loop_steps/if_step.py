@@ -12,20 +12,15 @@ class If_Loop_Step(Loop_Step_Container):
     """A loopstep providing an if-case selection with a variable number
     of `elif`.
 
-    Parameters
-    ----------
-
-    Returns
-    -------
-
     Attributes
     ----------
     condition : str
-        The condition which is used for the if-conditional
+        The condition which is used for the if-conditional (should be valid
+        python code)
     use_else : bool
         whether to add an `else`-case
     elifs : list of str
-        string-list of the conditions for a variable number of `elif`
+        string-list of the conditions for a variable number of `elif` cases
     """
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
@@ -40,34 +35,14 @@ class If_Loop_Step(Loop_Step_Container):
         self.update_children()
 
     def append_to_model(self, item_model:QStandardItemModel, parent=None):
-        """Overwritten, so that nothing can be dropped into the main step.
-
-        Parameters
-        ----------
-        item_model:QStandardItemModel :
-            
-        parent :
-             (Default value = None)
-
-        Returns
-        -------
-
-        """
+        """Overwritten, so that nothing can be dropped into the main step."""
         item = super(If_Loop_Step, self).append_to_model(item_model, parent)
         item.setDropEnabled(False)
         return item
 
     def update_children(self):
         """Updates the if-substeps provided by this step, giving them
-        the names corresponding to the conditions.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        """
+        the names corresponding to the conditions."""
         if not self.children:
             self.children.append(If_Sub_Step(f'{self.name}_{self.condition}'))
         n_children = 1 + len(self.elifs) + (1 if self.use_else else 0)
@@ -100,17 +75,7 @@ class If_Loop_Step(Loop_Step_Container):
             raise Exception('something went wrong with if-children!')
 
     def get_protocol_string(self, n_tabs=1):
-        """Putting together the children of all if-substeps.
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """Putting together the children of all if-substeps and the conditions"""
         tabs = '\t' * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}if eva.eval("{self.condition}"):\n'
@@ -125,17 +90,7 @@ class If_Loop_Step(Loop_Step_Container):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 0)
-
-        Returns
-        -------
-
-        """
+        """Shows all the conditions and the steps' children"""
         tabs = '\t' * n_tabs
         short_string = f'{tabs}if {self.condition}:\n'
         for child in self.children[0].children:
@@ -162,19 +117,8 @@ class If_Sub_Step(Loop_Step_Container):
         self.step_type = 'If_Sub'
 
     def append_to_model(self, item_model:QStandardItemModel, parent=None):
-        """Overwritten, so that nothing can be dropped into the main step.
-
-        Parameters
-        ----------
-        item_model:QStandardItemModel :
-            
-        parent :
-             (Default value = None)
-
-        Returns
-        -------
-
-        """
+        """Overwritten, so that nothing can be dropped into the main step. The
+        Sub-Step cannot be dragged out from the main step."""
         item = super().append_to_model(item_model, parent)
         item.setDragEnabled(False)
         item.setEnabled(False)

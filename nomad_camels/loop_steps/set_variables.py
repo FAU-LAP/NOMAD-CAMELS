@@ -4,7 +4,15 @@ from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.utility import variables_handling
 
 class Set_Variables(Loop_Step):
-    """ """
+    """
+    This step enables setting variables to a different value during the protocol.
+
+    Attributes
+    ----------
+    variables_values : dict{'Variable': list[str], 'Value': list[str]}
+        Contains a list of the variables and a list of the respective values to
+        which they should be set.
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Set Variables'
@@ -13,18 +21,7 @@ class Set_Variables(Loop_Step):
         self.variables_values = step_info['variables_values'] if 'variables_values' in step_info else {'Variable': [], 'Value': []}
 
     def get_protocol_string(self, n_tabs=1):
-        """If `wait_for_set` is True, then after setting, bps.wait for
-        the set group is called.
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """Evaluates the values for the variables, then updates the namespace."""
         tabs = '\t' * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         for i, variable in enumerate(self.variables_values['Variable']):
@@ -37,17 +34,7 @@ class Set_Variables(Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 0)
-
-        Returns
-        -------
-
-        """
+        """Shows the variables and values."""
         short_string = super().get_protocol_short_string(n_tabs)
         short_string = f'{short_string[:-1]} - {self.variables_values}\n'
         return short_string

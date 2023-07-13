@@ -1,13 +1,53 @@
+"""This module helps to synchronize information between different modules. To
+this aim, it holds several variables that may be read from different places.
+Furthermore, some functions to work with those variables are provided.
+
+Attributes
+----------
+    preset : str
+        The name of the currently used preset of CAMELS.
+    device_driver_path : str, path
+        The path, where to find local drivers.
+    meas_files_path : str, path
+        The path, where to write the measurement files, i.e. data.
+    CAMELS_path : str, path
+        The path to the current installation of CAMELS.
+    preferences : dict
+        The currently used preferences.
+    protocols : dict{"<protocol_name>": protocol}
+        The available protocols.
+    protocol_variables : dict{"<name>": <value>}
+        The variables provided by the currently viewed protocol.
+    channels : dict{"<name>": channel}
+        All available channels provided by the configured instruments.
+    loop_step_variables : dict{"<name>": <value>}
+        The variables provided by the steps of the currently viewed protocol.
+    devices : dict
+        All configured instruments/devices.
+    current_protocol = Measurement_Protocol
+        The protocol, that is currently being used.
+    dark_mode : bool
+        Whether dark-mode is currently active.
+    copied_step : Loop_Step
+        The last step, that was copied.
+    read_channel_sets : list[set]
+        Sets of the different channel-compositions for read-channels. Used to distinguish different reads with different channels for bluesky
+    read_channel_names : list[str]
+        Names of the different read-channel steps in use. Used to distinguish the different reads.
+    evaluation_functions_names : dict
+        Used to provide the right-click menu to use mathematical functions.
+    operator_names : dict
+        Used to provide the right-click menu to use mathematical operators.
+"""
+
 from ast import literal_eval, parse
 from PySide6.QtWidgets import QMenu
 from PySide6.QtGui import QColor, QAction
 
 import numpy as np
-# from nomad_camels.utility import simpleeval
 from nomad_camels.bluesky_handling import evaluation_helper
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
-# from bluesky_widgets.models import utils
 
 preset = ''
 device_driver_path = ''
@@ -28,34 +68,6 @@ copied_step = None
 
 read_channel_sets = []
 read_channel_names = []
-
-
-def get_output_channels():
-    """ """
-    outputs = []
-    for channel in channels:
-        if channels[channel].output:
-            outputs.append(channel)
-    return outputs
-
-# evaluation_functions = simpleeval.DEFAULT_FUNCTIONS.copy()
-# evaluation_functions.update({'exp': np.exp,
-#                              'log': np.log,
-#                              'sqrt': np.sqrt,
-#                              'round': round,
-#                              'sin': np.sin,
-#                              'cos': np.cos,
-#                              'sinh': np.sinh,
-#                              'cosh': np.cosh,
-#                              'sinc': np.sinc,
-#                              'tan': np.tan,
-#                              'arctan': np.arctan,
-#                              'arcsin': np.arcsin,
-#                              'arccos': np.arccos,
-#                              'arcsinh': np.arcsinh,
-#                              'arccosh': np.arccosh,
-#                              'arctanh': np.arctanh})
-
 
 evaluation_functions_names = {
     'randint()': 'randint(x) - random integer below x',
@@ -96,20 +108,31 @@ operator_names = {
     'not': 'logical negation'
 }
 
+
+def get_output_channels():
+    """Goes through all channels and returns a list of the names of those, that
+    are outputs."""
+    outputs = []
+    for channel in channels:
+        if channels[channel].output:
+            outputs.append(channel)
+    return outputs
+
 def get_color(color='', string=False):
     """Returns the respective QColor or rgb-code(if `string`) for
     `color`, taking dark-mode into account.
 
     Parameters
     ----------
-    color :
-         (Default value = '')
-    string :
-         (Default value = False)
-
-    Returns
-    -------
-
+    color : str
+        (Default value = '')
+        The name of the color asked for. Possible values are "red" / "r",
+        "strong_red", "green" / "g", "dark_green", "grey" / "gray", "blue" / "b"
+        "black" (white if `dark_mode`), "orange". Otherwise white (or black, if
+        `dark_mode`) is returned.
+    string : bool
+        (Default value = False)
+        If True, only the string of the rgb will be returned, not the QColor.
     """
     if color == 'red' or color == 'r':
         rgb = (255, 180, 180)
@@ -149,14 +172,19 @@ def get_menus(connect_function, pretext='Insert'):
 
     Parameters
     ----------
-    connect_function :
-        
-    pretext :
-         (Default value = 'Insert')
+    connect_function : callable
+        The function that should be executed when the action is clicked. It gets
+        the variable's name as a value.
+    pretext : str
+        (Default value = 'Insert')
+        This string will be written in front of the menus.
 
     Returns
     -------
-
+    menus : list[QMenu]
+        the created menus
+    actions : list[list[QAction]]
+        lists of the individual actions in the menus
     """
     variable_menu = QMenu(f'{pretext} Variable')
     channel_menu = QMenu(f'{pretext} Channel-Value')
@@ -167,33 +195,13 @@ def get_menus(connect_function, pretext='Insert'):
     actions = []
     function_actions = []
     add_actions_from_dict(channels, channel_actions, connect_function)
-    # for channel in sorted(channels, key=lambda x: x.lower()):
-    #     action = QAction(channel)
-    #     action.triggered.connect(lambda state=None, x=channel: connect_function(x))
-    #     channel_actions.append(action)
     add_actions_from_dict(protocol_variables, actions, connect_function)
-    # for variable in sorted(protocol_variables, key=lambda x: x.lower()):
-    #     action = QAction(variable)
-    #     action.triggered.connect(lambda state=None, x=variable: connect_function(x))
-    #     actions.append(action)
     add_actions_from_dict(loop_step_variables, actions, connect_function)
     add_actions_from_dict({'StartTime': 1, 'ElapsedTime': 1}, actions,
                           connect_function)
-    # for variable in sorted(loop_step_variables, key=lambda x: x.lower()):
-    #     action = QAction(variable)
-    #     action.triggered.connect(lambda state=None, x=variable: connect_function(x))
-    #     actions.append(action)
     add_actions_from_dict(operator_names, operator_actions, connect_function)
-    # for op in operator_names:
-    #     action = QAction(f'{op}\t{operator_names[op]}')
-    #     action.triggered.connect(lambda state=None, x=op: connect_function(x))
-    #     operator_actions.append(action)
     add_actions_from_dict(evaluation_functions_names, function_actions,
                           connect_function)
-    # for foo in sorted(evaluation_functions_names, key=lambda x: x.lower()):
-    #     action = QAction(evaluation_functions_names[foo])
-    #     action.triggered.connect(lambda state=None, x=foo: connect_function(x))
-    #     function_actions.append(action)
     channel_menu.addActions(channel_actions)
     variable_menu.addActions(actions)
     operator_menu.addActions(operator_actions)
@@ -208,21 +216,22 @@ def get_menus(connect_function, pretext='Insert'):
 
 def add_actions_from_dict(dictionary, actions, connect_function, add_string=''):
     """
+    The values of `dictionary` are handed to the `connect_function` when
+    clicking on the respective action named with the keys of the dictionary. The
+    created actions are added to `actions`.
 
     Parameters
     ----------
-    dictionary :
-        
-    actions :
-        
-    connect_function :
-        
-    add_string :
-         (Default value = '')
-
-    Returns
-    -------
-
+    dictionary : dict
+        the keys become the names of the actions, the values are handed to the
+        `connect_function`
+    actions : list
+        the created actions will be added to this list
+    connect_function : callable
+        this function is called, when one of the actions is clicked
+    add_string : str
+        (Default value = '')
+        added in front of the values of the dictionary for the connect_function
     """
     for var in sorted(dictionary, key=lambda x: x.lower()):
         if isinstance(dictionary[var], dict):
@@ -235,16 +244,13 @@ def add_actions_from_dict(dictionary, actions, connect_function, add_string=''):
             actions.append(action)
 
 def check_eval(s):
-    """Checks, whether the string `s` can be evaluated.
+    """Checks, whether the string `s` can be evaluated. Returns True if it is
+    possible, otherwise False.
 
     Parameters
     ----------
-    s :
-        
-
-    Returns
-    -------
-
+    s : str
+        the string that should be checked
     """
     try:
         namespace = dict(evaluation_helper.base_namespace)
@@ -260,15 +266,14 @@ def check_eval(s):
 
 def get_eval(s):
     """
+    Evaluates the string `s` with the namespace of `protocol_variables` and
+    `loop_step_variables` in addition to `evaluation_helper.base_namespace`.
+    Returns the evaluated value.
 
     Parameters
     ----------
-    s :
-        
-
-    Returns
-    -------
-
+    s : str
+        the string that should be evaluated
     """
     try:
         namespace = dict(evaluation_helper.base_namespace)
@@ -282,16 +287,13 @@ def get_eval(s):
 
 
 def get_data(s):
-    """Returns the evaluated data of s.
+    """Used instead of `get_eval` when there is no specific namespace. It simply
+    uses `ast.literal_eval` and if it does not work, the string `s` is returned.
 
     Parameters
     ----------
-    s :
-        
-
-    Returns
-    -------
-
+    s : str
+        the string to be evaluated
     """
     if not s:
         return ''
@@ -308,12 +310,8 @@ def check_data_type(s):
 
     Parameters
     ----------
-    s :
-        
-
-    Returns
-    -------
-
+    s : str
+        the string that should be checked
     """
     if not isinstance(s, str):
         return str(type(s))
@@ -328,17 +326,9 @@ def check_data_type(s):
     return str(type(lit))
 
 def get_write_from_data_type(s):
-    """
-
-    Parameters
-    ----------
-    s :
-        
-
-    Returns
-    -------
-
-    """
+    """Used for writing longer strings. Since the strings should stay strings in
+    the written files, if the evaluated datatype of `s` is str, quatation marks
+    will be added around the value, otherwise nothing is done."""
     t = check_data_type(s)
     if t == 'String':
         return f'"{s}"'
@@ -346,6 +336,23 @@ def get_write_from_data_type(s):
 
 
 def check_variable_name(name, raise_not_warn=False, parent=None):
+    """Checks whether `name` is a valid name for a variable. It checks, whether
+    the name mirrors a builtin function or keyword. If not, it is tried with ast
+    to parse the statement `<name> = None`, i.e. whether it works as a variable
+    name. If anything fails, either an exception is raised (if `raise_not_warn`)
+    or a `WarnPopup` is called.
+
+    Parameters
+    ----------
+    name : str
+        the name that should be checked
+    raise_not_warn : bool
+        (Default value = False)
+        if True, an exception is raised if a check fails, otherwise a WarnPopup
+    parent : QWidget
+        (Default value = None)
+        the parent widget for a possibly called WarnPopup
+    """
     try:
         built_check = name in vars(__builtins__)
     except:
@@ -365,5 +372,3 @@ def check_variable_name(name, raise_not_warn=False, parent=None):
         WarnPopup(parent, text, 'Invalid Name')
         return False
     return True
-
-

@@ -9,7 +9,49 @@ from nomad_camels.bluesky_handling import builder_helper_functions
 from nomad_camels.frontpanels.plot_definer import Plot_Info
 
 class Gradient_Descent_Step(Loop_Step):
-    """ """
+    """
+    A step performing a gradient descent with a given channel to optimize a
+    given function.
+
+
+    Attributes
+    ----------
+    read_channels : list[str]
+        A list of all the channels which are read for the optimization.
+    extremum : str ('Minimum', 'Maximum')
+        The extremum type that should be found.
+    out_channel : str
+        The channel wich is used for the optimization.
+    opt_func : str
+        This string is evaluated by the given to give the target function.
+    start_val : str, float
+        Representation of where to start the algorithm.
+    min_val : str, float
+        The minimum value that should be given to the `set_channel`.
+    max_val : str, float
+        The maximum value that should be given to the `set_channel`.
+    learning_rate : str, float
+         A weight for the learning of the gradient descent.
+         The next shift `delta_w` is calculated as:
+         delta_w = -learning_rate * <current_gradient> + momentum * <last_delta_w>
+    threshold : str, float
+        If the difference between two measurements is smaller than this
+        threshold, the algorithm recognizes the value as the optimum and stops.
+    momentum : str, float
+         (Default value = 0.8)
+         A momentum to keep up the last direction.
+         The next shift `delta_w` is calculated as:
+         delta_w = -learning_rate * <current_gradient> + momentum * <last_delta_w>
+    min_step : str, float
+        The minimum step size.
+    max_step : str, float
+        The maximum step size.
+    n_steps : str, int
+        The maximum number of iterations until the algorithm should stop if it
+        did not arrive at the threshold yet.
+    plot_steps : bool
+        Whether to plot the single steps of the algorithm at runtime.
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Gradient Descent'
@@ -30,7 +72,7 @@ class Gradient_Descent_Step(Loop_Step):
         self.plot_steps = step_info['plot_steps'] if 'plot_steps' in step_info else True
 
     def update_used_devices(self):
-        """ """
+        """Uses all devices in self.read_channels and of self.out_channel"""
         self.used_devices = []
         set_device = variables_handling.channels[self.out_channel].device
         self.used_devices.append(set_device)
@@ -41,7 +83,8 @@ class Gradient_Descent_Step(Loop_Step):
                     self.used_devices.append(device)
 
     def get_outer_string(self):
-        """ """
+        """Adds the plot, if self.plot_steps is True. The plot displays the
+        formula to be optimized vs the out_channel."""
         if self.plot_steps:
             plot = Plot_Info(x_axis=self.out_channel,
                               y_axes={'formula': [self.opt_func],
@@ -51,7 +94,7 @@ class Gradient_Descent_Step(Loop_Step):
         return ''
 
     def get_add_main_string(self):
-        """ """
+        """Adds the call of creating the plots if self.plot_steps."""
         add_main_string = ''
         if self.plot_steps:
             stream = f'"{self.name}"'
@@ -59,17 +102,8 @@ class Gradient_Descent_Step(Loop_Step):
         return add_main_string
 
     def get_protocol_string(self, n_tabs=1):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """Evaluates all / most of the values with the protocol's evaluator and
+        calls the helper function gradient_descent to perform the algorithm."""
         tabs = '\t'*n_tabs
         func_text = f'"{self.opt_func}"'
         if self.extremum == 'Maximum':
@@ -101,6 +135,7 @@ class Gradient_Descent_Step(Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
+        """Describes the kind of extremum, the opt_func and the out_channel."""
         short_string = super().get_protocol_short_string(n_tabs)[:-1]
         short_string += f' - {self.extremum} of {self.opt_func} via {self.out_channel}\n'
         return short_string

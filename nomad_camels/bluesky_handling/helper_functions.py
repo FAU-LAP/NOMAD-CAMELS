@@ -158,9 +158,9 @@ def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
         function.
     evaluator : Evaluator
         Used to evaluate the read values.
-    set_channel :
+    set_channel : ophyd.Signal
         The channel wich is used for the optimization.
-    read_channels :
+    read_channels : list
         A list of all the channels which are read for the optimization.
     min_step : float
         The minimum step size.
@@ -202,15 +202,13 @@ def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
 
     def obj_func(set_val):
         """
+        This function sets the value and then reads the channels for each
+        iteration of the algorithm.
 
         Parameters
         ----------
-        set_val :
-            
-
-        Returns
-        -------
-
+        set_val : float
+            Value to be set on the set_channel
         """
         yield from bps.checkpoint()
         yield from bps.abs_set(set_channel, set_val, group='A')
@@ -285,31 +283,46 @@ def gradient_descent(max_iterations, threshold, w_init, func_text, evaluator,
 def get_range(evaluator, start, stop, points, min_val=np.nan, max_val=np.nan,
               loop_type='start - stop', sweep_mode='linear', endpoint=True):
     """
+    This is a helper function for steps like sweeps and the for loop.
+    Using the evaluator, it creates the range of iterations given the other
+    values.
 
     Parameters
     ----------
-    evaluator :
-        
-    start :
-        
-    stop :
-        
-    points :
-        
-    min_val :
+    evaluator : Evaluator
+        Used to evaluate the given expressions (`start`, `stop`, `points`,
+        `min_val`, `max_val`).
+    start : float, str
+        The starting position for the sweep / loop.
+    stop : float, str
+        The end position for the sweep / loop.
+    points : float, str
+        The number of points in the range. If using `min_val` / `max_val`,
+        `points` is the distance between those two.
+    min_val : float, str
          (Default value = np.nan)
-    max_val :
+         Minimum value of the loop / sweep. Usefull for hysteresis-sweeps.
+    max_val : float, str
          (Default value = np.nan)
-    loop_type :
+         Minimum value of the loop / sweep. Usefull for hysteresis-sweeps.
+    loop_type : str
          (Default value = 'start - stop')
-    sweep_mode :
+         Possible values: 'start - stop', ignoring `min_val` and `max_val`
+         'start - min - max - stop' going to minimum first, then maximum
+         'start - max - min - stop', or anything not-specified.
+    sweep_mode : str
          (Default value = 'linear')
-    endpoint :
+         The type how the distance between the points is calculated.
+         If 'linear', they are equidistant, if 'logarithmic', the points between
+         log(start) and log(stop) are equidistant, if 'exponential', between
+         exp(start) and exp(stop), otherwise they are equidistant between
+         1/start and 1/stop.
+    endpoint : bool
          (Default value = True)
-
+         Whether to include the endpoint into the range.
     Returns
     -------
-
+        An array of the calculated range.
     """
     start = evaluator.eval(start)
     stop = evaluator.eval(stop)
@@ -335,23 +348,32 @@ def get_range(evaluator, start, stop, points, min_val=np.nan, max_val=np.nan,
 
 def get_inner_range(start, stop, points, sweep_mode, endpoint):
     """
+    Used for `get_range`, to make the split up ranges if doing a hysteresis
+    sweep.
 
     Parameters
     ----------
-    start :
-        
-    stop :
-        
-    points :
-        
-    sweep_mode :
-        
-    endpoint :
-        
+    start : float, str
+        The starting position for the sweep / loop.
+    stop : float, str
+        The end position for the sweep / loop.
+    points : float, str
+        The number of points in the range. If using `min_val` / `max_val`,
+        `points` is the distance between those two.
+    sweep_mode : str
+         (Default value = 'linear')
+         The type how the distance between the points is calculated.
+         If 'linear', they are equidistant, if 'logarithmic', the points between
+         log(start) and log(stop) are equidistant, if 'exponential', between
+         exp(start) and exp(stop), otherwise they are equidistant between
+         1/start and 1/stop.
+    endpoint : bool
+         (Default value = True)
+         Whether to include the endpoint into the range.
 
     Returns
     -------
-
+        An array of the calculated range.
     """
     if sweep_mode == 'linear':
         return np.linspace(start, stop, points, endpoint=endpoint)
@@ -367,7 +389,20 @@ def get_inner_range(start, stop, points, sweep_mode, endpoint):
 
 
 class Prompt_Box(QMessageBox):
-    """ """
+    """
+    A subclass of QMessageBox that is used in the prompt-step.
+    The protocol is paused until `self.done` is True.
+
+    Parameters
+    ----------
+    icon : str
+        If 'Error', the `QMessagebox.Critical` icon is desplayed, if 'Warning',
+        then `QMessagebox.Warning` is used, otherwise `QMessagebox.Information`.
+    text : str
+        The text to be displayed by the prompt.
+    title : str
+        The window-title of the prompt.
+    """
     def __init__(self, icon='', text='', title='', parent=None):
         super().__init__(parent=parent)
         if icon == 'Error':
@@ -384,21 +419,44 @@ class Prompt_Box(QMessageBox):
         self.done = False
 
     def set_done(self):
-        """ """
+        """Sets `self.done` to True."""
         self.done = True
 
     def start_execution(self):
-        """ """
+        """Sets `self.done` to False and starts `self.exec()`."""
         self.done = False
         self.exec()
 
 class BoxHelper(QWidget):
-    """ """
+    """Helper-class to start the execution of Prompts and other boxes from
+    within the protocol."""
     executor = Signal()
 
 
 class Value_Box(QDialog):
-    """ """
+    """
+    This dialog is used to set variables or channels at runtime of a protocol.
+
+    Parameters
+    ----------
+    text : str
+        A text to be displayed with the box.
+    title : str
+        The window title of the box.
+    variables : list, default: None
+        The variables that should be set by the user. A QLineEdit will be
+        provided for each of the variables.
+    channels : list, default: None
+        The channels that should be set by the user. A QLineEdit will be
+        provided for each of the channels.
+    free_variables : bool, default: False
+        Whether the user is allowed to freely set any variables.
+    free_channels : bool, default: False
+        Whether the user is allowed to freely set any channels.
+    devs : dict, default: None
+        Dictionary of the available devices. Only needed, if `free_channels` is
+        True, to provide the available channels.
+    """
     def __init__(self, text='', title='', variables=None, channels=None,
                  free_variables=False, free_channels=False, parent=None,
                  devs=None):
@@ -478,12 +536,16 @@ class Value_Box(QDialog):
         self.set_channels = {}
 
     def start_execution(self):
-        """ """
+        """Sets `self.done` to False and starts `self.exec()`."""
         self.done = False
         self.exec()
 
     def accept(self) -> None:
-        """ """
+        """
+        Reads all the values to be set to channels / variables and saves them in
+        `self.set_channels` and `self.set_variables` respectively, then sets
+        `self.done` to True, allowing the protocol to go on and accepts the dialog.
+        """
         self.set_variables = {}
         self.set_channels = {}
         for i, v_box in enumerate(self.variable_boxes):
@@ -519,22 +581,30 @@ class Value_Box(QDialog):
         return super().accept()
 
     def reject(self) -> None:
-        """ """
+        """
+        Sets `self.done` to True, allowing the protocol to go on before
+        rejecting the dialog.
+        """
         self.done = True
         return super().reject()
 
+
+
 def get_channels(dev):
-    """returns the components of an ophyd-device that are not listed in
-    the configuration
+    """
+    Goes through the components of the given ophyd device and returns all that
+    are not read-only and not config.
 
     Parameters
     ----------
-    dev :
-        
+    dev : ophyd.Device
+        The device that is checked for output channels.
 
     Returns
     -------
-
+    channels : dict
+        The keys are the channels in CAMELS-style. The values are
+        [dev.name, <name_of_the_component>].
     """
     channels = {}
     for comp in dev.walk_components():

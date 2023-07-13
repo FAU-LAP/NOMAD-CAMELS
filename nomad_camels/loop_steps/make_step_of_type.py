@@ -1,3 +1,5 @@
+"""This module provides a way to produce all possible protocol steps from the UI"""
+
 from nomad_camels.main_classes.loop_step import Loop_Step
 from nomad_camels.loop_steps import for_while_loops, read_channels, set_channels,\
     wait_loop_step, if_step, prompt_loop_step, run_subprotocol, simple_sweep,\
@@ -43,12 +45,10 @@ def get_device_steps():
     """Goes through all the devices and checks, whether they provide
     their own types of loop-steps.
 
-    Parameters
-    ----------
-
     Returns
     -------
-
+    device_steps
+        dictionary of the possible steps provided by the devices
     """
     device_steps = {}
     for devname, device in sorted(variables_handling.devices.items(), key=lambda x: x[0].lower()):
@@ -58,21 +58,25 @@ def get_device_steps():
 
 def make_step(step_type, step_info=None, children=None):
     """Checks whether the given `step_type` is supported, if yes, then a
-    step of that type with the given info and children will be created,
-    otherwise a new step is made.
+    step of that type with the given info and children will be created.
+    If there is no step_info, a new step is made.
 
     Parameters
     ----------
-    step_type :
-        
-    step_info :
-         (Default value = None)
-    children :
-         (Default value = None)
+    step_type : str
+        A string representing the type of the step. Should correspond to one of
+        the keys of `step_type_config` or a device specific step.
+    step_info : dict, None
+        (Default value = None)
+        The information for the step's configuration
+    children : list[Loop_Step], None
+        (Default value = None)
+        The produced step's children. Handed over to it's constructor.
 
     Returns
     -------
-
+    step
+        The produced step.
     """
     dev_steps = get_device_steps()
     if step_type in step_type_config:
@@ -100,12 +104,13 @@ def get_config(step:Loop_Step):
 
     Parameters
     ----------
-    step:Loop_Step :
-        
+    step : Loop_Step
+        The step for which the config-widget should be opened.
 
     Returns
     -------
-
+    step_config
+        The Loop_Step_Config corresponding to the given `step`.
     """
     step_type = step.step_type
     dev_steps = get_device_steps()

@@ -11,7 +11,27 @@ from nomad_camels.bluesky_handling import protocol_builder, builder_helper_funct
 
 
 class Run_Subprotocol(Loop_Step):
-    """ """
+    """
+    With this step, one may select another protocol to run inside the main one.
+
+    Attributes
+    ----------
+    prot_path : str, path
+        Path to the file of the subprotocol.
+    vars_in : dict
+        Variables of the subprotocol's namespace and the values they should get
+        before the subprotocol is run. This can be used to e.g. give the
+        subprotocol a new value for each run inside a loop.
+    vars_out : dict
+        Variables of the subprotocol and the name in the main protocol's
+        namespace where they should be put. This can be used to e.g. store some
+        value determined by the subprotocol for later use in the main protocol.
+    data_output : str
+        Whether the data is put into its own stream('sub-stream') or the primary
+        stream ('main-stream').
+    own_plots : bool
+        If True, the plots specified by the protocol will also be shown.
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Run Subprotocol'
@@ -25,17 +45,11 @@ class Run_Subprotocol(Loop_Step):
 
 
     def get_protocol_string(self, n_tabs=1):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """Overwrites the signal for the progressbar and the number of steps in
+        the subprotocol's module. Evaluates the input variables, then writes
+        them into the subprotocol's namespace and starts the subprotocol's
+        _plan_inner function. Afterwards the output variables are written to the
+        main namespace."""
         tabs = '\t' * n_tabs
         prot_name = os.path.basename(self.prot_path)[:-6]
         protocol_string = super().get_protocol_string(n_tabs)
@@ -52,23 +66,13 @@ class Run_Subprotocol(Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 0)
-
-        Returns
-        -------
-
-        """
+        """Specifies the name / path of the subprotocol."""
         short_string = super().get_protocol_short_string(n_tabs)
         short_string = f'{short_string[:-1]} - {self.prot_path}'
         return short_string
 
     def get_outer_string(self):
-        """ """
+        """Imports the subprotocol as <protocol_name>_mod."""
         prot_name = os.path.basename(self.prot_path)[:-6]
         py_file = f'{self.prot_path[:-6]}.py'
         if not os.path.isfile(py_file):
@@ -81,25 +85,25 @@ class Run_Subprotocol(Loop_Step):
         return outer_string
 
     def get_add_main_string(self):
-        """ """
-        prot_name = os.path.basename(self.prot_path)[:-6]
-        stream = f'"{prot_name}"'
-        if self.data_output == 'main stream':
-            stream = '"primary"'
+        """If using its own plots, adds them to the steps. In any case, the
+        added steps from the subprotocol are added here as well."""
         prot_name = os.path.basename(self.prot_path)[:-6]
         add_main_string = ''
         if self.own_plots:
+            stream = f'"{prot_name}"'
+            if self.data_output == 'main stream':
+                stream = '"primary"'
             add_main_string += builder_helper_functions.get_plot_add_string(prot_name, stream, True)
         add_main_string += f'\treturner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE)\n'
         return add_main_string
 
     def update_used_devices(self):
-        """ """
+        """Uses the devices that are used in the subprotocol."""
         sub_protocol = load_save_functions.load_protocol(self.prot_path)
         self.used_devices = sub_protocol.get_used_devices()
 
     def update_time_weight(self):
-        """ """
+        """The time weight in the end is the weight of the subprotocol + 1."""
         super().update_time_weight()
         sub_protocol = load_save_functions.load_protocol(self.prot_path)
         self.time_weight += sub_protocol.get_total_steps()

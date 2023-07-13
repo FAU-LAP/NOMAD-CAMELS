@@ -7,7 +7,20 @@ from nomad_camels.utility import variables_handling
 
 
 class Set_Channels(Loop_Step):
-    """Simple loop_step to set some channels."""
+    """
+    Simple step to set several channels to a given value. Uses `bps.abs_set`.
+
+    Attributes
+    ----------
+    channels_values : dict{'Channels': list[str], 'Values': list[str]}
+        This dictionary provides a list of the names of the channels that are to
+        be set and a list of the values they should get. The values are strings,
+        since they will be evaluated at runtime, thus providing the ability to
+        set some variable at runtime.
+    wait_for_set : bool, default True
+        Whether to wait after setting for the set channels to have the finished
+        status.
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Set Channels'
@@ -28,17 +41,8 @@ class Set_Channels(Loop_Step):
 
     def get_protocol_string(self, n_tabs=1):
         """If `wait_for_set` is True, then after setting, bps.wait for
-        the set group is called.
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        the set group is called. In any case, all the channels are set to their
+        specified value"""
         tabs = '\t' * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         for i, channel in enumerate(self.channels_values['Channels']):
@@ -52,17 +56,7 @@ class Set_Channels(Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 0)
-
-        Returns
-        -------
-
-        """
+        """Displays the channels and their values."""
         short_string = super().get_protocol_short_string(n_tabs)
         short_string = f'{short_string[:-1]} - {self.channels_values}\n'
         return short_string

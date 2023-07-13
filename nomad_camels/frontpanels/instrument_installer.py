@@ -94,11 +94,13 @@ def getAllDevices():
         devices_str = requests.get(url).text
     warned = False
     for x in devices_str.splitlines():
+        if '==' not in x:
+            continue
         try:
             name, version = x.split('==')
         except:
             if not warned:
-                WarnPopup(None, 'Could not read driver_list.txt from repo.\n'
+                WarnPopup(None, 'Could not (completely) read driver_list.txt from repo.\n'
                                 'Check settings if repository and branch are correct.',
                           'No online-drivers found')
             warned = True

@@ -1,3 +1,21 @@
+"""This package provides utility for everything regarding devices/instruments
+connected to the main UI.
+
+Attributes
+----------
+    local_packages : dict{"<driver_name>": python-module}
+        the loaded modules of local instrument drivers
+    running_devices : dict{"<device_name>": ophyd.Device}
+        The devices that are already instantiated and currently running. All
+        devices are given an attribute `device_run_count` which is increased by
+        1 each time a function tries to instantiate a device that is already
+        running. Closing the device decreases the run-count by 1. It is only
+        really closed, once the run-count reaches 0.
+    last_path : str, path
+        The path that was last used to search for local drivers. This is used to
+        only re-run loading the packages if something changed.
+"""
+
 import sys
 import os
 import importlib
@@ -15,15 +33,19 @@ last_path = ''
 
 def load_local_packages(tell_local=False):
     """
+    Loads the packages of local instrument drivers and returns a dictionary with
+    them. If `tell_local`, then the keys will be "local <driver_name>",
+    otherwise just "<driver_name>".
 
     Parameters
     ----------
-    tell_local :
-         (Default value = False)
+    tell_local : True
+        (Default value = False)
 
     Returns
     -------
-
+    dict
+        Contains the packages with the driver name as keys.
     """
     global local_packages, last_path
     local_instr_path = variables_handling.device_driver_path
@@ -54,15 +76,18 @@ def load_local_packages(tell_local=False):
 
 def get_channel_from_string(channel):
     """
+    Returns the component of the ophyd device that corresponds to the given
+    channel. The device has to be instantiated at this point.
 
     Parameters
     ----------
-    channel :
-        
+    channel : str
+        The name of the channel (i.e. "<device>.<channel>")
 
     Returns
     -------
-
+    ophyd.Signal
+        The signal / channel found from the string
     """
     dev, chan = channel.split('.')
     if dev not in running_devices:
@@ -72,15 +97,19 @@ def get_channel_from_string(channel):
 
 def get_channels_from_string_list(channel_list):
     """
+    Goes through the given channel_list and if they are valid channels in
+    CAMELS, their ophyd representation is called by `get_channel_from_string`.
 
     Parameters
     ----------
-    channel_list :
-        
+    channel_list : list[str]
+        List of the channels in CAMELS-representation
+        (i.e. "<device_name>_<channel_name>")
 
     Returns
     -------
-
+    list[ophyd.Signal]
+        A list of the ophyd representations of `channel_list`
     """
     channels = []
     for channel in channel_list:
@@ -95,15 +124,21 @@ def get_channels_from_string_list(channel_list):
 
 def start_devices_from_channel_list(channel_list):
     """
+    Instantiates the ophyd devices that are needed by the given channels.
+    Returns the ophyd devices and their metadata.
 
     Parameters
     ----------
-    channel_list :
-        
+    channel_list : list[str]
+        List of the channels, for which the devices should be started.
 
     Returns
     -------
-
+    devs : dict{"<device_name>": ophyd.Device}
+        Dictionary of the started devices (or if they were already running,
+        their currently running instance)
+    dev_data : dict{"<device_name>": dict}
+        Dictionary of the devices' metadata (i.e. config, settings...)
     """
     dev_list = set()
     for channel in channel_list:
@@ -114,15 +149,21 @@ def start_devices_from_channel_list(channel_list):
 
 def instantiate_devices(device_list):
     """
+    Starts the given devices, or increases their run-count by 1 and returns
+    them together with their settings.
 
     Parameters
     ----------
-    device_list :
-        
+    device_list : list[str]
+        The devices (as they are named in CAMELS) that should be started
 
     Returns
     -------
-
+    devices : dict{"<device_name>": ophyd.Device}
+        Dictionary of the started devices (or if they were already running,
+        their currently running instance)
+    device_config : dict{"<device_name>": dict}
+        Dictionary of the devices' metadata (i.e. config, settings...)
     """
     device_config = {}
     devices = {}
@@ -134,7 +175,10 @@ def instantiate_devices(device_list):
         settings = copy.deepcopy(device.get_settings())
         additional_info = copy.deepcopy(device.get_additional_info())
         if 'connection' in settings:
-            settings.pop('connection')
+            conn = settings.pop('connection')
+            if 'type' in conn:
+                conn.pop('type')
+            settings.update(conn)
         if 'idn' in settings:
             settings.pop('idn')
         extra_settings = {}
@@ -170,17 +214,15 @@ def instantiate_devices(device_list):
 
 def close_devices(device_list):
     """
+    Closes the given devices (calling their `finalize_steps`), or decreases
+    their run-count by 1.
 
     Parameters
     ----------
-    device_list :
-        
-
-    Returns
-    -------
-
+    device_list : list[str]
+        The devices (as they are named in CAMELS) that should be closed
     """
-    for dev in device_list:
+    for dev in reversed(device_list):
         if dev not in running_devices:
             raise Warning(f'Trying to close device {dev}, but it is not even running!')
         ophyd_dev = running_devices[dev]

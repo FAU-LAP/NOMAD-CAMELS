@@ -1,20 +1,8 @@
 def test_startup(qtbot, capfd):
     """Simply try to start and run CAMELS.
     By default, the autosave is enabled, so if it works correctly and closes,
-    the statement should be printed
-
-    Parameters
-    ----------
-    qtbot :
-        
-    capfd :
-        
-
-    Returns
-    -------
-
-    """
-    import sys
+    the statement "current state saved!" should be printed"""
+    # import sys
     import nomad_camels.MainApp_v2
     from nomad_camels.utility import exception_hook
     # sys.excepthook = exception_hook.exception_hook

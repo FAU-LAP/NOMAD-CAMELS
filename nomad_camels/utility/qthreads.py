@@ -1,3 +1,7 @@
+"""
+CURRENTLY DEPRECATED MODULE, NOTHING IS USED
+This module contains various threads that may be run from the main UI."""
+
 import signal
 import os
 import time
@@ -13,7 +17,9 @@ from nomad_camels.utility import variables_handling
 
 
 class Run_Protocol(QThread):
-    """Runs the given protocol with a file at the given path."""
+    """
+    DEPRECATED
+    Runs the given protocol with a file at the given path."""
     sig_step = Signal(int)
     info_step = Signal(str)
     protocol_done = Signal()
@@ -143,7 +149,9 @@ class Run_Protocol(QThread):
             self.info_step.emit(f'{msg}\n')
 
 class Run_Protocol_test(QThread):
-    """Runs the given protocol with a file at the given path."""
+    """
+    DEPRECATED
+    Runs the given protocol with a file at the given path."""
     sig_step = Signal(int)
     info_step = Signal(str)
     protocol_done = Signal()
@@ -282,7 +290,7 @@ class Run_Protocol_test(QThread):
 
 
 class Manual_Device_Thread(QThread):
-    """ """
+    """DEPRECATED"""
     def __init__(self, device, ophyd_class):
         super().__init__()
         self.device = ophyd_class(f'{device.custom_name}:',

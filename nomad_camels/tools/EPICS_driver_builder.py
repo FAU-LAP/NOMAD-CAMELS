@@ -15,10 +15,10 @@ class EPICS_Driver_Builder(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        if os.path.isdir('graphics'):
+        try:
             self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
-        else:
-            self.setWindowIcon(QIcon('../graphics/CAMELS.svg'))
+        except:
+            pass
         self.setWindowTitle('NOMAD-CAMELS - EPICS-driver-builder')
 
         label_name = QLabel('Instrument Name:')
@@ -81,14 +81,17 @@ class EPICS_Driver_Builder(QDialog):
                 ast.parse(f'{pv} = None')
             except (ValueError, SyntaxError, TypeError):
                 raise Exception(f'PV-name "{pv}" resembles python builtin function or variable!\nDefine another name!\nYou may change the PV-name later in the code, see the documentation for more information.')
+        all_good = True
         for name in inputs['PV-Name']:
-            check_builtin(name)
+            all_good = all_good and variables_handling.check_variable_name(name, parent=self)
         for name in outputs['PV-Name']:
-            check_builtin(name)
+            all_good = all_good and variables_handling.check_variable_name(name, parent=self)
         for name in configs['PV-Name']:
-            check_builtin(name)
+            all_good = all_good and variables_handling.check_variable_name(name, parent=self)
         for name in configs_in['PV-Name']:
-            check_builtin(name)
+            all_good = all_good and variables_handling.check_variable_name(name, parent=self)
+        if not all_good:
+            raise Exception(f'Some PV-name resemble python builtin function or variable!\nDefine another name!\nYou may change the PV-name later in the code, see the documentation for more information.')
         directory = f'{path}/nomad_camels_driver_{dev_name}'
         sys.path.append(directory)
         fname = f'{directory}/{dev_name}.py'
@@ -112,8 +115,8 @@ class EPICS_Driver_Builder(QDialog):
             elif configs['Datatype'][i] == 'bool':
                 class_string += f'\t\tself.config["{name}"] = False\n'
         class_string += '\n\nclass subclass_config(device_class.Simple_Config):\n'
-        class_string += '\tdef __init__(self, parent=None, data="", settings_dict=None, config_dict=None, ioc_dict=None, additional_info=None):\n'
-        class_string += f'\t\tsuper().__init__(parent, "{dev_name}", data, settings_dict, config_dict, ioc_dict, additional_info)\n'
+        class_string += '\tdef __init__(self, parent=None, data="", settings_dict=None, config_dict=None, additional_info=None):\n'
+        class_string += f'\t\tsuper().__init__(parent, "{dev_name}", data, settings_dict, config_dict, additional_info)\n'
         class_string += '\t\tself.comboBox_connection_type.addItem("EPICS")\n'
         class_string += '\t\tself.load_settings()\n'
 

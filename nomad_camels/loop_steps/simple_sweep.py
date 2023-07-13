@@ -11,7 +11,23 @@ from nomad_camels.frontpanels.plot_definer import Plot_Button_Overview
 from nomad_camels.loop_steps.for_while_loops import For_Loop_Step_Config_Sub, For_Loop_Step
 
 class Simple_Sweep(For_Loop_Step):
-    """ """
+    """
+    A sweep over a single channel reading arbitrary other channels. The
+    information about which values to sweep through are inherited from
+    For_Loop_Step.
+
+    Attributes
+    ----------
+    sweep_channel : str
+        The name of the channel that should be sweeped.
+    data_output : str
+        Whether the data is put into its own stream('sub-stream') or the primary
+        stream ('main-stream').
+    plots : list[Plot_Info]
+        List of the plots that should be created for the sweep.
+    read_channels : list[str]
+        List of the channels that should be read during the sweep.
+    """
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
         super().__init__(name, children, parent_step, step_info, **kwargs)
@@ -22,19 +38,9 @@ class Simple_Sweep(For_Loop_Step):
         self.data_output = step_info['data_output'] if 'data_output' in step_info else 'sub-stream'
         self.plots = load_plots([], step_info['plots']) if 'plots' in step_info else []
         self.read_channels = step_info['read_channels'] if 'read_channels' in step_info else []
-        self.use_own_plots = step_info['use_own_plots'] if 'use_own_plots' in step_info else False
-        self.calc_minmax = step_info['calc_minmax'] if 'calc_minmax' in step_info else False
-        self.calc_mean = step_info['calc_mean'] if 'calc_mean' in step_info else False
-        self.calc_stddev = step_info['calc_stddev'] if 'calc_stddev' in step_info else False
-        self.use_custom_fit = step_info['use_custom_fit'] if 'use_custom_fit' in step_info else False
-        self.calc_fit = step_info['calc_fit'] if 'calc_fit' in step_info else False
-        self.predef_fit = step_info['predef_fit'] if 'predef_fit' in step_info else 'Linear'
-        self.custom_fit = step_info['custom_fit'] if 'custom_fit' in step_info else ''
-        self.fit_params = step_info['fit_params'] if 'fit_params' in step_info else {}
-        self.guess_fit_params = step_info['guess_fit_params'] if 'guess_fit_params' in step_info else True
 
     def update_used_devices(self):
-        """ """
+        """Includes the devices from the read_channels and the sweep_channel."""
         self.used_devices = []
         set_device = variables_handling.channels[self.sweep_channel].device
         self.used_devices.append(set_device)
@@ -45,7 +51,7 @@ class Simple_Sweep(For_Loop_Step):
                     self.used_devices.append(device)
 
     def update_variables(self):
-        """ """
+        """Adds the fit variables from the plots."""
         variables = {}
         stream = f'{self.name}'
         for plot in self.plots:
@@ -56,46 +62,26 @@ class Simple_Sweep(For_Loop_Step):
 
 
     def get_outer_string(self):
-        """ """
-        if self.use_own_plots:
+        """Gives the string to create the plots of the sweeps"""
+        if self.plots:
             return builder_helper_functions.plot_creator(self.plots,
                                                          f'create_plots_{self.name}')[0]
         return ''
 
     def get_add_main_string(self):
-        """ """
+        """Calling the plot_creator from steps_add_main"""
         stream = f'"{self.name}"'
         if self.data_output == 'main stream':
             stream = '"primary"'
         add_main_string = ''
-        if self.use_own_plots:
+        if self.plots:
             add_main_string += builder_helper_functions.get_plot_add_string(self.name, stream)
         return add_main_string
 
     def get_protocol_string(self, n_tabs=1):
-        """The loop is enumerating over the selected points.
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """The channels to be read are set up. Then a for loop for the sweep is
+        started, setting the channel, then reading."""
         tabs = '\t'*n_tabs
-        # if self.loop_type in ['start - stop', 'start - min - max - stop',
-        #                       'start - max - min - stop']:
-        #     enumerator = get_space_string(self.start_val, self.stop_val,
-        #                                   self.n_points, self.min_val,
-        #                                   self.max_val, self.loop_type,
-        #                                   self.sweep_mode,
-        #                                   self.include_end_points)
-        # elif self.loop_type == 'Value-List':
-        #     enumerator = self.val_list
-        # else:
-        #     enumerator = f'np.loadtxt("{self.file_path}")'
 
         stream = f'"{self.name}"'
         if self.data_output == 'main stream':
@@ -123,8 +109,6 @@ class Simple_Sweep(For_Loop_Step):
         else:
             setter = f'devs["{name}"]'
 
-        # protocol_string += f'{tabs}for {self.name.replace(" ", "_")}_Count, {self.name.replace(" ", "_")}_Value in enumerate({enumerator}):\n'
-        # protocol_string += f'{tabs}\tnamespace.update({{"{self.name.replace(" ", "_")}_Count": {self.name.replace(" ", "_")}_Count, "{self.name.replace(" ", "_")}_Value": {self.name.replace(" ", "_")}_Value}})\n'
         protocol_string += f'{tabs}\tyield from bps.abs_set({setter}, {self.name.replace(" ", "_")}_Value, group="A")\n'
         protocol_string += f'{tabs}\tyield from bps.wait("A")\n'
         protocol_string += f'{tabs}\tyield from bps.trigger_and_read(channels, name={stream})\n'
@@ -133,17 +117,7 @@ class Simple_Sweep(For_Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 0)
-
-        Returns
-        -------
-
-        """
+        """The read and sweep channels and the sweep values are specified."""
         vals = super().get_protocol_short_string(n_tabs)[n_tabs+3:-1]
         tabs = '\t' * n_tabs
         short_string = f'{tabs}Sweep {self.sweep_channel}:\n{tabs}\tRead: {self.read_channels}\n{tabs}\tValues: {vals}'
@@ -185,24 +159,24 @@ class Simple_Sweep_Config(Loop_Step_Config):
         self.read_table = Channels_Check_Table(self, labels, info_dict=info_dict,
                                                title='Read-Channels')
 
-        self.checkBox_use_own_plots = QCheckBox('Use own Plots')
-        self.checkBox_use_own_plots.setChecked(loop_step.use_own_plots)
+        # self.checkBox_use_own_plots = QCheckBox('Use own Plots')
+        # self.checkBox_use_own_plots.setChecked(loop_step.use_own_plots)
 
         self.plot_widge = Plot_Button_Overview(self, self.loop_step.plots)
 
-        label_proc = QLabel('Data processing')
+        # label_proc = QLabel('Data processing')
         font = QFont()
         font.setBold(True)
-        label_proc.setStyleSheet('font-size: 9pt')
-        label_proc.setFont(font)
-        self.checkBox_minmax = QCheckBox('Calculate min/max')
-        self.checkBox_minmax.setChecked(loop_step.calc_minmax)
-        self.checkBox_mean = QCheckBox('Calculate mean')
-        self.checkBox_mean.setChecked(loop_step.calc_mean)
-        self.checkBox_stddev = QCheckBox('Calculate standard deviation')
-        self.checkBox_stddev.setChecked(loop_step.calc_stddev)
+        # label_proc.setStyleSheet('font-size: 9pt')
+        # label_proc.setFont(font)
+        # self.checkBox_minmax = QCheckBox('Calculate min/max')
+        # self.checkBox_minmax.setChecked(loop_step.calc_minmax)
+        # self.checkBox_mean = QCheckBox('Calculate mean')
+        # self.checkBox_mean.setChecked(loop_step.calc_mean)
+        # self.checkBox_stddev = QCheckBox('Calculate standard deviation')
+        # self.checkBox_stddev.setChecked(loop_step.calc_stddev)
         # self.checkBox_fit = QCheckBox('Calculate fit')
-        # self.checkBox_fit.setChecked(loop_step.calc_fit)
+#         # self.checkBox_fit.setChecked(loop_step.calc_fit)
         # self.checkBox_fit.clicked.connect(self.change_fitting)
         # self.checkBox_guess_fit = QCheckBox('Guess initial params')
         # self.checkBox_guess_fit.setChecked(loop_step.guess_fit_params)
@@ -242,14 +216,14 @@ class Simple_Sweep_Config(Loop_Step_Config):
         self.layout().addWidget(self.read_table, 6, 0, 1, 5)
 
         self.layout().addWidget(self.plot_widge, 8, 0, 1, 5)
-        self.layout().addWidget(self.checkBox_use_own_plots, 7, 0, 1, 5)
+        # self.layout().addWidget(self.checkBox_use_own_plots, 7, 0, 1, 5)
         # self.layout().addWidget(self.plot_table, 7, 2, 1, 3)
-        self.checkBox_use_own_plots.clicked.connect(self.use_plot_change)
+        # self.checkBox_use_own_plots.clicked.connect(self.use_plot_change)
 
-        self.layout().addWidget(label_proc, 10, 0, 1, 5)
-        self.layout().addWidget(self.checkBox_minmax, 11, 0, 1, 2)
-        self.layout().addWidget(self.checkBox_mean, 11, 2, 1, 3)
-        self.layout().addWidget(self.checkBox_stddev, 13, 0, 1, 2)
+        # self.layout().addWidget(label_proc, 10, 0, 1, 5)
+        # self.layout().addWidget(self.checkBox_minmax, 11, 0, 1, 2)
+        # self.layout().addWidget(self.checkBox_mean, 11, 2, 1, 3)
+        # self.layout().addWidget(self.checkBox_stddev, 13, 0, 1, 2)
         # self.layout().addWidget(self.checkBox_fit, 20, 0, 1, 2)
         # self.layout().addWidget(self.checkBox_guess_fit, 20, 2, 1, 3)
         # self.layout().addWidget(self.radioButton_predev, 21, 0, 1, 2)
@@ -259,7 +233,7 @@ class Simple_Sweep_Config(Loop_Step_Config):
         # self.layout().addWidget(self.start_params, 23, 0, 1, 5)
 
 
-        self.use_plot_change()
+        # self.use_plot_change()
 
     # def setup_plots(self):
     #     """Called when any preferences are changed. Makes the dictionary
@@ -279,10 +253,10 @@ class Simple_Sweep_Config(Loop_Step_Config):
         #          'dark_mode': self.actionDark_Mode.isChecked()}
         # load_save_functions.save_preferences(prefs)
 
-    def use_plot_change(self):
-        """ """
-        use_plots = self.checkBox_use_own_plots.isChecked()
-        self.plot_widge.setEnabled(use_plots)
+    # def use_plot_change(self):
+    #     """ """
+    #     use_plots = self.checkBox_use_own_plots.isChecked()
+    #     self.plot_widge.setEnabled(use_plots)
 
 
 
@@ -290,16 +264,16 @@ class Simple_Sweep_Config(Loop_Step_Config):
     def update_step_config(self):
         """ """
         super().update_step_config()
-        self.loop_step.use_own_plots = self.checkBox_use_own_plots.isChecked()
+        # self.loop_step.use_own_plots = self.checkBox_use_own_plots.isChecked()
         self.loop_step.plots = self.plot_widge.plot_data
         # self.loop_step.plots = self.plot_table.update_table_data()
         self.loop_step.read_channels = self.read_table.get_info()['channel']
         self.loop_step.data_output = self.comboBox_data_output.currentText()
         self.loop_step.sweep_channel = self.comboBox_sweep_channel.currentText()
-        self.loop_step.calc_minmax = self.checkBox_minmax.isChecked()
-        self.loop_step.calc_mean = self.checkBox_mean.isChecked()
-        self.loop_step.calc_stddev = self.checkBox_stddev.isChecked()
-        # self.loop_step.calc_fit = self.checkBox_fit.isChecked()
+        # self.loop_step.calc_minmax = self.checkBox_minmax.isChecked()
+        # self.loop_step.calc_mean = self.checkBox_mean.isChecked()
+        # self.loop_step.calc_stddev = self.checkBox_stddev.isChecked()
+        # # self.loop_step.calc_fit = self.checkBox_fit.isChecked()
         # self.loop_step.use_custom_fit = self.radioButton_own.isChecked()
         # self.loop_step.predef_fit = self.comboBox_fit.currentText()
         # self.loop_step.custom_fit = self.lineEdit_fit_func.text()

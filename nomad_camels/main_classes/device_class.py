@@ -11,18 +11,12 @@ from nomad_camels.main_classes.measurement_channel import Measurement_Channel
 
 
 class Device:
-    """General class for all devices
+    """General class for all devices/instruments.
     
-    The subclasses of this class should all be called "subclass", they
-    are imported via importlib in that way.
+    If subclassing this in a driver, subclass should be called "subclass", it
+    will be imported via importlib in that way.
     Any derived device should also provide the name of its ophyd-class
     as a string self.ophyd_class_name.
-
-    Parameters
-    ----------
-
-    Returns
-    -------
 
     Attributes
     ----------
@@ -37,9 +31,12 @@ class Device:
     settings : dict
         settings handed to the ophyd class at runtime of the protocol
     config : dict
-        values, the config-attributes should be set to
+        values, the config-attributes / components of the ophyd device should be
+        set to
     channels : dict
         channels of the device (i.e.: Signals that are not config)
+    controls : dict
+        Dictionary of additional manual controls this device provides
     """
 
     def __init__(self, name='', virtual=False, tags=None, ophyd_device=None,
@@ -88,31 +85,41 @@ class Device:
         self.controls = {}
 
     def get_necessary_devices(self):
-        """ """
+        """Returns a list of the devices that this device needs to function
+        (e.g. for a PID controller)."""
         return []
 
     def get_controls(self):
-        """ """
+        """Returns the device's specific manual controls.
+
+        Returns
+        -------
+        self.controls : dict
+            Dictionary of the device's manual controls
+        """
         return self.controls
 
     def get_finalize_steps(self):
-        """ """
+        """Returns the string used in the 'finally' part of the protocol's main
+        function to e.g. close the instrument communication.
+
+        Returns
+        -------
+        step_str : str
+        """
         return ''
 
     def get_passive_config(self):
-        """ """
+        """Not used."""
         return self.passive_config
 
     def get_config(self):
         """returns self.config, should be overwritten for special
         purposes (e.g. leaving out some keys of the dictionary)
 
-        Parameters
-        ----------
-
         Returns
         -------
-
+        self.config : dict
         """
         return self.config
 
@@ -120,29 +127,29 @@ class Device:
         """returns self.settings, should be overwritten for special
         purposes (e.g. leaving out some keys of the dictionary)
 
-        Parameters
-        ----------
-
         Returns
         -------
-
+        self.settings : dict
         """
         return self.settings
 
     def get_additional_info(self):
-        """ """
+        """Returns the additional information about the instrument.
+
+        Returns
+        -------
+        self.additional_info : dict
+        """
         return self.additional_info
 
     def get_channels(self):
         """returns self.channels, should be overwritten for special
         purposes (e.g. leaving out some keys of the dictionary)
 
-        Parameters
-        ----------
-
         Returns
         -------
-
+        self.channels : dict
+            dictionary containing the device's channels
         """
         self.channels = {}
         outputs = get_outputs(self.ophyd_instance)
@@ -160,12 +167,9 @@ class Device:
         """returns a string that will be added into the protocol after
         connecting to the device.
 
-        Parameters
-        ----------
-
         Returns
         -------
-
+        additional_str : str
         """
         return ''
 
@@ -174,12 +178,9 @@ class Device:
         loopsteps. The key is the loopstep's name, the value a list
         containing the Class of the step, and its config-widget.
 
-        Parameters
-        ----------
-
         Returns
         -------
-
+        steps : dict{'<step_name>': [Step_Class, Step_Config]}
         """
         return {}
 
@@ -195,12 +196,14 @@ def get_outputs(dev:OphydDevice):
 
     Parameters
     ----------
-    dev:OphydDevice :
+    dev : ophyd.Device
+        The device that should be checked
         
 
     Returns
     -------
-
+    outputs : list
+        List of the outputs' names
     """
     outputs = []
     for comp in dev.walk_components():
@@ -216,13 +219,18 @@ def get_channels(dev:OphydDevice, include_metadata=False):
 
     Parameters
     ----------
-    dev:OphydDevice :
+    dev : ophyd.Device
+        The device that should be checked
 
-    include_metadata: bool
+    include_metadata : bool, default False
+        If True, also returns the compnents' metadata
 
     Returns
     -------
-
+    channels : list
+        list of the device's channels
+        if metadata is True, it will be a list of tuples conaining the channels'
+        names and their metadata
     """
     channels = []
     for comp in dev.walk_components():
@@ -335,6 +343,7 @@ class Device_Config(QWidget):
         conn_old = self.connector
         if self.comboBox_connection_type.currentText() == 'Local VISA':
             self.connector = Local_VISA()
+        self.connector.load_settings(self.settings_dict)
         self.layout().replaceWidget(conn_old, self.connector)
         conn_old.deleteLater()
 
@@ -602,7 +611,12 @@ class Local_VISA(Connection_Config):
         label_baud = QLabel('Baud-Rate:')
         self.lineEdit_baud = QLineEdit('9600')
         self.layout().addWidget(label_baud, 1, 0)
-        self.layout().addWidget(self.lineEdit_baud, 1, 1, 1, 4)
+        self.layout().addWidget(self.lineEdit_baud, 1, 1)
+
+        label_timeout = QLabel('Timeout (ms):')
+        self.lineEdit_timeout = QLineEdit('2000')
+        self.layout().addWidget(label_timeout, 1, 2)
+        self.layout().addWidget(self.lineEdit_timeout, 1, 3)
 
         label_in_term = QLabel('In-Terminator:')
         self.lineEdit_in_term = QLineEdit('\\r\\n')
@@ -618,6 +632,7 @@ class Local_VISA(Connection_Config):
         """ """
         return {'resource_name': self.comboBox_port.currentText(),
                 'baud_rate': int(self.lineEdit_baud.text()),
+                'timeout': int(self.lineEdit_timeout.text()),
                 'read_termination': self.lineEdit_in_term.text().replace('\\r', '\r').replace('\\n', '\n'),
                 'write_termination': self.lineEdit_out_term.text().replace('\\r', '\r').replace('\\n', '\n')}
 
@@ -633,10 +648,14 @@ class Local_VISA(Connection_Config):
         -------
 
         """
+        if 'connection' in settings_dict:
+            settings_dict = settings_dict['connection']
         if 'resource_name' in settings_dict and settings_dict['resource_name'] in self.ports:
             self.comboBox_port.setCurrentText(settings_dict['resource_name'])
         if 'baud_rate' in settings_dict:
             self.lineEdit_baud.setText(str(settings_dict['baud_rate']))
+        if 'timeout' in settings_dict:
+            self.lineEdit_timeout.setText(str(settings_dict['timeout']))
         if 'read_termination' in settings_dict:
             self.lineEdit_in_term.setText(settings_dict['read_termination'].replace('\r', '\\r').replace('\n', '\\n'))
         if 'write_termination' in settings_dict:

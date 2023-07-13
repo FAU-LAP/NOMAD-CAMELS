@@ -7,7 +7,16 @@ from nomad_camels.main_classes.device_class import Device_Config_Sub
 from nomad_camels.utility import variables_handling
 
 class Change_DeviceConf(Loop_Step):
-    """ """
+    """
+    With this step, one can change the config-attributes of a device.
+
+    Attributes
+    ----------
+    device : str
+        The name of the device that has the config changed.
+    config_dict : dict
+        The dictionary with the new config-attributes of the device.
+    """
     def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
         self.step_type = 'Change Device Config'
@@ -18,21 +27,14 @@ class Change_DeviceConf(Loop_Step):
         self.settings_dict = step_info['settings_dict'] if 'settings_dict' in step_info else {}
 
     def update_used_devices(self):
-        """ """
+        """Includes self.device to the used devices."""
         self.used_devices = [self.device]
 
     def get_protocol_string(self, n_tabs=1):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """Creates an instance of `self.device` and uses `self.config_dict` to
+        get a complete config_dict from the instance.
+        The string consists of calling `dev.configure(config)`, where config is
+        the config_dict."""
         tabs = '\t' * n_tabs
         dev_name = self.device
         device = variables_handling.devices[dev_name]
@@ -47,17 +49,7 @@ class Change_DeviceConf(Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 0)
-
-        Returns
-        -------
-
-        """
+        """Includes the configured device in the short string."""
         short_string = super().get_protocol_short_string(n_tabs)
         short_string = f'{short_string[:-1]} - {self.device}\n'
         return short_string

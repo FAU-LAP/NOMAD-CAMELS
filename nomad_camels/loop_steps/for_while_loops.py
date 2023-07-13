@@ -13,16 +13,15 @@ class While_Loop_Step(Loop_Step_Container):
     """A loopstep that adds a simple While Loop with a condition, that
     may be just written as python-code.
 
-    Parameters
-    ----------
-
-    Returns
-    -------
-
     Attributes
     ----------
     condition : str
-        The condition which is used for the loop
+        The condition which is used for the loop. It should be interpretable
+        python-code within the namespace of the protocol.
+    expected_iterations : int, default 1
+        The expected number of iterations, used for the steps time weight for
+        the progress bar. Ideally rather too large than to small (otherwise the
+        progress bar reaches 100% too early).
     """
     def __init__(self, name='', children=None, parent_step=None, step_info=None,
                  **kwargs):
@@ -45,17 +44,7 @@ class While_Loop_Step(Loop_Step_Container):
     def get_protocol_string(self, n_tabs=1):
         """The string consists of declaring the count-variable. Then the
         while loop with the desired condition is started. After all the
-        children-steps, the count-variable increased by 1.
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        children-steps, the count-variable increased by 1."""
         self.update_time_weight()
         tabs = '\t'*n_tabs
         count_var = f'{self.name.replace(" ", "_")}_Count'
@@ -68,11 +57,13 @@ class While_Loop_Step(Loop_Step_Container):
         return protocol_string
 
     def update_time_weight(self):
-        """ """
+        """Multiplies the time_weight of the children with the expected
+        iterations + 5"""
         super().update_time_weight()
         self.time_weight *= self.expected_interations + 5
 
     def get_protocol_short_string(self, n_tabs=0):
+        """Adds the condition to the string"""
         tabs = '\t' * n_tabs
         short_string = f'{tabs}while {self.condition}:\n'
         for child in self.children:
@@ -131,12 +122,6 @@ class While_Loop_Step_Config_Sub(QWidget):
 class For_Loop_Step(Loop_Step_Container):
     """Loop_Step representing a For Loop. It offers several ways of
     defining the sweep.
-
-    Parameters
-    ----------
-
-    Returns
-    -------
 
     Attributes
     ----------
@@ -206,17 +191,8 @@ class For_Loop_Step(Loop_Step_Container):
         super().update_variables()
 
     def get_protocol_string(self, n_tabs=1):
-        """The loop is enumerating over the selected points.
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """The loop is enumerating over the selected points. When using a range,
+        the get_range helper function is used."""
         tabs = '\t'*n_tabs
         if self.loop_type in ['start - stop', 'start - min - max - stop',
                               'start - max - min - stop']:
@@ -238,11 +214,13 @@ class For_Loop_Step(Loop_Step_Container):
         return protocol_string
 
     def update_time_weight(self):
-        """ """
+        """Multiplies the childrens time_weight (-1 for the step itself) by the
+        number of iterations and adds 1 (for the step itself)."""
         super().update_time_weight()
         self.time_weight = (self.time_weight - 1) * self.n_iterations + 1
 
     def get_protocol_short_string(self, n_tabs=0):
+        """Shows the type of loop and the range in the short string as well"""
         tabs = '\t' * n_tabs
         if self.loop_type == 'Value-List':
             vals = self.val_list

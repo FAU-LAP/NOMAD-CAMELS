@@ -1,3 +1,5 @@
+""""""
+
 import os
 import pathlib
 
@@ -8,17 +10,16 @@ from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
 def make_yml(datapath, catalog_name='CAMELS_CATALOG', ask_restart=False):
     """
+    Creates the yml file for the databroker (where it is looking for them) to
+    configure a simple catalog for measurements with CAMELS.
 
     Parameters
     ----------
-    datapath :
-        
-    catalog_name :
+    datapath : str, path
+        The path where the measurement data of the catalog should be saved to.
+    catalog_name : str
          (Default value = 'CAMELS_CATALOG')
-
-    Returns
-    -------
-
+         The name, the catalog should have.
     """
     catalog_path = databroker.catalog_search_path()[0]
     if not isinstance(datapath, pathlib.Path):

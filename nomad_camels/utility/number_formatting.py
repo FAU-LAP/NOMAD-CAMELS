@@ -7,12 +7,13 @@ def format_number(value):
 
     Parameters
     ----------
-    value :
-        
+    value : float, int
+        The number that should be displayed as string.
 
     Returns
     -------
-
+    str
+        The formatted string of the number.
     """
     if isinstance(value, int):
         return str(value)

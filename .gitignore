@@ -4,4 +4,7 @@ devices/devices_drivers/keithley_237/keithley_237/k237_visa_test.py
 __pycache__/
 .vscode/
 .desertenv
+docs/
 .python-version
+dist/
+*.egg-info

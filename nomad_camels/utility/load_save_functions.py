@@ -1,3 +1,24 @@
+"""Provides helping functions to load and save all settings inside CAMELS.
+
+Attributes
+----------
+    appdata_path : str, path
+        The path to the local appdata of NOMAD-CAMELS
+    preset_path : str, path
+        the path, where CAMELS saves the presets, a subfolder of `appdata_path`
+    backup_path : str, path
+        the path, where CAMELS saves backups of presets, a subfolder of
+        `preset_path`
+    save_string_list : list[class]
+        a list of QWidget-classes, for which the current string they display should be
+        saved
+    save_dict_skip : list[class]
+        a list of QWidget-classes, that should be ignored when saving
+    standard_pref : dict
+        dictionary of the default preferences used if nothing is changed by the
+        user
+"""
+
 import os.path
 from os.path import isdir
 from os import makedirs, getenv, listdir
@@ -46,20 +67,18 @@ standard_pref = {'autosave': True,
                  'repo_branch': 'main',
                  'repo_directory': '',
                  'play_camel_on_error': False,
-                 'auto_check_updates': False}
+                 'auto_check_updates': False,
+                 'log_level': 'Warning',
+                 'logfile_size': 1,
+                 'logfile_backups': 1}
 
 def get_preset_list():
-    """returns a two list of available presets, once for devices, once
-    for measurements. (files with ".predev" or ".premeas" in
-    appdata_path. If the directory does not exist, it is created.
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-
     """
+    DEPRECATED
+
+    returns a two list of available presets, once for devices, once
+    for measurements. (files with ".predev" or ".premeas" in
+    appdata_path. If the directory does not exist, it is created."""
     if isdir(preset_path):
         names = listdir(preset_path)
         if 'Backup' not in names:
@@ -75,21 +94,17 @@ def get_preset_list():
 
 def autosave_preset(preset:str, preset_data, do_backup=True):
     """Saves the given preset and makes a backup of the former one in
-    the backup-folder.
+    the backup-folder (if do_backup).
 
     Parameters
     ----------
-    preset:str :
-        
-    preset_data :
-
-    do_backup :
-        
-
-    Returns
-    -------
-
-    
+    preset : str
+        the name of the preset
+    preset_data : dict
+        data of the preset, formatted into a dictionary
+    do_backup : bool, default=True
+        if True, the old preset file will be copied into the backup folder, with
+        timestamp
     """
     preset_file = f'{preset}.preset'
     if not os.path.isdir(preset_path):
@@ -99,22 +114,16 @@ def autosave_preset(preset:str, preset_data, do_backup=True):
     if do_backup:
         make_backup(preset_file)
 
-def save_preset(path:str, preset_data:dict):
+def save_preset(path, preset_data:dict):
     """Saves the given preset_data under the specified path.
-    If the path ends with '.predev', the following autosave_preset of
-    the saved data will be called with devices=True, otherwise
-    devices=False.
+    Further, `autosave_preset` is called.
 
     Parameters
     ----------
-    path:str :
-        
-    preset_data:dict :
-        
-
-    Returns
-    -------
-
+    path : str, path
+        where to save the preset
+    preset_data : dict
+        the data of the preset, to be dumped as json
     """
     preset_name = path.split('/')[-1][:-7]
     with open(path, 'w', encoding='utf-8') as json_file:
@@ -122,18 +131,16 @@ def save_preset(path:str, preset_data:dict):
     autosave_preset(preset_name, preset_data)
 
 def save_dictionary(path, dictionary:dict):
-    """Saves the given `dictionary` as json to the given `path`.
+    """
+    Processes the given `dictionary` using `get_save_str`, then saves it as json
+    to the given `path`.
 
     Parameters
     ----------
-    path :
-        
-    dictionary:dict :
-        
-
-    Returns
-    -------
-
+    path : str, path
+        where to save the dictionary
+    dictionary : dict
+        the dictionary to be saved as json
     """
     save_dict = {}
     for key, val in dictionary.items():
@@ -144,17 +151,14 @@ def save_dictionary(path, dictionary:dict):
         json.dump(save_dict, file, indent=2)
 
 def make_backup(preset_file:str):
-    """Puts a copy of the given preset_file into the backup-folder of
+    """
+    Puts a copy of the given `preset_file` into the backup-folder of
     the preset. The current datetime is added to the filename.
 
     Parameters
     ----------
-    preset_file:str :
-        
-
-    Returns
-    -------
-
+    preset_file : str
+        The name of the preset file. The file needs to be in the `preset_path`.
     """
     backup_save_path = f'{backup_path}{preset_file[:-7]}/'
     if not isdir(backup_save_path):
@@ -166,23 +170,32 @@ def make_backup(preset_file:str):
 def load_save_dict(string_dict:dict, object_dict:dict, update_missing_key=False, remove_extra_key=False):
     """For all keys both given dictionaries have in common, the value of
     the object in object_dict will be updated to the corresponding value
-    of the string in string_dict.
+    of the string in string_dict. Depending on the type of the objects already
+    in `object_dict`, the values may be processed differently.
+    The different possibilities are:
+
+    - QComboBox: the value will be set as current text
+    - QLineEdit: the value will be set as text
+    - key=="protocols_dict": calls `load_protocols_dict`
+    - key in ["active_devices_dict", "active_instruments"]: calls `load_devices_dict`
+    - dict or hasattr "__save_dict__" or "__dict__": calls `load_save_dict` recursively
+    - list: appends all the values in the list of the strings
+
 
     Parameters
     ----------
-    string_dict:dict :
-        
-    object_dict:dict :
-        
-    update_missing_key :
-         (Default value = False)
-    remove_extra_key :
-         (Default value = False)
-
-    Returns
-    -------
-
-    
+    string_dict : dict
+        A dictionary containing mostly strings as loaded from a json as values.
+    object_dict : dict
+        The dictionary to be loaded into.
+    update_missing_key : bool
+        (Default value = False)
+        If True, keys that are only in `string_dict`, but not in `object_dict`
+        will be added as well.
+    remove_extra_key : bool
+        (Default value = False)
+        If True, keys that are only in `object_dict`, but not in `string_dict`
+        will be removed.
     """
     for key in string_dict:
         if key in object_dict:
@@ -220,17 +233,19 @@ def get_save_str(obj):
     If the object has the attribute __save_dict__, it is the return value.
     Objects of the types specified in save_dict_skip return None.
     QComboBox and QLineEdit return their current text.
-    If None of the above, an object with the attribute __dict__ will
+    If `obj` is a dictionary or has the attribute `__dict__`, the values of the
+    dictionary will be recursively read by `get_save_str`.
+    Types str, bool and numbers are not converted.
+    Arrays are converted to lists.
 
     Parameters
     ----------
     obj :
-        
+        The object that should be represented as string.
 
     Returns
     -------
-    type
-        
+    the string-representation of `obj`
 
     """
     if hasattr(obj, '__save_dict__'):
@@ -274,16 +289,12 @@ def make_save_dict(obj):
     """Utility function to update the __save_dict__ of the given obj.
     Goes through all the keys in __dict__ and calls get_save_str on the
     object. Thus working recursively if an attribute of obj also has a
-    __save_dict__
+    `__save_dict__`.
 
     Parameters
     ----------
     obj :
-        
-
-    Returns
-    -------
-
+        The object of which the `__save_dict__` should be updated.
     """
     for key in obj.__dict__:
         if key == '__save_dict__' or (isinstance(obj, device_class.Device) and key in ['controls', 'ophyd_class', 'ophyd_class_no_epics', 'channels', 'virtual', 'tags', 'files', 'directory', 'requirements', 'ophyd_class_name', 'connection']):
@@ -295,22 +306,25 @@ def make_save_dict(obj):
 
 def load_protocol(path):
     """
+    Loads the protocol-json from the given `path` and converts it to a CAMELS
+    Measurement_Protocol instance.
 
     Parameters
     ----------
-    path :
-        
+    path : str, path
+        the path, where protocol file can be found
 
     Returns
     -------
-
+    Measurement_Protocol
+        the protocol constructed from the data in the loaded file
     """
     prot_name = os.path.basename(path)[:-6]
     if not os.path.isfile(path):
         return
     with open(path, 'r', encoding='utf-8') as f:
-        preset_dict = json.load(f)
-    prot_string_dict = {prot_name: preset_dict}
+        prot_dict = json.load(f)
+    prot_string_dict = {prot_name: prot_dict}
     sub_protocol = {}
     load_protocols_dict(prot_string_dict, sub_protocol)
     return sub_protocol[prot_name]
@@ -323,18 +337,17 @@ def load_protocol(path):
 
 
 def load_protocols_dict(string_dict, prot_dict):
-    """Specific function to load a protocol.
+    """
+    Specific function to construct protocols from a json string-dictionary.
+    Loads the attributes of a Measurement_Protocol from the corresponding keys.
 
     Parameters
     ----------
-    string_dict :
-        
-    prot_dict :
-        
-
-    Returns
-    -------
-
+    string_dict : dict{"<protocol_name>": dict}
+        the dictionary with the information about the protocols (which is are
+        dictinaries again)
+    prot_dict : dict
+        dictionary of the finished protocols
     """
     prot_dict.clear()
     for key in string_dict:
@@ -366,18 +379,16 @@ def load_protocols_dict(string_dict, prot_dict):
         prot_dict.update({key: prot})
 
 def load_devices_dict(string_dict, devices_dict):
-    """Specific function to load devices.
+    """Specific function to load the dictionary of devices/instruments.
+    Uses the instruments' name to import the corresponding module and create the
+    instance of the instrument.
 
     Parameters
     ----------
-    string_dict :
-        
-    devices_dict :
-        
-
-    Returns
-    -------
-
+    string_dict : dict{"<name>": dict}
+        containing the names and information of the instruments
+    devices_dict : dict
+        the dictionary, where to put the loaded instruments
     """
     devices_dict.clear()
     local_packages = load_local_packages()
@@ -423,16 +434,12 @@ def load_devices_dict(string_dict, devices_dict):
 
 
 def get_most_recent_presets():
-    """Goes through all files in the preset_path and returns the newest
-    device-preset and measurement-preset.
-
-    Parameters
-    ----------
+    """Goes through all files in the `preset_path` and returns the newest preset.
 
     Returns
     -------
-
-    
+    preset : str
+        the name of the newest preset
     """
     presets = []
     if not os.path.isdir(preset_path):
@@ -447,16 +454,15 @@ def get_most_recent_presets():
     return preset
 
 def get_preferences():
-    """If a file 'preferences.json' exists in the appdata, its content
+    """If a file 'preferences.json' exists in the `appdata_path`, its content
     will be loaded and returned, if no file exists, it will be created
-    with an empty dictionary.
-
-    Parameters
-    ----------
+    with an empty dictionary. Keys that are in the `standard_pref`, but not in
+    the loaded preferences will be added with their default value.
 
     Returns
     -------
-
+    prefs : dict
+        the loaded preferences dictionary
     """
     if 'preferences.json' not in os.listdir(appdata_path):
         with open(f'{appdata_path}/preferences.json', 'w', encoding='utf-8') as file:
@@ -469,16 +475,12 @@ def get_preferences():
     return prefs
 
 def save_preferences(prefs:dict):
-    """Saves the given dictionary prefs as 'preferences.json' in the appdata.
+    """Saves the given dictionary prefs as 'preferences.json' in the `appdata_path`
 
     Parameters
     ----------
-    prefs:dict :
-        
-
-    Returns
-    -------
-
+    prefs : dict
+        the preferences dictionary to be saved as json
     """
     with open(f'{appdata_path}/preferences.json', 'w', encoding='utf-8') as file:
         json.dump(prefs, file, indent=2)

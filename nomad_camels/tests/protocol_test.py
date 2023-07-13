@@ -2,28 +2,31 @@ import importlib
 import os.path
 import sys
 import databroker
+import pytest
+
+from PySide6.QtCore import Qt, QItemSelectionModel
+from PySide6.QtWidgets import QMessageBox
+
 from nomad_camels.frontpanels import protocol_config
 from nomad_camels.bluesky_handling import make_catalog
 from nomad_camels.frontpanels import instrument_installer
 from nomad_camels.utility import variables_handling
 from nomad_camels.utility.treeView_functions import getItemIndex
-from PySide6.QtCore import Qt, QItemSelectionModel
+
+
+
+@pytest.fixture(autouse=True)
+def mock_message_box(monkeypatch):
+    """If a messagebox, e.g. asking whether to discard all changes to the
+    protocol, pops up, it is automatically accepted"""
+    def mock_question(*args, **kwargs):
+        return QMessageBox.Yes
+    monkeypatch.setattr(QMessageBox, 'question', mock_question)
 
 
 def test_change_dev_config(qtbot, tmp_path):
-    """
-
-    Parameters
-    ----------
-    qtbot :
-        
-    tmp_path :
-        
-
-    Returns
-    -------
-
-    """
+    """Opens the config for "change device config" tries to configure it for the
+    demo instrument and tries to run a protocol with this step."""
     ensure_demo_in_devices()
     from nomad_camels.loop_steps import change_device_config
     conf = protocol_config.Protocol_Config()
@@ -44,19 +47,8 @@ def test_change_dev_config(qtbot, tmp_path):
     run_test_protocol(tmp_path, prot)
 
 def test_for_loop(qtbot, tmp_path):
-    """
-
-    Parameters
-    ----------
-    qtbot :
-
-    tmp_path :
-
-
-    Returns
-    -------
-
-    """
+    """Opens the config for a "For Loop" tries to configure it looping over a
+    wait-step and tries to run a protocol with this step."""
     # ensure_demo_in_devices()
     from nomad_camels.loop_steps import for_while_loops
     conf = protocol_config.Protocol_Config()
@@ -91,19 +83,8 @@ def test_for_loop(qtbot, tmp_path):
     run_test_protocol(tmp_path, prot)
 
 def test_gradient_descent(qtbot, tmp_path):
-    """
-
-    Parameters
-    ----------
-    qtbot :
-
-    tmp_path :
-
-
-    Returns
-    -------
-
-    """
+    """Opens the config for "Gradient Descent" tries to configure it for the
+    demo instrument and tries to run a protocol with this step."""
     ensure_demo_in_devices()
     from nomad_camels.loop_steps import gradient_descent
     conf = protocol_config.Protocol_Config()
@@ -135,19 +116,8 @@ def test_gradient_descent(qtbot, tmp_path):
     run_test_protocol(tmp_path, prot)
 
 def test_if_and_set_variables(qtbot, tmp_path):
-    """
-
-    Parameters
-    ----------
-    qtbot :
-
-    tmp_path :
-
-
-    Returns
-    -------
-
-    """
+    """Opens the config for "If" tries to configure to run the correct way if
+    the variables have the correct value, which is done by a "Set Variables" step."""
     from nomad_camels.loop_steps import set_variables
     conf = protocol_config.Protocol_Config()
     prot = conf.protocol
@@ -188,19 +158,8 @@ def test_nd_sweep():
     pass
 
 def test_read_channels(qtbot, tmp_path):
-    """
-
-    Parameters
-    ----------
-    qtbot :
-
-    tmp_path :
-
-
-    Returns
-    -------
-
-    """
+    """Opens the config for "Read Channels" tries to configure it for the
+    demo instrument and tries to run a protocol with this step."""
     ensure_demo_in_devices()
     from nomad_camels.loop_steps import read_channels
     conf = protocol_config.Protocol_Config()
@@ -227,19 +186,8 @@ def test_run_subprotocol():
     pass
 
 def test_set_channels(qtbot, tmp_path):
-    """
-
-    Parameters
-    ----------
-    qtbot :
-
-    tmp_path :
-
-
-    Returns
-    -------
-
-    """
+    """Opens the config for "Set Channels" tries to configure it for the
+    demo instrument and tries to run a protocol with this step."""
     ensure_demo_in_devices()
     from nomad_camels.loop_steps import set_channels
     conf = protocol_config.Protocol_Config()
@@ -263,19 +211,9 @@ def test_set_channels(qtbot, tmp_path):
     run_test_protocol(tmp_path, prot)
 
 def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
-    """
-
-    Parameters
-    ----------
-    qtbot :
-
-    tmp_path :
-
-
-    Returns
-    -------
-
-    """
+    """Opens the config for "Simple Sweep" tries to configure it for the
+    demo instrument. Further it adds a plot and a fit to the sweep and tries to
+    run a protocol with this step."""
     ensure_demo_in_devices()
     from nomad_camels.loop_steps import simple_sweep
     from nomad_camels.frontpanels import plot_definer
@@ -290,7 +228,6 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
     conf_widge.sweep_widget.lineEdit_stop.setText('10')
     conf_widge.sweep_widget.lineEdit_n_points.setText('21')
     conf_widge.comboBox_sweep_channel.setCurrentText('demo_instrument_motorY')
-    conf_widge.checkBox_use_own_plots.setChecked(True)
 
     table = conf_widge.read_table.tableWidget_channels
     row = get_row_from_channel_table('demo_instrument_detectorY', table)
@@ -315,19 +252,9 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
     run_test_protocol(tmp_path, prot)
 
 def test_trigger_and_read_channels(qtbot, tmp_path):
-    """
-
-    Parameters
-    ----------
-    qtbot :
-
-    tmp_path :
-
-
-    Returns
-    -------
-
-    """
+    """Opens the config for "Read Channels" tries to configure it with a split
+    triggering of the channels, then configures the trigger-step and tries to
+    run a protocol with these steps."""
     ensure_demo_in_devices()
     from nomad_camels.loop_steps import read_channels
     conf = protocol_config.Protocol_Config()
@@ -368,19 +295,9 @@ def test_trigger_and_read_channels(qtbot, tmp_path):
     run_test_protocol(tmp_path, prot)
 
 def test_while_loop(qtbot, tmp_path):
-    """
-
-    Parameters
-    ----------
-    qtbot :
-
-    tmp_path :
-
-
-    Returns
-    -------
-
-    """
+    """Opens the config for a "While Loop" and tries to configure it with the
+    condition being `While_Loop_Count < 5`. Into the loop, a wait-step is added.
+    Tries to run a protocol with this step."""
     from nomad_camels.loop_steps import for_while_loops
     conf = protocol_config.Protocol_Config()
     qtbot.addWidget(conf)
@@ -412,19 +329,8 @@ def test_while_loop(qtbot, tmp_path):
     run_test_protocol(tmp_path, prot)
 
 def test_wait(qtbot, tmp_path):
-    """
-
-    Parameters
-    ----------
-    qtbot :
-
-    tmp_path :
-
-
-    Returns
-    -------
-
-    """
+    """Opens the config for "Wait" tries to configure it to a wait time of
+    1.0 second and tries to run a protocol with this step."""
     from nomad_camels.loop_steps import wait_loop_step
     conf = protocol_config.Protocol_Config()
     qtbot.addWidget(conf)

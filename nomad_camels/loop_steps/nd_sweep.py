@@ -14,7 +14,24 @@ from nomad_camels.loop_steps.for_while_loops import For_Loop_Step_Config_Sub, Fo
 
 
 class ND_Sweep(Loop_Step):
-    """ """
+    """
+    An n-dimensional sweep with the read values. Usefull for e.g. an xy-scan.
+
+    Attributes
+    ----------
+    sweep_channels : list[str]
+        From outer to inner sweep, the names of the channels that should be
+        sweeped through.
+    data_output : str
+        Whether the data is put into its own stream('sub-stream') or the primary
+        stream ('main-stream').
+    plots : list[Plot_Info]
+        List of the plots that should be created for the sweep.
+    read_channels : list[str]
+        List of the channels that should be read during the sweep.
+    sweep_values : list[Sweep_Step]
+        List of sub-steps containing the information about the sweeps.
+    """
     def __init__(self, name='', parent_step=None, step_info=None,
                  **kwargs):
         super().__init__(name=name, parent_step=parent_step, step_info=step_info,
@@ -29,7 +46,7 @@ class ND_Sweep(Loop_Step):
         self.sweep_values = step_info['sweep_values'] if 'sweep_values' in step_info else []
 
     def update_used_devices(self):
-        """ """
+        """Includes the devices from the read_channels and the sweep_channels"""
         self.used_devices = []
         for channel in self.read_channels:
             if channel in variables_handling.channels:
@@ -42,14 +59,23 @@ class ND_Sweep(Loop_Step):
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
+    def update_variables(self):
+        """Adds the fit variables from the plots."""
+        variables = {}
+        stream = f'{self.name}'
+        for plot in self.plots:
+            variables.update(plot.get_fit_vars(stream))
+        variables_handling.loop_step_variables.update(variables)
+        super().update_variables()
+
     def get_outer_string(self):
-        """ """
+        """Gives the string to create the plots of the sweeps"""
         if self.plots:
             return builder_helper_functions.plot_creator(self.plots, f'create_plots_{self.name}')[0]
         return ''
 
     def get_add_main_string(self):
-        """ """
+        """Calling the plot_creator from steps_add_main"""
         stream = f'"{self.name}"'
         if self.data_output == 'main stream':
             stream = '"primary"'
@@ -60,17 +86,8 @@ class ND_Sweep(Loop_Step):
 
 
     def get_protocol_string(self, n_tabs=1):
-        """The loop is enumerating over the selected points.
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """The channels to be read are set up. Then a for loop for each sweep is
+        started, with the channels each being set inside it."""
         tabs = '\t'*n_tabs
 
         stream = f'"{self.name}"'
@@ -111,6 +128,7 @@ class ND_Sweep(Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
+        """The read channels and the sweeps are specified."""
         short_string = super().get_protocol_short_string(n_tabs)
         tabs = '\t' * (n_tabs+1)
         short_string += f'{tabs}Read: {self.read_channels}\n'
@@ -125,7 +143,17 @@ class ND_Sweep(Loop_Step):
 
 
 class Sweep_Step(For_Loop_Step):
-    """ """
+    """
+    One single sweep for the ND sweep. Inherits from For_Loop_Step regarding the
+    steps of the sweep.
+
+    Attributes
+    ----------
+    sweep_channel : str
+        The channel which is used in this sweep-part.
+    wait_time : str, float
+        The time in seconds, how long to wait after setting the channel.
+    """
     def __init__(self, step_info=None):
         step_info = step_info or {}
         super().__init__(step_info=step_info)
@@ -134,17 +162,8 @@ class Sweep_Step(For_Loop_Step):
         self.wait_time = step_info['wait_time'] if 'wait_time' in step_info else ''
 
     def get_protocol_string(self, n_tabs=1):
-        """
-
-        Parameters
-        ----------
-        n_tabs :
-             (Default value = 1)
-
-        Returns
-        -------
-
-        """
+        """Creates a for loop over the sweep_channel and waits for wait_time
+        after setting the channel."""
         tabs = '\t'*n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         name = variables_handling.channels[self.sweep_channel].name
@@ -159,6 +178,7 @@ class Sweep_Step(For_Loop_Step):
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
+        """Specifies the same way as the foor loop."""
         return super().get_protocol_short_string(n_tabs)[n_tabs+3:-1]
 
 

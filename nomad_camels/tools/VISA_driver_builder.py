@@ -17,16 +17,16 @@ class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
         super().__init__(parent=parent)
         self.setupUi(self)
 
-        if os.path.isdir('graphics'):
+        try:
             self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
-        else:
-            self.setWindowIcon(QIcon('../graphics/CAMELS.svg'))
+        except:
+            pass
         self.setWindowTitle('NOMAD-CAMELS - VISA-driver-builder')
 
-        label_in = QLabel('Input Channels')
-        label_out = QLabel('Output Channels')
+        label_in = QLabel('Read Channels')
+        label_out = QLabel('Set Channels')
         label_config = QLabel('Config Channels')
-        label_config_in = QLabel('Config Channels - Input Only')
+        label_config_in = QLabel('Config Channels - Read Only')
         label_in.setStyleSheet("font-weight: bold")
         label_out.setStyleSheet("font-weight: bold")
         label_config.setStyleSheet("font-weight: bold")
@@ -117,8 +117,8 @@ class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
             elif configs['Input-Type'][i] == 'bool':
                 class_string += f'\t\tself.config["{name}"] = False\n'
         class_string += '\n\nclass subclass_config(device_class.Simple_Config):\n'
-        class_string += '\tdef __init__(self, parent=None, data="", settings_dict=None, config_dict=None, ioc_dict=None, additional_info=None):\n'
-        class_string += f'\t\tsuper().__init__(parent, "{dev_name}", data, settings_dict, config_dict, ioc_dict, additional_info)\n'
+        class_string += '\tdef __init__(self, parent=None, data="", settings_dict=None, config_dict=None, additional_info=None):\n'
+        class_string += f'\t\tsuper().__init__(parent, "{dev_name}", data, settings_dict, config_dict, additional_info)\n'
         class_string += '\t\tself.comboBox_connection_type.addItem("Local VISA")\n'
         class_string += '\t\tself.load_settings()\n'
 
