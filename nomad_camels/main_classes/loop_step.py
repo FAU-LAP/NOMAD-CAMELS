@@ -19,7 +19,8 @@ class Loop_Step:
     step_info : dict, default None
         Dictionary containing all the relevant information of the step.
     """
-    def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
+    def __init__(self, name='', parent_step=None, step_info=None,
+                 protocol=None, **kwargs):
         self.step_type = 'Default'
         self.__save_dict__ = {}
         self.has_children = False
@@ -29,6 +30,7 @@ class Loop_Step:
         self.parent_step = parent_step
         self.time_weight = 1
         self.used_devices = []
+        self.protocol = protocol or None
         if step_info and 'description' in step_info:
             self.description = step_info['description']
         else:

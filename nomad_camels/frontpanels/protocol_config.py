@@ -441,7 +441,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         if copied_step:
             step = variables_handling.copied_step
         else:
-            step = make_step_of_type.make_step(step_type)
+            step = make_step_of_type.make_step(step_type, protocol=self.protocol)
         self.protocol.add_loop_step_rec(step, model=self.item_model_sequence, position=position, parent_step_name=parent)
         self.build_protocol_sequence()
         if copied_step:

@@ -62,6 +62,11 @@ class Channels_Check_Table(QWidget):
         -------
 
         """
+        if self.parent() and hasattr(self.parent(), 'loop_step'):
+            prot = self.parent().loop_step.protocol
+            variables_handling.protocol_variables = prot.variables
+            prot.update_variables()
+            variables_handling.loop_step_variables = prot.loop_step_variables
         menu = QMenu()
         # putting the returned actions somewhere is necessary, otherwise
         # there will be none inside the single menus

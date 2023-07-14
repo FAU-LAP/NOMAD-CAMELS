@@ -59,7 +59,7 @@ def get_device_steps():
     return device_steps
 
 
-def make_step(step_type, step_info=None, children=None):
+def make_step(step_type, step_info=None, children=None, protocol=None):
     """Checks whether the given `step_type` is supported, if yes, then a
     step of that type with the given info and children will be created.
     If there is no step_info, a new step is made.
@@ -75,6 +75,9 @@ def make_step(step_type, step_info=None, children=None):
     children : list[Loop_Step], None
         (Default value = None)
         The produced step's children. Handed over to it's constructor.
+    protocol : Measurement_Protocol
+        (Default value = None)
+        The protocol, in which the step should be.
 
     Returns
     -------
@@ -87,19 +90,23 @@ def make_step(step_type, step_info=None, children=None):
             name = step_type.replace(' ', '_')
         else:
             name = step_info['name']
-        return step_type_config[step_type][0](name=name, step_info=step_info, children=children)
+        return step_type_config[step_type][0](name=name, step_info=step_info,
+                                              children=children,
+                                              protocol=protocol)
     elif step_type in dev_steps:
         if step_info is None:
             name = step_type.replace(' ', '_')
         else:
             name = step_info['name']
-        return dev_steps[step_type][0](name=name, step_info=step_info, children=children)
+        return dev_steps[step_type][0](name=name, step_info=step_info,
+                                       children=children, protocol=protocol)
     elif step_type in non_addables:
         if step_info is None:
             name = step_type.replace(' ', '_')
         else:
             name = step_info['name']
-        return non_addables[step_type][0](name=name, step_info=step_info, children=children)
+        return non_addables[step_type][0](name=name, step_info=step_info,
+                                          children=children, protocol=protocol)
     return Loop_Step(name='fail')
 
 def get_config(step:Loop_Step):

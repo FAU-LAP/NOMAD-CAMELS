@@ -238,7 +238,7 @@ class Measurement_Protocol:
                 child_step = self.make_step(child)
                 child_step.parent_step = step_info['full_name']
                 children.append(child_step)
-        st = make_step_of_type.make_step(step_info['step_type'], step_info, children)
+        st = make_step_of_type.make_step(step_info['step_type'], step_info, children, protocol=self)
         st.full_name = step_info['full_name']
         return st
 
@@ -615,6 +615,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             name = self.variable_model.item(i, 0).text()
             value = variables_handling.get_data(self.variable_model.item(i, 1).text())
             self.protocol.variables.update({name: value})
+        variables_handling.protocol_variables = self.protocol.variables
 
     def name_change(self):
         """ """

@@ -17,6 +17,12 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 # Changelog
 
+## 0.1.6 (Not Released)
+Variables should mostly be refreshed for step configs without clicking around
+add_metadata removed from Custom_Function_Signal
+search in channels-tables not case sensitive anymore
+fixed that protocol without plots starts QApplication when run outside CAMELS
+
 ## 0.1.5
 Fixed the 'Update CAMELS' tool.\
 Renamed input and output to read and set in the 'Update CAMELS' tool.\
