@@ -212,7 +212,7 @@ class Channels_Check_Table(QWidget):
         channel_list = self.info_dict['channel']
         n = 0
         for i, channel in enumerate(sorted(self.channels, key=lambda x: x.lower())):
-            if searchtext not in channel or (not isinstance(self.channels, list) and self.only_output and not self.channels[channel].output):
+            if searchtext.lower() not in channel.lower() or (not isinstance(self.channels, list) and self.only_output and not self.channels[channel].output):
                 continue
             metadata = self.channels[channel].get_meta_str()
             self.tableWidget_channels.setRowCount(n+1)
