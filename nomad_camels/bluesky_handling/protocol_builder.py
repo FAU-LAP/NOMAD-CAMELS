@@ -93,7 +93,7 @@ standard_start_string2 += '\t\tadditional_step_data = steps_add_main(RE, devs)\n
 standard_start_string2 += '\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md)\n'
 standard_start_string3 = 'if __name__ == "__main__":\n'
 standard_start_string3 += '\tmain()\n'
-standard_start_string3 += '\tapp = QCoreApplication.instance()\n'
+# standard_start_string3 += '\tapp = QCoreApplication.instance()\n'
 standard_start_string3 += '\tprint("protocol finished!")\n'
 standard_start_string3 += '\tif app is not None:\n'
 standard_start_string3 += '\t\tsys.exit(app.exec())\n'
@@ -155,6 +155,7 @@ def build_protocol(protocol, file_path,
     variable_string += 'all_fits = {}\n'
     variable_string += 'plots = []\n'
     variable_string += 'boxes = {}\n'
+    variable_string += 'app = None\n'
     additional_string_devices = ''
     final_string = ''
 
