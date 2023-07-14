@@ -3,12 +3,15 @@
 from nomad_camels.main_classes.loop_step import Loop_Step
 from nomad_camels.loop_steps import for_while_loops, read_channels, set_channels,\
     wait_loop_step, if_step, prompt_loop_step, run_subprotocol, simple_sweep,\
-    gradient_descent, change_device_config, nd_sweep, set_variables, set_value_popup
+    gradient_descent, change_device_config, nd_sweep, set_variables,\
+    set_value_popup, export_data
 
 from nomad_camels.utility import variables_handling
 
 step_type_config = {'Change Device Config': [change_device_config.Change_DeviceConf,
                              change_device_config.Change_DeviceConf_Config],
+                    # 'Export Data': [export_data.Export_Data_Step,
+                    #                 export_data.Export_Data_Step_Config],
                     'For Loop': [for_while_loops.For_Loop_Step,
                                  for_while_loops.For_Loop_Step_Config],
                     'Gradient Descent': [gradient_descent.Gradient_Descent_Step,

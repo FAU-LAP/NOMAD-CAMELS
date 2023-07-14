@@ -156,6 +156,10 @@ def build_protocol(protocol, file_path,
     variable_string += 'plots = []\n'
     variable_string += 'boxes = {}\n'
     variable_string += 'app = None\n'
+    variable_string += f'save_path = "{save_path}"\n'
+    variable_string += f'session_name = "{protocol.session_name}"\n'
+    variable_string += f'export_to_csv = {protocol.export_csv}\n'
+    variable_string += f'export_to_json={protocol.export_json}\n'
     additional_string_devices = ''
     final_string = ''
 
@@ -291,10 +295,10 @@ def build_protocol(protocol, file_path,
         standard_save_string += f'\t\t\tnexus_mapper = {nexus_dict}\n'
         # TODO finish this
     else:
-        standard_save_string += f'\t\t\tbroker_to_NX(runs, "{save_path}", plots,' \
-                                f'session_name="{protocol.session_name}",' \
-                                f'export_to_csv={protocol.export_csv},' \
-                                f'export_to_json={protocol.export_json})\n\n\n'
+        standard_save_string += f'\t\t\tbroker_to_NX(runs, save_path, plots,' \
+                                f'session_name=session_name,' \
+                                f'export_to_csv=export_to_csv,' \
+                                f'export_to_json=export_to_json)\n\n\n'
 
     protocol_string += standard_start_string
 

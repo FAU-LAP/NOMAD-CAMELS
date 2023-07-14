@@ -21,7 +21,6 @@ class Custom_Function_Signal(Signal):
         self.put_function = put_function
         self.read_function = read_function
         self.trigger_function = trigger_function
-        self.add_metadata = metadata or {}
 
     def put(self, value, *, timestamp=None, force=False, metadata=None,
             **kwargs):
@@ -55,7 +54,6 @@ class Custom_Function_Signal(Signal):
         """Overwrites describe to add 'Custom Function' as 'source'."""
         info = super().describe()
         info[self.name]['source'] = 'Custom Function'
-        info[self.name].update(self.add_metadata)
         return info
 
 
@@ -76,7 +74,6 @@ class Custom_Function_SignalRO(SignalRO):
         super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
         self.read_function = read_function
         self.trigger_function = trigger_function
-        self.add_metadata = metadata or {}
 
     def get(self):
         """
@@ -100,5 +97,4 @@ class Custom_Function_SignalRO(SignalRO):
         """Overwrites describe to add 'Custom Function' as 'source'."""
         info = super().describe()
         info[self.name]['source'] = 'Custom Function'
-        info[self.name].update(self.add_metadata)
         return info
