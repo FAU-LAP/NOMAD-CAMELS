@@ -1,14 +1,16 @@
+"""This module provides functions for communicating with NOMAD."""
+
 import os.path
 import requests
 from PySide6.QtWidgets import QDialog
 
 from nomad_camels.ui_widgets.login_dialog import LoginDialog
+from nomad_camels.utility.dict_recursive_string import dict_recursive_string
 
 
 base_url = 'http://nomad-lab.eu/prod/v1/staging/api/v1'
 
 token = ''
-token = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJmb1hmZnM5QlFQWHduLU54Yk5PYlExOFhnZnlKU1FNRkl6ZFVnWjhrZzdVIn0.eyJqdGkiOiJlMjllYTdjYS0yYTkyLTQxODMtODc3ZS1mMDExZTkyOWI2YmMiLCJleHAiOjE2ODk4NjMzNjgsIm5iZiI6MCwiaWF0IjoxNjg5Nzc2OTY4LCJpc3MiOiJodHRwczovL25vbWFkLWxhYi5ldS9mYWlyZGkva2V5Y2xvYWsvYXV0aC9yZWFsbXMvZmFpcmRpX25vbWFkX3Byb2QiLCJzdWIiOiJlZWFlOGNjZC00MDA0LTQwNDEtOGNiZC1lOWE5MWFiZDc3ZjMiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJub21hZF9wdWJsaWMiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI2NGRkODA2OC1kZmRmLTQxMDEtOTk1NS1hNzFmM2VkYzRkMTQiLCJhY3IiOiIxIiwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJKb2hhbm5lcyBMZWhtZXllciIsInByZWZlcnJlZF91c2VybmFtZSI6ImpvLWxlaCIsImdpdmVuX25hbWUiOiJKb2hhbm5lcyIsImZhbWlseV9uYW1lIjoiTGVobWV5ZXIiLCJlbWFpbCI6ImpvaGFubmVzLmxlaG1leWVyQGZhdS5kZSJ9.epcIv-RHYLLs2OjCwH1zqA-0Ogj5t34hY4riDMA_41RWcnPZITgs0ZFYN5kvCyTAlM-0qLAOMD2FCp7sdvkR_WfTAfR48XwPLhRSvWn73cS7sncLXlr5sONdfdmQgiclSDvws_MkvAqG_O5SqLJyNcHrRPUo3E-_LSnbR6z65ATGPcK_ER79Nh_Ght4Q_2YfUqtALvEpx4oeWkKZovPxOpzcf2BzLhNc5RXi_dvqCWUsd4NjM1Au-BngV4bOJGdXT0nKqcEDYPxNYoNTNQXVyPmaSlXvVxmwVMm6Vky-_D7u4p6XXwKGia2Ngj4iey-_tM3ZTheOEOWqBSxTiOlC8A'
 auth = {'Authorization': f'Bearer {token}'}
 
 
@@ -33,9 +35,34 @@ def login_to_nomad(parent=None):
     login = {'username': dialog.username,
              'password': dialog.password}
     response = requests.get(f'{base_url}/auth/token', params=login)
+    check_response(response, 'Login failed!')
     token = response.json()['access_token']
     auth = {'Authorization': f'Bearer {token}'}
     return token
+
+
+def check_response(response, fail_info=''):
+    """Checks the given `response` from NOMAD and raises an Exception if the
+    request did not work.
+
+    Parameters
+    ----------
+    response : requests.Response
+        Response from the server. Its status code will be checked.
+    fail_info : str
+        (Default value = '')
+        If this string is not empty, it will display as the first part of the
+        raised exception. Usefull to specify, what went wrong.
+    """
+    if response.status_code != 200:
+        info = response.json()
+        if fail_info:
+            except_string = f'{fail_info}\n'
+        else:
+            except_string = ''
+        except_string += dict_recursive_string(info)
+        raise Exception(except_string)
+
 
 def logout_of_nomad():
     """Resets the global `token` to an empty string, thus logging out of NOMAD."""
@@ -58,6 +85,7 @@ def get_user_uploads(parent=None):
     if not token:
         login_to_nomad(parent)
     response = requests.get(f'{base_url}/uploads', headers=auth)
+    check_response(response, 'Could not get uploads!')
     return response.json()['data']
 
 
@@ -121,10 +149,28 @@ def upload_file(file, upload_name, upload_path='CAMELS_data',
     }
     head = {'accept': 'application/json'}
     head.update(auth)
-    return requests.put(f'{base_url}/uploads/{upload_id}/raw/{upload_path}',
-                        data=f, headers=head, params=params)
+    response = requests.put(f'{base_url}/uploads/{upload_id}/raw/{upload_path}',
+                            data=f, headers=head, params=params)
+    check_response(response, 'Failed to upload to NOMAD!')
+    return response
 
+def get_user_information(parent=None):
+    """Retrieves the information of the logged in user.
 
+    Parameters
+    ----------
+    parent : QWidget
+        the parent widget for the login dialog of `login_to_nomad` (if needed)
+
+    Returns
+    -------
+    the response's data, i.e. the user information
+    """
+    if not token:
+        login_to_nomad(parent)
+    response = requests.get(f'{base_url}/users/me', headers=auth)
+    check_response(response, 'Could not get user information from NOMAD')
+    return response.json()
 
 
 
@@ -134,5 +180,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     f = r"C:\Users\od93yces\Downloads\sic_TS.blend"
     up = get_user_upload_names()[0]
-    print(upload_file(f, up).json())
+    dat = get_user_information()
+    print(dat)
 
