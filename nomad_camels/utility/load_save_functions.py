@@ -70,7 +70,8 @@ standard_pref = {'autosave': True,
                  'auto_check_updates': False,
                  'log_level': 'Warning',
                  'logfile_size': 1,
-                 'logfile_backups': 1}
+                 'logfile_backups': 1,
+                 'NOMAD_URL': ''}
 
 def get_preset_list():
     """

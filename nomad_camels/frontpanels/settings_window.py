@@ -14,10 +14,6 @@ class Settings_Window(Ui_settings_window, QDialog):
         super().__init__(parent)
         self.setupUi(self)
         self.setWindowTitle('NOMAD-CAMELS - Settings')
-        # if 'dark_mode' in settings:
-        #     self.checkBox_dark_mode.setChecked(settings['dark_mode'])
-        # else:
-        #     self.checkBox_dark_mode.setChecked(standard_pref['dark_mode'])
         themes = QStyleFactory.keys()
         themes.append('qt-material')
         self.comboBox_theme.addItems(themes)
@@ -123,6 +119,11 @@ class Settings_Window(Ui_settings_window, QDialog):
         else:
             self.spinBox_logfile_number.setValue(standard_pref['logfile_backups'])
 
+        if 'NOMAD_URL' in settings:
+            self.lineEdit_oasis.setText(settings['NOMAD_URL'])
+        else:
+            self.lineEdit_oasis.setText(standard_pref['NOMAD_URL'])
+
         self.radioButton_mixed.clicked.connect(self.number_change)
         self.radioButton_plain_numbers.clicked.connect(self.number_change)
         self.radioButton_scientific.clicked.connect(self.number_change)
@@ -185,7 +186,8 @@ class Settings_Window(Ui_settings_window, QDialog):
                 'play_camel_on_error': self.checkBox_play_camel_on_error.isChecked(),
                 'log_level': self.comboBox_log_level.currentText(),
                 'logfile_size': self.spinBox_logfile_size.value(),
-                'logfile_backups': self.spinBox_logfile_number.value()}
+                'logfile_backups': self.spinBox_logfile_number.value(),
+                'NOMAD_URL': self.lineEdit_oasis.text()}
 
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

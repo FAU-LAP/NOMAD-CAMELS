@@ -106,6 +106,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.load_sample_data()
         variables_handling.CAMELS_path = os.path.dirname(__file__)
 
+        self.comboBox_user_type.addItems(['local user', 'NOMAD user'])
+        self.comboBox_user_type.currentTextChanged.connect(self.change_user_type)
+        self.change_user_type()
+
+        self.pushButton_login_nomad.clicked.connect(self.login_nomad)
+
 
         # actions
         self.actionSettings.triggered.connect(self.change_preferences)
@@ -255,6 +261,35 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
     # user / sample methods
     # --------------------------------------------------
+    def login_nomad(self):
+        from nomad_camels.nomad_integration import nomad_communication
+        if nomad_communication.token:
+            nomad_communication.logout_of_nomad()
+            if 'logged_in_nomad_user' in self.userdata:
+                self.userdata.pop('logged_in_nomad_user')
+            self.pushButton_login_nomad.setText('NOMAD login')
+            self.label_nomad_user.setText('not logged in')
+        else:
+            nomad_communication.login_to_nomad(self)
+            if not nomad_communication.token:
+                return
+            self.pushButton_login_nomad.setText('NOMAD logout')
+            user_data = nomad_communication.get_user_information(self)
+            self.label_nomad_user.setText(user_data['name'])
+            self.active_user = 'logged_in_nomad_user'
+            self.userdata['logged_in_nomad_user'] = user_data
+
+
+
+    def change_user_type(self):
+        """Shows / hides the ui-elements depending on the type of user,
+        e.g. the NOMAD login button is only shown if NOMAD user is selected."""
+        nomad = self.comboBox_user_type.currentText() == 'NOMAD user'
+        self.comboBox_user.setHidden(nomad)
+        self.pushButton_editUserInfo.setHidden(nomad)
+        self.pushButton_login_nomad.setHidden(not nomad)
+        self.label_nomad_user.setHidden(not nomad)
+
     def edit_user_info(self):
         """Calls dialog for user-information when
         pushButton_editUserInfo is clicked.
@@ -307,6 +342,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         """
         self.active_user = self.comboBox_user.currentText()
+        if 'logged_in_nomad_user' in self.userdata:
+            self.userdata.pop('logged_in_nomad_user')
         userdic = {'active_user': self.active_user}
         userdic.update(self.userdata)
         load_save_functions.save_dictionary(f'{load_save_functions.appdata_path}/userdata.json', userdic)

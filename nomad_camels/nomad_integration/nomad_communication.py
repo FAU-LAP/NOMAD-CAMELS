@@ -4,11 +4,13 @@ import os.path
 import requests
 from PySide6.QtWidgets import QDialog
 
-from nomad_camels.ui_widgets.login_dialog import LoginDialog
+from nomad_camels.nomad_integration.nomad_login import LoginDialog
 from nomad_camels.utility.dict_recursive_string import dict_recursive_string
+from nomad_camels.utility import variables_handling
 
-
-base_url = 'http://nomad-lab.eu/prod/v1/staging/api/v1'
+# by default the url of the central NOMAD at first
+central_url = 'http://nomad-lab.eu/prod/v1/staging/api/v1'
+nomad_url = ''
 
 token = ''
 auth = {'Authorization': f'Bearer {token}'}
@@ -28,18 +30,46 @@ def login_to_nomad(parent=None):
     -------
     the authentification token
     """
-    global token, auth
+    global token, auth, nomad_url
     dialog = LoginDialog(parent)
     if dialog.exec() != QDialog.Accepted:
         return
-    login = {'username': dialog.username,
-             'password': dialog.password}
-    response = requests.get(f'{base_url}/auth/token', params=login)
-    check_response(response, 'Login failed!')
-    token = response.json()['access_token']
-    auth = {'Authorization': f'Bearer {token}'}
+    nomad_url = dialog.url
+    if not nomad_url:
+        nomad_url = central_url
+    if dialog.token:
+        local_auth = {'Authorization': f'Bearer {dialog.token}'}
+        response = requests.get(f'{nomad_url}/auth/signature_token',
+                                headers=local_auth)
+        check_response(response, 'Login failed!')
+        token = dialog.token
+    else:
+        login = {'username': dialog.username,
+                 'password': dialog.password}
+        response = requests.get(f'{nomad_url}/auth/token', params=login)
+        check_response(response, 'Login failed!')
+        token = response.json()['access_token']
+        auth = {'Authorization': f'Bearer {token}'}
     return token
 
+def ensure_login(parent=None):
+    """Is always the first function to be called. Thus this function updates
+    possible changes in the used NOMAD URL. If the URL is different to the last
+    used one, `logout_of_nomad` is called. Then, if `token` is empty,
+    `login_to_nomad` is called.
+
+    Parameters
+    ----------
+    parent : QWidget
+        the parent widget for the login dialog of `login_to_nomad`"""
+    global nomad_url
+    if 'NOMAD_URL' in variables_handling.preferences:
+        url = variables_handling.preferences['NOMAD_URL']
+        if url and url != nomad_url:
+            nomad_url = url
+            logout_of_nomad()
+    if not token:
+        login_to_nomad(parent)
 
 def check_response(response, fail_info=''):
     """Checks the given `response` from NOMAD and raises an Exception if the
@@ -82,9 +112,8 @@ def get_user_uploads(parent=None):
     -------
     the user's uploads
     """
-    if not token:
-        login_to_nomad(parent)
-    response = requests.get(f'{base_url}/uploads', headers=auth)
+    ensure_login(parent)
+    response = requests.get(f'{nomad_url}/uploads', headers=auth)
     check_response(response, 'Could not get uploads!')
     return response.json()['data']
 
@@ -149,7 +178,7 @@ def upload_file(file, upload_name, upload_path='CAMELS_data',
     }
     head = {'accept': 'application/json'}
     head.update(auth)
-    response = requests.put(f'{base_url}/uploads/{upload_id}/raw/{upload_path}',
+    response = requests.put(f'{nomad_url}/uploads/{upload_id}/raw/{upload_path}',
                             data=f, headers=head, params=params)
     check_response(response, 'Failed to upload to NOMAD!')
     return response
@@ -166,9 +195,8 @@ def get_user_information(parent=None):
     -------
     the response's data, i.e. the user information
     """
-    if not token:
-        login_to_nomad(parent)
-    response = requests.get(f'{base_url}/users/me', headers=auth)
+    ensure_login(parent)
+    response = requests.get(f'{nomad_url}/users/me', headers=auth)
     check_response(response, 'Could not get user information from NOMAD')
     return response.json()
 
@@ -178,8 +206,8 @@ if __name__ == '__main__':
     import sys
     from PySide6.QtWidgets import QApplication
     app = QApplication(sys.argv)
-    f = r"C:\Users\od93yces\Downloads\sic_TS.blend"
-    up = get_user_upload_names()[0]
-    dat = get_user_information()
-    print(dat)
-
+    # f = r"C:\Users\od93yces\Downloads\sic_TS.blend"
+    # up = get_user_upload_names()[0]
+    # dat = get_user_information()
+    # print(dat)
+    print(get_user_information())
