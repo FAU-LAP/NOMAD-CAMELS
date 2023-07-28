@@ -43,6 +43,7 @@ def login_to_nomad(parent=None):
                                 headers=local_auth)
         check_response(response, 'Login failed!')
         token = dialog.token
+        auth = local_auth
     else:
         login = {'username': dialog.username,
                  'password': dialog.password}
@@ -210,4 +211,4 @@ if __name__ == '__main__':
     # up = get_user_upload_names()[0]
     # dat = get_user_information()
     # print(dat)
-    print(get_user_information())
+    print(get_user_upload_names())

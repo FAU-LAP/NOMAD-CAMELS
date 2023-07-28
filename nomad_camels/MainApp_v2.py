@@ -100,6 +100,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.userdata = {}
         self.active_user = 'default_user'
         self.active_sample = 'default_sample'
+        self.nomad_user = None
         self.pushButton_editUserInfo.clicked.connect(self.edit_user_info)
         self.load_user_data()
         self.pushButton_editSampleInfo.clicked.connect(self.edit_sample_info)
@@ -110,7 +111,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.comboBox_user_type.currentTextChanged.connect(self.change_user_type)
         self.change_user_type()
 
-        self.pushButton_login_nomad.clicked.connect(self.login_nomad)
+        self.pushButton_login_nomad.clicked.connect(self.login_logout_nomad)
 
 
         # actions
@@ -261,25 +262,28 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
     # user / sample methods
     # --------------------------------------------------
-    def login_nomad(self):
+    def login_logout_nomad(self):
         from nomad_camels.nomad_integration import nomad_communication
         if nomad_communication.token:
             nomad_communication.logout_of_nomad()
-            if 'logged_in_nomad_user' in self.userdata:
-                self.userdata.pop('logged_in_nomad_user')
             self.pushButton_login_nomad.setText('NOMAD login')
             self.label_nomad_user.setText('not logged in')
+            self.nomad_user = None
         else:
-            nomad_communication.login_to_nomad(self)
-            if not nomad_communication.token:
-                return
-            self.pushButton_login_nomad.setText('NOMAD logout')
-            user_data = nomad_communication.get_user_information(self)
-            self.label_nomad_user.setText(user_data['name'])
-            self.active_user = 'logged_in_nomad_user'
-            self.userdata['logged_in_nomad_user'] = user_data
+            self.login_nomad()
 
-
+    def login_nomad(self):
+        from nomad_camels.nomad_integration import nomad_communication
+        nomad_communication.ensure_login(self)
+        if not nomad_communication.token:
+            return
+        self.pushButton_login_nomad.setText('NOMAD logout')
+        user_data = nomad_communication.get_user_information(self)
+        for key in ['created', 'is_admin', 'is_oasis_admin']:
+            if key in user_data:
+                user_data.pop(key)
+        self.label_nomad_user.setText(user_data['name'])
+        self.nomad_user = user_data
 
     def change_user_type(self):
         """Shows / hides the ui-elements depending on the type of user,
@@ -289,6 +293,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_editUserInfo.setHidden(nomad)
         self.pushButton_login_nomad.setHidden(not nomad)
         self.label_nomad_user.setHidden(not nomad)
+        if not nomad:
+            self.nomad_user = None
+        else:
+            self.login_nomad()
+
 
     def edit_user_info(self):
         """Calls dialog for user-information when
@@ -342,8 +351,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         """
         self.active_user = self.comboBox_user.currentText()
-        if 'logged_in_nomad_user' in self.userdata:
-            self.userdata.pop('logged_in_nomad_user')
         userdic = {'active_user': self.active_user}
         userdic.update(self.userdata)
         load_save_functions.save_dictionary(f'{load_save_functions.appdata_path}/userdata.json', userdic)
@@ -1196,9 +1203,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 return
         else:
             path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
-        user = self.comboBox_user.currentText() or 'default_user'
+        if self.nomad_user:
+            userdata = self.nomad_user
+            user = userdata['name']
+        else:
+            user = self.active_user or 'default_user'
+            userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
         sample = self.comboBox_sample.currentText() or 'default_sample'
-        userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
         sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
         savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
         self.protocol_savepath = savepath

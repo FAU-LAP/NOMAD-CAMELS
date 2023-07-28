@@ -17,7 +17,6 @@ class LoginDialog(QDialog):
 
         self.comboBox_nomad_choice = QComboBox()
         self.comboBox_nomad_choice.addItems(['central NOMAD', 'NOMAD Oasis'])
-        self.comboBox_nomad_choice.currentTextChanged.connect(self.change_login)
 
         if oasis_url:
             self.comboBox_nomad_choice.setCurrentText('NOMAD Oasis')
@@ -28,7 +27,7 @@ class LoginDialog(QDialog):
         self.label_logo = QLabel()
         self.label_logo.setAlignment(Qt.AlignCenter)
 
-        self.label_info_oasis = QLabel('Currently we only support direct login for NOMAD Oasis via username/password.\nIf you use Single-Sing-On for your Oasis, a solution may come soon.')
+        self.label_info_oasis = QLabel('Currently we only support direct login for NOMAD Oasis via username/password.\nIf you use Single-Sing-On for your Oasis, copy the authorization token from your browser.')
         self.label_auth_type = QLabel('Authentification-Type:')
         self.comboBox_auth_type = QComboBox()
         self.comboBox_auth_type.addItems(['user/password', 'token'])
@@ -70,12 +69,14 @@ class LoginDialog(QDialog):
 
         layout.addWidget(self.button_box, 20, 0, 1, 2)
 
-
         self.setLayout(layout)
         self.setWindowTitle('Log in to NOMAD')
         self.change_login()
         self.url = None
         self.token = None
+
+        self.comboBox_nomad_choice.currentTextChanged.connect(self.change_login)
+
 
     def accept(self):
         oasis = self.comboBox_nomad_choice.currentText() == 'NOMAD Oasis'
@@ -86,7 +87,9 @@ class LoginDialog(QDialog):
             self.url = self.lineEdit_oasis_url.text()
         if oasis and use_token:
             self.token = self.lineEdit_token.text()
-
+            if 'Bearer%20' in self.token:
+                self.token = self.token.split('Bearer%20')[-1]
+            self.token = self.token.replace('"', '')
         super().accept()
 
     def change_login(self):
