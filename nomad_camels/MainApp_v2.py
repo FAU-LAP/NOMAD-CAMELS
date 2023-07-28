@@ -100,7 +100,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.userdata = {}
         self.active_user = 'default_user'
         self.active_sample = 'default_sample'
+
         self.nomad_user = None
+        self.nomad_sample = None
+
+        self.comboBox_upload_type.addItems(['auto upload', 'ask after run',
+                                            "don't upload"])
+        self.comboBox_upload_type.setCurrentText("don't upload")
+        self.comboBox_upload_type.currentTextChanged.connect(self.show_nomad_upload)
+
+        self.checkBox_use_nomad_sample.clicked.connect(self.show_nomad_sample)
+
         self.pushButton_editUserInfo.clicked.connect(self.edit_user_info)
         self.load_user_data()
         self.pushButton_editSampleInfo.clicked.connect(self.edit_sample_info)
@@ -228,6 +238,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """ """
         for plot in list(self.open_plots):
             plot.close()
+
     # --------------------------------------------------
     # Overwriting parent-methods
     # --------------------------------------------------
@@ -271,6 +282,21 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.nomad_user = None
         else:
             self.login_nomad()
+        self.show_nomad_sample()
+        self.show_nomad_upload()
+
+    def show_nomad_upload(self):
+        nomad = self.nomad_user is not None
+        self.label_nomad_upload.setHidden(not nomad)
+        self.comboBox_upload_type.setHidden(not nomad)
+        auto_upload = self.comboBox_upload_type.currentText() == 'auto upload'
+        self.comboBox_upload_choice.setHidden(not nomad or not auto_upload)
+        if nomad:
+            from nomad_camels.nomad_integration import nomad_communication
+            uploads = nomad_communication.get_user_upload_names(self)
+            self.comboBox_upload_choice.clear()
+            self.comboBox_upload_choice.addItems(uploads)
+
 
     def login_nomad(self):
         from nomad_camels.nomad_integration import nomad_communication
@@ -297,6 +323,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.nomad_user = None
         else:
             self.login_nomad()
+        self.show_nomad_sample()
+        self.show_nomad_upload()
 
 
     def edit_user_info(self):
@@ -457,6 +485,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
     # save / load methods
     # --------------------------------------------------
+    def show_nomad_sample(self):
+        nomad = self.nomad_user is not None
+        self.checkBox_use_nomad_sample.setHidden(not nomad)
+        self.pushButton_nomad_sample.setHidden(not nomad)
+        active_sample = self.nomad_sample is not None
+        use_nomad = self.checkBox_use_nomad_sample.isChecked()
+        self.comboBox_sample.setHidden(active_sample and use_nomad)
+        self.pushButton_editSampleInfo.setHidden(active_sample and use_nomad)
+        self.pushButton_nomad_sample.setEnabled(use_nomad)
+
     def load_preferences(self):
         """Loads the preferences.
 

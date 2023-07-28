@@ -16,10 +16,11 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
-    QLabel, QLineEdit, QMainWindow, QMenu,
-    QMenuBar, QProgressBar, QPushButton, QSizePolicy,
-    QSpacerItem, QSplitter, QStatusBar, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
+    QGridLayout, QLabel, QLineEdit, QMainWindow,
+    QMenu, QMenuBar, QProgressBar, QPushButton,
+    QSizePolicy, QSpacerItem, QSplitter, QStatusBar,
+    QWidget)
 
 from nomad_camels.ui_widgets.console_redirect import Console_TextEdit
 
@@ -27,7 +28,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1325, 561)
+        MainWindow.resize(1021, 370)
         self.actionPresets = QAction(MainWindow)
         self.actionPresets.setObjectName(u"actionPresets")
         self.actionOptions = QAction(MainWindow)
@@ -145,20 +146,13 @@ class Ui_MainWindow(object):
         self.gridLayout_6.setContentsMargins(0, 0, 0, 0)
         self.pushButton_manage_instr = QPushButton(self.widget)
         self.pushButton_manage_instr.setObjectName(u"pushButton_manage_instr")
+        self.pushButton_manage_instr.setMaximumSize(QSize(150, 16777215))
         font = QFont()
         font.setPointSize(12)
         font.setBold(True)
         self.pushButton_manage_instr.setFont(font)
 
         self.gridLayout_6.addWidget(self.pushButton_manage_instr, 0, 0, 1, 1)
-
-        self.comboBox_user = QComboBox(self.widget)
-        self.comboBox_user.setObjectName(u"comboBox_user")
-        font1 = QFont()
-        font1.setPointSize(10)
-        self.comboBox_user.setFont(font1)
-
-        self.gridLayout_6.addWidget(self.comboBox_user, 0, 2, 1, 1)
 
         self.line_2 = QFrame(self.widget)
         self.line_2.setObjectName(u"line_2")
@@ -174,42 +168,21 @@ class Ui_MainWindow(object):
 
         self.gridLayout_6.addWidget(self.line, 0, 8, 1, 1)
 
-        self.pushButton_login_nomad = QPushButton(self.widget)
-        self.pushButton_login_nomad.setObjectName(u"pushButton_login_nomad")
-        self.pushButton_login_nomad.setFont(font1)
-
-        self.gridLayout_6.addWidget(self.pushButton_login_nomad, 0, 6, 1, 1)
-
         self.comboBox_user_type = QComboBox(self.widget)
         self.comboBox_user_type.setObjectName(u"comboBox_user_type")
+        self.comboBox_user_type.setMaximumSize(QSize(110, 16777215))
 
         self.gridLayout_6.addWidget(self.comboBox_user_type, 0, 1, 1, 1)
-
-        self.label_nomad_user = QLabel(self.widget)
-        self.label_nomad_user.setObjectName(u"label_nomad_user")
-        self.label_nomad_user.setFont(font1)
-
-        self.gridLayout_6.addWidget(self.label_nomad_user, 0, 5, 1, 1)
-
-        self.pushButton_editUserInfo = QPushButton(self.widget)
-        self.pushButton_editUserInfo.setObjectName(u"pushButton_editUserInfo")
-        self.pushButton_editUserInfo.setFont(font1)
-
-        self.gridLayout_6.addWidget(self.pushButton_editUserInfo, 0, 3, 1, 1)
 
         self.widget_4 = QWidget(self.widget)
         self.widget_4.setObjectName(u"widget_4")
         self.gridLayout_7 = QGridLayout(self.widget_4)
         self.gridLayout_7.setObjectName(u"gridLayout_7")
         self.gridLayout_7.setContentsMargins(0, 0, 0, 0)
-        self.label_nomad_sample = QLabel(self.widget_4)
-        self.label_nomad_sample.setObjectName(u"label_nomad_sample")
-        self.label_nomad_sample.setFont(font1)
-
-        self.gridLayout_7.addWidget(self.label_nomad_sample, 1, 1, 1, 1)
-
         self.pushButton_editSampleInfo = QPushButton(self.widget_4)
         self.pushButton_editSampleInfo.setObjectName(u"pushButton_editSampleInfo")
+        font1 = QFont()
+        font1.setPointSize(10)
         self.pushButton_editSampleInfo.setFont(font1)
 
         self.gridLayout_7.addWidget(self.pushButton_editSampleInfo, 0, 2, 1, 1)
@@ -226,10 +199,10 @@ class Ui_MainWindow(object):
 
         self.gridLayout_7.addWidget(self.comboBox_sample, 0, 1, 1, 1)
 
-        self.pushButton_deselect_nomad_sample = QPushButton(self.widget_4)
-        self.pushButton_deselect_nomad_sample.setObjectName(u"pushButton_deselect_nomad_sample")
+        self.checkBox_use_nomad_sample = QCheckBox(self.widget_4)
+        self.checkBox_use_nomad_sample.setObjectName(u"checkBox_use_nomad_sample")
 
-        self.gridLayout_7.addWidget(self.pushButton_deselect_nomad_sample, 1, 3, 1, 1)
+        self.gridLayout_7.addWidget(self.checkBox_use_nomad_sample, 1, 1, 1, 1)
 
 
         self.gridLayout_6.addWidget(self.widget_4, 0, 10, 1, 1)
@@ -273,6 +246,38 @@ class Ui_MainWindow(object):
 
 
         self.gridLayout_6.addWidget(self.widget_3, 0, 15, 1, 1)
+
+        self.widget_5 = QWidget(self.widget)
+        self.widget_5.setObjectName(u"widget_5")
+        self.gridLayout_8 = QGridLayout(self.widget_5)
+        self.gridLayout_8.setObjectName(u"gridLayout_8")
+        self.gridLayout_8.setContentsMargins(0, 0, 0, 0)
+        self.pushButton_editUserInfo = QPushButton(self.widget_5)
+        self.pushButton_editUserInfo.setObjectName(u"pushButton_editUserInfo")
+        self.pushButton_editUserInfo.setFont(font1)
+
+        self.gridLayout_8.addWidget(self.pushButton_editUserInfo, 0, 1, 1, 1)
+
+        self.comboBox_user = QComboBox(self.widget_5)
+        self.comboBox_user.setObjectName(u"comboBox_user")
+        self.comboBox_user.setFont(font1)
+
+        self.gridLayout_8.addWidget(self.comboBox_user, 0, 0, 1, 1)
+
+        self.label_nomad_user = QLabel(self.widget_5)
+        self.label_nomad_user.setObjectName(u"label_nomad_user")
+        self.label_nomad_user.setFont(font1)
+
+        self.gridLayout_8.addWidget(self.label_nomad_user, 1, 0, 1, 1)
+
+        self.pushButton_login_nomad = QPushButton(self.widget_5)
+        self.pushButton_login_nomad.setObjectName(u"pushButton_login_nomad")
+        self.pushButton_login_nomad.setFont(font1)
+
+        self.gridLayout_8.addWidget(self.pushButton_login_nomad, 1, 1, 1, 1)
+
+
+        self.gridLayout_6.addWidget(self.widget_5, 0, 2, 1, 1)
 
         self.label_8 = QLabel(self.widget)
         self.label_8.setObjectName(u"label_8")
@@ -400,7 +405,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1325, 21))
+        self.menubar.setGeometry(QRect(0, 0, 1021, 21))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuHelp = QMenu(self.menubar)
@@ -468,15 +473,14 @@ class Ui_MainWindow(object):
         self.pushButton_clear_log.setText(QCoreApplication.translate("MainWindow", u"Clear Log", None))
         self.pushButton_manage_instr.setText(QCoreApplication.translate("MainWindow", u"Manage\n"
 "Instruments", None))
-        self.pushButton_login_nomad.setText(QCoreApplication.translate("MainWindow", u"NOMAD login", None))
-        self.label_nomad_user.setText(QCoreApplication.translate("MainWindow", u"not logged in", None))
-        self.pushButton_editUserInfo.setText(QCoreApplication.translate("MainWindow", u"Edit User-Information", None))
-        self.label_nomad_sample.setText(QCoreApplication.translate("MainWindow", u"no NOMAD sample", None))
         self.pushButton_editSampleInfo.setText(QCoreApplication.translate("MainWindow", u"Edit Sample-Information", None))
-        self.pushButton_nomad_sample.setText(QCoreApplication.translate("MainWindow", u"select sample from NOMAD", None))
-        self.pushButton_deselect_nomad_sample.setText(QCoreApplication.translate("MainWindow", u"don't use NOMAD sample", None))
+        self.pushButton_nomad_sample.setText(QCoreApplication.translate("MainWindow", u"select NOMAD sample", None))
+        self.checkBox_use_nomad_sample.setText(QCoreApplication.translate("MainWindow", u"use NOMAD sample", None))
         self.label_nomad_upload.setText(QCoreApplication.translate("MainWindow", u"NOMAD Upload:", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Session:", None))
+        self.pushButton_editUserInfo.setText(QCoreApplication.translate("MainWindow", u"Edit User-Information", None))
+        self.label_nomad_user.setText(QCoreApplication.translate("MainWindow", u"not logged in", None))
+        self.pushButton_login_nomad.setText(QCoreApplication.translate("MainWindow", u"NOMAD login", None))
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"Sample:", None))
         self.label_no_instruments.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">You are currently using no instruments.</span></p><p><span style=\" font-size:12pt; font-weight:600;\">Click &quot;Manage Instruments&quot; to configure your</span></p><p><span style=\" font-size:12pt; font-weight:600;\">first instrument and start with NOMAD CAMELS!</span></p></body></html>", None))
         self.label_arrow.setText("")

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1325</width>
-    <height>561</height>
+    <width>1021</width>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -145,6 +145,12 @@
        </property>
        <item row="0" column="0">
         <widget class="QPushButton" name="pushButton_manage_instr">
+         <property name="maximumSize">
+          <size>
+           <width>150</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="font">
           <font>
            <pointsize>12</pointsize>
@@ -155,15 +161,6 @@
          <property name="text">
           <string>Manage
 Instruments</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QComboBox" name="comboBox_user">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
          </property>
         </widget>
        </item>
@@ -181,42 +178,13 @@ Instruments</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="6">
-        <widget class="QPushButton" name="pushButton_login_nomad">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>NOMAD login</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1">
-        <widget class="QComboBox" name="comboBox_user_type"/>
-       </item>
-       <item row="0" column="5">
-        <widget class="QLabel" name="label_nomad_user">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>not logged in</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QPushButton" name="pushButton_editUserInfo">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Edit User-Information</string>
+        <widget class="QComboBox" name="comboBox_user_type">
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -235,18 +203,6 @@ Instruments</string>
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item row="1" column="1">
-           <widget class="QLabel" name="label_nomad_sample">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>no NOMAD sample</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="2">
            <widget class="QPushButton" name="pushButton_editSampleInfo">
             <property name="font">
@@ -267,7 +223,7 @@ Instruments</string>
              </font>
             </property>
             <property name="text">
-             <string>select sample from NOMAD</string>
+             <string>select NOMAD sample</string>
             </property>
            </widget>
           </item>
@@ -280,10 +236,10 @@ Instruments</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="3">
-           <widget class="QPushButton" name="pushButton_deselect_nomad_sample">
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="checkBox_use_nomad_sample">
             <property name="text">
-             <string>don't use NOMAD sample</string>
+             <string>use NOMAD sample</string>
             </property>
            </widget>
           </item>
@@ -350,6 +306,69 @@ Instruments</string>
           </item>
           <item row="0" column="1" colspan="2">
            <widget class="QLineEdit" name="lineEdit_session"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QWidget" name="widget_5" native="true">
+         <layout class="QGridLayout" name="gridLayout_8">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButton_editUserInfo">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Edit User-Information</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QComboBox" name="comboBox_user">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_nomad_user">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>not logged in</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pushButton_login_nomad">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>NOMAD login</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -600,7 +619,7 @@ Instruments</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1325</width>
+     <width>1021</width>
      <height>21</height>
     </rect>
    </property>
