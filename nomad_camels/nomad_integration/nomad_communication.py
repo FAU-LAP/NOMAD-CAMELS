@@ -179,8 +179,9 @@ def upload_file(file, upload_name, upload_path='CAMELS_data',
     }
     head = {'accept': 'application/json'}
     head.update(auth)
-    response = requests.put(f'{nomad_url}/uploads/{upload_id}/raw/{upload_path}',
-                            data=f, headers=head, params=params)
+    with open(file, 'rb') as f:
+        response = requests.put(f'{nomad_url}/uploads/{upload_id}/raw/{upload_path}',
+                                data=f, headers=head, params=params)
     check_response(response, 'Failed to upload to NOMAD!')
     return response
 
@@ -211,4 +212,6 @@ if __name__ == '__main__':
     # up = get_user_upload_names()[0]
     # dat = get_user_information()
     # print(dat)
-    print(get_user_upload_names())
+    # print(get_user_upload_names())
+    # fi = r"C:\Users\od93yces\Downloads\Estuary-PRINT-AT-HOME-pattern-pieces.pdf"
+    # upload_file(fi, 'testload')

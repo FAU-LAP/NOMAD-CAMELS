@@ -1,12 +1,14 @@
 import sys
 import os
+import time
+
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 sys.path.append(os.path.dirname(__file__))
 import json
 import importlib
 
-from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog
-from PySide6.QtCore import QCoreApplication, Qt, Signal
+from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QDialog
+from PySide6.QtCore import QCoreApplication, Qt, Signal, QMetaObject
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
 from nomad_camels.utility import exception_hook
@@ -167,6 +169,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.databroker_catalog = databroker.temp().v2
         self.run_engine.subscribe(self.databroker_catalog.v1.insert)
         self.run_engine.subscribe(self.protocol_finished, 'stop')
+        self.still_running = False
         self.re_subs = []
         self.protocol_module = None
         self.protocol_savepath = ''
@@ -274,6 +277,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # user / sample methods
     # --------------------------------------------------
     def login_logout_nomad(self):
+        """Handles logging in / out of NOMAD when the respective button is pushed"""
         from nomad_camels.nomad_integration import nomad_communication
         if nomad_communication.token:
             nomad_communication.logout_of_nomad()
@@ -285,20 +289,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.show_nomad_sample()
         self.show_nomad_upload()
 
-    def show_nomad_upload(self):
-        nomad = self.nomad_user is not None
-        self.label_nomad_upload.setHidden(not nomad)
-        self.comboBox_upload_type.setHidden(not nomad)
-        auto_upload = self.comboBox_upload_type.currentText() == 'auto upload'
-        self.comboBox_upload_choice.setHidden(not nomad or not auto_upload)
-        if nomad:
-            from nomad_camels.nomad_integration import nomad_communication
-            uploads = nomad_communication.get_user_upload_names(self)
-            self.comboBox_upload_choice.clear()
-            self.comboBox_upload_choice.addItems(uploads)
-
-
     def login_nomad(self):
+        """Handles the login to NOMAD. If the login is successfull, the UI is
+        adapted to show all the NOMAD-related buttons."""
         from nomad_camels.nomad_integration import nomad_communication
         nomad_communication.ensure_login(self)
         if not nomad_communication.token:
@@ -310,6 +303,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 user_data.pop(key)
         self.label_nomad_user.setText(user_data['name'])
         self.nomad_user = user_data
+
+    def show_nomad_upload(self):
+        """Shows / hides the settings for directly uploading data to NOMAD."""
+        nomad = self.nomad_user is not None
+        self.label_nomad_upload.setHidden(not nomad)
+        self.comboBox_upload_type.setHidden(not nomad)
+        auto_upload = self.comboBox_upload_type.currentText() == 'auto upload'
+        self.comboBox_upload_choice.setHidden(not nomad or not auto_upload)
+        if nomad:
+            from nomad_camels.nomad_integration import nomad_communication
+            uploads = nomad_communication.get_user_upload_names(self)
+            self.comboBox_upload_choice.clear()
+            self.comboBox_upload_choice.addItems(uploads)
 
     def change_user_type(self):
         """Shows / hides the ui-elements depending on the type of user,
@@ -1101,6 +1107,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
+        self.still_running = True
         from nomad_camels.utility import device_handling
         if 'autosave_run' in self.preferences and self.preferences['autosave_run']:
             self.save_state(do_backup=self.preferences['backup_before_run'])
@@ -1145,6 +1152,21 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_pause.setEnabled(False)
         self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
+        nomad = self.nomad_user is not None
+        if not nomad:
+            return
+        while self.still_running:
+            time.sleep(0.1)
+        if self.comboBox_upload_type.currentText() == 'auto upload':
+            from nomad_camels.nomad_integration import nomad_communication
+            upload = self.comboBox_upload_choice.currentText()
+            nomad_communication.upload_file(self.protocol_savepath, upload,
+                                            parent=self)
+        elif self.comboBox_upload_type.currentText() == 'ask after run':
+            from nomad_camels.nomad_integration import file_uploading
+            dialog = file_uploading.UploadDialog(self, self.protocol_savepath)
+
+
 
     def add_subs_from_dict(self, dictionary):
         """
@@ -1213,6 +1235,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.button_area_meas.enable_run_buttons()
         self.protocol_stepper_signal.emit(100)
         self.setCursor(Qt.ArrowCursor)
+        self.still_running = False
 
     def build_protocol(self, protocol_name, ask_file=True):
         """Calls the build_protocol from nomad_camels.bluesky_handling.protocol_builder

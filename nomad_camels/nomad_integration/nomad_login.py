@@ -1,4 +1,3 @@
-import sys
 from PySide6.QtWidgets import QApplication, QDialog, QLabel, QLineEdit, QGridLayout, QDialogButtonBox, QComboBox
 from PySide6.QtGui import QPixmap, Qt
 
@@ -8,6 +7,7 @@ from nomad_camels.utility import variables_handling
 
 
 class LoginDialog(QDialog):
+    """UI widget to handle the login to NOMAD."""
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -27,7 +27,7 @@ class LoginDialog(QDialog):
         self.label_logo = QLabel()
         self.label_logo.setAlignment(Qt.AlignCenter)
 
-        self.label_info_oasis = QLabel('Currently we only support direct login for NOMAD Oasis via username/password.\nIf you use Single-Sing-On for your Oasis, copy the authorization token from your browser.')
+        self.label_info_oasis = QLabel('Hint: You can set the URL for the Oasis also in the settings of CAMELS.\nCurrently we only support direct login for NOMAD Oasis via username/password.\nIf you use Single-Sing-On for your Oasis, copy the authorization token from your browser.')
         self.label_auth_type = QLabel('Authentification-Type:')
         self.comboBox_auth_type = QComboBox()
         self.comboBox_auth_type.addItems(['user/password', 'token'])
@@ -118,6 +118,7 @@ class LoginDialog(QDialog):
 
 
 if __name__ == "__main__":
+    import sys
     app = QApplication(sys.argv)
     dialog = LoginDialog()
     dialog.exec()
