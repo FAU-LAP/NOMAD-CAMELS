@@ -1,16 +1,8 @@
 import os.path
-import sys
 from PySide6.QtWidgets import QApplication, QDialog, QLabel, QLineEdit, QGridLayout, QDialogButtonBox, QComboBox
-from PySide6.QtGui import QPixmap, Qt
 
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.nomad_integration import nomad_communication
-
-from pkg_resources import resource_filename
-
-from nomad_camels.utility import variables_handling
-
-
 
 
 
@@ -59,6 +51,7 @@ class UploadDialog(QDialog):
 
 
     def accept(self) -> None:
+        """"Before calling the super method, the upload is done."""
         f = self.pathEdit_file.get_path()
         upload = self.combobox_upload.currentText()
         path = self.lineEdit_upload_path.text()

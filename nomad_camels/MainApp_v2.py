@@ -1097,15 +1097,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def run_protocol(self, protocol_name):
         """
+        This function runs the given protocol `protocol_name`.
+        First the protocol is built, then imported. The used instruments are
+        instantiated with `device_handling.instantiate_devices` and functions
+        from the protocol like creating plots are called.
 
-        Parameters
-        ----------
-        protocol_name :
-            
-
-        Returns
-        -------
-
+        If everything runs correctly and a nomad upload should be done, after
+        `protocol_finished` is called, this function will wait for it and then
+        handle the upload.
         """
         self.still_running = True
         from nomad_camels.utility import device_handling
