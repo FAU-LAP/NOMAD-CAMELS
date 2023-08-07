@@ -124,6 +124,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.change_user_type()
 
         self.pushButton_login_nomad.clicked.connect(self.login_logout_nomad)
+        self.pushButton_nomad_sample.clicked.connect(self.select_nomad_sample)
 
 
         # actions
@@ -283,7 +284,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             nomad_communication.logout_of_nomad()
             self.pushButton_login_nomad.setText('NOMAD login')
             self.label_nomad_user.setText('not logged in')
+            self.pushButton_nomad_sample.setText('select NOMAD sample')
             self.nomad_user = None
+            self.nomad_sample = None
         else:
             self.login_nomad()
         self.show_nomad_sample()
@@ -488,9 +491,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if not self.active_sample == 'default_sample':
             self.comboBox_sample.setCurrentText(self.active_sample)
 
-    # --------------------------------------------------
-    # save / load methods
-    # --------------------------------------------------
+    def select_nomad_sample(self):
+        from nomad_camels.nomad_integration import sample_selection
+        dialog = sample_selection.Sample_Selector(self)
+        if dialog.exec():
+            self.nomad_sample = dialog.sample_data
+            if 'name' in self.nomad_sample:
+                name = self.nomad_sample['name']
+            else:
+                name = self.nomad_sample['Name']
+            self.pushButton_nomad_sample.setText(f'change sample "{name}"')
+        self.show_nomad_sample()
+
+
     def show_nomad_sample(self):
         nomad = self.nomad_user is not None
         self.checkBox_use_nomad_sample.setHidden(not nomad)
@@ -500,6 +513,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.comboBox_sample.setHidden(active_sample and use_nomad)
         self.pushButton_editSampleInfo.setHidden(active_sample and use_nomad)
         self.pushButton_nomad_sample.setEnabled(use_nomad)
+
+    # --------------------------------------------------
+    # save / load methods
+    # --------------------------------------------------
 
     def load_preferences(self):
         """Loads the preferences.
@@ -1269,8 +1286,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         else:
             user = self.active_user or 'default_user'
             userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
-        sample = self.comboBox_sample.currentText() or 'default_sample'
-        sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
+        if self.nomad_sample and self.checkBox_use_nomad_sample.isChecked():
+            sampledata = self.nomad_sample
+            if 'name' in sampledata:
+                sample = sampledata['name']
+            elif 'Name' in sampledata:
+                sample = sampledata['Name']
+            else:
+                sample = 'NOMAD-Sample'
+        else:
+            sample = self.comboBox_sample.currentText() or 'default_sample'
+            sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
         savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
         self.protocol_savepath = savepath
         from nomad_camels.bluesky_handling import protocol_builder

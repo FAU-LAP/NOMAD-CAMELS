@@ -69,6 +69,12 @@ def ensure_login(parent=None):
         if url and url != nomad_url:
             nomad_url = url
             logout_of_nomad()
+    if '/gui/' in nomad_url:
+        nomad_url = nomad_url.split('/gui/')[0]
+    if nomad_url.endswith('/'):
+        nomad_url = nomad_url[-1]
+    if not nomad_url.endswith('/api/v1'):
+        nomad_url += '/api/v1'
     if not token:
         login_to_nomad(parent)
 
@@ -203,6 +209,29 @@ def get_user_information(parent=None):
     return response.json()
 
 
+def get_entries(parent=None, owner='user'):
+    """Retrieves the entries of the currently logged in user.
+
+    Parameters
+    ----------
+    parent : QWidget
+        the parent widget for the login dialog of `login_to_nomad` (if needed)
+    owner : str
+        The owner of the entries. Allowed values are 'public', 'all', 'visible',
+        'shared', 'user', 'staging', 'admin'. Default is 'user'.
+    """
+    ensure_login(parent)
+    params = {'owner': owner,
+              'page_size': 1000}
+    head = {'accept': 'application/json'}
+    head.update(auth)
+    response = requests.get(f'{nomad_url}/entries/archive', headers=head, params=params)
+    check_response(response, 'Could not retrieve entry-information from NOMAD')
+    return response.json()
+
+
+
+
 
 if __name__ == '__main__':
     import sys
@@ -215,3 +244,5 @@ if __name__ == '__main__':
     # print(get_user_upload_names())
     # fi = r"C:\Users\od93yces\Downloads\Estuary-PRINT-AT-HOME-pattern-pieces.pdf"
     # upload_file(fi, 'testload')
+    dat = get_entries()
+    print(dat)
