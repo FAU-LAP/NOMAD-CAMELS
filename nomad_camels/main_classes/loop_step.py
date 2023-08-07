@@ -1,6 +1,6 @@
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtCore import Qt, QSize, Signal
-from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QTextEdit
+from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QTextEdit, QCheckBox
 
 
 from nomad_camels.utility import treeView_functions, variables_handling
@@ -35,6 +35,7 @@ class Loop_Step:
             self.description = step_info['description']
         else:
             self.description = ''
+        self.is_active = True
 
     def update_full_name(self):
         """Updates the full_name by combination of step_type and name"""
@@ -54,6 +55,9 @@ class Loop_Step:
         """
         if parent is None:
             parent = item_model
+            active = self.is_active
+        else:
+            active = self.is_active and not parent.text().startswith('# ')
         if type(parent) is str:
             parent = item_model.itemFromIndex(treeView_functions.getItemIndex(item_model, parent))
         self.full_name = f'{self.step_type} ({self.name})'
@@ -65,8 +69,12 @@ class Loop_Step:
                 name = f'{name[:-3]}_{i})'
                 i += 1
             self.name = name[len(self.step_type)+2:-1]
+        if not active:
+            name = f'# {name}'
         item = QStandardItem(name)
         item.setData(name)
+        if not active:
+            item.setForeground(Qt.gray)
         parent.appendRow(item)
         index = treeView_functions.getItemIndex(item_model, name)
         item_model.setData(index, QSize(20,20), Qt.SizeHintRole)
@@ -288,13 +296,16 @@ class Loop_Step_Config(QWidget):
     """
     name_changed = Signal()
     add_other_step = Signal(dict)
+    active_changed = Signal()
 
     def __init__(self, parent=None, loop_step=None):
         super(Loop_Step_Config, self).__init__(parent)
         layout = QGridLayout()
-        self.name_widget = Loop_Step_Name_Widget(self, loop_step.name)
+        self.name_widget = Loop_Step_Name_Widget(self, loop_step.name,
+                                                 loop_step.is_active)
         self.loop_step = loop_step
         self.name_widget.name_changed.connect(self.change_name)
+        self.name_widget.active_changed.connect(self.change_active)
         layout.addWidget(self.name_widget, 0, 0, 1, 5)
         self.setLayout(layout)
 
@@ -319,6 +330,11 @@ class Loop_Step_Config(QWidget):
         self.loop_step.name = name
         self.loop_step.update_full_name()
         self.name_changed.emit()
+
+    def change_active(self, active):
+        """Changes if the step is active, or "commented out"."""
+        self.loop_step.is_active = active
+        self.active_changed.emit()
 
     def update_step_config(self):
         """Overwrite this for specific step-configuration. It should
@@ -348,19 +364,27 @@ class Loop_Step_Name_Widget(QWidget):
 
     """
     name_changed = Signal(str)
+    active_changed = Signal(bool)
 
-    def __init__(self, parent=None, name=''):
+    def __init__(self, parent=None, name='', is_active=True):
         super().__init__(parent)
         label = QLabel('Name:')
         self.lineEdit_name = QLineEdit(name, self)
+        self.checkBox_active = QCheckBox('active')
+        self.checkBox_active.setChecked(is_active)
 
         layout = QGridLayout()
         layout.addWidget(label, 0, 0)
         layout.addWidget(self.lineEdit_name, 0, 1)
+        layout.addWidget(self.checkBox_active, 0, 2)
         self.setLayout(layout)
         layout.setContentsMargins(0, 0, 0, 0)
 
         self.lineEdit_name.returnPressed.connect(self.change_name)
+        self.checkBox_active.clicked.connect(self.change_active)
+
+    def change_active(self):
+        self.active_changed.emit(self.checkBox_active.isChecked())
 
     def change_name(self):
         """ """

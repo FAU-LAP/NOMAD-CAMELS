@@ -77,6 +77,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         QShortcut('Ctrl+x', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.cut_shortcut)
         QShortcut('Ctrl+v', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.paste_shortcut)
         QShortcut('Ctrl+c', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.copy_shortcut)
+        QShortcut('Ctrl+k', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.comment_shortcut)
 
         self.build_protocol_sequence()
 
@@ -146,6 +147,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             self.configuration_main_widget.layout().addWidget(self.loop_step_configuration_widget, 1, 0)
             if not general:
                 self.loop_step_configuration_widget.name_changed.connect(self.change_step_name)
+                self.loop_step_configuration_widget.active_changed.connect(self.change_step_name)
 
     def build_protocol_sequence(self):
         """Shows / builds the protocol sequence in the treeView
@@ -281,11 +283,11 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             menu.addMenu(insert_above_menu)
             menu.addMenu(insert_below_menu)
             menu.addSeparator()
-            cut_action = QAction('Cut')
+            cut_action = QAction('Cut\tCtrl + X')
             cut_action.triggered.connect(lambda state=None, x=item.data(): self.cut_loop_step(x))
-            copy_action = QAction('Copy')
+            copy_action = QAction('Copy\tCtrl + C')
             copy_action.triggered.connect(lambda state=None, x=item.data(): self.copy_loop_step(x))
-            paste_menu = QMenu('Paste')
+            paste_menu = QMenu('Paste\tCtrl + V')
             if variables_handling.copied_step is not None:
                 paste_above = QAction('Paste Above')
                 paste_above.triggered.connect(lambda state=None, x=True, y=row, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
@@ -301,11 +303,17 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             menu.addAction(cut_action)
             menu.addAction(copy_action)
             menu.addMenu(paste_menu)
-            menu.addSeparator()
             if self.protocol.loop_step_dict[item.data()].step_type not in make_step_of_type.non_addables:
-                del_action = QAction('Delete Step')
+                del_action = QAction('Delete Step\tDel')
                 del_action.triggered.connect(lambda x: self.remove_loop_step(True))
                 menu.addAction(del_action)
+            menu.addSeparator()
+            if item.text().startswith('# '):
+                comment_action = QAction('Uncomment\tCtrl + K')
+            else:
+                comment_action = QAction('Comment\tCtrl + K')
+            comment_action.triggered.connect(lambda state=None, x=item.data(): self.comment_loop_step(x))
+            menu.addAction(comment_action)
         else:
             add_actions = []
             for stp in sorted(make_step_of_type.step_type_config, key=lambda x: x.lower()):
@@ -366,6 +374,14 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         item = self.item_model_sequence.itemFromIndex(inds[0])
         self.copy_loop_step(item.data())
 
+    def comment_shortcut(self):
+        inds = self.treeView_protocol_sequence.selectedIndexes()
+        if not inds:
+            return
+        item = self.item_model_sequence.itemFromIndex(inds[0])
+        self.comment_loop_step(item.data())
+
+
     def cut_loop_step(self, step_name):
         """Copies the given step, then removes it.
 
@@ -414,6 +430,11 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         """
         move_command = change_sequence.CommandMoveStep(self.treeView_protocol_sequence, self.item_model_sequence, up_down, in_out, self.protocol.loop_step_dict, self.update_loop_step_order)
         self.undo_stack.push(move_command)
+
+    def comment_loop_step(self, step_name):
+        step = self.protocol.loop_step_dict[step_name]
+        step.is_active = not step.is_active
+        self.build_protocol_sequence()
 
     def add_loop_step(self, step_type='', position=-1, parent=None,
                       copied_step=False):
