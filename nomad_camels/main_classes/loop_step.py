@@ -57,7 +57,8 @@ class Loop_Step:
             parent = item_model
             active = self.is_active
         else:
-            active = self.is_active and not parent.text().startswith('# ')
+            p = parent if isinstance(parent, str) else parent.text()
+            active = self.is_active and not p.startswith('# ')
         if type(parent) is str:
             parent = item_model.itemFromIndex(treeView_functions.getItemIndex(item_model, parent))
         self.full_name = f'{self.step_type} ({self.name})'
