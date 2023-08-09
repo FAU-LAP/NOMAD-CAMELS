@@ -1245,6 +1245,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
         device_handling.close_devices(self.current_protocol_device_list)
+        self.current_protocol_device_list = []
         self.pushButton_stop.setEnabled(False)
         self.pushButton_pause.setEnabled(False)
         self.pushButton_resume.setEnabled(False)
