@@ -17,22 +17,28 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 # Changelog
 
-## 0.1.6 (Not Released)
-Variables should mostly be refreshed for step configs without clicking around
-add_metadata removed from Custom_Function_Signal
-search in channels-tables not case sensitive anymore
-fixed that protocol without plots starts QApplication when run outside CAMELS
+## 0.1.6
+Added functionalities:
+- Added capabilities to interact with NOMAD (Oasis), uploading files, getting user information and using a NOMAD entry as sample
+- Functionality to comment / uncomment steps in a protocol for testing / quickly changing a protocol
+
+Fixes:
+- CAMELS should not crash completely anymore when an instrument cannot be initialised
+- Variables should mostly be refreshed for step configs without clicking around
+- add_metadata removed from Custom_Function_Signal
+- search in channels-tables not case sensitive anymore
+- fixed that protocol without plots starts QApplication when run outside CAMELS
 
 ## 0.1.5
-Fixed the 'Update CAMELS' tool.\
-Renamed input and output to read and set in the 'Update CAMELS' tool.\
-Small fix to the VISA device builder.
+- Fixed the 'Update CAMELS' tool.\
+- Renamed input and output to read and set in the 'Update CAMELS' tool.\
+- Small fix to the VISA device builder.
 
 ## 0.1.4
-Added a timeout setting to all VISA instruments. Setting the timeout determines how long the instrument waits after sending a command before raising a timeout exception
+- Added a timeout setting to all VISA instruments. Setting the timeout determines how long the instrument waits after sending a command before raising a timeout exception
 
 ## 0.1.3
-First stable and working release
+- First stable and working release
 
 ## 0.1.0 to 0.1.2 
-&#9888; Broken releases due to minor bugs that were fixed in 0.1.3
+- &#9888; Broken releases due to minor bugs that were fixed in 0.1.3
