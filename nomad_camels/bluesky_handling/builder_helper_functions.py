@@ -7,7 +7,8 @@ called by the classes of the single protocol-steps.
 
 import copy
 
-standard_plot_string = '\tapp = QCoreApplication.instance()\n'
+standard_plot_string = '\tglobal app\n'
+standard_plot_string += '\tapp = QCoreApplication.instance()\n'
 standard_plot_string += '\tif app is None:\n'
 standard_plot_string += '\t\tapp = QApplication(sys.argv)\n'
 # standard_plot_string += '\tapp.aboutToQuit.connect(wait_for_workers_to_quit)\n'
@@ -88,6 +89,9 @@ def plot_creator(plot_data, func_name='create_plots', multi_stream=False):
 
     """
     plot_string = f'\ndef {func_name}(RE, stream="primary"):\n'
+    if not plot_data:
+        plot_string += '\treturn [], [], None\n\n'
+        return plot_string, False
     plot_string += standard_plot_string
     plot_string += '\tsubs = []\n'
     plotting = False

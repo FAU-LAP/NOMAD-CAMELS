@@ -36,7 +36,7 @@ from datetime import datetime
 import json
 import ophyd
 
-from nomad_camels.main_classes import protocol_class, device_class
+from nomad_camels.main_classes import protocol_class, device_class, loop_step
 from nomad_camels.utility.load_save_helper_functions import load_plots
 from nomad_camels.utility.device_handling import load_local_packages
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
@@ -70,7 +70,8 @@ standard_pref = {'autosave': True,
                  'auto_check_updates': False,
                  'log_level': 'Warning',
                  'logfile_size': 1,
-                 'logfile_backups': 1}
+                 'logfile_backups': 1,
+                 'NOMAD_URL': ''}
 
 def get_preset_list():
     """
@@ -298,6 +299,8 @@ def make_save_dict(obj):
     """
     for key in obj.__dict__:
         if key == '__save_dict__' or (isinstance(obj, device_class.Device) and key in ['controls', 'ophyd_class', 'ophyd_class_no_epics', 'channels', 'virtual', 'tags', 'files', 'directory', 'requirements', 'ophyd_class_name', 'connection']):
+            continue
+        if key == 'protocol' and isinstance(obj, loop_step.Loop_Step):
             continue
         add_string = get_save_str(obj.__dict__[key])
         if add_string is not None:

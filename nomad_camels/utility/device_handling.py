@@ -167,49 +167,55 @@ def instantiate_devices(device_list):
     """
     device_config = {}
     devices = {}
-    for dev in device_list:
-        # getting all the settings
-        device = variables_handling.devices[dev]
-        classname = device.ophyd_class_name
-        config = copy.deepcopy(device.get_config())
-        settings = copy.deepcopy(device.get_settings())
-        additional_info = copy.deepcopy(device.get_additional_info())
-        if 'connection' in settings:
-            conn = settings.pop('connection')
-            if 'type' in conn:
-                conn.pop('type')
-            settings.update(conn)
-        if 'idn' in settings:
-            settings.pop('idn')
-        extra_settings = {}
-        non_strings = []
-        for key in settings:
-            if key.startswith('!non_string!_'):
-                extra_settings[key.replace('!non_string!_', '')] = settings[key]
-                non_strings.append(key)
-        for s in non_strings:
-            settings.pop(s)
-        additional_info['device_class_name'] = classname
-        extra_settings.update(settings)
+    started_devs = []
+    try:
+        for dev in device_list:
+            # getting all the settings
+            device = variables_handling.devices[dev]
+            classname = device.ophyd_class_name
+            config = copy.deepcopy(device.get_config())
+            settings = copy.deepcopy(device.get_settings())
+            additional_info = copy.deepcopy(device.get_additional_info())
+            if 'connection' in settings:
+                conn = settings.pop('connection')
+                if 'type' in conn:
+                    conn.pop('type')
+                settings.update(conn)
+            if 'idn' in settings:
+                settings.pop('idn')
+            extra_settings = {}
+            non_strings = []
+            for key in settings:
+                if key.startswith('!non_string!_'):
+                    extra_settings[key.replace('!non_string!_', '')] = settings[key]
+                    non_strings.append(key)
+            for s in non_strings:
+                settings.pop(s)
+            additional_info['device_class_name'] = classname
+            extra_settings.update(settings)
 
-        # instantiating ophyd-device
-        if dev in running_devices:
-            ophyd_device = running_devices[dev]
-            ophyd_device.device_run_count += 1
-        else:
-            ophyd_device = device.ophyd_class(f'{dev}:', name=dev, **extra_settings)
-            ophyd_device.device_run_count = 1
-            running_devices[dev] = ophyd_device
-        print(f"connecting {dev}")
-        ophyd_device.wait_for_connection()
-        configs = ophyd_device.configure(config)[1]
-        devices[dev] = ophyd_device
+            # instantiating ophyd-device
+            if dev in running_devices:
+                ophyd_device = running_devices[dev]
+                ophyd_device.device_run_count += 1
+            else:
+                ophyd_device = device.ophyd_class(f'{dev}:', name=dev, **extra_settings)
+                ophyd_device.device_run_count = 1
+                running_devices[dev] = ophyd_device
+            print(f"connecting {dev}")
+            ophyd_device.wait_for_connection()
+            configs = ophyd_device.configure(config)[1]
+            devices[dev] = ophyd_device
 
-        # updating the config data
-        device_config[dev] = {}
-        device_config[dev].update(helper_functions.simplify_configs_dict(configs))
-        device_config[dev].update(settings)
-        device_config[dev].update(additional_info)
+            # updating the config data
+            device_config[dev] = {}
+            device_config[dev].update(helper_functions.simplify_configs_dict(configs))
+            device_config[dev].update(settings)
+            device_config[dev].update(additional_info)
+            started_devs.append(dev)
+    except Exception as e:
+        close_devices(started_devs)
+        raise Exception(e)
     return devices, device_config
 
 def close_devices(device_list):

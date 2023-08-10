@@ -90,6 +90,8 @@ class Measurement_Protocol:
         """Update all the variables provided by loopsteps."""
         self.loop_step_variables.clear()
         for step in self.loop_steps:
+            if not step.is_active:
+                continue
             step.update_variables()
 
     def get_nexus_paths(self):
@@ -238,7 +240,7 @@ class Measurement_Protocol:
                 child_step = self.make_step(child)
                 child_step.parent_step = step_info['full_name']
                 children.append(child_step)
-        st = make_step_of_type.make_step(step_info['step_type'], step_info, children)
+        st = make_step_of_type.make_step(step_info['step_type'], step_info, children, protocol=self)
         st.full_name = step_info['full_name']
         return st
 
@@ -281,6 +283,8 @@ class Measurement_Protocol:
                 plan_string += var
             plan_string += '\n'
         for step in self.loop_steps:
+            if not step.is_active:
+                continue
             plan_string += step.get_protocol_string(n_tabs=1)
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
         plan_string += '\teva = Evaluator(namespace=namespace)\n'
@@ -296,6 +300,8 @@ class Measurement_Protocol:
         in the protocol."""
         short_string = ''
         for step in self.loop_steps:
+            if not step.is_active:
+                continue
             short_string += step.get_protocol_short_string()
         return short_string
 
@@ -305,6 +311,8 @@ class Measurement_Protocol:
         add_main_string = 'def steps_add_main(RE, devs):\n'
         add_main_string += '\treturner = {}\n'
         for step in self.loop_steps:
+            if not step.is_active:
+                continue
             add_main_string += step.get_add_main_string()
         add_main_string += '\treturn returner\n\n\n'
         return add_main_string
@@ -313,6 +321,8 @@ class Measurement_Protocol:
         """Returns the total number of steps (including repetitions for loops)"""
         total = 0
         for step in self.loop_steps:
+            if not step.is_active:
+                continue
             step.update_time_weight()
             total += step.time_weight
         return total
@@ -322,6 +332,8 @@ class Measurement_Protocol:
         functions to create step-specific plots."""
         outer_string = ''
         for step in self.loop_steps:
+            if not step.is_active:
+                continue
             outer_string += step.get_outer_string()
         return outer_string
 
@@ -329,6 +341,8 @@ class Measurement_Protocol:
         """Get a list of all devices needed by any loopstep."""
         devices = []
         for step in self.loop_steps:
+            if not step.is_active:
+                continue
             step.update_used_devices()
             devices += step.used_devices
         adds = []
@@ -615,6 +629,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             name = self.variable_model.item(i, 0).text()
             value = variables_handling.get_data(self.variable_model.item(i, 1).text())
             self.protocol.variables.update({name: value})
+        variables_handling.protocol_variables = self.protocol.variables
 
     def name_change(self):
         """ """

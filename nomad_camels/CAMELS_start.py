@@ -101,7 +101,7 @@ if __name__ == '__main__':
             """ """
             # Import your packages here
             for i, package in enumerate(package_list):
-                self.update_progress.emit(int(i / n * 100))
+                self.update_progress.emit(int(i / n * 96))
                 self.update_text.emit(f'loading {package}...')
                 try:
                     __import__(package)
@@ -110,7 +110,7 @@ if __name__ == '__main__':
                 except AttributeError:
                     pass
             self.update_text.emit('starting NOMAD-CAMELS...')
-            self.update_progress.emit(int((n-1)/n * 100))
+            self.update_progress.emit(int((n-1)/n * 96))
             from nomad_camels import MainApp_v2
 
 
