@@ -17,7 +17,7 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 # Changelog
 
-## 0.1.7 (in progress)
+## 0.1.7
 Added functionalities:
 - Added functionality to import protocols
 
