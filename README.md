@@ -17,6 +17,11 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 # Changelog
 
+## 0.1.7 (in progress)
+Fixes:
+- Fixed login for central NOMAD
+- fixed comment/uncomment of steps being saved correctly
+
 ## 0.1.6
 Added functionalities:
 - Added capabilities to interact with NOMAD (Oasis), uploading files, getting user information and using a NOMAD entry as sample

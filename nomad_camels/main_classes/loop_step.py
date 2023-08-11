@@ -35,7 +35,10 @@ class Loop_Step:
             self.description = step_info['description']
         else:
             self.description = ''
-        self.is_active = True
+        if step_info and 'is_active' in step_info:
+            self.is_active = step_info['is_active']
+        else:
+            self.is_active = True
 
     def update_full_name(self):
         """Updates the full_name by combination of step_type and name"""
