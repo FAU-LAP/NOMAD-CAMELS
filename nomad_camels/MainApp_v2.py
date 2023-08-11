@@ -1173,14 +1173,25 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             return
         while self.still_running:
             time.sleep(0.1)
+        if self.nomad_sample:
+            if 'name' in self.nomad_sample:
+                name = f"/{self.nomad_sample['name']}"
+            elif 'Name' in self.nomad_sample:
+                name = f"/{self.nomad_sample['Name']}"
+            else:
+                name = ''
+        else:
+            name = f'/{self.active_sample}'
         if self.comboBox_upload_type.currentText() == 'auto upload':
             from nomad_camels.nomad_integration import nomad_communication
             upload = self.comboBox_upload_choice.currentText()
             nomad_communication.upload_file(self.protocol_savepath, upload,
+                                            f'CAMELS_data{name}',
                                             parent=self)
         elif self.comboBox_upload_type.currentText() == 'ask after run':
             from nomad_camels.nomad_integration import file_uploading
-            dialog = file_uploading.UploadDialog(self, self.protocol_savepath)
+            dialog = file_uploading.UploadDialog(self, self.protocol_savepath,
+                                                 f'CAMELS_data{name}')
 
 
 
