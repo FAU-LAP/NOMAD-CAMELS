@@ -216,7 +216,7 @@ class LivePlot_2D(LiveScatter, QObject):
                 self.eva.event(doc)
             I = self.eva.eval(self.I)
         self.update(x, y, I)
-        self.new_data.emit()
+        self.new_data.emit(None)
 
     def update(self, x, y, I):  # noqa: E741
         """

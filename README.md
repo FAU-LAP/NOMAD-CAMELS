@@ -19,6 +19,7 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 ## 0.1.7 (in progress)
 Fixes:
+- Fixed error message appearing when closing List-Plot
 - Fixed login for central NOMAD
 - fixed comment/uncomment of steps being saved correctly
 
