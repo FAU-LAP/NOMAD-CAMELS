@@ -61,9 +61,13 @@ dependencies = [
 (python_files)=
 ## 2. Python files
 The `<driver_name>.py` file contains information about the possible instrument configurations and settings. This can be for example the current compliance of a voltage source or the integration time of a digital multimeter.
+
+> &#9888; There is an inherent difference with how CAMELS treats "config" and "settings". The "config" is provided by the instrument's ophyd class similar to channels (see [below](write_ophyd_file)). The "settings" are handed to the instrument's `__init__`. Using the protocol-step "Change-Device-Config", only "config" can be changed. This step works with either providing a class `subclass_config_sub` in the driver or when the main `subclass_config` has an attribute `sub_widget` (as is the case for `Simple_Config`, see next section).
+
+
 ### 2.1 Simple Configurations
-> &#9888; For **simple instruments** with only a **few settings** you do not need to write your own GUI for the settings but CAMELS can auto-generate the UI for you. \
-> An example file is displayed below:
+For **simple instruments** with only a **few settings** you do not need to write your own GUI for the settings but CAMELS can auto-generate the UI for you. \
+An example file is displayed below:
 
 ---
 
@@ -426,7 +430,7 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_B2912_channel):
 </details>
 
 ---
-
+(write_ophyd_file)=
 ### 2.3 Ophyd File
 The `<driver_name>_ophyd.py` file should contain a class inheriting from ophyd.Device (or one of its subclasses).
 Each component with `kind='normal'` or `'hinted'` (or unspecified) of the defined device will appear as a channel in CAMELS. Components with `kind='config'` should be managed in the instrument settings in the UI.  
