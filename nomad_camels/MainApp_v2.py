@@ -43,7 +43,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.button_area_meas = Drop_Scroll_Area(self, 120, 120)
         self.button_area_manual = Drop_Scroll_Area(self, 120, 120)
-        self.meas_widget.layout().addWidget(self.button_area_meas, 2, 0, 1, 3)
+        self.meas_widget.layout().addWidget(self.button_area_meas, 2, 0, 1, 4)
         self.manual_widget.layout().addWidget(self.button_area_manual, 2, 0, 1, 3)
 
         self.setWindowTitle('NOMAD-CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems')
@@ -145,6 +145,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.pushButton_manage_instr.clicked.connect(self.manage_instruments)
         self.pushButton_add_meas.clicked.connect(self.add_measurement_protocol)
+        self.pushButton_import_protocol.clicked.connect(self.import_measurement_protocol)
 
         self.pushButton_stop.clicked.connect(self.stop_protocol)
         self.pushButton_pause.clicked.connect(self.pause_protocol)
@@ -991,6 +992,23 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """ """
         from nomad_camels.frontpanels.protocol_config import Protocol_Config
         dialog = Protocol_Config()
+        dialog.show()
+        dialog.accepted.connect(self.add_prot_to_data)
+        self.add_to_open_windows(dialog)
+
+    def import_measurement_protocol(self):
+        from nomad_camels.frontpanels.protocol_config import Protocol_Config
+        from nomad_camels.ui_widgets.path_button_edit import Path_Button_Dialog
+        dialog = Path_Button_Dialog(self,
+                                    default_dir=self.preferences['py_files_path'],
+                                    file_extension='*.cprot',
+                                    title='Choose Protocol - NOMAD-CAMELS',
+                                    text='select the protocol you want to import')
+        if not dialog.exec():
+            return
+        prot_path = dialog.path
+        prot = load_save_functions.load_protocol(prot_path)
+        dialog = Protocol_Config(prot)
         dialog.show()
         dialog.accepted.connect(self.add_prot_to_data)
         self.add_to_open_windows(dialog)

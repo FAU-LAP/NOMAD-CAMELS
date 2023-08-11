@@ -18,6 +18,9 @@ For more information and documentation visit [this page](https://fau-lap.github.
 # Changelog
 
 ## 0.1.7 (in progress)
+Added functionalities:
+- Added functionality to import protocols
+
 Fixes:
 - Fixed error message appearing when closing List-Plot
 - Fixed login for central NOMAD
