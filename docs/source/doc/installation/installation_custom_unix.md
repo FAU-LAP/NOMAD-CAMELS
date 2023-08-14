@@ -57,7 +57,11 @@ pip install nomad-camels
 ```
    to install CAMELS.
 ## 4. Run CAMELS
-Go to `/.desertenv/Lib/site-packages/nomad_camels/` and run CAMELS using
+Go to `.desertenv/lib/python<version>/site-packages/nomad_camels/` and run CAMELS using
 ```bash
 python CAMELS_start.py
+```
+or run:
+```bash
+python ./desertenv/lib/python<version>/site-packages/nomad_camels/CAMELS_start.py
 ```
