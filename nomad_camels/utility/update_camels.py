@@ -23,8 +23,26 @@ def get_version():
 
 def update_camels():
     """Calls a subprocess that updates CAMELS via pip."""
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install',
-                           '--no-cache-dir', 'nomad-camels', '--upgrade',])
+    from pathlib import Path
+    from nomad_camels.utility.load_save_functions import appdata_path
+    if sys.platform == 'win32':
+        exe = Path(sys.executable).resolve()
+        if not str(exe)[-5] == 'w':
+            exew = Path(f'{str(exe)[:-4]}w.exe')
+        else:
+            exew = exe
+            exe = Path(f'{str(exew)[:-5]}.exe')
+        s = 'timeout /t 5'
+        s = f'{exe} -m pip install --no-cache-dir nomad-camels --upgrade\n'
+        s += f'{exew} '
+        for a in sys.argv:
+            s += f'{a} '
+        s += '\nexit'
+        f_path = Path(f'{appdata_path}/camels_update.bat')
+        with open(f_path, 'w+') as f:
+            f.write(s)
+        subprocess.Popen(["start", "cmd", "/k", f_path], shell=True)
+        sys.exit()
 
 def question_message_box(parent=None):
     """
