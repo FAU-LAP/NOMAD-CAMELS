@@ -32,7 +32,6 @@ def update_camels():
         else:
             exew = exe
             exe = Path(f'{str(exew)[:-5]}.exe')
-        s = 'timeout /t 5'
         s = f'{exe} -m pip install --no-cache-dir nomad-camels --upgrade\n'
         s += f'{exew} '
         for a in sys.argv:
@@ -42,6 +41,19 @@ def update_camels():
         with open(f_path, 'w+') as f:
             f.write(s)
         subprocess.Popen(["start", "cmd", "/k", f_path], shell=True)
+        sys.exit()
+    elif sys.platform.startswith('linux') or sys.platform == 'darwin':
+        exe = Path(sys.executable).resolve()
+        s = f'{exe} -m pip install --no-cache-dir nomad-camels --upgrade\n'
+        s += f'{exe} '
+        for a in sys.argv:
+            s += f"'{a}' "
+        f_path = Path(f'{appdata_path}/camels_update.sh')
+        with open(f_path, 'w+') as f:
+            f.write('#!/bin/bash\n')
+            f.write(s)
+        subprocess.check_call(['chmod', '+x', str(f_path)])
+        subprocess.Popen(['x-terminal-emulator', '-e', 'bash', '-c', f_path])
         sys.exit()
 
 def question_message_box(parent=None):
@@ -61,6 +73,7 @@ def question_message_box(parent=None):
     installed_version = get_version()
     url = f'https://raw.githubusercontent.com/FAU-LAP/NOMAD-CAMELS/development/nomad_camels_version.txt'
     available_version = requests.get(url).text
+    available_version = available_version.rstrip()
     if installed_version == available_version:
         warn_popup.WarnPopup(parent,
                              'Your version of NOMAD-CAMELS is already up to date',
@@ -103,6 +116,7 @@ def check_up_to_date():
     installed_version = get_version()
     url = f'https://raw.githubusercontent.com/FAU-LAP/NOMAD-CAMELS/development/nomad_camels_version.txt'
     available_version = requests.get(url).text
+    available_version = available_version.rstrip()
     return installed_version == available_version
 
 def auto_update(parent):
