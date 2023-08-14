@@ -45,8 +45,6 @@ Stock Bash startup files vary widely between distributions in which of them sour
   for example `pyenv install 3.11.3`.\
 `<python_version>` is the python version you want to install (3.11.3 or higher is suggested for NOMAD-CAMELS).
 
-sudo apt-get install -y libegl1 libdbus-1-3 libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0 x11-utils libxcb-cursor0
-
 ## 3. Install CAMELS
 - Create a folder where you want to install CAMELS (e.g. `\NOMAD-CAMELS\`)
 - Type in your shell `cd \NOMAD-CAMELS\;pyenv local <python_version> `
