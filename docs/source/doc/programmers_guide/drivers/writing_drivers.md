@@ -435,8 +435,8 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_B2912_channel):
 The `<driver_name>_ophyd.py` file should contain a class inheriting from ophyd.Device (or one of its subclasses).
 Each component with `kind='normal'` or `'hinted'` (or unspecified) of the defined device will appear as a channel in CAMELS. Components with `kind='config'` should be managed in the instrument settings in the UI.  
 A quick way to get started is using the `custom_function_signal` module. These Signals inherit from ophyd's Signal and provide a way to use any python function for setting / reading the channel.  
-The example below shows, how to use these. A function can be passed to the component directly, while a class method needs to be passed in the constructor.
-
+The example below shows, how to use these. A function can be passed to the component directly, while a class method needs to be passed in the constructor.  
+You may add a function `finalize_steps`. If this function exists, it will be called after a protocol. This function should be used to close / deinitialize the instrument if necessary.
 
 <details>
   <summary>Code example for an ophyd file</summary>
@@ -478,6 +478,9 @@ class Instrument_Name(Device):
     def my_set_method(self):
         # do setting
     
+    def finalize_steps(self):
+        # do things to close the instrument
+
 ```
 </details>
 
