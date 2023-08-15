@@ -7,7 +7,6 @@ import sys
 import subprocess
 from importlib.metadata import distributions
 import nomad_camels  # has to be imported for the distribution version number!
-import requests
 from nomad_camels.ui_widgets import warn_popup
 
 from PySide6.QtWidgets import QMessageBox
@@ -20,6 +19,12 @@ def get_version():
         if d.metadata['Name'] == 'nomad-camels':
             return d.version
     return None
+
+def get_latest_version():
+    latest_version = str(subprocess.run([sys.executable, '-m', 'pip', 'install', 'nomad-camels==random'], capture_output=True, text=True))
+    latest_version = latest_version[latest_version.find('(from versions:')+15:]
+    latest_version = latest_version[:latest_version.find(')')]
+    return latest_version.replace(' ','').split(',')[-1]
 
 def update_camels():
     """Calls a subprocess that updates CAMELS via pip."""
@@ -71,9 +76,7 @@ def question_message_box(parent=None):
         The parent widget to be used for the message boxes.
     """
     installed_version = get_version()
-    url = f'https://raw.githubusercontent.com/FAU-LAP/NOMAD-CAMELS/development/nomad_camels_version.txt'
-    available_version = requests.get(url).text
-    available_version = available_version.rstrip()
+    available_version = get_latest_version()
     if installed_version == available_version:
         warn_popup.WarnPopup(parent,
                              'Your version of NOMAD-CAMELS is already up to date',
@@ -114,9 +117,7 @@ def check_up_to_date():
     """Gets the installed and available version of CAMELS and checks whether
     they are the same. Returns the outcome as a bool."""
     installed_version = get_version()
-    url = f'https://raw.githubusercontent.com/FAU-LAP/NOMAD-CAMELS/development/nomad_camels_version.txt'
-    available_version = requests.get(url).text
-    available_version = available_version.rstrip()
+    available_version = get_latest_version()
     return installed_version == available_version
 
 def auto_update(parent):
@@ -135,4 +136,4 @@ def auto_update(parent):
 
 
 if __name__ == '__main__':
-    update_camels()
+    print(get_latest_version())
