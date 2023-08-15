@@ -91,7 +91,7 @@ standard_start_string += '\tRE.subscribe(bec)\n'
 standard_start_string2 = '\t\tplot_etc = create_plots(RE)\n'
 standard_start_string2 += '\t\tadditional_step_data = steps_add_main(RE, devs)\n'
 standard_start_string2 += '\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md)\n'
-standard_start_string3 = 'if __name__ == "__main__":\n'
+standard_start_string3 = '\n\n\nif __name__ == "__main__":\n'
 standard_start_string3 += '\tmain()\n'
 # standard_start_string3 += '\tapp = QCoreApplication.instance()\n'
 standard_start_string3 += '\tprint("protocol finished!")\n'
@@ -292,13 +292,13 @@ def build_protocol(protocol, file_path,
         nexus_dict = protocol.get_nexus_paths()
         nexus_dict.update(standard_nexus_dict)
         standard_save_string += '\t\t\tdata = broker_to_dict(runs)\n'
-        standard_save_string += f'\t\t\tnexus_mapper = {nexus_dict}\n'
+        standard_save_string += f'\t\t\tnexus_mapper = {nexus_dict}\n\n'
         # TODO finish this
     else:
         standard_save_string += f'\t\t\tbroker_to_NX(runs, save_path, plots,' \
                                 f'session_name=session_name,' \
                                 f'export_to_csv=export_to_csv,' \
-                                f'export_to_json=export_to_json)\n\n\n'
+                                f'export_to_json=export_to_json)\n\n'
 
     protocol_string += standard_start_string
 

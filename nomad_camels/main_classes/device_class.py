@@ -107,7 +107,9 @@ class Device:
         -------
         step_str : str
         """
-        return ''
+        s = f"\t\tif '{self.custom_name}' in devs and hasattr(devs['{self.custom_name}'], 'finalize_steps') and callable(devs['{self.custom_name}'].finalize_steps):\n"
+        s += f"\t\t\tdevs['{self.custom_name}'].finalize_steps()\n"
+        return s
 
     def get_passive_config(self):
         """Not used."""
