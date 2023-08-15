@@ -150,7 +150,7 @@ def build_protocol(protocol, file_path,
 
     # beginning of larger strings
     device_import_string = '\n'
-    devices_string = '\t\tdevs = {}\n\t\tdevice_config = {}\n'
+    devices_string = ''
     variable_string = '\nnamespace = {}\n'
     variable_string += 'all_fits = {}\n'
     variable_string += 'plots = []\n'
@@ -161,7 +161,9 @@ def build_protocol(protocol, file_path,
     variable_string += f'export_to_csv = {protocol.export_csv}\n'
     variable_string += f'export_to_json={protocol.export_json}\n'
     additional_string_devices = ''
-    final_string = ''
+    final_string = '\t\tfor name, device in devs.items():\n'
+    final_string += '\t\t\tif hasattr(device, "finalize_steps") and callable(device.finalize_steps):\n'
+    final_string += '\t\t\t\tdevice.finalize_steps()\n'
 
     # now all the variables of the protocol are added to the namespace
     # this includes also the variables of steps such as a foor-loop
@@ -232,7 +234,6 @@ def build_protocol(protocol, file_path,
         devices_string += f'\t\tdevs.update({{"{dev}": {dev}}})\n'
         device_import_string += f'from nomad_camels_driver_{device.name}.{device.name}_ophyd import {classname}\n'
         additional_string_devices += device.get_additional_string()
-        final_string += device.get_finalize_steps()
 
     # finishing up the device initialization
     devices_string += '\t\tprint("devices connected")\n'
@@ -317,7 +318,7 @@ def build_protocol(protocol, file_path,
     protocol_string += '\tprotocol_step_information["protocol_stepper_signal"] = tqdm_bar\n'
 
     # all the devices and the actual run are in a try-block
-    protocol_string += '\ttry:\n'
+    protocol_string += '\tdevs = {}\n\tdevice_config = {}\n\ttry:\n'
     protocol_string += devices_string
     protocol_string += standard_start_string2
     # protocol_string += '\tfinally:\n'
