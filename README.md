@@ -20,6 +20,9 @@ For more information and documentation visit [this page](https://fau-lap.github.
 New features:
 - Retry on error for VISA-devices
 
+Fixes:
+- Now the For-Loop (and children of it) display the "start - min - max - stop" preview correctly
+
 ## 0.1.8
 Fixes:
 - finalize steps of instruments are now being called

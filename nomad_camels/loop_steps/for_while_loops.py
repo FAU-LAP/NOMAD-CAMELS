@@ -449,14 +449,14 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
                     min_val_val = variables_handling.get_eval(min_val)
                     max_val_val = variables_handling.get_eval(max_val)
                     points_val = variables_handling.get_eval(points)
-                    if self.comboBox_sweep_mode.currentText() == 'start - min - max - stop':
+                    if self.comboBox_loop_type.currentText() == 'start - min - max - stop':
                         part_points1 = round(points_val * np.abs(start_val - min_val_val) /
                                              np.abs(max_val_val - min_val_val))
                         part_points2 = round(points_val * np.abs(stop_val - max_val_val) /
                                              np.abs(max_val_val - min_val_val))
-                        vals1 = self.get_space(start, min_val, part_points1)
+                        vals1 = self.get_space(start, min_val, str(part_points1))
                         vals2 = self.get_space(min_val, max_val, points)
-                        vals3 = self.get_space(max_val, stop, part_points2)
+                        vals3 = self.get_space(max_val, stop, str(part_points2))
                     else:
                         part_points1 = round(points_val * np.abs(start_val - max_val_val) /
                                              np.abs(max_val_val - min_val_val))
