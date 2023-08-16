@@ -630,13 +630,19 @@ class Local_VISA(Connection_Config):
         self.layout().addWidget(label_out_term, 2, 2)
         self.layout().addWidget(self.lineEdit_out_term, 2, 3)
 
+        label_error_retry = QLabel('Retries on error:')
+        self.lineEdit_error_retry = QLineEdit('0')
+        self.layout().addWidget(label_error_retry, 3, 0)
+        self.layout().addWidget(self.lineEdit_error_retry, 3, 1, 1, 3)
+
     def get_settings(self):
         """ """
         return {'resource_name': self.comboBox_port.currentText(),
                 'baud_rate': int(self.lineEdit_baud.text()),
                 'timeout': int(self.lineEdit_timeout.text()),
                 'read_termination': self.lineEdit_in_term.text().replace('\\r', '\r').replace('\\n', '\n'),
-                'write_termination': self.lineEdit_out_term.text().replace('\\r', '\r').replace('\\n', '\n')}
+                'write_termination': self.lineEdit_out_term.text().replace('\\r', '\r').replace('\\n', '\n'),
+                'retry_on_error': int(self.lineEdit_error_retry.text())}
 
     def load_settings(self, settings_dict):
         """
@@ -662,6 +668,8 @@ class Local_VISA(Connection_Config):
             self.lineEdit_in_term.setText(settings_dict['read_termination'].replace('\r', '\\r').replace('\n', '\\n'))
         if 'write_termination' in settings_dict:
             self.lineEdit_out_term.setText(settings_dict['write_termination'].replace('\r', '\\r').replace('\n', '\\n'))
+        if 'retry_on_error' in settings_dict:
+            self.lineEdit_error_retry.setText(str(settings_dict['retry_on_error']))
 
 
 

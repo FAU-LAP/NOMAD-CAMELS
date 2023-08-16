@@ -8,3 +8,4 @@ docs/
 .python-version
 dist/
 *.egg-info
+/nomad_camels/test.py
