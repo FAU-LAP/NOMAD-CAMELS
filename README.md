@@ -22,6 +22,7 @@ New features:
 
 Fixes:
 - Now the For-Loop (and children of it) display the "start - min - max - stop" preview correctly
+- import of instruments should now work correctly when running protocol outside the UI
 
 ## 0.1.8
 Fixes:

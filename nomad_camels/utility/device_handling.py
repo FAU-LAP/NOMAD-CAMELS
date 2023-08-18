@@ -28,6 +28,7 @@ import copy
 import pathlib
 
 local_packages = {}
+local_package_paths = {}
 running_devices = {}
 last_path = ''
 
@@ -69,6 +70,7 @@ def load_local_packages(tell_local=False):
                     local_packages[f'local {device.name}'] = package
                 else:
                     local_packages[device.name] = package
+                local_package_paths[device.name] = str(f.parent)
             except Exception as e:
                 print(f, e)
     return local_packages

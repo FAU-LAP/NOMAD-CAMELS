@@ -47,6 +47,7 @@ import pathlib
 from nomad_camels.utility import variables_handling, load_save_functions
 
 from nomad_camels.bluesky_handling.builder_helper_functions import plot_creator
+from nomad_camels.utility import device_handling
 
 
 # The default string in the beginning of the protocol including imports etc.
@@ -232,6 +233,8 @@ def build_protocol(protocol, file_path,
         devices_string += f'\t\tdevice_config["{dev}"].update(settings)\n'
         devices_string += f'\t\tdevice_config["{dev}"].update(additional_info)\n'
         devices_string += f'\t\tdevs.update({{"{dev}": {dev}}})\n'
+        if device.name in device_handling.local_packages:
+            device_import_string += f'sys.path.append(r"{device_handling.local_package_paths[device.name]}")\n'
         device_import_string += f'from nomad_camels_driver_{device.name}.{device.name}_ophyd import {classname}\n'
         additional_string_devices += device.get_additional_string()
 
