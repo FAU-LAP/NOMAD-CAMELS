@@ -97,7 +97,7 @@ def get_channel_from_string(channel):
     device = running_devices[dev]
     return getattr(device, chan)
 
-def get_channels_from_string_list(channel_list):
+def get_channels_from_string_list(channel_list, as_dict=False):
     """
     Goes through the given channel_list and if they are valid channels in
     CAMELS, their ophyd representation is called by `get_channel_from_string`.
@@ -107,13 +107,22 @@ def get_channels_from_string_list(channel_list):
     channel_list : list[str]
         List of the channels in CAMELS-representation
         (i.e. "<device_name>_<channel_name>")
+    as_dict : bool
+        (Default value = False)
+        if True, the returned channels will be a dictionary with the original
+        list serving as keys
 
     Returns
     -------
-    list[ophyd.Signal]
-        A list of the ophyd representations of `channel_list`
+    list[ophyd.Signal], dict
+        A list of the ophyd representations of `channel_list`.
+        If `as_dict` is True, it is a dictionary with the shape
+        {'channel_name': ophyd.Signal}
     """
-    channels = []
+    if as_dict:
+        channels = {}
+    else:
+        channels = []
     for channel in channel_list:
         chan = channel
         if chan == 'None':
@@ -121,7 +130,10 @@ def get_channels_from_string_list(channel_list):
             continue
         if channel in variables_handling.channels:
             chan = variables_handling.channels[channel]
-        channels.append(get_channel_from_string(chan.name))
+        if as_dict:
+            channels[channel] = get_channel_from_string(chan.name)
+        else:
+            channels.append(get_channel_from_string(chan.name))
     return channels
 
 def start_devices_from_channel_list(channel_list):

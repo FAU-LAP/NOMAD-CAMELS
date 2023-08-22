@@ -33,7 +33,7 @@ class Manual_Control(QWidget):
         super().__init__()
         # layout = QGridLayout()
         # self.setLayout(layout)
-        control_data = control_data or {}
+        self.control_data = control_data or {}
 
         self.setWindowTitle(f'NOMAD-CAMELS - {title}')
         self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
