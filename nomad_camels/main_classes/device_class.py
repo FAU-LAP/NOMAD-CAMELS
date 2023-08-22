@@ -861,7 +861,10 @@ class Simple_Config_Sub(Device_Config_Sub):
         for name, widge in self.setting_strings.items():
             self.settings_dict[name] = widge.text()
         for name, widge in self.setting_floats.items():
-            self.settings_dict[name] = float(widge.text())
+            try:
+                self.settings_dict[name] = int(widge.text())
+            except:
+                self.settings_dict[name] = float(widge.text())
         return super().get_settings()
 
     def get_config(self):
@@ -873,7 +876,10 @@ class Simple_Config_Sub(Device_Config_Sub):
         for name, widge in self.config_strings.items():
             self.config_dict[name] = widge.text()
         for name, widge in self.config_floats.items():
-            self.config_dict[name] = float(widge.text())
+            try:
+                self.config_dict[name] = int(widge.text())
+            except:
+                self.config_dict[name] = float(widge.text())
         return super().get_config()
 
 

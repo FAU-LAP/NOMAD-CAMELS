@@ -20,9 +20,13 @@ For more information and documentation visit [this page](https://fau-lap.github.
 New features:
 - Retry on error for VISA-devices
 
+Quality of life:
+- waiting cursor when adding instrument and it takes some time
+
 Fixes:
 - Now the For-Loop (and children of it) display the "start - min - max - stop" preview correctly
 - import of instruments should now work correctly when running protocol outside the UI
+- int in config is now saved as int
 
 ## 0.1.8
 Fixes:
