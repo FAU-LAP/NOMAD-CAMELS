@@ -7,7 +7,7 @@ from nomad_camels.gui.instrument_config import Ui_Form
 
 from nomad_camels.frontpanels.instrument_installer import getInstalledDevices
 
-from nomad_camels.utility import variables_handling
+from nomad_camels.utility import variables_handling, device_handling
 
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
@@ -218,6 +218,8 @@ class Instrument_Config(Ui_Form, QWidget):
         self.tableWidget_instruments.setHorizontalHeaderLabels(['instrument', 'number of instruments'])
         i = 0
         for dev in sorted(self.installed_instr.keys()):
+            if dev in device_handling.from_manual_controls:
+                continue
             if search_text.lower() not in dev.lower():
                 continue
             self.tableWidget_instruments.setRowCount(i+1)

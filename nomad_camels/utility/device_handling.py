@@ -30,6 +30,7 @@ import pathlib
 local_packages = {}
 local_package_paths = {}
 running_devices = {}
+from_manual_controls = []
 last_path = ''
 
 def load_local_packages(tell_local=False):
@@ -71,6 +72,21 @@ def load_local_packages(tell_local=False):
                 else:
                     local_packages[device.name] = package
                 local_package_paths[device.name] = str(f.parent)
+            except Exception as e:
+                print(f, e)
+    for f in pathlib.Path('manual_controls').resolve().rglob('*'):
+        match = re.match(r'^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$', f.name)
+        if match:
+            try:
+                sys.path.append(str(f.parent))
+                package = importlib.import_module(f'.{match.group(2)}', match.group(0))
+                device = package.subclass()
+                if tell_local:
+                    local_packages[f'local {device.name}'] = package
+                else:
+                    local_packages[device.name] = package
+                local_package_paths[device.name] = str(f.parent)
+                from_manual_controls.append(device.name)
             except Exception as e:
                 print(f, e)
     return local_packages

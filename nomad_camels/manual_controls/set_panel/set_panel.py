@@ -4,7 +4,7 @@ from PySide6.QtGui import QFont
 
 from nomad_camels.main_classes.manual_control import Manual_Control, Manual_Control_Config
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
-from nomad_camels.utility import device_handling
+from nomad_camels.utility import device_handling, variables_handling
 
 
 
@@ -29,6 +29,8 @@ class Set_Panel(Manual_Control):
 
 
         for n, (group, group_data) in enumerate(groups.items()):
+            self.buttons.append([])
+            self.set_vals.append([])
             group_widget = QFrame()
             layout = QGridLayout()
             group_widget.setLayout(layout)
@@ -41,16 +43,16 @@ class Set_Panel(Manual_Control):
                     radio_button = QRadioButton(button)
                     radio_button.clicked.connect(self.button_pushed)
                     layout.addWidget(radio_button, 0, 1+i)
-                    self.buttons.append(radio_button)
-                    self.set_vals.append(set_vals)
+                    self.buttons[n].append(radio_button)
+                    self.set_vals[n].append(set_vals)
                 self.layout().addWidget(group_widget, n, 0)
             else:
                 for i, (button, set_vals) in enumerate(group_data.items()):
                     radio_button = QRadioButton(button)
                     radio_button.clicked.connect(self.button_pushed)
                     layout.addWidget(radio_button, 1+i, 0)
-                    self.buttons.append(radio_button)
-                    self.set_vals.append(set_vals)
+                    self.buttons[n].append(radio_button)
+                    self.set_vals[n].append(set_vals)
                 self.layout().addWidget(group_widget, 0, n)
             for data in group_data.values():
                 channels += data['channel']
@@ -60,21 +62,22 @@ class Set_Panel(Manual_Control):
         self.adjustSize()
 
     def button_pushed(self):
-        for i, button in enumerate(self.buttons):
-            if button.isChecked():
-                for j, channel in enumerate(self.set_vals[i]['channel']):
-                    value = self.set_vals[i]['value'][j]
-                    try:
-                        value = int(value)
-                    except ValueError:
+        for n, group in enumerate(self.buttons):
+            for i, button in enumerate(group):
+                if button.isChecked():
+                    for j, channel in enumerate(self.set_vals[n][i]['channel']):
+                        value = self.set_vals[n][i]['value'][j]
                         try:
-                            value = float(value)
+                            value = int(value)
                         except ValueError:
                             try:
-                                value = bool(value)
+                                value = float(value)
                             except ValueError:
-                                pass
-                    self.channels[channel].put(value)
+                                try:
+                                    value = bool(value)
+                                except ValueError:
+                                    pass
+                        self.channels[channel].put(value)
 
 
 
@@ -94,7 +97,12 @@ class Set_Panel_Config(Manual_Control_Config):
         label_button_groups = QLabel('Button Groups')
         label_button_groups.setStyleSheet('font-size: 9pt')
         label_button_groups.setFont(font)
+        self.checkBox_as_instr = QCheckBox('provide set panel as instrument')
+        if 'provide_instr' in control_data:
+            self.checkBox_as_instr.setChecked(control_data['provide_instr'])
         self.checkBox_groups_horizontal = QCheckBox('arrange groups horizontally')
+        if 'horizontal' in control_data:
+            self.checkBox_groups_horizontal.setChecked(control_data['horizontal'])
         self.pushButton_add_group = QPushButton('add button group')
         self.pushButton_add_group.clicked.connect(self.add_button_group)
 
@@ -108,6 +116,7 @@ class Set_Panel_Config(Manual_Control_Config):
 
 
         layout = self.layout()
+        layout.addWidget(self.checkBox_as_instr, 1, 0, 1, 2)
         layout.addWidget(label_button_groups, 2, 0)
         layout.addWidget(self.checkBox_groups_horizontal, 2, 1)
         layout.addWidget(self.pushButton_add_group, 4, 0, 1, 2)
@@ -168,7 +177,48 @@ class Set_Panel_Config(Manual_Control_Config):
         button_groups.clear()
         for group in self.tabs:
             button_groups.update(group.get_data())
+        self.control_data['provide_instr'] = self.checkBox_as_instr.isChecked()
+        if self.checkBox_as_instr.isChecked():
+            self.provide_instrument()
+        else:
+            self.remove_instrument()
         super().accept()
+
+    def provide_instrument(self):
+        groups = self.control_data['button_groups']
+        set_vals = []
+        channels = []
+        group_names = []
+        for n, (group, group_data) in enumerate(groups.items()):
+            set_vals.append([])
+            group_names.append(group)
+            for i, (button, vals) in enumerate(group_data.items()):
+                set_vals[n].append(vals)
+            for data in group_data.values():
+                channels += data['channel']
+        channels = list(set(channels))
+        non_str_channels = {}
+        str_channels = {}
+        for channel in channels:
+            str_channels[channel] = channel
+            non_str_channels[channel] = variables_handling.channels[channel].get_bluesky_name()
+        settings = {'set_vals': set_vals,
+                    'group_names': group_names,
+                    'channel_names': channels,
+                    '!non_string!_channels': non_str_channels}
+        from .nomad_camels_driver_set_panel_device.set_panel_device import subclass
+        dev = subclass(**settings)
+        dev.settings = settings
+        name = f'{self.lineEdit_name.text()}_manual_control'
+        dev.custom_name = name
+        dev.get_channels()
+        variables_handling.devices[name] = dev
+        variables_handling.channels.update(dev.get_channels())
+
+
+    def remove_instrument(self):
+        name = f'{self.lineEdit_name.text()}_manual_control'
+        variables_handling.devices.pop(name)
 
 
 class Button_Group_Tab(QWidget):
