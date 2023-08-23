@@ -16,9 +16,10 @@ NOMAD-CAMELS is a configurable measurement software, targeted towards the requir
 For more information and documentation visit [this page](https://fau-lap.github.io/NOMAD-CAMELS/).
 
 # Changelog
-## 0.1.9 (in progress)
+## 0.1.9
 New features:
 - Retry on error for VISA-devices
+- Set_Panel added as a new manual control, this may be used to easily control channels that often have to be set to certain values in preparation of an experiment
 
 Quality of life:
 - waiting cursor when adding instrument and it takes some time
@@ -26,7 +27,8 @@ Quality of life:
 Fixes:
 - Now the For-Loop (and children of it) display the "start - min - max - stop" preview correctly
 - import of instruments should now work correctly when running protocol outside the UI
-- int in config is now saved as int
+- int in instrument config is now saved as int
+- pyvisa added to requirements to support local drivers
 
 ## 0.1.8
 Fixes:
