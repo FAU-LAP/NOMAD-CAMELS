@@ -1,11 +1,12 @@
-from PySide6.QtWidgets import QCheckBox, QLabel, QWidget, QGridLayout, QLineEdit, QApplication, QTabWidget, QPushButton, QScrollArea, QFrame, QRadioButton
-from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QCheckBox, QLabel, QWidget, QGridLayout, QLineEdit, QApplication, QTabWidget, QPushButton, QScrollArea, QFrame, QRadioButton, QButtonGroup
+from PySide6.QtCore import Signal, QThread
 from PySide6.QtGui import QFont
 
 from nomad_camels.main_classes.manual_control import Manual_Control, Manual_Control_Config
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 from nomad_camels.utility import device_handling, variables_handling
 
+import time
 
 
 class Set_Panel(Manual_Control):
@@ -26,11 +27,14 @@ class Set_Panel(Manual_Control):
         channels = []
         self.buttons = []
         self.set_vals = []
+        self.button_groups = []
 
 
         for n, (group, group_data) in enumerate(groups.items()):
             self.buttons.append([])
             self.set_vals.append([])
+            button_group = QButtonGroup()
+            self.button_groups.append(button_group)
             group_widget = QFrame()
             layout = QGridLayout()
             group_widget.setLayout(layout)
@@ -45,6 +49,7 @@ class Set_Panel(Manual_Control):
                     layout.addWidget(radio_button, 0, 1+i)
                     self.buttons[n].append(radio_button)
                     self.set_vals[n].append(set_vals)
+                    button_group.addButton(radio_button)
                 self.layout().addWidget(group_widget, n, 0)
             else:
                 for i, (button, set_vals) in enumerate(group_data.items()):
@@ -53,6 +58,7 @@ class Set_Panel(Manual_Control):
                     layout.addWidget(radio_button, 1+i, 0)
                     self.buttons[n].append(radio_button)
                     self.set_vals[n].append(set_vals)
+                    button_group.addButton(radio_button)
                 self.layout().addWidget(group_widget, 0, n)
             for data in group_data.values():
                 channels += data['channel']
@@ -61,25 +67,90 @@ class Set_Panel(Manual_Control):
         self.channels = device_handling.get_channels_from_string_list(channels, True)
         self.adjustSize()
 
+        t = control_data['readback_time'] if 'readback_time' in control_data else 5
+        self.read_thread = Readback_Thread(self, self.channels, t)
+        if 'readback' in control_data and control_data['readback']:
+            self.read_thread.data_sig.connect(self.check_readback)
+            self.read_thread.start()
+
     def button_pushed(self):
         for n, group in enumerate(self.buttons):
             for i, button in enumerate(group):
                 if button.isChecked():
                     for j, channel in enumerate(self.set_vals[n][i]['channel']):
                         value = self.set_vals[n][i]['value'][j]
-                        try:
-                            value = int(value)
-                        except ValueError:
-                            try:
-                                value = float(value)
-                            except ValueError:
-                                try:
-                                    value = bool(value)
-                                except ValueError:
-                                    pass
+                        value = conv_value(value)
                         self.channels[channel].put(value)
 
+    def check_readback(self, vals):
+        for n, group in enumerate(self.buttons):
+            self.button_groups[n].setExclusive(False)
+            for i, button in enumerate(group):
+                is_same = True
+                for j, channel in enumerate(self.set_vals[n][i]['channel']):
+                    set_value = self.set_vals[n][i]['value'][j]
+                    set_value = conv_value(set_value)
+                    is_value = conv_value(str(vals[channel]))
+                    if set_value != is_value:
+                        is_same = False
+                        break
+                button.setChecked(is_same)
+            self.button_groups[n].setExclusive(True)
 
+    def close(self) -> bool:
+        self.read_thread.still_running = False
+        return super().close()
+
+    def closeEvent(self, a0) -> None:
+        self.read_thread.still_running = False
+        return super().closeEvent(a0)
+
+
+
+def conv_value(value):
+    try:
+        value = int(value)
+    except ValueError:
+        try:
+            value = float(value)
+        except ValueError:
+            try:
+                value = bool(value)
+            except ValueError:
+                pass
+    return value
+
+
+class Readback_Thread(QThread):
+    data_sig = Signal(dict)
+
+    def __init__(self, parent=None, channels=None, read_time=5):
+        super().__init__(parent=parent)
+        self.channels = channels or []
+        self.read_time = read_time
+        self.still_running = True
+
+    def run(self):
+        self.do_reading()
+        accum = 0
+        while self.still_running:
+            if self.read_time > 5:
+                if self.read_time - accum > 5:
+                    time.sleep(5)
+                    accum += 5
+                    continue
+                else:
+                    time.sleep(self.read_time - accum)
+                    accum = 0
+            else:
+                time.sleep(self.read_time)
+            self.do_reading()
+
+    def do_reading(self):
+        vals = {}
+        for name, channel in self.channels.items():
+            vals[name] = channel.get()
+        self.data_sig.emit(vals)
 
 
 
@@ -97,6 +168,12 @@ class Set_Panel_Config(Manual_Control_Config):
         label_button_groups = QLabel('Button Groups')
         label_button_groups.setStyleSheet('font-size: 9pt')
         label_button_groups.setFont(font)
+        self.checkbox_readback = QCheckBox('readback loop in s:')
+        if 'readback' in control_data:
+            self.checkbox_readback.setChecked(control_data['readback'])
+        self.lineEdit_readback = QLineEdit('5')
+        if 'readback_time' in control_data:
+            self.lineEdit_readback.setText(str(control_data['readback_time']))
         self.checkBox_as_instr = QCheckBox('provide set panel as instrument')
         if 'provide_instr' in control_data:
             self.checkBox_as_instr.setChecked(control_data['provide_instr'])
@@ -113,12 +190,15 @@ class Set_Panel_Config(Manual_Control_Config):
                 self.add_button_group(name, group)
         if not self.tabs:
             self.add_button_group()
+        self.change_tab_name()
 
 
         layout = self.layout()
         layout.addWidget(self.checkBox_as_instr, 1, 0, 1, 2)
-        layout.addWidget(label_button_groups, 2, 0)
-        layout.addWidget(self.checkBox_groups_horizontal, 2, 1)
+        layout.addWidget(self.checkbox_readback, 2, 0)
+        layout.addWidget(self.lineEdit_readback, 2, 1)
+        layout.addWidget(label_button_groups, 3, 0)
+        layout.addWidget(self.checkBox_groups_horizontal, 3, 1)
         layout.addWidget(self.pushButton_add_group, 4, 0, 1, 2)
         layout.addWidget(self.tab_widget, 6, 0, 1, 2)
 
@@ -178,6 +258,8 @@ class Set_Panel_Config(Manual_Control_Config):
         for group in self.tabs:
             button_groups.update(group.get_data())
         self.control_data['provide_instr'] = self.checkBox_as_instr.isChecked()
+        self.control_data['readback'] = self.checkbox_readback.isChecked()
+        self.control_data['readback_time'] = float(self.lineEdit_readback.text())
         if self.checkBox_as_instr.isChecked():
             self.provide_instrument()
         else:
@@ -218,7 +300,11 @@ class Set_Panel_Config(Manual_Control_Config):
 
     def remove_instrument(self):
         name = f'{self.lineEdit_name.text()}_manual_control'
-        variables_handling.devices.pop(name)
+        if name in variables_handling.devices:
+            dev = variables_handling.devices[name]
+            for chan in dev.get_channels():
+                variables_handling.channels.pop(chan)
+            variables_handling.devices.pop(name)
 
 
 class Button_Group_Tab(QWidget):
