@@ -19,19 +19,27 @@ class Values_List_Plot(QWidget):
     closing = pySignal()
 
     def __init__(self, value_list, *, epoch='run', namespace=None, title='',
-                 stream_name='primary', parent=None, **kwargs):
+                 stream_name='primary', parent=None, plot_all_available=True,
+                 **kwargs):
         super().__init__(parent=parent)
         self.table = QTableWidget()
         self.livePlot = Live_List(value_list, epoch=epoch,
                                   namespace=namespace,
                                   stream_name=stream_name, parent=self,
-                                  table=self.table, **kwargs)
+                                  table=self.table,
+                                  plot_all_available=plot_all_available,
+                                  **kwargs)
         self.livePlot.new_data.connect(self.show)
 
         layout = QGridLayout()
         layout.addWidget(self.table)
         self.setLayout(layout)
-        self.setWindowTitle(title or f'{value_list[0]} ...')
+        if title:
+            self.setWindowTitle(title)
+        elif value_list:
+            self.setWindowTitle(f'{value_list[0]} ...')
+        else:
+            self.setWindowTitle('Current Value List')
         self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
         self.stream_name = stream_name
         place_widget(self)
@@ -64,7 +72,8 @@ class Live_List(QtAwareCallback, QObject):
     new_data = pySignal()
 
     def __init__(self, value_list, table, *, epoch='run', namespace=None,
-                 stream_name='primary', parent=None, **kwargs):
+                 stream_name='primary', parent=None, plot_all_available=False,
+                 **kwargs):
         QObject.__init__(self, parent=parent)
         QtAwareCallback.__init__(self, use_teleporter=kwargs.pop('use_teleporter', None))
         if isinstance(value_list, str):
@@ -72,6 +81,7 @@ class Live_List(QtAwareCallback, QObject):
         self.value_list = value_list
         self.stream_name = stream_name
         self.table = table
+        self.plot_all_available = plot_all_available
         self.eva = Evaluator(namespace=namespace)
 
         self.table.setRowCount(len(value_list))
@@ -87,10 +97,23 @@ class Live_List(QtAwareCallback, QObject):
             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
             self.table.setItem(i, 1, item)
             self.val_items.append(item)
+        self.add_items = {}
         self.desc = ''
         self.epoch_offset = 0
         self.epoch = epoch
         self.table.resizeColumnsToContents()
+
+    def add_to_table(self, name):
+        i = len(self.val_items) + len(self.add_items)
+        self.table.setRowCount(i+1)
+        item = QTableWidgetItem(name)
+        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(i, 0, item)
+        item = QTableWidgetItem(str(np.nan))
+        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+        self.table.setItem(i, 1, item)
+        self.add_items[name] = item
+
 
     def descriptor(self, doc):
         """
@@ -152,5 +175,12 @@ class Live_List(QtAwareCallback, QObject):
                         self.eva.event(doc)
                     new_val = self.eva.eval(val)
             self.val_items[i].setText(f'{new_val:7e}')
+        if self.plot_all_available:
+            for name, value in doc['data'].items():
+                if name in self.value_list:
+                    continue
+                if name not in self.add_items:
+                    self.add_to_table(name)
+                self.add_items[name].setText(f'{value:7e}')
         self.table.resizeColumnsToContents()
         self.new_data.emit(None)

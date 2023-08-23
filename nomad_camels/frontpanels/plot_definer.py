@@ -1,7 +1,7 @@
 import copy
 
 from PySide6.QtWidgets import QDialog, QWidget, QDialogButtonBox, QGridLayout,\
-    QLabel, QMessageBox, QPushButton
+    QLabel, QMessageBox, QPushButton, QCheckBox
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QKeyEvent
 
@@ -36,6 +36,7 @@ class Plot_Info:
         self.do_plot = do_plot
         self.same_fit = same_fit
         self.fits = fits or []
+        self.plot_all_available = True
         self.all_fit = all_fit or Fit_Info()
         self.name = ''
         self.update_name()
@@ -315,18 +316,22 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
     def __init__(self, plot_data:Plot_Info, parent=None):
         super().__init__(plot_data, parent)
         self.plot_data = plot_data
+        self.checkBox_plot_all = QCheckBox('plot all available channels')
+        self.checkBox_plot_all.setChecked(plot_data.plot_all_available)
         self.table = AddRemoveTable(title='Values', headerLabels=[],
                                     tableData=plot_data.y_axes['formula'],
                                     checkstrings=[0])
         self.table.added.connect(self.add_y)
         self.table.removed.connect(self.remove_y)
         self.layout = QGridLayout()
+        self.layout.addWidget(self.checkBox_plot_all)
         self.layout.addWidget(self.table)
         self.setLayout(self.layout)
         self.plot_data.update_name()
 
     def get_data(self):
         """ """
+        self.plot_data.plot_all_available = self.checkBox_plot_all.isChecked()
         self.plot_data.y_axes['formula'] = self.table.update_table_data()
         self.plot_data.y_axes['axis'] = [1] * len(self.plot_data.y_axes['formula'])
         self.plot_data.update_name()
