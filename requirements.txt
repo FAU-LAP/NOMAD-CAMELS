@@ -84,3 +84,5 @@ tables>=3.7.0
 numexpr>=2.8.4
 qt-material>=2.12
 pyserial>=3.5
+pyvisa>=1.13.0
+pyvisa-py>=0.7.0
