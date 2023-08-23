@@ -1,11 +1,9 @@
 import sys
 import os
-import time
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 sys.path.append(os.path.dirname(__file__))
 import json
-import importlib
 
 from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QDialog
 from PySide6.QtCore import QCoreApplication, Qt, Signal, QMetaObject
@@ -21,11 +19,6 @@ from nomad_camels.ui_widgets import options_run_button, warn_popup
 
 from collections import OrderedDict
 
-import bluesky
-import ophyd
-from bluesky import RunEngine
-from bluesky.callbacks.best_effort import BestEffortCallback
-import databroker
 
 camels_github = 'https://github.com/FAU-LAP/NOMAD-CAMELS'
 camels_github_pages = 'https://fau-lap.github.io/NOMAD-CAMELS/'
@@ -159,7 +152,21 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
 
 
-        # bluesky
+        # self.show()
+        self.adjustSize()
+
+        self.run_engine = None
+        self.databroker_catalog = None
+        self.still_running = False
+        self.re_subs = []
+        self.protocol_module = None
+        self.protocol_savepath = ''
+        self.running_protocol = None
+
+    def bluesky_setup(self):
+        from bluesky import RunEngine
+        from bluesky.callbacks.best_effort import BestEffortCallback
+        import databroker
         self.run_engine = RunEngine()
         bec = BestEffortCallback()
         self.run_engine.subscribe(bec)
@@ -176,9 +183,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_module = None
         self.protocol_savepath = ''
         self.running_protocol = None
-
-        # self.show()
-        self.adjustSize()
 
     def with_or_without_instruments(self):
         """ """
@@ -214,7 +218,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         window :
-            
+
 
         Returns
         -------
@@ -229,7 +233,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         plot :
-            
+
 
         Returns
         -------
@@ -260,7 +264,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         a0 :
-            
+
 
         Returns
         -------
@@ -340,7 +344,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def edit_user_info(self):
         """Calls dialog for user-information when
         pushButton_editUserInfo is clicked.
-        
+
         The opened AddRemoveDialoge contains columns for Name, E-Mail,
         Affiliation, Address, ORCID and Phone of the user.
         If the dialog is canceled, nothing is changed, otherwise the new
@@ -420,7 +424,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def edit_sample_info(self):
         """Calls dialog for user-information when
         pushButton_editSampleInfo is clicked.
-        
+
         The opened AddRemoveDialoge contains columns for Name,
         Identifier, and Preparation-Info.
         If the dialog is canceled, nothing is changed, otherwise the new
@@ -581,6 +585,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def change_catalog_name(self):
         """ """
+        if not hasattr(self, 'databroker_catalog') or not self.databroker_catalog:
+            return
+        import databroker
         if 'meas_files_path' in self.preferences:
             catalog_name = 'CATALOG_NAME'
             if 'databroker_catalog_name' in self.preferences:
@@ -715,7 +722,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         preset :
-            
+
 
         Returns
         -------
@@ -733,7 +740,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         preset :
-            
+
 
         Returns
         -------
@@ -798,7 +805,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         order :
-            
+
 
         Returns
         -------
@@ -822,7 +829,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         control_data :
-            
+
 
         Returns
         -------
@@ -838,7 +845,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         control_name :
-            
+
 
         Returns
         -------
@@ -855,9 +862,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         control_data :
-            
+
         old_name :
-            
+
 
         Returns
         -------
@@ -874,7 +881,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         control_name :
-            
+
 
         Returns
         -------
@@ -893,7 +900,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         name :
-            
+
 
         Returns
         -------
@@ -910,9 +917,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         button :
-            
+
         name :
-            
+
 
         Returns
         -------
@@ -939,7 +946,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         name :
-            
+
 
         Returns
         -------
@@ -960,9 +967,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         control :
-            
+
         name :
-            
+
 
         Returns
         -------
@@ -980,7 +987,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         order :
-            
+
 
         Returns
         -------
@@ -1019,7 +1026,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         protocol :
-            
+
 
         Returns
         -------
@@ -1035,7 +1042,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         prot_name :
-            
+
 
         Returns
         -------
@@ -1052,9 +1059,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         protocol :
-            
+
         old_name :
-            
+
 
         Returns
         -------
@@ -1071,7 +1078,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         prot_name :
-            
+
 
         Returns
         -------
@@ -1089,7 +1096,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         name :
-            
+
 
         Returns
         -------
@@ -1105,9 +1112,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         button :
-            
+
         name :
-            
+
 
         Returns
         -------
@@ -1141,6 +1148,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         `protocol_finished` is called, this function will wait for it and then
         handle the upload.
         """
+        self.setCursor(Qt.WaitCursor)
+        import importlib, bluesky, ophyd, time
+        if not self.run_engine:
+            self.bluesky_setup()
         self.still_running = True
         from nomad_camels.utility import device_handling
         if 'autosave_run' in self.preferences and self.preferences['autosave_run']:
@@ -1148,7 +1159,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.button_area_meas.disable_run_buttons()
         try:
             self.build_protocol(protocol_name, ask_file=False)
-            self.setCursor(Qt.WaitCursor)
             protocol = self.protocols_dict[protocol_name]
             path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
             name = os.path.basename(path)[:-3]
@@ -1219,7 +1229,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         dictionary :
-            
+
 
         Returns
         -------
@@ -1257,7 +1267,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         *args :
-            
+
 
         Returns
         -------
@@ -1291,7 +1301,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         protocol_name :
-            
+
         ask_file :
              (Default value = True)
 
@@ -1342,7 +1352,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         protocol_name :
-            
+
 
         Returns
         -------

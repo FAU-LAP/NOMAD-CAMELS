@@ -16,6 +16,10 @@ NOMAD-CAMELS is a configurable measurement software, targeted towards the requir
 For more information and documentation visit [this page](https://fau-lap.github.io/NOMAD-CAMELS/).
 
 # Changelog
+## 0.1.10 (in progress)
+Quality of life:
+- startup speed increased, but first run of protocol now slowed down
+
 ## 0.1.9
 New features:
 - Retry on error for VISA-devices
