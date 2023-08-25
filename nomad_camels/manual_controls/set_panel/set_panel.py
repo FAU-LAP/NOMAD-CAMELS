@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QCheckBox, QLabel, QWidget, QGridLayout, QLineEdit, QApplication, QTabWidget, QPushButton, QScrollArea, QFrame, QRadioButton, QButtonGroup
+from PySide6.QtWidgets import QCheckBox, QLabel, QWidget, QGridLayout, QLineEdit, QApplication, QTabWidget, QPushButton, QScrollArea, QFrame, QRadioButton, QButtonGroup, QSpacerItem, QSizePolicy
 from PySide6.QtCore import Signal, QThread
 from PySide6.QtGui import QFont
 
@@ -7,6 +7,9 @@ from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 from nomad_camels.utility import device_handling, variables_handling
 
 import time
+
+bold_font = QFont()
+bold_font.setBold(True)
 
 
 class Set_Panel(Manual_Control):
@@ -41,8 +44,10 @@ class Set_Panel(Manual_Control):
             layout.setContentsMargins(0, 0, 0, 0)
 
             label = QLabel(group)
+            label.setFont(bold_font)
             layout.addWidget(label, 0, 0)
             if self.horizontal:
+                spacer = QSpacerItem(0, 1, QSizePolicy.Expanding, QSizePolicy.Minimum)
                 for i, (button, set_vals) in enumerate(group_data.items()):
                     radio_button = QRadioButton(button)
                     radio_button.clicked.connect(self.button_pushed)
@@ -50,8 +55,10 @@ class Set_Panel(Manual_Control):
                     self.buttons[n].append(radio_button)
                     self.set_vals[n].append(set_vals)
                     button_group.addButton(radio_button)
+                layout.addItem(spacer, 0, len(group_data)+1)
                 self.layout().addWidget(group_widget, n, 0)
             else:
+                spacer = QSpacerItem(1, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
                 for i, (button, set_vals) in enumerate(group_data.items()):
                     radio_button = QRadioButton(button)
                     radio_button.clicked.connect(self.button_pushed)
@@ -59,6 +66,7 @@ class Set_Panel(Manual_Control):
                     self.buttons[n].append(radio_button)
                     self.set_vals[n].append(set_vals)
                     button_group.addButton(radio_button)
+                layout.addItem(spacer, len(group_data)+1, 0)
                 self.layout().addWidget(group_widget, 0, n)
             for data in group_data.values():
                 channels += data['channel']
@@ -161,13 +169,10 @@ class Set_Panel_Config(Manual_Control_Config):
         super().__init__(parent=parent, control_data=control_data,
                          title='Set Panel Config',
                          control_type='Set_Panel')
-        font = QFont()
-        font.setBold(True)
-
         control_data = control_data or {}
         label_button_groups = QLabel('Button Groups')
         label_button_groups.setStyleSheet('font-size: 9pt')
-        label_button_groups.setFont(font)
+        label_button_groups.setFont(bold_font)
         self.checkbox_readback = QCheckBox('readback loop in s:')
         if 'readback' in control_data:
             self.checkbox_readback.setChecked(control_data['readback'])
