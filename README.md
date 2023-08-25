@@ -25,8 +25,6 @@ Minor features:
 Quality of life:
 - startup speed increased, but first run of protocol now slowed down
 - added plot all available channels as possibility for List-Plot
-
-Fixes:
 - improved layout of set-panel
 
 ## 0.1.9

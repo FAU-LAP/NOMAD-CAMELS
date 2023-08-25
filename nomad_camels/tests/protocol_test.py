@@ -169,7 +169,7 @@ def test_read_channels(qtbot, tmp_path):
     conf_widge = conf.loop_step_configuration_widget
     assert isinstance(conf_widge,
                       read_channels.Read_Channels_Config)
-    table = conf_widge.sub_widget.read_table.tableWidget_functions
+    table = conf_widge.sub_widget.read_table.tableWidget_channels
     row = get_row_from_channel_table('demo_instrument_detectorX', table)
     table.item(row, 0).setCheckState(Qt.CheckState.Checked)
     with qtbot.waitSignal(conf.accepted) as blocker:
@@ -197,7 +197,7 @@ def test_set_channels(qtbot, tmp_path):
     conf_widge = conf.loop_step_configuration_widget
     assert isinstance(conf_widge,
                       set_channels.Set_Channels_Config)
-    table = conf_widge.sub_widget.tableWidget_functions
+    table = conf_widge.sub_widget.tableWidget_channels
     row = get_row_from_channel_table('demo_instrument_motorX', table)
     table.item(row, 0).setCheckState(Qt.CheckState.Checked)
     table.item(row, 2).setText('1')
@@ -229,7 +229,7 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
     conf_widge.sweep_widget.lineEdit_n_points.setText('21')
     conf_widge.comboBox_sweep_channel.setCurrentText('demo_instrument_motorY')
 
-    table = conf_widge.read_table.tableWidget_functions
+    table = conf_widge.read_table.tableWidget_channels
     row = get_row_from_channel_table('demo_instrument_detectorY', table)
     table.item(row, 0).setCheckState(Qt.CheckState.Checked)
     row = get_row_from_channel_table('demo_instrument_motorY', table)
