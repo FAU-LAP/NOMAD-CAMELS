@@ -176,7 +176,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
                                                title='Read-Channels')
         self.read_type_changed()
         self.layout().addWidget(self.read_table, 5, 0, 1, 2)
-        # self.tableWidget_channels.setHorizontalHeaderLabels(['read',
+        # self.tableWidget_functions.setHorizontalHeaderLabels(['read',
         #                                                      'channel name',
         #                                                      'use set-value'])
         # self.build_channels_table()
@@ -184,7 +184,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         # self.checkBox_use_set.toggled.connect(self.checkbox_toggle)
         # self.checkBox_plot.toggled.connect(self.checkbox_toggle)
         # self.checkBox_save.toggled.connect(self.checkbox_toggle)
-        # self.tableWidget_channels.clicked.connect(self.table_check_changed)
+        # self.tableWidget_functions.clicked.connect(self.table_check_changed)
 
     def use_trigger(self):
         """ """
@@ -212,10 +212,10 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         if hasattr(self, 'read_table'):
             self.read_table.setEnabled(not read_all)
         # if read_all:
-        #     self.tableWidget_channels.setEnabled(False)
+        #     self.tableWidget_functions.setEnabled(False)
         #     self.checkBox_use_set.setEnabled(True)
         # else:
-        #     self.tableWidget_channels.setEnabled(True)
+        #     self.tableWidget_functions.setEnabled(True)
         #     self.checkBox_use_set.setEnabled(False)
         self.loop_step.read_all = read_all
         self.loop_step.update_used_devices()
@@ -235,9 +235,9 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         # self.lineEdit_search.clear()
         # self.build_channels_table()
         # self.loop_step.channel_list = []
-        # for i in range(self.tableWidget_channels.rowCount()):
-        #     if self.tableWidget_channels.item(i, 0).checkState() > 0:
-        #         name = self.tableWidget_channels.item(i, 1).text()
+        # for i in range(self.tableWidget_functions.rowCount()):
+        #     if self.tableWidget_functions.item(i, 0).checkState() > 0:
+        #         name = self.tableWidget_functions.item(i, 1).text()
         #         self.loop_step.channel_list.append(name)
 
     def table_check_changed(self, pos):
@@ -266,14 +266,14 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         #     self.loop_step.channel_dict[name]['read'] =
         #     self.loop_step.update_used_devices()
         # if c == 2 and variables_handling.channels[name].output:
-        #     self.loop_step.channel_dict[name]['use set'] = self.tableWidget_channels.item(r, c).checkState() > 0
+        #     self.loop_step.channel_dict[name]['use set'] = self.tableWidget_functions.item(r, c).checkState() > 0
 
 
     def build_channels_table(self):
         """This creates the table for all channels."""
         self.tableWidget_channels.clear()
         self.tableWidget_channels.setColumnCount(2)
-        # self.tableWidget_channels.setRowCount(len(variables_handling.channels))
+        # self.tableWidget_functions.setRowCount(len(variables_handling.channels))
         self.tableWidget_channels.setRowCount(0)
         self.tableWidget_channels.setHorizontalHeaderLabels(['read', 'channel name'])
         searchtext = self.lineEdit_search.text()
@@ -303,7 +303,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
             # else:
             #     item = QTableWidgetItem()
             #     item.setFlags(item.flags() ^ Qt.ItemIsEditable)
-            # self.tableWidget_channels.setItem(i, 2, item)
+            # self.tableWidget_functions.setItem(i, 2, item)
         self.tableWidget_channels.resizeColumnsToContents()
         # for channel in self.loop_step.channel_dict:
         #     if channel not in variables_handling.channels:

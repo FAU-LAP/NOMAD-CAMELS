@@ -16,7 +16,12 @@ NOMAD-CAMELS is a configurable measurement software, targeted towards the requir
 For more information and documentation visit [this page](https://fau-lap.github.io/NOMAD-CAMELS/).
 
 # Changelog
-## 0.1.10 (in progress)
+## 0.2.0 (in progress)
+Major new feature:
+- Callable functions of instruments, that are not channels
+
+Minor features:
+
 Quality of life:
 - startup speed increased, but first run of protocol now slowed down
 - added plot all available channels as possibility for List-Plot

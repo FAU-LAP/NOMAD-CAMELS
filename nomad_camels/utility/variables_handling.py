@@ -109,6 +109,13 @@ operator_names = {
 }
 
 
+def get_non_channel_functions():
+    functions = []
+    for device in devices.values():
+        functions += device.get_non_channel_functions()
+    return functions
+
+
 def get_output_channels():
     """Goes through all channels and returns a list of the names of those, that
     are outputs."""

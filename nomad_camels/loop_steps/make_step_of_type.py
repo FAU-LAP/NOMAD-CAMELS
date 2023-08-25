@@ -4,11 +4,13 @@ from nomad_camels.main_classes.loop_step import Loop_Step
 from nomad_camels.loop_steps import for_while_loops, read_channels, set_channels,\
     wait_loop_step, if_step, prompt_loop_step, run_subprotocol, simple_sweep,\
     gradient_descent, change_device_config, nd_sweep, set_variables,\
-    set_value_popup, export_data
+    set_value_popup, export_data, call_function
 
 from nomad_camels.utility import variables_handling
 
-step_type_config = {'Change Device Config': [change_device_config.Change_DeviceConf,
+step_type_config = {'Call Function': [call_function.Call_Function,
+                                      call_function.Call_Function_Config],
+                    'Change Device Config': [change_device_config.Change_DeviceConf,
                              change_device_config.Change_DeviceConf_Config],
                     # 'Export Data': [export_data.Export_Data_Step,
                     #                 export_data.Export_Data_Step_Config],

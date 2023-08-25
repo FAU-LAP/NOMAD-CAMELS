@@ -40,7 +40,8 @@ class Device:
     """
 
     def __init__(self, name='', virtual=False, tags=None, ophyd_device=None,
-                 ophyd_class_name='', additional_info=None, **kwargs):
+                 ophyd_class_name='', additional_info=None,
+                 non_channel_functions=None, **kwargs):
         """
         Parameters
         ----------
@@ -67,6 +68,7 @@ class Device:
         self.config = {}
         self.passive_config = {}
         self.channels = {}
+        self.non_channel_functions = non_channel_functions or []
         self.ophyd_class_name = ophyd_class_name
         if ophyd_device is None:
             ophyd_device = OphydDevice
@@ -98,6 +100,12 @@ class Device:
             Dictionary of the device's manual controls
         """
         return self.controls
+
+    def get_non_channel_functions(self):
+        funcs = []
+        for func in self.non_channel_functions:
+            funcs.append(f'{self.custom_name}.{func}')
+        return funcs
 
     def get_finalize_steps(self):
         """Returns the string used in the 'finally' part of the protocol's main
