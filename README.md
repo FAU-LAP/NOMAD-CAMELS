@@ -21,6 +21,7 @@ Major new feature:
 - Callable functions of instruments, that are not channels
 
 Minor features:
+- Reference drive and stop of stage control are now callable functions
 
 Quality of life:
 - startup speed increased, but first run of protocol now slowed down

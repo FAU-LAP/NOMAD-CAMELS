@@ -113,6 +113,13 @@ def get_channel_from_string(channel):
     device = running_devices[dev]
     return getattr(device, chan)
 
+def get_funtion_from_string(func_name):
+    dev, func = func_name.split('.')
+    if dev not in running_devices:
+        raise Exception(f'Device {dev} is needed, but not yet instantiated!')
+    device = running_devices[dev]
+    return getattr(device, func)
+
 def get_channels_from_string_list(channel_list, as_dict=False):
     """
     Goes through the given channel_list and if they are valid channels in
@@ -151,6 +158,15 @@ def get_channels_from_string_list(channel_list, as_dict=False):
         else:
             channels.append(get_channel_from_string(chan.name))
     return channels
+
+def get_functions_from_string_list(func_list):
+    funcs = []
+    for func in func_list:
+        if func == 'None':
+            funcs.append(None)
+            continue
+        funcs.append(get_funtion_from_string(func))
+    return funcs
 
 def start_devices_from_channel_list(channel_list):
     """
