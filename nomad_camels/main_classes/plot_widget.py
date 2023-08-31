@@ -865,7 +865,8 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.checkBox_use_abs_y2.setEnabled(y2)
         self.ax.set_xscale(x_scale)
         self.ax.set_yscale(y_scale)
-        self.ax2.set_yscale(y2_scale)
+        if self.ax2:
+            self.ax2.set_yscale(y2_scale)
         self.livePlot.use_abs = {'x': self.checkBox_use_abs_x.isChecked() and x,
                                  'y': self.checkBox_use_abs_y.isChecked() and y,
                                  'y2': self.checkBox_use_abs_y2.isChecked() and y2}

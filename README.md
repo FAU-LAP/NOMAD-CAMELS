@@ -28,6 +28,9 @@ Quality of life:
 - added plot all available channels as possibility for List-Plot
 - improved layout of set-panel
 
+Fixes:
+- Can now set log scale when using only one y-axis
+
 ## 0.1.9
 New features:
 - Retry on error for VISA-devices
