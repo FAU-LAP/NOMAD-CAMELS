@@ -23,7 +23,8 @@ class Plot_Info:
     """ """
     def __init__(self, plt_type='X-Y plot', x_axis='', y_axes=None, title='',
                  xlabel='', ylabel='', ylabel2='', do_plot=True, zlabel='',
-                 same_fit=False, fits=None, all_fit=None, z_axis=''):
+                 same_fit=False, fits=None, all_fit=None, z_axis='',
+                 logX=False, logY=False, logY2=False):
         self.plt_type = plt_type
         self.x_axis = x_axis
         self.y_axes = y_axes or {'formula': [], 'axis': []}
@@ -32,6 +33,9 @@ class Plot_Info:
         self.xlabel = xlabel
         self.ylabel = ylabel
         self.ylabel2 = ylabel2
+        self.logX = logX
+        self.logY = logY
+        self.logY2 = logY2
         self.zlabel = zlabel
         self.do_plot = do_plot
         self.same_fit = same_fit
@@ -405,6 +409,9 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.lineEdit_ylabel2.setText(self.plot_data.ylabel2)
         self.checkBox_plot.setChecked(self.plot_data.do_plot)
         self.checkBox_same_fit.setChecked(self.plot_data.same_fit)
+        self.checkBox_xlog.setChecked(self.plot_data.logX)
+        self.checkBox_ylog.setChecked(self.plot_data.logY)
+        self.checkBox_ylog2.setChecked(self.plot_data.logY2)
         self.plot_data.update_name()
 
     def get_data(self):
@@ -417,6 +424,9 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.plot_data.ylabel2 = self.lineEdit_ylabel2.text()
         self.plot_data.do_plot = self.checkBox_plot.isChecked()
         self.plot_data.same_fit = self.checkBox_same_fit.isChecked()
+        self.plot_data.logX = self.checkBox_xlog.isChecked()
+        self.plot_data.logY = self.checkBox_ylog.isChecked()
+        self.plot_data.logY2 = self.checkBox_ylog2.isChecked()
         if not isinstance(self.fit_definer, QLabel):
             self.fit_definer.get_data()
         self.plot_data.update_name()

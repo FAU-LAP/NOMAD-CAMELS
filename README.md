@@ -30,6 +30,7 @@ Quality of life:
 
 Fixes:
 - Can now set log scale when using only one y-axis
+- now using settings of log-scale from definition window at startup of plot
 
 ## 0.1.9
 New features:
