@@ -8,7 +8,7 @@ from nomad_camels.nomad_integration import nomad_communication
 
 class UploadDialog(QDialog):
     """UI widget to handle uploading data to NOMAD."""
-    def __init__(self, parent=None, file_set=''):
+    def __init__(self, parent=None, file_set='', upload_path=''):
         super().__init__(parent)
 
         label_file = QLabel("File:")
@@ -20,7 +20,10 @@ class UploadDialog(QDialog):
         self.combobox_upload.addItems(uploads)
 
         label_upload_path = QLabel('Directory in upload:')
-        self.lineEdit_upload_path = QLineEdit('CAMELS_data')
+        if upload_path:
+            self.lineEdit_upload_path = QLineEdit(upload_path)
+        else:
+            self.lineEdit_upload_path = QLineEdit('CAMELS_data')
 
         self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.button_box.accepted.connect(self.accept)

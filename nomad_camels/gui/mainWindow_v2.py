@@ -365,7 +365,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.gridLayout_2.addItem(self.horizontalSpacer_2, 1, 2, 1, 1)
+        self.gridLayout_2.addItem(self.horizontalSpacer_2, 1, 3, 1, 1)
 
         self.label_3 = QLabel(self.meas_widget)
         self.label_3.setObjectName(u"label_3")
@@ -394,6 +394,15 @@ class Ui_MainWindow(object):
 "}")
 
         self.gridLayout_2.addWidget(self.pushButton_add_meas, 1, 1, 1, 1)
+
+        self.pushButton_import_protocol = QPushButton(self.meas_widget)
+        self.pushButton_import_protocol.setObjectName(u"pushButton_import_protocol")
+        sizePolicy.setHeightForWidth(self.pushButton_import_protocol.sizePolicy().hasHeightForWidth())
+        self.pushButton_import_protocol.setSizePolicy(sizePolicy)
+        self.pushButton_import_protocol.setMinimumSize(QSize(32, 32))
+        self.pushButton_import_protocol.setMaximumSize(QSize(50, 32))
+
+        self.gridLayout_2.addWidget(self.pushButton_import_protocol, 1, 2, 1, 1)
 
         self.main_splitter.addWidget(self.meas_widget)
 
@@ -488,6 +497,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Manual Control", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Measurement Protocols", None))
         self.pushButton_add_meas.setText(QCoreApplication.translate("MainWindow", u"+", None))
+        self.pushButton_import_protocol.setText(QCoreApplication.translate("MainWindow", u"import", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
         self.menuTools.setTitle(QCoreApplication.translate("MainWindow", u"Tools", None))

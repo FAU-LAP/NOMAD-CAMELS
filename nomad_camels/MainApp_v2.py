@@ -1,11 +1,9 @@
 import sys
 import os
-import time
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 sys.path.append(os.path.dirname(__file__))
 import json
-import importlib
 
 from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QDialog
 from PySide6.QtCore import QCoreApplication, Qt, Signal, QMetaObject
@@ -21,11 +19,6 @@ from nomad_camels.ui_widgets import options_run_button, warn_popup
 
 from collections import OrderedDict
 
-import bluesky
-import ophyd
-from bluesky import RunEngine
-from bluesky.callbacks.best_effort import BestEffortCallback
-import databroker
 
 camels_github = 'https://github.com/FAU-LAP/NOMAD-CAMELS'
 camels_github_pages = 'https://fau-lap.github.io/NOMAD-CAMELS/'
@@ -43,7 +36,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.button_area_meas = Drop_Scroll_Area(self, 120, 120)
         self.button_area_manual = Drop_Scroll_Area(self, 120, 120)
-        self.meas_widget.layout().addWidget(self.button_area_meas, 2, 0, 1, 3)
+        self.meas_widget.layout().addWidget(self.button_area_meas, 2, 0, 1, 4)
         self.manual_widget.layout().addWidget(self.button_area_manual, 2, 0, 1, 3)
 
         self.setWindowTitle('NOMAD-CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems')
@@ -145,6 +138,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.pushButton_manage_instr.clicked.connect(self.manage_instruments)
         self.pushButton_add_meas.clicked.connect(self.add_measurement_protocol)
+        self.pushButton_import_protocol.clicked.connect(self.import_measurement_protocol)
 
         self.pushButton_stop.clicked.connect(self.stop_protocol)
         self.pushButton_pause.clicked.connect(self.pause_protocol)
@@ -158,7 +152,21 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
 
 
-        # bluesky
+        # self.show()
+        self.adjustSize()
+
+        self.run_engine = None
+        self.databroker_catalog = None
+        self.still_running = False
+        self.re_subs = []
+        self.protocol_module = None
+        self.protocol_savepath = ''
+        self.running_protocol = None
+
+    def bluesky_setup(self):
+        from bluesky import RunEngine
+        from bluesky.callbacks.best_effort import BestEffortCallback
+        import databroker
         self.run_engine = RunEngine()
         bec = BestEffortCallback()
         self.run_engine.subscribe(bec)
@@ -175,9 +183,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_module = None
         self.protocol_savepath = ''
         self.running_protocol = None
-
-        # self.show()
-        self.adjustSize()
 
     def with_or_without_instruments(self):
         """ """
@@ -213,7 +218,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         window :
-            
+
 
         Returns
         -------
@@ -228,7 +233,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         plot :
-            
+
 
         Returns
         -------
@@ -259,7 +264,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         a0 :
-            
+
 
         Returns
         -------
@@ -339,7 +344,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def edit_user_info(self):
         """Calls dialog for user-information when
         pushButton_editUserInfo is clicked.
-        
+
         The opened AddRemoveDialoge contains columns for Name, E-Mail,
         Affiliation, Address, ORCID and Phone of the user.
         If the dialog is canceled, nothing is changed, otherwise the new
@@ -419,7 +424,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def edit_sample_info(self):
         """Calls dialog for user-information when
         pushButton_editSampleInfo is clicked.
-        
+
         The opened AddRemoveDialoge contains columns for Name,
         Identifier, and Preparation-Info.
         If the dialog is canceled, nothing is changed, otherwise the new
@@ -580,6 +585,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def change_catalog_name(self):
         """ """
+        if not hasattr(self, 'databroker_catalog') or not self.databroker_catalog:
+            return
+        import databroker
         if 'meas_files_path' in self.preferences:
             catalog_name = 'CATALOG_NAME'
             if 'databroker_catalog_name' in self.preferences:
@@ -714,7 +722,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         preset :
-            
+
 
         Returns
         -------
@@ -732,7 +740,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         preset :
-            
+
 
         Returns
         -------
@@ -797,7 +805,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         order :
-            
+
 
         Returns
         -------
@@ -821,7 +829,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         control_data :
-            
+
 
         Returns
         -------
@@ -837,7 +845,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         control_name :
-            
+
 
         Returns
         -------
@@ -854,9 +862,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         control_data :
-            
+
         old_name :
-            
+
 
         Returns
         -------
@@ -873,7 +881,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         control_name :
-            
+
 
         Returns
         -------
@@ -892,7 +900,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         name :
-            
+
 
         Returns
         -------
@@ -909,9 +917,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         button :
-            
+
         name :
-            
+
 
         Returns
         -------
@@ -938,7 +946,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         name :
-            
+
 
         Returns
         -------
@@ -959,9 +967,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         control :
-            
+
         name :
-            
+
 
         Returns
         -------
@@ -979,7 +987,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         order :
-            
+
 
         Returns
         -------
@@ -995,13 +1003,30 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         dialog.accepted.connect(self.add_prot_to_data)
         self.add_to_open_windows(dialog)
 
+    def import_measurement_protocol(self):
+        from nomad_camels.frontpanels.protocol_config import Protocol_Config
+        from nomad_camels.ui_widgets.path_button_edit import Path_Button_Dialog
+        dialog = Path_Button_Dialog(self,
+                                    default_dir=self.preferences['py_files_path'],
+                                    file_extension='*.cprot',
+                                    title='Choose Protocol - NOMAD-CAMELS',
+                                    text='select the protocol you want to import')
+        if not dialog.exec():
+            return
+        prot_path = dialog.path
+        prot = load_save_functions.load_protocol(prot_path)
+        dialog = Protocol_Config(prot)
+        dialog.show()
+        dialog.accepted.connect(self.add_prot_to_data)
+        self.add_to_open_windows(dialog)
+
     def add_prot_to_data(self, protocol):
         """
 
         Parameters
         ----------
         protocol :
-            
+
 
         Returns
         -------
@@ -1017,7 +1042,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         prot_name :
-            
+
 
         Returns
         -------
@@ -1034,9 +1059,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         protocol :
-            
+
         old_name :
-            
+
 
         Returns
         -------
@@ -1053,7 +1078,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         prot_name :
-            
+
 
         Returns
         -------
@@ -1071,7 +1096,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         name :
-            
+
 
         Returns
         -------
@@ -1087,9 +1112,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         button :
-            
+
         name :
-            
+
 
         Returns
         -------
@@ -1123,6 +1148,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         `protocol_finished` is called, this function will wait for it and then
         handle the upload.
         """
+        self.setCursor(Qt.WaitCursor)
+        import importlib, bluesky, ophyd, time
+        if not self.run_engine:
+            self.bluesky_setup()
         self.still_running = True
         from nomad_camels.utility import device_handling
         if 'autosave_run' in self.preferences and self.preferences['autosave_run']:
@@ -1130,7 +1159,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.button_area_meas.disable_run_buttons()
         try:
             self.build_protocol(protocol_name, ask_file=False)
-            self.setCursor(Qt.WaitCursor)
             protocol = self.protocols_dict[protocol_name]
             path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
             name = os.path.basename(path)[:-3]
@@ -1173,14 +1201,25 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             return
         while self.still_running:
             time.sleep(0.1)
+        if self.nomad_sample:
+            if 'name' in self.nomad_sample:
+                name = f"/{self.nomad_sample['name']}"
+            elif 'Name' in self.nomad_sample:
+                name = f"/{self.nomad_sample['Name']}"
+            else:
+                name = ''
+        else:
+            name = f'/{self.active_sample}'
         if self.comboBox_upload_type.currentText() == 'auto upload':
             from nomad_camels.nomad_integration import nomad_communication
             upload = self.comboBox_upload_choice.currentText()
             nomad_communication.upload_file(self.protocol_savepath, upload,
+                                            f'CAMELS_data{name}',
                                             parent=self)
         elif self.comboBox_upload_type.currentText() == 'ask after run':
             from nomad_camels.nomad_integration import file_uploading
-            dialog = file_uploading.UploadDialog(self, self.protocol_savepath)
+            dialog = file_uploading.UploadDialog(self, self.protocol_savepath,
+                                                 f'CAMELS_data{name}')
 
 
 
@@ -1190,7 +1229,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         dictionary :
-            
+
 
         Returns
         -------
@@ -1228,7 +1267,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         *args :
-            
+
 
         Returns
         -------
@@ -1262,7 +1301,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         protocol_name :
-            
+
         ask_file :
              (Default value = True)
 
@@ -1313,7 +1352,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Parameters
         ----------
         protocol_name :
-            
+
 
         Returns
         -------

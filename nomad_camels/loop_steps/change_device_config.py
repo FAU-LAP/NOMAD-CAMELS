@@ -94,7 +94,13 @@ class Change_DeviceConf_Config(Loop_Step_Config):
                                                           settings_dict=settings,
                                                           config_dict=config)
         except AttributeError:
-            config_widge = Device_Config_Sub(parent=self)
+            try:
+                widge = py_package.subclass_config(parent=self,
+                                                   settings_dict=settings,
+                                                   config_dict=config)
+                config_widge = widge.sub_widget
+            except AttributeError:
+                config_widge = Device_Config_Sub(parent=self)
         self.layout().replaceWidget(self.config_widget, config_widge)
         self.config_widget.deleteLater()
         self.config_widget = config_widge

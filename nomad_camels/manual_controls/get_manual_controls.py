@@ -7,9 +7,12 @@ from PySide6.QtCore import Qt
 
 from nomad_camels.utility import variables_handling
 from nomad_camels.manual_controls.stage_control import stage_control
+from nomad_camels.manual_controls.set_panel import set_panel
 
 manual_controls = {'Stage_Control': [stage_control.Stage_Control,
-                                     stage_control.Stage_Control_Config]}
+                                     stage_control.Stage_Control_Config],
+                   'Set_Panel': [set_panel.Set_Panel,
+                                 set_panel.Set_Panel_Config]}
 
 
 class New_Manual_Control_Dialog(QDialog):

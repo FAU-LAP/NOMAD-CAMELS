@@ -56,7 +56,9 @@ class Run_Subprotocol(Loop_Step):
         protocol_string += f'{tabs}{prot_name}_mod.protocol_step_information["protocol_stepper_signal"] = protocol_step_information["protocol_stepper_signal"]\n'
         protocol_string += f'{tabs}{prot_name}_mod.protocol_step_information["total_protocol_steps"] = {self.time_weight}\n'
         for i, var in enumerate(self.vars_in['Variable']):
+            protocol_string += f'{tabs}{prot_name}_mod.{var} = eva.eval("{self.vars_in["Value"][i]}")\n'
             protocol_string += f'{tabs}{prot_name}_mod.namespace["{var}"] = eva.eval("{self.vars_in["Value"][i]}")\n'
+        protocol_string += f'{tabs}{prot_name}_eva = Evaluator(namespace={prot_name}_mod.namespace)\n'
         stream = prot_name
         if self.data_output == 'main stream':
             stream = 'primary'
@@ -94,7 +96,7 @@ class Run_Subprotocol(Loop_Step):
             if self.data_output == 'main stream':
                 stream = '"primary"'
             add_main_string += builder_helper_functions.get_plot_add_string(prot_name, stream, True)
-        add_main_string += f'\treturner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE)\n'
+        add_main_string += f'\treturner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs)\n'
         return add_main_string
 
     def update_used_devices(self):
@@ -137,7 +139,7 @@ class Run_Subprotocol_Config(Loop_Step_Config):
 
         label_data = QLabel('Data Output:')
         self.comboBox_data_output = QComboBox()
-        output_types = ['sub-stream', 'main stream', 'own file']
+        output_types = ['sub-stream', 'main stream']  # , 'own file']
         self.comboBox_data_output.addItems(output_types)
         self.comboBox_data_output.setCurrentText(loop_step.data_output)
 

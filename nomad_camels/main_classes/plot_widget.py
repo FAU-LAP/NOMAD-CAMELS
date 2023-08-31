@@ -132,7 +132,8 @@ class PlotWidget(QWidget):
     def __init__(self, x_name, y_names, *, legend_keys=None, xlim=None,
                  ylim=None, epoch='run', parent=None, namespace=None, ylabel='',
                  xlabel='', title='', stream_name='primary', fits=None,
-                 do_plot=True, multi_stream=False, y_axes=None, **kwargs):
+                 do_plot=True, multi_stream=False, y_axes=None,
+                 logX=False, logY=False, logY2=False, **kwargs):
         super().__init__(parent=parent)
         canvas = MPLwidget()
         if isinstance(y_names, str):
@@ -235,6 +236,10 @@ class PlotWidget(QWidget):
         self.options_open = False
         if do_plot:
             self.show()
+            self.plot_options.checkBox_log_x.setChecked(logX)
+            self.plot_options.checkBox_log_y.setChecked(logY)
+            self.plot_options.checkBox_log_y2.setChecked(logY2)
+            self.plot_options.set_log()
         place_widget(self)
 
     def change_maxlen(self):
@@ -865,7 +870,8 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.checkBox_use_abs_y2.setEnabled(y2)
         self.ax.set_xscale(x_scale)
         self.ax.set_yscale(y_scale)
-        self.ax2.set_yscale(y2_scale)
+        if self.ax2:
+            self.ax2.set_yscale(y2_scale)
         self.livePlot.use_abs = {'x': self.checkBox_use_abs_x.isChecked() and x,
                                  'y': self.checkBox_use_abs_y.isChecked() and y,
                                  'y2': self.checkBox_use_abs_y2.isChecked() and y2}
@@ -1139,13 +1145,16 @@ class MultiLivePlot(LivePlot, QObject):
             ydat = np.abs(self.y_data[y]) if self.use_abs['y'] else self.y_data[y]
             line.set_data(xdat, ydat)
         # Rescale and redraw.
-        self.ax.relim(visible_only=True)
-        self.ax.autoscale_view(tight=True)
-        if self.ax2:
-            self.ax2.relim(visible_only=True)
-            self.ax2.autoscale_view(tight=True)
-        self.ax.figure.canvas.draw_idle()
-        self.new_data.emit(None)
+        try:
+            self.ax.relim(visible_only=True)
+            self.ax.autoscale_view(tight=True)
+            if self.ax2:
+                self.ax2.relim(visible_only=True)
+                self.ax2.autoscale_view(tight=True)
+            self.ax.figure.canvas.draw_idle()
+            self.new_data.emit(None)
+        except:
+            pass
 
     def stop(self, doc):
         """

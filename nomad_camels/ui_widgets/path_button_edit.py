@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QWidget, QGridLayout, QPushButton, QLineEdit, QFileDialog, QStyle, QApplication
-from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QWidget, QGridLayout, QPushButton, QLineEdit, QFileDialog, QStyle, QApplication, QDialog, QLabel, QDialogButtonBox
+from PySide6.QtCore import Signal, Qt
 
 import os
 
@@ -79,3 +79,36 @@ class Path_Button_Edit(QWidget):
     def changed(self):
         """ """
         self.path_changed.emit(self.get_path())
+
+
+class Path_Button_Dialog(QDialog):
+    def __init__(self, parent=None, path='', default_dir='', file_extension='',
+                 select_directory=False, save_file=False, title='', text=''):
+        super().__init__(parent)
+        layout = QGridLayout()
+        self.setLayout(layout)
+
+        if text:
+            label = QLabel(text)
+            layout.addWidget(label, 0, 0)
+        self.pathEdit = Path_Button_Edit(self, path, default_dir, file_extension, select_directory, save_file)
+        layout.addWidget(self.pathEdit, 1, 0)
+        if title:
+            self.setWindowTitle(title)
+
+        self.buttonBox = QDialogButtonBox(self)
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+
+        self.buttonBox.rejected.connect(self.reject)
+        self.buttonBox.accepted.connect(self.accept)
+        layout.addWidget(self.buttonBox, 2, 0)
+
+        self.path = ''
+
+    def accept(self) -> None:
+        self.path = self.pathEdit.get_path()
+        super().accept()
+
+

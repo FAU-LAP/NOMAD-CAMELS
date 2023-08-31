@@ -66,7 +66,7 @@ def ensure_login(parent=None):
     global nomad_url
     if 'NOMAD_URL' in variables_handling.preferences:
         url = variables_handling.preferences['NOMAD_URL']
-        if url and url != nomad_url:
+        if url and url != nomad_url and nomad_url != central_url:
             nomad_url = url
             logout_of_nomad()
     if '/gui/' in nomad_url:

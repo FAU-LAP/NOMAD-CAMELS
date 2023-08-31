@@ -1,6 +1,6 @@
 import time
 import numpy as np
-from PySide6.QtWidgets import QCheckBox, QComboBox, QLabel, QWidget, QGridLayout, QStyle, QLineEdit
+from PySide6.QtWidgets import QCheckBox, QComboBox, QLabel, QWidget, QGridLayout, QStyle
 from PySide6.QtCore import QThread, Signal, Qt
 from PySide6.QtGui import QKeyEvent
 
@@ -85,8 +85,8 @@ class Stage_Control(Manual_Control, Ui_Form):
         ax_names = ['X', 'Y', 'Z']
         set_channels = []
         read_channels = []
-        ref_channels = []
-        stop_channels = []
+        ref_functions = []
+        stop_functions = []
         for i, use in enumerate(control_data['use_axis']):
             ax = ax_names[i]
             for j, name in enumerate(self.line_names):
@@ -98,26 +98,26 @@ class Stage_Control(Manual_Control, Ui_Form):
             if not use:
                 set_channels.append('None')
                 read_channels.append('None')
-                ref_channels.append('None')
-                stop_channels.append('None')
+                ref_functions.append('None')
+                stop_functions.append('None')
                 continue
             set_channels.append(control_data['axis_channel'][i])
             if control_data['read_axis'][i]:
                 read_channels.append(control_data['read_channel'][i])
             else:
                 read_channels.append('None')
-            ref_channels.append(control_data['axis_ref'][i])
-            stop_channels.append(control_data['axis_stop'][i])
+            ref_functions.append(control_data['axis_ref'][i])
+            stop_functions.append(control_data['axis_stop'][i])
 
-        channels = set(stop_channels + ref_channels + read_channels + set_channels)
+        channels = set(read_channels + set_channels)
         if 'None' in channels:
             channels.remove('None')
         channels = list(channels)
         self.device_list, _ = device_handling.start_devices_from_channel_list(channels)
         self.set_channels = device_handling.get_channels_from_string_list(set_channels)
         self.read_channels = device_handling.get_channels_from_string_list(read_channels)
-        self.ref_channels = device_handling.get_channels_from_string_list(ref_channels)
-        self.stop_channels = device_handling.get_channels_from_string_list(stop_channels)
+        self.ref_funcs = device_handling.get_functions_from_string_list(ref_functions)
+        self.stop_funcs = device_handling.get_functions_from_string_list(stop_functions)
 
         read_not_none = False
         for channel in self.read_channels:
@@ -230,14 +230,15 @@ class Stage_Control(Manual_Control, Ui_Form):
     def reference_drive(self):
         """ """
         checks = [self.checkBox_refX, self.checkBox_refY, self.checkBox_refZ]
-        for i, channel in self.ref_channels:
-            if checks[i].isChecked():
-                channel.put(self.control_data['ref_vals'][i])
+        for i, func in enumerate(self.ref_funcs):
+            if checks[i].isChecked() and func:
+                func()
 
     def stop_moving(self):
         """ """
-        for i, channel in self.stop_channels:
-            channel.put(self.control_data['stop_vals'][i])
+        for func in self.stop_funcs:
+            if func:
+                func()
 
     def input_position(self):
         """ """
@@ -419,10 +420,11 @@ class Stage_Control_Config(Manual_Control_Config):
         self.read_checkboxes = []
         self.read_combos = []
         self.ref_combos = []
-        self.ref_vals = []
+        # self.ref_vals = []
         self.stop_combos = []
-        self.stop_vals = []
+        # self.stop_vals = []
         outputs = variables_handling.get_output_channels()
+        functions = variables_handling.get_non_channel_functions()
         channels = list(variables_handling.channels.keys())
         help_widge = QWidget()
         layout = QGridLayout()
@@ -462,37 +464,37 @@ class Stage_Control_Config(Manual_Control_Config):
             layout.addWidget(label, 10+i, 0)
 
             ref_combo = QComboBox()
-            ref_combo.addItems(outputs + ['None'])
-            if 'axis_ref' in control_data and control_data['axis_ref'][i] in outputs:
+            ref_combo.addItems(functions + ['None'])
+            if 'axis_ref' in control_data and control_data['axis_ref'][i] in functions:
                 ref_combo.setCurrentText(control_data['axis_ref'][i])
             else:
                 ref_combo.setCurrentText('None')
             self.ref_combos.append(ref_combo)
-            layout.addWidget(ref_combo, 10+i, 1)
+            layout.addWidget(ref_combo, 10+i, 1, 1, 2)
 
-            ref_val = QLineEdit()
-            if 'ref_vals' in control_data and control_data['ref_vals']:
-                ref_val.setText(control_data['ref_vals'][i])
-            self.ref_vals.append(ref_val)
-            layout.addWidget(ref_val, 10+i, 2)
+            # ref_val = QLineEdit()
+            # if 'ref_vals' in control_data and control_data['ref_vals']:
+            #     ref_val.setText(control_data['ref_vals'][i])
+            # self.ref_vals.append(ref_val)
+            # layout.addWidget(ref_val, 10+i, 2)
 
             label = QLabel(f'stop function {ax}:')
             layout.addWidget(label, 10+i, 3)
 
             stop_combo = QComboBox()
-            stop_combo.addItems(outputs + ['None'])
-            if 'axis_stop' in control_data and control_data['axis_stop'][i] in outputs:
+            stop_combo.addItems(functions + ['None'])
+            if 'axis_stop' in control_data and control_data['axis_stop'][i] in functions:
                 stop_combo.setCurrentText(control_data['axis_stop'][i])
             else:
                 stop_combo.setCurrentText('None')
             self.stop_combos.append(stop_combo)
-            layout.addWidget(stop_combo, 10+i, 4)
+            layout.addWidget(stop_combo, 10+i, 4, 1, 2)
 
-            stop_val = QLineEdit()
-            if 'stop_vals' in control_data and control_data['stop_vals']:
-                stop_val.setText(control_data['stop_vals'][i])
-            self.stop_vals.append(stop_val)
-            layout.addWidget(stop_val, 10+i, 5)
+            # stop_val = QLineEdit()
+            # if 'stop_vals' in control_data and control_data['stop_vals']:
+            #     stop_val.setText(control_data['stop_vals'][i])
+            # self.stop_vals.append(stop_val)
+            # layout.addWidget(stop_val, 10+i, 5)
 
             axis_box.clicked.connect(self.change_usage)
             read_box.clicked.connect(self.change_usage)
@@ -508,9 +510,9 @@ class Stage_Control_Config(Manual_Control_Config):
             self.read_checkboxes[i].setEnabled(able)
             self.read_combos[i].setEnabled(able and readback)
             self.ref_combos[i].setEnabled(able)
-            self.ref_vals[i].setEnabled(able)
+            # self.ref_vals[i].setEnabled(able)
             self.stop_combos[i].setEnabled(able)
-            self.stop_vals[i].setEnabled(able)
+            # self.stop_vals[i].setEnabled(able)
 
     def accept(self):
         """ """
@@ -519,17 +521,16 @@ class Stage_Control_Config(Manual_Control_Config):
         self.control_data['read_axis'] = []
         self.control_data['read_channel'] = []
         self.control_data['axis_ref'] = []
-        self.control_data['ref_vals'] = []
+        # self.control_data['ref_vals'] = []
         self.control_data['axis_stop'] = []
-        self.control_data['stop_vals'] = []
+        # self.control_data['stop_vals'] = []
         for i in range(3):
             self.control_data['use_axis'].append(self.axis_checkboxes[i].isChecked())
             self.control_data['axis_channel'].append(self.channels_combos[i].currentText())
             self.control_data['read_axis'].append(self.read_checkboxes[i].isChecked())
             self.control_data['read_channel'].append(self.read_combos[i].currentText())
-            self.control_data['ref_vals'].append(self.ref_vals[i].text())
+            # self.control_data['ref_vals'].append(self.ref_vals[i].text())
             self.control_data['axis_ref'].append(self.ref_combos[i].currentText())
-            self.control_data['stop_vals'].append(self.stop_vals[i].text())
+            # self.control_data['stop_vals'].append(self.stop_vals[i].text())
             self.control_data['axis_stop'].append(self.stop_combos[i].currentText())
         super().accept()
-

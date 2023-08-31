@@ -28,7 +28,9 @@ import copy
 import pathlib
 
 local_packages = {}
+local_package_paths = {}
 running_devices = {}
+from_manual_controls = []
 last_path = ''
 
 def load_local_packages(tell_local=False):
@@ -69,6 +71,22 @@ def load_local_packages(tell_local=False):
                     local_packages[f'local {device.name}'] = package
                 else:
                     local_packages[device.name] = package
+                local_package_paths[device.name] = str(f.parent)
+            except Exception as e:
+                print(f, e)
+    for f in pathlib.Path('manual_controls').resolve().rglob('*'):
+        match = re.match(r'^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$', f.name)
+        if match:
+            try:
+                sys.path.append(str(f.parent))
+                package = importlib.import_module(f'.{match.group(2)}', match.group(0))
+                device = package.subclass()
+                if tell_local:
+                    local_packages[f'local {device.name}'] = package
+                else:
+                    local_packages[device.name] = package
+                local_package_paths[device.name] = str(f.parent)
+                from_manual_controls.append(device.name)
             except Exception as e:
                 print(f, e)
     return local_packages
@@ -95,7 +113,14 @@ def get_channel_from_string(channel):
     device = running_devices[dev]
     return getattr(device, chan)
 
-def get_channels_from_string_list(channel_list):
+def get_funtion_from_string(func_name):
+    dev, func = func_name.split('.')
+    if dev not in running_devices:
+        raise Exception(f'Device {dev} is needed, but not yet instantiated!')
+    device = running_devices[dev]
+    return getattr(device, func)
+
+def get_channels_from_string_list(channel_list, as_dict=False):
     """
     Goes through the given channel_list and if they are valid channels in
     CAMELS, their ophyd representation is called by `get_channel_from_string`.
@@ -105,13 +130,22 @@ def get_channels_from_string_list(channel_list):
     channel_list : list[str]
         List of the channels in CAMELS-representation
         (i.e. "<device_name>_<channel_name>")
+    as_dict : bool
+        (Default value = False)
+        if True, the returned channels will be a dictionary with the original
+        list serving as keys
 
     Returns
     -------
-    list[ophyd.Signal]
-        A list of the ophyd representations of `channel_list`
+    list[ophyd.Signal], dict
+        A list of the ophyd representations of `channel_list`.
+        If `as_dict` is True, it is a dictionary with the shape
+        {'channel_name': ophyd.Signal}
     """
-    channels = []
+    if as_dict:
+        channels = {}
+    else:
+        channels = []
     for channel in channel_list:
         chan = channel
         if chan == 'None':
@@ -119,8 +153,20 @@ def get_channels_from_string_list(channel_list):
             continue
         if channel in variables_handling.channels:
             chan = variables_handling.channels[channel]
-        channels.append(get_channel_from_string(chan.name))
+        if as_dict:
+            channels[channel] = get_channel_from_string(chan.name)
+        else:
+            channels.append(get_channel_from_string(chan.name))
     return channels
+
+def get_functions_from_string_list(func_list):
+    funcs = []
+    for func in func_list:
+        if func == 'None':
+            funcs.append(None)
+            continue
+        funcs.append(get_funtion_from_string(func))
+    return funcs
 
 def start_devices_from_channel_list(channel_list):
     """

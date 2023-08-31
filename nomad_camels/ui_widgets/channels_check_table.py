@@ -250,3 +250,130 @@ class Channels_Check_Table(QWidget):
                     item.setToolTip(metadata)
             n += 1
         self.tableWidget_channels.resizeColumnsToContents()
+
+
+class Call_Functions_Table(QWidget):
+    def __init__(self, parent=None, headerLabels=None,
+                 info_dict=None, title='', functions=None):
+        super().__init__(parent)
+        self.functions = functions or variables_handling.get_non_channel_functions()
+        self.headerLabels = headerLabels or []
+        self.info_dict = info_dict or {}
+        if 'functions' not in self.info_dict:
+            self.info_dict['functions'] = []
+
+        layout = QGridLayout()
+        self.tableWidget_functions = QTableWidget()
+        self.tableWidget_functions.setHorizontalHeaderLabels(self.headerLabels)
+        label_search = QLabel('Search:')
+        self.tableWidget_functions.clicked.connect(self.tableWidget_functions.resizeColumnsToContents)
+        self.lineEdit_search = QLineEdit()
+        self.lineEdit_search.textChanged.connect(self.change_search)
+
+        self.setLayout(layout)
+        if title:
+            title_label = QLabel(title)
+            layout.addWidget(title_label, 0, 0, 1, 2)
+            font = QFont()
+            font.setBold(True)
+            title_label.setStyleSheet('font-size: 9pt')
+            title_label.setFont(font)
+        layout.addWidget(label_search, 1, 0)
+        layout.addWidget(self.lineEdit_search, 1, 1)
+        layout.addWidget(self.tableWidget_functions, 2, 0, 1, 2)
+        layout.setContentsMargins(0,0,0,0)
+        self.build_table()
+        self.tableWidget_functions.clicked.connect(self.check_change)
+
+
+    def check_change(self, pos):
+        """ """
+        c = pos.column()
+        if c != 0:
+            return
+        r = pos.row()
+        item = self.tableWidget_functions.item(r, c)
+        if item.checkState() != Qt.CheckState.Unchecked:
+            color = variables_handling.get_color('blue')
+        else:
+            color = variables_handling.get_color('white')
+        item.setBackground(QBrush(color))
+        self.tableWidget_functions.item(r, c + 1).setBackground(QBrush(color))
+
+    def change_search(self):
+        """ """
+        self.update_info()
+        self.build_table()
+
+    def get_info(self):
+        """ """
+        self.update_info()
+        return self.info_dict
+
+    def update_info(self):
+        """ """
+        func_list = self.info_dict['functions']
+        for k in self.info_dict:
+            if k != 'functions':
+                self.info_dict[k].clear()
+        for i in range(self.tableWidget_functions.rowCount()):
+            name = self.tableWidget_functions.item(i, 1).text()
+            if name not in func_list and self.tableWidget_functions.item(i, 0).checkState() != Qt.CheckState.Unchecked:
+                func_list.append(name)
+            elif name in func_list and self.tableWidget_functions.item(i, 0).checkState() == Qt.CheckState.Unchecked:
+                func_list.remove(name)
+            if name in func_list:
+                n = func_list.index(name)
+                # for j, lab in enumerate(self.headerLabels[2:]):
+                #     while len(self.info_dict[lab]) < n+1:
+                #         self.info_dict[lab].append(None)
+                #     item = self.tableWidget_functions.item(i, 2 + j)
+                #     t = item.text()
+                #     if not t:
+                #         raise Exception(f'You need to enter a value for channel {name}!')
+                #     self.info_dict[lab][n] = t
+        rems = []
+        for func in func_list:
+            if func not in self.functions:
+                rems.append(func)
+        for func in rems:
+            func_list.remove(func)
+
+
+
+    def build_table(self):
+        """ """
+        self.tableWidget_functions.clear()
+        self.tableWidget_functions.setColumnCount(len(self.headerLabels))
+        self.tableWidget_functions.setRowCount(0)
+        self.tableWidget_functions.setHorizontalHeaderLabels(self.headerLabels)
+        searchtext = self.lineEdit_search.text()
+        func_list = self.info_dict['functions']
+        n = 0
+        for i, func in enumerate(sorted(self.functions, key=lambda x: x.lower())):
+            if searchtext.lower() not in func.lower() or not isinstance(self.functions, list):
+                continue
+            self.tableWidget_functions.setRowCount(n + 1)
+            item = QTableWidgetItem()
+            item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+            if func in func_list:
+                item.setCheckState(Qt.CheckState.Checked)
+            else:
+                item.setCheckState(Qt.CheckState.Unchecked)
+            self.tableWidget_functions.setItem(n, 0, item)
+            item = QTableWidgetItem(func)
+            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+            self.tableWidget_functions.setItem(n, 1, item)
+            pos = self.tableWidget_functions.model().createIndex(n, 0)
+            self.check_change(pos)
+            vals = []
+            if func in self.info_dict['functions']:
+                n_chan = self.info_dict['functions'].index(func)
+                for lab in self.headerLabels[2:]:
+                    vals.append(str(self.info_dict[lab][n_chan]))
+            for j in range(len(self.headerLabels[2:])):
+                item = QTableWidgetItem(vals[j] if vals else '')
+                self.tableWidget_functions.setItem(n, j + 2, item)
+            n += 1
+        self.tableWidget_functions.resizeColumnsToContents()
+

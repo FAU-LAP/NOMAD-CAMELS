@@ -47,6 +47,7 @@ import pathlib
 from nomad_camels.utility import variables_handling, load_save_functions
 
 from nomad_camels.bluesky_handling.builder_helper_functions import plot_creator
+from nomad_camels.utility import device_handling
 
 
 # The default string in the beginning of the protocol including imports etc.
@@ -91,7 +92,7 @@ standard_start_string += '\tRE.subscribe(bec)\n'
 standard_start_string2 = '\t\tplot_etc = create_plots(RE)\n'
 standard_start_string2 += '\t\tadditional_step_data = steps_add_main(RE, devs)\n'
 standard_start_string2 += '\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md)\n'
-standard_start_string3 = 'if __name__ == "__main__":\n'
+standard_start_string3 = '\n\n\nif __name__ == "__main__":\n'
 standard_start_string3 += '\tmain()\n'
 # standard_start_string3 += '\tapp = QCoreApplication.instance()\n'
 standard_start_string3 += '\tprint("protocol finished!")\n'
@@ -150,7 +151,7 @@ def build_protocol(protocol, file_path,
 
     # beginning of larger strings
     device_import_string = '\n'
-    devices_string = '\t\tdevs = {}\n\t\tdevice_config = {}\n'
+    devices_string = ''
     variable_string = '\nnamespace = {}\n'
     variable_string += 'all_fits = {}\n'
     variable_string += 'plots = []\n'
@@ -161,7 +162,9 @@ def build_protocol(protocol, file_path,
     variable_string += f'export_to_csv = {protocol.export_csv}\n'
     variable_string += f'export_to_json={protocol.export_json}\n'
     additional_string_devices = ''
-    final_string = ''
+    final_string = '\t\tfor name, device in devs.items():\n'
+    final_string += '\t\t\tif hasattr(device, "finalize_steps") and callable(device.finalize_steps):\n'
+    final_string += '\t\t\t\tdevice.finalize_steps()\n'
 
     # now all the variables of the protocol are added to the namespace
     # this includes also the variables of steps such as a foor-loop
@@ -230,9 +233,10 @@ def build_protocol(protocol, file_path,
         devices_string += f'\t\tdevice_config["{dev}"].update(settings)\n'
         devices_string += f'\t\tdevice_config["{dev}"].update(additional_info)\n'
         devices_string += f'\t\tdevs.update({{"{dev}": {dev}}})\n'
+        if device.name in device_handling.local_packages:
+            device_import_string += f'sys.path.append(r"{device_handling.local_package_paths[device.name]}")\n'
         device_import_string += f'from nomad_camels_driver_{device.name}.{device.name}_ophyd import {classname}\n'
         additional_string_devices += device.get_additional_string()
-        final_string += device.get_finalize_steps()
 
     # finishing up the device initialization
     devices_string += '\t\tprint("devices connected")\n'
@@ -292,13 +296,13 @@ def build_protocol(protocol, file_path,
         nexus_dict = protocol.get_nexus_paths()
         nexus_dict.update(standard_nexus_dict)
         standard_save_string += '\t\t\tdata = broker_to_dict(runs)\n'
-        standard_save_string += f'\t\t\tnexus_mapper = {nexus_dict}\n'
+        standard_save_string += f'\t\t\tnexus_mapper = {nexus_dict}\n\n'
         # TODO finish this
     else:
         standard_save_string += f'\t\t\tbroker_to_NX(runs, save_path, plots,' \
                                 f'session_name=session_name,' \
                                 f'export_to_csv=export_to_csv,' \
-                                f'export_to_json=export_to_json)\n\n\n'
+                                f'export_to_json=export_to_json)\n\n'
 
     protocol_string += standard_start_string
 
@@ -317,7 +321,7 @@ def build_protocol(protocol, file_path,
     protocol_string += '\tprotocol_step_information["protocol_stepper_signal"] = tqdm_bar\n'
 
     # all the devices and the actual run are in a try-block
-    protocol_string += '\ttry:\n'
+    protocol_string += '\tdevs = {}\n\tdevice_config = {}\n\ttry:\n'
     protocol_string += devices_string
     protocol_string += standard_start_string2
     # protocol_string += '\tfinally:\n'

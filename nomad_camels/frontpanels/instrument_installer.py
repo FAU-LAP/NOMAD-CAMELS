@@ -311,7 +311,6 @@ class Install_Thread(QThread):
     def run(self):
         """ """
         n = len(self.devs)
-        path = os.path.dirname(sys.executable)
         for i, dev in enumerate(self.devs):
             self.val_step.emit(i / n * 100)
             if self.uninstall:

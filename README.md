@@ -16,6 +16,50 @@ NOMAD-CAMELS is a configurable measurement software, targeted towards the requir
 For more information and documentation visit [this page](https://fau-lap.github.io/NOMAD-CAMELS/).
 
 # Changelog
+## 0.2.0
+Major new feature:
+- Callable functions of instruments, that are not channels
+
+Minor features:
+- Reference drive and stop of stage control are now callable functions
+
+Quality of life:
+- startup speed increased, but first run of protocol now slowed down
+- added plot all available channels as possibility for List-Plot
+- improved layout of set-panel
+
+Fixes:
+- Can now set log scale when using only one y-axis
+- now using settings of log-scale from definition window at startup of plot
+
+## 0.1.9
+New features:
+- Retry on error for VISA-devices
+- Set_Panel added as a new manual control, this may be used to easily control channels that often have to be set to certain values in preparation of an experiment
+
+Quality of life:
+- waiting cursor when adding instrument and it takes some time
+
+Fixes:
+- Now the For-Loop (and children of it) display the "start - min - max - stop" preview correctly
+- import of instruments should now work correctly when running protocol outside the UI
+- int in instrument config is now saved as int
+- pyvisa added to requirements to support local drivers
+
+## 0.1.8
+Fixes:
+- finalize steps of instruments are now being called
+- fixed issue with handing variables to subprotocol
+- fixed update function for Windows, function for Unix/Mac not tested
+
+## 0.1.7
+Added functionalities:
+- Added functionality to import protocols
+
+Fixes:
+- Fixed error message appearing when closing List-Plot
+- Fixed login for central NOMAD
+- fixed comment/uncomment of steps being saved correctly
 
 ## 0.1.6
 Added functionalities:

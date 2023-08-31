@@ -40,7 +40,8 @@ class Device:
     """
 
     def __init__(self, name='', virtual=False, tags=None, ophyd_device=None,
-                 ophyd_class_name='', additional_info=None, **kwargs):
+                 ophyd_class_name='', additional_info=None,
+                 non_channel_functions=None, **kwargs):
         """
         Parameters
         ----------
@@ -67,6 +68,7 @@ class Device:
         self.config = {}
         self.passive_config = {}
         self.channels = {}
+        self.non_channel_functions = non_channel_functions or []
         self.ophyd_class_name = ophyd_class_name
         if ophyd_device is None:
             ophyd_device = OphydDevice
@@ -99,6 +101,12 @@ class Device:
         """
         return self.controls
 
+    def get_non_channel_functions(self):
+        funcs = []
+        for func in self.non_channel_functions:
+            funcs.append(f'{self.custom_name}.{func}')
+        return funcs
+
     def get_finalize_steps(self):
         """Returns the string used in the 'finally' part of the protocol's main
         function to e.g. close the instrument communication.
@@ -107,7 +115,9 @@ class Device:
         -------
         step_str : str
         """
-        return ''
+        s = f"\t\tif '{self.custom_name}' in devs and hasattr(devs['{self.custom_name}'], 'finalize_steps') and callable(devs['{self.custom_name}'].finalize_steps):\n"
+        s += f"\t\t\tdevs['{self.custom_name}'].finalize_steps()\n"
+        return s
 
     def get_passive_config(self):
         """Not used."""
@@ -628,13 +638,19 @@ class Local_VISA(Connection_Config):
         self.layout().addWidget(label_out_term, 2, 2)
         self.layout().addWidget(self.lineEdit_out_term, 2, 3)
 
+        label_error_retry = QLabel('Retries on error:')
+        self.lineEdit_error_retry = QLineEdit('0')
+        self.layout().addWidget(label_error_retry, 3, 0)
+        self.layout().addWidget(self.lineEdit_error_retry, 3, 1, 1, 3)
+
     def get_settings(self):
         """ """
         return {'resource_name': self.comboBox_port.currentText(),
                 'baud_rate': int(self.lineEdit_baud.text()),
                 'timeout': int(self.lineEdit_timeout.text()),
                 'read_termination': self.lineEdit_in_term.text().replace('\\r', '\r').replace('\\n', '\n'),
-                'write_termination': self.lineEdit_out_term.text().replace('\\r', '\r').replace('\\n', '\n')}
+                'write_termination': self.lineEdit_out_term.text().replace('\\r', '\r').replace('\\n', '\n'),
+                'retry_on_error': int(self.lineEdit_error_retry.text())}
 
     def load_settings(self, settings_dict):
         """
@@ -660,6 +676,8 @@ class Local_VISA(Connection_Config):
             self.lineEdit_in_term.setText(settings_dict['read_termination'].replace('\r', '\\r').replace('\n', '\\n'))
         if 'write_termination' in settings_dict:
             self.lineEdit_out_term.setText(settings_dict['write_termination'].replace('\r', '\\r').replace('\n', '\\n'))
+        if 'retry_on_error' in settings_dict:
+            self.lineEdit_error_retry.setText(str(settings_dict['retry_on_error']))
 
 
 
@@ -851,7 +869,10 @@ class Simple_Config_Sub(Device_Config_Sub):
         for name, widge in self.setting_strings.items():
             self.settings_dict[name] = widge.text()
         for name, widge in self.setting_floats.items():
-            self.settings_dict[name] = float(widge.text())
+            try:
+                self.settings_dict[name] = int(widge.text())
+            except:
+                self.settings_dict[name] = float(widge.text())
         return super().get_settings()
 
     def get_config(self):
@@ -863,7 +884,10 @@ class Simple_Config_Sub(Device_Config_Sub):
         for name, widge in self.config_strings.items():
             self.config_dict[name] = widge.text()
         for name, widge in self.config_floats.items():
-            self.config_dict[name] = float(widge.text())
+            try:
+                self.config_dict[name] = int(widge.text())
+            except:
+                self.config_dict[name] = float(widge.text())
         return super().get_config()
 
 

@@ -7,7 +7,6 @@ import sys
 import subprocess
 from importlib.metadata import distributions
 import nomad_camels  # has to be imported for the distribution version number!
-import requests
 from nomad_camels.ui_widgets import warn_popup
 
 from PySide6.QtWidgets import QMessageBox
@@ -21,10 +20,46 @@ def get_version():
             return d.version
     return None
 
+def get_latest_version():
+    latest_version = str(subprocess.run([sys.executable, '-m', 'pip', 'install', 'nomad-camels==random'], capture_output=True, text=True))
+    latest_version = latest_version[latest_version.find('(from versions:')+15:]
+    latest_version = latest_version[:latest_version.find(')')]
+    return latest_version.replace(' ','').split(',')[-1]
+
 def update_camels():
     """Calls a subprocess that updates CAMELS via pip."""
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install',
-                           '--no-cache-dir', 'nomad-camels', '--upgrade',])
+    from pathlib import Path
+    from nomad_camels.utility.load_save_functions import appdata_path
+    if sys.platform == 'win32':
+        exe = Path(sys.executable).resolve()
+        if not str(exe)[-5] == 'w':
+            exew = Path(f'{str(exe)[:-4]}w.exe')
+        else:
+            exew = exe
+            exe = Path(f'{str(exew)[:-5]}.exe')
+        s = f'{exe} -m pip install --no-cache-dir nomad-camels --upgrade\n'
+        s += f'{exew} '
+        for a in sys.argv:
+            s += f'{a} '
+        s += '\nexit'
+        f_path = Path(f'{appdata_path}/camels_update.bat')
+        with open(f_path, 'w+') as f:
+            f.write(s)
+        subprocess.Popen(["start", "cmd", "/k", f_path], shell=True)
+        sys.exit()
+    elif sys.platform.startswith('linux') or sys.platform == 'darwin':
+        exe = Path(sys.executable).resolve()
+        s = f'{exe} -m pip install --no-cache-dir nomad-camels --upgrade\n'
+        s += f'{exe} '
+        for a in sys.argv:
+            s += f"'{a}' "
+        f_path = Path(f'{appdata_path}/camels_update.sh')
+        with open(f_path, 'w+') as f:
+            f.write('#!/bin/bash\n')
+            f.write(s)
+        subprocess.check_call(['chmod', '+x', str(f_path)])
+        subprocess.Popen(['x-terminal-emulator', '-e', 'bash', '-c', f_path])
+        sys.exit()
 
 def question_message_box(parent=None):
     """
@@ -41,8 +76,7 @@ def question_message_box(parent=None):
         The parent widget to be used for the message boxes.
     """
     installed_version = get_version()
-    url = f'https://raw.githubusercontent.com/FAU-LAP/NOMAD-CAMELS/development/nomad_camels_version.txt'
-    available_version = requests.get(url).text
+    available_version = get_latest_version()
     if installed_version == available_version:
         warn_popup.WarnPopup(parent,
                              'Your version of NOMAD-CAMELS is already up to date',
@@ -83,8 +117,7 @@ def check_up_to_date():
     """Gets the installed and available version of CAMELS and checks whether
     they are the same. Returns the outcome as a bool."""
     installed_version = get_version()
-    url = f'https://raw.githubusercontent.com/FAU-LAP/NOMAD-CAMELS/development/nomad_camels_version.txt'
-    available_version = requests.get(url).text
+    available_version = get_latest_version()
     return installed_version == available_version
 
 def auto_update(parent):
@@ -103,4 +136,4 @@ def auto_update(parent):
 
 
 if __name__ == '__main__':
-    update_camels()
+    print(get_latest_version())
