@@ -181,6 +181,9 @@ class Live_List(QtAwareCallback, QObject):
                     continue
                 if name not in self.add_items:
                     self.add_to_table(name)
-                self.add_items[name].setText(f'{value:7e}')
+                try:
+                    self.add_items[name].setText(f'{value:7e}')
+                except:
+                    self.add_items[name].setText(str(value))
         self.table.resizeColumnsToContents()
         self.new_data.emit(None)
