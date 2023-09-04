@@ -17,8 +17,12 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 # Changelog
 ## 0.2.1 (in progress)
+Minor features:
+- callable functions for manual move of stage control
+
 Fixes:
 - Fixed bug for showing non-number values / channels in list-plot
+- fixed repeated firing of keyPress/ReleaseEvent in manual control of stage
 
 ## 0.2.0
 Major new feature:

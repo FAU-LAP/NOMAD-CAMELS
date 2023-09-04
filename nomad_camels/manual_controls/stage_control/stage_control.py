@@ -67,7 +67,7 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.check_names = ['find_ref_X', 'find_ref_Y', 'find_ref_Z',
                            'manual_active']
         if 'read_frequ' not in control_data:
-            control_data['read_frequ'] = np.inf
+            control_data['read_frequ'] = 5
         if 'manual_active' not in control_data:
             control_data['manual_active'] = False
 
@@ -87,6 +87,7 @@ class Stage_Control(Manual_Control, Ui_Form):
         read_channels = []
         ref_functions = []
         stop_functions = []
+        manual_functions = []
         for i, use in enumerate(control_data['use_axis']):
             ax = ax_names[i]
             for j, name in enumerate(self.line_names):
@@ -100,6 +101,7 @@ class Stage_Control(Manual_Control, Ui_Form):
                 read_channels.append('None')
                 ref_functions.append('None')
                 stop_functions.append('None')
+                manual_functions.append('None')
                 continue
             set_channels.append(control_data['axis_channel'][i])
             if control_data['read_axis'][i]:
@@ -108,6 +110,7 @@ class Stage_Control(Manual_Control, Ui_Form):
                 read_channels.append('None')
             ref_functions.append(control_data['axis_ref'][i])
             stop_functions.append(control_data['axis_stop'][i])
+            manual_functions.append(control_data['manual_function'][i])
 
         channels = set(read_channels + set_channels)
         if 'None' in channels:
@@ -118,6 +121,7 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.read_channels = device_handling.get_channels_from_string_list(read_channels)
         self.ref_funcs = device_handling.get_functions_from_string_list(ref_functions)
         self.stop_funcs = device_handling.get_functions_from_string_list(stop_functions)
+        self.manual_funcs = device_handling.get_functions_from_string_list(manual_functions)
 
         read_not_none = False
         for channel in self.read_channels:
@@ -135,9 +139,10 @@ class Stage_Control(Manual_Control, Ui_Form):
         manual_X = self.control_data['manual_X']
         manual_Y = self.control_data['manual_Y']
         manual_Z = self.control_data['manual_Z']
-        self.move_thread = Move_Thread(self, self.set_channels, [manual_X,
-                                                                 manual_Y,
-                                                                 manual_Z])
+        speeds = [manual_X, manual_Y, manual_Z]
+        self.move_thread = Move_Thread(self, self.set_channels, speeds,
+                                       manual_functions=self.manual_funcs,
+                                       stop_functions=self.stop_funcs)
         self.move_thread.start()
         for child in self.children():
             if isinstance(child, QWidget):
@@ -264,24 +269,27 @@ class Stage_Control(Manual_Control, Ui_Form):
         -------
 
         """
+        if a0.isAutoRepeat():
+            return super().keyPressEvent(a0)
         if not self.checkBox_manualActive.isChecked() or a0.modifiers() != Qt.ControlModifier:
             return super().keyPressEvent(a0)
-        if a0.key() == Qt.Key_Left:
+        print('hi')
+        if a0.key() == Qt.Key_Left and (self.set_channels[0] or self.manual_funcs[0]):
             self.move_thread.up_dir[0] = False
             self.move_thread.movers[0] = True
-        elif a0.key() == Qt.Key_Right:
+        elif a0.key() == Qt.Key_Right and (self.set_channels[0] or self.manual_funcs[0]):
             self.move_thread.up_dir[0] = True
             self.move_thread.movers[0] = True
-        elif a0.key() == Qt.Key_Up:
+        elif a0.key() == Qt.Key_Up and (self.set_channels[1] or self.manual_funcs[1]):
             self.move_thread.up_dir[1] = True
             self.move_thread.movers[1] = True
-        elif a0.key() == Qt.Key_Down:
+        elif a0.key() == Qt.Key_Down and (self.set_channels[1] or self.manual_funcs[1]):
             self.move_thread.up_dir[1] = False
             self.move_thread.movers[1] = True
-        elif a0.key() == Qt.Key_PageDown:
+        elif a0.key() == Qt.Key_PageDown and (self.set_channels[2] or self.manual_funcs[2]):
             self.move_thread.up_dir[2] = False
             self.move_thread.movers[2] = True
-        elif a0.key() == Qt.Key_PageUp:
+        elif a0.key() == Qt.Key_PageUp and (self.set_channels[2] or self.manual_funcs[2]):
             self.move_thread.up_dir[2] = True
             self.move_thread.movers[2] = True
         else:
@@ -299,6 +307,9 @@ class Stage_Control(Manual_Control, Ui_Form):
         -------
 
         """
+        if a0.isAutoRepeat():
+            return super().keyPressEvent(a0)
+        print('hi2')
         if a0.key() == Qt.Key_Left:
             self.move_thread.movers[0] = False
         elif a0.key() == Qt.Key_Right:
@@ -318,15 +329,19 @@ class Stage_Control(Manual_Control, Ui_Form):
 
 class Move_Thread(QThread):
     """ """
-    def __init__(self, parent=None, channels=None, move_speeds=None):
+    def __init__(self, parent=None, channels=None, move_speeds=None,
+                 manual_functions=None, stop_functions=None):
         super().__init__(parent=parent)
         self.channels = channels or []
+        self.manual_functions = manual_functions or []
+        self.stop_functions = stop_functions or []
         self.still_running = True
         self.movers = [False, False, False]
         self.move_speeds = move_speeds or [0, 0, 0]
         self.move_starts = [np.nan, np.nan, np.nan]
         self.up_dir = [True, True, True]
         self.last_set = [np.nan, np.nan, np.nan]
+        self.moving_started = [False, False, False]
 
     def run(self) -> None:
         """ """
@@ -342,6 +357,8 @@ class Move_Thread(QThread):
                 else:
                     if not np.isnan(self.move_starts[i]):
                         self.move_starts[i] = np.nan
+                        if self.stop_functions and self.stop_functions[i]:
+                            self.stop_functions[i]()
             if not move:
                 time.sleep(0.1)
 
@@ -357,15 +374,20 @@ class Move_Thread(QThread):
         -------
 
         """
-        before = self.last_set[ax]
-        now = time.time()
-        step_size = self.move_speeds[ax] * (now - self.move_starts[ax])
-        self.move_starts[ax] = now
-        if not self.up_dir[ax]:
-            step_size *= -1
-        val = step_size + before
-        self.channels[ax].put(val)
-        self.last_set[ax] = val
+        if self.manual_functions and self.manual_functions[ax]:
+            if not self.moving_started[ax]:
+                self.manual_functions[ax](self.move_speeds[ax] * 1 if self.up_dir[ax] else -1)
+        else:
+            before = self.last_set[ax]
+            now = time.time()
+            step_size = self.move_speeds[ax] * (now - self.move_starts[ax])
+            self.move_starts[ax] = now
+            if not self.up_dir[ax]:
+                step_size *= -1
+            val = step_size + before
+            self.channels[ax].put(val)
+            self.last_set[ax] = val
+        self.moving_started[ax] = True
 
 
 
@@ -423,6 +445,8 @@ class Stage_Control_Config(Manual_Control_Config):
         # self.ref_vals = []
         self.stop_combos = []
         # self.stop_vals = []
+        self.auto_ref_checkboxes = []
+        self.manual_move_combos = []
         outputs = variables_handling.get_output_channels()
         functions = variables_handling.get_non_channel_functions()
         channels = list(variables_handling.channels.keys())
@@ -430,34 +454,47 @@ class Stage_Control_Config(Manual_Control_Config):
         layout = QGridLayout()
         help_widge.setLayout(layout)
         for i, ax in enumerate(['x', 'y', 'z']):
-            label = QLabel(ax)
-            layout.addWidget(label, 2+i, 0)
+            # label = QLabel(ax)
+            # layout.addWidget(label, 2+i, 0)
 
             axis_box = QCheckBox(f'use axis {ax}')
             if 'use_axis' in control_data and control_data['use_axis']:
                 axis_box.setChecked(control_data['use_axis'][i])
             self.axis_checkboxes.append(axis_box)
-            layout.addWidget(axis_box, 2+i, 1)
+            layout.addWidget(axis_box, 2+i, 0)
 
             channel_combo = QComboBox()
             channel_combo.addItems(outputs)
             if 'axis_channel' in control_data and control_data['axis_channel'][i] in outputs:
                 channel_combo.setCurrentText(control_data['axis_channel'][i])
             self.channels_combos.append(channel_combo)
-            layout.addWidget(channel_combo, 2+i, 2)
+            layout.addWidget(channel_combo, 2+i, 1)
 
             read_box = QCheckBox(f'readback axis {ax}')
             self.read_checkboxes.append(read_box)
             if 'read_axis' in control_data and control_data['read_axis']:
                 read_box.setChecked(control_data['read_axis'][i])
-            layout.addWidget(read_box, 2+i, 3)
+            layout.addWidget(read_box, 2+i, 2)
 
             read_combo = QComboBox()
             read_combo.addItems(channels)
             if 'read_channel' in control_data and control_data['read_channel'][i] in channels:
                 read_combo.setCurrentText(control_data['read_channel'][i])
             self.read_combos.append(read_combo)
-            layout.addWidget(read_combo, 2+i, 4)
+            layout.addWidget(read_combo, 2+i, 3)
+
+
+            label = QLabel(f'manual move function {ax}:')
+            layout.addWidget(label, 2+i, 4)
+
+            manual_combo = QComboBox()
+            manual_combo.addItems(functions + ['None'])
+            if 'manual_function' in control_data and control_data['manual_function'][i] in functions:
+                manual_combo.setCurrentText(control_data['manual_function'][i])
+            else:
+                manual_combo.setCurrentText('None')
+            self.manual_move_combos.append(manual_combo)
+            layout.addWidget(manual_combo, 2+i, 5)
 
 
             label = QLabel(f'reference function {ax}:')
@@ -470,7 +507,7 @@ class Stage_Control_Config(Manual_Control_Config):
             else:
                 ref_combo.setCurrentText('None')
             self.ref_combos.append(ref_combo)
-            layout.addWidget(ref_combo, 10+i, 1, 1, 2)
+            layout.addWidget(ref_combo, 10+i, 1)
 
             # ref_val = QLineEdit()
             # if 'ref_vals' in control_data and control_data['ref_vals']:
@@ -479,7 +516,7 @@ class Stage_Control_Config(Manual_Control_Config):
             # layout.addWidget(ref_val, 10+i, 2)
 
             label = QLabel(f'stop function {ax}:')
-            layout.addWidget(label, 10+i, 3)
+            layout.addWidget(label, 10+i, 2)
 
             stop_combo = QComboBox()
             stop_combo.addItems(functions + ['None'])
@@ -488,7 +525,13 @@ class Stage_Control_Config(Manual_Control_Config):
             else:
                 stop_combo.setCurrentText('None')
             self.stop_combos.append(stop_combo)
-            layout.addWidget(stop_combo, 10+i, 4, 1, 2)
+            layout.addWidget(stop_combo, 10+i, 3)
+
+            auto_ref = QCheckBox('auto-reference at start')
+            if 'auto_reference' in control_data:
+                auto_ref.setChecked(control_data['auto_reference'][i])
+            self.auto_ref_checkboxes.append(auto_ref)
+            layout.addWidget(auto_ref, 10+i, 4, 1, 2)
 
             # stop_val = QLineEdit()
             # if 'stop_vals' in control_data and control_data['stop_vals']:
@@ -512,6 +555,8 @@ class Stage_Control_Config(Manual_Control_Config):
             self.ref_combos[i].setEnabled(able)
             # self.ref_vals[i].setEnabled(able)
             self.stop_combos[i].setEnabled(able)
+            self.auto_ref_checkboxes[i].setEnabled(able)
+            self.manual_move_combos[i].setEnabled(able)
             # self.stop_vals[i].setEnabled(able)
 
     def accept(self):
@@ -524,6 +569,8 @@ class Stage_Control_Config(Manual_Control_Config):
         # self.control_data['ref_vals'] = []
         self.control_data['axis_stop'] = []
         # self.control_data['stop_vals'] = []
+        self.control_data['auto_reference'] = []
+        self.control_data['manual_function'] = []
         for i in range(3):
             self.control_data['use_axis'].append(self.axis_checkboxes[i].isChecked())
             self.control_data['axis_channel'].append(self.channels_combos[i].currentText())
@@ -533,4 +580,7 @@ class Stage_Control_Config(Manual_Control_Config):
             self.control_data['axis_ref'].append(self.ref_combos[i].currentText())
             # self.control_data['stop_vals'].append(self.stop_vals[i].text())
             self.control_data['axis_stop'].append(self.stop_combos[i].currentText())
+            self.control_data['auto_reference'].append(self.auto_ref_checkboxes[i].isChecked())
+            self.control_data['manual_function'].append(self.manual_move_combos[i].currentText())
+
         super().accept()
