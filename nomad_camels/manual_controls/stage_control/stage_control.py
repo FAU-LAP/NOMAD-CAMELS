@@ -148,6 +148,12 @@ class Stage_Control(Manual_Control, Ui_Form):
             if isinstance(child, QWidget):
                 child.setFocusPolicy(Qt.ClickFocus)
         self.setFocusPolicy(Qt.ClickFocus)
+        self.show()
+        for i, auto in enumerate(control_data['auto_reference']):
+            self.checks[i].setChecked(auto)
+        self.reference_drive()
+        for i, auto in enumerate(control_data['auto_reference']):
+            self.checks[i].setChecked(True)
 
 
     def line_change(self):
@@ -234,10 +240,14 @@ class Stage_Control(Manual_Control, Ui_Form):
 
     def reference_drive(self):
         """ """
-        checks = [self.checkBox_refX, self.checkBox_refY, self.checkBox_refZ]
-        for i, func in enumerate(self.ref_funcs):
-            if checks[i].isChecked() and func:
-                func()
+        self.setCursor(Qt.WaitCursor)
+        try:
+            checks = [self.checkBox_refX, self.checkBox_refY, self.checkBox_refZ]
+            for i, func in enumerate(self.ref_funcs):
+                if checks[i].isChecked() and func:
+                    func()
+        finally:
+            self.setCursor(Qt.ArrowCursor)
 
     def stop_moving(self):
         """ """
@@ -253,9 +263,10 @@ class Stage_Control(Manual_Control, Ui_Form):
 
     def move_to_position(self):
         """ """
-        self.set_channels[0].put(self.control_data['go_to_X'])
-        self.set_channels[1].put(self.control_data['go_to_Y'])
-        self.set_channels[2].put(self.control_data['go_to_Z'])
+        axes = ['X', 'Y', 'Z']
+        for i in range(3):
+            if self.set_channels[i]:
+                self.set_channels[i].put(self.control_data[f'go_to_{axes[i]}'])
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
         """
@@ -273,7 +284,6 @@ class Stage_Control(Manual_Control, Ui_Form):
             return super().keyPressEvent(a0)
         if not self.checkBox_manualActive.isChecked() or a0.modifiers() != Qt.ControlModifier:
             return super().keyPressEvent(a0)
-        print('hi')
         if a0.key() == Qt.Key_Left and (self.set_channels[0] or self.manual_funcs[0]):
             self.move_thread.up_dir[0] = False
             self.move_thread.movers[0] = True
@@ -309,7 +319,6 @@ class Stage_Control(Manual_Control, Ui_Form):
         """
         if a0.isAutoRepeat():
             return super().keyPressEvent(a0)
-        print('hi2')
         if a0.key() == Qt.Key_Left:
             self.move_thread.movers[0] = False
         elif a0.key() == Qt.Key_Right:
@@ -359,6 +368,7 @@ class Move_Thread(QThread):
                         self.move_starts[i] = np.nan
                         if self.stop_functions and self.stop_functions[i]:
                             self.stop_functions[i]()
+                        self.moving_started[i] = False
             if not move:
                 time.sleep(0.1)
 
@@ -376,7 +386,7 @@ class Move_Thread(QThread):
         """
         if self.manual_functions and self.manual_functions[ax]:
             if not self.moving_started[ax]:
-                self.manual_functions[ax](self.move_speeds[ax] * 1 if self.up_dir[ax] else -1)
+                self.manual_functions[ax](self.move_speeds[ax] * (1 if self.up_dir[ax] else -1))
         else:
             before = self.last_set[ax]
             now = time.time()

@@ -20,6 +20,9 @@ For more information and documentation visit [this page](https://fau-lap.github.
 Minor features:
 - callable functions for manual move of stage control
 
+Quality of life:
+- waiting cursor during reference drive of stage control
+
 Fixes:
 - Fixed bug for showing non-number values / channels in list-plot
 - fixed repeated firing of keyPress/ReleaseEvent in manual control of stage
