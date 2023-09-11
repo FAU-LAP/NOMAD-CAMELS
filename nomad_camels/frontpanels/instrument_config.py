@@ -1,11 +1,12 @@
 import importlib
 
-from PySide6.QtWidgets import QWidget, QTableWidgetItem, QLabel, QMessageBox
+import importlib_metadata
+from PySide6.QtWidgets import QWidget, QTableWidgetItem, QLabel, QMessageBox, QTextBrowser
 from PySide6.QtCore import Qt
 
 from nomad_camels.gui.instrument_config import Ui_Form
 
-from nomad_camels.frontpanels.instrument_installer import getInstalledDevices
+from nomad_camels.frontpanels.instrument_installer import getInstalledDevices, Info_Widget
 
 from nomad_camels.utility import variables_handling, device_handling
 
@@ -45,6 +46,22 @@ class Instrument_Config(Ui_Form, QWidget):
         self.tableWidget_instruments.clicked.connect(self.table_click)
         self.pushButton_add.clicked.connect(self.add_instance)
         self.pushButton_remove.clicked.connect(self.remove_instance)
+        self.info_widge = Info_Widget(self)
+        self.info_widge.setHidden(True)
+        self.layout().addWidget(self.info_widge, 0, 5, 3, 1)
+
+        self.hide_info = False
+        self.pushButton_info.clicked.connect(self.show_hide_info)
+
+
+    def show_hide_info(self):
+        if self.hide_info:
+            self.pushButton_info.setText('hide info')
+        else:
+            self.pushButton_info.setText('show info')
+        self.hide_info = not self.hide_info
+        self.info_widge.setHidden(self.hide_info)
+
 
     def table_click(self):
         """ """
@@ -74,6 +91,8 @@ class Instrument_Config(Ui_Form, QWidget):
                     self.config_tabs.addTab(inst_widge, name)
                     inst_widge.name_change.connect(self.name_config_changed)
             self.pushButton_add.setEnabled(True)
+            self.info_widge.update_texts(instr)
+            self.pushButton_info.setHidden(not self.info_widge.info)
         finally:
             self.setCursor(Qt.ArrowCursor)
 

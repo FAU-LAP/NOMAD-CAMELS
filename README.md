@@ -19,6 +19,7 @@ For more information and documentation visit [this page](https://fau-lap.github.
 ## 0.2.1 (in progress)
 Minor features:
 - callable functions for manual move of stage control
+- now showing readme and license of drivers
 
 Quality of life:
 - waiting cursor during reference drive of stage control
