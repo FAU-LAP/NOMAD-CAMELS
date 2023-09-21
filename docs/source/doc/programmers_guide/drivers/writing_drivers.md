@@ -487,10 +487,22 @@ class Instrument_Name(Device):
 
 ## 3. Building the Instrument Package
 To create a new package that can be installed via pip from PyPi or testPyPi follow these steps.
-1. Make sure you have `build` and `twine` installed into your python environment with `pip install build` and `pip install twine`
+1. Make sure you have `build` and `twine` installed into your python environment with
+   ```
+   pip install build
+   ``` 
+   and 
+   ```
+   pip install twine
+   ``` 
+
 2. Go to the `<driver_name>` directory of the driver. So the parent directory containing the pyproject.toml
 3. Set the correct version number and metadata in your `pyproject.toml` file
-4. Run the build command : `python -m build`. This creates the `dist/` folder and the distributions to upload to PyPi
+4. Run the build command : 
+   ```
+   python -m build
+   ```
+   This creates the `dist/` folder and the distributions to upload to PyPi
 5. Upload to PyPi with
     ```console
     python -m twine upload dist/nomad*
