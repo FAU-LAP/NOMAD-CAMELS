@@ -28,6 +28,7 @@ Fixes:
 - Fixed bug for showing non-number values / channels in list-plot
 - fixed repeated firing of keyPress/ReleaseEvent in manual control of stage
 - fixed all 3 axes being called when clicking "go-to" in stage control, even if not available
+- fixed that Read_Channels steps could not be renamed
 
 ## 0.2.0
 Major new feature:
