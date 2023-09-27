@@ -23,6 +23,7 @@ Minor features:
 
 Quality of life:
 - waiting cursor during reference drive of stage control
+- names of steps now appear in protocol overview
 
 Fixes:
 - Fixed bug for showing non-number values / channels in list-plot

@@ -65,7 +65,7 @@ class While_Loop_Step(Loop_Step_Container):
     def get_protocol_short_string(self, n_tabs=0):
         """Adds the condition to the string"""
         tabs = '\t' * n_tabs
-        short_string = f'{tabs}while {self.condition}:\n'
+        short_string = f'{tabs}\'{self.name}\' while {self.condition}:\n'
         for child in self.children:
             short_string += child.get_protocol_short_string(n_tabs+1)
         return short_string
@@ -232,7 +232,7 @@ class For_Loop_Step(Loop_Step_Container):
             vals += f'points: {self.n_points})'
         else:
             vals = self.file_path
-        short_string = f'{tabs}for {vals}:\n'
+        short_string = f'{tabs}\'{self.name}\' for {vals}:\n'
         for child in self.children:
             short_string += child.get_protocol_short_string(n_tabs+1)
         return short_string

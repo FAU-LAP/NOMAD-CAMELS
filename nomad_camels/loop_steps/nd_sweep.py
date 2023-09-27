@@ -179,7 +179,7 @@ class Sweep_Step(For_Loop_Step):
 
     def get_protocol_short_string(self, n_tabs=0):
         """Specifies the same way as the foor loop."""
-        return super().get_protocol_short_string(n_tabs)[n_tabs+3:-1]
+        return super().get_protocol_short_string(n_tabs)[:-1].split(' for ')[-1]
 
 
 
