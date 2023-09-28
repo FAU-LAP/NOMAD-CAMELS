@@ -42,6 +42,25 @@ With NOMAD CAMELS we develop a tool that is completely free to use for everybody
 
 Furthermore, NOMAD CAMELS provides a direct connection to NOMAD [@Draxl2019] (or NOMAD Oasis, a local installation) to make use of electronic lab notebook (ELN) features. The user can select sample-data from NOMAD to connect with the measurement and directly upload the measured data, providing a simple and fast workflow in the lab.
 
+# NOMAD CAMELS
+
+The functionalities of the main UI can be split into three parts, the instrument management, manual controls and measurement protocols. For instrument control and orchestration of measurements, NOMAD CAMELS uses bluesky and related packages [@Allan2019].
+
+## Instrument Management
+Instruments in NOMAD CAMELS can be added in two ways. The simple way is to add them via the instrument management in the software, which checks a curated list on our driver-repo [@CAMELS_drivers]. The drivers are installed to the python environment via pip, with each driver being represented by its own package.
+
+The other way to add drivers is by placing them into the folder specified under NOMAD CAMELS' settings. This is the way to go for users who want to write their own drivers. Although it is possible to share them with the community by contributing to the drivers repo or uploading them to PyPI, sometimes it might be not possible to users, because of copyright reasons.
+
+In general, a driver for NOMAD CAMELS is made up of two files: One containing the interface to the hardware and the bluesky-libraries, the other one containing mainly the user interface for settings that should be done inside NOMAD CAMELS.
+
+## Manual Controls
+The manual controls inside NOMAD CAMELS are a kind of plugin. They provide functionalities to control the instruments of the setup without running a specific protocol. An example for this is a control window for motorized stages, e.g. to drive the investigated sample under a microscope.
+
+Each instrument may provide its own manual control(s). This is for example used in PID-package.
+
+## Measurement protocols
+
+
 # Acknowledgements
 
 FAIRmat is funded by the the Deutsche Forschungsgemeinschaft ”DFG, German Re- search Foundation” – project 460197019.
