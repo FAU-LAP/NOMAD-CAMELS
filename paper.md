@@ -36,25 +36,11 @@ NOMAD-CAMELS is a configurable measurement software, targeted towards the requir
 
 # Statement of need
 
-`Gala` is an Astropy-affiliated Python package for galactic dynamics. Python
-enables wrapping low-level languages (e.g., C) for speed without losing
-flexibility or ease-of-use in the user-interface. The API for `Gala` was
-designed to provide a class-based and user-friendly interface to fast (C or
-Cython-optimized) implementations of common operations such as gravitational
-potential and force evaluation, orbit integration, dynamical transformations,
-and chaos indicators for nonlinear dynamics. `Gala` also relies heavily on and
-interfaces well with the implementations of physical units and astronomical
-coordinate systems in the `Astropy` package [@astropy] (`astropy.units` and
-`astropy.coordinates`).
+In experimental physics many home-built, ad hoc measurement setups are used. Typically, a specific software is written to control each of these setups. Although there are already tools available (e.g. "SweepMe!" [@SweepMe]) to realise the control of different measurement instruments, they are usually not open source and their data output is not compliant to the FAIR principles [@Wilkinson2016].
 
-`Gala` was designed to be used by both astronomical researchers and by
-students in courses on gravitational dynamics or astronomy. It has already been
-used in a number of scientific publications [@Pearson:2017] and has also been
-used in graduate courses on Galactic dynamics to, e.g., provide interactive
-visualizations of textbook material [@Binney:2008]. The combination of speed,
-design, and support for Astropy functionality in `Gala` will enable exciting
-scientific explorations of forthcoming data releases from the *Gaia* mission
-[@gaia] by students and experts alike.
+With NOMAD CAMELS we develop a tool that is completely free to use for everybody and collects all the metadata of experiment, known to the computer, automatically for each measurement. By providing an easy to use graphical user interface, NOMAD CAMELS allows the collection of data and rich metadata even without programming knowledge. With the default output as a structured .hdf5 file, NOMAD CAMELS' measurement data stays as close to the NeXus format [@Konnecke2015] as possible, while staying agnostic of the measurement itself, complying with the FAIR principles.
+
+Furthermore, NOMAD CAMELS provides a direct connection to NOMAD [@Draxl2019] (or NOMAD Oasis, a local installation) to make use of electronic lab notebook (ELN) features. The user can select sample-data from NOMAD to connect with the measurement and directly upload the measured data, providing a simple and fast workflow in the lab.
 
 # Mathematics
 
