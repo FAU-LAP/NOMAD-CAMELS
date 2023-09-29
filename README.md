@@ -16,6 +16,21 @@ NOMAD-CAMELS is a configurable measurement software, targeted towards the requir
 For more information and documentation visit [this page](https://fau-lap.github.io/NOMAD-CAMELS/).
 
 # Changelog
+## 0.2.1
+Minor features:
+- callable functions for manual move of stage control
+- now showing readme and license of drivers
+
+Quality of life:
+- waiting cursor during reference drive of stage control
+- names of steps now appear in protocol overview
+
+Fixes:
+- Fixed bug for showing non-number values / channels in list-plot
+- fixed repeated firing of keyPress/ReleaseEvent in manual control of stage
+- fixed all 3 axes being called when clicking "go-to" in stage control, even if not available
+- fixed that Read_Channels steps could not be renamed
+
 ## 0.2.0
 Major new feature:
 - Callable functions of instruments, that are not channels

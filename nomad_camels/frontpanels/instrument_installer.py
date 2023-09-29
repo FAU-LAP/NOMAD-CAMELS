@@ -2,8 +2,10 @@ import re
 import subprocess
 import importlib
 
+import pkg_resources
+
 from nomad_camels.gui.device_installer import Ui_Form
-from PySide6.QtWidgets import QWidget, QTableWidgetItem, QCheckBox, QMessageBox
+from PySide6.QtWidgets import QWidget, QTableWidgetItem, QCheckBox, QMessageBox, QTextBrowser, QGridLayout, QSplitter
 from PySide6.QtGui import QBrush, QColor, QFont
 from PySide6.QtCore import Qt, QThread, Signal
 
@@ -25,6 +27,7 @@ installed_instr = {}
 last_repo = ''
 last_branch = ''
 last_dir = ''
+repo_url = ''
 
 
 def getInstalledDevices(force=False, return_packages=False):
@@ -74,7 +77,7 @@ def getAllDevices():
     -------
 
     """
-    global all_instr, last_repo, last_branch, last_dir
+    global all_instr, last_repo, last_branch, last_dir, repo_url
     try:
         repo = variables_handling.preferences['driver_repository']
         branch = variables_handling.preferences['repo_branch']
@@ -87,10 +90,12 @@ def getAllDevices():
     all_instr = {}
     try:
         repo_part = repo.split('.com/')[1].split('.git')[0]
-        url = f'https://raw.githubusercontent.com/{repo_part}/{branch}/{directory}/driver_list.txt'
+        repo_url = f'https://raw.githubusercontent.com/{repo_part}/{branch}/{directory}'
+        url = f'{repo_url}/driver_list.txt'
         devices_str = requests.get(url).text
     except:
-        url = 'https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt'
+        repo_url = 'https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main'
+        url = f'{repo_url}/driver_list.txt'
         devices_str = requests.get(url).text
     warned = False
     for x in devices_str.splitlines():
@@ -108,9 +113,77 @@ def getAllDevices():
         all_instr[name.replace('-', '_')] = version
     return all_instr
 
+def get_instr_readme_text(instr_name):
+    url = f'{repo_url}/{instr_name}/README.md'
+    return requests.get(url).text
+
+def get_instr_license_text(instr_name):
+    url = f'{repo_url}/{instr_name}/LICENSE.txt'
+    return requests.get(url).text
+
 
 bold_font = QFont()
 bold_font.setBold(True)
+
+class Info_Widget(QSplitter):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.splitter = QSplitter(Qt.Orientation.Vertical)
+
+        self.info_text = QTextBrowser()
+        self.info_text.setOpenExternalLinks(True)
+        self.info_text.setTextInteractionFlags(Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
+        self.addWidget(self.info_text)
+
+        self.license_text = QTextBrowser()
+        self.license_text.setOpenExternalLinks(True)
+        self.license_text.setTextInteractionFlags(Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
+        self.addWidget(self.license_text)
+        self.info = False
+
+        self.setContentsMargins(0, 0, 0, 0)
+
+    def update_texts(self, instr):
+        self.info = False
+        hidden = True
+        try:
+            self.info_text.setHidden(True)
+            self.info_text.clear()
+            try:
+                meta = importlib_metadata.metadata(f'nomad_camels_driver_{instr}')
+                text = meta.json['description']
+            except:
+                text = get_instr_readme_text(instr)
+            self.info_text.setMarkdown(text)
+            self.info_text.setHidden(False)
+            hidden = False
+        except:
+            pass
+        try:
+            self.license_text.setHidden(True)
+            self.license_text.clear()
+            try:
+                text = ''
+                for p in pkg_resources.working_set:
+                    if not p.key.startswith(f'nomad-camels-driver-{instr.replace("_", "-")}'):
+                        print(p)
+                        continue
+                    lic = p.get_metadata_lines('LICENSE.txt')
+                    for l in lic:
+                        text += f'{l}\n'
+                    break
+                if not text:
+                    raise Exception('')
+                self.license_text.setText(text)
+            except:
+                text = get_instr_license_text(instr)
+                self.license_text.setMarkdown(text)
+            self.license_text.setHidden(False)
+            hidden = False
+        except:
+            pass
+        self.info = not hidden
+        self.setHidden(hidden)
 
 
 class Instrument_Installer(Ui_Form, QWidget):
@@ -153,6 +226,13 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.pushButton_install_update_selected.clicked.connect(self.install_selected)
         self.pushButton_uninstall.clicked.connect(self.uninstall_selected)
         self.pushButton_update_drivers.clicked.connect(self.update_installed)
+
+        self.device_table.clicked.connect(self.table_click)
+
+        self.info_widge = Info_Widget()
+        self.info_widge.setHidden(True)
+        self.layout().addWidget(self.info_widge, 0, 5, 5, 1)
+
 
     def checkBox_change(self, row):
         """
@@ -276,6 +356,7 @@ class Instrument_Installer(Ui_Form, QWidget):
                 continue
             self.device_table.setRowCount(i + 1)
             item = QTableWidgetItem()
+            item.setData(3, dev)
             checkbox = QCheckBox(dev)
             self.checkboxes.append(checkbox)
             checkbox.stateChanged.connect(lambda a0, x=i: self.checkBox_change(x))
@@ -297,6 +378,16 @@ class Instrument_Installer(Ui_Form, QWidget):
             self.device_table.setItem(i, 2, item_inst)
             i += 1
 
+    def table_click(self):
+        """ """
+        self.setCursor(Qt.WaitCursor)
+        try:
+            ind = self.device_table.selectedIndexes()[0]
+            instr = self.device_table.item(ind.row(), 0).data(3)
+            self.info_widge.update_texts(instr)
+            self.adjustSize()
+        finally:
+            self.setCursor(Qt.ArrowCursor)
 
 class Install_Thread(QThread):
     """ """

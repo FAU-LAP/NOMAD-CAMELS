@@ -128,7 +128,7 @@ class Loop_Step:
             The string representing the step
         """
         tabs = '\t' * n_tabs
-        short_string = f'{tabs}{self.step_type}\n'
+        short_string = f'{tabs}{self.step_type} \'{self.name}\'\n'
         return short_string
 
 

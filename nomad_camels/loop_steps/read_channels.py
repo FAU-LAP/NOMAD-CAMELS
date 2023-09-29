@@ -147,6 +147,7 @@ class Read_Channels_Config(Loop_Step_Config):
 
     def update_step_config(self):
         """ """
+        super().update_step_config()
         self.sub_widget.update_step_config()
 
 class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
