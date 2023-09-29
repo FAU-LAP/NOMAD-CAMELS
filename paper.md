@@ -32,7 +32,7 @@ bibliography: paper.bib
 
 # Summary
 
-NOMAD-CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics. Here many experiments utilize a multitude of measurement devices used in dynamically changing setups. CAMELS will allow to define instrument control and measurement protocols using a graphical user interface (GUI). This provides a low entry threshold enabling the creation of new measurement protocols without programming knowledge or a deeper understanding of device communication. The GUI generates python code that interfaces with instruments and allows users to modify the code for specific applications and implementations of arbitrary devices if necessary. Even large-scale, distributed systems can be implemented. CAMELS is well suited to generate FAIR-compliant output data. Nexus standards, immediate NOMAD integration and hence a FAIRmat compliant data pipeline can be readily implemented.
+NOMAD-CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics. Here many experiments utilize a multitude of measurement devices used in dynamically changing setups. CAMELS will allow to define instrument control and measurement protocols using a graphical user interface (GUI). This provides a low entry threshold enabling the creation of new measurement protocols without programming knowledge or a deeper understanding of device communication. The GUI generates python code that interfaces with instruments and allows users to modify the code for specific applications and implementations of arbitrary devices if necessary. Even large-scale, distributed systems can be implemented. CAMELS is well suited to generate FAIR-compliant output data. NeXus standards, immediate NOMAD integration and hence a FAIRmat compliant data pipeline can be readily implemented.
 
 # Statement of need
 
@@ -44,14 +44,14 @@ Furthermore, NOMAD CAMELS provides a direct connection to NOMAD [@Draxl2019] (or
 
 # NOMAD CAMELS
 
-The functionalities of the main UI can be split into three parts, the instrument management, manual controls and measurement protocols. For instrument control and orchestration of measurements, NOMAD CAMELS uses bluesky and related packages [@Allan2019].
+The functionalities of the main UI can be split into three parts, the instrument management, manual controls and measurement protocols. For instrument control and orchestration of measurements, NOMAD CAMELS uses bluesky and related packages [@Allan2019]. Using these packages, NOMAD CAMELS can easily communicate with EPICS [INSERT REFERENCE] and thus also supports large scale, distributed systems.
 
 ## Instrument Management
 Instruments in NOMAD CAMELS can be added in two ways. The simple way is to add them via the instrument management in the software, which checks a curated list on our driver-repo [@CAMELS_drivers]. The drivers are installed to the python environment via pip, with each driver being represented by its own package.
 
 The other way to add drivers is by placing them into the folder specified under NOMAD CAMELS' settings. This is the way to go for users who want to write their own drivers. Although it is possible to share them with the community by contributing to the drivers repo or uploading them to PyPI, sometimes it might be not possible to users, because of copyright reasons.
 
-In general, a driver for NOMAD CAMELS is made up of two files: One containing the interface to the hardware and the bluesky-libraries, the other one containing mainly the user interface for settings that should be done inside NOMAD CAMELS.
+In general, a driver for NOMAD CAMELS is made up of two files: One containing the interface to the hardware and the bluesky-libraries, the other one containing mainly the user interface for settings that should be done inside NOMAD CAMELS. The Components / Signals from the bluesky-representation are recognized by NOMAD CAMELS and become settable and / or readable "channels", that can be used inside the protocols.
 
 ## Manual Controls
 The manual controls inside NOMAD CAMELS are a kind of plugin. They provide functionalities to control the instruments of the setup without running a specific protocol. An example for this is a control window for motorized stages, e.g. to drive the investigated sample under a microscope.
@@ -59,6 +59,18 @@ The manual controls inside NOMAD CAMELS are a kind of plugin. They provide funct
 Each instrument may provide its own manual control(s). This is for example used in PID-package.
 
 ## Measurement protocols
+When a measurement is run from NOMAD CAMELS, a complete python file, that can also be executed on its own, outside the UI, is generated. This enables users who have more specific requirements than provided by NOMAD CAMELS to add further functions to their protocol. Furthermore, the files can be exported and imported at other PCs running NOMAD CAMELS, enabling users to share their protocols with colleagues.
+
+A measurement protocol or recipe is made up of several single steps. These are pre-defined blocks in the generated script that cover things like setting or reading instrument channels (e.g. a voltage), but also more sophisticated, frequently used functions like sweeping over a value.  
+Instrument drivers can bring their own steps. The PID package does this, for example, with a step that is used to wait until the PID indicates that it is stable.
+
+## Data output
+At the end of a protocol (or if it encounters an error), the data from NOMAD CAMELS is saved into an hdf5 file that is structured closely to the NeXus format [@Konnecke2015]. Exporting into csv for the data and into json for the metadata is also possible.
+
+The raw data that should be collected is defined by the user, mainly with protocol steps like "Read_Channels". Additionally to that, NOMAD CAMELS collects the available metadata.
+A big part of the metadata is all instrument settings of the instruments used. Further, information about user and investigated sample are added if provided.
+
+It should be emphasized that the data file contains the complete python script that was used to create this data file. Additionally, the information about the python environment in which it was run is saved as well. This hugely simplifies reproducibility, since the measurement can be run the same way again, years later. 
 
 
 # Acknowledgements
