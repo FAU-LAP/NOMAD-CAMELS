@@ -67,7 +67,7 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.check_names = ['find_ref_X', 'find_ref_Y', 'find_ref_Z',
                            'manual_active']
         if 'read_frequ' not in control_data:
-            control_data['read_frequ'] = 5
+            control_data['read_frequ'] = 0.5
         if 'manual_active' not in control_data:
             control_data['manual_active'] = False
 
