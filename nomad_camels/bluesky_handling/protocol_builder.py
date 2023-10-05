@@ -66,7 +66,7 @@ standard_string += 'from nomad_camels.main_classes import plot_widget, list_plot
 standard_string += 'from nomad_camels.utility.databroker_export import broker_to_hdf5, broker_to_dict, broker_to_NX\n'
 standard_string += 'from nomad_camels.utility import theme_changing\n'
 standard_string += 'from nomad_camels.bluesky_handling.evaluation_helper import Evaluator\n'
-standard_string += 'from nomad_camels.bluesky_handling import helper_functions\n'
+standard_string += 'from nomad_camels.bluesky_handling import helper_functions, variable_reading\n'
 standard_string += 'darkmode = False\n'
 standard_string += 'theme = "default"\n'
 standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "total_protocol_steps": 0, "protocol_stepper_signal": None}\n'
@@ -182,7 +182,7 @@ def build_protocol(protocol, file_path,
             continue
         variable_string += f'{var} = {val}\n'
         variable_string += f'namespace["{var}"] = {var}\n'
-
+    variable_string += f'\n{protocol.name}_variable_signal = variable_reading.Variable_Signal(name="{protocol.name}_variable_signal", variables_dict=namespace)\n'
     # this handles all the used devices
     for dev in protocol.get_used_devices():
         device = variables_handling.devices[dev]

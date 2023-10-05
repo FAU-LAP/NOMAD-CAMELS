@@ -18,6 +18,9 @@ For more information and documentation visit [this page](https://fau-lap.github.
 # Changelog
 
 ## 0.2.2 (in progress)
+Features:
+- Reading/Saving of variables ad Read_Channels is now possible, appears as an array in the data
+
 Fixes:
 - unwanted printing of packages in instrument-management fixed
 
