@@ -23,7 +23,7 @@ authors:
 affiliations:
    - name: Lehrstuhl für Angewandte Physik, Friedrich-Alexander Universität Erlangen-Nürnberg, Germany
      index: 1
-   - name: FAIRmat, Humboldt-Universität zu Berlin
+   - name: FAIRmat, Humboldt-Universität zu Berlin, Germany
      index: 2
 date: 13 July 2023
 bibliography: paper.bib
@@ -44,7 +44,7 @@ Furthermore, NOMAD CAMELS provides a direct connection to NOMAD [@Draxl2019] (or
 
 # NOMAD CAMELS
 
-The functionalities of the main UI can be split into three parts, the instrument management, manual controls and measurement protocols. For instrument control and orchestration of measurements, NOMAD CAMELS uses bluesky and related packages [@Allan2019]. Using these packages, NOMAD CAMELS can easily communicate with EPICS [INSERT REFERENCE] and thus also supports large scale, distributed systems.
+The functionalities of the main UI can be split into three parts, the instrument management, manual controls and measurement protocols. For instrument control and orchestration of measurements, NOMAD CAMELS uses bluesky and related packages [@Allan2019, @bluesky]. Using these packages, NOMAD CAMELS can easily communicate with EPICS [@Knott1994, @EPICS] and thus also supports large scale, distributed systems.
 
 ## Instrument Management
 Instruments in NOMAD CAMELS can be added in two ways. The simple way is to add them via the instrument management in the software, which checks a curated list on our driver-repo [@CAMELS_drivers]. The drivers are installed to the python environment via pip, with each driver being represented by its own package.
