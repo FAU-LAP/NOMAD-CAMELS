@@ -16,6 +16,11 @@ NOMAD-CAMELS is a configurable measurement software, targeted towards the requir
 For more information and documentation visit [this page](https://fau-lap.github.io/NOMAD-CAMELS/).
 
 # Changelog
+
+## 0.2.2 (in progress)
+Fixes:
+- unwanted printing of packages in instrument-management fixed
+
 ## 0.2.1
 Minor features:
 - callable functions for manual move of stage control

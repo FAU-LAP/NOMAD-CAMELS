@@ -166,7 +166,6 @@ class Info_Widget(QSplitter):
                 text = ''
                 for p in pkg_resources.working_set:
                     if not p.key.startswith(f'nomad-camels-driver-{instr.replace("_", "-")}'):
-                        print(p)
                         continue
                     lic = p.get_metadata_lines('LICENSE.txt')
                     for l in lic:
