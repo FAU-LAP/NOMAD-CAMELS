@@ -23,6 +23,7 @@ Features:
 
 Fixes:
 - unwanted printing of packages in instrument-management fixed
+- plots of sweeps or subprotocols of subprotocols should now also be added to the main-plot list, enabling closing on closing of CAMELS or via button
 
 ## 0.2.1
 Minor features:
