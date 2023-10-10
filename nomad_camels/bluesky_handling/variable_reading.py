@@ -9,16 +9,20 @@ class Variable_Signal(SignalRO):
                          labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance,
                          metadata=metadata, cl=cl, attr_name=attr_name)
         self.variables_dict = variables_dict or {}
+        self.vars = list(sorted(self.variables_dict.keys()))
 
     def describe(self):
         info = super().describe()
         info[self.name]['source'] = 'local_NOMAD_CAMELS_variables'
-        info[self.name]['variables'] = list(sorted(self.variables_dict.keys()))
+        # self.vars = list(sorted(self.variables_dict.keys()))
+        info[self.name]['variables'] = self.vars
         return info
 
     def get(self):
         data = []
         for key in sorted(self.variables_dict.keys()):
+            if key not in self.vars:
+                continue
             data.append(self.variables_dict[key])
-        self._readback = data
+        self._readback = np.asarray(data)
         return super().get()
