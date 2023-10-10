@@ -6,7 +6,7 @@ from bluesky import plan_stubs as bps
 
 from ophyd import SignalRO
 
-from PySide6.QtWidgets import QMessageBox, QWidget, QDialog, QDialogButtonBox, QGridLayout, QLabel, QLineEdit
+from PySide6.QtWidgets import QMessageBox, QWidget, QDialog, QDialogButtonBox, QGridLayout, QLabel, QLineEdit, QProgressBar, QPushButton
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QFont
 
@@ -614,3 +614,37 @@ def get_channels(dev):
         if name not in dev.configuration_attrs:
             channels[f'{dev.name}_{name}'] = [dev.name, name]
     return channels
+
+
+class Waiting_Bar(QWidget):
+    def __init__(self, parent=None, title='', skipable=False):
+        super().__init__(parent=parent)
+        layout = QGridLayout()
+        self.progressBar = QProgressBar()
+        self.progressBar.setValue(0)
+        layout.addWidget(self.progressBar, 0, 0)
+
+        self.skipButton = QPushButton('SKIP')
+        self.skip = False
+        if skipable:
+            layout.addWidget(self.skipButton, 0, 1)
+            self.skipButton.clicked.connect(self.skipping)
+        self.setLayout(layout)
+        self.setWindowTitle(title or 'CAMELS progress bar')
+        self.adjustSize()
+        self.helper = BoxHelper()
+        self.helper.executor.connect(self.start_execution)
+
+    def setValue(self, value):
+        self.progressBar.setValue(value)
+
+    def skipping(self):
+        self.skip = True
+
+    def start_execution(self):
+        """Sets `self.done` to False and starts `self.exec()`."""
+        self.skip = False
+        self.setHidden(False)
+        self.show()
+
+
