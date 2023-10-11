@@ -20,10 +20,13 @@ For more information and documentation visit [this page](https://fau-lap.github.
 ## 0.2.2 (in progress)
 Features:
 - Reading/Saving of variables ad Read_Channels is now possible, appears as an array in the data
+- added a class for a waiting bar during protocols
 
 Fixes:
 - unwanted printing of packages in instrument-management fixed
 - plots of sweeps or subprotocols of subprotocols should now also be added to the main-plot list, enabling closing on closing of CAMELS or via button
+- error of screen object already being deleted should be fixed
+- databroker export to csv improved for non simple 2D data
 
 ## 0.2.1
 Minor features:

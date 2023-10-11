@@ -22,7 +22,7 @@ def trigger_multi(devices, grp=None):
     ----------
     devices : list[ophyd.Device]
         List of the devices that should be triggered.
-        
+
     grp : string (or any hashable object), optional
         identifier used by 'wait'; None by default
     """
@@ -69,7 +69,7 @@ def simplify_configs_dict(configs):
     ----------
     configs : dict
         The dictionary to be simplified.
-        
+
 
     Returns
     -------
@@ -616,6 +616,10 @@ def get_channels(dev):
     return channels
 
 
+class Value_Setter(QWidget):
+    set_signal = Signal(float)
+    hide_signal = Signal()
+
 class Waiting_Bar(QWidget):
     def __init__(self, parent=None, title='', skipable=False):
         super().__init__(parent=parent)
@@ -634,12 +638,16 @@ class Waiting_Bar(QWidget):
         self.adjustSize()
         self.helper = BoxHelper()
         self.helper.executor.connect(self.start_execution)
+        self.setter = Value_Setter()
+        self.setter.set_signal.connect(self.setValue)
+        self.setter.hide_signal.connect(self.hide)
 
     def setValue(self, value):
         self.progressBar.setValue(value)
 
     def skipping(self):
         self.skip = True
+        self.hide()
 
     def start_execution(self):
         """Sets `self.done` to False and starts `self.exec()`."""
