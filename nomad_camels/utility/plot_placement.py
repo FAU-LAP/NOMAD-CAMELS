@@ -52,7 +52,7 @@ def place_widget(widget:QWidget):
     widget : QWidget
         the widget that should be placed
     """
-    global max_height_in_row, current_screen, current_pos, iteration
+    global max_height_in_row, current_screen, current_pos, iteration, screens
     widget.show()
     c = current_pos
     # print(c, current_screen)
