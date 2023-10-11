@@ -27,6 +27,7 @@ Fixes:
 - plots of sweeps or subprotocols of subprotocols should now also be added to the main-plot list, enabling closing on closing of CAMELS or via button
 - error of screen object already being deleted should be fixed
 - databroker export to csv improved for non simple 2D data
+- time weight of sub protocols now handled correctly
 
 ## 0.2.1
 Minor features:

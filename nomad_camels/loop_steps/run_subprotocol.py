@@ -53,8 +53,7 @@ class Run_Subprotocol(Loop_Step):
         tabs = '\t' * n_tabs
         prot_name = os.path.basename(self.prot_path)[:-6]
         protocol_string = super().get_protocol_string(n_tabs)
-        protocol_string += f'{tabs}{prot_name}_mod.protocol_step_information["protocol_stepper_signal"] = protocol_step_information["protocol_stepper_signal"]\n'
-        protocol_string += f'{tabs}{prot_name}_mod.protocol_step_information["total_protocol_steps"] = {self.time_weight}\n'
+        protocol_string += f'{tabs}{prot_name}_mod.protocol_step_information = protocol_step_information\n'
         for i, var in enumerate(self.vars_in['Variable']):
             protocol_string += f'{tabs}{prot_name}_mod.{var} = eva.eval("{self.vars_in["Value"][i]}")\n'
             protocol_string += f'{tabs}{prot_name}_mod.namespace["{var}"] = eva.eval("{self.vars_in["Value"][i]}")\n'
