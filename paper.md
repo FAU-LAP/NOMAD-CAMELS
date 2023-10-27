@@ -32,7 +32,9 @@ bibliography: paper.bib
 
 # Summary
 
-NOMAD-CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics. Here many experiments utilize a multitude of measurement devices used in dynamically changing setups. CAMELS will allow to define instrument control and measurement protocols using a graphical user interface (GUI). This provides a low entry threshold enabling the creation of new measurement protocols without programming knowledge or a deeper understanding of device communication. The GUI generates python code that interfaces with instruments and allows users to modify the code for specific applications and implementations of arbitrary devices if necessary. Even large-scale, distributed systems can be implemented. CAMELS is well suited to generate FAIR-compliant output data. NeXus standards, immediate NOMAD integration and hence a FAIRmat compliant data pipeline can be readily implemented.
+NOMAD-CAMELS is a configurable measurement software, that records fully self-describing experimental data. It has its origins in the field of experimental physics where a wide variety of measurement devices are used in rapidly changing experimental setups. CAMELS is designed with focus on full recording of data and metadata, allowing others to understand the data and the exact measurement procedure employed. CAMELS provides a user-friendly graphical user interface (GUI) which allows the user to define instrument control and measurement protocols. The GUI provides a low entry threshold enabling the creation of new measurement protocols without requiring programming knowledge or deep understanding of device communication. CAMELS generates python code to interface with instruments, allowing users to customize the code for specific applications and arbitrary device implementation if needed. Existing large-scale, distributed control systems using EPICS can be readily implemented. 
+Researchers can take their first step towards a FAIR-data pipeline and reproducible science by utilizing CAMELS.
+
 
 # Statement of need
 
@@ -65,7 +67,7 @@ A measurement protocol or recipe is made up of several single steps. These are p
 Instrument drivers can bring their own steps. The PID package does this, for example, with a step that is used to wait until the PID indicates that it is stable.
 
 ## Data output
-At the end of a protocol (or if it encounters an error), the data from NOMAD CAMELS is saved into an hdf5 file that is structured closely to the NeXus format [@Konnecke2015]. Exporting into csv for the data and into json for the metadata is also possible.
+At the end of a protocol (or if it encounters an error), the data from NOMAD CAMELS is saved into an HDF5 file that is structured closely to the NeXus format [@Konnecke2015]. Exporting into csv for the data and into json for the metadata is also possible.
 
 The raw data that should be collected is defined by the user, mainly with protocol steps like "Read_Channels". Additionally to that, NOMAD CAMELS collects the available metadata.
 A big part of the metadata is all instrument settings of the instruments used. Further, information about user and investigated sample are added if provided.
