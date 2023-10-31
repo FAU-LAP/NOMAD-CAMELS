@@ -47,10 +47,20 @@ Stock Bash startup files vary widely between distributions in which of them sour
 
 ## 3. Install CAMELS
 - Create a folder where you want to install CAMELS (e.g. `\NOMAD-CAMELS\`)
-- Type in your shell `cd \NOMAD-CAMELS\;pyenv local <python_version> `
+- Type in your shell 
+  ```
+  cd \NOMAD-CAMELS\;pyenv local <python_version> 
+  ```
 - If you have a working Python environment (`python -V` in `/NOMAD-CAMELS/` returns `<python_version>`) then you can continue to install CAMELS.
-- Now  run the command `python -m venv .desertenv` in this folder to create a virtual Python environment (using the Python version given by `pyenv local <python_version>`)
-- Now  activate the environment with `source ./.desertenv/bin/activate`
+- Now  run the command 
+  ```
+  python -m venv .desertenv
+  ``` 
+  in this folder to create a virtual Python environment (using the Python version given by `pyenv local <python_version>`)
+- Now  activate the environment with 
+  ```
+  source ./.desertenv/bin/activate
+  ```
 - Now type
 ```bash
 pip install nomad-camels 

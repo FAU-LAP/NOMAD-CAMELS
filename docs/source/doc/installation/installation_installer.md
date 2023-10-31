@@ -13,4 +13,4 @@ This takes about 2-3 minutes depending on your systems performance.
 
 > &#9888; Try to always use this option as it minimizes any unwanted errors during setup and makes running and uninstalling easy.
 
-You have the option to also perform a custom installation for windows described [here](installation_custom_windows.md).
+If the installer fails or if you want more control over your installation you can also use [pyenv](installation_custom_windows.md) or [Anaconda](installation_custom_anaconda) to install CAMELS.
