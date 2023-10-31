@@ -1,6 +1,6 @@
 (protocols_top_link)=
-# Setting Up Measurement Protocols
-Measurement protocols are the main way in which CAMELS performs measurements. It can be understood as something similar to a `measurement recipe` where a step for step guide is given to different instruments to perform a measurement procedure.
+# How to Perform Measurements
+Measurement protocols are the main way in which CAMELS performs measurements. It can be understood as something similar to a _measurement recipe_ where a step for step guide is given to different instruments to perform a measurement procedure.
 
 A good example of such a measurement procedure is a temperature dependant current-voltage (IV) measurement. Here the temperature of a sample is set to a specific value with a PID controller and waits for the temperature to be stable. Then it performs an IV-sweep, so it sets a voltage and measures the accompanying current for a given range of voltage values (often something like 100 points between -1 V and +1V).\
 The temperature set-points are also set to values in a given range (for example from 295K to 320K in 25 steps).\
@@ -8,10 +8,10 @@ So one would need to nest different loops (one for setting teh temperature and o
 
 
 
-## 1. Simple Start with a `demo_device`
-But let's start very simple with the `demo_device` which is a pure software implementation of an instrument. 
+## 1. Simple Start with a `demo_instrument`
+But let's start very simple with the `demo_instrument` which is a pure software implementation of an instrument. 
 
-Start by clicking the large &#10133; symbol next to `Measurement Protocols`. This opens up and empty protocol window.\
+Start by clicking the large &#10133; symbol next to `Measurement Protocols`. This opens up an empty protocol window.\
 ![img_9.png](images/img_9.png)
 
 Here you can fully configure the measurement routine you want to perform. Give the protocol a custom name using `Protocol Name`. With `Filename` you set the name of data file that is created during the measurement. You can also add a custom description to describe what your measurement protocol does.
@@ -53,7 +53,7 @@ Below you can see the readable and the settable channels of the `demo_device`.
 
 ---
 
-## 2. Use Single Set and Read
+## 2. How to Set and Read Individual Channels
 Let's see how you can set and read individual channels.
 
 ### 2.1. Set Channels
@@ -117,16 +117,18 @@ We can see that the `motorX` was set correctly to a value of 4.
 ---
 
 (sweeping-using-a-for-loop-step)=
-## 3. Sweeping using a `For loop` step
-Start by creating a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols`in the main window.
+## 3. How to create a Sweep using the `For Loop` step
+A _sweep_ is a type of measurement where a single channel is changed from one value to another in a number of steps. For each step an arbitrary number of other channels is read and actions are performed. A typical measurement of this type is the _temperature sweep_ where a number of different temperatures are set and for each temperature e. g. the current is measured.
+
+To start, create a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols` in the main window.
 ### 3.1. Create Steps
 Create a `For Loop ` step as the first step in the sequence.\
 ![img_27.png](images/img_27.png)
 
-Right-click the `For loop`step and click `Add Into` to add a `Set Channel` step into the for-loop. Steps within a for-loop are executed for each iteration of the loop.\
+Right-click the `For loop` step and click `Add Into` to add a `Set Channel` step into the `For loop`. Steps within a `For loop` are executed for each iteration of the loop.\
 ![img_28.png](images/img_28.png)
 
-Then also add a `Read Channel` step by right-clicking the `Set Channels` step and using _Insert Below_.\
+Then also add a `Read Channel` step by right-clicking the `Set Channels` step and using `Insert Below`.\
 ![img_29.png](images/img_29.png)
 
 ### 3.2. Create Variables
@@ -148,7 +150,7 @@ We set
 - `motorY` to `For_Loop_Value`
 - `motorZ` to `For_Loop_Count + For_Loop_Value`
 
-to demonstrate both of the variables and the use of mathematical operations (here `+`) in value fields.
+to show how to use the variables and the mathematical operations (here `+`) in value fields.
 
 ### 3.4. Read Channels
 Now set which channels should be read each time the loop is iterated over. If you like you can  select `Read All` at the top to read all available channels. You could of course select individual channels if you want read fewer. Here we are only interested in the motor channels, so we will only read these. 

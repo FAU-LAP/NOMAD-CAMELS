@@ -1,6 +1,6 @@
 (top-link)=
-# How to Install and Configure the Demo Instrument
-This page should help you learn how to use CAMELS, especially if this is your first time using CAMELS. It shows you how to install a new instrument (`demo instrument`) to CAMELS and how to configure it.
+# How to Install and Configure Your First Instrument
+This page should help you learn how to use CAMELS, especially if this is your first time using CAMELS. It shows you how to install a new instrument to CAMELS and how to configure it. We will be using the `demo instrument` which is pure software implementation of an imaginary instrument. It has 3 settable channels and several channels that can only be read. 
 ## 1. Installation of Demo Instrument
 When you first start up NOMAD-CAMELS, you should see something like this:  
 ![Initial window on start up](images/img.png)
