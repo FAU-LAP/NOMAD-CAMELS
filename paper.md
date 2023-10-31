@@ -42,7 +42,7 @@ While electronic lab notebooks are an important step towards FAIR data it is equ
 
 In experimental physics many custom-built measurement setups are controlled by a very specific software written by individual researchers. This results in a fully heterogeneous landscape of software solutions for measurements written in many different languages and with often poor documentation, making it almost impossible for other researchers to extend or alter it. The degree to which the saved raw data is understandable varies greatly but is often unintelligible even for researchers from same lab. The recording of metadata such as instrument settings or the actual measurement steps performed to obtain the final raw data are almost never recorded. Resulting in raw data that can only be understood by individual researchers or a very specific group of people, standing in the way towards FAIR research data. Although there are some tools available (e.g. _SweepMe!_ [@SweepMe], _iC_ [@pernstich2012]) to realise the control of arbitrary measurement instruments, they are usually not open-source or their data output is not compliant to the FAIR principles. 
 
-![Visualization of CAMELS functionality and workflow. It connects with local instruments as well as large-scale lab infrastructure running EPICS. The measurements protocol is executed and FAIR-compliant measurement data is recorded.](/pictures/Bild_CAMELS.png){ width=80% }
+![Visualization of CAMELS functionality and workflow. It connects with local instruments as well as large-scale lab infrastructure running EPICS. The measurements protocol is executed and FAIR-compliant measurement data is recorded.](pictures/Bild_CAMELS.png){ width=80% }
 
 # NOMAD CAMELS
 CAMELS is completely open-source and collects all experimental metadata automatically for every measurement. By providing an easy to use graphical user interface, it allows creating and customizing measurements without programming knowledge. The default data output is a structured HDF5-file, staying as close to the NeXus format [@Konnecke2015] as possible, while still being agnostic to the exact measurement performed. The final HDF5-file contains the actual measurement data as well as the metadata in a single file, complying with the FAIR principles. 
@@ -53,7 +53,7 @@ The orchestration of measurements is performed by _bluesky_ [@Allan2019; @bluesk
 
 CAMELS functionalities can be split into three main parts, the instrument management, measurement protocols and manual controls. 
 
-![**a)** Displays the instrument manager with a few of the available instruments. **b)** Measurement protocol sequence consisting of several steps. \label{fig:manager_protocols}](/pictures/CAMELS_manager_protocol.png)
+![**a)** Displays the instrument manager with a few of the available instruments. **b)** Measurement protocol sequence consisting of several steps. \label{fig:manager_protocols}](pictures/CAMELS_manager_protocol.png)
 
 ## Instrument Management
 Instruments can be added to NOMAD CAMELS in two ways. First, instruments for which drivers already exist can be added using the _instrument manager_, which gets the available ones from the curated/official driver repository [@CAMELS_drivers]. Drivers are then installed to the Python environment via _pip_ [@PipDocumentationV23], with each driver being packaged individually.
@@ -76,7 +76,7 @@ Some devices require manual control before complex measurement routines can be s
 Every instrument can provide its own manual controls.
 
 ## Data output
-![Typical metadata output of a measurements performed with CAMELS. **a)** Human readable protocol summary of the steps performed. This allows any one to understand how the data was measured. **b)** Full Python script that was executed to perform the measurement. Allows for complete reproducibility of measurements procedures. ](/pictures/h5_data.png)
+![Typical metadata output of a measurements performed with CAMELS. **a)** Human readable protocol summary of the steps performed. This allows any one to understand how the data was measured. **b)** Full Python script that was executed to perform the measurement. Allows for complete reproducibility of measurements procedures. ](pictures/h5_data.png)
 After executing the measurement protocol the time-stamped data is saved into an HDF5-file structured similar to the NeXus format [@Konnecke2015]. Data can also be exported as CSV, while the metadata can be exported as JSON, allowing existing workflows to still be used. 
 
 The data can be separated into several sections where the most relevant are the actual measured data resulting from protocol steps such as _read Channels_, the metadata containing all the instrument settings, the metadata containing information about the steps performed and the Python script, and the metadata related to sample information and user information.
