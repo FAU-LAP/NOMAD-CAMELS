@@ -1,9 +1,73 @@
 # Writing New Instrument Drivers
-CAMELS is an open-source community driven project, so it is ideal if every instrument driver is an individual [PyPi](https://pypi.org/) package. \
-It is possible to create drivers that are [only available locally](local_drivers) for you.
+There are two flavors of instrument drivers:
 
-The source code of each driver can be found in [this repository](https://github.com/FAU-LAP/CAMELS_drivers).
-## 1. Folder structure
+1. Drivers written only for your own use and stored locally
+2. Drivers written for the entire CAMELS community that are uploaded to PyPi
+
+As CAMELS is an open-source community driven project, it is ideal if as many instrument drivers as possible are available to the entire community by creating a new [PyPi](https://pypi.org/) package for each driver you write but is ofcourse not mandatory.
+
+The source code for existing drivers can be found in [this repository](https://github.com/FAU-LAP/CAMELS_drivers) on our GitHub.
+
+The basic steps for creating both flavors of drivers are the same.
+
+
+## 1. VISA-driver builder - Creating the core structure
+The easiest way to create a new instrument driver for any kind of instrument is to open `CAMELS` and navigate to `Tools > VISA-driver builder`.
+
+### 1.1. Basic Driver Settings
+At the top enter the `Name` of the instrument, this should be lowercase and describe the instrument unambiguously. For example `keithley_2400`.\
+Then enter the `Ophyd-Class-Name`. Best-practice is to have it be slightly different from `Name` and uppercase for the first letter of the Ophyd-Class-Name. For example `Keithley_2400`. 
+
+If you communicate with the instrument via a **serial connection** enter the correct baud rate and read and write terminators. This is of course not relevant, if you communicate with the device via other ways such as .dlls, sockets, or ethernet connections. 
+
+### 1.2. Instrument Channels
+You now have the option to add four different types of channels to your instrument.
+Channels are the core functionality of your instrument. Channels can be thought of like methods of a class that can be called to perform various tasks.
+
+* `Read Channels`: Communicate with the instrument and read/return the value/data that you wish to save in to your measurement data. This channel type is used for values that can only be read from the instrument, e.g. a measured resistance.  They can be used in **measurements protocols** by using a `Read Channels` step.\
+If you for example have a simple instrument that returns a voltage measurement when you send `VOLT?` to the device you would simply enter `VOLT?` in to the `Query-String` field. 
+* `Set Channels`: These channels can set/output a value defined by the user, e.g. a voltage. These channels communicate with the instruments and write to the instrument and it is assumed that the state of instrument is modified in some way. If no return parser is set the message is simply written and nothing is read from the instrument. They can be used in measurements protocols by using a `Set Channels` step. In most cases it is not assumed that a `Set Channel` would return/save any data/information from the instrument. 
+
+`Read Channels` and `Set Channels` can be used in measurement protocols (or manual controls) to read and set instruments. They are only executed when explicitly called in a protocol.
+
+* `Config Channels - Read Only`: These may be used for values that are read only once from the instrument at the beginning of the measurement, but do not change its current state, e.g. the instrument identifier, as response from the `*IDN?` command.\
+
+* `Config Channels`: These values are set at the beginning of a protocol and are configured in the instrument management (`Manage Instruments` window). These should be values, that are normally not changed, like the current and voltage compliance, exposure time or whether the instrument is used as a voltage or current source.
+
+&#9888; Config Channels are **always** run once at the beginning of a measurement when the instrument is used. 
+You can change instrument config channels during measurements, but the idea behind configs are settings that do not change within a single measurement. The value of the config channels are saved as metadata to the instrument at the beginning of the measurement. So take care when changing this during the measurement.
+
+
+These four channels have several fields that you can fill out while creating your driver.
+
+* **Name:** This will be the name of the channel, as it is also displayed in CAMELS.
+* **Query-String: (Only for Read Channels)** The string sent to the instrument for querying some value (Input only, examples: `*IDN?`, `VOLT?`). This is useful for query commands that do not change.
+* **Write-Format-String: (Only for Set Channels)** A string that formats the input value so that the instrument understands the set command. The value (that you entered in the measurement protocol) is passed to the string with `{value}`, i.e. for example: `"VOLT {value}"` where "{value}" will be replaced with the input value. So in the end if you set the value in the protocol to `1` the string that the instrument receives would be for example `"VOLT 1"`.
+* **Return-Parser:** A regular expression which parses the string returned from the instrument. The regex must contain a capture group, so parenthesis around the value you want to extract. The first capture group from the regex will become the value. The actual code executed looks like this `re.match(parse, val).group(1)`, where `parse` is the regex string and `val` is the initial string read from the instrument.\
+If this is `None`, for a set-channel, the instrument will only be written to, if it is not `None` a query is performed.
+
+* **Return-Type:** The type to which the returned value from the "Return-Parser" should be converted. Supported are `str`, `float`, `int` and `bool`.
+* **Unit:** The physical unit of the channel's measurement / output.
+* **Description:** A description for the channel, making it clear in the metadata and for the user, what this channel does.
+* **Input-Type:** This determines the input for a config-channel in the config window. Supporter are `str`, `float` (or any number-type) and `bool`.
+
+When you are finished click `Build Driver` and select a folder where you want to save the driver.
+
+This will automatically create the basic folder structure required to use the driver in CAMELS.
+
+## 2. Folder structure
+The basic folder structure for drivers is quite simple. For an instrument named `driver_name` it looks as follows.
+```
+nomad_camels_driver_<driver_name> (contains the actual device communication files)
+└─> <driver_name>.py
+└─> <driver_name>_ophyd.py
+```
+The `<driver_name>.py` file contains code regarding the configuration settings you find in the `Manage Instruments` window and sets up the instrument.
+
+The `<driver_name>_ophyd.py` file contain code that describes how exactly you communicate with the instrument and describes its channels. This contains all commands that are sent to the instrument and how the read data is treated. 
+
+
+
 The driver should have the following folder structure
 ```
 <driver_name>
