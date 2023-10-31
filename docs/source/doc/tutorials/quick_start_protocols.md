@@ -182,13 +182,14 @@ We can see that the mathematical operation of adding `Count` and `Value` for `mo
 
 ---
 
-## 4. Using the `Simple Sweep` functionality
-If you want to sweep and set one channel (e.g. voltage) and read any number of other channels (e.g. current and temperature) you can either use a for-loop as described [above](sweeping-using-a-for-loop-step) or you can use the _Simple Sweep_ functionality which is a 'cleaner' implementation of such a sweep.
+## 4. How to use the `Simple Sweep` functionality
+If you want to sweep and set one channel (e.g. temperature) and read any number of other channels (e.g. current and voltage) you can either use a `For Loop` as described [above](sweeping-using-a-for-loop-step) or you can use the _Simple Sweep_ functionality which is a more optimized and powerful tool for 
+this task.
 
-### 4.1. Create Step
-Start by creating a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols`in the main window. Add a `Simple Sweep` step into teh sequence.
+### 4.1. Create `Simple Sweep` Step
+Start by creating a new Protocol by clicking the large ➕ symbol next to `Measurement Protocols`in the main window. Add a `Simple Sweep` step into the sequence.
 ### 4.2. Customize Simple Sweep
-You can now configure the `Simple Sweep`. This is quite similar to configuring the `For loop` step [above](sweeping-using-a-for-loop-step). But you musts first configure the Sweep Channel, so the channel that should be changed and set. We will use the `motorX` channel for this example.
+You can now configure the `Simple Sweep`. This is quite similar to configuring the `For loop` step [above](sweeping-using-a-for-loop-step). But you must first configure the Sweep Channel, so the channel that should be changed and set. We will use the `motorX` channel of the `demo_instrument` for this example.
 ![img_39.png](images/img_39.png)\
 `Data Output` configures in which Bluesky stream the sweep is run. `sub-stream` should be fine for most cases.\
 Select the `Loop-Type` and `Sweep mode` you want.
