@@ -1,8 +1,8 @@
 (plots_top_link)=
-# Setting Up Plots in Protocols
-You can display live-plots in the measurement protocols to have a better understanding of what is going on during the measurement. 
+# How to Create Plots for Protocols
+You can display live-plots in the measurement protocols to see what is happening during the measurement. 
 ## 1. Configure Plots
-To configure the plots  click `Define Plots / Fits`. Here we bill be doing this for the for-loop measurement protocol created [in the Tutorial](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_protocols.html#13-sweeping-using-a-for-loop-step).
+To configure the plots  click `Define Plots / Fits` in the protocol window. Here we bill be doing this for the `For Loop` measurement protocol created [in the Tutorial](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_protocols.html#13-sweeping-using-a-for-loop-step).
 
 Add a new plot by clicking the &#10133; symbol and choosing a plot type.
 
@@ -18,13 +18,14 @@ Give the plot a `x-label` and `y-label` as well as a `title`.
 A finished plot configuration (without a fit) could look like this for example
 ![img_51.png](images/img_51.png)
 ## 2. Run Protocol with Plots
-If you then run the protocol the plot is displayed and updated live.
+If you then run the protocol the plot is displayed and updated for every new data point that is measured.
 
 ```{image} img_52.png
 :width: 80%
 ```
 
-> &#9888; To get this plot you have to modify the protocol from [before](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_protocols.html#13-sweeping-using-a-for-loop-step) by adding a small `Wait` time of `0.1` seconds as the internal software sweep is too fast for the plot to follow.\
+> &#9888; For very fast measurements the plotting can be too slow and cause crashes. So especially when dealing with pure software instruments with very low communication times it might help to add a wait time in the protocol.\
+Here to get this plot you have to modify the protocol from [before](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_protocols.html#13-sweeping-using-a-for-loop-step) by adding a small `Wait` time of `0.1` seconds as the internal software sweep is too fast for the plot to follow.\
 > ![img_53.png](images/img_53.png)
 
 
