@@ -1,4 +1,4 @@
-# Uninstalling CAMELS
+# Removing CAMELS
 ## Windows Installer
 To remove CAMELS simply run the uninstaller. This is only possible if you used the installer.exe to install CAMELS in the first place.
 

@@ -1,4 +1,4 @@
-# Custom UNIX Installation Using Pyenv
+# UNIX - Installation Using Pyenv
 
 ## 1. Pyenv Installation
 See the [official Pyenv installation guide](https://github.com/pyenv/pyenv#installation) for more details and the most recent version.

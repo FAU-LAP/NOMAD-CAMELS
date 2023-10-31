@@ -1,10 +1,10 @@
 # Writing New Instrument Drivers
 There are two flavors of instrument drivers:
 
-1. Drivers written only for your own use and stored locally
-2. Drivers written for the entire CAMELS community that are uploaded to PyPi
+1. Drivers written only for your own use that are stored locally.
+2. Drivers written for the entire CAMELS community that are made available through PyPi.
 
-As CAMELS is an open-source community driven project, it is ideal if as many instrument drivers as possible are available to the entire community by creating a new [PyPi](https://pypi.org/) package for each driver you write but is ofcourse not mandatory.
+For the entire community to benefit, it's best to create a new [PyPi](https://pypi.org/) package for each instrument driver you write for CAMELS. It's not mandatory, but it helps make our project more accessible and useful for others as it is community-driven and open source.
 
 The source code for existing drivers can be found in [this repository](https://github.com/FAU-LAP/CAMELS_drivers) on our GitHub.
 
@@ -64,11 +64,14 @@ nomad_camels_driver_<driver_name> (contains the actual device communication file
 ```
 The `<driver_name>.py` file contains code regarding the configuration settings you find in the `Manage Instruments` window and sets up the instrument.
 
-The `<driver_name>_ophyd.py` file contain code that describes how exactly you communicate with the instrument and describes its channels. This contains all commands that are sent to the instrument and how the read data is treated. 
+The `<driver_name>_ophyd.py` file contains code that describes how exactly you communicate with the instrument and defines the available channels. This file contains all commands that are sent to the instrument and specifies how the read data is treated.
 
+# Drivers for PyPi
+If you want to share your driver with others, all you have to do is create a PyPi package out of the folder you created above. 
 
-
-The driver should have the following folder structure
+You can ofcourse also fork our [driver repository](https://github.com/FAU-LAP/CAMELS_drivers) and create a pull request with the new driver you wrote and we will be happy to add your driver to PyPi for you. 
+Or you can also send us 
+To do this the driver should have the following folder structure:
 ```
 <driver_name>
 └─> dist (this is automatically created by python -m build)
@@ -81,11 +84,15 @@ The driver should have the following folder structure
 └─> pyproject.toml
 └─> README.md
 ```
-The most important files are the `<driver_name>.py` and `<driver_name>_ophyd.py` files. The first one contains everything that is needed by the NOMAD-CAMELS GUI. The latter contains the class that is actually used for communicating with the instrument.  
-The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPi (see the [setuptools page](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)).\
+
+The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPi (see the [setuptools page](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)).
+
 &#9888; Most importantly the project name and version must be set in the `pyproject.toml` file.
 
+
 ---
+
+Here is an exemplary .toml file:
 
 <details>
   <summary>Code example: pyproject.toml file for the  Keithley 237</summary>
