@@ -1,5 +1,5 @@
 (top_link)=
-# Using Manual Controls
+# How to Use Manual Controls
 `Manual Control` functionality allows you to set individual instrument channels (e.g. stage in x direction or a voltage output of a SMU)
 ## 1. Add Manual Control
 To start  click the &#10133; symbol next to `Manual Control`. You can now select which type of manual control you want to add. The options depend on the instruments you have installed. The most basic manual control is the `Stage_Control` which sets individual channels. It is mainly designed for motorized stages but can be used to control most instruments. 
@@ -13,6 +13,7 @@ Click `OK` and `start` the manual control.\
 This opens the stage control.\
 ![img_47.png](images/img_47.png)\
 Here you can set the step size and use the green arrow keys to control the selected axis. You can also jump to a specific value by entering values below the `Go To` button and then pressing the button.
-> &#9888; The value of `Time between readings` is the time in seconds after which the axis is read (using the set `readback axis` channel).
+> &#9888; The value of `Time between readings` is the time in seconds after which the axis is read (using the set `readback axis` channel).\
+> This should NOT be inf as the position will never be read. Typically, a value of 0.5 seconds is reasonable. 
 
 [&#8679; Back to the top &#8679;](top_link)
