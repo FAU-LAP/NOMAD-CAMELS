@@ -21,11 +21,11 @@ Here you will configure the individual steps of the measurement procedure.
 
 Right click into the empty space to add a new step
 
-```{image} img_10.png
+```{image} images/img_10.png
 :width: 75%
 ```
 or use the small &#10133; symbol in the top right to add a new step.
-```{image} img_11.png
+```{image} images/img_11.png
 :width: 75%
 ```
 
@@ -42,10 +42,10 @@ Depending on the exact implementation of the instruments channels they are eithe
 
 Below you can see the readable and the settable channels of the `demo_device`. 
 
-```{image} img_13.png
+```{image} images/img_13.png
 :width: 53%
 ```
-```{image} img_14.png
+```{image} images/img_14.png
 :width: 46%
 ```
 
@@ -59,10 +59,10 @@ Let's see how you can set and read individual channels.
 ### 2.1. Set Channels
 We can now configure the protocol so that first each motor channel (`X`,`Y`,`Z`) are set to a value (in this case `1`,`2`,`3`).
 
-```{image} img_15.png
+```{image} images/img_15.png
 :width: 49%
 ```
-```{image} img_16.png
+```{image} images/img_16.png
 :width: 49%
 ```
 
@@ -76,10 +76,10 @@ We can now configure the protocol so that first each motor channel (`X`,`Y`,`Z`)
 
 For this simply add a variable on the bottom right of the protocol screen with the &#10133; symbol
 
-```{image} img_17.png
+```{image} images/img_17.png
 :width: 49%
 ```
-```{image} img_18.png
+```{image} images/img_18.png
 :width: 49%
 ```
 
@@ -162,17 +162,17 @@ Now  click `OK` and `run` the protocol.
 You can already see the eleven iterations the loop makes from the console window.
 ### 3.6. Sweep Data
 Now lets look at the data produced. The HDF5 file with the data is saved into the location specified by you. With a simple HDF5 viewer like [H5web](https://h5web.panosc.eu/h5wasm) you can easily read and display the data.
-```{image} img_36.png
+```{image} images/img_36.png
 :width: 62%
 ```
 
 
 Here are the other two motor channels
 
-```{image} img_37.png
+```{image} images/img_37.png
 :width: 22%
 ```
-```{image} img_38.png
+```{image} images/img_38.png
 :width: 21.3%
 ```
 
@@ -193,15 +193,15 @@ You can now configure the `Simple Sweep`. This is quite similar to configuring t
 ![img_39.png](images/img_39.png)\
 `Data Output` configures in which Bluesky stream the sweep is run. `sub-stream` should be fine for most cases.\
 Select the `Loop-Type` and `Sweep mode` you want.
-```{image} img_40.png
+```{image} images/img_40.png
 :width: 30%
 ```
-```{image} img_41.png
+```{image} images/img_41.png
 :width: 34.8%
 ```
 
 Set the `Start`, `Stop` and `points` parameters. For this we can again use variables as done [above](sweeping-using-a-for-loop-step). Then select which channels you want to read. We will only select the `motorX` channel. As this is the only channel that is changed.
-```{image} img_42.png
+```{image} images/img_42.png
 :width: 70%
 ```
 
@@ -211,7 +211,7 @@ Click `OK` and `run` the protocol.\
 
 ### 4.4. Data File
 Now lets look at the data produced. The HDF5 file with the data is saved into the location specified by you. With a simple HDF5 viewer like [H5web](https://h5web.panosc.eu/h5wasm) you can easily read and display the data.
-```{image} img_44.png
+```{image} images/img_44.png
 :width: 75%
 ```
 
