@@ -7,10 +7,10 @@ When you first start up NOMAD-CAMELS, you should see something like this:
 
 Clicking on the "Manage Instruments" button will open a dialog where you can install available instruments from the CAMELS repository (PyPi).
 
-```{image} img_1.png
+```{image} images/img_1.png
 :width: 49%
 ```
-```{image} img_3.png
+```{image} images/img_3.png
 :width: 49%
 ```
 
