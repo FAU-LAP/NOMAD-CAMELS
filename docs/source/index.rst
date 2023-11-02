@@ -56,7 +56,7 @@ If you have any questions or feedback you can reach the development team of CAME
    Create New Instrument Drivers <doc/programmers_guide/instrument_drivers.md>
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contribute to CAMELS
 
    General Process <doc/contribute/general_process.md>
