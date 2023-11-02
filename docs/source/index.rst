@@ -5,7 +5,7 @@ CAMELS - Configurable Application for Measurements, Experiments and Laboratory S
 
 What is CAMELS?
 ===============
-NOMAD-CAMELS (or just "CAMELS") is an open-source measurement software, targeted towards the requirements of experimental physics. Ease of use, rich metadata and FAIR-compliant data are at the heart of CAMELS design.
+NOMAD-CAMELS (or simply **CAMELS**) is an open-source measurement software, targeted towards the requirements of experimental physics. Ease of use, rich metadata and FAIR-compliant data are at the heart of CAMELS design.
 
 
 CAMELS provides a graphical user interface (GUI) that can be used to setup instrument control and measurement protocols. The GUI then generates Python code that interfaces with `bluesky <https://blueskyproject.io/>`_ to communicate with the instruments and orchestrate the measurement. CAMELS can also be used to communicate with large-scale, distributed systems implemented with `EPICS <https://epics-controls.org/>`_.
@@ -34,8 +34,9 @@ The CAMELS software can be viewed here https://github.com/FAU-LAP/CAMELS. We inv
 Contact
 =======
 If you have any questions or feedback you can reach the development team of CAMELS via:
-* e-mail at nomad-camels@fau.de
-* join the discussion on GitHub: https://github.com/FAU-LAP/NOMAD-CAMELS/discussions
+
+* E-mail [nomad-camels@fau.de](mailto:nomad-camels@fau.de)
+* Join the discussion on [GitHub](https://github.com/FAU-LAP/NOMAD-CAMELS/discussions)
 
 .. toctree::
    :maxdepth: 2
@@ -53,6 +54,13 @@ If you have any questions or feedback you can reach the development team of CAME
 
    Available Instruments <doc/instruments/instruments.md>
    Create New Instrument Drivers <doc/programmers_guide/instrument_drivers.md>
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contribute to CAMELS
+
+   General Process <doc/contribute/general_process.md>
+   Code of Conduct <doc/contribute/code_of_conduct.md>
 
 .. toctree::
    :maxdepth: 2
