@@ -34,7 +34,7 @@ cd \Path\to\NOMAD-CAMELS\.desertenv\Scripts\
 
 ---
 
-```{imag} img_2.png
+```{imag} images/img_2.png
 :width: 65%
 :align: right
 ```
@@ -51,10 +51,10 @@ After successful installation you can switch to the "Configure Instruments" tab.
 Here all the available instruments are listed as well as the number of instances (so 'actual' instruments) you have added of the installed instrument type.\
 For this  select the instrument type you want to add and click the &#10133; symbol under `Configure`.
 
-```{imag} img_4.png
+```{imag} images/img_4.png
 :width: 49%
 ```
-```{imag} img_5.png
+```{imag} images/img_5.png
 :width: 49%
 ```
 
@@ -64,10 +64,10 @@ After adding the instrument a new instance of this instrument type is created. Y
 You can then change the instrument settings as you wish.\
 You can add a plain text description of the instrument and what you are planning to do with it. This is added to the **metadata** of your measurement when the instrument is used. This can help you better understand what the instrument does for larger project and allows others to better understand your measurement data.
 
-```{imag} img_6.png
+```{imag} images/img_6.png
 :width: 49%
 ```
-```{imag} img_7.png
+```{imag} images/img_7.png
 :width: 49%
 ```
 
