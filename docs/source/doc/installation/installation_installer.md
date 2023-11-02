@@ -20,9 +20,10 @@ If your installation fails randomly (setup of Python environment takes less than
 Set the correct PATH variables for pyenv and retry the installation again.\
 **Alternative:**\
 Remove pyenv by deleting the `/.pyenv/` folder or by running 
-    ```bash
-    .\install-pyenv-win.ps1 -uninstall
-    ```
+
+```bash
+.\install-pyenv-win.ps1 -uninstall
+```
   in the terminal. The `install-pyenv-win.ps1` script is located in `/.pyenv/pyenv-win/`.
 
   Remove the `/NOMAD-CAMELS/` folder as well and restart the installer.
