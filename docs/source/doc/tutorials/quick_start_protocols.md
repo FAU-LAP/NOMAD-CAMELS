@@ -24,7 +24,9 @@ Right click into the empty space to add a new step
 ```{image} images/img_10.png
 :width: 75%
 ```
+
 or use the small &#10133; symbol in the top right to add a new step.
+
 ```{image} images/img_11.png
 :width: 75%
 ```

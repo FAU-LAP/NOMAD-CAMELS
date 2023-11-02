@@ -6,7 +6,7 @@ To configure the plots  click `Define Plots / Fits` in the protocol window. Here
 
 Add a new plot by clicking the &#10133; symbol and choosing a plot type.
 
-```{image} img_49.png
+```{image} images/img_49.png
 :width: 40%
 ```
 
@@ -20,7 +20,7 @@ A finished plot configuration (without a fit) could look like this for example
 ## 2. Run Protocol with Plots
 If you then run the protocol the plot is displayed and updated for every new data point that is measured.
 
-```{image} img_52.png
+```{image} images/img_52.png
 :width: 80%
 ```
 

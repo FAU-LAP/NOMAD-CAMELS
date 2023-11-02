@@ -7,10 +7,10 @@ When you first start up NOMAD-CAMELS, you should see something like this:
 
 Clicking on the "Manage Instruments" button will open a dialog where you can install available instruments from the CAMELS repository (PyPi).
 
-```{Manage instruments window before installation} img_1.png
+```{image} img_1.png
 :width: 49%
 ```
-```{Manage instruments window after installation} img_3.png
+```{image} img_3.png
 :width: 49%
 ```
 
@@ -34,7 +34,7 @@ cd \Path\to\NOMAD-CAMELS\.desertenv\Scripts\
 
 ---
 
-```{imag} images/img_2.png
+```{image} images/img_2.png
 :width: 65%
 :align: right
 ```
@@ -51,10 +51,10 @@ After successful installation you can switch to the "Configure Instruments" tab.
 Here all the available instruments are listed as well as the number of instances (so 'actual' instruments) you have added of the installed instrument type.\
 For this  select the instrument type you want to add and click the &#10133; symbol under `Configure`.
 
-```{imag} images/img_4.png
+```{image} images/img_4.png
 :width: 49%
 ```
-```{imag} images/img_5.png
+```{image} images/img_5.png
 :width: 49%
 ```
 
@@ -64,10 +64,10 @@ After adding the instrument a new instance of this instrument type is created. Y
 You can then change the instrument settings as you wish.\
 You can add a plain text description of the instrument and what you are planning to do with it. This is added to the **metadata** of your measurement when the instrument is used. This can help you better understand what the instrument does for larger project and allows others to better understand your measurement data.
 
-```{imag} images/img_6.png
+```{image} images/img_6.png
 :width: 49%
 ```
-```{imag} images/img_7.png
+```{image} images/img_7.png
 :width: 49%
 ```
 
