@@ -66,77 +66,18 @@ The `<driver_name>.py` file contains code regarding the configuration settings y
 
 The `<driver_name>_ophyd.py` file contains code that describes how exactly you communicate with the instrument and defines the available channels. This file contains all commands that are sent to the instrument and specifies how the read data is treated.
 
-# Drivers for PyPi
-If you want to share your driver with others, all you have to do is create a PyPi package out of the folder you created above. 
 
-You can ofcourse also fork our [driver repository](https://github.com/FAU-LAP/CAMELS_drivers) and create a pull request with the new driver you wrote and we will be happy to add your driver to PyPi for you. 
-Or you can also send us 
-To do this the driver should have the following folder structure:
-```
-<driver_name>
-└─> dist (this is automatically created by python -m build)
-    └─> nomad_camels_driver_<driver_name>-X.Y.Z.tar.gz
-    └─> nomad_camels_driver_<driver_name>-X.Y.Z-py3-none-any.whl
-└─> nomad_camels_driver_<driver_name> (contains the actual device communication files)
-    └─> <driver_name>.py
-    └─> <driver_name>_ophyd.py
-└─> LICENSE.txt
-└─> pyproject.toml
-└─> README.md
-```
-
-The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPi (see the [setuptools page](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)).
-
-&#9888; Most importantly the project name and version must be set in the `pyproject.toml` file.
-
-
----
-
-Here is an exemplary .toml file:
-
-<details>
-  <summary>Code example: pyproject.toml file for the  Keithley 237</summary>
-
-```toml
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "nomad_camels_driver_keithley_237"
-version = "0.1.4"
-authors = [
-    { name="FAIRmat - HU Berlin", email="nomad-camels@fau.de" }
-]
-description = "Instrument driver for the Keithley 237 SMU."
-readme = "README.md"
-requires-python = ">=3.9.6"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",
-    "Operating System :: Microsoft :: Windows",
-]
-dependencies = [
-    "pyvisa",
-    "pyvisa-py"
-]
-[project.urls]
-"GitHub Page" = "https://github.com/FAU-LAP/NOMAD-CAMELS"
-"Documentation" = "https://fau-lap.github.io/NOMAD-CAMELS/"
-```
-
-</details>
 
 ---
 
 (python_files)=
-## 2. Python files
+## 3. Functionality of the Python files
 The `<driver_name>.py` file contains information about the possible instrument configurations and settings. This can be for example the current compliance of a voltage source or the integration time of a digital multimeter.
 
 > &#9888; There is an inherent difference with how CAMELS treats "config" and "settings". The "config" is provided by the instrument's ophyd class similar to channels (see [below](write_ophyd_file)). The "settings" are handed to the instrument's `__init__`. Using the protocol-step "Change-Device-Config", only "config" can be changed. This step works with either providing a class `subclass_config_sub` in the driver or when the main `subclass_config` has an attribute `sub_widget` (as is the case for `Simple_Config`, see next section).
 
 
-### 2.1 Simple Configurations
+### 3.1 Simple Configurations
 For **simple instruments** with only a **few settings** you do not need to write your own GUI for the settings but CAMELS can auto-generate the UI for you. \
 An example file is displayed below:
 
@@ -204,7 +145,7 @@ class subclass_config(device_class.Simple_Config):
 
 ---
 
-### 2.2 Complex Configurations
+### 3.2 Complex Configurations
 If the instrument is more complex CAMELS can not auto generate the UI anymore. Here you need to write your own UI using for example QT Designer. The first three class definitions are relevant for this.
 
 ---
@@ -502,7 +443,7 @@ class subclass_config_sub(device_class.Device_Config_Sub, Ui_B2912_channel):
 
 ---
 (write_ophyd_file)=
-### 2.3 Ophyd File
+### 3.3 Ophyd File
 The `<driver_name>_ophyd.py` file should contain a class inheriting from ophyd.Device (or one of its subclasses).
 Each component with `kind='normal'` or `'hinted'` (or unspecified) of the defined device will appear as a channel in CAMELS. Components with `kind='config'` should be managed in the instrument settings in the UI.  
 A quick way to get started is using the `custom_function_signal` module. These Signals inherit from ophyd's Signal and provide a way to use any python function for setting / reading the channel.  
@@ -556,7 +497,7 @@ class Instrument_Name(Device):
 </details>
 
 
-## 3. Building the Instrument Package
+## 4. Building the Instrument Package
 To create a new package that can be installed via pip from PyPi or testPyPi follow these steps.
 1. Make sure you have `build` and `twine` installed into your python environment with
    ```
@@ -581,7 +522,7 @@ To create a new package that can be installed via pip from PyPi or testPyPi foll
 
 ---
 
-## 4. Automated Build and Upload
+## 5. Automated Build and Upload
 You can run the following script using microsoft PowerShell in the `$rootFolder` containing multiple instrument drivers in subdirectories.\
 It runs the `python -m build` and `python -m twine upload dist/nomad*` commands in each subdirectory containing a `pyproject.toml` file.
 
@@ -600,10 +541,71 @@ Get-ChildItem $rootFolder -Recurse -Directory | ForEach-Object {
 
 ---
 
-## 5. Install Instrument Package
+## 6. Install Instrument Package
 To install  run
 ```console
 pip install nomad_camels_driver_<driver_name>
 ```
 where `nomad_camels_driver_<driver_name>` is the driver name you gave your folder and project.\
 
+# Drivers for PyPi
+If you want to share your driver with others, all you have to do is create a PyPi package out of the folder you created above. 
+
+You can ofcourse also fork our [driver repository](https://github.com/FAU-LAP/CAMELS_drivers) and create a pull request with the new driver you wrote and we will be happy to add your driver to PyPi for you. 
+Or you can also send us the files via [email](mailto:nomad-camels@fau.de) and we will add them to the repository and PyPi for you.
+
+To create a PyPi package for your driver you should have the following folder structure:
+```
+<driver_name>
+└─> dist (this is automatically created by python -m build)
+    └─> nomad_camels_driver_<driver_name>-X.Y.Z.tar.gz
+    └─> nomad_camels_driver_<driver_name>-X.Y.Z-py3-none-any.whl
+└─> nomad_camels_driver_<driver_name> (contains the actual device communication files)
+    └─> <driver_name>.py
+    └─> <driver_name>_ophyd.py
+└─> LICENSE.txt
+└─> pyproject.toml
+└─> README.md
+```
+
+The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPi (see the [setuptools page](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)).
+
+&#9888; Most importantly the project name and version must be set in the `pyproject.toml` file.
+
+
+---
+
+Here is an exemplary .toml file:
+
+<details>
+  <summary>Code example: pyproject.toml file for the  Keithley 237</summary>
+
+```toml
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nomad_camels_driver_keithley_237"
+version = "0.1.4"
+authors = [
+    { name="FAIRmat - HU Berlin", email="nomad-camels@fau.de" }
+]
+description = "Instrument driver for the Keithley 237 SMU."
+readme = "README.md"
+requires-python = ">=3.9.6"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",
+    "Operating System :: Microsoft :: Windows",
+]
+dependencies = [
+    "pyvisa",
+    "pyvisa-py"
+]
+[project.urls]
+"GitHub Page" = "https://github.com/FAU-LAP/NOMAD-CAMELS"
+"Documentation" = "https://fau-lap.github.io/NOMAD-CAMELS/"
+```
+
+</details>
