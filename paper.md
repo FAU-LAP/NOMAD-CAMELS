@@ -32,61 +32,66 @@ bibliography: paper.bib
 
 # Summary
 
-NOMAD CAMELS (short: CAMELS) is a configurable, open-source measurement software that records fully self-describing experimental data. It has its origins in the field of experimental physics where a wide variety of measurement instruments are used in frequently changing experimental setups and measurement protocols. CAMELS provides a user-friendly graphical user interface (GUI) which allows the user to configure experiments without the need of programming skills or deep understanding of instrument communication. CAMELS translates user-defined measurement protocols into stand-alone executable Python code for full transparency of the actual measurement sequences. Existing large-scale, distributed control systems using EPICS can be natively implemented. CAMELS is designed with focus on full recording of data and metadata. When shared with others, data produced with CAMELS allow full understanding of the measurement and the resulting data.
+NOMAD CAMELS (short: CAMELS) is a configurable, open-source measurement software that records fully self-describing experimental data. It has its origins in the field of experimental physics where a wide variety of measurement instruments are used in frequently changing experimental setups and measurement protocols. CAMELS provides a user-friendly graphical user interface (GUI) which allows the user to configure experiments without the need of programming skills or deep understanding of instrument communication. CAMELS translates user-defined measurement protocols into stand-alone executable Python code for full transparency of the actual measurement sequences. Existing large-scale, distributed control systems using e.g. EPICS can be natively implemented. CAMELS is designed with focus on full recording of data and metadata. When shared with others, data produced with CAMELS allow full understanding of the measurement and the resulting data.
 
-CAMELS sets in at the earliest stage, the design of the measurement, to facilitate collecting sustainable data in accordance with the **FAIR** (**F**indable, **A**ccessible, **I**nteroperable and **R**e-usable) principles.
+CAMELS sets in at the earliest stage, the design of the measurement, to facilitate collecting sustainable data in accordance with the **FAIR** (**F**indable, **A**ccessible, **I**nteroperable and **R**e-usable) principles [@Wilkinson2016].
 
 
 # Statement of need
-Research data management has peaked greater and greater interest in recent years with large research funding agencies emphasizing the importance of well-founded research data strategies in their treatment of proposals. The key goal is to create research data following the FAIR principles [@Wilkinson2016] and thereby improve world-wide research.
-While electronic lab notebooks are an important step towards FAIR data it is equally important to start recording FAIR measurement data as early as possible in the research workflow. 
+Research data management has piqued greater and greater interest in recent years. Today research funding agencies demand sustainable research data strategies. The key criterion is to create research data following the FAIR principles and thereby improve world-wide data-driven research.
+While one ingredient, electronic lab notebooks, are an important step towards FAIR data, it is equally important to record the measurement data along FAIR principles as early as possible in the research workflow. 
 
-In experimental physics many custom-built measurement setups are controlled by very specific software written by individual researchers. This results in a fully heterogeneous landscape of software solutions for measurements written in many different languages and with often poor documentation, making it almost impossible for other researchers to extend or alter it. The degree to which the stored raw data is understandable varies greatly but is often unintelligible even for researchers from same lab. Important metadata such as instrument settings or the actual measurement steps performed to obtain the final raw data are rarely recorded. As a consequence, the documentation of experiments is incomplete preventing FAIR research data. Although there are some tools available (e.g. _SweepMe!_ [@SweepMe], _iC_ [@pernstich2012]) to realise control of arbitrary measurement instruments, they are usually not open-source or their data output is not compliant to the FAIR principles. 
+In experimental physics many custom-built measurement setups are controlled by very specific software written by individual researchers. This results in a heterogeneous landscape of software fragments for measurements written in many different languages and with often poor documentation, making it almost impossible for other researchers to extend them. The degree to which the stored raw data is understandable varies greatly but is often unintelligible even for researchers from same lab. Important metadata such as instrument settings or the actual measurement steps performed to obtain the final raw data are rarely recorded. As a consequence, the documentation of experiments is incomplete preventing FAIR research data. Although there are some tools available (e.g. _SweepMe!_ [@SweepMe], _iC_ [@pernstich2012]) to realise control of arbitrary measurement instruments, they are usually not open-source or their data output is not compliant to the FAIR principles. 
 
-![Visualization of CAMELS functionality and workflow. CAMELS connects with local instruments as well as large-scale lab infrastructure running EPICS. Customizable measurements protocols are translated into Python code and executed, and FAIR-compliant measurement data is recorded. \label{fig:camels_overview}](pictures/Bild_CAMELS.png){ width=80% }
+![Visualization of CAMELS functionality and workflow. CAMELS connects directly with local instruments and/or large-scale lab infrastructure running network protocols, e.g. EPICS. Customizable measurements protocols are translated into Python code and executed. The output is FAIR-compliant measurement data. \label{fig:camels_overview}](pictures/Bild_CAMELS.png){ width=80% }
 
 # NOMAD CAMELS
-CAMELS is an open-source tool that automatically collects all computer-accessible experimental metadata automatically. It features a user-friendly graphical interface that enables the creation and customization of measurements without the need for programming knowledge. The data is output in a structured HDF5 file format that closely resembles the NeXus standard [@Konnecke2015] while remaining agnostic to the specific measurement performed. The final HDF5 file contains both the actual measurement data and metadata in a single file, adhering to the FAIR principles. 
+CAMELS is an open-source tool that automatically collects all computer-accessible experimental metadata automatically. It features a user-friendly graphical interface that enables the creation and customization of measurements without the need for programming knowledge. By default, the data is stored in a structured HDF5 file format that closely resembles the structure of the NeXus standard [@Konnecke2015]. The final HDF5 file contains both the actual measurement data and metadata in a single file, adhering to the FAIR principles. 
 
-Moreover, CAMELS allows for direct access to the _NOMAD_ [@Draxl2019] online repository or a local database installation called _NOMAD Oasis_ enabling the use of their electronic lab notebook (ELN) features. The user can select sample data from _NOMAD_ and link it with the measurement; measured data is directly uploaded providing a simple and stream-lined data workflow.
+Moreover, CAMELS allows for direct access to the _NOMAD_ [PAPER SCHEIDGEN DOI https://doi.org/10.52825/cordi.v1i.376online]() repository or its on-premise installation called _NOMAD Oasis_ enabling direct linking to electronic lab notebook (ELN) entries. The user can for example connect measurements to previous experiment workflows documented in _NOMAD_ ELNs. CAMELS can subsequently upload measurement results directly into the ELN providing a simple and stream-lined data workflow.
 
-The _bluesky_ software [@Allan2019; @bluesky] initially developed to control instruments at large-scale research institutions using EPICS [@Knott1994; @EPICS] is the backbone of CAMELS and orchestrates the instrument communication. This allows CAMELS to seamlessly integrate with any existing lab infrastructure running EPICS. A schematic overview of the functionality of CAMELS is displayed in \autoref{fig:camel_overview}.
+The technological backbone of CAMELS is _bluesky_ [@Allan2019; @bluesky] initially developed to control instruments at large-scale research institutions using EPICS [@Knott1994; @EPICS]. In CAMELS, _bluesky_ is employed to orchestrate the instrument communication either directly (e.g. via PyVISA) or using network protocols. Existing lab infrastructure controlled by EPICS is therefore immediately accessible. A schematic overview of the functionality of CAMELS is displayed in \autoref{fig:camel_overview}.
 
 CAMELS provides a comprehensive set of functionalities that can be split into three primary components: the instrument management, measurement protocols and manual controls. 
 
-![**a)** Displays the instrument manager with a just few of the available instruments. **b)** Measurement protocol sequence consisting of several steps. \label{fig:manager_protocols}](pictures/CAMELS_manager_protocol.png)
+![**(a)** The instrument manager allows to install and configure instrument drivers from the curated instrument driver library or the user's hard drive. **(b)** The measurement protocol editor allows users to configure arbitrary measurement sequences. \label{fig:manager_protocols}](pictures/CAMELS_manager_protocol.png)
 
 ## Instrument Management
-Instruments can be added to NOMAD CAMELS in two ways. The first involves using the instrument manager to add instruments for which drivers already exist. The manager obtains these drivers from the official, curated driver repository [@CAMELS_drivers]. Subsequently, these drivers are installed to the Python environment via _pip_ [@PipDocumentationV23] with each driver being packaged individually.
+Scientific instruments can be added to NOMAD CAMELS in two ways. The first involves the _instrument manager_ to add instruments from the official curated driver repository [@CAMELS_drivers]. These drivers are installed to the Python environment via _pip_ [@PipDocumentationV23] with each driver being packaged individually.
 
-The second way is to add drivers by creating the necessary files locally and placing them in the folder specified in the NOMAD CAMELS settings. To facilitate this process CAMELS provides a _driver builder_ that automatically generates the essential structure and boilerplate code. This approach is recommended for users intending to create their own drivers. As CAMELS is an open-source project developed by and for the community, users are encouraged to contribute by creating pull requests for new drivers on the driver repository.
+The second way is to add self-built drivers by creating the necessary files locally and placing them in the directory specified in the NOMAD CAMELS settings. To facilitate this process CAMELS provides a _driver builder_ that automatically generates the essential structure and boilerplate code. As CAMELS is an open-source project developed by and for the community, users are encouraged to contribute to the driver library by creating pull requests for new drivers on the GitHub repository [@CAMELS_drivers].
 
-In general, a CAMELS driver comprises two files: one containing the hardware interface, the other defining the controllable instrument settings. Instruments consist of _channels_ that can be set and read; they correspond to an individual functionality or physical property of the instrument.
+In general, a CAMELS driver comprises two files: one containing the hardware interface communication, the other defining the available instrument settings. Data communication to instruments is handled via _channels_ that can be set and/or read; they correspond to an instrument's individual functionality or physical property.
 
 
 ## Measurement protocols
-Coming from experimental physics, the _measurement protocol_ in CAMELS is a distinctive sequence of setting and measuring instruments (see \autoref{fig:manager_protocols}). This yields a measurement in a 'recipe-style' format, where the next step is executed after the successful completion of each preceding step.  
-  
-CAMELS translates the protocol created in the GUI into a Python script, which is then executed. The script can be modified and run without CAMELS permitting
-complex modifications of the measurement as required. Additionally, users can export and import the scripts on different systems running CAMELS enabling the sharing of entire measurement procedures.
+In CAMELS a _measurement protocol_ is a distinctive sequence of individual steps including setting and reading instrument channels (see \autoref{fig:manager_protocols}), loops, conditional execution, running sub-protocols, PID control, etc. This yields a measurement in a 'recipe-style' format, where the next step is usually executed after the successful completion of each preceding step. Asynchronous data acquisition is supported.
 
-The individual steps in the protocol are predefined building blocks that perform various functions such as writing commands to the instruments, reading data from instruments, and even creating complex, parametrized measurement scans. Individual instrument drivers can integrate custom steps, such as a PID-controller that adds the ability to wait for the desired value stabilize.
+CAMELS translates the protocol created in the GUI into a Python script, which is then executed. The script can be viewed, run independent of CAMELS, and modified if required. CAMELS protocols and settings can be stored and shared with colleagues enabling easy reproducibility of experiments. 
+
+
 
 ## Manual Controls
-Certain devices require manual control before complex measurement routines can be started, such as adjusting stages or the specification of a particular sample temperature. _Manual controls_ allow the user to control individual instruments without having to create a complete protocol in advance.
-Each instrument may provide its own manual controls.
+Certain scientific instruments require manual control before starting predefined measurement routines, e.g. adjusting stages, controlling temperature, valves, pumps, etc. In CAMELS this is achieved through the _Manual controls_ functionality which can be applied to any writable instrument channel.
 
 ## Data output
-![Typical metadata output of a measurements performed with CAMELS. **a)** Human readable protocol summary of the steps performed. This allows anyone to understand how the data was measured. **b)** Full Python script that was executed to perform the measurement allowing for complete reproducibility of measurement procedures. \label{fig:h5_data}](pictures/h5_data.png)
-After executing the measurement protocol, the time-stamped data is saved in an HDF5 file with a structure similar to that of the NeXus standard [@Konnecke2015]. Data can also be exported in CSV format, with the metadata exported in JSON, enabling the use of existing workflows.
 
-The stored data can be divided into distinct sections. The most significant among these are the actual measured data generated from protocol steps like reading channels, the metadata containing all instrument settings, metadata containing information about the steps performed and the Python script (see \autoref{fig:h5_data}), and metadata related to sample and user information.
+![CAMELS stores measurement data together with rich metadata collected automatically into a structured HDF5 file by default. This includes **(a)** a human readable measurement protocol summary and **(b)** the executable Python script that was used to actually record the data. This allows others to understand the data acquisition and to reproduce the experiment. \label{fig:h5_data}](pictures/h5_data.png)
 
-# Documentation
-In-depth documentation and guides for installing, using and troubleshooting can be found on the CAMELS documentation [website](https://fau-lap.github.io/NOMAD-CAMELS/) [@fuchsCAMELSConfigurableApplication].
+After executing the measurement protocol, the time-stamped data is by default saved to an HDF5 file with a structure similar to the NeXus standard [@Konnecke2015]. Data can also be exported in CSV format with the metadata exported in JSON.
+
+The stored data can be divided into distinct sections:
+* Time-stamped raw data obtained during the execution of the measurement protocol.
+* Instrument settings.
+* Human-readable summary of the measurement protocol information (see \autoref{fig:h5_data} (s)).
+* Python script that recorded the data (see \autoref{fig:h5_data} (b)).
+* Further metadata e.g. sample and user information.
+
+## Documentation
+In-depth documentation and guides for installing, using and troubleshooting can be found on the [CAMELS documentation webpage](https://fau-lap.github.io/NOMAD-CAMELS/) [@fuchsCAMELSConfigurableApplication].
 
 # Acknowledgements
 
-NOMAD CAMELS is being developed within the FAIRmat project that is funded by the Deutsche Forschungsgemeinschaft ”DFG, German Research Foundation” – project 460197019.
+NOMAD CAMELS is being developed within the NFDI consortium _FAIRmat_ funded by the Deutsche Forschungsgemeinschaft ”DFG, German Research Foundation”, project 460197019.
 
 # References
