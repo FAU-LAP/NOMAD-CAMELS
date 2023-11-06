@@ -91,6 +91,7 @@ The stored data can be divided into distinct sections:
 In-depth documentation and guides for installing, using and troubleshooting can be found on the [CAMELS documentation webpage](https://fau-lap.github.io/NOMAD-CAMELS/) [@fuchsCAMELSConfigurableApplication].
 
 # Acknowledgements
+We thank Heinz Junkes and Patrick Oppermann (Fritz-Haber-Institut der Max-Planck-Gesellschaft) for valuable discussions.
 
 NOMAD CAMELS is being developed within the NFDI consortium _FAIRmat_ funded by the Deutsche Forschungsgemeinschaft ”DFG, German Research Foundation”, project 460197019.
 
