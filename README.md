@@ -28,6 +28,7 @@ Fixes:
 - error of screen object already being deleted should be fixed
 - databroker export to csv improved for non simple 2D data
 - time weight of sub protocols now handled correctly
+- use abs for y axis should now be possible (again)
 
 ## 0.2.1
 Minor features:

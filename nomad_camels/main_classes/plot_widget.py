@@ -781,7 +781,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
             self.tableWidget.setCellWidget(i, 1, markerwidge)
 
             colorwidge = QPushButton(line.get_color())
-            colorwidge.clicked.connect(lambda x, n=i: self.change_color(n))
+            colorwidge.clicked.connect(lambda n=i: self.change_color(n))
             self.color_widges.append(colorwidge)
             self.tableWidget.setCellWidget(i, 2, colorwidge)
 
@@ -865,6 +865,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.checkBox_use_abs_x.setEnabled(x)
         y = self.checkBox_log_y.isChecked()
         y_scale = 'log' if y else 'linear'
+        self.checkBox_use_abs_y.setEnabled(y)
         y2 = self.checkBox_log_y2.isChecked()
         y2_scale = 'log' if y2 else 'linear'
         self.checkBox_use_abs_y2.setEnabled(y2)
@@ -1038,7 +1039,7 @@ class MultiLivePlot(LivePlot, QObject):
         self.ax.set_ylabel(self.ylabel)
         if self.ax2:
             self.ax2.set_ylabel(self.ylabel2)
-        self.setup_done.emit(None)
+        self.setup_done.emit()
 
     def descriptor(self, doc):
         """
