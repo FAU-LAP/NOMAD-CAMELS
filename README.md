@@ -21,6 +21,7 @@ For more information and documentation visit [this page](https://fau-lap.github.
 Features:
 - Reading/Saving of variables ad Read_Channels is now possible, appears as an array in the data
 - added a class for a waiting bar during protocols
+- added support for NOMAD's new app token feature
 
 Fixes:
 - unwanted printing of packages in instrument-management fixed
