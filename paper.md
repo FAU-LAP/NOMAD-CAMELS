@@ -86,6 +86,7 @@ Certain scientific instruments require manual control before starting predefined
 After executing the measurement protocol, the time-stamped data is by default saved to an HDF5 file with a structure similar to the NeXus standard [@Konnecke2015]. Data can also be exported in CSV format with the metadata exported in JSON.
 
 The stored data can be divided into distinct sections:
+
 - Time-stamped raw data obtained during the execution of the measurement protocol.
 - Instrument settings.
 - Human-readable summary of the measurement protocol information (see \autoref{fig:h5_data}a).
