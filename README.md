@@ -30,6 +30,7 @@ Fixes:
 - databroker export to csv improved for non simple 2D data
 - time weight of sub protocols now handled correctly
 - use abs for y axis should now be possible (again)
+- color settings for material theme are now remembered when opening the settings
 
 ## 0.2.1
 Minor features:

@@ -27,7 +27,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             if t.startswith('light_'):
                 material_themes.append(t[6:-4])
         self.comboBox_material_theme.addItems(material_themes)
-        if 'material_theme' in settings and settings['material_theme'] in themes:
+        if 'material_theme' in settings and settings['material_theme'] in material_themes:
             self.comboBox_material_theme.setCurrentText(settings['material_theme'])
         if 'dark_mode' in settings:
             self.checkBox_dark.setChecked(settings['dark_mode'])
