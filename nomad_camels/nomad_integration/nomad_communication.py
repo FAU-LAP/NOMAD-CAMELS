@@ -72,7 +72,7 @@ def ensure_login(parent=None):
     if '/gui/' in nomad_url:
         nomad_url = nomad_url.split('/gui/')[0]
     if nomad_url.endswith('/'):
-        nomad_url = nomad_url[-1]
+        nomad_url = nomad_url[:-1]
     if not nomad_url.endswith('/api/v1'):
         nomad_url += '/api/v1'
     if not token:

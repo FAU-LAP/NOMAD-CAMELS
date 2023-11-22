@@ -6,7 +6,7 @@ from bluesky import plan_stubs as bps
 
 from ophyd import SignalRO
 
-from PySide6.QtWidgets import QMessageBox, QWidget, QDialog, QDialogButtonBox, QGridLayout, QLabel, QLineEdit
+from PySide6.QtWidgets import QMessageBox, QWidget, QDialog, QDialogButtonBox, QGridLayout, QLabel, QLineEdit, QProgressBar, QPushButton
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QFont
 
@@ -22,7 +22,7 @@ def trigger_multi(devices, grp=None):
     ----------
     devices : list[ophyd.Device]
         List of the devices that should be triggered.
-        
+
     grp : string (or any hashable object), optional
         identifier used by 'wait'; None by default
     """
@@ -69,7 +69,7 @@ def simplify_configs_dict(configs):
     ----------
     configs : dict
         The dictionary to be simplified.
-        
+
 
     Returns
     -------
@@ -614,3 +614,45 @@ def get_channels(dev):
         if name not in dev.configuration_attrs:
             channels[f'{dev.name}_{name}'] = [dev.name, name]
     return channels
+
+
+class Value_Setter(QWidget):
+    set_signal = Signal(float)
+    hide_signal = Signal()
+
+class Waiting_Bar(QWidget):
+    def __init__(self, parent=None, title='', skipable=False):
+        super().__init__(parent=parent)
+        layout = QGridLayout()
+        self.progressBar = QProgressBar()
+        self.progressBar.setValue(0)
+        layout.addWidget(self.progressBar, 0, 0)
+
+        self.skipButton = QPushButton('SKIP')
+        self.skip = False
+        if skipable:
+            layout.addWidget(self.skipButton, 0, 1)
+            self.skipButton.clicked.connect(self.skipping)
+        self.setLayout(layout)
+        self.setWindowTitle(title or 'CAMELS progress bar')
+        self.adjustSize()
+        self.helper = BoxHelper()
+        self.helper.executor.connect(self.start_execution)
+        self.setter = Value_Setter()
+        self.setter.set_signal.connect(self.setValue)
+        self.setter.hide_signal.connect(self.hide)
+
+    def setValue(self, value):
+        self.progressBar.setValue(value)
+
+    def skipping(self):
+        self.skip = True
+        self.hide()
+
+    def start_execution(self):
+        """Sets `self.done` to False and starts `self.exec()`."""
+        self.skip = False
+        self.setHidden(False)
+        self.show()
+
+

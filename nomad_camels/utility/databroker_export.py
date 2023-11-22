@@ -230,9 +230,10 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
                     if not os.path.isdir(f'{filename.split(".")[0]}/{entry_name_non_iso}'):
                         os.makedirs(f'{filename.split(".")[0]}/{entry_name_non_iso}')
                     try:
-                        dataset.to_pandas().to_csv(f'{filename.split(".")[0]}/{entry_name_non_iso}/{stream}.csv')
+                        df = dataset.to_dataframe()
+                        df.to_csv(f'{filename.split(".")[0]}/{entry_name_non_iso}/{stream}.csv', sep=';')
                     except Exception as e:
-                        raise print(e)
+                        print(e)
                 if stream == 'primary':
                     group = data_entry
                 else:

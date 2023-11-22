@@ -1174,11 +1174,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             devs, dev_data = device_handling.instantiate_devices(device_list)
             self.current_protocol_device_list = device_list
             additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
-            if 'plots' in additionals:
-                for plot in additionals['plots']:
-                    self.add_to_plots(plot)
             self.re_subs += subs
-            self.add_subs_from_dict(additionals)
+            self.add_subs_and_plots_from_dict(additionals)
         except Exception as e:
             self.protocol_finished()
             raise e
@@ -1223,7 +1220,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
 
 
-    def add_subs_from_dict(self, dictionary):
+    def add_subs_and_plots_from_dict(self, dictionary):
         """
 
         Parameters
@@ -1238,8 +1235,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         for k, v in dictionary.items():
             if k == 'subs':
                 self.re_subs += v
+            elif k == 'plots':
+                for plot in v:
+                    self.add_to_plots(plot)
             elif isinstance(v, dict):
-                self.add_subs_from_dict(v)
+                self.add_subs_and_plots_from_dict(v)
 
     def pause_protocol(self):
         """ """

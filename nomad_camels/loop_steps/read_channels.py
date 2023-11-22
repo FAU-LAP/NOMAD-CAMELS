@@ -35,6 +35,10 @@ class Read_Channels(Loop_Step):
             self.channel_list = step_info['channel_list']
         else:
             self.channel_list = []
+        if 'read_variables' in step_info:
+            self.read_variables = step_info['read_variables']
+        else:
+            self.read_variables = False
         self.update_used_devices()
 
     def update_used_devices(self):
@@ -76,6 +80,8 @@ class Read_Channels(Loop_Step):
         else:
             for channel in self.channel_list:
                 channel_string += get_channel_string(channel)
+        if self.read_variables:
+            channel_string += f'{self.protocol.name}_variable_signal, '
         channel_string = channel_string[:-2] + ']\n'
         return channel_string
 
@@ -176,7 +182,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         self.read_table = Channels_Check_Table(self, labels, info_dict=info_dict,
                                                title='Read-Channels')
         self.read_type_changed()
-        self.layout().addWidget(self.read_table, 5, 0, 1, 2)
+        self.layout().addWidget(self.read_table, 5, 0, 1, 3)
         # self.tableWidget_channels.setHorizontalHeaderLabels(['read',
         #                                                      'channel name',
         #                                                      'use set-value'])
@@ -224,6 +230,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
     def load_data(self):
         """Putting the data from the loop_step into the widgets."""
         self.checkBox_read_all.setChecked(self.loop_step.read_all)
+        self.checkBox_read_variables.setChecked(self.loop_step.read_variables)
         self.checkBox_split_trigger.setChecked(self.loop_step.split_trigger)
         # self.checkBox_save.setChecked(self.loop_step.save_data)
         # self.checkBox_plot.setChecked(self.loop_step.plot_data)
@@ -233,6 +240,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
     def update_step_config(self):
         """ """
         self.loop_step.channel_list = self.read_table.get_info()['channel']
+        self.loop_step.read_variables = self.checkBox_read_variables.isChecked()
         # self.lineEdit_search.clear()
         # self.build_channels_table()
         # self.loop_step.channel_list = []

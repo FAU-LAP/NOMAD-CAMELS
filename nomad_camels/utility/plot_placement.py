@@ -52,12 +52,16 @@ def place_widget(widget:QWidget):
     widget : QWidget
         the widget that should be placed
     """
-    global max_height_in_row, current_screen, current_pos, iteration
+    global max_height_in_row, current_screen, current_pos, iteration, screens
     widget.show()
     c = current_pos
     # print(c, current_screen)
     s = widget.size()
-    screen_geometry = screens[current_screen].availableGeometry()
+    try:
+        screen_geometry = screens[current_screen].availableGeometry()
+    except:
+        screens = app.screens()
+        screen_geometry = screens[current_screen].availableGeometry()
     if current_pos[0] + s.width() > screen_geometry.width():
         current_pos[1] += max_height_in_row + horizontal_margin
         current_pos[0] = 0

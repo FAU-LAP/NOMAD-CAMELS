@@ -16,6 +16,22 @@ NOMAD-CAMELS is a configurable measurement software, targeted towards the requir
 For more information and documentation visit [this page](https://fau-lap.github.io/NOMAD-CAMELS/).
 
 # Changelog
+
+## 0.2.2
+Features:
+- Reading/Saving of variables ad Read_Channels is now possible, appears as an array in the data
+- added a class for a waiting bar during protocols
+- added support for NOMAD's new app token feature
+
+Fixes:
+- unwanted printing of packages in instrument-management fixed
+- plots of sweeps or subprotocols of subprotocols should now also be added to the main-plot list, enabling closing on closing of CAMELS or via button
+- error of screen object already being deleted should be fixed
+- databroker export to csv improved for non simple 2D data
+- time weight of sub protocols now handled correctly
+- use abs for y axis should now be possible (again)
+- color settings for material theme are now remembered when opening the settings
+
 ## 0.2.1
 Minor features:
 - callable functions for manual move of stage control
