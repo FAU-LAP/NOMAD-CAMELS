@@ -1,8 +1,8 @@
 # Writing New Instrument Drivers
 There are two flavors of instrument drivers:
 
-1. [Drivers written only for your own use that are stored locally](#1-visa-driver-builder---creating-the-core-structure).
-2. [Drivers written for the entire CAMELS community that are made available through PyPi](#drivers-for-pypi).
+1. [Drivers written only for your own use that are stored locally](#1-local-drivers).
+2. [Drivers written for the entire CAMELS community that are made available through PyPi](#2-drivers-for-pypi).
 
 For the entire community to benefit, it's best to create a new [PyPi](https://pypi.org/) package for each instrument driver you write for CAMELS. It's not mandatory, but it helps make our project more accessible and useful for others as it is community-driven and open source.
 
