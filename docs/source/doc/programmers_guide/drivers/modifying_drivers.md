@@ -43,7 +43,7 @@ This generates the following instrument settings in the `Manage Instrument` wind
 
 You do not need to write your own UI elements if you use the `device_class.Simple_Config` subclass!
 
-> [!IMPORTANT]   
+> [!NOTE]   
 > There is a difference between the `self.settings` and `self.config` parameters!\
 > The `settings` values are passed immediately to the instrument and are available right from the beginning. This makes sense for instrument settings that are required even before you can communicate with the instrument. Here for example the IP or port the instrument listens to. The values of the settings are simply variables that the `<driver_name>_ophyd.py` can use.\
 > The `config` value is passed to the instrument as an actual command at the start of every measurement protocol.
