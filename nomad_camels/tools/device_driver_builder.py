@@ -1,5 +1,6 @@
 import sys
 import os
+from shutil import copyfile
 
 from PySide6.QtWidgets import QDialog, QLabel, QPushButton, QFileDialog, QMessageBox, QWidget, QGridLayout, QSpacerItem, QSizePolicy
 from PySide6.QtGui import QIcon, QCloseEvent
@@ -128,7 +129,7 @@ class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
                 return
 
         path = variables_handling.device_driver_path or ''
-        directory = QFileDialog.getExistingDirectory(self, "Select driver directory", f'{path}')
+        directory = QFileDialog.getExistingDirectory(self, "Select driver's parent directory", f'{path}')
         if not directory:
             return
 
@@ -136,14 +137,15 @@ class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
         if not os.path.isfile(f'{directory}/__init__.py'):
             with open(f'{directory}/__init__.py', 'w', encoding='utf-8') as f:
                 pass
-        fdir = f'{directory}/nomad_camels_driver_{dev_name}'
-        fname = f'{fdir}/{dev_name}.py'
-        if os.path.isdir(fdir) and os.path.isfile(fname):
+        module_dir = f'{directory}/{dev_name}'
+        driver_dir = f'{module_dir}/nomad_camels_driver_{dev_name}'
+        fname = f'{driver_dir}/{dev_name}.py'
+        if os.path.isdir(driver_dir) and os.path.isfile(fname):
             answer = QMessageBox.question(self, 'Driver already exists!', f'Driver with name {dev_name} already exists.\nDo you want to overwrite the driver?', buttons=QMessageBox.Yes | QMessageBox.Cancel, defaultButton=QMessageBox.Cancel)
             if answer != QMessageBox.Yes:
                 return
-        if not os.path.isdir(fdir):
-            os.mkdir(fdir)
+        if not os.path.isdir(driver_dir):
+            os.makedirs(driver_dir)
 
         class_string = f'from .{dev_name}_ophyd import {ophyd_name}\n\n'
         class_string += 'from nomad_camels.main_classes import device_class\n\n'
@@ -231,12 +233,39 @@ class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
             ophyd_string += f'\tdef {name}_put_function(self, value):\n'
             ophyd_string += f'\t\tpass\n\n'
 
-        with open(f'{fdir}/{dev_name}.py', 'w', encoding='utf-8') as f:
+        readme_string = f'# NOMAD Camels driver for {dev_name}\n\n'
+        readme_string += f'Driver for {dev_name} written for the measurement software [NOMAD Camels](https://fau-lap.github.io/NOMAD-CAMELS/).\n\n\n'
+        readme_string += '## Documentation\n\n'
+        readme_string += 'For more information and instruments visit the [documentation](https://fau-lap.github.io/NOMAD-CAMELS/doc/instruments/instruments.html).'
+
+        toml_string = '[build-system]\nrequires = ["setuptools>=61.0"]\nbuild-backend = "setuptools.build_meta"\n\n'
+        toml_string += f'[project]\nname = "nomad_camels_driver_{dev_name}"\nversion = "0.1.0"\n'
+        toml_string += 'authors = [\n\t{name="enter your name here!", email="contact@email.com"}\n]\n'
+        toml_string += f'description = "Instrument driver for {dev_name} for NOMAD-CAMELS"\n'
+        toml_string += 'readme = "README.md"\n'
+        toml_string += 'requires-python = ">=3.9.6"\n'
+        toml_string += 'classifiers = [\n\t"Programming Language :: Python :: 3",\n\t"License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",\n]\n\n'
+        toml_string += 'dependencies = [\n\t"nomad-camels"'
+        if visa:
+            toml_string += ',\n\t"pyvisa",\n\t"pyvisa-py"'
+        toml_string += '\n]\n\n'
+        toml_string += '[project.urls]\n'
+        toml_string += '"NOMAD Camels GitHub" = "https://github.com/FAU-LAP/NOMAD-CAMELS"\n'
+        toml_string += '"CAMELS Drivers GitHub" = "https://github.com/FAU-LAP/CAMELS_drivers"\n'
+        toml_string += '"NOMAD Camels Documentation" = "https://fau-lap.github.io/NOMAD-CAMELS/doc/instruments/instruments.html"\n'
+
+        with open(f'{driver_dir}/{dev_name}.py', 'w', encoding='utf-8') as f:
             f.write(class_string)
-        with open(f'{fdir}/{dev_name}_ophyd.py', 'w', encoding='utf-8') as f:
+        with open(f'{driver_dir}/{dev_name}_ophyd.py', 'w', encoding='utf-8') as f:
             f.write(ophyd_string)
-        with open(f'{fdir}/__init__.py', 'w', encoding='utf-8') as f:
+        with open(f'{driver_dir}/__init__.py', 'w', encoding='utf-8') as f:
             pass
+        with open(f'{module_dir}/README.md', 'w', encoding='utf-8') as f:
+            f.write(readme_string)
+        with open(f'{module_dir}/pyproject.toml', 'w', encoding='utf-8') as f:
+            f.write(toml_string)
+        copyfile(f'{os.path.dirname(__file__)}/../../LICENSE.txt',
+                 f'{module_dir}/LICENSE.txt')
 
         QMessageBox.information(self, 'Build finished!',
                                 f'The driver "{dev_name}" has been built!')
