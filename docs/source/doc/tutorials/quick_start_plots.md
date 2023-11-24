@@ -2,7 +2,7 @@
 # How to Create Plots for Protocols
 You can display live-plots in the measurement protocols to see what is happening during the measurement. 
 ## 1. Configure Plots
-To configure the plots  click `Define Plots / Fits` in the protocol window. Here we bill be doing this for the `For Loop` measurement protocol created [in the Tutorial](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_protocols.html#13-sweeping-using-a-for-loop-step).
+To configure the plots  click `Define Plots / Fits` in the protocol window. Here we bill be doing this for the `For Loop` measurement protocol created [in the Tutorial](quick_start_protocols.md).
 
 Add a new plot by clicking the &#10133; symbol and choosing a plot type.
 
