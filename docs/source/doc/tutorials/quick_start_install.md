@@ -23,7 +23,7 @@ On the left we can see the instrument selection window and on the right you can 
 ```
 
 ```powershell
-pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<parent_driver_name>
+pip install nomad_camels_driver_<parent_driver_name>
 ```
 
 ```{note}
