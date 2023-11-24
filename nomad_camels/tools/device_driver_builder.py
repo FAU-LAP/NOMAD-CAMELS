@@ -1,17 +1,17 @@
 import sys
 import os
 
-from PySide6.QtWidgets import QDialog, QLabel, QPushButton, QFileDialog, QMessageBox
+from PySide6.QtWidgets import QDialog, QLabel, QPushButton, QFileDialog, QMessageBox, QWidget, QGridLayout, QSpacerItem, QSizePolicy
 from PySide6.QtGui import QIcon, QCloseEvent
 
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.utility import variables_handling, fit_variable_renaming
-from nomad_camels.tools.VISA_builder import Ui_VISA_Device_Builder
+from nomad_camels.tools.driver_builder import Ui_VISA_Device_Builder
 
 from pkg_resources import resource_filename
 
 
-class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
+class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
     """ """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -21,18 +21,21 @@ class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
             self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
         except:
             pass
-        self.setWindowTitle('NOMAD-CAMELS - VISA-driver-builder')
+        self.setWindowTitle('NOMAD Camels - driver-builder')
 
-        label_in = QLabel('Read Channels')
-        label_out = QLabel('Set Channels')
-        label_config = QLabel('Config Channels')
-        label_config_in = QLabel('Config Channels - Read Only')
+        label_custom = QLabel('Custom Channels')
+        label_in = QLabel('Read Channels - VISA')
+        label_out = QLabel('Set Channels - VISA')
+        label_config = QLabel('Config Channels - VISA')
+        label_config_in = QLabel('Config Channels - Read Only - VISA')
+        label_custom.setStyleSheet("font-weight: bold")
         label_in.setStyleSheet("font-weight: bold")
         label_out.setStyleSheet("font-weight: bold")
         label_config.setStyleSheet("font-weight: bold")
         label_config_in.setStyleSheet("font-weight: bold")
         label_info = QLabel('The values "Write-Format-String", "Return-Parser" and "Query-String" can be left empty, if you want to use a custom function for those!')
         label_info.setStyleSheet("font-weight: bold")
+        label_info.setMaximumHeight(20)
 
         channel_info_config = ['Name', 'Write-Format-String', 'Input-Type', 'Return-Parser', 'Return-Type', 'Unit', 'Description']
         channel_info_in = ['Name', 'Query-String', 'Return-Parser', 'Return-Type', 'Unit', 'Description']
@@ -41,6 +44,12 @@ class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
         comboboxes_out = {'Return-Type': ['None', 'str', 'float', 'int', 'bool']}
         comboBoxes_config = dict(comboboxes_out)
         comboBoxes_config.update({'Input-Type': ['str', 'float', 'bool']})
+
+        channel_info_custom = ['Name', 'Channel-Type', 'Input-Type', 'Unit', 'Description']
+        comboboxes_custom = {'Channel-Type': ['read-only', 'set', 'config', 'config - read-only'], 'Input-Type': ['str', 'float', 'bool']}
+        self.table_custom = AddRemoveTable(headerLabels=channel_info_custom,
+                                           comboBoxes=comboboxes_custom)
+
         self.table_in = AddRemoveTable(headerLabels=channel_info_in,
                                        comboBoxes=comboboxes_in)
         self.table_out = AddRemoveTable(headerLabels=channel_info_out,
@@ -54,34 +63,66 @@ class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
         self.button_cancel = QPushButton('Cancel')
         self.button_cancel.clicked.connect(self.close)
         self.button_build.clicked.connect(self.build_driver)
+        self.checkBox_VISA.clicked.connect(self.toggle_VISA)
+        self.visa_widgets = [label_in, label_info, label_out, label_config,
+                             label_config_in, self.table_config,
+                             self.table_config_in, self.table_in, self.table_out,
+                             self.label_read_term, self.label_write_term,
+                             self.label_baud_rate, self.lineEdit_baud_rate,
+                             self.lineEdit_write_term, self.lineEdit_read_term]
+        self.toggle_VISA()
 
         layout = self.layout()
-        layout.addWidget(label_in, 10, 0, 1, 2)
-        layout.addWidget(self.table_in, 11, 0, 1, 2)
-        layout.addWidget(label_out, 10, 2, 1, 2)
-        layout.addWidget(self.table_out, 11, 2, 1, 2)
-        layout.addWidget(label_config_in, 30, 0, 1, 2)
-        layout.addWidget(self.table_config_in, 31, 0, 1, 2)
-        layout.addWidget(label_config, 30, 2, 1, 2)
-        layout.addWidget(self.table_config, 31, 2, 1, 2)
-        layout.addWidget(label_info, 20, 0, 1, 4)
-        layout.addWidget(self.button_build, 50, 2)
-        layout.addWidget(self.button_cancel, 50, 3)
-        self.resize(600, 700)
+
+        layout.addWidget(label_custom, 10, 0, 1, 3)
+        layout.addWidget(self.table_custom, 11, 0, 4, 3)
+
+        layout.addWidget(label_in, 10, 4, 1, 2)
+        layout.addWidget(self.table_in, 11, 4, 1, 2)
+        layout.addWidget(label_out, 10, 6, 1, 2)
+        layout.addWidget(self.table_out, 11, 6, 1, 2)
+        layout.addWidget(label_config_in, 13, 4, 1, 2)
+        layout.addWidget(self.table_config_in, 14, 4, 1, 2)
+        layout.addWidget(label_config, 13, 6, 1, 2)
+        layout.addWidget(self.table_config, 14, 6, 1, 2)
+        layout.addWidget(label_info, 12, 4, 1, 3)
+
+        button_widget = QWidget()
+        lay = QGridLayout()
+        button_widget.setLayout(lay)
+        lay.addItem(QSpacerItem(0, 0, hData=QSizePolicy.Policy.Expanding, vData=QSizePolicy.Policy.Minimum), 0, 0)
+        lay.addWidget(self.button_build, 0, 1)
+        lay.addWidget(self.button_cancel, 0, 2)
+        layout.addWidget(button_widget, 50, 0, 1, 8)
+
+        self.adjustSize()
+
+    def toggle_VISA(self):
+        visa = self.checkBox_VISA.isChecked()
+        for widget in self.visa_widgets:
+            widget.setHidden(not visa)
+        self.adjustSize()
 
     def build_driver(self):
         """ """
         dev_name = fit_variable_renaming.replace_name(self.lineEdit_name.text())
         ophyd_name = fit_variable_renaming.replace_name(self.lineEdit_ophyd_name.text())
-        read_term = fit_variable_renaming.replace_name(self.lineEdit_read_term.text())
-        write_term = fit_variable_renaming.replace_name(self.lineEdit_write_term.text())
-        baud_rate = int(self.lineEdit_baud_rate.text())
         search_tags = self.lineEdit_search_tags.text().split()
-        inputs = self.table_in.update_table_data()
-        outputs = self.table_out.update_table_data()
-        configs = self.table_config.update_table_data()
-        configs_in = self.table_config_in.update_table_data()
-        names = inputs['Name'] + outputs['Name'] + configs['Name'] + configs_in['Name']
+        visa = self.checkBox_VISA.isChecked()
+        configs = inputs = outputs = configs_in = {'Name': []}
+        write_term = read_term = ''
+        baud_rate = 0
+        if visa:
+            read_term = fit_variable_renaming.replace_name(self.lineEdit_read_term.text())
+            write_term = fit_variable_renaming.replace_name(self.lineEdit_write_term.text())
+            baud_rate = int(self.lineEdit_baud_rate.text())
+            inputs = self.table_in.update_table_data()
+            outputs = self.table_out.update_table_data()
+            configs = self.table_config.update_table_data()
+            configs_in = self.table_config_in.update_table_data()
+
+        customs = self.table_custom.update_table_data()
+        names = inputs['Name'] + outputs['Name'] + configs['Name'] + configs_in['Name'] + customs['Name']
         for name in names:
             if not variables_handling.check_variable_name(name, parent=self):
                 return
@@ -116,15 +157,31 @@ class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
                 class_string += f'\t\tself.config["{name}"] = 0\n'
             elif configs['Input-Type'][i] == 'bool':
                 class_string += f'\t\tself.config["{name}"] = False\n'
+        for i, name in enumerate(customs['Name']):
+            if customs['Channel-Type'][i] == 'config':
+                if customs['Input-Type'][i] == 'str':
+                    class_string += f'\t\tself.config["{name}"] = ""\n'
+                elif customs['Input-Type'][i] == 'float':
+                    class_string += f'\t\tself.config["{name}"] = 0\n'
+                elif customs['Input-Type'][i] == 'bool':
+                    class_string += f'\t\tself.config["{name}"] = False\n'
+
         class_string += '\n\nclass subclass_config(device_class.Simple_Config):\n'
         class_string += '\tdef __init__(self, parent=None, data="", settings_dict=None, config_dict=None, additional_info=None):\n'
         class_string += f'\t\tsuper().__init__(parent, "{dev_name}", data, settings_dict, config_dict, additional_info)\n'
-        class_string += '\t\tself.comboBox_connection_type.addItem("Local VISA")\n'
+        if visa:
+            class_string += '\t\tself.comboBox_connection_type.addItem("Local VISA")\n'
         class_string += '\t\tself.load_settings()\n'
 
         ophyd_string = 'from ophyd import Component as Cpt\n\n'
-        ophyd_string += 'from nomad_camels.bluesky_handling.visa_signal import VISA_Signal, VISA_Signal_RO, VISA_Device\n\n'
-        ophyd_string += f'class {ophyd_name}(VISA_Device):\n'
+        if customs:
+            ophyd_string += 'from nomad_camels.bluesky_handling.custom_function_signal import Custom_Function_Signal, Custom_Function_SignalRO\n'
+        if visa:
+            ophyd_string += 'from nomad_camels.bluesky_handling.visa_signal import VISA_Signal, VISA_Signal_RO, VISA_Device\n\n'
+            ophyd_string += f'class {ophyd_name}(VISA_Device):\n'
+        else:
+            ophyd_string += 'from ophyd import Device\n\n'
+            ophyd_string += f'class {ophyd_name}(Device):\n'
         open_queries = []
         open_writes = []
         comp_str, opens = make_component_str(inputs, True, False)
@@ -140,12 +197,24 @@ class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
         ophyd_string += comp_str
         open_queries += opens
 
-        ophyd_string += f'\n\tdef __init__(self, prefix="", *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, resource_name="", write_termination="{write_term}", read_termination="{read_term}", baud_rate={baud_rate}, **kwargs):\n'
-        ophyd_string += f'\t\tsuper().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, resource_name=resource_name, baud_rate=baud_rate, read_termination=read_termination, write_termination=write_termination, **kwargs)\n'
+        comp_str, read_names, write_names = make_custom_component(customs)
+        ophyd_string += comp_str
+
+        if visa:
+            ophyd_string += f'\n\tdef __init__(self, prefix="", *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, resource_name="", write_termination="{write_term}", read_termination="{read_term}", baud_rate={baud_rate}, **kwargs):\n'
+            ophyd_string += f'\t\tsuper().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, resource_name=resource_name, baud_rate=baud_rate, read_termination=read_termination, write_termination=write_termination, **kwargs)\n'
+        else:
+            ophyd_string += f'\n\tdef __init__(self, prefix="", *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, **kwargs):\n'
+            ophyd_string += f'\t\tsuper().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, **kwargs)\n'
         for name in open_queries:
             ophyd_string += f'\t\tself.{name}.query = self.{name}_query_function\n'
         for name in open_writes:
             ophyd_string += f'\t\tself.{name}.write = self.{name}_write_function\n'
+        for name in read_names:
+            ophyd_string += f'\t\tself.{name}.read_function = self.{name}_read_function\n'
+        for name in write_names:
+            ophyd_string += f'\t\tself.{name}.put_function = self.{name}_put_function\n'
+
         ophyd_string += '\n'
 
         for name in open_queries:
@@ -153,6 +222,13 @@ class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
             ophyd_string += f'\t\tpass\n\n'
         for name in open_writes:
             ophyd_string += f'\tdef {name}_write_function(self, value):\n'
+            ophyd_string += f'\t\tpass\n\n'
+
+        for name in read_names:
+            ophyd_string += f'\tdef {name}_read_function(self):\n'
+            ophyd_string += f'\t\tpass\n\n'
+        for name in write_names:
+            ophyd_string += f'\tdef {name}_put_function(self, value):\n'
             ophyd_string += f'\t\tpass\n\n'
 
         with open(f'{fdir}/{dev_name}.py', 'w', encoding='utf-8') as f:
@@ -186,6 +262,26 @@ class VISA_Driver_Builder(Ui_VISA_Device_Builder, QDialog):
             return
         super().closeEvent(a0)
 
+def make_custom_component(dic):
+    ophyd_string = ''
+    read_names = []
+    write_names = []
+    for i, name in enumerate(dic['Name']):
+        channel_type = dic['Channel-Type'][i]
+        read_names.append(name)
+        RO = False
+        if 'read-only' in channel_type:
+            RO = True
+        else:
+            write_names.append(name)
+        conf = False
+        if 'config' in channel_type:
+            conf = True
+        ophyd_string += f'\t{name} = Cpt(Custom_Function_Signal{"RO" if RO else ""}, name="{name}", '
+        if conf:
+            ophyd_string += 'kind="config", '
+        ophyd_string += f'metadata={{"units": "{dic["Unit"][i]}", "description": "{dic["Description"][i]}"}})\n'
+    return ophyd_string, read_names, write_names
 
 
 def make_component_str(dic, RO, config):
@@ -229,6 +325,6 @@ if __name__ == '__main__':
     app = QCoreApplication.instance()
     if app is None:
         app = QApplication(sys.argv)
-    ui = VISA_Driver_Builder()
+    ui = Driver_Builder()
     ui.show()
     app.exec()
