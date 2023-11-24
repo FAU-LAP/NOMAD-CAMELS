@@ -1,5 +1,5 @@
 (plots_top_link)=
-# How to Create Plots for Protocols
+# How to Create Plots for Measurements
 You can display live-plots in the measurement protocols to see what is happening during the measurement. 
 ## 1. Configure Plots
 To configure the plots  click `Define Plots / Fits` in the protocol window. Here we bill be doing this for the `For Loop` measurement protocol created [in the Tutorial](quick_start_protocols.md).
