@@ -20,9 +20,14 @@ The four types of channels vary only a little:
 * **Read Channels:** These are used for values that can only be read from the instrument, e.g. a measured resistance. They can be used in measurements protocols by using a `Read Channels` step.
 * **Set Channels:** These channels can set/output a value defined by the user, e.g. a voltage. These channels communicate with the instruments and write to the instrument. If no return parser is set the message is simply written and nothing is read from the instrument. They can be used in measurements protocols by using a `Set Channels` step.
 * **Config Channels - Read Only:** These may be used for values that are read only once from the instrument at the beginning of the measurement, but do not change its current state, e.g. the instrument identifier, as response from the `*IDN?` command.\
-&#9888; Config Channels are always run once at the beginning of a measurement. 
+```{note}
+  Config Channels are always run **once** at the beginning of a measurement.
+  ```
+
 * **Config Channels:** These values are set at the beginning of a protocol and are configured in the instrument management (`Manage Instruments` window). These should be values, that are normally not changed, like the current and voltage compliance or whether the instrument is used as a voltage or current source for example.\
-&#9888; Config Channels are always run once at the beginning of a measurement. 
+```{note}
+  Config Channels are always run once at the beginning of a measurement. 
+```
 
 For configuring these channels, there are several fields:
 * **Name:** This will be the name of the channel, as it is also displayed in CAMELS.

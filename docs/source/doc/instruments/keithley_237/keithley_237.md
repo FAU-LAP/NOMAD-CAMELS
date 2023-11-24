@@ -29,10 +29,14 @@ There are **four basic usage types** of the Keithley 237:
 3. Source current, read voltage
 4. Sweep current, read voltage and current ( reads the set value of the current, does not actually measure it)
 
-> &#9888; The source type of your Keithley 237 must be set in the device configuration window (see image above)
+```{note}
+ The source type of your Keithley 237 must be set in the device configuration window (see image above)
+```
 
-> &#9888; If `Source Type` in the config window is set to `Voltage` or `Current` then it is NOT possible to read the data created during a sweep in a measurement protocol using the `start_sweep` channel.\
-> &#9888; If `Source Type` in the config window is set to `Sweep Voltage` or `Sweep Current` then it is NOT possible to read the data from an individual measurement using the channel `read_DC`.  
+```{note}
+ If `Source Type` in the config window is set to `Voltage` or `Current` then it is NOT possible to read the data created during a sweep in a measurement protocol using the `start_sweep` channel.\
+ If `Source Type` in the config window is set to `Sweep Voltage` or `Sweep Current` then it is NOT possible to read the data from an individual measurement using the channel `read_DC`.  
+```
  
 ### Setting and Reading Individual Data Points
 To set and read single data points (for example set one voltage and read the corresponding current value in a for-loop) set `Source Type` to `Voltage` or `Current`. When voltage is sourced current is read and when current is sourced then voltage is read.\
@@ -45,11 +49,18 @@ Settings of the for-loop: it will create 11 values between 0 and 1 including the
 ![img.png](img.png)
 ##### Set Channel
 Sets the `set_DC` channel to the value of the for-loop.\
-&#9888; `set_DC` always sets the source type you selected in the configuration.
+```{note}
+  `set_DC` always sets the source type you selected in the configuration.
+```
+
 ![img_1.png](img_1.png) 
 ##### Read Channel
-Reads the `read_DC` channel.\
-&#9888; `read_DC` always reads the compliance side of the source type. So it reads voltage when current is sourced and reads current when voltage is sourced.
+Reads the `read_DC` channel.
+
+```{note}
+ `read_DC` always reads the compliance side of the source type. So it reads voltage when current is sourced and reads current when voltage is sourced.
+```
+
 ![img_2.png](img_2.png)
 
 ##### Resulting Data
@@ -79,7 +90,10 @@ Each type requires a different set of parameters from this list :\
 Before you start the sweep measurement you have to set the required parameters to the desired value in a _'Set Channels step'_. 
 
 E.g. for a linear stair sweep from `start=0` to `stop=1` with `step size=0.1`. `Bias delay` and `range` are set in the instrument config page.\
-&#9888; You **MUST set the sweep type** using the `keithley_237_setSweep_Type` channel:\
+```{note}
+  You **MUST set the sweep type** using the `keithley_237_setSweep_Type` channel:
+```
+
 Here we want the linear sweep so we set the value to `1` as this corresponds to the linear sweep (see list of 5 sweep types [above](int_sweeps))\
 ![img_4.png](img_4.png)
 

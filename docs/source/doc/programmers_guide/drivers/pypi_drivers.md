@@ -23,7 +23,9 @@ To create a PyPi package for your driver you should have the following folder st
 
 The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPi (see the [setuptools page](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)).
 
-&#9888; Most importantly the project name and version must be set in the `pyproject.toml` file.
+```{note}
+  Most importantly the project name and version must be set in the `pyproject.toml` file.
+```
 
 
 ---

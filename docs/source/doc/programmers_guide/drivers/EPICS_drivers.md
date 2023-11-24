@@ -15,9 +15,12 @@ The folder should contain two files `<instrument_driver_name>.py` and `<instrume
 The resulting PV-names will in the end be `<instrument_name>:<PV-name>` where:
 - `<instrument_name>` is the name you give your instrument in the config inside CAMELS. This will appear in the manage instruments window.
 - `<PV-name>` is the name you give the PVs in the builder. You can also see them in the `<instrument_driver_name>_ophyd.py`-file.
-> &#9888; There are two things you need to pay attention to:
-> - The `<instrument_driver_name>` you use in the builder must __NOT__ be equal to the name of your instrument later.
-> - The `<PV-name>` should not mirror any python builtin function. If your EPICS environment uses such a name, you can edit the file (see [Troubleshooting](epics_driver_builder_troubleshooting))
+
+```{note}
+ There are two things you need to pay attention to:
+- The `<instrument_driver_name>` you use in the builder must __NOT__ be equal to the name of your instrument later.
+- The `<PV-name>` should not mirror any python builtin function. If your EPICS environment uses such a name, you can edit the file (see [Troubleshooting](epics_driver_builder_troubleshooting))
+```
 
 (epics_driver_builder_troubleshooting)=
 ## Troubleshooting

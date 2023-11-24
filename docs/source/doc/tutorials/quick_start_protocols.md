@@ -68,13 +68,17 @@ We can now configure the protocol so that first each motor channel (`X`,`Y`,`Z`)
 :width: 49%
 ```
 
-> The green background of the `value` field tells you that CAMELS understands the entry as it expects to see a number (float) here.\
-> &#9888; If you enter a value which CAMELS can not convert to float it will **change the background to red** (see image on the right).
+```{note}
+ The green background of the `value` field tells you that CAMELS understands the entry as it expects to see a number (float) here.\
+ If you enter a value which CAMELS can not convert to float it will **change the background to red** (see image on the right).
+```
 
 ### 2.2. Use Variables
 
-> &#9888; You can use variables instead of 'hard-coding' values.\
-> &#9888; You can use most symbolic math operations the same way you would in regular Python code in the value field to perform calculations before setting the result of the calculation.
+```{note}
+You can use variables instead of 'hard-coding' values.\
+You can use most symbolic math operations the same way you would in regular Python code in the value field to perform calculations before setting the result of the calculation.
+```
 
 For this simply add a variable on the bottom right of the protocol screen with the &#10133; symbol
 
@@ -134,7 +138,10 @@ Then also add a `Read Channel` step by right-clicking the `Set Channels` step an
 ![img_29.png](images/img_29.png)
 
 ### 3.2. Create Variables
-> &#9888; This step is optional.
+
+```{note}
+ This step is optional.
+```
 
 Add these variables to make it clearer what values are used in the `For Loop`. This also makes maintaining the protocol easier and enables you to more easily share it with others.   
 ![img_30.png](images/img_30.png)

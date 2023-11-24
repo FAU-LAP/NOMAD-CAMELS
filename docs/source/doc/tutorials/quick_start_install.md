@@ -18,13 +18,19 @@ On the left we can see the instrument selection window and on the right you can 
 - Check the instruments you want to install. To follow this example  install the `demo instrument`. 
 - Then click `Install / update Selected` to install the most recent version of the instrument from PyPi (this is done internally with a simple `pip install <instrument_name>`).
 
-&#9888; This means you can also use the virtual Python environment `.desertenv` to manually install instruments by running:
+```{note}
+  This means you can also use the virtual Python environment `.desertenv` to manually install instruments by running:
+```
+
 ```powershell
 pip install --no-cache-dir --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nomad_camels_driver_<parent_driver_name>
 ```
 
-&#9888; For this to work you must activate the correct virtual environment first!
+```{note}
+  For this to work you must activate the correct virtual environment first!
 Run this code with the correct path in powershell to activate the virtual environment:
+```
+
 ```powershell
 cd \Path\to\NOMAD-CAMELS\.desertenv\Scripts\
 .\activate

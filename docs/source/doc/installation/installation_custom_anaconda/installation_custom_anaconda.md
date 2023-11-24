@@ -58,5 +58,7 @@ python CAMELS_start.py
 ```
 this starts CAMELS.
 
-> &#9888; You might receive a `CATALOG ERROR`.\
-> If you do, then re-run the command `python CAMELS_start.py`. This should fix the error.
+```{note}
+  You might receive a `CATALOG ERROR`.\
+If you do, then re-run the command `python CAMELS_start.py`. This should fix the error.
+```
