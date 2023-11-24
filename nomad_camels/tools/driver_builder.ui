@@ -67,19 +67,6 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_6">
-     <property name="maximumSize">
-      <size>
-       <width>150</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Ophyd-Class-Name:</string>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0">
     <widget class="QLabel" name="label_5">
      <property name="maximumSize">
@@ -147,16 +134,6 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="2">
-    <widget class="QLineEdit" name="lineEdit_ophyd_name">
-     <property name="maximumSize">
-      <size>
-       <width>350</width>
-       <height>16777215</height>
-      </size>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="3" rowspan="4">
     <widget class="Line" name="line">
      <property name="orientation">
@@ -168,7 +145,6 @@
  </widget>
  <tabstops>
   <tabstop>lineEdit_name</tabstop>
-  <tabstop>lineEdit_ophyd_name</tabstop>
  </tabstops>
  <resources/>
  <connections/>

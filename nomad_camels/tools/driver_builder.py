@@ -54,12 +54,6 @@ class Ui_VISA_Device_Builder(object):
 
         self.gridLayout.addWidget(self.label_write_term, 2, 4, 1, 1)
 
-        self.label_6 = QLabel(VISA_Device_Builder)
-        self.label_6.setObjectName(u"label_6")
-        self.label_6.setMaximumSize(QSize(150, 16777215))
-
-        self.gridLayout.addWidget(self.label_6, 1, 0, 1, 1)
-
         self.label_5 = QLabel(VISA_Device_Builder)
         self.label_5.setObjectName(u"label_5")
         self.label_5.setMaximumSize(QSize(100, 16777215))
@@ -98,12 +92,6 @@ class Ui_VISA_Device_Builder(object):
 
         self.gridLayout.addWidget(self.lineEdit_read_term, 1, 5, 1, 3)
 
-        self.lineEdit_ophyd_name = QLineEdit(VISA_Device_Builder)
-        self.lineEdit_ophyd_name.setObjectName(u"lineEdit_ophyd_name")
-        self.lineEdit_ophyd_name.setMaximumSize(QSize(350, 16777215))
-
-        self.gridLayout.addWidget(self.lineEdit_ophyd_name, 1, 1, 1, 2)
-
         self.line = QFrame(VISA_Device_Builder)
         self.line.setObjectName(u"line")
         self.line.setFrameShape(QFrame.VLine)
@@ -111,7 +99,6 @@ class Ui_VISA_Device_Builder(object):
 
         self.gridLayout.addWidget(self.line, 0, 3, 4, 1)
 
-        QWidget.setTabOrder(self.lineEdit_name, self.lineEdit_ophyd_name)
 
         self.retranslateUi(VISA_Device_Builder)
 
@@ -123,7 +110,6 @@ class Ui_VISA_Device_Builder(object):
         self.label_baud_rate.setText(QCoreApplication.translate("VISA_Device_Builder", u"Default Baud-Rate:", None))
         self.label.setText(QCoreApplication.translate("VISA_Device_Builder", u"Name:", None))
         self.label_write_term.setText(QCoreApplication.translate("VISA_Device_Builder", u"Default Write-Termination:", None))
-        self.label_6.setText(QCoreApplication.translate("VISA_Device_Builder", u"Ophyd-Class-Name:", None))
         self.label_5.setText(QCoreApplication.translate("VISA_Device_Builder", u"Search-Tags:", None))
         self.label_read_term.setText(QCoreApplication.translate("VISA_Device_Builder", u"Default Read-Termination:", None))
         self.lineEdit_write_term.setText(QCoreApplication.translate("VISA_Device_Builder", u"\\r\\n", None))

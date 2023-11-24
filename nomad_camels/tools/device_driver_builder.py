@@ -107,7 +107,8 @@ class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
     def build_driver(self):
         """ """
         dev_name = fit_variable_renaming.replace_name(self.lineEdit_name.text())
-        ophyd_name = fit_variable_renaming.replace_name(self.lineEdit_ophyd_name.text())
+        ophyd_name = dev_name.title()
+        ophyd_name = fit_variable_renaming.replace_name(ophyd_name)
         search_tags = self.lineEdit_search_tags.text().split()
         visa = self.checkBox_VISA.isChecked()
         configs = inputs = outputs = configs_in = {'Name': []}
