@@ -9,6 +9,7 @@ If you have instrument communication already implemented using EPICS you can [cr
 ```{toctree}
 :maxdepth: 1
 
+Tutorial: Creating your own Instrument Driver <drivers/drivers_tutorial>
 How to Write New Drivers <drivers/writing_drivers.md>
 EPICS Instrument Drivers <drivers/EPICS_drivers.md>
 How to Modify Existing Drivers <drivers/modifying_drivers.md>
