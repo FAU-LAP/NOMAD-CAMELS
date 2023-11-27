@@ -1,5 +1,5 @@
 ---
-title: 'NOMAD Camels: Configurable Application for Measurements, Experiments and Laboratory Systems'
+title: 'NOMAD CAMELS: Configurable Application for Measurements, Experiments and Laboratory Systems'
 tags:
    - Python
 
@@ -37,7 +37,7 @@ bibliography: paper.bib
 
 # Summary
 
-NOMAD Camels (short: CAMELS) is a configurable, open-source measurement software that records fully self-describing experimental data. It has its origins in the field of experimental physics where a wide variety of measurement instruments are used in frequently changing experimental setups and measurement protocols. CAMELS provides a user-friendly graphical user interface (GUI) which allows the user to configure experiments without the need of programming skills or deep understanding of instrument communication. CAMELS translates user-defined measurement protocols into stand-alone executable Python code for full transparency of the actual measurement sequences. Existing large-scale, distributed control systems using e.g. EPICS can be natively implemented. CAMELS is designed with focus on full recording of data and metadata. When shared with others, data produced with CAMELS allow full understanding of the measurement and the resulting data.
+NOMAD CAMELS (short: CAMELS) is a configurable, open-source measurement software that records fully self-describing experimental data. It has its origins in the field of experimental physics where a wide variety of measurement instruments are used in frequently changing experimental setups and measurement protocols. CAMELS provides a user-friendly graphical user interface (GUI) which allows the user to configure experiments without the need of programming skills or deep understanding of instrument communication. CAMELS translates user-defined measurement protocols into stand-alone executable Python code for full transparency of the actual measurement sequences. Existing large-scale, distributed control systems using e.g. EPICS can be natively implemented. CAMELS is designed with focus on full recording of data and metadata. When shared with others, data produced with CAMELS allow full understanding of the measurement and the resulting data.
 
 CAMELS sets in at the earliest stage, the design of the measurement, to facilitate collecting sustainable data in accordance with the **FAIR** (**F**indable, **A**ccessible, **I**nteroperable and **R**e-usable) principles [@Wilkinson2016].
 
@@ -50,7 +50,7 @@ In experimental physics many custom-built measurement setups are controlled by v
 
 ![Visualization of CAMELS functionality and workflow. CAMELS connects directly with local instruments and/or large-scale lab infrastructure running network protocols, e.g. EPICS. Customizable measurements protocols are translated into Python code and executed. The output is FAIR-compliant measurement data. \label{fig:camels_overview}](pictures/Bild_CAMELS.png){ width=80% }
 
-# NOMAD Camels
+# NOMAD CAMELS
 CAMELS is an open-source tool that automatically collects all computer-accessible experimental metadata automatically. It features a user-friendly graphical interface that enables the creation and customization of measurements without the need for programming knowledge. By default, the data is stored in a structured HDF5 file format that closely resembles the structure of the NeXus standard [@Konnecke2015]. The final HDF5 file contains both the actual measurement data and metadata in a single file, adhering to the FAIR principles. 
 
 Moreover, CAMELS allows for direct access to the _NOMAD_ [@scheidgenFAIRResearchData2023], [@scheidgenNOMADDistributedWebbased2023] repository or its on-premise installation called _NOMAD Oasis_ enabling direct linking to electronic lab notebook (ELN) entries. The user can for example connect measurements to previous experiment workflows documented in _NOMAD_ ELNs. CAMELS can subsequently upload measurement results directly into the ELN providing a simple and stream-lined data workflow.
@@ -99,6 +99,6 @@ In-depth documentation and guides for installing, using and troubleshooting can 
 # Acknowledgements
 We thank Patrick Oppermann (Fritz-Haber-Institut der Max-Planck-Gesellschaft) for valuable discussions.
 
-NOMAD Camels is being developed within the NFDI consortium _FAIRmat_ funded by the Deutsche Forschungsgemeinschaft ”DFG, German Research Foundation”, project 460197019.
+NOMAD CAMELS is being developed within the NFDI consortium _FAIRmat_ funded by the Deutsche Forschungsgemeinschaft ”DFG, German Research Foundation”, project 460197019.
 
 # References
