@@ -104,6 +104,10 @@ Now we want to add channels that will define the instrument settings, so things 
 
 We will first add the setting options for the compliances.
 
+```{attention}
+You have to manually add default values for the settings you create here after the driver has been built! Modify the `keithley_2400_smu.py` to do this. See [below](#9-finishing-the-instrument-settings) for more information.
+```
+
 #### 5.4.1 Compliances
 
 As the instrument takes a simple `:CURR/VOLT:PROT <value>` command to set the instrument compliance we can send this command without further modification. 
@@ -382,3 +386,54 @@ def finalize_steps(self):
 ```
 
 This will always turn off the instrument after the measurement protocol is finished.
+
+
+# 9. Finishing the Instrument Settings
+
+To modify your instrument settings open the `keithley_2400_smu.py` file. You must add a few more lines to finish the instrument settings so that they are displayed correctly in the instrument manager.
+First add default values for the four settings channels.
+
+```python
+...
+self.config["current_compliance"] = 0.1
+self.config["voltage_compliance"] = 2
+self.config["voltage_range"] = 2
+self.config["current_range"] = 0.1
+...
+```
+
+Now we can add labels for the channels so that we have a GUI that looks better. For this we simply add a dictionary of labels with the names of the channels as key and the corresponding value is the String we want displayed. Then pass the label dictionary to the `super().__init__` with the `labels=labels` command.
+
+```python
+...
+class subclass_config(device_class.Simple_Config):
+    def __init__(self, parent=None, data="", settings_dict=None, config_dict=None, additional_info=None):
+        labels = {'current_compliance': 'Current Compliance (A)',
+                  'voltage_compliance': 'Voltage Compliance (V)',
+                  'voltage_range': 'Voltage Range (V)',
+                  'current_range': 'Current Range (A)',
+                  }
+        super().__init__(parent, "keithley_2400_smu", data, settings_dict, config_dict, additional_info, labels=labels)
+        self.comboBox_connection_type.addItem("Local VISA")
+        self.load_settings()
+```
+
+## 10. Adding Your New Instrument
+You should now be finished and ready to use the instrument. CAMELS loads locally stored drivers every time it is started from the path given in the CAMELS settings marked in red in the image below.
+
+![Alt text](driver_path.png)
+
+If every thing worked correctly you should see it when opening the `Instrument Manager` in the `Configure Instruments` tab. 
+
+![Alt text](image-3.png)
+
+Now add the instrument with the &#10133;Symbol. We can now see the instrument settings that we just implemented. Set the ranges and compliances fitting to your needs. Click the `OK` button to finish adding the new instrument.
+
+![Alt text](image-4.png)
+
+## 11. Using Your New Instrument in Measurements
+To use your new instrument in your measurement protocols simply open a (new) protocol and add set and read channel steps.
+
+![Alt text](image-5.png)
+
+![Alt text](image-6.png)
