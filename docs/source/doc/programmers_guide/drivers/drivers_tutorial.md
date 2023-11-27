@@ -363,7 +363,7 @@ class Keithley_2400_smu(VISA_Device):
 ```
 </details>
 
-# 8. Instrument Clean Up - Protocol End
+## 8. Instrument Clean Up - Protocol End
 
 Some instruments might require specific commands to be sent before closing the connection or before they can be turned off. Right before a protocol ends, as a last step, the `finalize_steps` function is called.
 
@@ -377,7 +377,7 @@ def finalize_steps(self):
 This will always turn off the instrument after the measurement protocol is finished.
 
 
-# 9. Finishing the Instrument Settings
+## 9. Finishing the Instrument Settings
 
 To modify your instrument settings open the `keithley_2400_smu.py` file. You must add a few more lines to finish the instrument settings so that they are displayed correctly in the instrument manager.
 First add default values for the four settings channels.
