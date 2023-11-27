@@ -363,17 +363,6 @@ class Keithley_2400_smu(VISA_Device):
 ```
 </details>
 
-Test codeblock
-
-```{dropdown}
-:open:
-This is the content info
-def set_voltage_write_function(self, value):
-   if self.source_function != 'voltage':
-      self.visa_instrument.write(':SOUR:FUNC VOLT') # Setst the correct source mode
-      self.source_function = 'voltage'
-```
-
 # 8. Instrument Clean Up - Protocol End
 
 Some instruments might require specific commands to be sent before closing the connection or before they can be turned off. Right before a protocol ends, as a last step, the `finalize_steps` function is called.
