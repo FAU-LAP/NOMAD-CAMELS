@@ -4,8 +4,7 @@
 The easiest way to create a new instrument driver for any kind of instrument is to open `CAMELS` and navigate to `Tools > Driver builder`. After filling out the desired fields the _driver builder_ creates all required files and the folder structure needed for a basic instrument driver. Additional functionality can then be added to the driver by modifying the files manually.
 
 ### Basic Driver Settings
-At the top of the _driver builder_ enter the `Name` of the instrument, this should be lowercase and describe the instrument unambiguously. For example, you could name the _Keithley Series 2400 SourceMeter_ : `keithley_2400`.\
-Then enter the `Ophyd-Class-Name`. Best-practice is to have it be slightly different from `Name` and uppercase for the first letter of the Ophyd-Class-Name. For example `Keithley_2400`. 
+At the top of the _driver builder_ enter the `Name` of the instrument, this should be lowercase and describe the instrument unambiguously. For example, you could name the _Keithley Series 2400 SourceMeter_ : `keithley_2400`.
 
 If you communicate with the instrument via a **serial connection** check the `VISA` button and enter the correct baud rate and read and write terminators. This is not relevant, if you communicate with the device via other ways such as .dlls, sockets, or ethernet connections. 
 
@@ -55,11 +54,17 @@ When you are finished click `Build Driver` and select a folder where you want to
 This will automatically create the basic folder structure and files so that you can immediately use the driver in CAMELS.
 
 The basic folder structure of a driver is quite simple. For an instrument named `driver_name` it looks as follows.
+
 ```
-nomad_camels_driver_<driver_name> (contains the actual device communication files)
-└─> <driver_name>.py
-└─> <driver_name>_ophyd.py
+<driver_name>
+└─> nomad_camels_driver_<driver_name> (contains the actual device communication files)
+    └─> <driver_name>.py
+    └─> <driver_name>_ophyd.py
+└─> LICENSE.txt
+└─> pyproject.toml
+└─> README.md
 ```
+
 The `<driver_name>.py` file contains code regarding the configuration settings you find in the `Manage Instruments` window and sets up the instrument. Here the `Config Channels` are implemented.
 
 The `<driver_name>_ophyd.py` file contains code that describes how exactly you communicate with the instrument and defines the available channels. This file contains all commands that are sent to the instrument and specifies how the read data is treated.

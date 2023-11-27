@@ -6,3 +6,4 @@ __pycache__/
 .desertenv
 .python-version
 **/html_out/
+docs/source/doc/programmers_guide/drivers/backup.md
