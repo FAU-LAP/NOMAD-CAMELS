@@ -105,7 +105,7 @@ Now we want to add channels that will define the instrument settings, so things 
 We will first add the setting options for the compliances.
 
 ```{attention}
-You have to manually add default values for the settings you create here after the driver has been built! Modify the `keithley_2400_smu.py` to do this. See [below](#9-finishing-the-instrument-settings) for more information.
+You have to manually add default values for the settings you create here after the driver has been built! Modify the `keithley_2400_smu.py` to do this. See [below](chapter_9) for more information.
 ```
 
 #### 5.4.1 Compliances
@@ -376,7 +376,7 @@ def finalize_steps(self):
 
 This will always turn off the instrument after the measurement protocol is finished.
 
-
+(chapter_9)=
 ## 9. Finishing the Instrument Settings
 
 To modify your instrument settings open the `keithley_2400_smu.py` file. You must add a few more lines to finish the instrument settings so that they are displayed correctly in the instrument manager.
