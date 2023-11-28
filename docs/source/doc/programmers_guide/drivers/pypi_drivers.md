@@ -1,14 +1,16 @@
-# Drivers for PyPi
-If you want to share your driver with others, all you have to do is create a PyPi package out of the folder you created above. 
+# Drivers for PyPI
 
-You can of course also fork our [driver repository](https://github.com/FAU-LAP/CAMELS_drivers) and create a pull request with the new driver you wrote and we will be happy to add your driver to PyPi for you. 
+If you want to share your driver with others, all you have to do is create a PyPI package out of the folder you created above. 
 
-Or you can also send us the files via [email](mailto:nomad-camels@fau.de) and we will add them to the repository and PyPi for you.
+You can of course also fork our [driver repository](https://github.com/FAU-LAP/CAMELS_drivers) and create a pull request with the new driver you wrote and we will be happy to add your driver to PyPI for you. 
+
+Or you can also send us the files via [email](mailto:nomad-camels@fau.de) and we will add them to the repository and PyPI for you.
 
 ---
 
-To create a PyPi package for your driver you should have the following folder structure:
+To create a PyPI package for your driver you should have the following folder structure:
 ```
+
 <driver_name>
 └─> dist (this is automatically created by python -m build)
     └─> nomad_camels_driver_<driver_name>-X.Y.Z.tar.gz
@@ -21,7 +23,7 @@ To create a PyPi package for your driver you should have the following folder st
 └─> README.md
 ```
 
-The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPi (see the [setuptools page](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)).
+The `pyproject.toml` file contains most of the relevant information concerning the package that will be uploaded to PyPI (see the [setuptools page](https://setuptools.pypa.io/en/latest/userguide/quickstart.html)).
 
 ```{note}
   Most importantly the project name and version must be set in the `pyproject.toml` file.
@@ -68,7 +70,9 @@ dependencies = [
 ---
 
 ## 1. Building the Instrument Package
-To create a new package that can be installed via pip from PyPi or testPyPi follow these steps.
+
+To create a new package that can be installed via pip from PyPI follow these steps.
+
 1. Make sure you have `build` and `twine` installed into your python environment with
    ```
    pip install build
@@ -84,8 +88,8 @@ To create a new package that can be installed via pip from PyPi or testPyPi foll
    ```
    python -m build
    ```
-   This creates the `dist/` folder and the distributions to upload to PyPi
-5. Upload to PyPi with
+   This creates the `dist/` folder and the distributions to upload to PyPI
+5. Upload to PyPI with
     ```console
     python -m twine upload dist/nomad*
     ```

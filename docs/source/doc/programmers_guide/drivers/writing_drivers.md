@@ -82,7 +82,7 @@ Head to the [next page](modifying_drivers.md) to learn how to modify your driver
 
 ---
 
-If you want to share your driver with others all you need to do is upload your driver to PyPi or create a pull request on our [driver GitHub repository](https://github.com/FAU-LAP/CAMELS_drivers).
+If you want to share your driver with others all you need to do is upload your driver to PyPI or create a pull request on our [driver GitHub repository](https://github.com/FAU-LAP/CAMELS_drivers).
 For more information on how to do this look [here](pypi_drivers.md).
 
 

@@ -5,7 +5,7 @@ This page should help you learn how to use CAMELS, especially if this is your fi
 When you first start up NOMAD-CAMELS, you should see something like this:  
 ![Initial window on start up](images/img.png)
 
-Clicking on the "Manage Instruments" button will open a dialog where you can install available instruments from the CAMELS repository (PyPi).
+Clicking on the "Manage Instruments" button will open a dialog where you can install available instruments from the CAMELS repository (PyPI).
 
 ```{image} images/img_1.png
 :width: 49%
@@ -16,7 +16,7 @@ Clicking on the "Manage Instruments" button will open a dialog where you can ins
 
 On the left we can see the instrument selection window and on the right you can see the screen after successful installation of the instruments. 
 - Check the instruments you want to install. To follow this example  install the `demo instrument`. 
-- Then click `Install / update Selected` to install the most recent version of the instrument from PyPi (this is done internally with a simple `pip install <instrument_name>`).
+- Then click `Install / update Selected` to install the most recent version of the instrument from PyPI (this is done internally with a simple `pip install <instrument_name>`).
 
 ```{note}
   This means you can also use the virtual Python environment `.desertenv` to manually install instruments by running:
