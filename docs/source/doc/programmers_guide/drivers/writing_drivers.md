@@ -1,14 +1,15 @@
-# Create the Core Structure
+# Writing New Drivers
+## Create the Core Structure
 
-## Driver Builder
+### Driver Builder
 The easiest way to create a new instrument driver for any kind of instrument is to open `CAMELS` and navigate to `Tools > Driver builder`. After filling out the desired fields the _driver builder_ creates all required files and the folder structure needed for a basic instrument driver. Additional functionality can then be added to the driver by modifying the files manually.
 
-### Basic Driver Settings
+#### Basic Driver Settings
 At the top of the _driver builder_ enter the `Name` of the instrument, this should be lowercase and describe the instrument unambiguously. For example, you could name the _Keithley Series 2400 SourceMeter_ : `keithley_2400`.
 
 If you communicate with the instrument via a **serial connection** check the `VISA` button and enter the correct baud rate and read and write terminators. This is not relevant, if you communicate with the device via other ways such as .dlls, sockets, or ethernet connections. 
 
-### Instrument Channels
+#### Instrument Channels
 Channels are a key part of CAMELS. When you create a measurement protocol you can set and read the channels of the instruments. Each channel typically corresponds to a single property or functionality of the instrument. Channels are the core functionality of your instrument. Channels can be thought of like methods of a class that can be called to perform various tasks.
 
 You now have the option to add four different types of channels to your instrument.
@@ -31,7 +32,7 @@ If you for example have a simple instrument using VISA communication that return
 Config Channels are **always** run once at the beginning of a measurement when the instrument is used.\
 You can change instrument config channels during measurements, but the idea behind configs are settings that do not change within a single measurement. The value of the config channels are saved as metadata to the instrument at the beginning of the measurement. So take care when changing this during the measurement.
 ```
-### Channel Fields
+#### Channel Fields
 
 These four channels have several fields that you can fill out while creating your driver. They define what exactly is done when a channel is set or read.
 
@@ -48,7 +49,7 @@ If this is `None`, for a set-channel, the instrument will only be written to, if
 * **Description:** A description for the channel, making it clear in the metadata and for the user, what this channel does. It is displayed in the measurement protocol when hovering over the channel.
 * **Input-Type:** This determines the input for a config-channel in the config window. Supporter are `str`, `float` (or any number-type) and `bool`.
 
-### Build Driver
+#### Build Driver
 When you are finished click `Build Driver` and select a folder where you want to save the driver.
 
 This will automatically create the basic folder structure and files so that you can immediately use the driver in CAMELS.
@@ -69,7 +70,7 @@ The `<driver_name>.py` file contains code regarding the configuration settings y
 
 The `<driver_name>_ophyd.py` file contains code that describes how exactly you communicate with the instrument and defines the available channels. This file contains all commands that are sent to the instrument and specifies how the read data is treated.
 
-# Adding New Driver to CAMELS
+## Adding New Driver to CAMELS
 CAMELS loads locally created drivers on start-up from the directory specified in `File > Settings` and then `Drivers > Local drivers path`.\
 You can add a driver you just built by placing the `nomad_camels_driver_*` folder in the directory specified above.
 

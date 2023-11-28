@@ -39,7 +39,7 @@ class subclass_config(device_class.Simple_Config):
 ```
 
 This generates the following instrument settings in the `Manage Instrument` window **automatically**. 
-![img.png](img.png)
+![img.png](images/img.png)
 
 You do not need to write your own UI elements if you use the `device_class.Simple_Config` subclass!
 
