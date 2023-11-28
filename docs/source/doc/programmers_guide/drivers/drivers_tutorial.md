@@ -173,8 +173,10 @@ keithley_2400_smu
 ```{important}
 The standard license that is created with the builder is LGPL 2.1. This is a permissive license. 
 If you do not want this, you must manually remove or change the license!
-This is only relevant for you if you choose to share your driver with others.
+This is only relevant if you choose to share your driver with others.
 ```
+
+The `pyproject.toml`, `LICENSE.txt` and `README.md` files are created to make it easier for you to share your driver with others. It is only a few more [steps](pypi_drivers.md) to upload your driver to PyPI.
 
 As CAMELS is an open-source project by and for the community you can share your driver with others. Find out more about sharing your driver [here](pypi_drivers.md).
 
