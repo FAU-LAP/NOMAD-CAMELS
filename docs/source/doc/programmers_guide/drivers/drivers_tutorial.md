@@ -9,7 +9,7 @@ The instrument is connected to our computer via serial connection (RS232, GPIB, 
 
 To create the core structure use the _driver builder_. Open `CAMELS` and navigate to `Tools > Driver builder`.
 
-![img_1.png](img_1.png)
+![img_1.png](images/img_1.png)
 
 ## 2. Name Instrument
 
@@ -29,7 +29,7 @@ As our Keithley instrument is connected using a GPIB-USB adapter we check the `V
 
 The driver builder sohuld now look like this
 
-![img_2.png](img_2.png)
+![img_2.png](images/img_2.png)
 
 ## 4. Set Serial Connection Parameters (OPTIONAL)
 
@@ -84,7 +84,7 @@ As unit we set `V` and `A` respectively.
 You can add a `Description` if you like. This will make it easier for people to understand what this channel does and how to use it in a measurement protocol. Descriptions appear when overing over a channel in the measurement protocol.
 
 Your instrument should look something like this now.
-![img_3.png](img_3.png)
+![img_3.png](images/img_3.png)
 
 ### 5.3 Set Channels - VISA
 
@@ -93,7 +93,7 @@ We now add two `Set Channels - VISA` by clicking the &#10133;Symbol.
 The Keithley 2400 can only set voltages/currents if the source function is set to voltage/current. This means we can not send a generic command to simply set the voltage/current of the output but we have to check if it is in the right source mode first. Therefore, we can not add a generic `Write-Format-String` but we will add the functionality later on in the Python code of the driver.
 
 We add units and descriptions. You should have something like this now
-![img_4.png](img_4.png)
+![img_4.png](images/img_4.png)
 
 ### 5.4 Instrument Settings
 
@@ -129,7 +129,7 @@ for the voltage channel and
 for the current channel.
 
 Then we add the units and a short description. You should now have the following entry for your instrument.
-![Alt text](image.png)
+![Alt text](images/image.png)
 
 #### 5.4.2 Ranges
 
@@ -141,7 +141,7 @@ We add two new channels and add the command for setting the range in the `Write-
 :VOLT:RANG {value}
 ```
 After adding units and a description you should now have the following settings channels:
-![Alt text](image-1.png)
+![Alt text](images/image-1.png)
 
 We do not need return parser, as we do not want to read any thing from these channels when setting them.
 
@@ -152,7 +152,7 @@ For the last channel we want to read the instrument ID at the start of every pro
 We expect the returned value to be a string and we do not require any parsing as we just want the entire string. 
 
 You should now have the following Read Only configuration channel:
-![Alt text](image-2.png)
+![Alt text](images/image-2.png)
 
 ## 6. Build the Driver
 
@@ -412,19 +412,19 @@ class subclass_config(device_class.Simple_Config):
 ## 10. Adding Your New Instrument
 You should now be finished and ready to use the instrument. CAMELS loads locally stored drivers every time it is started from the path given in the CAMELS settings marked in red in the image below.
 
-![Alt text](driver_path.png)
+![Alt text](images/driver_path.png)
 
 If every thing worked correctly you should see it when opening the `Instrument Manager` in the `Configure Instruments` tab. 
 
-![Alt text](image-3.png)
+![Alt text](images/image-3.png)
 
 Now add the instrument with the &#10133;Symbol. We can now see the instrument settings that we just implemented. Set the ranges and compliances fitting to your needs. Click the `OK` button to finish adding the new instrument.
 
-![Alt text](image-4.png)
+![Alt text](images/image-4.png)
 
 ## 11. Using Your New Instrument in Measurements
 To use your new instrument in your measurement protocols simply open a (new) protocol and add set and read channel steps.
 
-![Alt text](image-5.png)
+![Alt text](images/image-5.png)
 
-![Alt text](image-6.png)
+![Alt text](images/image-6.png)
