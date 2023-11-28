@@ -23,14 +23,17 @@ The beginning of a line in your terminal should look something like this
 (desertenv) C:\WINDOWS\system32> 
 ```
 indicating that you are currently using the `desertenv` python environment.
+
 ## 3. Install CAMELS
-Now run the following command to install CAMELS from PyPi (currently from testPyPi, this will be changed in the future).
+
+Now run the following command to install CAMELS from PyPI.
 
 ```bash
 pip install nomad-camels
 ```
 
 ## 4. Run CAMELS
+
 CAMELS is a python package that is saved under the python environment created above. Python packages are typically saved under the path:
 ```
 /<python_env>/Lib/site-packages/<package_name>
