@@ -210,6 +210,16 @@ def build_protocol(protocol, file_path,
         for s in non_strings:
             settings.pop(s)
 
+        # same applies to non_string configs
+        extra_config = {}
+        non_strings = []
+        for key in config:
+            if key.startswith('!non_string!_'):
+                extra_config[key.replace('!non_string!_', '')] = config[key]
+                non_strings.append(key)
+        for s in non_strings:
+            config.pop(s)
+
         # Information about the device is written into the protocol as well
         additional_info['device_class_name'] = classname
         if 'description' in additional_info:
@@ -227,6 +237,8 @@ def build_protocol(protocol, file_path,
         devices_string += f'\t\tprint("connecting {dev}")\n'
         devices_string += f'\t\t{dev}.wait_for_connection()\n'
         devices_string += f'\t\tconfig = {config}\n'
+        for k, v in extra_config.items():
+            devices_string += f'\t\tconfig["{k}"] = {v}\n'
         devices_string += f'\t\tconfigs = {dev}.configure(config)[1]\n'
         devices_string += f'\t\tdevice_config["{dev}"] = {{}}\n'
         devices_string += f'\t\tdevice_config["{dev}"].update(helper_functions.simplify_configs_dict(configs))\n'

@@ -240,6 +240,16 @@ def instantiate_devices(device_list):
             additional_info['device_class_name'] = classname
             extra_settings.update(settings)
 
+            extra_config = {}
+            non_strings = []
+            for key in config:
+                if key.startswith('!non_string!_'):
+                    extra_config[key.replace('!non_string!_', '')] = config[key]
+                    non_strings.append(key)
+            for s in non_strings:
+                config.pop(s)
+            config.update(extra_config)
+
             # instantiating ophyd-device
             if dev in running_devices:
                 ophyd_device = running_devices[dev]
