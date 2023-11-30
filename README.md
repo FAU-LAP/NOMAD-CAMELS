@@ -17,7 +17,8 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 # Changelog
 
-## 0.2.3 (in Progress)
+
+## 0.2.3
 Features:
 - driver builder now not only for VISA, includes custom functions
 - now allowing for non-string configs (e.g. other instruments)
@@ -25,9 +26,11 @@ Features:
 Changes:
 - changed order of channels to be above variables in context menu
 - changed marker style to 'pixel' for 2D-plots
+- changed driver information window, you can now toggle it on and off with the button in the instrument management
 
 Fixes:
 - fixed error when changing the sweep channel in the ND sweep step 
+
 
 ## 0.2.2
 Features:
