@@ -43,6 +43,15 @@ class Change_DeviceConf(Loop_Step):
         dev_instance = py_package.subclass()
         dev_instance.config = self.config_dict
         config_dict = dev_instance.get_config()
+        extra_config = {}
+        non_strings = []
+        for key in config_dict:
+            if key.startswith('!non_string!_'):
+                extra_config[key.replace('!non_string!_', '')] = config_dict[key]
+                non_strings.append(key)
+        for s in non_strings:
+            config_dict.pop(s)
+        config_dict.update(extra_config)
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}config = {config_dict}\n'
         protocol_string += f'{tabs}devs["{self.device}"].configure(config)\n'
