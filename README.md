@@ -17,7 +17,7 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 # Changelog
 
-## 0.2.3 (in Progress)
+## 0.2.3
 Features:
 - driver builder now not only for VISA, includes custom functions
 
