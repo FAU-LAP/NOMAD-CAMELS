@@ -17,14 +17,6 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 # Changelog
 
-## 0.2.4 (in Progress)
-
-Features:
-
-Changes:
-
-Fixes:
-
 
 ## 0.2.3
 Features:
