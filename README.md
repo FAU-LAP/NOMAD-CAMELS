@@ -21,6 +21,9 @@ For more information and documentation visit [this page](https://fau-lap.github.
 Features:
 - driver builder now not only for VISA, includes custom functions
 
+Changes:
+- changed order of channels to be above variables in context menu
+
 ## 0.2.2
 Features:
 - Reading/Saving of variables ad Read_Channels is now possible, appears as an array in the data
