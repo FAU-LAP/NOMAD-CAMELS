@@ -19,19 +19,24 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 
 ## 0.2.3
+
 Features:
+
 - driver builder now not only for VISA, includes custom functions
 
 Changes:
+
 - changed order of channels to be above variables in context menu
 - changed marker style to 'pixel' for 2D-plots
 - changed driver information window, you can now toggle it on and off with the button in the instrument management
 
 Fixes:
+
 - fixed error when changing the sweep channel in the ND sweep step 
 
 
 ## 0.2.2
+
 Features:
 - Reading/Saving of variables ad Read_Channels is now possible, appears as an array in the data
 - added a class for a waiting bar during protocols
@@ -47,6 +52,7 @@ Fixes:
 - color settings for material theme are now remembered when opening the settings
 
 ## 0.2.1
+
 Minor features:
 - callable functions for manual move of stage control
 - now showing readme and license of drivers
@@ -62,6 +68,7 @@ Fixes:
 - fixed that Read_Channels steps could not be renamed
 
 ## 0.2.0
+
 Major new feature:
 - Callable functions of instruments, that are not channels
 
@@ -78,6 +85,7 @@ Fixes:
 - now using settings of log-scale from definition window at startup of plot
 
 ## 0.1.9
+
 New features:
 - Retry on error for VISA-devices
 - Set_Panel added as a new manual control, this may be used to easily control channels that often have to be set to certain values in preparation of an experiment
@@ -92,12 +100,14 @@ Fixes:
 - pyvisa added to requirements to support local drivers
 
 ## 0.1.8
+
 Fixes:
 - finalize steps of instruments are now being called
 - fixed issue with handing variables to subprotocol
 - fixed update function for Windows, function for Unix/Mac not tested
 
 ## 0.1.7
+
 Added functionalities:
 - Added functionality to import protocols
 
@@ -107,6 +117,7 @@ Fixes:
 - fixed comment/uncomment of steps being saved correctly
 
 ## 0.1.6
+
 Added functionalities:
 - Added capabilities to interact with NOMAD (Oasis), uploading files, getting user information and using a NOMAD entry as sample
 - Functionality to comment / uncomment steps in a protocol for testing / quickly changing a protocol
@@ -119,15 +130,19 @@ Fixes:
 - fixed that protocol without plots starts QApplication when run outside CAMELS
 
 ## 0.1.5
+
 - Fixed the 'Update CAMELS' tool.\
 - Renamed input and output to read and set in the 'Update CAMELS' tool.\
 - Small fix to the VISA device builder.
 
 ## 0.1.4
+
 - Added a timeout setting to all VISA instruments. Setting the timeout determines how long the instrument waits after sending a command before raising a timeout exception
 
 ## 0.1.3
+
 - First stable and working release
 
 ## 0.1.0 to 0.1.2 
+
 - &#9888; Broken releases due to minor bugs that were fixed in 0.1.3
