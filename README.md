@@ -25,9 +25,11 @@ Features:
 Changes:
 - changed order of channels to be above variables in context menu
 - changed marker style to 'pixel' for 2D-plots
+- changed driver information window, you can now toggle it on and off with the button in the instrument management
 
 Fixes:
 - fixed error when changing the sweep channel in the ND sweep step 
+
 
 ## 0.2.2
 Features:

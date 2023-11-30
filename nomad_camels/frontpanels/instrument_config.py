@@ -51,15 +51,19 @@ class Instrument_Config(Ui_Form, QWidget):
         self.layout().addWidget(self.info_widge, 0, 5, 3, 1)
 
         self.hide_info = False
-        self.pushButton_info.clicked.connect(self.show_hide_info)
+        self.toggle_info_hidden()
+        self.pushButton_info.clicked.connect(self.toggle_info_hidden)
 
 
-    def show_hide_info(self):
+    def toggle_info_hidden(self):
         if self.hide_info:
             self.pushButton_info.setText('hide info')
         else:
             self.pushButton_info.setText('show info')
         self.hide_info = not self.hide_info
+        self.show_hide_info()
+
+    def show_hide_info(self):
         self.info_widge.setHidden(self.hide_info)
 
 
@@ -93,6 +97,7 @@ class Instrument_Config(Ui_Form, QWidget):
             self.pushButton_add.setEnabled(True)
             self.info_widge.update_texts(instr)
             self.pushButton_info.setHidden(not self.info_widge.info)
+            self.show_hide_info()
         finally:
             self.setCursor(Qt.ArrowCursor)
 
