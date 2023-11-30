@@ -159,7 +159,7 @@ class LivePlot_2D(LiveScatter, QObject):
         self._ydata.clear()
         self._Idata.clear()
         sc = self.ax.scatter(self._xdata, self._ydata, c=self._Idata,
-                             norm=self._norm, cmap=self.cmap, **self.kwargs)
+                             norm=self._norm, cmap=self.cmap, marker=',', **self.kwargs)
         self._sc.append(sc)
         self.sc = sc
         self.cb = self.ax.figure.colorbar(sc, ax=self.ax)
