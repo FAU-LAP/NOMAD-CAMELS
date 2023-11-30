@@ -23,6 +23,7 @@ For more information and documentation visit [this page](https://fau-lap.github.
 Features:
 
 - driver builder now not only for VISA, includes custom functions
+- now allowing for non-string configs (e.g. other instruments)
 
 Changes:
 

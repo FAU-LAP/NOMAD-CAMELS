@@ -4,7 +4,7 @@ simpler to use these than writing them as a string into the protocol-file."""
 import numpy as np
 from bluesky import plan_stubs as bps
 
-from ophyd import SignalRO
+from ophyd import SignalRO, Device
 
 from PySide6.QtWidgets import QMessageBox, QWidget, QDialog, QDialogButtonBox, QGridLayout, QLabel, QLineEdit, QProgressBar, QPushButton
 from PySide6.QtCore import Signal, Qt
@@ -79,9 +79,13 @@ def simplify_configs_dict(configs):
     confs = {}
     for key, value in configs.items():
         if 'value' in value:
-            confs[key] = value['value']
+            val = value['value']
         else:
-            confs[key] = value
+            val = value
+        if isinstance(val, Device):
+            confs[key] = val.name
+        else:
+            confs[key] = val
     return confs
 
 def get_fit_results(fits, namespace, yielding=False, stream='primary'):
