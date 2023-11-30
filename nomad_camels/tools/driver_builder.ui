@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VISA_Device_Builder</class>
+ <widget class="QWidget" name="VISA_Device_Builder">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1141</width>
+    <height>310</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="1" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_name">
+     <property name="maximumSize">
+      <size>
+       <width>350</width>
+       <height>16777215</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="lineEdit_search_tags">
+     <property name="maximumSize">
+      <size>
+       <width>250</width>
+       <height>16777215</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="4">
+    <widget class="QLabel" name="label_baud_rate">
+     <property name="text">
+      <string>Default Baud-Rate:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="4">
+    <widget class="QLabel" name="label_write_term">
+     <property name="maximumSize">
+      <size>
+       <width>140</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Default Write-Termination:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Search-Tags:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QLabel" name="label_read_term">
+     <property name="maximumSize">
+      <size>
+       <width>140</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Default Read-Termination:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="5" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_write_term">
+     <property name="text">
+      <string>\r\n</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QLabel" name="label_7">
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>(space-separated)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="5" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_baud_rate">
+     <property name="text">
+      <string>9600</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="4" colspan="4">
+    <widget class="QCheckBox" name="checkBox_VISA">
+     <property name="text">
+      <string>VISA connection</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_read_term">
+     <property name="text">
+      <string>\r\n</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3" rowspan="4">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lineEdit_name</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -672,7 +672,7 @@ Instruments</string>
     </property>
     <addaction name="actionUpdate_CAMELS"/>
     <addaction name="actionExport_from_databroker"/>
-    <addaction name="actionVISA_driver_builder"/>
+    <addaction name="action_driver_builder"/>
     <addaction name="actionEPICS_driver_builder"/>
    </widget>
    <addaction name="menuFile"/>
@@ -796,9 +796,9 @@ Instruments</string>
     <string>Report Bug</string>
    </property>
   </action>
-  <action name="actionVISA_driver_builder">
+  <action name="action_driver_builder">
    <property name="text">
-    <string>VISA-driver builder</string>
+    <string>Driver builder</string>
    </property>
   </action>
   <action name="actionEPICS_driver_builder">

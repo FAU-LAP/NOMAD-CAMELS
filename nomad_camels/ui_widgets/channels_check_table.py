@@ -72,15 +72,15 @@ class Channels_Check_Table(QWidget):
         # there will be none inside the single menus
         (channel_menu, variable_menu, function_menu), _ = \
             variables_handling.get_menus(self.insert_variable)
-        menu.addMenu(variable_menu)
         menu.addMenu(channel_menu)
+        menu.addMenu(variable_menu)
         menu.addMenu(function_menu)
         # menu.addMenu(operator_menu)
         menu.addSeparator()
         (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ = \
             variables_handling.get_menus(self.append_variable, 'Append')
-        menu.addMenu(variable_menu2)
         menu.addMenu(channel_menu2)
+        menu.addMenu(variable_menu2)
         menu.addMenu(function_menu2)
         menu.addMenu(operator_menu2)
         menu.exec_(self.mapToGlobal(pos))

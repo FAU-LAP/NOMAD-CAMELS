@@ -5,8 +5,8 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 sys.path.append(os.path.dirname(__file__))
 import json
 
-from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QDialog
-from PySide6.QtCore import QCoreApplication, Qt, Signal, QMetaObject
+from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog
+from PySide6.QtCore import QCoreApplication, Qt, Signal
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
 from nomad_camels.utility import exception_hook
@@ -126,7 +126,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionSave_Preset.triggered.connect(self.save_state)
         self.actionNew_Preset.triggered.connect(self.new_preset)
         self.actionLoad_Backup_Preset.triggered.connect(self.load_backup_preset)
-        self.actionVISA_driver_builder.triggered.connect(self.launch_device_builder)
+        self.action_driver_builder.triggered.connect(self.launch_device_builder)
         self.actionEPICS_driver_builder.triggered.connect(self.launch_epics_builder)
         self.actionExport_from_databroker.triggered.connect(self.launch_data_exporter)
         self.actionReport_Bug.triggered.connect(lambda x: os.startfile(f'{camels_github}/issues'))
@@ -1368,8 +1368,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
     def launch_device_builder(self):
         """ """
-        from nomad_camels.tools import VISA_driver_builder
-        device_builder = VISA_driver_builder.VISA_Driver_Builder(self)
+        from nomad_camels.tools import device_driver_builder
+        device_builder = device_driver_builder.Driver_Builder(self)
         device_builder.show()
 
     def launch_epics_builder(self):

@@ -309,7 +309,7 @@ class Single_Sweep_Tab(QWidget):
     signal_remove = Signal()
     signal_move_left = Signal()
     signal_move_right = Signal()
-    signal_change_sweep = Signal()
+    signal_change_sweep = Signal(str)
 
     def __init__(self, loop_step:Sweep_Step, parent=None):
         super().__init__(parent)
