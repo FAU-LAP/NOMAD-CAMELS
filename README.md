@@ -23,6 +23,7 @@ Features:
 
 Changes:
 - changed order of channels to be above variables in context menu
+- changed marker style to 'pixel' for 2D-plots
 
 ## 0.2.2
 Features:
