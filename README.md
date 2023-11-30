@@ -25,6 +25,9 @@ Changes:
 - changed order of channels to be above variables in context menu
 - changed marker style to 'pixel' for 2D-plots
 
+Fixes:
+- fixed error when changing the sweep channel in the ND sweep step 
+
 ## 0.2.2
 Features:
 - Reading/Saving of variables ad Read_Channels is now possible, appears as an array in the data
