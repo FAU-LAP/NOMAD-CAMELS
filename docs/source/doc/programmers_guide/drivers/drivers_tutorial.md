@@ -9,7 +9,7 @@ The instrument is connected to our computer via serial connection (RS232, GPIB, 
 
 To create the core structure use the _driver builder_. Open `CAMELS` and navigate to `Tools > Driver builder`.
 
-![img_1.png](images/img_1.png)
+![Alt text](images/image_driver_builder.png)
 
 ## 2. Name Instrument
 
@@ -27,7 +27,7 @@ Check or uncheck the `VISA connection` box accordingly.
 
 As our Keithley instrument is connected using a GPIB-USB adapter we check the `VISA connection` box.
 
-The driver builder sohuld now look like this
+The driver builder should now look like this
 
 ![img_2.png](images/img_2.png)
 
@@ -56,7 +56,7 @@ As we want to actually communicate with the instrument when setting and reading 
 - `Set Channels - VISA`: sets voltage/current on the instrument.
 
 ```{important}
-`VISA` channels **always** send a string to the instrument. If you do not want to send a string every time the channel is set or read, use the custom Channel on the left! There you can customize exactly waht is done when the channel is read and set.
+`VISA` channels **always** send a string to the instrument. If you do not want to send a string every time the channel is set or read, use the custom Channel on the left! There you can customize exactly what is done when the channel is read and set.
 ```
 
 ### 5.2 Reading Channels - VISA
@@ -428,3 +428,4 @@ To use your new instrument in your measurement protocols simply open a (new) pro
 ![Alt text](images/image-5.png)
 
 ![Alt text](images/image-6.png)
+
