@@ -6,7 +6,7 @@ After physically setting up the Arduino, write the Code so that the Arduino resp
 to a GET-Request. In this case, as the Ethernet-Library, `<UIPEthernet.h>` is needed, since the Nano Ethernet Shield V1.0
 uses a ENC28J60 network module and the standard library does not support that module. Note that this library already includes `<SPI.h>`.
 
-```{arduino}
+```{cpp}
 #include <UIPEthernet.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
@@ -24,7 +24,7 @@ EthernetServer server(80);
 ```
 
 the void setup() should start a Serial-Connection for possible USB readouts and the server
-```{arduino}
+```{cpp}
 void setup() {
 	//Set Baud-Rate
 	Serial.begin(9600);
@@ -53,7 +53,7 @@ void setup() {
 as already written, the void loop should sends back an HTML-Page with the sensor values
 
 
-```{arduino}
+```{cpp}
 void loop() {
 	EthernetClient client = server.available();
 	if (client) {
