@@ -51,7 +51,7 @@ void setup() {
 
 as already written, the void loop should sends back an HTML-Page with the sensor values
 
-```{dropdown} Arduino HTML Page Code
+````{dropdown} Arduino HTML Page Code
 ```
 void loop() {
 	EthernetClient client = server.available();
@@ -126,7 +126,7 @@ void loop() {
 	}
 }
 ```
-```
+````
 
 ```{attention}
 This code reads the sensor on every HTTP GET-Request. Therefor, if two sources simultaneously ask vor values, they will get different results.

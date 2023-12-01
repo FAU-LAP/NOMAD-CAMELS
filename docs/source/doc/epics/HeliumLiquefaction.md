@@ -17,29 +17,29 @@ IOC, `HeliumLiquefaction` will be needed to be replaced by the chosen name for t
 <!-- TOC -->
 - [Helium Liquefaction Documentation](#helium-liquefaction-documentation)
 - [Table of Content](#table-of-content)
-- [Overview](#overview)
-- [Section 1: Filllevel Calculation](#section-1-filllevel-calculation)
-  - [Chapter 1: Creating the FillLevel.db and FillLevel.proto](#chapter-1-creating-the-fillleveldb-and-filllevelproto)
-    - [Step 1: Reading the sensors](#step-1-reading-the-sensors)
+  - [Overview](#overview)
+  - [Section 1: Filllevel Calculation](#section-1-filllevel-calculation)
+    - [Chapter 1: Creating the FillLevel.db and FillLevel.proto](#chapter-1-creating-the-fillleveldb-and-filllevelproto)
+      - [Step 1: Reading the sensors](#step-1-reading-the-sensors)
           - [FillLevel.proto](#filllevelproto)
           - [FillLevel.db](#fillleveldb)
-    - [Step 2: Fill level calculation](#step-2-fill-level-calculation)
-    - [Step 3: Interpolation](#step-3-interpolation)
-    - [Step 4: Entire FillLevel.db](#step-4-entire-fillleveldb)
-    - [Step 5: Makefile changes](#step-5-makefile-changes)
-  - [Chapter 2: Import of the Breakpoint Tables](#chapter-2-import-of-the-breakpoint-tables)
-- [Section 2: Liquefier Data](#section-2-liquefier-data)
-- [Section 3: Setting up st.cmd for a correct boot of the IOC](#section-3-setting-up-stcmd-for-a-correct-boot-of-the-ioc)
+      - [Step 2: Fill level calculation](#step-2-fill-level-calculation)
+      - [Step 3: Interpolation](#step-3-interpolation)
+      - [Step 4: Entire FillLevel.db](#step-4-entire-fillleveldb)
+      - [Step 5: Makefile changes](#step-5-makefile-changes)
+    - [Chapter 2: Import of the Breakpoint Tables](#chapter-2-import-of-the-breakpoint-tables)
+  - [Section 2: Liquefier Data](#section-2-liquefier-data)
+  - [Section 3: Setting up st.cmd for a correct boot of the IOC](#section-3-setting-up-stcmd-for-a-correct-boot-of-the-ioc)
         - [Tips for an easier time working with IOCs](#tips-for-an-easier-time-working-with-iocs)
 <!-- TOC -->
 
-# Overview
+## Overview
 
 Each different device has his own .db file and for device communication a .proto file with the same name.
 In this documentation, the focus will lie on the two more complicated records:
 <ul>
     <li>Calculation of the fill level of the Helium tank in Liters via Interpolation</li>
-    <li>Handling unsolicitated Data from the Liquefier</li>
+    <li>Handling unsolicited Data from the Liquefier</li>
 </ul>
 The other records mostly using the same logic as the fill level one, in the sense of also being "talked to" via Serial Connection.
 
@@ -47,9 +47,9 @@ It is assumed a newly created, empty IOC is already set up with.
 
 
 
-# Section 1: Filllevel Calculation
+## Section 1: Filllevel Calculation
 
-## Chapter 1: Creating the FillLevel.db and FillLevel.proto
+### Chapter 1: Creating the FillLevel.db and FillLevel.proto
 
 First, a short explanation of how the fill level calculation works: Two sensors, being vertically offset and sensor 2 being the one closer to the bottom, cover the
 entire tank and measure their percentage of being submerged in liquid helium, giving back a value of 100% if they are fully
@@ -66,7 +66,7 @@ The fill level record therefor needs to do the following:
 2. Calculate the fill level in millimeters
 3. Interpolate
 
-### Step 1: Reading the sensors
+#### Step 1: Reading the sensors
 
 The first step is to understand the device protocoll, i.e. how to talk to it and how responses are formatted. Check the
 device manual for instructions. Also, with programms like CuteCom ([their GitHub](https://github.com/oudream/cutecom))
@@ -141,7 +141,7 @@ In the context of this IOC, only why certain values are chosen will be explained
 
 With this, the sensor reading is complete.
 
-### Step 2: Fill level calculation
+#### Step 2: Fill level calculation
 To calculate the fill level, a `calcout` record is used. This record uses up to 12 inputs and writes the result of the calculation in another record.
 The record should look like this:
 ```
@@ -184,7 +184,7 @@ record(ai, FillLevel:filllevelMM)
 
 Now, the record `FillLevel:filllevelMM` contains the current level of the helium tank in millimeters.
 
-### Step 3: Interpolation
+#### Step 3: Interpolation
 Theoretically, a single record would be all that is needed for the interpolation. It would read the value of the `FillLevel:filllevelMM` and interpolate with a breakpoint table.
 However, non-linear interpolations with these values here are a bit tricky in EPICS and need a bit of a workaround.
 Interpolation is a type of Linearization (used in the `FillLevel:sensor1` record to divide the value by 1000), that uses the RVAL field of a record.
@@ -238,7 +238,7 @@ record(ai, FillLevel:filllevelL)
 * `LINR` set to `filllevel` tells the record to use the breakpoint table `filllevel`
 * `DTYP` needs to be `Raw Soft Channel` again to use `RVAL`.
 
-### Step 4: Entire FillLevel.db
+#### Step 4: Entire FillLevel.db
 The completed file should then look like this:
 ```
 record(ai, FillLevel:sensor1)
@@ -305,7 +305,7 @@ record(ai, FillLevel:filllevelL)
 }
 ```
 
-### Step 5: Makefile changes
+#### Step 5: Makefile changes
 The `Makefile` in this folder needs to be changed to include the newly created files, so add 
 ```
 DB += FillLevel.db
@@ -318,7 +318,7 @@ underneath the lines
 #DB += xxx.db
 ```
 
-## Chapter 2: Import of the Breakpoint Tables
+### Chapter 2: Import of the Breakpoint Tables
 To make the breakpoint table used in the previously described record available, navigate to `HeliumLiquefaction/HeliumLiquefactionApp/src`.
 Firstly, the basic steps needed to import `StreamDevice` and `asyn`:
 Create a `drvHeliumLiquefaction.dbd` with the content
@@ -446,7 +446,7 @@ include $(TOP)/configure/RULES
 #  ADD RULES AFTER THIS LINE
 ```
 
-# Section 2: Liquefier Data
+## Section 2: Liquefier Data
 
 The main particularity of the Liquefier is that it doesnt wait to a value request and responds with the requested value, instead it periodically broadcasts all values.
 These values consist of binary values `0` and `1` representing `Off` and `On` and analog values, for example Turbine Speed. Due to the values all being separated by long and different strings, records like `aai` or `waveform` are not advisable
@@ -518,7 +518,7 @@ CompressorStatus
 * in the next line, its the same with the value being matched, but it is ignored instead of saved. It is crucial for `StreamDevice` protocols where multiple values need to be saved from messages that every record "sees" every input but only matches the one actually needed for the record. Otherwise, record processing will not work correctly. It might seem as though values of records are updated, however monitoring of these records will fail.
 
 
-# Section 3: Setting up st.cmd for a correct boot of the IOC
+## Section 3: Setting up st.cmd for a correct boot of the IOC
 Now navigate to `/HeliumLiquefaction/iocBoot/iocHeliumLiquefaction`. There, edit the st.cmd to look like this:
 
 *Note: for completeness sake, the entire `st.cmd` is included, which therefor contains files not explained here but necessary for the complete Helium Liquefaction driver. They are however commented out, so they should not cause problems*
@@ -634,8 +634,8 @@ iocInit
   * `var dbBptNotMonotonic 1` sets the breakpointtable below to be not monotonic.
   * `dbLoadRecords("dbd/filllevel.dbd")` loads the filllevel.dbd breakpoint table.
 
-
 ##### Tips for an easier time working with IOCs
+
 Especially during working on a new `.db` and `.proto`, its often necessary to rebuild the IOC and restart it. To make that a bit faster, consider making an `mk.cmd` where the `st.cmd` is located with the following content:
 ```
 #!/bin/bash
