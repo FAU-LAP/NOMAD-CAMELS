@@ -1,13 +1,13 @@
-# Run IOCs in the Background
+# Run IOCs with procServ
+
+```{note}
+It is best-practice to **always** run your IOCs using procServ as it you to run IOC without using active terminals that shut off the IOC when they are closed (by accident). 
+```
 
 You can use **procServ** to run IOCs in the background while still having access to them via `ssh`. You can also configure your IOC to automatically start when the host UNIX machine is turned on.
 
 This guide is for setting up procServ on a Linux-Server.
 It is assumed you already have installed EPICS and created a IOC that you now want to run (in the background).
-
-```{note}
-It is best-practice to **always** run your IOCs using procServ as it you to run IOC without using active terminals that shut off the IOC when they are closed (by accident). 
-```
 
 ## Step 1: Install procServ
 

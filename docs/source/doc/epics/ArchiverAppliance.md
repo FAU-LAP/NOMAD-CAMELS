@@ -71,5 +71,5 @@ Its possible to set Debian to automatically login on (re-)boot. This might be de
 
 To do it though, open a terminal and run `sudo nano /etc/gdm3/daemon.conf`, uncomment or set the line `AutomaticLoginEnable = 1`, and set `AutomaticLogin = <username>`, where <username> is the user which runs the Archiver Appliance.
 
-# Conclusion
+## Conclusion
 This should leave you with a functioning Archiver Appliance, which should be reachable from within the local network via `http://<IPADRESS/HOSTNAME>:17665/mgmt/ui/index.html`.

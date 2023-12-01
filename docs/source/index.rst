@@ -62,7 +62,6 @@ If you have any questions or feedback you can reach the development team of CAME
    Run IOCs <doc/epics/procServ.md>
    Archiver Appliance <doc/epics/ArchiverAppliance.md>
    Example Setups <doc/epics/examples.md>
-   EPICS Climate Sensor <doc/epics/RoomClimateSensorIOC.md>
    
 
 .. toctree::
