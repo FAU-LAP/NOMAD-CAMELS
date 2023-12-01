@@ -15,7 +15,7 @@ This opens the stage control.\
 Here you can set the step size and use the green arrow keys to control the selected axis. You can also jump to a specific value by entering values below the `Go To` button and then pressing the button.
 ```{note}
   The value of `Time between readings` is the time in seconds after which the axis is read (using the set `readback axis` channel).\
-This should NOT be inf as the position will never be read. Typically, a value of 0.5 seconds is reasonable. 
+This should NOT be `inf` as the position will never be read. Typically, a value of 0.5 seconds is reasonable. 
 ```
 
 [&#8679; Back to the top &#8679;](top_link)

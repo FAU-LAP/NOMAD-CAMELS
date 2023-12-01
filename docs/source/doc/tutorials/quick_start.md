@@ -7,6 +7,7 @@ You can then add your own instruments that have not been implemented yet by [wri
 
 ```{toctree}
 :caption: Contents
+:maxdepth: 2
 
 quick_start_install
 quick_start_protocols

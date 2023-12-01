@@ -43,10 +43,9 @@ If you have any questions or feedback you can reach the development team of CAME
    :caption: User Documentation
 
    Home <self>
-   Installation <doc/installation/installation.md>
+   Installing CAMELS <doc/installation/installation.md>
    Getting Started <doc/tutorials/quick_start.md>
-   User's Guide <doc/users_guide.md>
-   Programmer's Guide <doc/programmers_guide/programmers_guide.md>
+   Handling HDF5 Files <doc/handling_hdf5.md>
 
 .. toctree::
    :maxdepth: 2
@@ -54,6 +53,12 @@ If you have any questions or feedback you can reach the development team of CAME
 
    Available Instruments <doc/instruments/instruments.md>
    Create New Instrument Drivers <doc/programmers_guide/instrument_drivers.md>
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Maintaining CAMELS Project
+
+   Maintain CAMELS <doc/programmers_guide/programmers_guide.md>
 
 .. toctree::
    :maxdepth: 1

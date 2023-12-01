@@ -110,19 +110,19 @@ You have to manually add default values for the settings you create here after t
 
 #### 5.4.1 Compliances
 
-As the instrument takes a simple `:CURR/VOLT:PROT <value>` command to set the instrument compliance we can send this command without further modification. 
+As the instrument takes a simple `:CURR/VOLT:PROT <value>` command to set the instrument compliance we can send this command without further modification.
 
-We add a regular `Config Channel - VISA` entry by clicking the &#10133;Symbol. 
+We add a regular `Config Channel - VISA` entry by clicking the &#10133;Symbol.
 
 Then we enter a `Write-Format-String` which defines what is done when the channel is set. The setting of a settings channel always occurs at the beginning of the protocol execution. We enter
 
-```
+```bash
 :VOLT:PROT {value}
 ```
 
 for the voltage channel and
 
-```
+```bash
 :CURR:PROT {value}
 ```
 
@@ -137,9 +137,10 @@ We can proceed in the same way for the voltage/current ranges. The voltage and c
 
 We add two new channels and add the command for setting the range in the `Write-Format-String` field like:
 
-```
+```bash
 :VOLT:RANG {value}
 ```
+
 After adding units and a description you should now have the following settings channels:
 ![Alt text](images/image-1.png)
 
@@ -149,7 +150,7 @@ We do not need return parser, as we do not want to read any thing from these cha
 
 For the last channel we want to read the instrument ID at the start of every protocol execution. Here we want to send the `*IDN?` command and read the string that is returned. As this command takes no variable parameters we can add this as a simple `Config Channels - Read Only - VISA` channel.
 
-We expect the returned value to be a string and we do not require any parsing as we just want the entire string. 
+We expect the returned value to be a string and we do not require any parsing as we just want the entire string.
 
 You should now have the following Read Only configuration channel:
 ![Alt text](images/image-2.png)
@@ -160,7 +161,7 @@ We can now build the driver. This will create the folder structure as well as th
 
 For this simply hit `Build Driver` and select a location where the driver should be saved. You should now have a folder with the following structure.
 
-```
+```bash
 keithley_2400_smu
 └─> nomad_camels_driver_keithley_2400_smu
     └─> keithley_2400_smu.py
@@ -215,7 +216,7 @@ if name == 'test':
 ```
 
 All code below this will not be executed when CAMELS starts up.
- You should now have 
+ You should now have
 
  ```python
 ...
@@ -265,7 +266,6 @@ self.visa_instrument.write()
 function can be used to send string visa commands directly to the instrument. This is very useful when you need to send a sequence of several commands when executing a single action. This also allows you to write specific commands to the device before sending the final command by returning a string to the .write or .query methods.
 ````
 
-
 ### 7.2 Adding Setting Functionality
 
 We proceed in similar fashion for the setting of voltages and currents. Here we also first want to check what source mode we are in and change the mode if does not match. Then we check if the output is on and if not we turn it on. The `.write` method always expects a string to be returned which it then writes to the instrument. Therefore all the functions return simple strings that are created every time the function is called.
@@ -273,6 +273,7 @@ We proceed in similar fashion for the setting of voltages and currents. Here we 
 ```{Note}
 This means that setting the voltage and current **ALWAYS** turns on the output! Consider this when designing your protocols and care for everyone's safety. 
 ```
+
 Finally we set the value resulting in the following code for setting voltages
 
 ```python
@@ -301,68 +302,69 @@ from nomad_camels.bluesky_handling.custom_function_signal import Custom_Function
 from nomad_camels.bluesky_handling.visa_signal import VISA_Signal, VISA_Signal_RO, VISA_Device
 
 class Keithley_2400_smu(VISA_Device):
-	measure_voltage = Cpt(VISA_Signal_RO, name="measure_voltage", parse="^([+-].*),[+-].*,[+-].*,[+-].*,[+-].*$", parse_return_type="float", metadata={"units": "V", "description": "measures voltage"})
-	measure_current = Cpt(VISA_Signal_RO, name="measure_current", parse="^[+-].*,([+-].*),[+-].*,[+-].*,[+-].*$", parse_return_type="float", metadata={"units": "A", "description": "measures current"})
-	set_voltage = Cpt(VISA_Signal, name="set_voltage", parse_return_type=None, metadata={"units": "V", "description": "Sets voltage to desired value"})
-	set_current = Cpt(VISA_Signal, name="set_current", parse_return_type=None, metadata={"units": "A", "description": "Sets current to desired value"})
-	voltage_compliance = Cpt(VISA_Signal, name="voltage_compliance", write=":VOLT:PROT {value}", parse_return_type=None, kind="config", metadata={"units": "V", "description": "Sets the voltage compliance"})
-	current_compliance = Cpt(VISA_Signal, name="current_compliance", write=":CURR:PROT {value}", parse_return_type=None, kind="config", metadata={"units": "A", "description": "Sets the current compliance"})
-	voltage_range = Cpt(VISA_Signal, name="voltage_range", write=":VOLT:RANG {value}", parse_return_type=None, kind="config", metadata={"units": "V", "description": "Sets the voltage range"})
-	current_range = Cpt(VISA_Signal, name="current_range", write=":CURR:RANG {value}", parse_return_type=None, kind="config", metadata={"units": "A", "description": "Sets the current range"})
-	instrument_id = Cpt(VISA_Signal_RO, name="instrument_id", query="*IDN?", parse_return_type="str", kind="config", metadata={"units": "", "description": "Instrument id returned with *IDN? command "})
+    measure_voltage = Cpt(VISA_Signal_RO, name="measure_voltage", parse="^([+-].*),[+-].*,[+-].*,[+-].*,[+-].*$", parse_return_type="float", metadata={"units": "V", "description": "measures voltage"})
+    measure_current = Cpt(VISA_Signal_RO, name="measure_current", parse="^[+-].*,([+-].*),[+-].*,[+-].*,[+-].*$", parse_return_type="float", metadata={"units": "A", "description": "measures current"})
+    set_voltage = Cpt(VISA_Signal, name="set_voltage", parse_return_type=None, metadata={"units": "V", "description": "Sets voltage to desired value"})
+    set_current = Cpt(VISA_Signal, name="set_current", parse_return_type=None, metadata={"units": "A", "description": "Sets current to desired value"})
+    voltage_compliance = Cpt(VISA_Signal, name="voltage_compliance", write=":VOLT:PROT {value}", parse_return_type=None, kind="config", metadata={"units": "V", "description": "Sets the voltage compliance"})
+    current_compliance = Cpt(VISA_Signal, name="current_compliance", write=":CURR:PROT {value}", parse_return_type=None, kind="config", metadata={"units": "A", "description": "Sets the current compliance"})
+    voltage_range = Cpt(VISA_Signal, name="voltage_range", write=":VOLT:RANG {value}", parse_return_type=None, kind="config", metadata={"units": "V", "description": "Sets the voltage range"})
+    current_range = Cpt(VISA_Signal, name="current_range", write=":CURR:RANG {value}", parse_return_type=None, kind="config", metadata={"units": "A", "description": "Sets the current range"})
+    instrument_id = Cpt(VISA_Signal_RO, name="instrument_id", query="*IDN?", parse_return_type="str", kind="config", metadata={"units": "", "description": "Instrument id returned with *IDN? command "})
 
-	def __init__(self, prefix="", *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, resource_name="", write_termination="\r\n", read_termination="\r\n", baud_rate=9600, **kwargs):
-		super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, resource_name=resource_name, baud_rate=baud_rate, read_termination=read_termination, write_termination=write_termination, **kwargs)
-		self.measure_voltage.query = self.measure_voltage_query_function
-		self.measure_current.query = self.measure_current_query_function
-		self.set_voltage.write = self.set_voltage_write_function
-		self.set_current.write = self.set_current_write_function
-		if name == 'test':
-			return
-		self.source_function = None
-		self.measure_function = None
-		self.output_on = False
+    def __init__(self, prefix="", *, name, kind=None, read_attrs=None, configuration_attrs=None, parent=None, resource_name="", write_termination="\r\n", read_termination="\r\n", baud_rate=9600, **kwargs):
+        super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs, configuration_attrs=configuration_attrs, parent=parent, resource_name=resource_name, baud_rate=baud_rate, read_termination=read_termination, write_termination=write_termination, **kwargs)
+        self.measure_voltage.query = self.measure_voltage_query_function
+        self.measure_current.query = self.measure_current_query_function
+        self.set_voltage.write = self.set_voltage_write_function
+        self.set_current.write = self.set_current_write_function
+        if name == 'test':
+            return
+        self.source_function = None
+        self.measure_function = None
+        self.output_on = False
 
-	def measure_voltage_query_function(self):
-		if self.measure_function != 'voltage':
-			self.visa_instrument.write(':CONF:VOLT')
-			self.measure_function = 'voltage'
-		else:
-			pass
-		return ':READ?'
+    def measure_voltage_query_function(self):
+        if self.measure_function != 'voltage':
+            self.visa_instrument.write(':CONF:VOLT')
+            self.measure_function = 'voltage'
+        else:
+            pass
+        return ':READ?'
 
-	def measure_current_query_function(self):
-		if self.measure_function != 'current':
-			self.visa_instrument.write(':CONF:CURR')
-			self.measure_function = 'current'
-		else:
-			pass
-		return ':READ?'
+    def measure_current_query_function(self):
+        if self.measure_function != 'current':
+            self.visa_instrument.write(':CONF:CURR')
+            self.measure_function = 'current'
+        else:
+            pass
+        return ':READ?'
 
-	def set_voltage_write_function(self, value):
-		if self.source_function != 'voltage':
-			self.visa_instrument.write(':SOUR:FUNC VOLT')
-			self.source_function = 'voltage'
-		else:
-			pass
-		if self.output_on:
-			pass
-		else:
-			self.visa_instrument.write(':OUTP 1')
-		return f':SOUR:VOLT {value}'
+    def set_voltage_write_function(self, value):
+        if self.source_function != 'voltage':
+            self.visa_instrument.write(':SOUR:FUNC VOLT')
+            self.source_function = 'voltage'
+        else:
+            pass
+        if self.output_on:
+            pass
+        else:
+            self.visa_instrument.write(':OUTP 1')
+        return f':SOUR:VOLT {value}'
 
-	def set_current_write_function(self, value):
-		if self.source_function != 'current':
-			self.visa_instrument.write(':SOUR:FUNC CURR')
-			self.source_function = 'current'
-		else:
-			pass
-		if self.output_on:
-			pass
-		else:
-			self.visa_instrument.write(':OUTP 1')
-		return f':SOUR:CURR {value}'
+    def set_current_write_function(self, value):
+        if self.source_function != 'current':
+            self.visa_instrument.write(':SOUR:FUNC CURR')
+            self.source_function = 'current'
+        else:
+            pass
+        if self.output_on:
+            pass
+        else:
+            self.visa_instrument.write(':OUTP 1')
+        return f':SOUR:CURR {value}'
 ```
+
 </details>
 
 ## 8. Instrument Clean Up - Protocol End
@@ -410,11 +412,12 @@ class subclass_config(device_class.Simple_Config):
 ```
 
 ## 10. Adding Your New Instrument
+
 You should now be finished and ready to use the instrument. CAMELS loads locally stored drivers every time it is started from the path given in the CAMELS settings marked in red in the image below.
 
 ![Alt text](images/driver_path.png)
 
-If every thing worked correctly you should see it when opening the `Instrument Manager` in the `Configure Instruments` tab. 
+If every thing worked correctly you should see it when opening the `Instrument Manager` in the `Configure Instruments` tab.
 
 ![Alt text](images/image-3.png)
 
@@ -423,9 +426,9 @@ Now add the instrument with the &#10133;Symbol. We can now see the instrument se
 ![Alt text](images/image-4.png)
 
 ## 11. Using Your New Instrument in Measurements
+
 To use your new instrument in your measurement protocols simply open a (new) protocol and add set and read channel steps.
 
 ![Alt text](images/image-5.png)
 
 ![Alt text](images/image-6.png)
-

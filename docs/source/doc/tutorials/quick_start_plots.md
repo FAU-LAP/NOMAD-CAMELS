@@ -25,9 +25,12 @@ If you then run the protocol the plot is displayed and updated for every new dat
 ```
 
 ```{note}
- For very fast measurements the plotting can be too slow and cause crashes. So especially when dealing with pure software instruments with very low communication times it might help to add a wait time in the protocol.\
-Here to get this plot you have to modify the protocol from [before](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_protocols.html#13-sweeping-using-a-for-loop-step) by adding a small `Wait` time of `0.1` seconds as the internal software sweep is too fast for the plot to follow.\
-> ![img_53.png](images/img_53.png)
-```
+ For very fast measurements the plotting can be too slow and cause errors when displaying the plot. So especially when dealing with pure software instruments with very fast communication times it might help to add a wait time in the protocol. This is purely a displaying error and all data points are recorded correctly in the measurement file.
+ ```
+
+To get a working plot here you have to modify the protocol from [before](https://fau-lap.github.io/NOMAD-CAMELS/docs/Tutorials/quick_start/quick_start_protocols.html#13-sweeping-using-a-for-loop-step) by adding a small `Wait` time of `0.1` seconds as the internal software sweep is too fast for the plot to follow.
+
+![img_53.png](images/img_53.png)
+
 
 [&#8679; Back to the top &#8679;](plots_top_link)
