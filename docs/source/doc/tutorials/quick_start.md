@@ -11,7 +11,7 @@ The easiest way to get comfortable with CAMELS is to first learn [how to add and
 
 ---
 
-Do you want to use CAMELS but for the instruments you have in your lab you can not find appropriate drivers?
+Do you want to use CAMELS but you can not find appropriate drivers for the instruments you have in your lab?
 
 ```{tip}
 You can add your own instruments that have not been implemented yet by [writing your own drivers](../programmers_guide/instrument_drivers.md).
