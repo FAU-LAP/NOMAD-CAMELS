@@ -56,6 +56,13 @@ If you have any questions or feedback you can reach the development team of CAME
 
 .. toctree::
    :maxdepth: 2
+   :caption: Combine with EPICS
+
+   Create New EPICS IOC <doc/epics/new_ioc.md>
+   
+
+.. toctree::
+   :maxdepth: 2
    :caption: Maintaining CAMELS Project
 
    Maintain CAMELS <doc/programmers_guide/programmers_guide.md>

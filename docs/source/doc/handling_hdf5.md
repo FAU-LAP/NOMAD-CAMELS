@@ -84,6 +84,7 @@ for index, detector_data_point in enumerate(detector_data):
                 )
 ```
 
+![Alt text](image.png)
 
 
 ## Get Metadata
