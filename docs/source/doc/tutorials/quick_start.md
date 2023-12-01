@@ -6,7 +6,7 @@ The easiest way to get comfortable with CAMELS is to first learn [how to add and
 ```
 
 ```{tip}
- Then how to [use them in measurement protocols](quick_start_protocols.md). 
+ Then how to [use instruments in measurement protocols](quick_start_protocols.md). 
 ```
 
 ---
