@@ -14,7 +14,10 @@ There are several ways to set up the correct Python environment and install CAME
 
 ### Windows
 
-* [Windows installer](installation_installer.md) (We recommended this if you do not want to deal with installing your own Python environment.)
+* [Windows installer](installation_installer.md) 
+  ```{tip}
+  We recommended this if you do not want to deal with installing your own Python environment.
+  ```
 * [Installation using pyenv](installation_custom_windows.md)
 * [Installation using Anaconda](installation_custom_anaconda/installation_custom_anaconda.md)
 

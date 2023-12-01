@@ -1,13 +1,17 @@
 # Create New Instrument Drivers
 
-Do you want to use CAMELS but you can not find existing drivers for the instruments you have in your lab?\
+Do you want to use CAMELS but can not find existing drivers for the instruments you have in your lab?\
 You can simply create your own drivers for CAMELS. We provide you with automatic builders and guides to help you create them.
 
-You can follow our [step-by-step tutorial](drivers/drivers_tutorial.md) to learn the basics on how to create your own instrument driver.  
+```{tip}
+Follow our [step-by-step tutorial](drivers/drivers_tutorial.md) to learn the basics on how to create your own instrument driver.  
+```
 
 Or you can read the pages below to directly [start writing](drivers/writing_drivers.md) your own driver.
 
-If you have instrument communication already implemented using EPICS you can [create drivers for EPICS](drivers/EPICS_drivers.md) very easily. 
+```{tip}
+If you have instrument communication already implemented using **EPICS** you can [create drivers for EPICS](drivers/EPICS_drivers.md) very easily. 
+```
 
 ```{toctree}
 :maxdepth: 2
