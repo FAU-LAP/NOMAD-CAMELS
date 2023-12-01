@@ -106,12 +106,15 @@ mkdir <ioc_name>
 and go to this folder.
 
 ## Create an Empty IOC
+
 In the empty folder we will now create a basic IOC with no functionality. Run following command
+
 ```
 makeBaseApp.pl -t ioc <ioc_name>
 makeBaseApp.pl -i -t ioc <ioc_name>
 ```
-you do not need to give the IOC an additional name when you are prompted, simply hit _enter_. 
+
+you do not need to give the IOC an additional name when you are prompted, simply hit _enter_.
 
 Your folder structure should now look something like this:
 
@@ -124,6 +127,7 @@ Your folder structure should now look something like this:
         └─> iocBoot/
         └─> <ioc_name>App/
 ```
+
 ## Change Configuration Files
 Now we have to make some changes to several configuration files.
 
@@ -131,6 +135,7 @@ Now we have to make some changes to several configuration files.
 Open `/<ioc_name>App/src/Makefile` and add all the required *.dbd files. This is mainly `asyn`, `streamdevice`, `drvAsynSerialPort.dbd` and `drvAsynIPPort.dbd`. 
 
 It should look something like this. Check the lines for `<-- add this` to see where you need to change the file.
+
 ```
 TOP=../..
 
@@ -267,6 +272,8 @@ Then you can run the startup file with
 ./st.cmd
 ````
 and you should have a functional IOC.
+
+To run your IOC in production we recommend to use procServ. [Here](procServ.md) you can find out how to setup procServ.
 
 
 

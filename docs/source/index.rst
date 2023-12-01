@@ -59,6 +59,10 @@ If you have any questions or feedback you can reach the development team of CAME
    :caption: Combine with EPICS
 
    Create New EPICS IOC <doc/epics/new_ioc.md>
+   Run IOCs <doc/epics/procServ.md>
+   Archiver Appliance <doc/epics/ArchiverAppliance.md>
+   Example Setups <doc/epics/examples.md>
+   EPICS Climate Sensor <doc/epics/RoomClimateSensorIOC.md>
    
 
 .. toctree::
