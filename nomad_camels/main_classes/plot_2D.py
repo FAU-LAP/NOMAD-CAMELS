@@ -140,6 +140,7 @@ class LivePlot_2D(LiveScatter, QObject):
         self.eva = evaluator
         self.sc = None
         self.cb = None
+        self.pcolormesh = None
         self.desc = ''
 
     def start(self, doc):
@@ -160,6 +161,7 @@ class LivePlot_2D(LiveScatter, QObject):
         self._Idata.clear()
         sc = self.ax.scatter(self._xdata, self._ydata, c=self._Idata,
                              norm=self._norm, cmap=self.cmap, marker=',', **self.kwargs)
+        self.ax.set_aspect('auto')
         self._sc.append(sc)
         self.sc = sc
         self.cb = self.ax.figure.colorbar(sc, ax=self.ax)
@@ -218,42 +220,82 @@ class LivePlot_2D(LiveScatter, QObject):
         self.update(x, y, I)
         self.new_data.emit(None)
 
-    def update(self, x, y, I):  # noqa: E741
-        """
+    def make_colormesh(self, x_shape=None, y_shape=None):
+        if x_shape is None and y_shape is None:
+            return None
+            if len(self._xdata) != len(self._ydata) or len(self._xdata) != len(self._Idata):
+                return None
+            try:
+                x, y = np.meshgrid(self._xdata, self._ydata)
+                c = np.tile(self._Idata, (len(self._Idata), 1))
+                return x, y, c
+            except Exception as e:
+                print(e)
+                return None
+        elif x_shape is not None and y_shape is None:
+            y_shape = int(np.array(self._xdata).size / x_shape)
+        elif x_shape is None and y_shape is not None:
+            x_shape = int(np.array(self._ydata).size / y_shape)
+        try:
+            x = np.array(self._xdata).reshape((x_shape, y_shape))
+            y = np.array(self._ydata).reshape((x_shape, y_shape))
+            c = np.array(self._Idata).reshape((x_shape, y_shape))
+            return x, y, c
+        except Exception as e:
+            print(e)
+            return None
 
-        Parameters
-        ----------
-        x :
-            
-        y :
-            
-        I :
-            
+    def update(self, x, y, I):
+        x_shape = None
+        y_shape = None
+        if np.isscalar(I):
+            I = np.array([I])
+        if np.isscalar(x):
+            x = np.full(I.shape, x)
+        else:
+            x_shape = x.size
+        if np.isscalar(y):
+            y = np.full(I.shape, y)
+        else:
+            y_shape = y.size
 
-        Returns
-        -------
-
-        """
         # if one is None all are
         if self._minx is None:
-            self._minx = x
-            self._maxx = x
-            self._miny = y
-            self._maxy = y
+            self._minx = np.min(x)
+            self._maxx = np.max(x)
+            self._miny = np.min(y)
+            self._maxy = np.max(y)
 
-        self._xdata.append(x)
-        self._ydata.append(y)
-        self._Idata.append(I)
-        offsets = np.vstack([self._xdata, self._ydata]).T
-        self.sc.set_offsets(offsets)
-        self.sc.set_array(np.asarray(self._Idata))
+        self._xdata.extend(x)
+        self._ydata.extend(y)
+        self._Idata.extend(I)
+        mesh = self.make_colormesh(x_shape, y_shape)
+        no_mesh = True
+        if mesh:
+            try:
+                x, y, c = mesh
+                if self.pcolormesh:
+                    self.pcolormesh.remove()
+                self.pcolormesh = self.ax.pcolormesh(x, y, c)
+                self.pcolormesh.set_visible(True)
+                self.sc.set_visible(False)
+                no_mesh = False
+            except:
+                no_mesh = True
+        if no_mesh:
+            offsets = np.vstack([self._xdata, self._ydata]).T
+            self.sc.set_offsets(offsets)
+            self.sc.set_array(np.asarray(self._Idata))
+            if self.pcolormesh:
+                self.pcolormesh.remove()
+            self.sc.set_visible(True)
 
         if self.xlim is None:
-            self._minx, self._maxx = np.minimum(x, self._minx), np.maximum(x, self._maxx)
+            self._minx, self._maxx = np.minimum(np.min(x), self._minx), np.maximum(np.max(x), self._maxx)
             self.ax.set_xlim(self._minx, self._maxx)
 
         if self.ylim is None:
-            self._miny, self._maxy = np.minimum(y, self._miny), np.maximum(y, self._maxy)
+            self._miny, self._maxy = np.minimum(np.min(y), self._miny), np.maximum(np.max(y), self._maxy)
             self.ax.set_ylim(self._miny, self._maxy)
 
         if self.clim is None:
