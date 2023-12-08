@@ -49,20 +49,17 @@ In experimental physics many custom-built measurement setups are controlled by v
 This results in a heterogeneous landscape of software fragments for measurements written in many different languages and with often incomplete documentation, making it almost impossible for other researchers to extend existing code.
 The degree to which the stored raw data is understandable varies greatly but is often unintelligible even for researchers from the same lab.
 Important metadata such as instrument settings or the actual measurement steps performed to obtain the final raw data are rarely recorded, making it virtually impossible to reproduce experiments. Therefore, the documentation of experiments is incomplete preventing FAIR research data.
-Although there are some tools available (e.g. _SweepMe!_ [@SweepMe], _iC_ [@pernstich2012]) to realise control of arbitrary measurement instruments, they are frequently not open-source or their data output is not compliant to the FAIR principles. 
-TODO add reference from Pepe
+Although there are some tools available (e.g. _SweepMe!_ [@SweepMe], _iC_ [@pernstich2012], PyMoDAQ [@PyMoDAQ]) to realise control of arbitrary measurement instruments, they are frequently not open-source or their data output is not compliant to the FAIR principles.
 
 ![Visualization of CAMELS functionality and workflow. CAMELS connects directly with local instruments and/or large-scale lab infrastructure running network protocols, e.g. EPICS. Customizable measurements protocols are translated into Python code and executed. The output is FAIR-compliant measurement data. \label{fig:camels_overview}](pictures/Bild_CAMELS.png){ width=80% }
 
 # NOMAD CAMELS
-CAMELS is an open-source tool that automatically collects all computer-accessible experimental metadata. It features a user-friendly graphical interface that enables the creation and customization of measurements without the need for programming knowledge. By default, the data is stored in a structured HDF5 file format that closely resembles the structure of the NeXus standard [@Konnecke2015].
-TODO add fairmat nexus proposal reference
+CAMELS is an open-source tool that automatically collects all computer-accessible experimental metadata. It features a user-friendly graphical interface that enables the creation and customization of measurements without the need for programming knowledge. By default, the data is stored in a structured HDF5 file format that closely resembles the structure of the NeXus standard [@Konnecke2015; @FAIRmatNeXusProposal].
 The final HDF5 file contains both the actual measurement data and metadata in a single file, compliant to the FAIR principles. 
 
 Moreover, CAMELS allows for direct access to the _NOMAD_ repository [@scheidgenFAIRResearchData2023], [@scheidgenNOMADDistributedWebbased2023] or its on-premise installation called _NOMAD Oasis_ enabling direct linking to electronic lab notebook (ELN) entries. The user can for example connect measurements to previous experiment workflows documented in _NOMAD_ ELNs. CAMELS can subsequently upload measurement results directly into the ELN providing a simple and stream-lined data workflow.
 
-CAMELS builds on _bluesky_ [@Allan2019; @bluesky] initially developed to control instruments at large-scale research institutions using EPICS [@Knott1994; @EPICS]. In CAMELS, _bluesky_ is employed to orchestrate the instrument communication either directly (e.g. via PyVISA)
-TODO ref PyVISA
+CAMELS builds on _bluesky_ [@Allan2019; @bluesky] initially developed to control instruments at large-scale research institutions using EPICS [@Knott1994; @EPICS]. In CAMELS, _bluesky_ is employed to orchestrate the instrument communication either directly (e.g. via PyVISA [@PyVISA])
 or via using network protocols. Existing lab infrastructure controlled by EPICS is therefore immediately accessible. A schematic overview of the functionality of CAMELS is displayed in \autoref{fig:camels_overview}.
 
 CAMELS provides a comprehensive set of functionalities that can be split into three primary components: instrument management, measurement protocols and manual controls. 
@@ -90,7 +87,6 @@ Certain scientific instruments require manual control before starting predefined
 ## Data output
 
 ![CAMELS stores measurement data together with rich metadata collected automatically into a structured HDF5 file by default. This includes **(a)** a human readable measurement protocol summary and **(b)** the executable Python script that was used to actually record the data. This allows others to understand the data acquisition and to reproduce the experiment. \label{fig:h5_data}](pictures/h5_data.png)
-TODO make (a) and (b) smaller in figure
 
 After executing the measurement protocol, the time-stamped data is by default saved to an HDF5 file with a structure similar to the NeXus standard [@Konnecke2015]. Data can also be exported in CSV format with the metadata exported in JSON.
 
