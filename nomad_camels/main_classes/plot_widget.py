@@ -31,7 +31,8 @@ stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 dark_mode = False
 def activate_dark_mode():
-    """Changes the plot-style to dark-mode."""
+    """Changes the plot-style to dark-mode.
+    """
     global dark_mode
     dark_mode = True
     plt.style.use('dark_background')
@@ -297,6 +298,8 @@ class PlotWidget(QWidget):
 
     def closeEvent(self, a0):
         """
+        Overwrite the closeEvent to emit the closing signal before closing the
+        window.
 
         Parameters
         ----------
@@ -533,10 +536,12 @@ class Fit_Ophyd(Device):
 
         Parameters
         ----------
-        result :
+        result : lmfit.model.ModelResult
+            The result of the fit.
             
-        timestamp :
-            
+        timestamp : float
+            The timestamp of the fit. Used to update the timestamp metadata of
+            the components.
 
         Returns
         -------
@@ -555,14 +560,6 @@ class Fit_Ophyd(Device):
     def read(self):
         """Overwrites the `read` method from `Device`.
         Stops reading, as soon as the number of parameters is reached.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        
         """
         res = BlueskyInterface.read(self)
         i = 1
@@ -735,7 +732,19 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
 
 
 class Plot_Options(Ui_Plot_Options, QWidget):
-    """ """
+    """Widget for setting the options of a plot.
+
+    Parameters
+    ----------
+    parent : QWidget, optional
+        The parent widget.
+    ax : matplotlib.axes.Axes, optional
+        The axes to plot on.
+    livePlot : LivePlot, optional
+        The LivePlot to set the options for.
+    ax2 : matplotlib.axes.Axes, optional
+        The second (y) axes to plot on.
+    """
     def __init__(self, parent=None, ax=None, livePlot=None, ax2=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -757,7 +766,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.linestyle_dict = {}
 
     def setup_table(self):
-        """ """
+        """Sets up the table with the current lines in the plot."""
         self.tableWidget.setColumnCount(5)
         self.tableWidget.setMinimumWidth(400)
         self.tableWidget.setHorizontalHeaderLabels(['Name', 'marker',
@@ -802,16 +811,12 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.tableWidget.resizeColumnsToContents()
 
     def change_linestyle(self, row):
-        """
+        """Changes the linestyle of the selected line in the plot.
 
         Parameters
         ----------
-        row :
-            
-
-        Returns
-        -------
-
+        row : int
+            The row of the line in the table.
         """
         linestyle = self.linestyle_widges[row].currentText()
         name = self.ax.lines[row].get_label()
