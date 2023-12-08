@@ -41,8 +41,7 @@ NOMAD CAMELS (short: CAMELS) is a configurable, open-source measurement software
 
 
 # Statement of need
-Research data management has piqued greater and greater interest in recent years. Today, research funding agencies demand sustainable research data strategies. The key criterion is to create research data following the FAIR principles and thereby improve world-wide data-driven research.
-TODO add reference
+Research data management has piqued greater and greater interest in recent years. Today, research funding agencies demand sustainable research data strategies. The key criterion is to create research data following the FAIR principles and thereby improve world-wide data-driven research [@DFG_position_paper].
 While one ingredient, electronic lab notebooks, are an important step towards FAIR data, it is equally important to record the measurement data along FAIR principles as early as possible in the research workflow. 
 
 In experimental physics many custom-built measurement setups are controlled by very specific software written by individual researchers.
