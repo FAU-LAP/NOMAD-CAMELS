@@ -14,7 +14,17 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="3" column="2">
+   <item row="3" column="2" rowspan="3">
+    <widget class="QTextEdit" name="textEdit_device_info">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
     <widget class="QProgressBar" name="progressBar">
      <property name="enabled">
       <bool>true</bool>
@@ -27,16 +37,110 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="lineEdit_search_name">
-     <property name="maximumSize">
-      <size>
-       <width>250</width>
-       <height>16777215</height>
-      </size>
+   <item row="7" column="0">
+    <widget class="QPushButton" name="pushButton_update_drivers">
+     <property name="enabled">
+      <bool>true</bool>
      </property>
-     <property name="placeholderText">
-      <string>device name</string>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+                        background-color: #4CAF50; 
+                        color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                display: inline-block; 
+                                font-size: 15px; 
+                                margin: 2px 2px; 
+                                transition-duration: 0.4s; 
+                                cursor: pointer; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+                    QPushButton:hover {
+                        background-color: #45a049;
+                    }</string>
+     </property>
+     <property name="text">
+      <string>Update all installed drivers</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Search name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="pushButton_sel_none">
+     <property name="text">
+      <string>Select None</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QPushButton" name="pushButton_uninstall">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+                background-color: #FF3333; 
+                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                display: inline-block; 
+                                font-size: 15px; 
+                                margin: 2px 2px; 
+                                transition-duration: 0.4s; 
+                                cursor: pointer; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+            QPushButton:hover {
+                background-color: #B22222;
+            }</string>
+     </property>
+     <property name="text">
+      <string>Uninstall Selected</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QPushButton" name="pushButton_install_update_selected">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+                                background-color: #4CAF50; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                display: inline-block; 
+                                font-size: 15px; 
+                                margin: 2px 2px; 
+                                transition-duration: 0.4s; 
+                                cursor: pointer; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+                            QPushButton:hover {
+                                background-color: #45a049;
+                            }</string>
+     </property>
+     <property name="text">
+      <string>Install / Update Selected</string>
      </property>
     </widget>
    </item>
@@ -53,54 +157,20 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="pushButton_uninstall">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
+   <item row="6" column="2">
+    <widget class="QPushButton" name="pushButton_info">
      <property name="text">
-      <string>Uninstall Selected</string>
+      <string>hide info</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QPushButton" name="pushButton_install_update_selected">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="text">
-      <string>Install / Update Selected</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Search name:</string>
-     </property>
-    </widget>
+   <item row="3" column="0" rowspan="3" colspan="2">
+    <widget class="QTableWidget" name="device_table"/>
    </item>
    <item row="2" column="0">
     <widget class="QPushButton" name="pushButton_sel_all">
      <property name="text">
       <string>Select All</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QPushButton" name="pushButton_sel_none">
-     <property name="text">
-      <string>Select None</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="QPushButton" name="pushButton_update_drivers">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="text">
-      <string>Update all installed drivers</string>
      </property>
     </widget>
    </item>
@@ -111,25 +181,18 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="2">
-    <widget class="QTextEdit" name="textEdit_device_info">
-     <property name="enabled">
-      <bool>true</bool>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="lineEdit_search_name">
+     <property name="maximumSize">
+      <size>
+       <width>250</width>
+       <height>16777215</height>
+      </size>
      </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2">
-    <widget class="QPushButton" name="pushButton_info">
-     <property name="text">
-      <string>hide info</string>
+     <property name="placeholderText">
+      <string>device name</string>
      </property>
     </widget>
-   </item>
-   <item row="3" column="0" rowspan="3" colspan="2">
-    <widget class="QTableWidget" name="device_table"/>
    </item>
   </layout>
  </widget>
