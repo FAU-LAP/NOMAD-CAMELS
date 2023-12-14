@@ -14,26 +14,13 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="3" column="2" rowspan="3">
+   <item row="1" column="2" rowspan="5">
     <widget class="QTextEdit" name="textEdit_device_info">
      <property name="enabled">
       <bool>true</bool>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="QProgressBar" name="progressBar">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="value">
-      <number>0</number>
-     </property>
-     <property name="invertedAppearance">
-      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -50,11 +37,8 @@
                                 padding: 2px 10px; 
                                 text-align: center; 
                                 text-decoration: none; 
-                                display: inline-block; 
-                                font-size: 15px; 
+                                font-size: 13px; 
                                 margin: 2px 2px; 
-                                transition-duration: 0.4s; 
-                                cursor: pointer; 
                                 border-radius: 6px;
 								font-weight: bold;
                             }
@@ -95,11 +79,8 @@
                                 padding: 2px 10px; 
                                 text-align: center; 
                                 text-decoration: none; 
-                                display: inline-block; 
-                                font-size: 15px; 
+                                font-size: 13px; 
                                 margin: 2px 2px; 
-                                transition-duration: 0.4s; 
-                                cursor: pointer; 
                                 border-radius: 6px;
 								font-weight: bold;
                             }
@@ -126,11 +107,8 @@
                                 padding: 2px 10px; 
                                 text-align: center; 
                                 text-decoration: none; 
-                                display: inline-block; 
-                                font-size: 15px; 
+                                font-size: 13px; 
                                 margin: 2px 2px; 
-                                transition-duration: 0.4s; 
-                                cursor: pointer; 
                                 border-radius: 6px;
 								font-weight: bold;
                             }
@@ -171,6 +149,19 @@
     <widget class="QPushButton" name="pushButton_sel_all">
      <property name="text">
       <string>Select All</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QProgressBar" name="progressBar">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+     <property name="invertedAppearance">
+      <bool>false</bool>
      </property>
     </widget>
    </item>

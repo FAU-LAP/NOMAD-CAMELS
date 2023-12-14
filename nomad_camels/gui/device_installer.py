@@ -17,7 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QGridLayout, QHeaderView, QLabel,
     QLineEdit, QProgressBar, QPushButton, QSizePolicy,
-    QTableWidget, QTableWidgetItem, QTextEdit, QWidget)
+    QTableWidget, QTableWidgetItem, QTextEdit, QWidget,)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -26,21 +26,6 @@ class Ui_Form(object):
         Form.resize(679, 481)
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.textEdit_device_info = QTextEdit(Form)
-        self.textEdit_device_info.setObjectName(u"textEdit_device_info")
-        self.textEdit_device_info.setEnabled(True)
-        self.textEdit_device_info.setTextInteractionFlags(Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
-
-        self.gridLayout.addWidget(self.textEdit_device_info, 3, 2, 3, 1)
-
-        self.progressBar = QProgressBar(Form)
-        self.progressBar.setObjectName(u"progressBar")
-        self.progressBar.setEnabled(True)
-        self.progressBar.setValue(0)
-        self.progressBar.setInvertedAppearance(False)
-
-        self.gridLayout.addWidget(self.progressBar, 2, 2, 1, 1)
-
         self.pushButton_update_drivers = QPushButton(Form)
         self.pushButton_update_drivers.setObjectName(u"pushButton_update_drivers")
         self.pushButton_update_drivers.setEnabled(True)
@@ -51,11 +36,8 @@ class Ui_Form(object):
 "                                padding: 2px 10px; \n"
 "                                text-align: center; \n"
 "                                text-decoration: none; \n"
-"                                display: inline-block; \n"
-"                                font-size: 15px; \n"
+"                                font-size: 13px; \n"
 "                                margin: 2px 2px; \n"
-"                                transition-duration: 0.4s; \n"
-"                                cursor: pointer; \n"
 "                                border-radius: 6px;\n"
 "								font-weight: bold;\n"
 "                            }\n"
@@ -86,11 +68,8 @@ class Ui_Form(object):
 "                                padding: 2px 10px; \n"
 "                                text-align: center; \n"
 "                                text-decoration: none; \n"
-"                                display: inline-block; \n"
-"                                font-size: 15px; \n"
+"                                font-size: 13px; \n"
 "                                margin: 2px 2px; \n"
-"                                transition-duration: 0.4s; \n"
-"                                cursor: pointer; \n"
 "                                border-radius: 6px;\n"
 "								font-weight: bold;\n"
 "                            }\n"
@@ -111,11 +90,8 @@ class Ui_Form(object):
 "                                padding: 2px 10px; \n"
 "                                text-align: center; \n"
 "                                text-decoration: none; \n"
-"                                display: inline-block; \n"
-"                                font-size: 15px; \n"
+"                                font-size: 13px; \n"
 "                                margin: 2px 2px; \n"
-"                                transition-duration: 0.4s; \n"
-"                                cursor: pointer; \n"
 "                                border-radius: 6px;\n"
 "								font-weight: bold;\n"
 "                            }\n"
@@ -157,6 +133,21 @@ class Ui_Form(object):
         self.lineEdit_search_name.setMaximumSize(QSize(250, 16777215))
 
         self.gridLayout.addWidget(self.lineEdit_search_name, 0, 1, 1, 1)
+
+        self.progressBar = QProgressBar(Form)
+        self.progressBar.setObjectName(u"progressBar")
+        self.progressBar.setEnabled(True)
+        self.progressBar.setValue(0)
+        self.progressBar.setInvertedAppearance(False)
+
+        self.gridLayout.addWidget(self.progressBar, 0, 2, 1, 1)
+
+        self.textEdit_device_info = QTextEdit(Form)
+        self.textEdit_device_info.setObjectName(u"textEdit_device_info")
+        self.textEdit_device_info.setEnabled(True)
+        self.textEdit_device_info.setTextInteractionFlags(Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
+
+        self.gridLayout.addWidget(self.textEdit_device_info, 1, 2, 5, 1)
 
 
         self.retranslateUi(Form)

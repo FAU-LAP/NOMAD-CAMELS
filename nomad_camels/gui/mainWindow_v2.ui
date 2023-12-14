@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1021</width>
+    <width>1039</width>
     <height>370</height>
    </rect>
   </property>
@@ -39,6 +39,24 @@
         <height>16777215</height>
        </size>
       </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+                                background-color: #4CAF50; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 13px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+                            QPushButton:hover {
+                                background-color: #45a049;
+                            }</string>
+      </property>
       <property name="text">
        <string>Resume</string>
       </property>
@@ -55,6 +73,24 @@
         <height>16777215</height>
        </size>
       </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+                background-color: #FF3333; 
+                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 13px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+            QPushButton:hover {
+                background-color: #B22222;
+            }</string>
+      </property>
       <property name="text">
        <string>Stop</string>
       </property>
@@ -70,6 +106,24 @@
         <width>130</width>
         <height>16777215</height>
        </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+        background-color: #FFA500;
+        color: white;
+        border: none;
+        padding: 2px 10px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 13px;
+        margin: 2px 2px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    QPushButton:hover {
+        background-color: #FF4500;
+    }</string>
       </property>
       <property name="text">
        <string>Pause</string>
@@ -154,7 +208,6 @@
          <property name="font">
           <font>
            <pointsize>12</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -269,7 +322,6 @@ Instruments</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -289,7 +341,6 @@ Instruments</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -384,7 +435,6 @@ Instruments</string>
          <property name="font">
           <font>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -483,19 +533,30 @@ Instruments</string>
              <property name="font">
               <font>
                <family>Calibri</family>
-               <pointsize>30</pointsize>
-               <weight>75</weight>
+               <pointsize>-1</pointsize>
                <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
               </font>
              </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
-	font-family: Calibri;
-	font-size: 30pt;
-	font-weight: bold;
-	padding: 0px;
-	padding-bottom: 5px;
-}</string>
+                                background-color: #4CAF50; 
+                                color: white; 
+                                border: none; 
+                                padding: 0px; 
+                                padding-bottom: 5px;
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 30px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+                            QPushButton:hover {
+                                background-color: #45a049;
+                            }</string>
              </property>
              <property name="text">
               <string>+</string>
@@ -508,7 +569,6 @@ Instruments</string>
               <font>
                <family>Calibri</family>
                <pointsize>20</pointsize>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -547,7 +607,6 @@ Instruments</string>
               <font>
                <family>Calibri</family>
                <pointsize>20</pointsize>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -586,19 +645,30 @@ Instruments</string>
              <property name="font">
               <font>
                <family>Calibri</family>
-               <pointsize>30</pointsize>
-               <weight>75</weight>
+               <pointsize>-1</pointsize>
                <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
               </font>
              </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
-	font-family: Calibri;
-	font-size: 30pt;
-	font-weight: bold;
-	padding: 0px;
-	padding-bottom: 5px;
-}</string>
+                                background-color: #4CAF50; 
+                                color: white; 
+                                border: none; 
+                                padding: 0px; 
+                                padding-bottom: 5px;
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 30px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+                            QPushButton:hover {
+                                background-color: #45a049;
+                            }</string>
              </property>
              <property name="text">
               <string>+</string>
@@ -644,8 +714,8 @@ Instruments</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1021</width>
-     <height>21</height>
+     <width>1039</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
