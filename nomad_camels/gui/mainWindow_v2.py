@@ -506,7 +506,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.pushButton_import_protocol.sizePolicy().hasHeightForWidth())
         self.pushButton_import_protocol.setSizePolicy(sizePolicy)
         self.pushButton_import_protocol.setMinimumSize(QSize(32, 32))
-        self.pushButton_import_protocol.setMaximumSize(QSize(50, 32))
+        self.pushButton_import_protocol.setMaximumSize(QSize(60, 32))
         self.pushButton_import_protocol.setStyleSheet(u"QPushButton {\n"
 "                                background-color: #808080; \n"
 "                                color: white; \n"
