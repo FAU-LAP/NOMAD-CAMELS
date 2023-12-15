@@ -47,8 +47,27 @@
          <property name="maximumSize">
           <size>
            <width>30</width>
-           <height>16777215</height>
+           <height>30</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+                                background-color:  #FF3333; 
+                                color: white; 
+                                border: none; 
+                                padding: 0px; 
+                                padding-bottom: 5px;
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 18px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+            QPushButton:hover {
+                background-color: #B22222;
+            }</string>
          </property>
          <property name="text">
           <string>-</string>
@@ -72,8 +91,27 @@
          <property name="maximumSize">
           <size>
            <width>30</width>
-           <height>16777215</height>
+           <height>30</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton {
+                                background-color: #4CAF50; 
+                                color: white; 
+                                border: none; 
+                                padding: 0px; 
+                                padding-bottom: 5px;
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 18px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+                            QToolButton:hover {
+                                background-color: #45a049;
+                            }</string>
          </property>
          <property name="text">
           <string>+</string>
@@ -91,7 +129,6 @@
          <property name="font">
           <font>
            <pointsize>12</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -102,8 +139,24 @@
        </item>
        <item row="2" column="0">
         <widget class="QPushButton" name="pushButton_move_step_up">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+                                background-color: #808080; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 13px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+                            }
+                            QPushButton:hover {
+                                background-color: #a0a0a0;
+                            }</string>
+         </property>
          <property name="text">
-          <string>move up</string>
+          <string>move up ↑</string>
          </property>
         </widget>
        </item>
@@ -112,22 +165,70 @@
        </item>
        <item row="3" column="0">
         <widget class="QPushButton" name="pushButton_move_step_down">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+                                background-color: #808080; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 13px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+                            }
+                            QPushButton:hover {
+                                background-color: #a0a0a0;
+                            }</string>
+         </property>
          <property name="text">
-          <string>move down</string>
+          <string>move down ↓</string>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
         <widget class="QPushButton" name="pushButton_move_step_out">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+                                background-color: #808080; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 13px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+                            }
+                            QPushButton:hover {
+                                background-color: #a0a0a0;
+                            }</string>
+         </property>
          <property name="text">
-          <string>move out</string>
+          <string>move out ←</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
         <widget class="QPushButton" name="pushButton_move_step_in">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+                                background-color: #808080; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 13px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+                            }
+                            QPushButton:hover {
+                                background-color: #a0a0a0;
+                            }</string>
+         </property>
          <property name="text">
-          <string>move in</string>
+          <string>move in →</string>
          </property>
         </widget>
        </item>
@@ -155,7 +256,6 @@
          <property name="font">
           <font>
            <pointsize>12</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>

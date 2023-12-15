@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1039</width>
+    <width>1060</width>
     <height>370</height>
    </rect>
   </property>
@@ -28,37 +28,26 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="9">
-     <widget class="QPushButton" name="pushButton_resume">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>130</width>
-        <height>16777215</height>
-       </size>
-      </property>
+    <item row="8" column="9" colspan="2">
+     <widget class="QPushButton" name="pushButton_clear_log">
       <property name="styleSheet">
        <string notr="true">QPushButton {
-                                background-color: #4CAF50; 
+                                background-color: #808080; 
                                 color: white; 
                                 border: none; 
                                 padding: 2px 10px; 
                                 text-align: center; 
                                 text-decoration: none; 
-                                font-size: 13px; 
+                                font-size: 12px; 
                                 margin: 2px 2px; 
                                 border-radius: 6px;
-								font-weight: bold;
                             }
-
                             QPushButton:hover {
-                                background-color: #45a049;
+                                background-color: #a0a0a0;
                             }</string>
       </property>
       <property name="text">
-       <string>Resume</string>
+       <string>Clear Log</string>
       </property>
      </widget>
     </item>
@@ -96,40 +85,6 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="10">
-     <widget class="QPushButton" name="pushButton_pause">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>130</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-        background-color: #FFA500;
-        color: white;
-        border: none;
-        padding: 2px 10px;
-        text-align: center;
-        text-decoration: none;
-        font-size: 13px;
-        margin: 2px 2px;
-        border-radius: 6px;
-        font-weight: bold;
-    }
-
-    QPushButton:hover {
-        background-color: #FF4500;
-    }</string>
-      </property>
-      <property name="text">
-       <string>Pause</string>
-      </property>
-     </widget>
-    </item>
     <item row="5" column="9" colspan="3">
      <widget class="QProgressBar" name="progressBar_protocols">
       <property name="maximumSize">
@@ -159,20 +114,6 @@
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="11">
-     <widget class="QPushButton" name="pushButton_close_plots">
-      <property name="text">
-       <string>Close Plots</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="9" colspan="2">
-     <widget class="QPushButton" name="pushButton_clear_log">
-      <property name="text">
-       <string>Clear Log</string>
       </property>
      </widget>
     </item>
@@ -207,9 +148,27 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>-1</pointsize>
            <bold>true</bold>
+           <underline>false</underline>
+           <strikeout>false</strikeout>
           </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+                                background-color: #808080; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 4px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 15px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+                            }
+                            QPushButton:hover {
+                                background-color: #a0a0a0;
+                            }</string>
          </property>
          <property name="text">
           <string>Manage
@@ -260,8 +219,26 @@ Instruments</string>
            <widget class="QPushButton" name="pushButton_editSampleInfo">
             <property name="font">
              <font>
-              <pointsize>10</pointsize>
+              <pointsize>-1</pointsize>
+              <underline>false</underline>
+              <strikeout>false</strikeout>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+                                background-color: #808080; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 12px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+                            }
+                            QPushButton:hover {
+                                background-color: #a0a0a0;
+                            }</string>
             </property>
             <property name="text">
              <string>Edit Sample-Information</string>
@@ -272,8 +249,26 @@ Instruments</string>
            <widget class="QPushButton" name="pushButton_nomad_sample">
             <property name="font">
              <font>
-              <pointsize>10</pointsize>
+              <pointsize>-1</pointsize>
+              <underline>false</underline>
+              <strikeout>false</strikeout>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+                                background-color: #808080; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 12px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+                            }
+                            QPushButton:hover {
+                                background-color: #a0a0a0;
+                            }</string>
             </property>
             <property name="text">
              <string>select NOMAD sample</string>
@@ -376,18 +371,6 @@ Instruments</string>
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="pushButton_editUserInfo">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Edit User-Information</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
            <widget class="QComboBox" name="comboBox_user">
             <property name="font">
@@ -413,11 +396,59 @@ Instruments</string>
            <widget class="QPushButton" name="pushButton_login_nomad">
             <property name="font">
              <font>
-              <pointsize>10</pointsize>
+              <pointsize>-1</pointsize>
+              <underline>false</underline>
+              <strikeout>false</strikeout>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+                                background-color: #808080; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 12px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+                            }
+                            QPushButton:hover {
+                                background-color: #a0a0a0;
+                            }</string>
             </property>
             <property name="text">
              <string>NOMAD login</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButton_editUserInfo">
+            <property name="font">
+             <font>
+              <pointsize>-1</pointsize>
+              <underline>false</underline>
+              <strikeout>false</strikeout>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+                                background-color: #808080; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 12px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+                            }
+                            QPushButton:hover {
+                                background-color: #a0a0a0;
+                            }</string>
+            </property>
+            <property name="text">
+             <string>Edit User-Information</string>
             </property>
            </widget>
           </item>
@@ -695,6 +726,22 @@ Instruments</string>
                <height>32</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+                                background-color: #808080; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 12px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+                            }
+                            QPushButton:hover {
+                                background-color: #a0a0a0;
+                            }</string>
+             </property>
              <property name="text">
               <string>import</string>
              </property>
@@ -707,6 +754,97 @@ Instruments</string>
       </layout>
      </widget>
     </item>
+    <item row="4" column="10">
+     <widget class="QPushButton" name="pushButton_pause">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>130</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+        background-color: #FFA500;
+        color: white;
+        border: none;
+        padding: 2px 10px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 13px;
+        margin: 2px 2px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    QPushButton:hover {
+        background-color: #FF4500;
+    }</string>
+      </property>
+      <property name="text">
+       <string>Pause</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="9">
+     <widget class="QPushButton" name="pushButton_resume">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>130</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+                                background-color: #4CAF50; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 13px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+                            QPushButton:hover {
+                                background-color: #45a049;
+                            }</string>
+      </property>
+      <property name="text">
+       <string>Resume</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="11">
+     <widget class="QPushButton" name="pushButton_close_plots">
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+                                background-color: #808080; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 12px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+                            }
+                            QPushButton:hover {
+                                background-color: #a0a0a0;
+                            }</string>
+      </property>
+      <property name="text">
+       <string>Close Plots</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -714,7 +852,7 @@ Instruments</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1039</width>
+     <width>1060</width>
      <height>22</height>
     </rect>
    </property>

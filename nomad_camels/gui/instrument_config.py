@@ -44,7 +44,7 @@ class Ui_Form(object):
         self.pushButton_remove = QPushButton(Form)
         self.pushButton_remove.setObjectName(u"pushButton_remove")
         self.pushButton_remove.setEnabled(False)
-        self.pushButton_remove.setMaximumSize(QSize(8999, 16777215))
+        self.pushButton_remove.setMaximumSize(QSize(89999, 27))
         font1 = QFont()
         font1.setBold(True)
         font1.setUnderline(False)
@@ -72,6 +72,17 @@ class Ui_Form(object):
 
         self.pushButton_info = QPushButton(Form)
         self.pushButton_info.setObjectName(u"pushButton_info")
+        self.pushButton_info.setStyleSheet(u"QPushButton {\n"
+"                                background-color: #808080; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 2px 10px; \n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 13px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"                            }")
 
         self.gridLayout.addWidget(self.pushButton_info, 0, 4, 1, 1)
 
@@ -103,7 +114,7 @@ class Ui_Form(object):
         self.pushButton_add = QPushButton(Form)
         self.pushButton_add.setObjectName(u"pushButton_add")
         self.pushButton_add.setEnabled(False)
-        self.pushButton_add.setMaximumSize(QSize(1000, 16777215))
+        self.pushButton_add.setMaximumSize(QSize(99999, 27))
         self.pushButton_add.setFont(font1)
         self.pushButton_add.setStyleSheet(u"QPushButton {\n"
 "                                background-color: #4CAF50; \n"

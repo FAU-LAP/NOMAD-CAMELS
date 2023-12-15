@@ -28,7 +28,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1039, 370)
+        MainWindow.resize(1060, 370)
         self.actionPresets = QAction(MainWindow)
         self.actionPresets.setObjectName(u"actionPresets")
         self.actionOptions = QAction(MainWindow)
@@ -92,28 +92,10 @@ class Ui_MainWindow(object):
 
         self.gridLayout_5.addWidget(self.textEdit_console_output, 6, 9, 2, 3)
 
-        self.pushButton_resume = QPushButton(self.centralwidget)
-        self.pushButton_resume.setObjectName(u"pushButton_resume")
-        self.pushButton_resume.setEnabled(False)
-        self.pushButton_resume.setMaximumSize(QSize(130, 16777215))
-        self.pushButton_resume.setStyleSheet(u"QPushButton {\n"
-"                                background-color: #4CAF50; \n"
-"                                color: white; \n"
-"                                border: none; \n"
-"                                padding: 2px 10px; \n"
-"                                text-align: center; \n"
-"                                text-decoration: none; \n"
-"                                font-size: 13px; \n"
-"                                margin: 2px 2px; \n"
-"                                border-radius: 6px;\n"
-"								font-weight: bold;\n"
-"                            }\n"
-"\n"
-"                            QPushButton:hover {\n"
-"                                background-color: #45a049;\n"
-"                            }")
+        self.pushButton_clear_log = QPushButton(self.centralwidget)
+        self.pushButton_clear_log.setObjectName(u"pushButton_clear_log")
 
-        self.gridLayout_5.addWidget(self.pushButton_resume, 4, 9, 1, 1)
+        self.gridLayout_5.addWidget(self.pushButton_clear_log, 8, 9, 1, 2)
 
         self.pushButton_stop = QPushButton(self.centralwidget)
         self.pushButton_stop.setObjectName(u"pushButton_stop")
@@ -138,29 +120,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_5.addWidget(self.pushButton_stop, 4, 11, 1, 1)
 
-        self.pushButton_pause = QPushButton(self.centralwidget)
-        self.pushButton_pause.setObjectName(u"pushButton_pause")
-        self.pushButton_pause.setEnabled(False)
-        self.pushButton_pause.setMaximumSize(QSize(130, 16777215))
-        self.pushButton_pause.setStyleSheet(u"QPushButton {\n"
-"        background-color: #FFA500;\n"
-"        color: white;\n"
-"        border: none;\n"
-"        padding: 2px 10px;\n"
-"        text-align: center;\n"
-"        text-decoration: none;\n"
-"        font-size: 13px;\n"
-"        margin: 2px 2px;\n"
-"        border-radius: 6px;\n"
-"        font-weight: bold;\n"
-"    }\n"
-"\n"
-"    QPushButton:hover {\n"
-"        background-color: #FF4500;\n"
-"    }")
-
-        self.gridLayout_5.addWidget(self.pushButton_pause, 4, 10, 1, 1)
-
         self.progressBar_protocols = QProgressBar(self.centralwidget)
         self.progressBar_protocols.setObjectName(u"progressBar_protocols")
         self.progressBar_protocols.setMaximumSize(QSize(400, 16777215))
@@ -176,16 +135,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_5.addWidget(self.label_logo, 9, 9, 1, 3)
 
-        self.pushButton_close_plots = QPushButton(self.centralwidget)
-        self.pushButton_close_plots.setObjectName(u"pushButton_close_plots")
-
-        self.gridLayout_5.addWidget(self.pushButton_close_plots, 8, 11, 1, 1)
-
-        self.pushButton_clear_log = QPushButton(self.centralwidget)
-        self.pushButton_clear_log.setObjectName(u"pushButton_clear_log")
-
-        self.gridLayout_5.addWidget(self.pushButton_clear_log, 8, 9, 1, 2)
-
         self.widget = QWidget(self.centralwidget)
         self.widget.setObjectName(u"widget")
         self.widget.setMaximumSize(QSize(16777215, 50))
@@ -196,9 +145,24 @@ class Ui_MainWindow(object):
         self.pushButton_manage_instr.setObjectName(u"pushButton_manage_instr")
         self.pushButton_manage_instr.setMaximumSize(QSize(150, 16777215))
         font = QFont()
-        font.setPointSize(12)
         font.setBold(True)
+        font.setUnderline(False)
+        font.setStrikeOut(False)
         self.pushButton_manage_instr.setFont(font)
+        self.pushButton_manage_instr.setStyleSheet(u"QPushButton {\n"
+"                                background-color: #808080; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 2px 4px; \n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 15px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"                            }\n"
+"                            QPushButton:hover {\n"
+"                                background-color: #a0a0a0;\n"
+"                            }")
 
         self.gridLayout_6.addWidget(self.pushButton_manage_instr, 0, 0, 1, 1)
 
@@ -230,20 +194,51 @@ class Ui_MainWindow(object):
         self.pushButton_editSampleInfo = QPushButton(self.widget_4)
         self.pushButton_editSampleInfo.setObjectName(u"pushButton_editSampleInfo")
         font1 = QFont()
-        font1.setPointSize(10)
+        font1.setUnderline(False)
+        font1.setStrikeOut(False)
         self.pushButton_editSampleInfo.setFont(font1)
+        self.pushButton_editSampleInfo.setStyleSheet(u"QPushButton {\n"
+"                                background-color: #808080; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 2px 10px; \n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 12px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"                            }\n"
+"                            QPushButton:hover {\n"
+"                                background-color: #a0a0a0;\n"
+"                            }")
 
         self.gridLayout_7.addWidget(self.pushButton_editSampleInfo, 0, 2, 1, 1)
 
         self.pushButton_nomad_sample = QPushButton(self.widget_4)
         self.pushButton_nomad_sample.setObjectName(u"pushButton_nomad_sample")
         self.pushButton_nomad_sample.setFont(font1)
+        self.pushButton_nomad_sample.setStyleSheet(u"QPushButton {\n"
+"                                background-color: #808080; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 2px 10px; \n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 12px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"                            }\n"
+"                            QPushButton:hover {\n"
+"                                background-color: #a0a0a0;\n"
+"                            }")
 
         self.gridLayout_7.addWidget(self.pushButton_nomad_sample, 1, 2, 1, 1)
 
         self.comboBox_sample = QComboBox(self.widget_4)
         self.comboBox_sample.setObjectName(u"comboBox_sample")
-        self.comboBox_sample.setFont(font1)
+        font2 = QFont()
+        font2.setPointSize(10)
+        self.comboBox_sample.setFont(font2)
 
         self.gridLayout_7.addWidget(self.comboBox_sample, 0, 1, 1, 1)
 
@@ -267,17 +262,17 @@ class Ui_MainWindow(object):
 
         self.label_nomad_upload = QLabel(self.widget_3)
         self.label_nomad_upload.setObjectName(u"label_nomad_upload")
-        font2 = QFont()
-        font2.setPointSize(10)
-        font2.setBold(True)
-        self.label_nomad_upload.setFont(font2)
+        font3 = QFont()
+        font3.setPointSize(10)
+        font3.setBold(True)
+        self.label_nomad_upload.setFont(font3)
 
         self.gridLayout_4.addWidget(self.label_nomad_upload, 1, 0, 1, 1)
 
         self.label_4 = QLabel(self.widget_3)
         self.label_4.setObjectName(u"label_4")
         self.label_4.setMaximumSize(QSize(1500000, 16777215))
-        self.label_4.setFont(font2)
+        self.label_4.setFont(font3)
         self.label_4.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.gridLayout_4.addWidget(self.label_4, 0, 0, 1, 1)
@@ -300,29 +295,57 @@ class Ui_MainWindow(object):
         self.gridLayout_8 = QGridLayout(self.widget_5)
         self.gridLayout_8.setObjectName(u"gridLayout_8")
         self.gridLayout_8.setContentsMargins(0, 0, 0, 0)
-        self.pushButton_editUserInfo = QPushButton(self.widget_5)
-        self.pushButton_editUserInfo.setObjectName(u"pushButton_editUserInfo")
-        self.pushButton_editUserInfo.setFont(font1)
-
-        self.gridLayout_8.addWidget(self.pushButton_editUserInfo, 0, 1, 1, 1)
-
         self.comboBox_user = QComboBox(self.widget_5)
         self.comboBox_user.setObjectName(u"comboBox_user")
-        self.comboBox_user.setFont(font1)
+        self.comboBox_user.setFont(font2)
 
         self.gridLayout_8.addWidget(self.comboBox_user, 0, 0, 1, 1)
 
         self.label_nomad_user = QLabel(self.widget_5)
         self.label_nomad_user.setObjectName(u"label_nomad_user")
-        self.label_nomad_user.setFont(font1)
+        self.label_nomad_user.setFont(font2)
 
         self.gridLayout_8.addWidget(self.label_nomad_user, 1, 0, 1, 1)
 
         self.pushButton_login_nomad = QPushButton(self.widget_5)
         self.pushButton_login_nomad.setObjectName(u"pushButton_login_nomad")
         self.pushButton_login_nomad.setFont(font1)
+        self.pushButton_login_nomad.setStyleSheet(u"QPushButton {\n"
+"                                background-color: #808080; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 2px 10px; \n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 12px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"                            }\n"
+"                            QPushButton:hover {\n"
+"                                background-color: #a0a0a0;\n"
+"                            }")
 
         self.gridLayout_8.addWidget(self.pushButton_login_nomad, 1, 1, 1, 1)
+
+        self.pushButton_editUserInfo = QPushButton(self.widget_5)
+        self.pushButton_editUserInfo.setObjectName(u"pushButton_editUserInfo")
+        self.pushButton_editUserInfo.setFont(font1)
+        self.pushButton_editUserInfo.setStyleSheet(u"QPushButton {\n"
+"                                background-color: #808080; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 2px 10px; \n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 12px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"                            }\n"
+"                            QPushButton:hover {\n"
+"                                background-color: #a0a0a0;\n"
+"                            }")
+
+        self.gridLayout_8.addWidget(self.pushButton_editUserInfo, 0, 1, 1, 1)
 
 
         self.gridLayout_6.addWidget(self.widget_5, 0, 2, 1, 1)
@@ -330,7 +353,7 @@ class Ui_MainWindow(object):
         self.label_8 = QLabel(self.widget)
         self.label_8.setObjectName(u"label_8")
         self.label_8.setMaximumSize(QSize(70, 16777215))
-        self.label_8.setFont(font2)
+        self.label_8.setFont(font3)
         self.label_8.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.gridLayout_6.addWidget(self.label_8, 0, 9, 1, 1)
@@ -376,12 +399,12 @@ class Ui_MainWindow(object):
         self.pushButton_add_manual.setSizePolicy(sizePolicy)
         self.pushButton_add_manual.setMinimumSize(QSize(32, 32))
         self.pushButton_add_manual.setMaximumSize(QSize(32, 32))
-        font3 = QFont()
-        font3.setFamilies([u"Calibri"])
-        font3.setBold(True)
-        font3.setUnderline(False)
-        font3.setStrikeOut(False)
-        self.pushButton_add_manual.setFont(font3)
+        font4 = QFont()
+        font4.setFamilies([u"Calibri"])
+        font4.setBold(True)
+        font4.setUnderline(False)
+        font4.setStrikeOut(False)
+        self.pushButton_add_manual.setFont(font4)
         self.pushButton_add_manual.setStyleSheet(u"QPushButton {\n"
 "                                background-color: #4CAF50; \n"
 "                                color: white; \n"
@@ -404,11 +427,11 @@ class Ui_MainWindow(object):
 
         self.label_2 = QLabel(self.manual_widget)
         self.label_2.setObjectName(u"label_2")
-        font4 = QFont()
-        font4.setFamilies([u"Calibri"])
-        font4.setPointSize(20)
-        font4.setBold(True)
-        self.label_2.setFont(font4)
+        font5 = QFont()
+        font5.setFamilies([u"Calibri"])
+        font5.setPointSize(20)
+        font5.setBold(True)
+        self.label_2.setFont(font5)
         self.label_2.setStyleSheet(u"QLabel {\n"
 "	font-family: Calibri;\n"
 "	font-size: 20pt;\n"
@@ -428,7 +451,7 @@ class Ui_MainWindow(object):
 
         self.label_3 = QLabel(self.meas_widget)
         self.label_3.setObjectName(u"label_3")
-        self.label_3.setFont(font4)
+        self.label_3.setFont(font5)
         self.label_3.setStyleSheet(u"QLabel {\n"
 "	font-family: Calibri;\n"
 "	font-size: 20pt;\n"
@@ -443,7 +466,7 @@ class Ui_MainWindow(object):
         self.pushButton_add_meas.setSizePolicy(sizePolicy)
         self.pushButton_add_meas.setMinimumSize(QSize(32, 32))
         self.pushButton_add_meas.setMaximumSize(QSize(32, 32))
-        self.pushButton_add_meas.setFont(font3)
+        self.pushButton_add_meas.setFont(font4)
         self.pushButton_add_meas.setStyleSheet(u"QPushButton {\n"
 "                                background-color: #4CAF50; \n"
 "                                color: white; \n"
@@ -480,10 +503,61 @@ class Ui_MainWindow(object):
 
         self.gridLayout_5.addWidget(self.widget_2, 4, 2, 6, 7)
 
+        self.pushButton_pause = QPushButton(self.centralwidget)
+        self.pushButton_pause.setObjectName(u"pushButton_pause")
+        self.pushButton_pause.setEnabled(False)
+        self.pushButton_pause.setMaximumSize(QSize(130, 16777215))
+        self.pushButton_pause.setStyleSheet(u"QPushButton {\n"
+"        background-color: #FFA500;\n"
+"        color: white;\n"
+"        border: none;\n"
+"        padding: 2px 10px;\n"
+"        text-align: center;\n"
+"        text-decoration: none;\n"
+"        font-size: 13px;\n"
+"        margin: 2px 2px;\n"
+"        border-radius: 6px;\n"
+"        font-weight: bold;\n"
+"    }\n"
+"\n"
+"    QPushButton:hover {\n"
+"        background-color: #FF4500;\n"
+"    }")
+
+        self.gridLayout_5.addWidget(self.pushButton_pause, 4, 10, 1, 1)
+
+        self.pushButton_resume = QPushButton(self.centralwidget)
+        self.pushButton_resume.setObjectName(u"pushButton_resume")
+        self.pushButton_resume.setEnabled(False)
+        self.pushButton_resume.setMaximumSize(QSize(130, 16777215))
+        self.pushButton_resume.setStyleSheet(u"QPushButton {\n"
+"                                background-color: #4CAF50; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 2px 10px; \n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 13px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"								font-weight: bold;\n"
+"                            }\n"
+"\n"
+"                            QPushButton:hover {\n"
+"                                background-color: #45a049;\n"
+"                            }")
+
+        self.gridLayout_5.addWidget(self.pushButton_resume, 4, 9, 1, 1)
+
+        self.pushButton_close_plots = QPushButton(self.centralwidget)
+        self.pushButton_close_plots.setObjectName(u"pushButton_close_plots")
+
+        self.gridLayout_5.addWidget(self.pushButton_close_plots, 8, 11, 1, 1)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1039, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1060, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuHelp = QMenu(self.menubar)
@@ -543,12 +617,9 @@ class Ui_MainWindow(object):
         self.action_driver_builder.setText(QCoreApplication.translate("MainWindow", u"Driver builder", None))
         self.actionEPICS_driver_builder.setText(QCoreApplication.translate("MainWindow", u"EPICS-driver-builder", None))
         self.actionExport_from_databroker.setText(QCoreApplication.translate("MainWindow", u"Export from databroker", None))
-        self.pushButton_resume.setText(QCoreApplication.translate("MainWindow", u"Resume", None))
-        self.pushButton_stop.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
-        self.pushButton_pause.setText(QCoreApplication.translate("MainWindow", u"Pause", None))
-        self.label_logo.setText("")
-        self.pushButton_close_plots.setText(QCoreApplication.translate("MainWindow", u"Close Plots", None))
         self.pushButton_clear_log.setText(QCoreApplication.translate("MainWindow", u"Clear Log", None))
+        self.pushButton_stop.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
+        self.label_logo.setText("")
         self.pushButton_manage_instr.setText(QCoreApplication.translate("MainWindow", u"Manage\n"
 "Instruments", None))
         self.pushButton_editSampleInfo.setText(QCoreApplication.translate("MainWindow", u"Edit Sample-Information", None))
@@ -556,9 +627,9 @@ class Ui_MainWindow(object):
         self.checkBox_use_nomad_sample.setText(QCoreApplication.translate("MainWindow", u"use NOMAD sample", None))
         self.label_nomad_upload.setText(QCoreApplication.translate("MainWindow", u"NOMAD Upload:", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Session:", None))
-        self.pushButton_editUserInfo.setText(QCoreApplication.translate("MainWindow", u"Edit User-Information", None))
         self.label_nomad_user.setText(QCoreApplication.translate("MainWindow", u"not logged in", None))
         self.pushButton_login_nomad.setText(QCoreApplication.translate("MainWindow", u"NOMAD login", None))
+        self.pushButton_editUserInfo.setText(QCoreApplication.translate("MainWindow", u"Edit User-Information", None))
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"Sample:", None))
         self.label_no_instruments.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">You are currently using no instruments.</span></p><p><span style=\" font-size:12pt; font-weight:600;\">Click &quot;Manage Instruments&quot; to configure your</span></p><p><span style=\" font-size:12pt; font-weight:600;\">first instrument and start with NOMAD CAMELS!</span></p></body></html>", None))
         self.label_arrow.setText("")
@@ -567,6 +638,9 @@ class Ui_MainWindow(object):
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Measurement Protocols", None))
         self.pushButton_add_meas.setText(QCoreApplication.translate("MainWindow", u"+", None))
         self.pushButton_import_protocol.setText(QCoreApplication.translate("MainWindow", u"import", None))
+        self.pushButton_pause.setText(QCoreApplication.translate("MainWindow", u"Pause", None))
+        self.pushButton_resume.setText(QCoreApplication.translate("MainWindow", u"Resume", None))
+        self.pushButton_close_plots.setText(QCoreApplication.translate("MainWindow", u"Close Plots", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
         self.menuTools.setTitle(QCoreApplication.translate("MainWindow", u"Tools", None))

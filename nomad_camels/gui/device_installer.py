@@ -17,7 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QGridLayout, QHeaderView, QLabel,
     QLineEdit, QProgressBar, QPushButton, QSizePolicy,
-    QTableWidget, QTableWidgetItem, QTextEdit, QWidget,)
+    QTableWidget, QTableWidgetItem, QTextEdit, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -26,12 +26,19 @@ class Ui_Form(object):
         Form.resize(679, 481)
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
+        self.textEdit_device_info = QTextEdit(Form)
+        self.textEdit_device_info.setObjectName(u"textEdit_device_info")
+        self.textEdit_device_info.setEnabled(True)
+        self.textEdit_device_info.setTextInteractionFlags(Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
+
+        self.gridLayout.addWidget(self.textEdit_device_info, 1, 2, 5, 1)
+
         self.pushButton_update_drivers = QPushButton(Form)
         self.pushButton_update_drivers.setObjectName(u"pushButton_update_drivers")
         self.pushButton_update_drivers.setEnabled(True)
         self.pushButton_update_drivers.setStyleSheet(u"QPushButton {\n"
-"                        background-color: #4CAF50; \n"
-"                        color: white; \n"
+"                                background-color: #2a4cdf; \n"
+"                                color: white; \n"
 "                                border: none; \n"
 "                                padding: 2px 10px; \n"
 "                                text-align: center; \n"
@@ -42,9 +49,9 @@ class Ui_Form(object):
 "								font-weight: bold;\n"
 "                            }\n"
 "\n"
-"                    QPushButton:hover {\n"
-"                        background-color: #45a049;\n"
-"                    }")
+"                            QPushButton:hover {\n"
+"                                background-color: #1a3cbf;\n"
+"                            }")
 
         self.gridLayout.addWidget(self.pushButton_update_drivers, 7, 0, 1, 1)
 
@@ -55,6 +62,22 @@ class Ui_Form(object):
 
         self.pushButton_sel_none = QPushButton(Form)
         self.pushButton_sel_none.setObjectName(u"pushButton_sel_none")
+        self.pushButton_sel_none.setStyleSheet(u"QPushButton {\n"
+"        background-color: #bf8a36;\n"
+"        color: white;\n"
+"        border: none;\n"
+"        padding: 2px 10px;\n"
+"        text-align: center;\n"
+"        text-decoration: none;\n"
+"        font-size: 13px;\n"
+"        margin: 2px 2px;\n"
+"        border-radius: 6px;\n"
+"        font-weight: bold;\n"
+"    }\n"
+"\n"
+"    QPushButton:hover {\n"
+"        background-color: #8a5a23;\n"
+"    }")
 
         self.gridLayout.addWidget(self.pushButton_sel_none, 2, 1, 1, 1)
 
@@ -84,7 +107,7 @@ class Ui_Form(object):
         self.pushButton_install_update_selected.setObjectName(u"pushButton_install_update_selected")
         self.pushButton_install_update_selected.setEnabled(True)
         self.pushButton_install_update_selected.setStyleSheet(u"QPushButton {\n"
-"                                background-color: #4CAF50; \n"
+"                                background-color: #2a4cdf; \n"
 "                                color: white; \n"
 "                                border: none; \n"
 "                                padding: 2px 10px; \n"
@@ -97,7 +120,7 @@ class Ui_Form(object):
 "                            }\n"
 "\n"
 "                            QPushButton:hover {\n"
-"                                background-color: #45a049;\n"
+"                                background-color: #1a3cbf;\n"
 "                            }")
 
         self.gridLayout.addWidget(self.pushButton_install_update_selected, 6, 0, 1, 1)
@@ -110,6 +133,20 @@ class Ui_Form(object):
 
         self.pushButton_info = QPushButton(Form)
         self.pushButton_info.setObjectName(u"pushButton_info")
+        self.pushButton_info.setStyleSheet(u"QPushButton {\n"
+"                                background-color: #808080; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 2px 10px; \n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 13px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"                            }\n"
+"                            QPushButton:hover {\n"
+"                                background-color: #a0a0a0;\n"
+"                            }")
 
         self.gridLayout.addWidget(self.pushButton_info, 6, 2, 1, 1)
 
@@ -120,8 +157,32 @@ class Ui_Form(object):
 
         self.pushButton_sel_all = QPushButton(Form)
         self.pushButton_sel_all.setObjectName(u"pushButton_sel_all")
+        self.pushButton_sel_all.setStyleSheet(u"QPushButton {\n"
+"    background-color: #2a4cdf; /* This is a lighter shade of blue */\n"
+"    color: white;\n"
+"    border: none;\n"
+"    padding: 2px 10px;\n"
+"    text-align: center;\n"
+"    text-decoration: none;\n"
+"    font-size: 13px;\n"
+"    margin: 2px 2px;\n"
+"    border-radius: 6px;\n"
+"    font-weight: bold;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */\n"
+"}")
 
         self.gridLayout.addWidget(self.pushButton_sel_all, 2, 0, 1, 1)
+
+        self.progressBar = QProgressBar(Form)
+        self.progressBar.setObjectName(u"progressBar")
+        self.progressBar.setEnabled(True)
+        self.progressBar.setValue(0)
+        self.progressBar.setInvertedAppearance(False)
+
+        self.gridLayout.addWidget(self.progressBar, 0, 2, 1, 1)
 
         self.label_2 = QLabel(Form)
         self.label_2.setObjectName(u"label_2")
@@ -133,21 +194,6 @@ class Ui_Form(object):
         self.lineEdit_search_name.setMaximumSize(QSize(250, 16777215))
 
         self.gridLayout.addWidget(self.lineEdit_search_name, 0, 1, 1, 1)
-
-        self.progressBar = QProgressBar(Form)
-        self.progressBar.setObjectName(u"progressBar")
-        self.progressBar.setEnabled(True)
-        self.progressBar.setValue(0)
-        self.progressBar.setInvertedAppearance(False)
-
-        self.gridLayout.addWidget(self.progressBar, 0, 2, 1, 1)
-
-        self.textEdit_device_info = QTextEdit(Form)
-        self.textEdit_device_info.setObjectName(u"textEdit_device_info")
-        self.textEdit_device_info.setEnabled(True)
-        self.textEdit_device_info.setTextInteractionFlags(Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
-
-        self.gridLayout.addWidget(self.textEdit_device_info, 1, 2, 5, 1)
 
 
         self.retranslateUi(Form)

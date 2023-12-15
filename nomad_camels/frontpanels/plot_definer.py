@@ -623,7 +623,20 @@ class Plot_Button_Overview(QWidget):
         self.plot_button = QPushButton('Define Plots / Fits')
         font = QFont()
         font.setBold(True)
-        self.plot_button.setStyleSheet('font-size: 9pt')
+        self.plot_button.setStyleSheet(u"QPushButton {\n"
+"                                background-color: #808080; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 2px 10px; \n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 13px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"                            }\n"
+"                            QPushButton:hover {\n"
+"                                background-color: #a0a0a0;\n"
+"                            }")
         self.plot_button.setFont(font)
         self.plot_button.clicked.connect(self.define_plots)
 

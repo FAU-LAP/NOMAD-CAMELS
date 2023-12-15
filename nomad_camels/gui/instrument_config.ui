@@ -49,8 +49,8 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>8999</width>
-       <height>16777215</height>
+       <width>89999</width>
+       <height>27</height>
       </size>
      </property>
      <property name="font">
@@ -87,6 +87,19 @@
    </item>
    <item row="0" column="4">
     <widget class="QPushButton" name="pushButton_info">
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+                                background-color: #808080; 
+                                color: white; 
+                                border: none; 
+                                padding: 2px 10px; 
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 13px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+                            }</string>
+     </property>
      <property name="text">
       <string>hide info</string>
      </property>
@@ -134,8 +147,8 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>1000</width>
-       <height>16777215</height>
+       <width>99999</width>
+       <height>27</height>
       </size>
      </property>
      <property name="font">
