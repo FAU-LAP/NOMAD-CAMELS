@@ -94,6 +94,20 @@ class Ui_MainWindow(object):
 
         self.pushButton_clear_log = QPushButton(self.centralwidget)
         self.pushButton_clear_log.setObjectName(u"pushButton_clear_log")
+        self.pushButton_clear_log.setStyleSheet(u"QPushButton {\n"
+"                                background-color: #808080; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 2px 10px; \n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 12px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"                            }\n"
+"                            QPushButton:hover {\n"
+"                                background-color: #a0a0a0;\n"
+"                            }")
 
         self.gridLayout_5.addWidget(self.pushButton_clear_log, 8, 9, 1, 2)
 
@@ -493,6 +507,20 @@ class Ui_MainWindow(object):
         self.pushButton_import_protocol.setSizePolicy(sizePolicy)
         self.pushButton_import_protocol.setMinimumSize(QSize(32, 32))
         self.pushButton_import_protocol.setMaximumSize(QSize(50, 32))
+        self.pushButton_import_protocol.setStyleSheet(u"QPushButton {\n"
+"                                background-color: #808080; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 2px 10px; \n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 12px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"                            }\n"
+"                            QPushButton:hover {\n"
+"                                background-color: #a0a0a0;\n"
+"                            }")
 
         self.gridLayout_2.addWidget(self.pushButton_import_protocol, 1, 2, 1, 1)
 
@@ -551,6 +579,20 @@ class Ui_MainWindow(object):
 
         self.pushButton_close_plots = QPushButton(self.centralwidget)
         self.pushButton_close_plots.setObjectName(u"pushButton_close_plots")
+        self.pushButton_close_plots.setStyleSheet(u"QPushButton {\n"
+"                                background-color: #808080; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 2px 10px; \n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 12px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"                            }\n"
+"                            QPushButton:hover {\n"
+"                                background-color: #a0a0a0;\n"
+"                            }")
 
         self.gridLayout_5.addWidget(self.pushButton_close_plots, 8, 11, 1, 1)
 
