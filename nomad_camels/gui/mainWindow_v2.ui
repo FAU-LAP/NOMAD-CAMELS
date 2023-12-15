@@ -32,19 +32,21 @@
      <widget class="QPushButton" name="pushButton_clear_log">
       <property name="styleSheet">
        <string notr="true">QPushButton {
-                                background-color: #808080; 
-                                color: white; 
-                                border: none; 
-                                padding: 2px 10px; 
-                                text-align: center; 
-                                text-decoration: none; 
-                                font-size: 12px; 
-                                margin: 2px 2px; 
-                                border-radius: 6px;
-                            }
-                            QPushButton:hover {
-                                background-color: #a0a0a0;
-                            }</string>
+        background-color: #bf8a36;
+        color: white;
+        border: none;
+        padding: 2px 10px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 12px;
+        margin: 2px 2px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    QPushButton:hover {
+        background-color: #8a5a23;
+    }</string>
       </property>
       <property name="text">
        <string>Clear Log</string>
@@ -64,7 +66,7 @@
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton {
-                background-color: #FF3333; 
+                background-color: #E60000; 
                 color: white; 
                                 border: none; 
                                 padding: 2px 10px; 
@@ -156,7 +158,7 @@
          </property>
          <property name="styleSheet">
           <string notr="true">QPushButton {
-                                background-color: #808080; 
+                                background-color: #bf8a36; 
                                 color: white; 
                                 border: none; 
                                 padding: 2px 4px; 
@@ -167,7 +169,7 @@
                                 border-radius: 6px;
                             }
                             QPushButton:hover {
-                                background-color: #a0a0a0;
+                                background-color: #8a5a23;
                             }</string>
          </property>
          <property name="text">
@@ -220,25 +222,28 @@ Instruments</string>
             <property name="font">
              <font>
               <pointsize>-1</pointsize>
+              <bold>true</bold>
               <underline>false</underline>
               <strikeout>false</strikeout>
              </font>
             </property>
             <property name="styleSheet">
              <string notr="true">QPushButton {
-                                background-color: #808080; 
-                                color: white; 
-                                border: none; 
-                                padding: 2px 10px; 
-                                text-align: center; 
-                                text-decoration: none; 
-                                font-size: 12px; 
-                                margin: 2px 2px; 
-                                border-radius: 6px;
-                            }
-                            QPushButton:hover {
-                                background-color: #a0a0a0;
-                            }</string>
+        background-color: #bf8a36;
+        color: white;
+        border: none;
+        padding: 2px 10px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 12px;
+        margin: 2px 2px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    QPushButton:hover {
+        background-color: #8a5a23;
+    }</string>
             </property>
             <property name="text">
              <string>Edit Sample-Information</string>
@@ -250,25 +255,28 @@ Instruments</string>
             <property name="font">
              <font>
               <pointsize>-1</pointsize>
+              <bold>true</bold>
               <underline>false</underline>
               <strikeout>false</strikeout>
              </font>
             </property>
             <property name="styleSheet">
              <string notr="true">QPushButton {
-                                background-color: #808080; 
-                                color: white; 
-                                border: none; 
-                                padding: 2px 10px; 
-                                text-align: center; 
-                                text-decoration: none; 
-                                font-size: 12px; 
-                                margin: 2px 2px; 
-                                border-radius: 6px;
-                            }
-                            QPushButton:hover {
-                                background-color: #a0a0a0;
-                            }</string>
+        background-color: #bf8a36;
+        color: white;
+        border: none;
+        padding: 2px 10px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 12px;
+        margin: 2px 2px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    QPushButton:hover {
+        background-color: #8a5a23;
+    }</string>
             </property>
             <property name="text">
              <string>select NOMAD sample</string>
@@ -397,25 +405,28 @@ Instruments</string>
             <property name="font">
              <font>
               <pointsize>-1</pointsize>
+              <bold>true</bold>
               <underline>false</underline>
               <strikeout>false</strikeout>
              </font>
             </property>
             <property name="styleSheet">
              <string notr="true">QPushButton {
-                                background-color: #808080; 
-                                color: white; 
-                                border: none; 
-                                padding: 2px 10px; 
-                                text-align: center; 
-                                text-decoration: none; 
-                                font-size: 12px; 
-                                margin: 2px 2px; 
-                                border-radius: 6px;
-                            }
-                            QPushButton:hover {
-                                background-color: #a0a0a0;
-                            }</string>
+        background-color: #bf8a36;
+        color: white;
+        border: none;
+        padding: 2px 10px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 12px;
+        margin: 2px 2px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    QPushButton:hover {
+        background-color: #8a5a23;
+    }</string>
             </property>
             <property name="text">
              <string>NOMAD login</string>
@@ -427,25 +438,28 @@ Instruments</string>
             <property name="font">
              <font>
               <pointsize>-1</pointsize>
+              <bold>true</bold>
               <underline>false</underline>
               <strikeout>false</strikeout>
              </font>
             </property>
             <property name="styleSheet">
              <string notr="true">QPushButton {
-                                background-color: #808080; 
-                                color: white; 
-                                border: none; 
-                                padding: 2px 10px; 
-                                text-align: center; 
-                                text-decoration: none; 
-                                font-size: 12px; 
-                                margin: 2px 2px; 
-                                border-radius: 6px;
-                            }
-                            QPushButton:hover {
-                                background-color: #a0a0a0;
-                            }</string>
+        background-color: #bf8a36;
+        color: white;
+        border: none;
+        padding: 2px 10px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 12px;
+        margin: 2px 2px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    QPushButton:hover {
+        background-color: #8a5a23;
+    }</string>
             </property>
             <property name="text">
              <string>Edit User-Information</string>
@@ -728,19 +742,21 @@ Instruments</string>
              </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
-                                background-color: #808080; 
-                                color: white; 
-                                border: none; 
-                                padding: 2px 10px; 
-                                text-align: center; 
-                                text-decoration: none; 
-                                font-size: 12px; 
-                                margin: 2px 2px; 
-                                border-radius: 6px;
-                            }
-                            QPushButton:hover {
-                                background-color: #a0a0a0;
-                            }</string>
+        background-color: #bf8a36;
+        color: white;
+        border: none;
+        padding: 2px 10px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 12px;
+        margin: 2px 2px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    QPushButton:hover {
+        background-color: #8a5a23;
+    }</string>
              </property>
              <property name="text">
               <string>import</string>
@@ -826,19 +842,21 @@ Instruments</string>
      <widget class="QPushButton" name="pushButton_close_plots">
       <property name="styleSheet">
        <string notr="true">QPushButton {
-                                background-color: #808080; 
-                                color: white; 
-                                border: none; 
-                                padding: 2px 10px; 
-                                text-align: center; 
-                                text-decoration: none; 
-                                font-size: 12px; 
-                                margin: 2px 2px; 
-                                border-radius: 6px;
-                            }
-                            QPushButton:hover {
-                                background-color: #a0a0a0;
-                            }</string>
+        background-color: #bf8a36;
+        color: white;
+        border: none;
+        padding: 2px 10px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 12px;
+        margin: 2px 2px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    QPushButton:hover {
+        background-color: #8a5a23;
+    }</string>
       </property>
       <property name="text">
        <string>Close Plots</string>

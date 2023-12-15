@@ -66,23 +66,31 @@ class Ui_Form(object):
 "\n"
 "            QPushButton:hover {\n"
 "                background-color: #B22222;\n"
-"            }")
+"            }\n"
+"QPushButton:disabled {\n"
+"        background-color:#808080;\n"
+"    }")
 
         self.gridLayout.addWidget(self.pushButton_remove, 1, 4, 1, 1)
 
         self.pushButton_info = QPushButton(Form)
         self.pushButton_info.setObjectName(u"pushButton_info")
         self.pushButton_info.setStyleSheet(u"QPushButton {\n"
-"                                background-color: #808080; \n"
-"                                color: white; \n"
-"                                border: none; \n"
-"                                padding: 2px 10px; \n"
-"                                text-align: center; \n"
-"                                text-decoration: none; \n"
-"                                font-size: 13px; \n"
-"                                margin: 2px 2px; \n"
-"                                border-radius: 6px;\n"
-"                            }")
+"        background-color: #bf8a36;\n"
+"        color: white;\n"
+"        border: none;\n"
+"        padding: 2px 10px;\n"
+"        text-align: center;\n"
+"        text-decoration: none;\n"
+"        font-size: 12px;\n"
+"        margin: 2px 2px;\n"
+"        border-radius: 6px;\n"
+"        font-weight: bold;\n"
+"    }\n"
+"\n"
+"    QPushButton:hover {\n"
+"        background-color: #8a5a23;\n"
+"    }")
 
         self.gridLayout.addWidget(self.pushButton_info, 0, 4, 1, 1)
 
@@ -132,7 +140,10 @@ class Ui_Form(object):
 "\n"
 "                            QPushButton:hover {\n"
 "                                background-color: #45a049;\n"
-"                            }")
+"                            }\n"
+"QPushButton:disabled {\n"
+"        background-color: #808080;\n"
+"    }")
 
         self.gridLayout.addWidget(self.pushButton_add, 1, 3, 1, 1)
 

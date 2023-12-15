@@ -121,22 +121,27 @@ class AddRemoveTable(QWidget):
         self.addButton = QPushButton(addLabel)
         self.addButton.setMaximumHeight(24)
         self.addButton.setStyleSheet(u"QPushButton {\n"
-"                                background-color: #4CAF50; \n"
-"                                color: white; \n"
-"                                border: none; \n"
-"                                padding: 0px; \n"
-"                                padding-bottom: 5px;\n"
-"                                text-align: center; \n"
-"                                text-decoration: none; \n"
-"                                font-size: 15px; \n"
-"                                margin: 2px 2px; \n"
-"                                border-radius: 6px;\n"
-"								font-weight: bold;\n"
-"                            }\n"
-"\n"
-"                            QPushButton:hover {\n"
-"                                background-color: #45a049;\n"
-"                            }")
+        "                                background-color: #4CAF50; \n"
+        "                                color: white; \n"
+        "                                border: none; \n"
+        "                                padding: 0px; \n"
+        "                                padding-bottom: 5px;\n"
+        "                                text-align: center; \n"
+        "                                text-decoration: none; \n"
+        "                                font-size: 15px; \n"
+        "                                margin: 2px 2px; \n"
+        "                                border-radius: 6px;\n"
+        "								font-weight: bold;\n"
+        "                            }\n"
+        "\n"
+        "                            QPushButton:hover {\n"
+        "                                background-color: #45a049;\n"
+        "                            }\n"
+        "\n"
+        "                            QPushButton:disabled {\n"
+        "                                background-color: #808080;\n"
+        "                                color: white;\n"
+        "                            }")
         self.removeButton = QPushButton(removeLabel)
         self.removeButton.setMaximumHeight(24)
         self.removeButton.setStyleSheet(u"QPushButton {\n"
@@ -155,7 +160,12 @@ class AddRemoveTable(QWidget):
 "\n"
 "            QPushButton:hover {\n"
 "                background-color: #B22222;\n"
-"            }")
+"            }"
+        "\n"
+        "                            QPushButton:disabled {\n"
+        "                                background-color: #808080;\n"
+        "                                color: white;\n"
+        "                            }")
         self.table = QTableView()
         self.table_model = QStandardItemModel()
         self.table.setModel(self.table_model)

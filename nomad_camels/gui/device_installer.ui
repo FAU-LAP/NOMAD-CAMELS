@@ -91,7 +91,7 @@
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
-                background-color: #FF3333; 
+                background-color: #E60000; 
                 color: white; 
                                 border: none; 
                                 padding: 2px 10px; 
@@ -157,19 +157,21 @@
     <widget class="QPushButton" name="pushButton_info">
      <property name="styleSheet">
       <string notr="true">QPushButton {
-                                background-color: #808080; 
-                                color: white; 
-                                border: none; 
-                                padding: 2px 10px; 
-                                text-align: center; 
-                                text-decoration: none; 
-                                font-size: 13px; 
-                                margin: 2px 2px; 
-                                border-radius: 6px;
-                            }
-                            QPushButton:hover {
-                                background-color: #a0a0a0;
-                            }</string>
+        background-color: #bf8a36;
+        color: white;
+        border: none;
+        padding: 2px 10px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 12px;
+        margin: 2px 2px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    QPushButton:hover {
+        background-color: #8a5a23;
+    }</string>
      </property>
      <property name="text">
       <string>hide info</string>

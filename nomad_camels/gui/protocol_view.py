@@ -103,19 +103,21 @@ class Ui_Protocol_View(object):
         self.pushButton_move_step_up = QPushButton(self.sequence_main_widget)
         self.pushButton_move_step_up.setObjectName(u"pushButton_move_step_up")
         self.pushButton_move_step_up.setStyleSheet(u"QPushButton {\n"
-"                                background-color: #808080; \n"
-"                                color: white; \n"
-"                                border: none; \n"
-"                                padding: 2px 10px; \n"
-"                                text-align: center; \n"
-"                                text-decoration: none; \n"
-"                                font-size: 13px; \n"
-"                                margin: 2px 2px; \n"
-"                                border-radius: 6px;\n"
-"                            }\n"
-"                            QPushButton:hover {\n"
-"                                background-color: #a0a0a0;\n"
-"                            }")
+"        background-color: #bf8a36;\n"
+"        color: white;\n"
+"        border: none;\n"
+"        padding: 2px 10px;\n"
+"        text-align: center;\n"
+"        text-decoration: none;\n"
+"        font-size: 13px;\n"
+"        margin: 2px 2px;\n"
+"        border-radius: 6px;\n"
+"        font-weight: bold;\n"
+"    }\n"
+"\n"
+"    QPushButton:hover {\n"
+"        background-color: #8a5a23;\n"
+"    }")
 
         self.gridLayout_8.addWidget(self.pushButton_move_step_up, 2, 0, 1, 1)
 
@@ -127,57 +129,63 @@ class Ui_Protocol_View(object):
         self.pushButton_move_step_down = QPushButton(self.sequence_main_widget)
         self.pushButton_move_step_down.setObjectName(u"pushButton_move_step_down")
         self.pushButton_move_step_down.setStyleSheet(u"QPushButton {\n"
-"                                background-color: #808080; \n"
-"                                color: white; \n"
-"                                border: none; \n"
-"                                padding: 2px 10px; \n"
-"                                text-align: center; \n"
-"                                text-decoration: none; \n"
-"                                font-size: 13px; \n"
-"                                margin: 2px 2px; \n"
-"                                border-radius: 6px;\n"
-"                            }\n"
-"                            QPushButton:hover {\n"
-"                                background-color: #a0a0a0;\n"
-"                            }")
+"        background-color: #bf8a36;\n"
+"        color: white;\n"
+"        border: none;\n"
+"        padding: 2px 10px;\n"
+"        text-align: center;\n"
+"        text-decoration: none;\n"
+"        font-size: 13px;\n"
+"        margin: 2px 2px;\n"
+"        border-radius: 6px;\n"
+"        font-weight: bold;\n"
+"    }\n"
+"\n"
+"    QPushButton:hover {\n"
+"        background-color: #8a5a23;\n"
+"    }")
 
         self.gridLayout_8.addWidget(self.pushButton_move_step_down, 3, 0, 1, 1)
 
         self.pushButton_move_step_out = QPushButton(self.sequence_main_widget)
         self.pushButton_move_step_out.setObjectName(u"pushButton_move_step_out")
         self.pushButton_move_step_out.setStyleSheet(u"QPushButton {\n"
-"                                background-color: #808080; \n"
-"                                color: white; \n"
-"                                border: none; \n"
-"                                padding: 2px 10px; \n"
-"                                text-align: center; \n"
-"                                text-decoration: none; \n"
-"                                font-size: 13px; \n"
-"                                margin: 2px 2px; \n"
-"                                border-radius: 6px;\n"
-"                            }\n"
-"                            QPushButton:hover {\n"
-"                                background-color: #a0a0a0;\n"
-"                            }")
+"        background-color: #bf8a36;\n"
+"        color: white;\n"
+"        border: none;\n"
+"        padding: 2px 10px;\n"
+"        text-align: center;\n"
+"        text-decoration: none;\n"
+"        font-size: 13px;\n"
+"        margin: 2px 2px;\n"
+"        border-radius: 6px;\n"
+"        font-weight: bold;\n"
+"    }\n"
+"\n"
+"    QPushButton:hover {\n"
+"        background-color: #8a5a23;\n"
+"    }")
 
         self.gridLayout_8.addWidget(self.pushButton_move_step_out, 3, 1, 1, 1)
 
         self.pushButton_move_step_in = QPushButton(self.sequence_main_widget)
         self.pushButton_move_step_in.setObjectName(u"pushButton_move_step_in")
         self.pushButton_move_step_in.setStyleSheet(u"QPushButton {\n"
-"                                background-color: #808080; \n"
-"                                color: white; \n"
-"                                border: none; \n"
-"                                padding: 2px 10px; \n"
-"                                text-align: center; \n"
-"                                text-decoration: none; \n"
-"                                font-size: 13px; \n"
-"                                margin: 2px 2px; \n"
-"                                border-radius: 6px;\n"
-"                            }\n"
-"                            QPushButton:hover {\n"
-"                                background-color: #a0a0a0;\n"
-"                            }")
+"        background-color: #bf8a36;\n"
+"        color: white;\n"
+"        border: none;\n"
+"        padding: 2px 10px;\n"
+"        text-align: center;\n"
+"        text-decoration: none;\n"
+"        font-size: 13px;\n"
+"        margin: 2px 2px;\n"
+"        border-radius: 6px;\n"
+"        font-weight: bold;\n"
+"    }\n"
+"\n"
+"    QPushButton:hover {\n"
+"        background-color: #8a5a23;\n"
+"    }")
 
         self.gridLayout_8.addWidget(self.pushButton_move_step_in, 2, 1, 1, 1)
 
