@@ -27,6 +27,8 @@ from nomad_camels.bluesky_handling import helper_functions
 import copy
 import pathlib
 
+from PySide6.QtCore import QThread
+
 local_packages = {}
 local_package_paths = {}
 running_devices = {}
@@ -251,6 +253,7 @@ def instantiate_devices(device_list):
             config.update(extra_config)
 
             # instantiating ophyd-device
+            print(f"connecting {dev}")
             if dev in running_devices:
                 ophyd_device = running_devices[dev]
                 ophyd_device.device_run_count += 1
@@ -258,7 +261,6 @@ def instantiate_devices(device_list):
                 ophyd_device = device.ophyd_class(f'{dev}:', name=dev, **extra_settings)
                 ophyd_device.device_run_count = 1
                 running_devices[dev] = ophyd_device
-            print(f"connecting {dev}")
             ophyd_device.wait_for_connection()
             configs = ophyd_device.configure(config)[1]
             devices[dev] = ophyd_device
@@ -273,6 +275,23 @@ def instantiate_devices(device_list):
         close_devices(started_devs)
         raise Exception(e)
     return devices, device_config
+
+class InstantiateDevicesThread(QThread):
+    """
+    Thread for starting devices in the background.
+    """
+    def __init__(self, device_list, channels=False):
+        super().__init__()
+        self.channels = channels
+        self.device_list = device_list
+        self.devices = None
+        self.device_config = None
+
+    def run(self):
+        if self.channels:
+            self.devices, self.device_config = start_devices_from_channel_list(self.device_list)
+        else:
+            self.devices, self.device_config = instantiate_devices(self.device_list)
 
 def close_devices(device_list):
     """

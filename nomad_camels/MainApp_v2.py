@@ -1171,7 +1171,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         self.setCursor(Qt.WaitCursor)
         # IMPORT importlib, bluesky, ophyd and time only if needed
-        import importlib, bluesky, ophyd, time
+        import importlib
         if not self.run_engine:
             self.bluesky_setup()
         self.still_running = True
@@ -1194,17 +1194,29 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             for plot in plots:
                 self.add_to_plots(plot)
             device_list = protocol.get_used_devices()
-            devs, dev_data = device_handling.instantiate_devices(device_list)
             self.current_protocol_device_list = device_list
-            additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
             self.re_subs += subs
+            self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(device_list)
+            self.instantiate_devices_thread.finished.connect(self.run_protocol_part2)
+            self.instantiate_devices_thread.start()
+        except Exception as e:
+            self.protocol_finished()
+            raise e
+
+    def run_protocol_part2(self):
+        try:
+            devs = self.instantiate_devices_thread.devices
+            dev_data = self.instantiate_devices_thread.device_config
+            additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
             self.add_subs_and_plots_from_dict(additionals)
         except Exception as e:
             self.protocol_finished()
             raise e
+        import bluesky, ophyd, time
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
         self.pushButton_stop.setEnabled(True)
+        protocol = self.running_protocol
         self.protocol_module.run_protocol_main(self.run_engine, catalog=self.databroker_catalog, devices=devs,
                                                md={'devices': dev_data,
                                                    'description': protocol.description,

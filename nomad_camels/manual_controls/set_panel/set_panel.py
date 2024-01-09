@@ -70,11 +70,15 @@ class Set_Panel(Manual_Control):
                 self.layout().addWidget(group_widget, 0, n)
             for data in group_data.values():
                 channels += data['channel']
-        channels = list(set(channels))
-        self.device_list, _ = device_handling.start_devices_from_channel_list(channels)
-        self.channels = device_handling.get_channels_from_string_list(channels, True)
+        self.channel_list = list(set(channels))
+        self.channels = device_handling.get_channels_from_string_list(self.channel_list, True)
         self.adjustSize()
+        self.read_thread = None
+        self.start_multiple_devices(self.channel_list, True)
 
+    def device_ready(self):
+        super().device_ready()
+        control_data = self.control_data
         t = control_data['readback_time'] if 'readback_time' in control_data else 5
         self.read_thread = Readback_Thread(self, self.channels, t)
         if 'readback' in control_data and control_data['readback']:

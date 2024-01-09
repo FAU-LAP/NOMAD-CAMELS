@@ -40,6 +40,7 @@ class Manual_Control(QWidget):
         self.name = title
         self.device = None
         self.ophyd_device = None
+        self.instantiate_devices_thread = None
         self.device_list = []
         self.show()
 
@@ -56,8 +57,14 @@ class Manual_Control(QWidget):
         return super().closeEvent(a0)
 
     def start_device(self, device_name):
-        """Returns self.device as the corresponding device to `device_name`.
-        If it is not None, it will be instantiated."""
+        """Starts a device by using the
+        `device_handling.InstantiateDevicesThread` class.
+
+        Parameters
+        ----------
+        device_name : str
+            The name of the device to be started.
+        """
         self.device = variables_handling.devices[device_name]
         if self.device:
             self.device_list = self.device.get_necessary_devices()
@@ -65,8 +72,35 @@ class Manual_Control(QWidget):
             if self.device.name in self.device_list:
                 self.device_list.remove(self.device.custom_name)
             self.device_list.append(self.device.custom_name)
-            devs, dev_data = device_handling.instantiate_devices(self.device_list)
-            self.ophyd_device = devs[self.device.custom_name]
+            self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(self.device_list)
+            self.instantiate_devices_thread.finished.connect(self.device_ready)
+            self.setCursor(Qt.WaitCursor)
+            self.setEnabled(False)
+            self.instantiate_devices_thread.start()
+
+    def start_multiple_devices(self, device_names, channels=False):
+        """Starts multiple devices at once.
+        
+        Parameters
+        ----------
+        device_names : list
+            A list of the names of the devices to be started, or the names of the channels, if `channels` is True.
+        channels : bool
+            Whether 'device_names' are channel names or device names.
+        """
+        self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(device_names, channels)
+        self.instantiate_devices_thread.finished.connect(self.device_ready)
+        self.setEnabled(False)
+        self.instantiate_devices_thread.start()
+
+    def device_ready(self):
+        """Called when the devices are ready to be used, i.e. when the
+        `instantiate_devices_thread` is finished."""
+        self.device_list = self.instantiate_devices_thread.devices
+        if self.device:
+            self.ophyd_device = self.device_list[self.device.custom_name]
+        self.setCursor(Qt.ArrowCursor)
+        self.setEnabled(True)
 
 
 

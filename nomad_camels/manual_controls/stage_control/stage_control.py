@@ -116,21 +116,31 @@ class Stage_Control(Manual_Control, Ui_Form):
         if 'None' in channels:
             channels.remove('None')
         channels = list(channels)
-        self.device_list, _ = device_handling.start_devices_from_channel_list(channels)
-        self.set_channels = device_handling.get_channels_from_string_list(set_channels)
-        self.read_channels = device_handling.get_channels_from_string_list(read_channels)
-        self.ref_funcs = device_handling.get_functions_from_string_list(ref_functions)
-        self.stop_funcs = device_handling.get_functions_from_string_list(stop_functions)
-        self.manual_funcs = device_handling.get_functions_from_string_list(manual_functions)
+        self.set_channels = set_channels
+        self.read_channels = read_channels
+        self.ref_funcs = ref_functions
+        self.stop_funcs = stop_functions
+        self.manual_funcs = manual_functions
+        self.read_thread = None
+        self.move_thread = None
+        self.start_multiple_devices(channels, True)
+
+
+    def device_ready(self):
+        super().device_ready()
+        self.set_channels = device_handling.get_channels_from_string_list(self.set_channels)
+        self.read_channels = device_handling.get_channels_from_string_list(self.read_channels)
+        self.ref_funcs = device_handling.get_functions_from_string_list(self.ref_funcs)
+        self.stop_funcs = device_handling.get_functions_from_string_list(self.stop_funcs)
+        self.manual_funcs = device_handling.get_functions_from_string_list(self.manual_funcs)
 
         read_not_none = False
         for channel in self.read_channels:
             if channel is not None:
                 read_not_none = True
                 break
-        self.read_thread = None
         if read_not_none:
-            self.read_thread = Readback_Thread(self, self.read_channels, control_data['read_frequ'])
+            self.read_thread = Readback_Thread(self, self.read_channels, self.control_data['read_frequ'])
             self.read_thread.data_sig.connect(self.update_readback)
             self.read_thread.start()
         else:
@@ -149,10 +159,10 @@ class Stage_Control(Manual_Control, Ui_Form):
                 child.setFocusPolicy(Qt.ClickFocus)
         self.setFocusPolicy(Qt.ClickFocus)
         self.show()
-        for i, auto in enumerate(control_data['auto_reference']):
+        for i, auto in enumerate(self.control_data['auto_reference']):
             self.checks[i].setChecked(auto)
         self.reference_drive()
-        for i, auto in enumerate(control_data['auto_reference']):
+        for i, auto in enumerate(self.control_data['auto_reference']):
             self.checks[i].setChecked(True)
 
 
