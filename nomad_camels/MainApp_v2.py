@@ -6,7 +6,7 @@ sys.path.append(os.path.dirname(__file__))
 import json
 
 from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog
-from PySide6.QtCore import QCoreApplication, Qt, Signal
+from PySide6.QtCore import QCoreApplication, Qt, Signal, QThread
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
 from nomad_camels.utility import exception_hook
@@ -14,7 +14,7 @@ from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from pkg_resources import resource_filename
 
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
-from nomad_camels.utility import load_save_functions, variables_handling, number_formatting, theme_changing, update_camels, logging_settings
+from nomad_camels.utility import load_save_functions, variables_handling, number_formatting, theme_changing, update_camels, logging_settings, qthreads
 from nomad_camels.ui_widgets import options_run_button, warn_popup
 
 from collections import OrderedDict
@@ -163,7 +163,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_savepath = ''
         self.running_protocol = None
 
+        self.importer_thread = qthreads.Additional_Imports_Thread(self)
+        self.importer_thread.start(priority=QThread.LowPriority)
+
     def bluesky_setup(self):
+        # IMPORT bluesky only if it is needed
         from bluesky import RunEngine
         from bluesky.callbacks.best_effort import BestEffortCallback
         import databroker
@@ -203,6 +207,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def manage_instruments(self):
         """ """
         self.setCursor(Qt.WaitCursor)
+        # IMPORT ManageInstruments only if it is needed
         from nomad_camels.frontpanels.manage_instruments import ManageInstruments
         dialog = ManageInstruments(active_instruments=self.active_instruments,
                                    parent=self)
@@ -284,6 +289,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
     def login_logout_nomad(self):
         """Handles logging in / out of NOMAD when the respective button is pushed"""
+        # IMPORT nomad_communication only if it is needed
         from nomad_camels.nomad_integration import nomad_communication
         if nomad_communication.token:
             nomad_communication.logout_of_nomad()
@@ -300,6 +306,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def login_nomad(self):
         """Handles the login to NOMAD. If the login is successfull, the UI is
         adapted to show all the NOMAD-related buttons."""
+        # IMPORT nomad_communication only if it is needed
         from nomad_camels.nomad_integration import nomad_communication
         nomad_communication.ensure_login(self)
         if not nomad_communication.token:
@@ -320,6 +327,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         auto_upload = self.comboBox_upload_type.currentText() == 'auto upload'
         self.comboBox_upload_choice.setHidden(not nomad or not auto_upload)
         if nomad:
+            # IMPORT nomad_communication only if it is needed
             from nomad_camels.nomad_integration import nomad_communication
             uploads = nomad_communication.get_user_upload_names(self)
             self.comboBox_upload_choice.clear()
@@ -357,6 +365,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
+        # IMPORT pandas and add_remove_table only if it is needed
         import pandas as pd
         from nomad_camels.ui_widgets import add_remove_table
         self.active_user = self.comboBox_user.currentText()
@@ -437,6 +446,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
+        # IMPORT pandas and add_remove_table only if it is needed
         import pandas as pd
         from nomad_camels.ui_widgets import add_remove_table
         self.active_sample = self.comboBox_sample.currentText()
@@ -497,6 +507,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.comboBox_sample.setCurrentText(self.active_sample)
 
     def select_nomad_sample(self):
+        # IMPORT sample_selection only if it is needed
         from nomad_camels.nomad_integration import sample_selection
         dialog = sample_selection.Sample_Selector(self)
         if dialog.exec():
@@ -587,17 +598,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """ """
         if not hasattr(self, 'databroker_catalog') or not self.databroker_catalog:
             return
+        # IMPORT databroker only if it is needed
         import databroker
         if 'meas_files_path' in self.preferences:
             catalog_name = 'CATALOG_NAME'
             if 'databroker_catalog_name' in self.preferences:
                 catalog_name = self.preferences['databroker_catalog_name']
+            # IMPORT make_catalog only if it is needed
             from nomad_camels.bluesky_handling import make_catalog
             make_catalog.make_yml(self.preferences['meas_files_path'], catalog_name, ask_restart=True)
             databroker.catalog.force_reload()
             try:
                 self.databroker_catalog = databroker.catalog[catalog_name]
             except KeyError:
+                # IMPORT warnings only if it is needed
                 import warnings
                 warnings.warn('Could not find databroker catalog, using temporary catalog. If data is not transferred, it might get lost.')
                 self.databroker_catalog = databroker.temp()
@@ -616,6 +630,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
+        # IMPORT Settings_Window only if it is needed
         from nomad_camels.frontpanels.settings_window import Settings_Window
         settings_dialog = Settings_Window(parent=self, settings=self.preferences)
         if settings_dialog.exec():
@@ -815,6 +830,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def add_manual_control(self):
         """ """
+        # IMPORT New_Manual_Control_Dialog only if needed
         from nomad_camels.manual_controls.get_manual_controls import New_Manual_Control_Dialog
         dialog = New_Manual_Control_Dialog(self)
         if dialog.exec():
@@ -887,6 +903,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
+        # IMPORT get_control_by_type_name only if needed
         from nomad_camels.manual_controls.get_manual_controls import get_control_by_type_name
         control_data = self.manual_controls[control_name]
         config_cls = get_control_by_type_name(control_data['control_type'])[1]
@@ -952,6 +969,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
+        # IMPORT get_control_by_type_name only if needed
         from nomad_camels.manual_controls.get_manual_controls import get_control_by_type_name
         control_data = self.manual_controls[name]
         control_type = control_data['control_type']
@@ -997,6 +1015,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def add_measurement_protocol(self):
         """ """
+        # IMPORT Protocol_Config only if needed
         from nomad_camels.frontpanels.protocol_config import Protocol_Config
         dialog = Protocol_Config()
         dialog.show()
@@ -1004,6 +1023,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.add_to_open_windows(dialog)
 
     def import_measurement_protocol(self):
+        # IMPORT Protocol_Config and Path_Button_Dialog only if needed
         from nomad_camels.frontpanels.protocol_config import Protocol_Config
         from nomad_camels.ui_widgets.path_button_edit import Path_Button_Dialog
         dialog = Path_Button_Dialog(self,
@@ -1084,6 +1104,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
+        # IMPORT Protocol_Config only if needed
         from nomad_camels.frontpanels.protocol_config import Protocol_Config
         dialog = Protocol_Config(self.protocols_dict[prot_name])
         dialog.show()
@@ -1149,10 +1170,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         handle the upload.
         """
         self.setCursor(Qt.WaitCursor)
+        # IMPORT importlib, bluesky, ophyd and time only if needed
         import importlib, bluesky, ophyd, time
         if not self.run_engine:
             self.bluesky_setup()
         self.still_running = True
+        # IMPORT device_handling only if needed
         from nomad_camels.utility import device_handling
         if 'autosave_run' in self.preferences and self.preferences['autosave_run']:
             self.save_state(do_backup=self.preferences['backup_before_run'])
@@ -1208,12 +1231,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         else:
             name = f'/{self.active_sample}'
         if self.comboBox_upload_type.currentText() == 'auto upload':
+            # IMPORT nomad_communication only if needed
             from nomad_camels.nomad_integration import nomad_communication
             upload = self.comboBox_upload_choice.currentText()
             nomad_communication.upload_file(self.protocol_savepath, upload,
                                             f'CAMELS_data{name}',
                                             parent=self)
         elif self.comboBox_upload_type.currentText() == 'ask after run':
+            # IMPORT file_uploading only if needed
             from nomad_camels.nomad_integration import file_uploading
             dialog = file_uploading.UploadDialog(self, self.protocol_savepath,
                                                  f'CAMELS_data{name}')
@@ -1273,6 +1298,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
+        # IMPORT databroker_export and device_handling only if needed
         from nomad_camels.utility import databroker_export, device_handling
         if self.protocol_module and hasattr(self.protocol_module, 'uids') and self.protocol_module.uids:
             runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
@@ -1339,6 +1365,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
         savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
         self.protocol_savepath = savepath
+        # IMPORT protocol_builder only if needed
         from nomad_camels.bluesky_handling import protocol_builder
         protocol_builder.build_protocol(protocol,
                                         path, savepath,
@@ -1368,16 +1395,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
     def launch_device_builder(self):
         """ """
+        # IMPORT device_driver_builder only if needed
         from nomad_camels.tools import device_driver_builder
         device_builder = device_driver_builder.Driver_Builder(self)
         device_builder.show()
 
     def launch_epics_builder(self):
+        # IMPORT EPICS_driver_builder only if needed
         from nomad_camels.tools import EPICS_driver_builder
         device_builder = EPICS_driver_builder.EPICS_Driver_Builder(self)
         device_builder.show()
 
     def launch_data_exporter(self):
+        # IMPORT databroker_exporter only if needed
         from nomad_camels.tools import databroker_exporter
         exporter = databroker_exporter.Datbroker_Exporter(self)
         exporter.show()
