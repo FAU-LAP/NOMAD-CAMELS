@@ -156,7 +156,9 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
     for run in runs:
         metadata = run.metadata
         meta_start = dict(metadata['start'])
-        meta_stop = dict(metadata['stop'])
+        meta_stop = {'time': None}
+        if 'stop' in metadata and metadata['stop']:
+            meta_stop = dict(metadata['stop'])
         st_time = meta_start.pop('time')
         start_time = timestamp_to_ISO8601(st_time)
         end_time = timestamp_to_ISO8601(meta_stop.pop('time'))
@@ -419,5 +421,7 @@ def timestamp_to_ISO8601(timestamp):
     -------
 
     """
+    if timestamp is None:
+        return 'None'
     from_stamp = dt.fromtimestamp(timestamp)
     return from_stamp.astimezone().isoformat()
