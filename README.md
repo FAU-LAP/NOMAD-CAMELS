@@ -21,6 +21,7 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 Fixes:
 - fixed export from databroker if the run failed such that no "stop" is in metadata
+- plot widget now shows the table to change linestyle and markerstyle
 
 
 ## 0.2.3

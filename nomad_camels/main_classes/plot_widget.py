@@ -294,6 +294,7 @@ class PlotWidget(QWidget):
             self.pushButton_show_options.setText('Hide Options')
             self.options_open = True
             self.plot_options.show()
+            self.plot_options.setup_table()
         self.adjustSize()
 
     def closeEvent(self, a0):
@@ -765,7 +766,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.marker_dict = {}
         self.linestyle_dict = {}
 
-    def setup_table(self):
+    def setup_table(self, x=None, y=None):
         """Sets up the table with the current lines in the plot."""
         self.tableWidget.setColumnCount(5)
         self.tableWidget.setMinimumWidth(400)
