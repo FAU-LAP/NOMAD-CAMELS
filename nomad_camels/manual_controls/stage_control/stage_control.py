@@ -423,9 +423,9 @@ class Readback_Thread(QThread):
 
     def run(self):
         """ """
-        self.do_reading()
         accum = 0
         while self.still_running:
+            self.do_reading()
             if self.read_time > 5:
                 if self.read_time - accum > 5:
                     time.sleep(5)
@@ -436,7 +436,6 @@ class Readback_Thread(QThread):
                     accum = 0
             else:
                 time.sleep(self.read_time)
-            self.do_reading()
 
     def do_reading(self):
         """ """
