@@ -284,14 +284,41 @@ class InstantiateDevicesThread(QThread):
         super().__init__()
         self.channels = channels
         self.device_list = device_list
-        self.devices = None
-        self.device_config = None
+        main_thread_devs = []
+        if channels:
+            for channel in device_list:
+                if channel not in variables_handling.channels:
+                    raise Warning(f'Trying to use channel {channel}, but it is not defined!')
+                chan = variables_handling.channels[channel]
+                if chan.device not in variables_handling.devices:
+                    raise Warning(f'Trying to use channel {channel}, but the corresponding device {chan.device} is not defined!')
+                dev = variables_handling.devices[chan.device]
+                if dev.main_thread_only:
+                    main_thread_devs.append(channel)
+        else:
+            for device in device_list:
+                if device not in variables_handling.devices:
+                    raise Warning(f'Trying to start device {device}, but it is not even defined!')
+                dev = variables_handling.devices[device]
+                if dev.main_thread_only:
+                    main_thread_devs.append(device)
+                    for d in dev.get_necessary_devices():
+                        main_thread_devs.insert(0, d)
+        for dev in main_thread_devs:
+            self.device_list.remove(dev)
+        if self.channels:
+            self.devices, self.device_config = start_devices_from_channel_list(main_thread_devs)
+        else:
+            self.devices, self.device_config = instantiate_devices(main_thread_devs)
 
     def run(self):
+        print(self.device_list)
         if self.channels:
-            self.devices, self.device_config = start_devices_from_channel_list(self.device_list)
+            devices, device_config = start_devices_from_channel_list(self.device_list)
         else:
-            self.devices, self.device_config = instantiate_devices(self.device_list)
+            devices, device_config = instantiate_devices(self.device_list)
+        self.devices.update(devices)
+        self.device_config.update(device_config)
 
 def close_devices(device_list):
     """

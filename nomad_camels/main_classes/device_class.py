@@ -41,7 +41,7 @@ class Device:
 
     def __init__(self, name='', virtual=False, tags=None, ophyd_device=None,
                  ophyd_class_name='', additional_info=None,
-                 non_channel_functions=None, **kwargs):
+                 non_channel_functions=None, main_thread_only=False, **kwargs):
         """
         Parameters
         ----------
@@ -69,6 +69,7 @@ class Device:
         self.passive_config = {}
         self.channels = {}
         self.non_channel_functions = non_channel_functions or []
+        self.main_thread_only = main_thread_only
         self.ophyd_class_name = ophyd_class_name
         if ophyd_device is None:
             ophyd_device = OphydDevice

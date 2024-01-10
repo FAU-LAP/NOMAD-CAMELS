@@ -1194,7 +1194,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             for plot in plots:
                 self.add_to_plots(plot)
             device_list = protocol.get_used_devices()
-            self.current_protocol_device_list = device_list
+            self.current_protocol_device_list = list(device_list)
             self.re_subs += subs
             self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(device_list)
             self.instantiate_devices_thread.finished.connect(self.run_protocol_part2)
