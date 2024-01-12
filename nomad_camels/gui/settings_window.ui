@@ -7,32 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>391</width>
-    <height>632</height>
+    <height>679</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="31" column="1" colspan="3">
-    <widget class="Line" name="line_7">
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="lineWidth">
-      <number>5</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="22" column="2" colspan="2">
-    <widget class="QLineEdit" name="lineEdit_catalog_name"/>
-   </item>
-   <item row="25" column="2" colspan="2">
-    <widget class="QLineEdit" name="lineEdit_repo"/>
-   </item>
    <item row="12" column="1" colspan="3">
     <widget class="QLabel" name="label_3">
      <property name="maximumSize">
@@ -52,6 +33,19 @@
      </property>
     </widget>
    </item>
+   <item row="21" column="1">
+    <widget class="QLabel" name="label_7">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>17</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Measurement-Data Path</string>
+     </property>
+    </widget>
+   </item>
    <item row="18" column="1">
     <widget class="QLabel" name="label_6">
      <property name="maximumSize">
@@ -62,38 +56,6 @@
      </property>
      <property name="text">
       <string>Python-Files Path</string>
-     </property>
-    </widget>
-   </item>
-   <item row="17" column="1" colspan="3">
-    <widget class="QLabel" name="label_5">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>17</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Files</string>
-     </property>
-    </widget>
-   </item>
-   <item row="28" column="1" colspan="3">
-    <widget class="Line" name="line_5">
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="lineWidth">
-      <number>5</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
@@ -110,23 +72,42 @@
      </property>
     </widget>
    </item>
-   <item row="21" column="1">
-    <widget class="QLabel" name="label_7">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>17</height>
-      </size>
+   <item row="22" column="2" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_catalog_name"/>
+   </item>
+   <item row="31" column="1" colspan="3">
+    <widget class="Line" name="line_7">
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
      </property>
-     <property name="text">
-      <string>Measurement-Data Path</string>
+     <property name="lineWidth">
+      <number>5</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
+   </item>
+   <item row="25" column="2" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_repo"/>
    </item>
    <item row="26" column="2">
     <widget class="QLineEdit" name="lineEdit_branch">
      <property name="placeholderText">
       <string>branch</string>
+     </property>
+    </widget>
+   </item>
+   <item row="28" column="1" colspan="3">
+    <widget class="Line" name="line_5">
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <property name="lineWidth">
+      <number>5</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
@@ -157,21 +138,33 @@
      </property>
     </widget>
    </item>
-   <item row="27" column="1">
-    <widget class="QLabel" name="label_8">
+   <item row="17" column="1" colspan="3">
+    <widget class="QLabel" name="label_5">
      <property name="maximumSize">
       <size>
        <width>16777215</width>
        <height>17</height>
       </size>
      </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>Local drivers path</string>
+      <string>Files</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
-    <widget class="QComboBox" name="comboBox_theme"/>
+   <item row="27" column="2" colspan="2">
+    <widget class="Path_Button_Edit" name="pathButton_device_path" native="true"/>
+   </item>
+   <item row="18" column="2" colspan="2">
+    <widget class="Path_Button_Edit" name="pathButton_py_files" native="true"/>
+   </item>
+   <item row="21" column="2" colspan="2">
+    <widget class="Path_Button_Edit" name="pathButton_meas_files" native="true"/>
    </item>
    <item row="13" column="2">
     <widget class="QRadioButton" name="radioButton_scientific">
@@ -179,6 +172,60 @@
       <string>Scientific</string>
      </property>
     </widget>
+   </item>
+   <item row="37" column="1" colspan="3">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" colspan="3">
+    <widget class="QLabel" name="label_9">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Logging</string>
+     </property>
+    </widget>
+   </item>
+   <item row="30" column="1" colspan="3">
+    <widget class="QCheckBox" name="checkBox_play_camel_on_error">
+     <property name="text">
+      <string>Play Camel-Roar on error</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="QLabel" name="label_16">
+     <property name="text">
+      <string>max. logfile size (MB)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="3">
+    <widget class="QRadioButton" name="radioButton_mixed">
+     <property name="text">
+      <string>Scientific from 1e...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QCheckBox" name="checkBox_backup_before_run">
+     <property name="text">
+      <string>backup before run</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="2">
+    <widget class="QComboBox" name="comboBox_material_theme"/>
    </item>
    <item row="8" column="1" colspan="3">
     <widget class="QLabel" name="label_2">
@@ -199,6 +246,19 @@
      </property>
     </widget>
    </item>
+   <item row="27" column="1">
+    <widget class="QLabel" name="label_8">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>17</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Local drivers path</string>
+     </property>
+    </widget>
+   </item>
    <item row="23" column="1" colspan="3">
     <widget class="Line" name="line_6">
      <property name="frameShadow">
@@ -212,12 +272,8 @@
      </property>
     </widget>
    </item>
-   <item row="30" column="1" colspan="3">
-    <widget class="QCheckBox" name="checkBox_play_camel_on_error">
-     <property name="text">
-      <string>Play Camel-Roar on error</string>
-     </property>
-    </widget>
+   <item row="9" column="1">
+    <widget class="QComboBox" name="comboBox_theme"/>
    </item>
    <item row="10" column="1" colspan="3">
     <widget class="Line" name="line_2">
@@ -246,36 +302,6 @@
      </property>
     </widget>
    </item>
-   <item row="34" column="1" colspan="3">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1" colspan="3">
-    <widget class="QLabel" name="label_9">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Logging</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2">
-    <widget class="QLabel" name="label_16">
-     <property name="text">
-      <string>max. logfile size (MB)</string>
-     </property>
-    </widget>
-   </item>
    <item row="6" column="2">
     <widget class="QSpinBox" name="spinBox_logfile_size">
      <property name="value">
@@ -296,10 +322,16 @@
      </property>
     </widget>
    </item>
-   <item row="13" column="3">
-    <widget class="QRadioButton" name="radioButton_mixed">
-     <property name="text">
-      <string>Scientific from 1e...</string>
+   <item row="16" column="1" colspan="3">
+    <widget class="Line" name="line_3">
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <property name="lineWidth">
+      <number>5</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
@@ -323,18 +355,15 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="3">
-    <widget class="QCheckBox" name="checkBox_backup_before_run">
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="checkBox_autosave">
      <property name="text">
-      <string>backup before run</string>
+      <string>autosave on closing</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="2">
-    <widget class="QComboBox" name="comboBox_material_theme"/>
-   </item>
-   <item row="16" column="1" colspan="3">
-    <widget class="Line" name="line_3">
+   <item row="3" column="1" colspan="3">
+    <widget class="Line" name="line_4">
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
@@ -346,10 +375,10 @@
      </property>
     </widget>
    </item>
-   <item row="22" column="1">
-    <widget class="QLabel" name="label_10">
+   <item row="33" column="1">
+    <widget class="QLabel" name="label_19">
      <property name="text">
-      <string>Databroker catalog-name</string>
+      <string>NOMAD Oasis URL</string>
      </property>
     </widget>
    </item>
@@ -357,6 +386,40 @@
     <widget class="QCheckBox" name="checkBox_dark">
      <property name="text">
       <string>dark mode</string>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="1">
+    <widget class="QLabel" name="label_4">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>17</height>
+      </size>
+     </property>
+     <property name="text">
+      <string># decimals:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="22" column="1">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Databroker catalog-name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="25" column="1">
+    <widget class="QLabel" name="label_12">
+     <property name="text">
+      <string>Driver Repository URL</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="3">
+    <widget class="QSpinBox" name="spinBox_scientific_from">
+     <property name="value">
+      <number>3</number>
      </property>
     </widget>
    </item>
@@ -374,33 +437,6 @@
      </property>
     </widget>
    </item>
-   <item row="25" column="1">
-    <widget class="QLabel" name="label_12">
-     <property name="text">
-      <string>Driver Repository URL</string>
-     </property>
-    </widget>
-   </item>
-   <item row="15" column="1">
-    <widget class="QLabel" name="label_4">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>17</height>
-      </size>
-     </property>
-     <property name="text">
-      <string># decimals:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="3">
-    <widget class="QSpinBox" name="spinBox_scientific_from">
-     <property name="value">
-      <number>3</number>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="1" colspan="3">
     <widget class="QCheckBox" name="checkBox_auto_check_updates">
      <property name="text">
@@ -408,25 +444,11 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1" colspan="3">
-    <widget class="Line" name="line_4">
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="lineWidth">
-      <number>5</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
+   <item row="6" column="1">
+    <widget class="QComboBox" name="comboBox_log_level"/>
    </item>
-   <item row="1" column="1">
-    <widget class="QCheckBox" name="checkBox_autosave">
-     <property name="text">
-      <string>autosave on closing</string>
-     </property>
-    </widget>
+   <item row="33" column="2" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_oasis"/>
    </item>
    <item row="13" column="1">
     <widget class="QRadioButton" name="radioButton_plain_numbers">
@@ -448,9 +470,6 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
-    <widget class="QComboBox" name="comboBox_log_level"/>
-   </item>
    <item row="32" column="1">
     <widget class="QLabel" name="label_18">
      <property name="font">
@@ -464,24 +483,47 @@
      </property>
     </widget>
    </item>
-   <item row="27" column="2" colspan="2">
-    <widget class="Path_Button_Edit" name="pathButton_device_path" native="true"/>
-   </item>
-   <item row="18" column="2" colspan="2">
-    <widget class="Path_Button_Edit" name="pathButton_py_files" native="true"/>
-   </item>
-   <item row="21" column="2" colspan="2">
-    <widget class="Path_Button_Edit" name="pathButton_meas_files" native="true"/>
-   </item>
-   <item row="33" column="1">
-    <widget class="QLabel" name="label_19">
-     <property name="text">
-      <string>NOMAD Oasis URL</string>
+   <item row="34" column="1" colspan="3">
+    <widget class="Line" name="line_8">
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <property name="lineWidth">
+      <number>5</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="33" column="2" colspan="2">
-    <widget class="QLineEdit" name="lineEdit_oasis"/>
+   <item row="35" column="1">
+    <widget class="QLabel" name="label_20">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Extensions</string>
+     </property>
+    </widget>
+   </item>
+   <item row="36" column="1">
+    <widget class="QLabel" name="label_21">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>17</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Local extensions path</string>
+     </property>
+    </widget>
+   </item>
+   <item row="36" column="2" colspan="2">
+    <widget class="Path_Button_Edit" name="pathButton_extension_path" native="true"/>
    </item>
   </layout>
  </widget>

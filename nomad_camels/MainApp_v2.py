@@ -16,8 +16,10 @@ from pkg_resources import resource_filename
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
 from nomad_camels.utility import load_save_functions, variables_handling, number_formatting, theme_changing, update_camels, logging_settings
 from nomad_camels.ui_widgets import options_run_button, warn_popup
+from nomad_camels.extensions import extension_contexts
 
 from collections import OrderedDict
+import importlib
 
 
 camels_github = 'https://github.com/FAU-LAP/NOMAD-CAMELS'
@@ -162,6 +164,38 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_module = None
         self.protocol_savepath = ''
         self.running_protocol = None
+
+
+        # Extension Contexts
+        self.eln_context = extension_contexts.ELN_Context(self)
+        self.extension_contexts = {'ELN_Context': self.eln_context}
+        self.extensions = []
+        self.load_extensions()
+    
+
+    def load_extensions(self):
+        if not 'extensions' in self.preferences:
+            from nomad_camels.utility.load_save_functions import standard_pref
+            self.preferences['extensions'] = standard_pref['extensions']
+        if not 'extension_path' in self.preferences:
+            from nomad_camels.utility.load_save_functions import standard_pref
+            self.preferences['extension_path'] = standard_pref['extension_path']
+        sys.path.append(self.preferences['extension_path'])
+        for extension in self.preferences['extensions']:
+            try:
+                extension_module = importlib.import_module(extension)
+            except (ModuleNotFoundError, AttributeError) as e:
+                print(f'Could not load extension {extension}.\n{e}')
+                continue
+            config = getattr(extension_module, 'EXTENSION_CONFIG')
+            name = config['name']
+            contexts = {}
+            for context in config['required_contexts']:
+                contexts[context] = self.extension_contexts[context]
+            self.extensions.append(getattr(extension_module, name)(**contexts))
+            
+            
+            
 
     def bluesky_setup(self):
         from bluesky import RunEngine
@@ -328,7 +362,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def change_user_type(self):
         """Shows / hides the ui-elements depending on the type of user,
         e.g. the NOMAD login button is only shown if NOMAD user is selected."""
-        nomad = self.comboBox_user_type.currentText() == 'NOMAD user'
+        user_type = self.comboBox_user_type.currentText()
+        if user_type not in ['local user', 'NOMAD user']:
+            return
+        nomad = user_type == 'NOMAD user'
         self.comboBox_user.setHidden(nomad)
         self.pushButton_editUserInfo.setHidden(nomad)
         self.pushButton_login_nomad.setHidden(not nomad)

@@ -71,7 +71,10 @@ standard_pref = {'autosave': True,
                  'log_level': 'Warning',
                  'logfile_size': 1,
                  'logfile_backups': 1,
-                 'NOMAD_URL': ''}
+                 'NOMAD_URL': '',
+                 'extension_path': os.path.join(os.getcwd(), 'extensions').replace('\\','/'),
+                 'extensions': []
+                }
 
 def get_preset_list():
     """

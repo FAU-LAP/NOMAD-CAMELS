@@ -123,10 +123,20 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.lineEdit_oasis.setText(settings['NOMAD_URL'])
         else:
             self.lineEdit_oasis.setText(standard_pref['NOMAD_URL'])
+        
+        if 'extension_path' in settings:
+            self.pathButton_extension_path.set_path(settings['extension_path'])
+        else:
+            self.pathButton_extension_path.set_path(standard_pref['extension_path'])
+        self.pathButton_extension_path.select_directory = True
 
         self.radioButton_mixed.clicked.connect(self.number_change)
         self.radioButton_plain_numbers.clicked.connect(self.number_change)
         self.radioButton_scientific.clicked.connect(self.number_change)
+        if 'extensions' in settings:
+            self.extensions = settings['extensions']
+        else:
+            self.extensions = standard_pref['extensions']
 
 
     def autosave_run_change(self):
@@ -187,7 +197,9 @@ class Settings_Window(Ui_settings_window, QDialog):
                 'log_level': self.comboBox_log_level.currentText(),
                 'logfile_size': self.spinBox_logfile_size.value(),
                 'logfile_backups': self.spinBox_logfile_number.value(),
-                'NOMAD_URL': self.lineEdit_oasis.text()}
+                'NOMAD_URL': self.lineEdit_oasis.text(),
+                'extension_path': self.pathButton_extension_path.get_path(),
+                'extensions': self.extensions}
 
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

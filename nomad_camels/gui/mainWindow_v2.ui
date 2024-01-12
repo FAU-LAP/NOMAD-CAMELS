@@ -123,7 +123,7 @@
      </widget>
     </item>
     <item row="1" column="2" colspan="10">
-     <widget class="QWidget" name="widget" native="true">
+     <widget class="QWidget" name="menu_widget" native="true">
       <property name="maximumSize">
        <size>
         <width>16777215</width>
@@ -189,7 +189,7 @@ Instruments</string>
         </widget>
        </item>
        <item row="0" column="10">
-        <widget class="QWidget" name="widget_4" native="true">
+        <widget class="QWidget" name="sample_widget" native="true">
          <layout class="QGridLayout" name="gridLayout_7">
           <property name="leftMargin">
            <number>0</number>
@@ -247,7 +247,7 @@ Instruments</string>
         </widget>
        </item>
        <item row="0" column="15">
-        <widget class="QWidget" name="widget_3" native="true">
+        <widget class="QWidget" name="session_upload_widget" native="true">
          <layout class="QGridLayout" name="gridLayout_4">
           <property name="leftMargin">
            <number>0</number>
@@ -311,7 +311,7 @@ Instruments</string>
         </widget>
        </item>
        <item row="0" column="2">
-        <widget class="QWidget" name="widget_5" native="true">
+        <widget class="QWidget" name="user_widget" native="true">
          <layout class="QGridLayout" name="gridLayout_8">
           <property name="leftMargin">
            <number>0</number>
@@ -674,6 +674,8 @@ Instruments</string>
     <addaction name="actionExport_from_databroker"/>
     <addaction name="actionVISA_driver_builder"/>
     <addaction name="actionEPICS_driver_builder"/>
+    <addaction name="separator"/>
+    <addaction name="actionManage_Extensions"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
@@ -809,6 +811,11 @@ Instruments</string>
   <action name="actionExport_from_databroker">
    <property name="text">
     <string>Export from databroker</string>
+   </property>
+  </action>
+  <action name="actionManage_Extensions">
+   <property name="text">
+    <string>Managa Add-Ons</string>
    </property>
   </action>
  </widget>
