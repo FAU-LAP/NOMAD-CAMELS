@@ -164,7 +164,7 @@ class Plot_Definer(QDialog):
     def __init__(self, parent=None, plot_data=None):
         self.plot_data = plot_data or []
         super().__init__(parent)
-        self.setWindowTitle('NOMAD-CAMELS - define plot')
+        self.setWindowTitle('Define plot - NOMAD CAMELS')
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
         cols = ['plot-type', 'name']
         comboBoxes = {'plot-type': plot_types}

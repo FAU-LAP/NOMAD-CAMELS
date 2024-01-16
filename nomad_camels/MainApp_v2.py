@@ -39,7 +39,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.meas_widget.layout().addWidget(self.button_area_meas, 2, 0, 1, 4)
         self.manual_widget.layout().addWidget(self.button_area_manual, 2, 0, 1, 3)
 
-        self.setWindowTitle('NOMAD-CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems')
+        self.setWindowTitle('NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems')
         self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
 
         image = QPixmap()
@@ -545,7 +545,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         - n_decimals: the number of displayed decimals of a number.
         - py_files_path: the path, where python files (e.g. protocols) are created.
         - meas_files_path: the path, where measurement data is stored.
-        - device_driver_path: the path, where NOMAD-CAMELS can find the installed devices.
+        - device_driver_path: the path, where NOMAD CAMELS can find the installed devices.
         - databroker_catalog_name: the name of the databroker catalog
 
         Parameters
@@ -1029,7 +1029,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         dialog = Path_Button_Dialog(self,
                                     default_dir=self.preferences['py_files_path'],
                                     file_extension='*.cprot',
-                                    title='Choose Protocol - NOMAD-CAMELS',
+                                    title='Choose Protocol - NOMAD CAMELS',
                                     text='select the protocol you want to import')
         if not dialog.exec():
             return
@@ -1220,7 +1220,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_module.run_protocol_main(self.run_engine, catalog=self.databroker_catalog, devices=devs,
                                                md={'devices': dev_data,
                                                    'description': protocol.description,
-                                                   'versions': {"NOMAD-CAMELS": '0.1',
+                                                   'versions': {"NOMAD CAMELS": '0.1',
                                                                 'EPICS': '7.0.6.2',
                                                                 'bluesky': bluesky.__version__,
                                                                 'ophyd': ophyd.__version__}})

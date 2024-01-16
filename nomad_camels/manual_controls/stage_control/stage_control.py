@@ -20,7 +20,7 @@ class Stage_Control(Manual_Control, Ui_Form):
             name = 'Stage Control'
         super().__init__(parent=parent, title=name)
         self.setupUi(self)
-        self.setWindowTitle(f'NOMAD-CAMELS - {name}')
+        self.setWindowTitle(f'{name} - NOMAD CAMELS')
         self.control_data = control_data
 
         self.pushButton_up.setIcon(self.style().standardIcon(QStyle.SP_ArrowUp))

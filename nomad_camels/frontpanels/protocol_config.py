@@ -28,7 +28,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             protocol = deepcopy(protocol)
             self.old_name = protocol.name
         self.setupUi(self)
-        self.setWindowTitle(f'{protocol.name} - Measurement Protocol - NOMAD-CAMELS')
+        self.setWindowTitle(f'{protocol.name} - Measurement Protocol - NOMAD CAMELS')
         self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
         self.configuration_main_widget.setHidden(True)
         self.general_settings = General_Protocol_Settings(protocol=protocol)
@@ -558,7 +558,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
     def change_name(self):
         """ """
-        self.setWindowTitle(f'{self.protocol.name} - Measurement Protocol - NOMAD-CAMELS')
+        self.setWindowTitle(f'{self.protocol.name} - Measurement Protocol - NOMAD CAMELS')
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
         """Overwrites the keyPressEvent of the QDialog so that it does

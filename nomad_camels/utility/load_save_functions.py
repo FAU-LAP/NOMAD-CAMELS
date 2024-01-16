@@ -3,7 +3,7 @@
 Attributes
 ----------
     appdata_path : str, path
-        The path to the local appdata of NOMAD-CAMELS
+        The path to the local appdata of NOMAD CAMELS
     preset_path : str, path
         the path, where CAMELS saves the presets, a subfolder of `appdata_path`
     backup_path : str, path

@@ -654,7 +654,7 @@ class Ui_MainWindow(object):
         self.actionOpen_Backup_Device_Preset.setText(QCoreApplication.translate("MainWindow", u"Load Backup Device Preset", None))
         self.actionLoad_Backup_Preset.setText(QCoreApplication.translate("MainWindow", u"Load Preset", None))
         self.actionAutosave_on_closing.setText(QCoreApplication.translate("MainWindow", u"Autosave on closing", None))
-        self.actionUpdate_CAMELS.setText(QCoreApplication.translate("MainWindow", u"Update NOMAD-CAMELS", None))
+        self.actionUpdate_CAMELS.setText(QCoreApplication.translate("MainWindow", u"Update NOMAD CAMELS", None))
         self.actionDark_Mode.setText(QCoreApplication.translate("MainWindow", u"Dark Mode", None))
         self.actionUndo.setText(QCoreApplication.translate("MainWindow", u"Undo (ctrl + z)", None))
         self.actionRedo.setText(QCoreApplication.translate("MainWindow", u"Redo (ctrl + y)", None))

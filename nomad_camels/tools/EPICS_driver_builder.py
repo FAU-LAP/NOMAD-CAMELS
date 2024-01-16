@@ -19,7 +19,7 @@ class EPICS_Driver_Builder(QDialog):
             self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
         except:
             pass
-        self.setWindowTitle('NOMAD-CAMELS - EPICS-driver-builder')
+        self.setWindowTitle('EPICS-driver-builder - NOMAD CAMELS')
 
         label_name = QLabel('Instrument Name:')
         self.lineEdit_name = QLineEdit()

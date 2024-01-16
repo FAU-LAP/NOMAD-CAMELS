@@ -35,7 +35,7 @@ class Manual_Control(QWidget):
         # self.setLayout(layout)
         self.control_data = control_data or {}
 
-        self.setWindowTitle(f'NOMAD-CAMELS - {title}')
+        self.setWindowTitle(f'{title} - NOMAD CAMELS')
         self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
         self.name = title
         self.device = None
@@ -113,7 +113,7 @@ class Manual_Control_Config(QDialog):
         self.setLayout(layout)
         self.control_type = control_type or 'Manual_Control'
 
-        self.setWindowTitle(f'{title} - NOMAD-CAMELS')
+        self.setWindowTitle(f'{title} - NOMAD CAMELS')
 
         self.buttonBox = QDialogButtonBox()
         self.buttonBox.setOrientation(Qt.Horizontal)

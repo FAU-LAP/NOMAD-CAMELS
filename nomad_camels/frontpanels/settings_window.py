@@ -13,7 +13,7 @@ class Settings_Window(Ui_settings_window, QDialog):
     def __init__(self, parent=None, settings=None):
         super().__init__(parent)
         self.setupUi(self)
-        self.setWindowTitle('NOMAD-CAMELS - Settings')
+        self.setWindowTitle('Settings - NOMAD CAMELS')
         themes = QStyleFactory.keys()
         themes.append('qt-material')
         self.comboBox_theme.addItems(themes)
