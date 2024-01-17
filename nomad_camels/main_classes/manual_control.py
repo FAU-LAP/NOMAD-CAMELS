@@ -56,6 +56,16 @@ class Manual_Control(QWidget):
         self.closing.emit()
         return super().closeEvent(a0)
 
+    def propagate_exception(self, exception):
+        """Propagates an exception to the main UI window.
+
+        Parameters
+        ----------
+        exception : Exception
+            The exception to be propagated.
+        """
+        raise exception
+
     def start_device(self, device_name):
         """Starts a device by using the
         `device_handling.InstantiateDevicesThread` class.
@@ -76,6 +86,7 @@ class Manual_Control(QWidget):
             self.instantiate_devices_thread.finished.connect(self.device_ready)
             self.setCursor(Qt.WaitCursor)
             self.setEnabled(False)
+            self.instantiate_devices_thread.exception_raised.connect(self.propagate_exception)
             self.instantiate_devices_thread.start()
 
     def start_multiple_devices(self, device_names, channels=False):
@@ -91,6 +102,7 @@ class Manual_Control(QWidget):
         self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(device_names, channels)
         self.instantiate_devices_thread.finished.connect(self.device_ready)
         self.setEnabled(False)
+        self.instantiate_devices_thread.exception_raised.connect(self.propagate_exception)
         self.instantiate_devices_thread.start()
 
     def device_ready(self):

@@ -1198,10 +1198,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.re_subs += subs
             self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(device_list)
             self.instantiate_devices_thread.finished.connect(self.run_protocol_part2)
+            self.instantiate_devices_thread.exception_raised.connect(self.propagate_exception)
             self.instantiate_devices_thread.start()
         except Exception as e:
             self.protocol_finished()
             raise e
+    
+    def propagate_exception(self, exception):
+        self.protocol_finished()
+        raise exception
 
     def run_protocol_part2(self):
         try:

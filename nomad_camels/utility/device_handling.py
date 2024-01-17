@@ -27,7 +27,7 @@ from nomad_camels.bluesky_handling import helper_functions
 import copy
 import pathlib
 
-from PySide6.QtCore import QThread
+from PySide6.QtCore import QThread, Signal
 
 local_packages = {}
 local_package_paths = {}
@@ -280,6 +280,8 @@ class InstantiateDevicesThread(QThread):
     """
     Thread for starting devices in the background.
     """
+    exception_raised = Signal(Exception)
+
     def __init__(self, device_list, channels=False):
         super().__init__()
         self.channels = channels
@@ -312,13 +314,15 @@ class InstantiateDevicesThread(QThread):
             self.devices, self.device_config = instantiate_devices(main_thread_devs)
 
     def run(self):
-        print(self.device_list)
-        if self.channels:
-            devices, device_config = start_devices_from_channel_list(self.device_list)
-        else:
-            devices, device_config = instantiate_devices(self.device_list)
-        self.devices.update(devices)
-        self.device_config.update(device_config)
+        try:
+            if self.channels:
+                devices, device_config = start_devices_from_channel_list(self.device_list)
+            else:
+                devices, device_config = instantiate_devices(self.device_list)
+            self.devices.update(devices)
+            self.device_config.update(device_config)
+        except Exception as e:
+            self.exception_raised.emit(e)
 
 def close_devices(device_list):
     """
