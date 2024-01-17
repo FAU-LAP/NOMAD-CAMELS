@@ -134,7 +134,7 @@ class PlotWidget(QWidget):
                  ylim=None, epoch='run', parent=None, namespace=None, ylabel='',
                  xlabel='', title='', stream_name='primary', fits=None,
                  do_plot=True, multi_stream=False, y_axes=None,
-                 logX=False, logY=False, logY2=False, **kwargs):
+                 logX=False, logY=False, logY2=False, maxlen=np.inf, **kwargs):
         super().__init__(parent=parent)
         canvas = MPLwidget()
         if isinstance(y_names, str):
@@ -216,7 +216,7 @@ class PlotWidget(QWidget):
         self.pushButton_clear.clicked.connect(self.clear_plot)
         self.plot_options = Plot_Options(self, self.ax, self.livePlot, self.ax2)
         label_n_data = QLabel('# data points:')
-        self.lineEdit_n_data = QLineEdit(str(np.inf))
+        self.lineEdit_n_data = QLineEdit(str(maxlen))
         self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
 
         layout = QGridLayout()
@@ -242,6 +242,7 @@ class PlotWidget(QWidget):
             self.plot_options.checkBox_log_y2.setChecked(logY2)
             self.plot_options.set_log()
         place_widget(self)
+        self.change_maxlen()
 
     def change_maxlen(self):
         """ """
@@ -1006,11 +1007,11 @@ class MultiLivePlot(LivePlot, QObject):
         """
         self.__setup()
         # The doc is not used; we just use the signal that a new run began.
-        self._epoch_offset = doc['time']  # used if self.x == 'time'
-        self.x_data = []
-        self.y_data = {}
-        for y in self.ys:
-            self.y_data[y] = []
+        # self._epoch_offset = doc['time']  # used if self.x == 'time'
+        # self.x_data = []
+        # self.y_data = {}
+        # for y in self.ys:
+        #     self.y_data[y] = []
         # label = " :: ".join(
             # [str(doc.get(name, name)) for name in self.legend_keys])
         kwargs = ChainMap({'ls': 'None', 'marker': 'x'})
@@ -1193,7 +1194,7 @@ class MultiLivePlot(LivePlot, QObject):
 class PlotWidget_NoBluesky(QWidget):
     """ """
     def __init__(self, xlabel='', ylabel='', parent=None, title='', ylabel2='',
-                 y_axes=None, labels=(), first_hidden=None, show_plot=True):
+                 y_axes=None, labels=(), first_hidden=None, show_plot=True, maxlen=np.inf):
         app = QCoreApplication.instance()
         if app is None:
             app = QApplication(sys.argv)
@@ -1212,8 +1213,9 @@ class PlotWidget_NoBluesky(QWidget):
         self.pushButton_clear.clicked.connect(self.clear_plot)
         self.plot_options = Plot_Options(self, self.ax, self.plot)
         label_n_data = QLabel('# data points:')
-        self.lineEdit_n_data = QLineEdit(str(np.inf))
+        self.lineEdit_n_data = QLineEdit(str(maxlen))
         self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
+        self.change_maxlen()
 
         self.setWindowTitle(title or f'{xlabel} vs. {ylabel}')
         self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))

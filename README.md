@@ -18,9 +18,15 @@ For more information and documentation visit [this page](https://fau-lap.github.
 # Changelog
 
 ## 0.2.4 (in progress)
+Features:
+- Refactor device instantiation to be handled in another thread to keep the UI responsive, this might cause some problems with instrument-specific manual controls that are not yet updated accordingly
+- Added the plot point number to the definition already
+
 Changes:
 - the imports needed at a later time are now running in another thread after starting the main app to improve speed
-- Refactor device instantiation to be handled in another thread to keep the UI responsive, this might cause some problems with instrument-specific manual controls that are not yet updated accordingly
+- Changed displayed window titles to show "NOMAD CAMELS" last
+- Changed displayed name to "NOMAD CAMELS" wherever found
+- Removed checkbox whether to plot an xy-plot, it is now always plotted
 
 Fixes:
 - fixed export from databroker if the run failed such that no "stop" is in metadata
