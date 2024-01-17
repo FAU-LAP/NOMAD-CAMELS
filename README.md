@@ -26,6 +26,7 @@ Fixes:
 - fixed export from databroker if the run failed such that no "stop" is in metadata
 - plot widget now shows the table to change linestyle and markerstyle
 - Refactor file paths for cross-platform compatibility in device_driver_builder.py
+- Fix issue of stage control not updating set_channel when moving manually
 
 
 ## 0.2.3

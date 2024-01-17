@@ -245,7 +245,10 @@ class Stage_Control(Manual_Control, Ui_Form):
         step_size = self.control_data[f'stepSize_{ax_names[axis]}']
         if not up:
             step_size *= -1
-        before = self.set_channels[axis].get()
+        if self.read_channels[axis] is not None:
+            before = self.read_channels[axis].get()
+        else:
+            before = self.set_channels[axis].get()
         self.set_channels[axis].put(before + step_size)
 
     def reference_drive(self):
