@@ -17,10 +17,11 @@ For more information and documentation visit [this page](https://fau-lap.github.
 
 # Changelog
 
-## 0.2.4 (in progress)
+## 1.0.0 (in progress)
 Features:
 - Refactor device instantiation to be handled in another thread to keep the UI responsive, this might cause some problems with instrument-specific manual controls that are not yet updated accordingly
 - Added the plot point number to the definition already
+- It is now possible to not configure instruments when starting a protocol, this feature has to be used with caution!
 
 Changes:
 - the imports needed at a later time are now running in another thread after starting the main app to improve speed

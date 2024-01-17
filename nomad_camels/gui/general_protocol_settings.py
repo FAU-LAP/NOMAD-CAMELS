@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'general_protocol_settings.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.2
+## Created by: Qt User Interface Compiler version 6.5.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,7 +23,7 @@ class Ui_Protocol_Settings(object):
     def setupUi(self, Protocol_Settings):
         if not Protocol_Settings.objectName():
             Protocol_Settings.setObjectName(u"Protocol_Settings")
-        Protocol_Settings.resize(397, 668)
+        Protocol_Settings.resize(258, 668)
         self.gridLayout = QGridLayout(Protocol_Settings)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -52,6 +52,11 @@ class Ui_Protocol_Settings(object):
         self.checkBox_json_exp.setObjectName(u"checkBox_json_exp")
 
         self.gridLayout_2.addWidget(self.checkBox_json_exp, 0, 1, 1, 1)
+
+        self.checkBox_no_config = QCheckBox(self.widget_2)
+        self.checkBox_no_config.setObjectName(u"checkBox_no_config")
+
+        self.gridLayout_2.addWidget(self.checkBox_no_config, 1, 0, 1, 2)
 
 
         self.gridLayout.addWidget(self.widget_2, 4, 0, 1, 6)
@@ -166,6 +171,7 @@ class Ui_Protocol_Settings(object):
         Protocol_Settings.setWindowTitle(QCoreApplication.translate("Protocol_Settings", u"Form", None))
         self.checkBox_csv_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export data to csv", None))
         self.checkBox_json_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export metadata to json", None))
+        self.checkBox_no_config.setText(QCoreApplication.translate("Protocol_Settings", u"do not reconfigure instruments at start", None))
         self.label.setText(QCoreApplication.translate("Protocol_Settings", u"Filename:", None))
         self.label_2.setText(QCoreApplication.translate("Protocol_Settings", u"Variables", None))
         self.pushButton_add_variable.setText(QCoreApplication.translate("Protocol_Settings", u"+", None))

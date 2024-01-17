@@ -170,7 +170,7 @@ def get_functions_from_string_list(func_list):
         funcs.append(get_funtion_from_string(func))
     return funcs
 
-def start_devices_from_channel_list(channel_list):
+def start_devices_from_channel_list(channel_list, skip_config=False):
     """
     Instantiates the ophyd devices that are needed by the given channels.
     Returns the ophyd devices and their metadata.
@@ -192,10 +192,10 @@ def start_devices_from_channel_list(channel_list):
     for channel in channel_list:
         dev_list.add(variables_handling.channels[channel].device)
     dev_list = list(dev_list)
-    devs, dev_data = instantiate_devices(dev_list)
+    devs, dev_data = instantiate_devices(dev_list, skip_config=skip_config)
     return devs, dev_data
 
-def instantiate_devices(device_list):
+def instantiate_devices(device_list, skip_config=False):
     """
     Starts the given devices, or increases their run-count by 1 and returns
     them together with their settings.
@@ -221,7 +221,10 @@ def instantiate_devices(device_list):
             # getting all the settings
             device = variables_handling.devices[dev]
             classname = device.ophyd_class_name
-            config = copy.deepcopy(device.get_config())
+            if skip_config:
+                config = {}
+            else:
+                config = copy.deepcopy(device.get_config())
             settings = copy.deepcopy(device.get_settings())
             additional_info = copy.deepcopy(device.get_additional_info())
             if 'connection' in settings:
@@ -282,10 +285,11 @@ class InstantiateDevicesThread(QThread):
     """
     exception_raised = Signal(Exception)
 
-    def __init__(self, device_list, channels=False):
+    def __init__(self, device_list, channels=False, skip_config=False):
         super().__init__()
         self.channels = channels
         self.device_list = device_list
+        self.skip_config = skip_config
         main_thread_devs = []
         if channels:
             for channel in device_list:
@@ -309,16 +313,16 @@ class InstantiateDevicesThread(QThread):
         for dev in main_thread_devs:
             self.device_list.remove(dev)
         if self.channels:
-            self.devices, self.device_config = start_devices_from_channel_list(main_thread_devs)
+            self.devices, self.device_config = start_devices_from_channel_list(main_thread_devs, skip_config=skip_config)
         else:
-            self.devices, self.device_config = instantiate_devices(main_thread_devs)
+            self.devices, self.device_config = instantiate_devices(main_thread_devs, skip_config=skip_config)
 
     def run(self):
         try:
             if self.channels:
-                devices, device_config = start_devices_from_channel_list(self.device_list)
+                devices, device_config = start_devices_from_channel_list(self.device_list, skip_config=self.skip_config)
             else:
-                devices, device_config = instantiate_devices(self.device_list)
+                devices, device_config = instantiate_devices(self.device_list, skip_config=self.skip_config)
             self.devices.update(devices)
             self.device_config.update(device_config)
         except Exception as e:

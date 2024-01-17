@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
+    <width>258</width>
     <height>668</height>
    </rect>
   </property>
@@ -65,6 +65,13 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkBox_no_config">
+        <property name="text">
+         <string>do not reconfigure instruments at start</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -81,6 +88,7 @@
      </property>
      <property name="font">
       <font>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -94,6 +102,7 @@
      <property name="font">
       <font>
        <pointsize>9</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -139,6 +148,7 @@
      <property name="font">
       <font>
        <pointsize>12</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -160,6 +170,7 @@
      </property>
      <property name="font">
       <font>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
