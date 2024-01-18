@@ -107,7 +107,7 @@ class Ui_Form(object):
         self.pushButton_install_update_selected.setObjectName(u"pushButton_install_update_selected")
         self.pushButton_install_update_selected.setEnabled(True)
         self.pushButton_install_update_selected.setStyleSheet(u"QPushButton {\n"
-"                                background-color: #2a4cdf; \n"
+"                                background-color: #4CAF50; \n"
 "                                color: white; \n"
 "                                border: none; \n"
 "                                padding: 2px 10px; \n"
@@ -120,7 +120,7 @@ class Ui_Form(object):
 "                            }\n"
 "\n"
 "                            QPushButton:hover {\n"
-"                                background-color: #1a3cbf;\n"
+"                                background-color: #45a049;\n"
 "                            }")
 
         self.gridLayout.addWidget(self.pushButton_install_update_selected, 6, 0, 1, 1)
