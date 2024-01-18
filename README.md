@@ -30,6 +30,7 @@ Changes:
 - Changed displayed window titles to show "NOMAD CAMELS" last
 - Changed displayed name to "NOMAD CAMELS" wherever found
 - Removed checkbox whether to plot an xy-plot, it is now always plotted
+- Added color to GUI buttons for better usability
 
 Fixes:
 - fixed export from databroker if the run failed such that no "stop" is in metadata
