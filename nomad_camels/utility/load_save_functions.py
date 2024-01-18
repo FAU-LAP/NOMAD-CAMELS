@@ -3,7 +3,7 @@
 Attributes
 ----------
     appdata_path : str, path
-        The path to the local appdata of NOMAD-CAMELS
+        The path to the local appdata of NOMAD CAMELS
     preset_path : str, path
         the path, where CAMELS saves the presets, a subfolder of `appdata_path`
     backup_path : str, path
@@ -25,6 +25,7 @@ from os.path import isdir
 from os import makedirs, getenv, listdir
 from shutil import copyfile
 import importlib
+from glob import glob
 
 import numpy as np
 import pandas as pd
@@ -33,13 +34,14 @@ from PySide6.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel,\
     QGridLayout
 from PySide6.QtGui import QAction
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import ophyd
 
 from nomad_camels.main_classes import protocol_class, device_class, loop_step
 from nomad_camels.utility.load_save_helper_functions import load_plots
 from nomad_camels.utility.device_handling import load_local_packages
+from nomad_camels.utility import variables_handling
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
 appdata_path = f'{getenv("LOCALAPPDATA")}/nomad_camels'
@@ -72,7 +74,10 @@ standard_pref = {'autosave': True,
                  'log_level': 'Warning',
                  'logfile_size': 1,
                  'logfile_backups': 1,
-                 'NOMAD_URL': ''}
+                 'NOMAD_URL': '',
+                 'backups': 'smart',
+                 'backup_number': 30,
+                 'number_databroker_files': 30}
 
 def get_preset_list():
     """
@@ -168,6 +173,45 @@ def make_backup(preset_file:str):
     now = datetime.now()
     backup_name = f'{backup_save_path}{now.strftime("%Y-%m-%d_%H-%M-%S")}_{preset_file}'
     copyfile(f'{preset_path}{preset_file}', backup_name)
+
+    if not 'backups' in variables_handling.preferences:
+        return
+    backups = sorted(glob(f'{backup_save_path}*.preset'), key=os.path.getmtime)
+    if variables_handling.preferences['backups'] == 'number':
+        if 'backup_number' in variables_handling.preferences:
+            backup_number = variables_handling.preferences['backup_number']
+            while len(backups) > backup_number:
+                os.remove(backups.pop(0))
+    elif variables_handling.preferences['backups'] == 'smart':
+        backups = [b for b in backups if datetime.fromtimestamp(os.path.getmtime(b)) < now - timedelta(days=7)]
+        for day in range(8, 31):
+            day_ago = now - timedelta(days=day)
+            daily_backups = [b for b in backups if datetime.fromtimestamp(os.path.getmtime(b)).date() == day_ago.date()]
+            while len(daily_backups) > 1:
+                backup = daily_backups.pop(0)
+                os.remove(backup)
+                backups.remove(backup)
+        backups = [b for b in backups if datetime.fromtimestamp(os.path.getmtime(b)) < now - timedelta(days=30)]
+        for month in range(1, 13):
+            month_ago = now - timedelta(days=30*month)
+            monthly_backups = [b for b in backups if datetime.fromtimestamp(os.path.getmtime(b)).month == month_ago.month]
+            while len(monthly_backups) > 1:
+                backup = monthly_backups.pop(0)
+                os.remove(backup)
+                backups.remove(backup)
+        backups = [b for b in backups if datetime.fromtimestamp(os.path.getmtime(b)) < now - timedelta(days=365)]
+        if not backups:
+            return
+        for year in range(1, now.year - datetime.fromtimestamp(os.path.getmtime(backups[0])).year + 1):
+            year_ago = now - timedelta(days=365*year)
+            yearly_backups = [b for b in backups if datetime.fromtimestamp(os.path.getmtime(b)).year == year_ago.year]
+            while len(yearly_backups) > 1:
+                backup = yearly_backups.pop(0)
+                os.remove(backup)
+                backups.remove(backup)
+
+
+
 
 def load_save_dict(string_dict:dict, object_dict:dict, update_missing_key=False, remove_extra_key=False):
     """For all keys both given dictionaries have in common, the value of

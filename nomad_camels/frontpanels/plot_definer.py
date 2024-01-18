@@ -1,4 +1,5 @@
 import copy
+import numpy as np
 
 from PySide6.QtWidgets import QDialog, QWidget, QDialogButtonBox, QGridLayout,\
     QLabel, QMessageBox, QPushButton, QCheckBox
@@ -43,6 +44,7 @@ class Plot_Info:
         self.plot_all_available = True
         self.all_fit = all_fit or Fit_Info()
         self.name = ''
+        self.maxlen = np.inf
         self.update_name()
 
     def update_name(self):
@@ -164,7 +166,7 @@ class Plot_Definer(QDialog):
     def __init__(self, parent=None, plot_data=None):
         self.plot_data = plot_data or []
         super().__init__(parent)
-        self.setWindowTitle('NOMAD-CAMELS - define plot')
+        self.setWindowTitle('Define plot - NOMAD CAMELS')
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
         cols = ['plot-type', 'name']
         comboBoxes = {'plot-type': plot_types}
@@ -391,14 +393,14 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.checkBox_same_fit.clicked.connect(self.fit_change)
         self.layout().replaceWidget(self.y_axes, self.y_table)
 
-        self.checkBox_plot.clicked.connect(self.plot_change)
+        # self.checkBox_plot.clicked.connect(self.plot_change)
         self.load_data()
-        self.plot_change()
+        # self.plot_change()
         self.fit_change()
 
-    def plot_change(self):
-        """ """
-        self.plotting_group.setEnabled(self.checkBox_plot.isChecked())
+    # def plot_change(self):
+    #     """ """
+    #     self.plotting_group.setEnabled(self.checkBox_plot.isChecked())
 
     def load_data(self):
         """ """
@@ -407,7 +409,8 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.lineEdit_xlabel.setText(self.plot_data.xlabel)
         self.lineEdit_ylabel.setText(self.plot_data.ylabel)
         self.lineEdit_ylabel2.setText(self.plot_data.ylabel2)
-        self.checkBox_plot.setChecked(self.plot_data.do_plot)
+        # self.checkBox_plot.setChecked(self.plot_data.do_plot)
+        self.lineEdit_nPoints.setText(str(self.plot_data.maxlen))
         self.checkBox_same_fit.setChecked(self.plot_data.same_fit)
         self.checkBox_xlog.setChecked(self.plot_data.logX)
         self.checkBox_ylog.setChecked(self.plot_data.logY)
@@ -422,7 +425,11 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
         self.plot_data.ylabel = self.lineEdit_ylabel.text()
         self.plot_data.ylabel2 = self.lineEdit_ylabel2.text()
-        self.plot_data.do_plot = self.checkBox_plot.isChecked()
+        # self.plot_data.do_plot = self.checkBox_plot.isChecked()
+        try:
+            self.plot_data.maxlen = int(self.lineEdit_nPoints.text())
+        except ValueError:
+            self.plot_data.maxlen = np.inf
         self.plot_data.same_fit = self.checkBox_same_fit.isChecked()
         self.plot_data.logX = self.checkBox_xlog.isChecked()
         self.plot_data.logY = self.checkBox_ylog.isChecked()

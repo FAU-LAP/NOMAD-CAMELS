@@ -22,7 +22,7 @@ class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
             self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
         except:
             pass
-        self.setWindowTitle('NOMAD Camels - driver-builder')
+        self.setWindowTitle('Driver-builder - NOMAD CAMELS')
 
         label_custom = QLabel('Custom Channels')
         label_in = QLabel('Read Channels - VISA')
@@ -242,7 +242,7 @@ class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
         toml_string = '[build-system]\nrequires = ["setuptools>=61.0"]\nbuild-backend = "setuptools.build_meta"\n\n'
         toml_string += f'[project]\nname = "nomad_camels_driver_{dev_name}"\nversion = "0.1.0"\n'
         toml_string += 'authors = [\n\t{name="enter your name here!", email="contact@email.com"}\n]\n'
-        toml_string += f'description = "Instrument driver for {dev_name} for NOMAD-CAMELS"\n'
+        toml_string += f'description = "Instrument driver for {dev_name} for NOMAD CAMELS"\n'
         toml_string += 'readme = "README.md"\n'
         toml_string += 'requires-python = ">=3.9.6"\n'
         toml_string += 'classifiers = [\n\t"Programming Language :: Python :: 3",\n\t"License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",\n]\n\n'

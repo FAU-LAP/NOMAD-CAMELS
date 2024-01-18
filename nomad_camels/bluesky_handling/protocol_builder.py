@@ -187,7 +187,10 @@ def build_protocol(protocol, file_path,
     for dev in protocol.get_used_devices():
         device = variables_handling.devices[dev]
         classname = device.ophyd_class_name
-        config = copy.deepcopy(device.get_config())
+        if protocol.skip_config:
+            config = {}
+        else:
+            config = copy.deepcopy(device.get_config())
         settings = copy.deepcopy(device.get_settings())
         additional_info = copy.deepcopy(device.get_additional_info())
         # informations on the connection is reshaped to be useful

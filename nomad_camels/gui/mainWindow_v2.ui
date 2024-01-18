@@ -967,7 +967,7 @@ QPushButton:disabled {
   </action>
   <action name="actionUpdate_CAMELS">
    <property name="text">
-    <string>Update NOMAD-CAMELS</string>
+    <string>Update NOMAD CAMELS</string>
    </property>
   </action>
   <action name="actionDark_Mode">

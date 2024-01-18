@@ -13,7 +13,7 @@ class Settings_Window(Ui_settings_window, QDialog):
     def __init__(self, parent=None, settings=None):
         super().__init__(parent)
         self.setupUi(self)
-        self.setWindowTitle('NOMAD-CAMELS - Settings')
+        self.setWindowTitle('Settings - NOMAD CAMELS')
         themes = QStyleFactory.keys()
         themes.append('qt-material')
         self.comboBox_theme.addItems(themes)
@@ -123,6 +123,25 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.lineEdit_oasis.setText(settings['NOMAD_URL'])
         else:
             self.lineEdit_oasis.setText(standard_pref['NOMAD_URL'])
+        
+        
+        if 'backups' in settings:
+            if settings['backups'] == 'all':
+                self.radioButton_all_backups.setChecked(True)
+            elif settings['backups'] == 'number':
+                self.radioButton_n_backups.setChecked(True)
+            else:
+                self.radioButton_smart_backups.setChecked(True)
+        else:
+            self.radioButton_smart_backups.setChecked(True)
+        if 'backup_number' in settings:
+            self.spinBox_backup_number.setValue(settings['backup_number'])
+        else:
+            self.spinBox_backup_number.setValue(standard_pref['backup_number'])
+        if 'number_databroker_files' in settings:
+            self.spinBox_n_databroker_files.setValue(settings['number_databroker_files'])
+        else:
+            self.spinBox_n_databroker_files.setValue(standard_pref['number_databroker_files'])
 
         self.radioButton_mixed.clicked.connect(self.number_change)
         self.radioButton_plain_numbers.clicked.connect(self.number_change)
@@ -166,6 +185,12 @@ class Settings_Window(Ui_settings_window, QDialog):
             numbers = 'scientific'
         else:
             numbers = 'mixed'
+        if self.radioButton_all_backups.isChecked():
+            backups = 'all'
+        elif self.radioButton_n_backups.isChecked():
+            backups = 'number'
+        else:
+            backups = 'smart'
         return {'autosave': self.checkBox_autosave.isChecked(),
                 'autosave_run': self.checkBox_autosave_run.isChecked(),
                 'backup_before_run': self.checkBox_backup_before_run.isChecked(),
@@ -187,7 +212,11 @@ class Settings_Window(Ui_settings_window, QDialog):
                 'log_level': self.comboBox_log_level.currentText(),
                 'logfile_size': self.spinBox_logfile_size.value(),
                 'logfile_backups': self.spinBox_logfile_number.value(),
-                'NOMAD_URL': self.lineEdit_oasis.text()}
+                'NOMAD_URL': self.lineEdit_oasis.text(),
+                'backups': backups,
+                'backup_number': self.spinBox_backup_number.value(),
+                'number_databroker_files': self.spinBox_n_databroker_files.value(),
+                }
 
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

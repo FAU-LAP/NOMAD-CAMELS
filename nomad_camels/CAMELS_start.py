@@ -16,7 +16,7 @@ class LoadingScreen(QDialog):
     """ """
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("NOMAD-CAMELS - Loading...")
+        self.setWindowTitle("NOMAD CAMELS - Loading...")
         self.setCursor(Qt.WaitCursor)
         layout = QGridLayout()
         self.setLayout(layout)
@@ -109,7 +109,7 @@ if __name__ == '__main__':
                     pass
                 except AttributeError:
                     pass
-            self.update_text.emit('starting NOMAD-CAMELS...')
+            self.update_text.emit('starting NOMAD CAMELS...')
             self.update_progress.emit(int((n-1)/n * 96))
             from nomad_camels import MainApp_v2
 

@@ -366,4 +366,3 @@ class Additional_Imports_Thread(QThread):
         self.imports.append(device_driver_builder)
         self.imports.append(EPICS_driver_builder)
         self.imports.append(databroker_exporter)
-        print('finished all additional imports')

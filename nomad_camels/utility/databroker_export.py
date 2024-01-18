@@ -183,7 +183,7 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
                 entry['experiment_identifier'] = ident
             proc = entry.create_group('process')
             proc.attrs['NX_class'] = 'NXprocess'
-            proc['program'] = 'NOMAD-CAMELS'
+            proc['program'] = 'NOMAD CAMELS'
             proc['program'].attrs['version'] = '0.1'
             proc['program'].attrs['program_url'] = 'https://github.com/FAU-LAP/NOMAD-CAMELS'
             version_dict = meta_start.pop('versions')

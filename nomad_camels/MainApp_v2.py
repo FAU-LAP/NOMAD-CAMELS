@@ -39,7 +39,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.meas_widget.layout().addWidget(self.button_area_meas, 2, 0, 1, 4)
         self.manual_widget.layout().addWidget(self.button_area_manual, 2, 0, 1, 3)
 
-        self.setWindowTitle('NOMAD-CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems')
+        self.setWindowTitle('NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems')
         self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
 
         image = QPixmap()
@@ -545,7 +545,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         - n_decimals: the number of displayed decimals of a number.
         - py_files_path: the path, where python files (e.g. protocols) are created.
         - meas_files_path: the path, where measurement data is stored.
-        - device_driver_path: the path, where NOMAD-CAMELS can find the installed devices.
+        - device_driver_path: the path, where NOMAD CAMELS can find the installed devices.
         - databroker_catalog_name: the name of the databroker catalog
 
         Parameters
@@ -1029,7 +1029,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         dialog = Path_Button_Dialog(self,
                                     default_dir=self.preferences['py_files_path'],
                                     file_extension='*.cprot',
-                                    title='Choose Protocol - NOMAD-CAMELS',
+                                    title='Choose Protocol - NOMAD CAMELS',
                                     text='select the protocol you want to import')
         if not dialog.exec():
             return
@@ -1171,7 +1171,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         self.setCursor(Qt.WaitCursor)
         # IMPORT importlib, bluesky, ophyd and time only if needed
-        import importlib, bluesky, ophyd, time
+        import importlib
         if not self.run_engine:
             self.bluesky_setup()
         self.still_running = True
@@ -1194,21 +1194,38 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             for plot in plots:
                 self.add_to_plots(plot)
             device_list = protocol.get_used_devices()
-            devs, dev_data = device_handling.instantiate_devices(device_list)
-            self.current_protocol_device_list = device_list
-            additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
+            self.current_protocol_device_list = list(device_list)
             self.re_subs += subs
+            self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(device_list, skip_config=protocol.skip_config)
+            self.instantiate_devices_thread.finished.connect(self.run_protocol_part2)
+            self.instantiate_devices_thread.exception_raised.connect(self.propagate_exception)
+            self.instantiate_devices_thread.start()
+        except Exception as e:
+            self.protocol_finished()
+            raise e
+    
+    def propagate_exception(self, exception):
+        self.protocol_finished()
+        raise exception
+
+    def run_protocol_part2(self):
+        try:
+            devs = self.instantiate_devices_thread.devices
+            dev_data = self.instantiate_devices_thread.device_config
+            additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
             self.add_subs_and_plots_from_dict(additionals)
         except Exception as e:
             self.protocol_finished()
             raise e
+        import bluesky, ophyd, time
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
         self.pushButton_stop.setEnabled(True)
+        protocol = self.running_protocol
         self.protocol_module.run_protocol_main(self.run_engine, catalog=self.databroker_catalog, devices=devs,
                                                md={'devices': dev_data,
                                                    'description': protocol.description,
-                                                   'versions': {"NOMAD-CAMELS": '0.1',
+                                                   'versions': {"NOMAD CAMELS": '0.1',
                                                                 'EPICS': '7.0.6.2',
                                                                 'bluesky': bluesky.__version__,
                                                                 'ophyd': ophyd.__version__}})
@@ -1317,6 +1334,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.button_area_meas.enable_run_buttons()
         self.protocol_stepper_signal.emit(100)
         self.setCursor(Qt.ArrowCursor)
+        if 'number_databroker_files' in variables_handling.preferences:
+            n_files = variables_handling.preferences['number_databroker_files']
+            if n_files > 0:
+                name = self.preferences['databroker_catalog_name']
+                meas_dir = self.preferences['meas_files_path']
+                catalog_dir = f'{meas_dir}/databroker/{name}'
+                if os.path.isdir(catalog_dir):
+                    files = os.listdir(catalog_dir)
+                    if len(files) > n_files:
+                        files.sort(key=lambda x: os.path.getmtime(f'{catalog_dir}/{x}'))
+                        for file in files[:-n_files]:
+                            os.remove(f'{catalog_dir}/{file}')
         self.still_running = False
 
     def build_protocol(self, protocol_name, ask_file=True):
