@@ -196,7 +196,11 @@
           </widget>
          </item>
          <item row="5" column="1">
-          <widget class="QSpinBox" name="spinBox_n_databroker_files"/>
+          <widget class="QSpinBox" name="spinBox_n_databroker_files">
+           <property name="toolTip">
+            <string>with &quot;0&quot; all files will be kept</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

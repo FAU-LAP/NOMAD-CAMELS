@@ -23,6 +23,7 @@ Features:
 - Added the plot point number to the definition already
 - It is now possible to not configure instruments when starting a protocol, this feature has to be used with caution!
 - Number of backuped preset files can now be curated. Possibilities are to keep all, only a certain number or "smart" way: all backups of the last 7 days, one for each of the last 30 days, one for each of the last 12 months and one for each year.
+- Old databroker files may now be removed.
 
 Changes:
 - the imports needed at a later time are now running in another thread after starting the main app to improve speed

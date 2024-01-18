@@ -1334,6 +1334,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.button_area_meas.enable_run_buttons()
         self.protocol_stepper_signal.emit(100)
         self.setCursor(Qt.ArrowCursor)
+        if 'number_databroker_files' in variables_handling.preferences:
+            n_files = variables_handling.preferences['number_databroker_files']
+            if n_files > 0:
+                name = self.preferences['databroker_catalog_name']
+                meas_dir = self.preferences['meas_files_path']
+                catalog_dir = f'{meas_dir}/databroker/{name}'
+                if os.path.isdir(catalog_dir):
+                    files = os.listdir(catalog_dir)
+                    if len(files) > n_files:
+                        files.sort(key=lambda x: os.path.getmtime(f'{catalog_dir}/{x}'))
+                        for file in files[:-n_files]:
+                            os.remove(f'{catalog_dir}/{file}')
         self.still_running = False
 
     def build_protocol(self, protocol_name, ask_file=True):
