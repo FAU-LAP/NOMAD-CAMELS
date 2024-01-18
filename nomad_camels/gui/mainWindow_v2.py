@@ -28,7 +28,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1060, 370)
+        MainWindow.resize(1062, 370)
         self.actionPresets = QAction(MainWindow)
         self.actionPresets.setObjectName(u"actionPresets")
         self.actionOptions = QAction(MainWindow)
@@ -95,7 +95,7 @@ class Ui_MainWindow(object):
         self.pushButton_clear_log = QPushButton(self.centralwidget)
         self.pushButton_clear_log.setObjectName(u"pushButton_clear_log")
         self.pushButton_clear_log.setStyleSheet(u"QPushButton {\n"
-"        background-color: #bf8a36;\n"
+"        background-color: #2a4cdf;\n"
 "        color: white;\n"
 "        border: none;\n"
 "        padding: 2px 10px;\n"
@@ -108,7 +108,7 @@ class Ui_MainWindow(object):
 "    }\n"
 "\n"
 "    QPushButton:hover {\n"
-"        background-color: #8a5a23;\n"
+"        background-color: #1a3cbf;\n"
 "    }")
 
         self.gridLayout_5.addWidget(self.pushButton_clear_log, 8, 9, 1, 2)
@@ -132,7 +132,10 @@ class Ui_MainWindow(object):
 "\n"
 "            QPushButton:hover {\n"
 "                background-color: #B22222;\n"
-"            }")
+"            }\n"
+"QPushButton:disabled {\n"
+"        background-color: #808080;\n"
+"    }")
 
         self.gridLayout_5.addWidget(self.pushButton_stop, 4, 11, 1, 1)
 
@@ -166,19 +169,21 @@ class Ui_MainWindow(object):
         font.setStrikeOut(False)
         self.pushButton_manage_instr.setFont(font)
         self.pushButton_manage_instr.setStyleSheet(u"QPushButton {\n"
-"                                background-color: #bf8a36; \n"
-"                                color: white; \n"
-"                                border: none; \n"
-"                                padding: 2px 4px; \n"
-"                                text-align: center; \n"
-"                                text-decoration: none; \n"
-"                                font-size: 15px; \n"
-"                                margin: 2px 2px; \n"
-"                                border-radius: 6px;\n"
-"                            }\n"
-"                            QPushButton:hover {\n"
-"                                background-color: #8a5a23;\n"
-"                            }")
+"        background-color: #2a4cdf;\n"
+"        color: white;\n"
+"        border: none;\n"
+"        padding: 2px 10px;\n"
+"        text-align: center;\n"
+"        text-decoration: none;\n"
+"        font-size: 15px;\n"
+"        margin: 2px 2px;\n"
+"        border-radius: 6px;\n"
+"        font-weight: bold;\n"
+"    }\n"
+"\n"
+"    QPushButton:hover {\n"
+"        background-color: #1a3cbf;\n"
+"    }")
 
         self.gridLayout_6.addWidget(self.pushButton_manage_instr, 0, 0, 1, 1)
 
@@ -211,20 +216,20 @@ class Ui_MainWindow(object):
         self.pushButton_editSampleInfo.setObjectName(u"pushButton_editSampleInfo")
         self.pushButton_editSampleInfo.setFont(font)
         self.pushButton_editSampleInfo.setStyleSheet(u"QPushButton {\n"
-"        background-color: #bf8a36;\n"
+"        background-color: #2a4cdf;\n"
 "        color: white;\n"
 "        border: none;\n"
 "        padding: 2px 10px;\n"
 "        text-align: center;\n"
 "        text-decoration: none;\n"
-"        font-size: 12px;\n"
+"        font-size: 11px;\n"
 "        margin: 2px 2px;\n"
 "        border-radius: 6px;\n"
 "        font-weight: bold;\n"
 "    }\n"
 "\n"
 "    QPushButton:hover {\n"
-"        background-color: #8a5a23;\n"
+"        background-color: #1a3cbf;\n"
 "    }")
 
         self.gridLayout_7.addWidget(self.pushButton_editSampleInfo, 0, 2, 1, 1)
@@ -233,7 +238,7 @@ class Ui_MainWindow(object):
         self.pushButton_nomad_sample.setObjectName(u"pushButton_nomad_sample")
         self.pushButton_nomad_sample.setFont(font)
         self.pushButton_nomad_sample.setStyleSheet(u"QPushButton {\n"
-"        background-color: #bf8a36;\n"
+"        background-color: #2a4cdf;\n"
 "        color: white;\n"
 "        border: none;\n"
 "        padding: 2px 10px;\n"
@@ -246,7 +251,7 @@ class Ui_MainWindow(object):
 "    }\n"
 "\n"
 "    QPushButton:hover {\n"
-"        background-color: #8a5a23;\n"
+"        background-color: #1a3cbf;\n"
 "    }")
 
         self.gridLayout_7.addWidget(self.pushButton_nomad_sample, 1, 2, 1, 1)
@@ -328,7 +333,7 @@ class Ui_MainWindow(object):
         self.pushButton_login_nomad.setObjectName(u"pushButton_login_nomad")
         self.pushButton_login_nomad.setFont(font)
         self.pushButton_login_nomad.setStyleSheet(u"QPushButton {\n"
-"        background-color: #bf8a36;\n"
+"        background-color: #2a4cdf;\n"
 "        color: white;\n"
 "        border: none;\n"
 "        padding: 2px 10px;\n"
@@ -341,7 +346,7 @@ class Ui_MainWindow(object):
 "    }\n"
 "\n"
 "    QPushButton:hover {\n"
-"        background-color: #8a5a23;\n"
+"        background-color: #1a3cbf;\n"
 "    }")
 
         self.gridLayout_8.addWidget(self.pushButton_login_nomad, 1, 1, 1, 1)
@@ -350,7 +355,7 @@ class Ui_MainWindow(object):
         self.pushButton_editUserInfo.setObjectName(u"pushButton_editUserInfo")
         self.pushButton_editUserInfo.setFont(font)
         self.pushButton_editUserInfo.setStyleSheet(u"QPushButton {\n"
-"        background-color: #bf8a36;\n"
+"        background-color: #2a4cdf;\n"
 "        color: white;\n"
 "        border: none;\n"
 "        padding: 2px 10px;\n"
@@ -363,7 +368,7 @@ class Ui_MainWindow(object):
 "    }\n"
 "\n"
 "    QPushButton:hover {\n"
-"        background-color: #8a5a23;\n"
+"        background-color: #1a3cbf;\n"
 "    }")
 
         self.gridLayout_8.addWidget(self.pushButton_editUserInfo, 0, 1, 1, 1)
@@ -515,7 +520,7 @@ class Ui_MainWindow(object):
         self.pushButton_import_protocol.setMinimumSize(QSize(32, 32))
         self.pushButton_import_protocol.setMaximumSize(QSize(60, 32))
         self.pushButton_import_protocol.setStyleSheet(u"QPushButton {\n"
-"        background-color: #bf8a36;\n"
+"        background-color: #2a4cdf;\n"
 "        color: white;\n"
 "        border: none;\n"
 "        padding: 2px 10px;\n"
@@ -528,7 +533,7 @@ class Ui_MainWindow(object):
 "    }\n"
 "\n"
 "    QPushButton:hover {\n"
-"        background-color: #8a5a23;\n"
+"        background-color: #1a3cbf;\n"
 "    }")
 
         self.gridLayout_2.addWidget(self.pushButton_import_protocol, 1, 2, 1, 1)
@@ -559,6 +564,9 @@ class Ui_MainWindow(object):
 "\n"
 "    QPushButton:hover {\n"
 "        background-color: #FF4500;\n"
+"    }\n"
+"QPushButton:disabled {\n"
+"        background-color: #808080;\n"
 "    }")
 
         self.gridLayout_5.addWidget(self.pushButton_pause, 4, 10, 1, 1)
@@ -582,14 +590,17 @@ class Ui_MainWindow(object):
 "\n"
 "                            QPushButton:hover {\n"
 "                                background-color: #45a049;\n"
-"                            }")
+"                            }\n"
+"QPushButton:disabled {\n"
+"        background-color: #808080;\n"
+"    }")
 
         self.gridLayout_5.addWidget(self.pushButton_resume, 4, 9, 1, 1)
 
         self.pushButton_close_plots = QPushButton(self.centralwidget)
         self.pushButton_close_plots.setObjectName(u"pushButton_close_plots")
         self.pushButton_close_plots.setStyleSheet(u"QPushButton {\n"
-"        background-color: #bf8a36;\n"
+"        background-color: #2a4cdf;\n"
 "        color: white;\n"
 "        border: none;\n"
 "        padding: 2px 10px;\n"
@@ -602,7 +613,7 @@ class Ui_MainWindow(object):
 "    }\n"
 "\n"
 "    QPushButton:hover {\n"
-"        background-color: #8a5a23;\n"
+"        background-color: #1a3cbf;\n"
 "    }")
 
         self.gridLayout_5.addWidget(self.pushButton_close_plots, 8, 11, 1, 1)
@@ -610,7 +621,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1060, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1062, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuHelp = QMenu(self.menubar)
@@ -676,7 +687,7 @@ class Ui_MainWindow(object):
         self.pushButton_manage_instr.setText(QCoreApplication.translate("MainWindow", u"Manage\n"
 "Instruments", None))
         self.pushButton_editSampleInfo.setText(QCoreApplication.translate("MainWindow", u"Edit Sample-Information", None))
-        self.pushButton_nomad_sample.setText(QCoreApplication.translate("MainWindow", u"select NOMAD sample", None))
+        self.pushButton_nomad_sample.setText(QCoreApplication.translate("MainWindow", u"Select NOMAD sample", None))
         self.checkBox_use_nomad_sample.setText(QCoreApplication.translate("MainWindow", u"use NOMAD sample", None))
         self.label_nomad_upload.setText(QCoreApplication.translate("MainWindow", u"NOMAD Upload:", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Session:", None))

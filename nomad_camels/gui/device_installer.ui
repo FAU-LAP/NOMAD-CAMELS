@@ -63,7 +63,7 @@
     <widget class="QPushButton" name="pushButton_sel_none">
      <property name="styleSheet">
       <string notr="true">QPushButton {
-        background-color: #bf8a36;
+        background-color: #A9A9A9;
         color: white;
         border: none;
         padding: 2px 10px;
@@ -76,7 +76,7 @@
     }
 
     QPushButton:hover {
-        background-color: #8a5a23;
+        background-color: #696969;
     }</string>
      </property>
      <property name="text">
@@ -157,21 +157,21 @@
     <widget class="QPushButton" name="pushButton_info">
      <property name="styleSheet">
       <string notr="true">QPushButton {
-        background-color: #bf8a36;
-        color: white;
-        border: none;
-        padding: 2px 10px;
-        text-align: center;
-        text-decoration: none;
-        font-size: 12px;
-        margin: 2px 2px;
-        border-radius: 6px;
-        font-weight: bold;
-    }
+    background-color: #2a4cdf; /* This is a lighter shade of blue */
+    color: white;
+    border: none;
+    padding: 2px 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 13px;
+    margin: 2px 2px;
+    border-radius: 6px;
+    font-weight: bold;
+}
 
-    QPushButton:hover {
-        background-color: #8a5a23;
-    }</string>
+QPushButton:hover {
+    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */
+}</string>
      </property>
      <property name="text">
       <string>hide info</string>
