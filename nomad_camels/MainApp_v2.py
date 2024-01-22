@@ -29,12 +29,17 @@ camels_github_pages = 'https://fau-lap.github.io/NOMAD-CAMELS/'
 class MainWindow(Ui_MainWindow, QMainWindow):
     """Main Window for the program. Connects to all the other classes."""
     protocol_stepper_signal = Signal(int)
+    run_done_file_signal = Signal(str)
 
     def __init__(self, parent=None):
-        super().__init__()
+        super().__init__(parent=parent)
         self.setupUi(self)
         sys.stdout = self.textEdit_console_output.text_writer
         sys.stderr = self.textEdit_console_output.error_writer
+
+        self.sample_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
+        self.user_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
+        self.session_upload_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
         self.button_area_meas = Drop_Scroll_Area(self, 120, 120)
         self.button_area_manual = Drop_Scroll_Area(self, 120, 120)
@@ -167,6 +172,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
 
         # Extension Contexts
+        self.extension_user = {}
+        self.extension_sample = {}
         self.eln_context = extension_contexts.ELN_Context(self)
         self.extension_contexts = {'ELN_Context': self.eln_context}
         self.extensions = []
@@ -349,8 +356,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def show_nomad_upload(self):
         """Shows / hides the settings for directly uploading data to NOMAD."""
         nomad = self.nomad_user is not None
-        self.label_nomad_upload.setHidden(not nomad)
-        self.comboBox_upload_type.setHidden(not nomad)
+        self.nomad_upload_widget.setHidden(not nomad)
         auto_upload = self.comboBox_upload_type.currentText() == 'auto upload'
         self.comboBox_upload_choice.setHidden(not nomad or not auto_upload)
         if nomad:
@@ -366,10 +372,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if user_type not in ['local user', 'NOMAD user']:
             return
         nomad = user_type == 'NOMAD user'
-        self.comboBox_user.setHidden(nomad)
-        self.pushButton_editUserInfo.setHidden(nomad)
-        self.pushButton_login_nomad.setHidden(not nomad)
-        self.label_nomad_user.setHidden(not nomad)
+        self.user_widget_nomad.setHidden(not nomad)
+        self.user_widget_default.setHidden(nomad)
         if not nomad:
             self.nomad_user = None
         else:
@@ -548,12 +552,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def show_nomad_sample(self):
         nomad = self.nomad_user is not None
-        self.checkBox_use_nomad_sample.setHidden(not nomad)
-        self.pushButton_nomad_sample.setHidden(not nomad)
+        self.sample_widget_nomad.setHidden(not nomad)
         active_sample = self.nomad_sample is not None
         use_nomad = self.checkBox_use_nomad_sample.isChecked()
-        self.comboBox_sample.setHidden(active_sample and use_nomad)
-        self.pushButton_editSampleInfo.setHidden(active_sample and use_nomad)
+        use_nomad_sample = active_sample and use_nomad and nomad
+        self.sample_widget_default.setHidden(use_nomad_sample)
         self.pushButton_nomad_sample.setEnabled(use_nomad)
 
     # --------------------------------------------------
@@ -1231,6 +1234,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
         nomad = self.nomad_user is not None
+        self.run_done_file_signal.emit(self.protocol_savepath)
         if not nomad:
             return
         while self.still_running:
@@ -1360,6 +1364,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if self.nomad_user:
             userdata = self.nomad_user
             user = userdata['name']
+        elif self.extension_user:
+            userdata = self.extension_user
         else:
             user = self.active_user or 'default_user'
             userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
@@ -1371,6 +1377,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 sample = sampledata['Name']
             else:
                 sample = 'NOMAD-Sample'
+        elif self.extension_sample:
+            sampledata = self.extension_sample
+            sample = sampledata['name']
         else:
             sample = self.comboBox_sample.currentText() or 'default_sample'
             sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
