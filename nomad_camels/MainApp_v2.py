@@ -4,6 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 sys.path.append(os.path.dirname(__file__))
 import json
+import pathlib
 
 from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog, QDialog
 from PySide6.QtCore import QCoreApplication, Qt, Signal, QMetaObject
@@ -178,7 +179,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.extension_contexts = {'ELN_Context': self.eln_context}
         self.extensions = []
         self.load_extensions()
+        self.actionManage_Extensions.triggered.connect(self.manage_extensions)
     
+    def manage_extensions(self):
+        self.setCursor(Qt.WaitCursor)
+        from nomad_camels.extensions.extension_management import Extension_Manager
+        from nomad_camels.utility.update_camels import restart_camels
+        dialog = Extension_Manager(self.preferences, self)
+        if dialog.exec():
+            # self.load_extensions()
+            load_save_functions.save_preferences(self.preferences)
+            warn_popup.WarnPopup(self, 'Extensions will be loaded after restart.', 'Restart required', info_icon=True)
+            restart_camels(self, True)
+        self.setCursor(Qt.ArrowCursor)
+
 
     def load_extensions(self):
         if not 'extensions' in self.preferences:
@@ -188,18 +202,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             from nomad_camels.utility.load_save_functions import standard_pref
             self.preferences['extension_path'] = standard_pref['extension_path']
         sys.path.append(self.preferences['extension_path'])
-        for extension in self.preferences['extensions']:
-            try:
-                extension_module = importlib.import_module(extension)
-            except (ModuleNotFoundError, AttributeError) as e:
-                print(f'Could not load extension {extension}.\n{e}')
-                continue
-            config = getattr(extension_module, 'EXTENSION_CONFIG')
-            name = config['name']
-            contexts = {}
-            for context in config['required_contexts']:
-                contexts[context] = self.extension_contexts[context]
-            self.extensions.append(getattr(extension_module, name)(**contexts))
+        for f in pathlib.Path(self.preferences['extension_path']).rglob('*'):
+            for extension in self.preferences['extensions']:
+                if not f.name == extension:
+                    continue
+                sys.path.append(str(f.parent))
+                try:
+                    extension_module = importlib.import_module(extension)
+                except (ModuleNotFoundError, AttributeError) as e:
+                    print(f'Could not load extension {extension}.\n{e}')
+                    continue
+                config = getattr(extension_module, 'EXTENSION_CONFIG')
+                name = config['name']
+                contexts = {}
+                for context in config['required_contexts']:
+                    contexts[context] = self.extension_contexts[context]
+                self.extensions.append(getattr(extension_module, name)(**contexts))
             
             
             

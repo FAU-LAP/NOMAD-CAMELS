@@ -932,7 +932,7 @@ Instruments</string>
   </action>
   <action name="actionManage_Extensions">
    <property name="text">
-    <string>Managa Add-Ons</string>
+    <string>Managa Extensions</string>
    </property>
   </action>
  </widget>

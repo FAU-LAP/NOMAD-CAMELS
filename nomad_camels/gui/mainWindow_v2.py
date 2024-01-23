@@ -529,7 +529,7 @@ class Ui_MainWindow(object):
         self.actionVISA_driver_builder.setText(QCoreApplication.translate("MainWindow", u"VISA-driver builder", None))
         self.actionEPICS_driver_builder.setText(QCoreApplication.translate("MainWindow", u"EPICS-driver-builder", None))
         self.actionExport_from_databroker.setText(QCoreApplication.translate("MainWindow", u"Export from databroker", None))
-        self.actionManage_Extensions.setText(QCoreApplication.translate("MainWindow", u"Managa Add-Ons", None))
+        self.actionManage_Extensions.setText(QCoreApplication.translate("MainWindow", u"Managa Extensions", None))
         self.pushButton_resume.setText(QCoreApplication.translate("MainWindow", u"Resume", None))
         self.pushButton_stop.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
         self.pushButton_pause.setText(QCoreApplication.translate("MainWindow", u"Pause", None))
