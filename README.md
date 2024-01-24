@@ -18,6 +18,9 @@ For more information and documentation visit [this page](https://fau-lap.github.
 # Changelog
 
 ## 1.0.0 (in progress)
+Major Features:
+- There is now an extension feature, the first extension provides a compatibility with eLabFTW
+
 Features:
 - Refactor device instantiation to be handled in another thread to keep the UI responsive, this might cause some problems with instrument-specific manual controls that are not yet updated accordingly
 - Added the plot point number to the definition already
