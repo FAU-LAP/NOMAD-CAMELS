@@ -77,7 +77,10 @@ standard_pref = {'autosave': True,
                  'NOMAD_URL': '',
                  'backups': 'smart',
                  'backup_number': 30,
-                 'number_databroker_files': 30}
+                 'number_databroker_files': 30,
+                 'extension_path': os.path.join(os.getcwd(), 'extensions').replace('\\','/'),
+                 'extensions': []
+                }
 
 def get_preset_list():
     """

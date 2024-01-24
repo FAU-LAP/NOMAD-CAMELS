@@ -4,6 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 sys.path.append(os.path.dirname(__file__))
 import json
+import pathlib
 
 from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog
 from PySide6.QtCore import QCoreApplication, Qt, Signal, QThread
@@ -16,8 +17,10 @@ from pkg_resources import resource_filename
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
 from nomad_camels.utility import load_save_functions, variables_handling, number_formatting, theme_changing, update_camels, logging_settings, qthreads
 from nomad_camels.ui_widgets import options_run_button, warn_popup
+from nomad_camels.extensions import extension_contexts
 
 from collections import OrderedDict
+import importlib
 
 
 camels_github = 'https://github.com/FAU-LAP/NOMAD-CAMELS'
@@ -27,12 +30,17 @@ camels_github_pages = 'https://fau-lap.github.io/NOMAD-CAMELS/'
 class MainWindow(Ui_MainWindow, QMainWindow):
     """Main Window for the program. Connects to all the other classes."""
     protocol_stepper_signal = Signal(int)
+    run_done_file_signal = Signal(str)
 
     def __init__(self, parent=None):
-        super().__init__()
+        super().__init__(parent=parent)
         self.setupUi(self)
         sys.stdout = self.textEdit_console_output.text_writer
         sys.stderr = self.textEdit_console_output.error_writer
+
+        self.sample_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
+        self.user_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
+        self.session_upload_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
         self.button_area_meas = Drop_Scroll_Area(self, 120, 120)
         self.button_area_manual = Drop_Scroll_Area(self, 120, 120)
@@ -163,8 +171,62 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_savepath = ''
         self.running_protocol = None
 
+        # Extension Contexts
+        self.extension_user = {}
+        self.extension_sample = {}
+        self.eln_context = extension_contexts.ELN_Context(self)
+        self.extension_contexts = {'ELN_Context': self.eln_context}
+        self.extensions = []
+        self.load_extensions()
+        self.actionManage_Extensions.triggered.connect(self.manage_extensions)
+
+
+
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
+
+
+
+    def manage_extensions(self):
+        self.setCursor(Qt.WaitCursor)
+        from nomad_camels.extensions.extension_management import Extension_Manager
+        from nomad_camels.utility.update_camels import restart_camels
+        dialog = Extension_Manager(self.preferences, self)
+        if dialog.exec():
+            # self.load_extensions()
+            load_save_functions.save_preferences(self.preferences)
+            warn_popup.WarnPopup(self, 'Extensions will be loaded after restart.', 'Restart required', info_icon=True)
+            restart_camels(self, True)
+        self.setCursor(Qt.ArrowCursor)
+
+
+    def load_extensions(self):
+        if not 'extensions' in self.preferences:
+            from nomad_camels.utility.load_save_functions import standard_pref
+            self.preferences['extensions'] = standard_pref['extensions']
+        if not 'extension_path' in self.preferences:
+            from nomad_camels.utility.load_save_functions import standard_pref
+            self.preferences['extension_path'] = standard_pref['extension_path']
+        sys.path.append(self.preferences['extension_path'])
+        for f in pathlib.Path(self.preferences['extension_path']).rglob('*'):
+            for extension in self.preferences['extensions']:
+                if not f.name == extension:
+                    continue
+                sys.path.append(str(f.parent))
+                try:
+                    extension_module = importlib.import_module(extension)
+                except (ModuleNotFoundError, AttributeError) as e:
+                    print(f'Could not load extension {extension}.\n{e}')
+                    continue
+                config = getattr(extension_module, 'EXTENSION_CONFIG')
+                name = config['name']
+                contexts = {}
+                for context in config['required_contexts']:
+                    contexts[context] = self.extension_contexts[context]
+                self.extensions.append(getattr(extension_module, name)(**contexts))
+            
+            
+            
 
     def bluesky_setup(self):
         # IMPORT bluesky only if it is needed
@@ -322,8 +384,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def show_nomad_upload(self):
         """Shows / hides the settings for directly uploading data to NOMAD."""
         nomad = self.nomad_user is not None
-        self.label_nomad_upload.setHidden(not nomad)
-        self.comboBox_upload_type.setHidden(not nomad)
+        self.nomad_upload_widget.setHidden(not nomad)
         auto_upload = self.comboBox_upload_type.currentText() == 'auto upload'
         self.comboBox_upload_choice.setHidden(not nomad or not auto_upload)
         if nomad:
@@ -336,11 +397,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def change_user_type(self):
         """Shows / hides the ui-elements depending on the type of user,
         e.g. the NOMAD login button is only shown if NOMAD user is selected."""
-        nomad = self.comboBox_user_type.currentText() == 'NOMAD user'
-        self.comboBox_user.setHidden(nomad)
-        self.pushButton_editUserInfo.setHidden(nomad)
-        self.pushButton_login_nomad.setHidden(not nomad)
-        self.label_nomad_user.setHidden(not nomad)
+        user_type = self.comboBox_user_type.currentText()
+        if user_type not in ['local user', 'NOMAD user']:
+            return
+        nomad = user_type == 'NOMAD user'
+        self.user_widget_nomad.setHidden(not nomad)
+        self.user_widget_default.setHidden(nomad)
         if not nomad:
             self.nomad_user = None
         else:
@@ -522,12 +584,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def show_nomad_sample(self):
         nomad = self.nomad_user is not None
-        self.checkBox_use_nomad_sample.setHidden(not nomad)
-        self.pushButton_nomad_sample.setHidden(not nomad)
+        self.sample_widget_nomad.setHidden(not nomad)
         active_sample = self.nomad_sample is not None
         use_nomad = self.checkBox_use_nomad_sample.isChecked()
-        self.comboBox_sample.setHidden(active_sample and use_nomad)
-        self.pushButton_editSampleInfo.setHidden(active_sample and use_nomad)
+        use_nomad_sample = active_sample and use_nomad and nomad
+        self.sample_widget_default.setHidden(use_nomad_sample)
         self.pushButton_nomad_sample.setEnabled(use_nomad)
 
     # --------------------------------------------------
@@ -1234,6 +1295,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
         nomad = self.nomad_user is not None
+        self.run_done_file_signal.emit(self.protocol_savepath)
         if not nomad:
             return
         while self.still_running:
@@ -1378,6 +1440,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if self.nomad_user:
             userdata = self.nomad_user
             user = userdata['name']
+        elif self.extension_user:
+            userdata = self.extension_user
         else:
             user = self.active_user or 'default_user'
             userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
@@ -1389,6 +1453,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 sample = sampledata['Name']
             else:
                 sample = 'NOMAD-Sample'
+        elif self.extension_sample:
+            sampledata = self.extension_sample
+            sample = sampledata['name']
         else:
             sample = self.comboBox_sample.currentText() or 'default_sample'
             sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]

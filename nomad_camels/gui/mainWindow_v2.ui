@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1062</width>
-    <height>370</height>
+    <width>1059</width>
+    <height>345</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -123,11 +123,11 @@ QPushButton:disabled {
      </widget>
     </item>
     <item row="1" column="2" colspan="10">
-     <widget class="QWidget" name="widget" native="true">
+     <widget class="QWidget" name="menu_widget" native="true">
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>50</height>
+        <height>60</height>
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_6">
@@ -154,6 +154,7 @@ QPushButton:disabled {
          <property name="font">
           <font>
            <pointsize>-1</pointsize>
+           <weight>75</weight>
            <bold>true</bold>
            <underline>false</underline>
            <strikeout>false</strikeout>
@@ -208,8 +209,11 @@ Instruments</string>
         </widget>
        </item>
        <item row="0" column="10">
-        <widget class="QWidget" name="widget_4" native="true">
-         <layout class="QGridLayout" name="gridLayout_7">
+        <widget class="QWidget" name="sample_widget" native="true">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="spacing">
+           <number>0</number>
+          </property>
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -222,51 +226,43 @@ Instruments</string>
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="pushButton_editSampleInfo">
-            <property name="font">
-             <font>
-              <pointsize>-1</pointsize>
-              <bold>true</bold>
-              <underline>false</underline>
-              <strikeout>false</strikeout>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton {
-        background-color: #2a4cdf;
-        color: white;
-        border: none;
-        padding: 2px 10px;
-        text-align: center;
-        text-decoration: none;
-        font-size: 11px;
-        margin: 2px 2px;
-        border-radius: 6px;
-        font-weight: bold;
-    }
-
-    QPushButton:hover {
-        background-color: #1a3cbf;
-    }</string>
-            </property>
-            <property name="text">
-             <string>Edit Sample-Information</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="pushButton_nomad_sample">
-            <property name="font">
-             <font>
-              <pointsize>-1</pointsize>
-              <bold>true</bold>
-              <underline>false</underline>
-              <strikeout>false</strikeout>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton {
+          <item>
+           <widget class="QWidget" name="sample_widget_default" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>3</number>
+             </property>
+             <item>
+              <widget class="QComboBox" name="comboBox_sample">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_editSampleInfo">
+               <property name="font">
+                <font>
+                 <pointsize>-1</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                 <underline>false</underline>
+                 <strikeout>false</strikeout>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
         background-color: #2a4cdf;
         color: white;
         border: none;
@@ -282,34 +278,83 @@ Instruments</string>
     QPushButton:hover {
         background-color: #1a3cbf;
     }</string>
-            </property>
-            <property name="text">
-             <string>Select NOMAD sample</string>
-            </property>
+               </property>
+               <property name="text">
+                <string>Edit Sample-Information</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_sample">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="checkBox_use_nomad_sample">
-            <property name="text">
-             <string>use NOMAD sample</string>
-            </property>
+          <item>
+           <widget class="QWidget" name="sample_widget_nomad" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>3</number>
+             </property>
+             <item>
+              <widget class="QCheckBox" name="checkBox_use_nomad_sample">
+               <property name="text">
+                <string>use NOMAD sample</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_nomad_sample">
+               <property name="font">
+                <font>
+                 <pointsize>-1</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                 <underline>false</underline>
+                 <strikeout>false</strikeout>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+        background-color: #2a4cdf;
+        color: white;
+        border: none;
+        padding: 2px 10px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 12px;
+        margin: 2px 2px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    QPushButton:hover {
+        background-color: #1a3cbf;
+    }</string>
+               </property>
+               <property name="text">
+                <string>select NOMAD sample</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
        <item row="0" column="15">
-        <widget class="QWidget" name="widget_3" native="true">
-         <layout class="QGridLayout" name="gridLayout_4">
+        <widget class="QWidget" name="session_upload_widget" native="true">
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="spacing">
+           <number>0</number>
+          </property>
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -322,56 +367,97 @@ Instruments</string>
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_upload_type"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_nomad_upload">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>NOMAD Upload:</string>
-            </property>
+          <item>
+           <widget class="QWidget" name="nomad_upload_widget" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>3</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_nomad_upload">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>NOMAD Upload:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBox_upload_type"/>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBox_upload_choice"/>
+             </item>
+            </layout>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="maximumSize">
-             <size>
-              <width>1500000</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Session:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
+          <item>
+           <widget class="QWidget" name="session_widget" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>3</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_4">
+               <property name="maximumSize">
+                <size>
+                 <width>1500000</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Session:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_session"/>
+             </item>
+            </layout>
            </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QComboBox" name="comboBox_upload_choice"/>
-          </item>
-          <item row="0" column="1" colspan="2">
-           <widget class="QLineEdit" name="lineEdit_session"/>
           </item>
          </layout>
         </widget>
        </item>
        <item row="0" column="2">
-        <widget class="QWidget" name="widget_5" native="true">
-         <layout class="QGridLayout" name="gridLayout_8">
+        <widget class="QWidget" name="user_widget" native="true">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -384,39 +470,43 @@ Instruments</string>
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QComboBox" name="comboBox_user">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_nomad_user">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>not logged in</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="pushButton_login_nomad">
-            <property name="font">
-             <font>
-              <pointsize>-1</pointsize>
-              <bold>true</bold>
-              <underline>false</underline>
-              <strikeout>false</strikeout>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton {
+          <item>
+           <widget class="QWidget" name="user_widget_default" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>3</number>
+             </property>
+             <item>
+              <widget class="QComboBox" name="comboBox_user">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_editUserInfo">
+               <property name="font">
+                <font>
+                 <pointsize>-1</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                 <underline>false</underline>
+                 <strikeout>false</strikeout>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
         background-color: #2a4cdf;
         color: white;
         border: none;
@@ -432,24 +522,55 @@ Instruments</string>
     QPushButton:hover {
         background-color: #1a3cbf;
     }</string>
-            </property>
-            <property name="text">
-             <string>NOMAD login</string>
-            </property>
+               </property>
+               <property name="text">
+                <string>Edit User-Information</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="pushButton_editUserInfo">
-            <property name="font">
-             <font>
-              <pointsize>-1</pointsize>
-              <bold>true</bold>
-              <underline>false</underline>
-              <strikeout>false</strikeout>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton {
+          <item>
+           <widget class="QWidget" name="user_widget_nomad" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>3</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_nomad_user">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>not logged in</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_login_nomad">
+               <property name="font">
+                <font>
+                 <pointsize>-1</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                 <underline>false</underline>
+                 <strikeout>false</strikeout>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
         background-color: #2a4cdf;
         color: white;
         border: none;
@@ -465,10 +586,13 @@ Instruments</string>
     QPushButton:hover {
         background-color: #1a3cbf;
     }</string>
-            </property>
-            <property name="text">
-             <string>Edit User-Information</string>
-            </property>
+               </property>
+               <property name="text">
+                <string>NOMAD login</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -485,6 +609,7 @@ Instruments</string>
          <property name="font">
           <font>
            <pointsize>10</pointsize>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -582,8 +707,8 @@ Instruments</string>
              </property>
              <property name="font">
               <font>
-               <family>Calibri</family>
                <pointsize>-1</pointsize>
+               <weight>75</weight>
                <bold>true</bold>
                <underline>false</underline>
                <strikeout>false</strikeout>
@@ -619,6 +744,7 @@ Instruments</string>
               <font>
                <family>Calibri</family>
                <pointsize>20</pointsize>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -657,6 +783,7 @@ Instruments</string>
               <font>
                <family>Calibri</family>
                <pointsize>20</pointsize>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -694,8 +821,8 @@ Instruments</string>
              </property>
              <property name="font">
               <font>
-               <family>Calibri</family>
                <pointsize>-1</pointsize>
+               <weight>75</weight>
                <bold>true</bold>
                <underline>false</underline>
                <strikeout>false</strikeout>
@@ -881,8 +1008,8 @@ QPushButton:disabled {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1062</width>
-     <height>22</height>
+     <width>1059</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -911,6 +1038,8 @@ QPushButton:disabled {
     <addaction name="actionExport_from_databroker"/>
     <addaction name="action_driver_builder"/>
     <addaction name="actionEPICS_driver_builder"/>
+    <addaction name="separator"/>
+    <addaction name="actionManage_Extensions"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
@@ -1046,6 +1175,11 @@ QPushButton:disabled {
   <action name="actionExport_from_databroker">
    <property name="text">
     <string>Export from databroker</string>
+   </property>
+  </action>
+  <action name="actionManage_Extensions">
+   <property name="text">
+    <string>Managa Extensions</string>
    </property>
   </action>
  </widget>

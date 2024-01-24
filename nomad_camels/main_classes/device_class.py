@@ -717,6 +717,8 @@ class Simple_Config_Sub(Device_Config_Sub):
                  comboBoxes=None, config_types=None, labels=None):
         super().__init__(settings_dict=settings_dict, parent=parent,
                          config_dict=config_dict)
+        settings_dict = settings_dict or {}
+        config_dict = config_dict or {}
         self.setLayout(QGridLayout())
         self.layout().setContentsMargins(0,0,0,0)
         comboBoxes = comboBoxes or {}
