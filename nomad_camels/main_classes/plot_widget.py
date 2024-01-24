@@ -195,7 +195,8 @@ class PlotWidget(QWidget):
             self.liveFitPlots.append(Fit_Plot_No_Init_Guess(livefit, ax=ax,
                                                             legend_keys=[name],
                                                             ax_is2=ax_is2,
-                                                            color=col))
+                                                            color=col,
+                                                            display_values=fit['display_values']))
         self.livePlot = MultiLivePlot(y_names, x_name, legend_keys=legend_keys,
                                       xlim=xlim, ylim=ylim, epoch=epoch,
                                       ax=canvas.axes, evaluator=eva,
@@ -577,11 +578,12 @@ class Fit_Ophyd(Device):
 class Fit_Plot_No_Init_Guess(LiveFitPlot):
     """A subclass of LiveFitPlot that doesn't plot the initial guess for the fit."""
     def __init__(self, livefit, *, num_points=100, legend_keys=None, xlim=None,
-                 ylim=None, ax=None, ax_is2=False, **kwargs):
+                 ylim=None, ax=None, ax_is2=False, display_values=False, **kwargs):
         # super().__init__(livefit, num_points=num_points, legend_keys=legend_keys,
         #                  xlim=xlim, ylim=ylim, ax=ax, **kwargs)
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
+        self.display_values = display_values
         if len(livefit.independent_vars) != 1:
             raise NotImplementedError("LiveFitPlot supports models with one "
                                       "independent variable only.")
@@ -628,6 +630,8 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         self.x = None
         self.ax_is2 = ax_is2
         self.__setup = setup
+        self.line_position = None
+        self.text_objects = []
 
 
     def start(self, doc):
@@ -730,6 +734,19 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         """Sets the current x and y data, then calls the `parent_plot` to update."""
         self.current_line.set_data(self.x_data, self.y_data)
         self.parent_plot.update_plot()
+        if self.display_values:
+            for text_object in self.text_objects:
+                text_object.remove()
+            self.text_objects.clear()
+            vals = self.livefit.result.values
+            if self.line_position is None:
+                self.line_position = self.parent_plot.line_number
+                self.parent_plot.line_number += len(vals)
+            color = self.current_line.get_color()
+            for i, (key, value) in enumerate(vals.items()):
+                text_object = self.parent_plot.ax.text(0.05, 0.95 - (i + self.line_position) * 0.05, f"{key}: {value:.2e}", transform=self.ax.transAxes, verticalalignment='top', color=color)
+                self.text_objects.append(text_object)
+        
 
 
 
@@ -970,6 +987,7 @@ class MultiLivePlot(LivePlot, QObject):
         self.current_lines = {}
         self.descs_fit_readying = {}
         self.legend = None
+        self.line_number = 0
 
     def change_maxlen(self, maxlen):
         """

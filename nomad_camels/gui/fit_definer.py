@@ -20,19 +20,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
     QSpacerItem, QWidget)
 
 class Ui_Fit_Definer(object):
-    """ """
     def setupUi(self, Fit_Definer):
-        """
-
-        Parameters
-        ----------
-        Fit_Definer :
-            
-
-        Returns
-        -------
-
-        """
         if not Fit_Definer.objectName():
             Fit_Definer.setObjectName(u"Fit_Definer")
         Fit_Definer.resize(287, 243)
@@ -43,11 +31,6 @@ class Ui_Fit_Definer(object):
         self.radioButton_custom_func.setObjectName(u"radioButton_custom_func")
 
         self.gridLayout.addWidget(self.radioButton_custom_func, 1, 1, 1, 1)
-
-        self.checkBox_guess = QCheckBox(Fit_Definer)
-        self.checkBox_guess.setObjectName(u"checkBox_guess")
-
-        self.gridLayout.addWidget(self.checkBox_guess, 4, 0, 1, 2)
 
         self.radioButton_predef_func = QRadioButton(Fit_Definer)
         self.radioButton_predef_func.setObjectName(u"radioButton_predef_func")
@@ -83,6 +66,16 @@ class Ui_Fit_Definer(object):
 
         self.gridLayout.addWidget(self.checkBox_fit, 0, 1, 1, 1)
 
+        self.checkBox_guess = QCheckBox(Fit_Definer)
+        self.checkBox_guess.setObjectName(u"checkBox_guess")
+
+        self.gridLayout.addWidget(self.checkBox_guess, 4, 0, 1, 1)
+
+        self.checkBox_display_values = QCheckBox(Fit_Definer)
+        self.checkBox_display_values.setObjectName(u"checkBox_display_values")
+
+        self.gridLayout.addWidget(self.checkBox_display_values, 4, 1, 1, 1)
+
 
         self.retranslateUi(Fit_Definer)
 
@@ -90,22 +83,12 @@ class Ui_Fit_Definer(object):
     # setupUi
 
     def retranslateUi(self, Fit_Definer):
-        """
-
-        Parameters
-        ----------
-        Fit_Definer :
-            
-
-        Returns
-        -------
-
-        """
         Fit_Definer.setWindowTitle(QCoreApplication.translate("Fit_Definer", u"Form", None))
         self.radioButton_custom_func.setText(QCoreApplication.translate("Fit_Definer", u"Custom function", None))
-        self.checkBox_guess.setText(QCoreApplication.translate("Fit_Definer", u"guess initial parameters", None))
         self.radioButton_predef_func.setText(QCoreApplication.translate("Fit_Definer", u"Predefined function", None))
         self.label.setText(QCoreApplication.translate("Fit_Definer", u"Fit to: all y-axes", None))
         self.checkBox_fit.setText(QCoreApplication.translate("Fit_Definer", u"fit?", None))
+        self.checkBox_guess.setText(QCoreApplication.translate("Fit_Definer", u"guess initial parameters", None))
+        self.checkBox_display_values.setText(QCoreApplication.translate("Fit_Definer", u"display fit values", None))
     # retranslateUi
 

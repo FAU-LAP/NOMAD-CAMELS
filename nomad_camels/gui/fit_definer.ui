@@ -33,13 +33,6 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QCheckBox" name="checkBox_guess">
-     <property name="text">
-      <string>guess initial parameters</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QRadioButton" name="radioButton_predef_func">
      <property name="text">
@@ -87,6 +80,20 @@
     <widget class="QCheckBox" name="checkBox_fit">
      <property name="text">
       <string>fit?</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QCheckBox" name="checkBox_guess">
+     <property name="text">
+      <string>guess initial parameters</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QCheckBox" name="checkBox_display_values">
+     <property name="text">
+      <string>display fit values</string>
      </property>
     </widget>
    </item>

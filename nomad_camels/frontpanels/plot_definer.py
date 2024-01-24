@@ -105,13 +105,14 @@ class Fit_Info:
     """ """
     def __init__(self, do_fit=False, predef_func='Linear', custom_func='',
                  use_custom_func=False, guess_params=True, initial_params=None,
-                 y='', x='', additional_data=None):
+                 y='', x='', additional_data=None, display_values=False):
         self.do_fit = do_fit
         self.predef_func = predef_func
         self.custom_func = custom_func
         self.use_custom_func = use_custom_func
         self.guess_params = guess_params
         self.name = ''
+        self.display_values = display_values
         self.initial_params = initial_params or {'name': [],
                                                  'initial value': [],
                                                  'lower bound': [],
@@ -549,6 +550,7 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
         self.lineEdit_custom_func.setText(self.fit_info.custom_func)
         self.radioButton_custom_func.setChecked(self.fit_info.use_custom_func)
         self.checkBox_guess.setChecked(self.fit_info.guess_params)
+        self.checkBox_display_values.setChecked(self.fit_info.display_values)
 
     def get_data(self):
         """ """
@@ -559,6 +561,7 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
         self.fit_info.custom_func = self.lineEdit_custom_func.text()
         self.fit_info.use_custom_func = self.radioButton_custom_func.isChecked()
         self.fit_info.guess_params = self.checkBox_guess.isChecked()
+        self.fit_info.display_values = self.checkBox_display_values.isChecked()
 
 
 def add_fit(tableData, fit):
