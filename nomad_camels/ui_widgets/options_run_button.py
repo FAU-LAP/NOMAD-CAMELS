@@ -78,6 +78,7 @@ class Options_Run_Button(QFrame):
     """ """
     build_asked = Signal()
     external_asked = Signal()
+    data_path_asked = Signal()
     del_asked = Signal()
 
     def __init__(self, text='', size=120, small_text='run',
@@ -101,6 +102,7 @@ class Options_Run_Button(QFrame):
         self.run_function = None
         self.build_function = None
         self.external_function = None
+        self.data_path_function = None
         self.del_function = None
 
         self.setFixedSize(size,size)
@@ -117,6 +119,8 @@ class Options_Run_Button(QFrame):
             self.build_asked.connect(self.build_function)
         if self.external_function is not None:
             self.external_asked.connect(self.external_function)
+        if self.data_path_function is not None:
+            self.data_path_asked.connect(self.data_path_function)
         if self.del_function is not None:
             self.del_asked.connect(self.del_function)
 
@@ -139,7 +143,9 @@ class Options_Run_Button(QFrame):
             action_export.triggered.connect(self.build_asked.emit)
             action_open = QAction('Open Externally')
             action_open.triggered.connect(self.external_asked.emit)
-            actions += [action_export, action_open]
+            action_datapath = QAction('Open Data Path')
+            action_datapath.triggered.connect(self.data_path_asked.emit)
+            actions += [action_export, action_open, action_datapath]
         action_delete = QAction('Delete')
         action_delete.triggered.connect(self.delete_button)
         actions.append(action_delete)

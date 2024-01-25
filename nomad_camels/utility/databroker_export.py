@@ -169,8 +169,8 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
         entry_name_non_iso = clean_filename(entry_name)
         # check if the filename already exists, if yes, add entry_name to filename
         if new_file_each_run and os.path.isfile(filename):
-            filename = filename.split(".")[0] + f'_{entry_name_non_iso}.hdf5'
-        filename = os.path.dirname(filename) + f'/{clean_filename(os.path.basename(filename).split(".")[0])}.hdf5'
+            filename = filename.split(".")[0] + f'_{entry_name_non_iso}.h5'
+        filename = os.path.dirname(filename) + f'/{clean_filename(os.path.basename(filename).split(".")[0])}.h5'
         if export_to_json:
             if not os.path.isdir(filename.split(".")[0]):
                 os.makedirs(filename.split(".")[0])

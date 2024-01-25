@@ -1223,8 +1223,28 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         button.run_function = lambda state=None, x=name: self.run_protocol(x)
         button.build_function = lambda x=name: self.build_protocol(x)
         button.external_function = lambda x=name: self.open_protocol(x)
+        button.data_path_function = lambda x=name: self.open_data_path(x)
         button.del_function = lambda x=name: self.remove_protocol(x)
         button.update_functions()
+    
+    def open_data_path(self, protocol_name):
+        user = self.get_user_name_data()[0]
+        sample = self.get_sample_name_data()[0]
+        protocol = self.protocols_dict[protocol_name]
+        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
+        savepath = os.path.normpath(savepath)
+        while not os.path.exists(savepath):
+            savepath = os.path.dirname(savepath)
+        import platform, subprocess
+        if platform.system() == "Windows":
+            # /select, specifies that the file should be highlighted
+            subprocess.Popen(f'explorer /select,"{savepath}"')
+        elif platform.system() == "Darwin":
+            # -R, specifies that the file should be revealed in finder
+            subprocess.Popen(["open", "-R", savepath])
+        else:
+            # Linux doesn't support highlighting a specific file in the file explorer
+            subprocess.Popen(["xdg-open", os.path.dirname(savepath)])
 
     def populate_meas_buttons(self):
         """ """
@@ -1455,6 +1475,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 return
         else:
             path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
+        user, userdata = self.get_user_name_data()
+        sample, sampledata = self.get_sample_name_data()
+        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
+        self.protocol_savepath = savepath
+        # IMPORT protocol_builder only if needed
+        from nomad_camels.bluesky_handling import protocol_builder
+        protocol_builder.build_protocol(protocol,
+                                        path, savepath,
+                                        userdata=userdata, sampledata=sampledata)
+        print('\n\nBuild successfull!\n')
+        self.progressBar_protocols.setValue(100 if ask_file else 1)
+    
+    def get_user_name_data(self):
         if self.nomad_user:
             userdata = self.nomad_user
             user = userdata['name']
@@ -1463,6 +1496,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         else:
             user = self.active_user or 'default_user'
             userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
+        return user, userdata
+    
+    def get_sample_name_data(self):
         if self.nomad_sample and self.checkBox_use_nomad_sample.isChecked():
             sampledata = self.nomad_sample
             if 'name' in sampledata:
@@ -1477,15 +1513,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         else:
             sample = self.comboBox_sample.currentText() or 'default_sample'
             sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
-        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
-        self.protocol_savepath = savepath
-        # IMPORT protocol_builder only if needed
-        from nomad_camels.bluesky_handling import protocol_builder
-        protocol_builder.build_protocol(protocol,
-                                        path, savepath,
-                                        userdata=userdata, sampledata=sampledata)
-        print('\n\nBuild successfull!\n')
-        self.progressBar_protocols.setValue(100 if ask_file else 1)
+        return sample, sampledata
+
 
     def open_protocol(self, protocol_name):
         """

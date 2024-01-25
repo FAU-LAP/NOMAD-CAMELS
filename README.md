@@ -28,6 +28,7 @@ Features:
 - Password protection may be enabled for changing settings or presets. May be useful if the responsible person does not want users to change anything, or for lab courses.
 - There is now an extension feature, the first extension provides a compatibility with eLabFTW
 - Can now save each run in its own file.
+- Can now open the save file path when right-clicking on a protocol.
 
 Changes:
 - the imports needed at a later time are now running in another thread after starting the main app to improve speed
