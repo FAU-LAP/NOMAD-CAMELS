@@ -161,7 +161,10 @@ def build_protocol(protocol, file_path,
     variable_string += f'session_name = "{protocol.session_name}"\n'
     variable_string += f'export_to_csv = {protocol.export_csv}\n'
     variable_string += f'export_to_json={protocol.export_json}\n'
-    variable_string += f'new_file_each_run={variables_handling.preferences["new_file_each_run"]}\n'
+    if 'new_file_each_run' in variables_handling.preferences:
+        variable_string += f'new_file_each_run={variables_handling.preferences["new_file_each_run"]}\n'
+    else:
+        variable_string += f'new_file_each_run=False\n'
     additional_string_devices = ''
     final_string = '\t\tfor name, device in devs.items():\n'
     final_string += '\t\t\tif hasattr(device, "finalize_steps") and callable(device.finalize_steps):\n'
