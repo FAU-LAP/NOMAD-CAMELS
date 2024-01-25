@@ -18,9 +18,6 @@ For more information and documentation visit [this page](https://fau-lap.github.
 # Changelog
 
 ## 1.0.0 (in progress)
-Major Features:
-- There is now an extension feature, the first extension provides a compatibility with eLabFTW
-
 Features:
 - Fit values can now be displayed directly in the plot
 - Refactor device instantiation to be handled in another thread to keep the UI responsive, this might cause some problems with instrument-specific manual controls that are not yet updated accordingly
@@ -28,6 +25,8 @@ Features:
 - It is now possible to not configure instruments when starting a protocol, this feature has to be used with caution!
 - Number of backuped preset files can now be curated. Possibilities are to keep all, only a certain number or "smart" way: all backups of the last 7 days, one for each of the last 30 days, one for each of the last 12 months and one for each year.
 - Old databroker files may now be removed.
+- Password protection may be enabled for changing settings or presets. May be useful if the responsible person does not want users to change anything, or for lab courses.
+- There is now an extension feature, the first extension provides a compatibility with eLabFTW
 
 Changes:
 - the imports needed at a later time are now running in another thread after starting the main app to improve speed

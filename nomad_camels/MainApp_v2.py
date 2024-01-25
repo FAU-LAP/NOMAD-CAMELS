@@ -188,6 +188,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
 
     def manage_extensions(self):
+        if 'password_protection' in self.preferences and self.preferences['password_protection']:
+            from nomad_camels.utility.password_widgets import Password_Dialog
+            dialog = Password_Dialog(self, compare_hash=self.preferences['password_hash'])
+            if not dialog.exec():
+                return
         self.setCursor(Qt.WaitCursor)
         from nomad_camels.extensions.extension_management import Extension_Manager
         from nomad_camels.utility.update_camels import restart_camels
@@ -695,7 +700,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         from nomad_camels.frontpanels.settings_window import Settings_Window
         settings_dialog = Settings_Window(parent=self, settings=self.preferences)
         if settings_dialog.exec():
-            self.preferences = settings_dialog.get_settings()
+            self.preferences.update(settings_dialog.get_settings())
             load_save_functions.save_preferences(self.preferences)
         self.update_preference_settings()
 
@@ -714,6 +719,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
+        if 'password_protection' in self.preferences and self.preferences['password_protection']:
+            from PySide6.QtWidgets import QMessageBox
+            msg_box = QMessageBox()
+            msg_box.setText('This version of NOMAD CAMELS is password protected.\nDo you want to save changes?')
+            msg_box.setWindowTitle('Save changes?')
+            msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            if msg_box.exec() == QMessageBox.Cancel:
+                return
+            from nomad_camels.utility.password_widgets import Password_Dialog
+            dialog = Password_Dialog(self, compare_hash=self.preferences['password_hash'])
+            if not dialog.exec():
+                return
         self.make_save_dict()
         load_save_functions.autosave_preset(self._current_preset[0],
                                             self.__save_dict__,

@@ -26,7 +26,7 @@ class Ui_settings_window(object):
     def setupUi(self, settings_window):
         if not settings_window.objectName():
             settings_window.setObjectName(u"settings_window")
-        settings_window.resize(634, 449)
+        settings_window.resize(634, 472)
         self.gridLayout = QGridLayout(settings_window)
         self.gridLayout.setObjectName(u"gridLayout")
         self.right = QWidget(settings_window)
@@ -339,26 +339,26 @@ class Ui_settings_window(object):
         self.gridLayout_2 = QGridLayout(self.saving)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.radioButton_n_backups = QRadioButton(self.saving)
-        self.radioButton_n_backups.setObjectName(u"radioButton_n_backups")
-
-        self.gridLayout_2.addWidget(self.radioButton_n_backups, 2, 1, 1, 1)
-
         self.radioButton_smart_backups = QRadioButton(self.saving)
         self.radioButton_smart_backups.setObjectName(u"radioButton_smart_backups")
         self.radioButton_smart_backups.setChecked(True)
 
-        self.gridLayout_2.addWidget(self.radioButton_smart_backups, 2, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.radioButton_smart_backups, 3, 2, 1, 1)
 
         self.spinBox_backup_number = QSpinBox(self.saving)
         self.spinBox_backup_number.setObjectName(u"spinBox_backup_number")
 
-        self.gridLayout_2.addWidget(self.spinBox_backup_number, 3, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.spinBox_backup_number, 4, 1, 1, 1)
 
         self.radioButton_all_backups = QRadioButton(self.saving)
         self.radioButton_all_backups.setObjectName(u"radioButton_all_backups")
 
-        self.gridLayout_2.addWidget(self.radioButton_all_backups, 2, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.radioButton_all_backups, 3, 0, 1, 1)
+
+        self.radioButton_n_backups = QRadioButton(self.saving)
+        self.radioButton_n_backups.setObjectName(u"radioButton_n_backups")
+
+        self.gridLayout_2.addWidget(self.radioButton_n_backups, 3, 1, 1, 1)
 
         self.line_4 = QFrame(self.saving)
         self.line_4.setObjectName(u"line_4")
@@ -366,22 +366,17 @@ class Ui_settings_window(object):
         self.line_4.setLineWidth(5)
         self.line_4.setFrameShape(QFrame.HLine)
 
-        self.gridLayout_2.addWidget(self.line_4, 4, 0, 1, 3)
+        self.gridLayout_2.addWidget(self.line_4, 5, 0, 1, 3)
 
         self.checkBox_autosave_run = QCheckBox(self.saving)
         self.checkBox_autosave_run.setObjectName(u"checkBox_autosave_run")
 
-        self.gridLayout_2.addWidget(self.checkBox_autosave_run, 1, 2, 1, 1)
-
-        self.checkBox_autosave = QCheckBox(self.saving)
-        self.checkBox_autosave.setObjectName(u"checkBox_autosave")
-
-        self.gridLayout_2.addWidget(self.checkBox_autosave, 1, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.checkBox_autosave_run, 2, 2, 1, 1)
 
         self.checkBox_backup_before_run = QCheckBox(self.saving)
         self.checkBox_backup_before_run.setObjectName(u"checkBox_backup_before_run")
 
-        self.gridLayout_2.addWidget(self.checkBox_backup_before_run, 1, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.checkBox_backup_before_run, 2, 1, 1, 1)
 
         self.label = QLabel(self.saving)
         self.label.setObjectName(u"label")
@@ -392,6 +387,16 @@ class Ui_settings_window(object):
         self.label.setFont(font1)
 
         self.gridLayout_2.addWidget(self.label, 0, 0, 1, 3)
+
+        self.checkBox_autosave = QCheckBox(self.saving)
+        self.checkBox_autosave.setObjectName(u"checkBox_autosave")
+
+        self.gridLayout_2.addWidget(self.checkBox_autosave, 2, 0, 1, 1)
+
+        self.checkBox_password = QCheckBox(self.saving)
+        self.checkBox_password.setObjectName(u"checkBox_password")
+
+        self.gridLayout_2.addWidget(self.checkBox_password, 1, 0, 1, 3)
 
 
         self.gridLayout_3.addWidget(self.saving, 0, 0, 1, 1)
@@ -560,13 +565,14 @@ class Ui_settings_window(object):
         self.label_17.setText(QCoreApplication.translate("settings_window", u"old logfile backups", None))
         self.label_16.setText(QCoreApplication.translate("settings_window", u"max. logfile size (MB)", None))
         self.label_15.setText(QCoreApplication.translate("settings_window", u"Log-Level", None))
-        self.radioButton_n_backups.setText(QCoreApplication.translate("settings_window", u"keep only...", None))
         self.radioButton_smart_backups.setText(QCoreApplication.translate("settings_window", u"\"smart\" backups", None))
         self.radioButton_all_backups.setText(QCoreApplication.translate("settings_window", u"keep all backups", None))
+        self.radioButton_n_backups.setText(QCoreApplication.translate("settings_window", u"keep only...", None))
         self.checkBox_autosave_run.setText(QCoreApplication.translate("settings_window", u"autosave before run", None))
-        self.checkBox_autosave.setText(QCoreApplication.translate("settings_window", u"autosave on closing", None))
         self.checkBox_backup_before_run.setText(QCoreApplication.translate("settings_window", u"backup before run", None))
         self.label.setText(QCoreApplication.translate("settings_window", u"Saving", None))
+        self.checkBox_autosave.setText(QCoreApplication.translate("settings_window", u"autosave on closing", None))
+        self.checkBox_password.setText(QCoreApplication.translate("settings_window", u"password protection", None))
         self.checkBox_play_camel_on_error.setText(QCoreApplication.translate("settings_window", u"Play Camel-Roar on error", None))
         self.label_11.setText(QCoreApplication.translate("settings_window", u"Sounds", None))
         self.label_3.setText(QCoreApplication.translate("settings_window", u"Number-Formatting (only visual)", None))

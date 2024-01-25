@@ -79,7 +79,9 @@ standard_pref = {'autosave': True,
                  'backup_number': 30,
                  'number_databroker_files': 30,
                  'extension_path': os.path.join(os.getcwd(), 'extensions').replace('\\','/'),
-                 'extensions': []
+                 'extensions': [],
+                 'password_protection': False,
+                 'password_hash': ''
                 }
 
 def get_preset_list():
