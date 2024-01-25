@@ -26,7 +26,7 @@ class Ui_settings_window(object):
     def setupUi(self, settings_window):
         if not settings_window.objectName():
             settings_window.setObjectName(u"settings_window")
-        settings_window.resize(634, 472)
+        settings_window.resize(634, 495)
         self.gridLayout = QGridLayout(settings_window)
         self.gridLayout.setObjectName(u"gridLayout")
         self.right = QWidget(settings_window)
@@ -366,7 +366,7 @@ class Ui_settings_window(object):
         self.line_4.setLineWidth(5)
         self.line_4.setFrameShape(QFrame.HLine)
 
-        self.gridLayout_2.addWidget(self.line_4, 5, 0, 1, 3)
+        self.gridLayout_2.addWidget(self.line_4, 6, 0, 1, 3)
 
         self.checkBox_autosave_run = QCheckBox(self.saving)
         self.checkBox_autosave_run.setObjectName(u"checkBox_autosave_run")
@@ -397,6 +397,11 @@ class Ui_settings_window(object):
         self.checkBox_password.setObjectName(u"checkBox_password")
 
         self.gridLayout_2.addWidget(self.checkBox_password, 1, 0, 1, 3)
+
+        self.checkBox_new_file_each_run = QCheckBox(self.saving)
+        self.checkBox_new_file_each_run.setObjectName(u"checkBox_new_file_each_run")
+
+        self.gridLayout_2.addWidget(self.checkBox_new_file_each_run, 5, 0, 1, 3)
 
 
         self.gridLayout_3.addWidget(self.saving, 0, 0, 1, 1)
@@ -573,6 +578,7 @@ class Ui_settings_window(object):
         self.label.setText(QCoreApplication.translate("settings_window", u"Saving", None))
         self.checkBox_autosave.setText(QCoreApplication.translate("settings_window", u"autosave on closing", None))
         self.checkBox_password.setText(QCoreApplication.translate("settings_window", u"password protection", None))
+        self.checkBox_new_file_each_run.setText(QCoreApplication.translate("settings_window", u"save each measurement run in new file", None))
         self.checkBox_play_camel_on_error.setText(QCoreApplication.translate("settings_window", u"Play Camel-Roar on error", None))
         self.label_11.setText(QCoreApplication.translate("settings_window", u"Sounds", None))
         self.label_3.setText(QCoreApplication.translate("settings_window", u"Number-Formatting (only visual)", None))

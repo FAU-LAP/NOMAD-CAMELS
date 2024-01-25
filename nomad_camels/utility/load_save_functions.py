@@ -81,7 +81,8 @@ standard_pref = {'autosave': True,
                  'extension_path': os.path.join(os.getcwd(), 'extensions').replace('\\','/'),
                  'extensions': [],
                  'password_protection': False,
-                 'password_hash': ''
+                 'password_hash': '',
+                 'new_file_each_run': True
                 }
 
 def get_preset_list():

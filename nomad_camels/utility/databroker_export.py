@@ -10,6 +10,8 @@ from datetime import datetime as dt
 import numpy as np
 import xarray
 
+from nomad_camels.utility.fit_variable_renaming import replace_name
+
 
 def recourse_entry_dict(entry, metadata):
     """Recoursively makes the metadata to a dictionary.
@@ -116,16 +118,17 @@ def broker_to_hdf5(runs, filename, additional_data=None):
 
 def export_run(filename, run_number=-1, plot_data=None, additional_data=None,
                session_name='', export_to_csv=False, export_to_json=False,
-               catalog_name='CAMELS_CATALOG'):
+               catalog_name='CAMELS_CATALOG', new_file_each_run=False):
     """ TODO """
     catalog = databroker.catalog[catalog_name]
     run = catalog[run_number]
     broker_to_NX([run], filename, plot_data, additional_data,
-                 session_name, export_to_csv, export_to_json)
+                 session_name, export_to_csv, export_to_json,
+                 new_file_each_run)
 
 
 def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
-                 session_name='', export_to_csv=False, export_to_json=False):
+                 session_name='', export_to_csv=False, export_to_json=False, new_file_each_run=False):
     """
 
     Parameters
@@ -163,7 +166,11 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
         start_time = timestamp_to_ISO8601(st_time)
         end_time = timestamp_to_ISO8601(meta_stop.pop('time'))
         entry_name = f'{session_name}_{start_time}' if session_name else start_time
-        entry_name_non_iso = f'{session_name}_{st_time}' if session_name else st_time
+        entry_name_non_iso = clean_filename(entry_name)
+        # check if the filename already exists, if yes, add entry_name to filename
+        if new_file_each_run and os.path.isfile(filename):
+            filename = filename.split(".")[0] + f'_{entry_name_non_iso}.hdf5'
+        filename = os.path.dirname(filename) + f'/{clean_filename(os.path.basename(filename).split(".")[0])}.hdf5'
         if export_to_json:
             if not os.path.isdir(filename.split(".")[0]):
                 os.makedirs(filename.split(".")[0])
@@ -425,3 +432,26 @@ def timestamp_to_ISO8601(timestamp):
         return 'None'
     from_stamp = dt.fromtimestamp(timestamp)
     return from_stamp.astimezone().isoformat()
+
+def clean_filename(filename):
+    """
+    cleans the filename from characters that are not allowed
+
+    Parameters
+    ----------
+    filename : str
+        The filename to clean.
+    """
+    filename = filename.replace(' ', '_')
+    filename = filename.replace('.', '_')
+    filename = filename.replace(':', '-')
+    filename = filename.replace('/', '-')
+    filename = filename.replace('\\', '-')
+    filename = filename.replace('?', '_')
+    filename = filename.replace('*', '_')
+    filename = filename.replace('<', '_smaller_')
+    filename = filename.replace('>', '_greater_')
+    filename = filename.replace('|', '-')
+    filename = filename.replace('"', '_quote_')
+    return filename
+

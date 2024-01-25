@@ -138,6 +138,11 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.extensions = settings['extensions']
         else:
             self.extensions = standard_pref['extensions']
+
+        if 'new_file_each_run' in settings:
+            self.checkBox_new_file_each_run.setChecked(settings['new_file_each_run'])
+        else:
+            self.checkBox_new_file_each_run.setChecked(standard_pref['new_file_each_run'])
         
         if 'password_protection' in settings:
             self.checkBox_password.setChecked(settings['password_protection'])
@@ -236,7 +241,9 @@ class Settings_Window(Ui_settings_window, QDialog):
                 'backups': backups,
                 'NOMAD_URL': self.lineEdit_oasis.text(),
                 'password_protection': self.checkBox_password.isChecked(),
-                'password_hash': self.password_hash}
+                'password_hash': self.password_hash,
+                'new_file_each_run': self.checkBox_new_file_each_run.isChecked()
+                }
 
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

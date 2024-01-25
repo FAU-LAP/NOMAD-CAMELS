@@ -1402,7 +1402,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                                            self.protocol_module.plots,
                                            session_name=self.running_protocol.session_name,
                                            export_to_csv=self.running_protocol.export_csv,
-                                           export_to_json=self.running_protocol.export_json)
+                                           export_to_json=self.running_protocol.export_json,
+                                           new_file_each_run=self.preferences['new_file_each_run'])
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
         device_handling.close_devices(self.current_protocol_device_list)
