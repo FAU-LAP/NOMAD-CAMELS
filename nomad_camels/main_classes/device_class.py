@@ -713,6 +713,8 @@ class Simple_Config(Device_Config):
 
 class Simple_Config_Sub(Device_Config_Sub):
     """ """
+    config_changed = Signal()
+    
     def __init__(self, settings_dict=None, parent=None, config_dict=None,
                  comboBoxes=None, config_types=None, labels=None):
         super().__init__(settings_dict=settings_dict, parent=parent,
@@ -785,6 +787,22 @@ class Simple_Config_Sub(Device_Config_Sub):
                 self.config_strings[name] = QLineEdit(val)
             else:
                 raise Exception(f'Type of {name} with value {val} not supported for simple device config!')
+        for widge in self.setting_checks.values():
+            widge.stateChanged.connect(self.config_changed.emit)
+        for widge in self.setting_combos.values():
+            widge.currentTextChanged.connect(self.config_changed.emit)
+        for widge in self.setting_strings.values():
+            widge.returnPressed.connect(self.config_changed.emit)
+        for widge in self.setting_floats.values():
+            widge.returnPressed.connect(self.config_changed.emit)
+        for widge in self.config_checks.values():
+            widge.stateChanged.connect(self.config_changed.emit)
+        for widge in self.config_combos.values():
+            widge.currentTextChanged.connect(self.config_changed.emit)
+        for widge in self.config_strings.values():
+            widge.returnPressed.connect(self.config_changed.emit)
+        for widge in self.config_floats.values():
+            widge.returnPressed.connect(self.config_changed.emit)
 
         col = 0
         row = 0
