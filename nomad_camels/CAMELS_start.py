@@ -68,7 +68,8 @@ class LoadingScreen(QDialog):
 
 
 # Show the loading screen and import your packages
-if __name__ == '__main__':
+def start_camels():
+    import os
     appdata_path = f'{os.getenv("LOCALAPPDATA")}/nomad_camels'
     app = QCoreApplication.instance()
     if app is None:
@@ -134,3 +135,6 @@ if __name__ == '__main__':
     main_window.show()
 
     app.exec()
+
+if __name__ == '__main__':
+    start_camels()

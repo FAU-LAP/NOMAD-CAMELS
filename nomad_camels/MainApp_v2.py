@@ -4,6 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 sys.path.append(os.path.dirname(__file__))
 import json
+import pathlib
 
 from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog
 from PySide6.QtCore import QCoreApplication, Qt, Signal, QThread
@@ -16,8 +17,10 @@ from pkg_resources import resource_filename
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import Drop_Scroll_Area
 from nomad_camels.utility import load_save_functions, variables_handling, number_formatting, theme_changing, update_camels, logging_settings, qthreads
 from nomad_camels.ui_widgets import options_run_button, warn_popup
+from nomad_camels.extensions import extension_contexts
 
 from collections import OrderedDict
+import importlib
 
 
 camels_github = 'https://github.com/FAU-LAP/NOMAD-CAMELS'
@@ -27,12 +30,17 @@ camels_github_pages = 'https://fau-lap.github.io/NOMAD-CAMELS/'
 class MainWindow(Ui_MainWindow, QMainWindow):
     """Main Window for the program. Connects to all the other classes."""
     protocol_stepper_signal = Signal(int)
+    run_done_file_signal = Signal(str)
 
     def __init__(self, parent=None):
-        super().__init__()
+        super().__init__(parent=parent)
         self.setupUi(self)
         sys.stdout = self.textEdit_console_output.text_writer
         sys.stderr = self.textEdit_console_output.error_writer
+
+        self.sample_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
+        self.user_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
+        self.session_upload_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
         self.button_area_meas = Drop_Scroll_Area(self, 120, 120)
         self.button_area_manual = Drop_Scroll_Area(self, 120, 120)
@@ -163,8 +171,67 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_savepath = ''
         self.running_protocol = None
 
+        # Extension Contexts
+        self.extension_user = {}
+        self.extension_sample = {}
+        self.eln_context = extension_contexts.ELN_Context(self)
+        self.extension_contexts = {'ELN_Context': self.eln_context}
+        self.extensions = []
+        self.load_extensions()
+        self.actionManage_Extensions.triggered.connect(self.manage_extensions)
+
+
+
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
+
+
+
+    def manage_extensions(self):
+        if 'password_protection' in self.preferences and self.preferences['password_protection']:
+            from nomad_camels.utility.password_widgets import Password_Dialog
+            dialog = Password_Dialog(self, compare_hash=self.preferences['password_hash'])
+            if not dialog.exec():
+                return
+        self.setCursor(Qt.WaitCursor)
+        from nomad_camels.extensions.extension_management import Extension_Manager
+        from nomad_camels.utility.update_camels import restart_camels
+        dialog = Extension_Manager(self.preferences, self)
+        if dialog.exec():
+            # self.load_extensions()
+            load_save_functions.save_preferences(self.preferences)
+            warn_popup.WarnPopup(self, 'Extensions will be loaded after restart.', 'Restart required', info_icon=True)
+            restart_camels(self, True)
+        self.setCursor(Qt.ArrowCursor)
+
+
+    def load_extensions(self):
+        if not 'extensions' in self.preferences:
+            from nomad_camels.utility.load_save_functions import standard_pref
+            self.preferences['extensions'] = standard_pref['extensions']
+        if not 'extension_path' in self.preferences:
+            from nomad_camels.utility.load_save_functions import standard_pref
+            self.preferences['extension_path'] = standard_pref['extension_path']
+        sys.path.append(self.preferences['extension_path'])
+        for f in pathlib.Path(self.preferences['extension_path']).rglob('*'):
+            for extension in self.preferences['extensions']:
+                if not f.name == extension:
+                    continue
+                sys.path.append(str(f.parent))
+                try:
+                    extension_module = importlib.import_module(extension)
+                except (ModuleNotFoundError, AttributeError) as e:
+                    print(f'Could not load extension {extension}.\n{e}')
+                    continue
+                config = getattr(extension_module, 'EXTENSION_CONFIG')
+                name = config['name']
+                contexts = {}
+                for context in config['required_contexts']:
+                    contexts[context] = self.extension_contexts[context]
+                self.extensions.append(getattr(extension_module, name)(**contexts))
+            
+            
+            
 
     def bluesky_setup(self):
         # IMPORT bluesky only if it is needed
@@ -322,8 +389,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def show_nomad_upload(self):
         """Shows / hides the settings for directly uploading data to NOMAD."""
         nomad = self.nomad_user is not None
-        self.label_nomad_upload.setHidden(not nomad)
-        self.comboBox_upload_type.setHidden(not nomad)
+        self.nomad_upload_widget.setHidden(not nomad)
         auto_upload = self.comboBox_upload_type.currentText() == 'auto upload'
         self.comboBox_upload_choice.setHidden(not nomad or not auto_upload)
         if nomad:
@@ -336,11 +402,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def change_user_type(self):
         """Shows / hides the ui-elements depending on the type of user,
         e.g. the NOMAD login button is only shown if NOMAD user is selected."""
-        nomad = self.comboBox_user_type.currentText() == 'NOMAD user'
-        self.comboBox_user.setHidden(nomad)
-        self.pushButton_editUserInfo.setHidden(nomad)
-        self.pushButton_login_nomad.setHidden(not nomad)
-        self.label_nomad_user.setHidden(not nomad)
+        user_type = self.comboBox_user_type.currentText()
+        if user_type not in ['local user', 'NOMAD user']:
+            return
+        nomad = user_type == 'NOMAD user'
+        self.user_widget_nomad.setHidden(not nomad)
+        self.user_widget_default.setHidden(nomad)
         if not nomad:
             self.nomad_user = None
         else:
@@ -522,12 +589,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def show_nomad_sample(self):
         nomad = self.nomad_user is not None
-        self.checkBox_use_nomad_sample.setHidden(not nomad)
-        self.pushButton_nomad_sample.setHidden(not nomad)
+        self.sample_widget_nomad.setHidden(not nomad)
         active_sample = self.nomad_sample is not None
         use_nomad = self.checkBox_use_nomad_sample.isChecked()
-        self.comboBox_sample.setHidden(active_sample and use_nomad)
-        self.pushButton_editSampleInfo.setHidden(active_sample and use_nomad)
+        use_nomad_sample = active_sample and use_nomad and nomad
+        self.sample_widget_default.setHidden(use_nomad_sample)
         self.pushButton_nomad_sample.setEnabled(use_nomad)
 
     # --------------------------------------------------
@@ -634,7 +700,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         from nomad_camels.frontpanels.settings_window import Settings_Window
         settings_dialog = Settings_Window(parent=self, settings=self.preferences)
         if settings_dialog.exec():
-            self.preferences = settings_dialog.get_settings()
+            self.preferences.update(settings_dialog.get_settings())
             load_save_functions.save_preferences(self.preferences)
         self.update_preference_settings()
 
@@ -653,6 +719,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
+        if 'password_protection' in self.preferences and self.preferences['password_protection']:
+            from PySide6.QtWidgets import QMessageBox
+            msg_box = QMessageBox()
+            msg_box.setText('This version of NOMAD CAMELS is password protected.\nDo you want to save changes?')
+            msg_box.setWindowTitle('Save changes?')
+            msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            if msg_box.exec() == QMessageBox.Cancel:
+                return
+            from nomad_camels.utility.password_widgets import Password_Dialog
+            dialog = Password_Dialog(self, compare_hash=self.preferences['password_hash'])
+            if not dialog.exec():
+                return
         self.make_save_dict()
         load_save_functions.autosave_preset(self._current_preset[0],
                                             self.__save_dict__,
@@ -1145,8 +1223,28 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         button.run_function = lambda state=None, x=name: self.run_protocol(x)
         button.build_function = lambda x=name: self.build_protocol(x)
         button.external_function = lambda x=name: self.open_protocol(x)
+        button.data_path_function = lambda x=name: self.open_data_path(x)
         button.del_function = lambda x=name: self.remove_protocol(x)
         button.update_functions()
+    
+    def open_data_path(self, protocol_name):
+        user = self.get_user_name_data()[0]
+        sample = self.get_sample_name_data()[0]
+        protocol = self.protocols_dict[protocol_name]
+        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
+        savepath = os.path.normpath(savepath)
+        while not os.path.exists(savepath):
+            savepath = os.path.dirname(savepath)
+        import platform, subprocess
+        if platform.system() == "Windows":
+            # /select, specifies that the file should be highlighted
+            subprocess.Popen(f'explorer /select,"{savepath}"')
+        elif platform.system() == "Darwin":
+            # -R, specifies that the file should be revealed in finder
+            subprocess.Popen(["open", "-R", savepath])
+        else:
+            # Linux doesn't support highlighting a specific file in the file explorer
+            subprocess.Popen(["xdg-open", os.path.dirname(savepath)])
 
     def populate_meas_buttons(self):
         """ """
@@ -1234,6 +1332,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
         nomad = self.nomad_user is not None
+        self.run_done_file_signal.emit(self.protocol_savepath)
         if not nomad:
             return
         while self.still_running:
@@ -1323,7 +1422,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                                            self.protocol_module.plots,
                                            session_name=self.running_protocol.session_name,
                                            export_to_csv=self.running_protocol.export_csv,
-                                           export_to_json=self.running_protocol.export_json)
+                                           export_to_json=self.running_protocol.export_json,
+                                           new_file_each_run=self.preferences['new_file_each_run'])
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
         device_handling.close_devices(self.current_protocol_device_list)
@@ -1375,23 +1475,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 return
         else:
             path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
-        if self.nomad_user:
-            userdata = self.nomad_user
-            user = userdata['name']
-        else:
-            user = self.active_user or 'default_user'
-            userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
-        if self.nomad_sample and self.checkBox_use_nomad_sample.isChecked():
-            sampledata = self.nomad_sample
-            if 'name' in sampledata:
-                sample = sampledata['name']
-            elif 'Name' in sampledata:
-                sample = sampledata['Name']
-            else:
-                sample = 'NOMAD-Sample'
-        else:
-            sample = self.comboBox_sample.currentText() or 'default_sample'
-            sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
+        user, userdata = self.get_user_name_data()
+        sample, sampledata = self.get_sample_name_data()
         savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
         self.protocol_savepath = savepath
         # IMPORT protocol_builder only if needed
@@ -1401,6 +1486,35 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                                         userdata=userdata, sampledata=sampledata)
         print('\n\nBuild successfull!\n')
         self.progressBar_protocols.setValue(100 if ask_file else 1)
+    
+    def get_user_name_data(self):
+        if self.nomad_user:
+            userdata = self.nomad_user
+            user = userdata['name']
+        elif self.extension_user:
+            userdata = self.extension_user
+        else:
+            user = self.active_user or 'default_user'
+            userdata = {'name': 'default_user'} if user == 'default_user' else self.userdata[user]
+        return user, userdata
+    
+    def get_sample_name_data(self):
+        if self.nomad_sample and self.checkBox_use_nomad_sample.isChecked():
+            sampledata = self.nomad_sample
+            if 'name' in sampledata:
+                sample = sampledata['name']
+            elif 'Name' in sampledata:
+                sample = sampledata['Name']
+            else:
+                sample = 'NOMAD-Sample'
+        elif self.extension_sample:
+            sampledata = self.extension_sample
+            sample = sampledata['name']
+        else:
+            sample = self.comboBox_sample.currentText() or 'default_sample'
+            sampledata = {'name': 'default_sample'} if sample == 'default_sample' else self.sampledata[sample]
+        return sample, sampledata
+
 
     def open_protocol(self, protocol_name):
         """
