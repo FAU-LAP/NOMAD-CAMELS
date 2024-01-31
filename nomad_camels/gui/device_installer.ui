@@ -156,22 +156,7 @@
    <item row="6" column="2">
     <widget class="QPushButton" name="pushButton_info">
      <property name="styleSheet">
-      <string notr="true">QPushButton {
-    background-color: #2a4cdf; /* This is a lighter shade of blue */
-    color: white;
-    border: none;
-    padding: 2px 10px;
-    text-align: center;
-    text-decoration: none;
-    font-size: 13px;
-    margin: 2px 2px;
-    border-radius: 6px;
-    font-weight: bold;
-}
-
-QPushButton:hover {
-    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */
-}</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string>hide info</string>

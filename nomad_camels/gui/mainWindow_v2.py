@@ -94,22 +94,7 @@ class Ui_MainWindow(object):
 
         self.pushButton_clear_log = QPushButton(self.centralwidget)
         self.pushButton_clear_log.setObjectName(u"pushButton_clear_log")
-        self.pushButton_clear_log.setStyleSheet(u"QPushButton {\n"
-"        background-color: #2a4cdf;\n"
-"        color: white;\n"
-"        border: none;\n"
-"        padding: 2px 10px;\n"
-"        text-align: center;\n"
-"        text-decoration: none;\n"
-"        font-size: 12px;\n"
-"        margin: 2px 2px;\n"
-"        border-radius: 6px;\n"
-"        font-weight: bold;\n"
-"    }\n"
-"\n"
-"    QPushButton:hover {\n"
-"        background-color: #1a3cbf;\n"
-"    }")
+        self.pushButton_clear_log.setStyleSheet(u"")
 
         self.gridLayout_5.addWidget(self.pushButton_clear_log, 8, 9, 1, 2)
 
@@ -563,7 +548,7 @@ class Ui_MainWindow(object):
 "    }\n"
 "\n"
 "    QPushButton:hover {\n"
-"        background-color: #FF4500;\n"
+"        background-color: #FF8C00;\n"
 "    }\n"
 "QPushButton:disabled {\n"
 "        background-color: #808080;\n"
@@ -599,22 +584,7 @@ class Ui_MainWindow(object):
 
         self.pushButton_close_plots = QPushButton(self.centralwidget)
         self.pushButton_close_plots.setObjectName(u"pushButton_close_plots")
-        self.pushButton_close_plots.setStyleSheet(u"QPushButton {\n"
-"        background-color: #2a4cdf;\n"
-"        color: white;\n"
-"        border: none;\n"
-"        padding: 2px 10px;\n"
-"        text-align: center;\n"
-"        text-decoration: none;\n"
-"        font-size: 12px;\n"
-"        margin: 2px 2px;\n"
-"        border-radius: 6px;\n"
-"        font-weight: bold;\n"
-"    }\n"
-"\n"
-"    QPushButton:hover {\n"
-"        background-color: #1a3cbf;\n"
-"    }")
+        self.pushButton_close_plots.setStyleSheet(u"")
 
         self.gridLayout_5.addWidget(self.pushButton_close_plots, 8, 11, 1, 1)
 
@@ -665,7 +635,7 @@ class Ui_MainWindow(object):
         self.actionOpen_Backup_Device_Preset.setText(QCoreApplication.translate("MainWindow", u"Load Backup Device Preset", None))
         self.actionLoad_Backup_Preset.setText(QCoreApplication.translate("MainWindow", u"Load Preset", None))
         self.actionAutosave_on_closing.setText(QCoreApplication.translate("MainWindow", u"Autosave on closing", None))
-        self.actionUpdate_CAMELS.setText(QCoreApplication.translate("MainWindow", u"Update NOMAD CAMELS", None))
+        self.actionUpdate_CAMELS.setText(QCoreApplication.translate("MainWindow", u"Update NOMAD-CAMELS", None))
         self.actionDark_Mode.setText(QCoreApplication.translate("MainWindow", u"Dark Mode", None))
         self.actionUndo.setText(QCoreApplication.translate("MainWindow", u"Undo (ctrl + z)", None))
         self.actionRedo.setText(QCoreApplication.translate("MainWindow", u"Redo (ctrl + y)", None))
