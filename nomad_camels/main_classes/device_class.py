@@ -609,6 +609,8 @@ class Local_VISA(Connection_Config):
     """ """
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.only_resource_name = False
+
         label_port = QLabel('Resource-Name:')
         self.comboBox_port = QComboBox()
         import pyvisa
@@ -643,9 +645,16 @@ class Local_VISA(Connection_Config):
         self.lineEdit_error_retry = QLineEdit('0')
         self.layout().addWidget(label_error_retry, 3, 0)
         self.layout().addWidget(self.lineEdit_error_retry, 3, 1, 1, 3)
+        self.widgets_to_hide = [label_baud, self.lineEdit_baud,
+                                label_timeout, self.lineEdit_timeout,
+                                label_in_term, self.lineEdit_in_term,
+                                label_out_term, self.lineEdit_out_term,
+                                label_error_retry, self.lineEdit_error_retry]
 
     def get_settings(self):
         """ """
+        if self.only_resource_name:
+            return {'resource_name': self.comboBox_port.currentText()}
         return {'resource_name': self.comboBox_port.currentText(),
                 'baud_rate': int(self.lineEdit_baud.text()),
                 'timeout': int(self.lineEdit_timeout.text()),
@@ -679,6 +688,11 @@ class Local_VISA(Connection_Config):
             self.lineEdit_out_term.setText(settings_dict['write_termination'].replace('\r', '\\r').replace('\n', '\\n'))
         if 'retry_on_error' in settings_dict:
             self.lineEdit_error_retry.setText(str(settings_dict['retry_on_error']))
+    
+    def set_only_resource_name(self):
+        for widge in self.widgets_to_hide:
+            widge.setHidden(True)
+        self.only_resource_name = True
 
 
 
