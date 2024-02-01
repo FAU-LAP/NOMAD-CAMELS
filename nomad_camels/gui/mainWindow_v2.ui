@@ -31,22 +31,7 @@
     <item row="8" column="9" colspan="2">
      <widget class="QPushButton" name="pushButton_clear_log">
       <property name="styleSheet">
-       <string notr="true">QPushButton {
-        background-color: #2a4cdf;
-        color: white;
-        border: none;
-        padding: 2px 10px;
-        text-align: center;
-        text-decoration: none;
-        font-size: 12px;
-        margin: 2px 2px;
-        border-radius: 6px;
-        font-weight: bold;
-    }
-
-    QPushButton:hover {
-        background-color: #1a3cbf;
-    }</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Clear Log</string>
@@ -928,7 +913,7 @@ Instruments</string>
     }
 
     QPushButton:hover {
-        background-color: #FF4500;
+        background-color: #FF8C00;
     }
 QPushButton:disabled {
         background-color: #808080;
@@ -979,22 +964,7 @@ QPushButton:disabled {
     <item row="8" column="11">
      <widget class="QPushButton" name="pushButton_close_plots">
       <property name="styleSheet">
-       <string notr="true">QPushButton {
-        background-color: #2a4cdf;
-        color: white;
-        border: none;
-        padding: 2px 10px;
-        text-align: center;
-        text-decoration: none;
-        font-size: 12px;
-        margin: 2px 2px;
-        border-radius: 6px;
-        font-weight: bold;
-    }
-
-    QPushButton:hover {
-        background-color: #1a3cbf;
-    }</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Close Plots</string>
@@ -1099,7 +1069,7 @@ QPushButton:disabled {
   </action>
   <action name="actionUpdate_CAMELS">
    <property name="text">
-    <string>Update NOMAD CAMELS</string>
+    <string>Update NOMAD-CAMELS</string>
    </property>
   </action>
   <action name="actionDark_Mode">

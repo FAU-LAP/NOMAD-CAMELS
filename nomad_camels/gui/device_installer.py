@@ -133,22 +133,7 @@ class Ui_Form(object):
 
         self.pushButton_info = QPushButton(Form)
         self.pushButton_info.setObjectName(u"pushButton_info")
-        self.pushButton_info.setStyleSheet(u"QPushButton {\n"
-"    background-color: #2a4cdf; /* This is a lighter shade of blue */\n"
-"    color: white;\n"
-"    border: none;\n"
-"    padding: 2px 10px;\n"
-"    text-align: center;\n"
-"    text-decoration: none;\n"
-"    font-size: 13px;\n"
-"    margin: 2px 2px;\n"
-"    border-radius: 6px;\n"
-"    font-weight: bold;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */\n"
-"}")
+        self.pushButton_info.setStyleSheet(u"")
 
         self.gridLayout.addWidget(self.pushButton_info, 6, 2, 1, 1)
 
