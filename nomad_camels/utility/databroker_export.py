@@ -10,6 +10,9 @@ from datetime import datetime as dt
 import numpy as np
 import xarray
 
+from PySide6.QtWidgets import QDialog, QComboBox, QPushButton, QGridLayout, QLabel, QCheckBox
+
+sys.path.append(r'C:\Users\od93yces\FAIRmat\CAMELS')
 from nomad_camels.utility.fit_variable_renaming import replace_name
 
 
@@ -338,6 +341,174 @@ def broker_to_NX(runs, filename, plot_data=None, additional_data=None,
                 group.attrs['NX_class'] = 'NXdata'
     # print('Successfully saved protocol data!')
 
+def export_h5_to_csv_json(filename, entry_name=None, export_data=True, export_metadata=True):
+    # read the h5 file and list the entries
+    with h5py.File(filename, 'r') as file:
+        entries = list(file.keys())
+    if entry_name is not None and entry_name in entries:
+        entries = [entry_name]
+    for entry_name in entries:
+        with h5py.File(filename, 'r') as file:
+            entry = file[entry_name]
+            entry_name_non_iso = clean_filename(entry_name)
+            if export_metadata:
+                metadata = h5_group_to_dict(entry)
+                fname = f'{filename.split(".")[0]}/{entry_name_non_iso}_metadata.json'
+                if not os.path.isdir(os.path.dirname(fname)):
+                    os.makedirs(os.path.dirname(fname))
+                with open(fname, 'w', encoding='utf-8') as json_file:
+                    json.dump(metadata, json_file, cls=NumpyEncoder, indent=2)
+            if export_data:
+                if 'data' not in entry:
+                    continue
+                data = entry['data']
+                export_h5_group_to_csv(data, f'{filename.split(".")[0]}/{entry_name_non_iso}/primary.csv')
+
+
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, np.bool_):
+            return bool(obj)
+        else:
+            return super(NumpyEncoder, self).default(obj)
+
+def h5_group_to_dict(group):
+    """
+
+    Parameters
+    ----------
+    group :
+        
+
+    Returns
+    -------
+
+    """
+    data = {}
+    for k in group.keys():
+        if k == 'data':
+            continue
+        if isinstance(group[k], h5py.Group):
+            data[k] = h5_group_to_dict(group[k])
+        else:
+            # read dataset and handle scalar data
+            if len(group[k].shape) == 0:
+                data[k] = group[k][()]
+            else:
+                data[k] = group[k][:].tolist()
+            # if data[k] is of type bytes, convert it to string
+            if isinstance(data[k], bytes):
+                data[k] = data[k].decode('utf-8')
+    return data
+        
+def export_h5_group_to_csv(group, filename):
+    import pandas as pd
+    arrs = {}
+    if not os.path.isdir(os.path.dirname(filename)):
+        os.makedirs(os.path.dirname(filename))
+    for k in group.keys():
+        if isinstance(group[k], h5py.Group):
+            export_h5_group_to_csv(group[k], f'{filename.split(".")[0]}_{k}.csv')
+        elif isinstance(group[k], h5py.Dataset):
+            # convert the dataset to a numpy array
+            arr = group[k][:]
+            # if the array is 2D save it as a dataframe
+            if len(arr.shape) == 2:
+                df = pd.DataFrame(arr)
+                df.to_csv(f'{filename.split(".")[0]}_{k}.csv', sep=',')
+            elif len(arr.shape) > 2:
+                # Create a MultiIndex for an unknown number of dimensions
+                index = pd.MultiIndex.from_product([range(i) for i in arr.shape], names=[f'dim{i}' for i in range(len(arr.shape))])
+                # Flatten the array and create a DataFrame
+                arr_flat = arr.flatten()
+                df = pd.DataFrame(arr_flat, index=index)
+                df.to_csv(f'{filename.split(".")[0]}_{k}.csv', sep=',')
+            else:
+                arrs[k] = arr
+    if arrs:
+        try:
+            df = pd.DataFrame(arrs)
+        except Exception as e:
+            print(e)
+            return
+        df.to_csv(filename, sep=',')
+
+
+class ExportH5_dialog(QDialog):
+    def __init__(self, parent=None):
+        from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
+        super().__init__(parent)
+        self.setWindowTitle('Export H5 - NOMAD CAMELS')
+        layout = QGridLayout()
+        self.setLayout(layout)
+
+        self.filename = Path_Button_Edit()
+        self.filename.path_changed.connect(self.update_entries)
+        
+        label_entry = QLabel('Entry')
+        self.entry_name = QComboBox()
+        self.export_button = QPushButton('Export')
+        self.export_button.clicked.connect(self.accept)
+
+        self.checkbox_all_entries = QCheckBox('export all entries')
+        self.checkbox_all_entries.stateChanged.connect(self.all_entries)
+
+        self.checkbox_data = QCheckBox('export data')
+        self.checkbox_data.setChecked(True)
+        self.checkbox_metadata = QCheckBox('export metadata')
+        self.checkbox_metadata.setChecked(True)
+
+        self.cancel_button = QPushButton('Cancel')
+        self.cancel_button.clicked.connect(self.reject)
+
+        layout.addWidget(QLabel('hdf5 file'), 0, 0)
+        layout.addWidget(self.filename, 0, 1)
+        layout.addWidget(label_entry, 1, 0)
+        layout.addWidget(self.entry_name, 1, 1)
+        layout.addWidget(self.checkbox_all_entries, 2, 0, 1, 2)
+        layout.addWidget(self.checkbox_data, 3, 0)
+        layout.addWidget(self.checkbox_metadata, 3, 1)
+        layout.addWidget(self.export_button, 4, 0)
+        layout.addWidget(self.cancel_button, 4, 1)
+
+        self.show()
+    
+    def all_entries(self):
+        if self.checkbox_all_entries.isChecked():
+            self.entry_name.setEnabled(False)
+        else:
+            self.entry_name.setEnabled(True)
+    
+    def update_entries(self):
+        self.entry_name.clear()
+        if not self.filename.get_path():
+            return
+        with h5py.File(self.filename.get_path(), 'r') as file:
+            entries = list(file.keys())
+        self.entry_name.addItems(entries)
+    
+    def accept(self):
+        if not self.filename.get_path():
+            return
+        if self.checkbox_all_entries.isChecked():
+            entry = None
+        else:
+            entry = self.entry_name.currentText()
+        export_data = self.checkbox_data.isChecked()
+        export_metadata = self.checkbox_metadata.isChecked()
+        export_h5_to_csv_json(self.filename.get_path(), entry_name=entry,
+                              export_data=export_data,
+                              export_metadata=export_metadata)
+        super().accept()
+
+
 
 def get_param_dict(param_values):
     """
@@ -455,3 +626,6 @@ def clean_filename(filename):
     filename = filename.replace('"', '_quote_')
     return filename
 
+if __name__ == '__main__':
+    f = r"C:\Users\od93yces\NOMAD_CAMELS_data\Johannes Lehmeyer\default_sample\data.h5"
+    export_h5_to_csv_json(f)

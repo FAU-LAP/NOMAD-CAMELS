@@ -140,6 +140,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionReport_Bug.triggered.connect(lambda x: os.startfile(f'{camels_github}/issues'))
         self.actionDocumentation.triggered.connect(lambda x: os.startfile(camels_github_pages))
         self.actionUpdate_CAMELS.triggered.connect(lambda x: update_camels.question_message_box(self))
+        self.actionExport_CAMELS_hdf5_to_csv_json.triggered.connect(self.launch_hdf5_exporter)
 
         # buttons
         self.pushButton_add_manual.clicked.connect(self.add_manual_control)
@@ -1554,6 +1555,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         from nomad_camels.tools import databroker_exporter
         exporter = databroker_exporter.Datbroker_Exporter(self)
         exporter.show()
+    
+    def launch_hdf5_exporter(self):
+        from nomad_camels.utility import databroker_export
+        exporter = databroker_export.ExportH5_dialog(self)
+        exporter.exec()
 
 
 

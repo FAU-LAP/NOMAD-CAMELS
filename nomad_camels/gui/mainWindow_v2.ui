@@ -1035,7 +1035,10 @@ QPushButton:disabled {
      <string>Tools</string>
     </property>
     <addaction name="actionUpdate_CAMELS"/>
+    <addaction name="separator"/>
     <addaction name="actionExport_from_databroker"/>
+    <addaction name="actionExport_CAMELS_hdf5_to_csv_json"/>
+    <addaction name="separator"/>
     <addaction name="action_driver_builder"/>
     <addaction name="actionEPICS_driver_builder"/>
     <addaction name="separator"/>
@@ -1180,6 +1183,11 @@ QPushButton:disabled {
   <action name="actionManage_Extensions">
    <property name="text">
     <string>Managa Extensions</string>
+   </property>
+  </action>
+  <action name="actionExport_CAMELS_hdf5_to_csv_json">
+   <property name="text">
+    <string>Export CAMELS hdf5 to csv/json</string>
    </property>
   </action>
  </widget>

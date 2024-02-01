@@ -29,6 +29,7 @@ Features:
 - There is now an extension feature, the first extension provides a compatibility with eLabFTW
 - Can now save each run in its own file.
 - Can now open the save file path when right-clicking on a protocol.
+- Added a tool to export CAMELS hdf5 files to csv / json
 
 Changes:
 - the imports needed at a later time are now running in another thread after starting the main app to improve speed
