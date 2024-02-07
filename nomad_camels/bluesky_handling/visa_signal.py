@@ -97,7 +97,14 @@ class VISA_Signal(Signal):
         if not self.write:
             write_text = str(value)
         elif isinstance(self.write, str):
-            write_text = self.write.format(value=value)
+            val = value
+            if 'value:g' in self.write:
+                val = float(value)
+            elif re.search(r'{value:\.\df}', self.write) is not None:
+                val = float(value)
+            elif 'value:d' in self.write:
+                val = int(value)
+            write_text = self.write.format(value=val)
         else:
             write_text = self.write(value)
         if self.parse is not None:
