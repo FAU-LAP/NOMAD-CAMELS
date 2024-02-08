@@ -39,9 +39,9 @@ class Set_Value_Popup(Loop_Step):
         given values."""
         tabs = '\t' * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
-        protocol_string += f'{tabs}boxes["values_{self.name}"].done = False\n'
+        protocol_string += f'{tabs}boxes["values_{self.name}"].done_flag = False\n'
         protocol_string += f'{tabs}boxes["values_{self.name}"].helper.executor.emit()\n'
-        protocol_string += f'{tabs}while not boxes["values_{self.name}"].done:\n'
+        protocol_string += f'{tabs}while not boxes["values_{self.name}"].done_flag:\n'
         protocol_string += f'{tabs}\tyield from bps.sleep(0.1)\n'
         protocol_string += f'{tabs}if boxes["values_{self.name}"].was_accepted:\n'
         protocol_string += f'{tabs}\tfor var, val in boxes["values_{self.name}"].set_variables.items():\n'

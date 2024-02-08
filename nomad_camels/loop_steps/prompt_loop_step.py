@@ -29,13 +29,13 @@ class Prompt_Loop_Step(Loop_Step):
         self.icon = step_info['icon'] if 'icon' in step_info else 'Info'
 
     def get_protocol_string(self, n_tabs=1):
-        """Sets the prompt's `done` to False, then starts execution of the
-        prompt and waits until it is done."""
+        """Sets the prompt's `done_flag` to False, then starts execution of the
+        prompt and waits until it is done_flag."""
         tabs = '\t' * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
-        protocol_string += f'{tabs}boxes["prompt_{self.name}"].done = False\n'
+        protocol_string += f'{tabs}boxes["prompt_{self.name}"].done_flag = False\n'
         protocol_string += f'{tabs}boxes["prompt_{self.name}"].helper.executor.emit()\n'
-        protocol_string += f'{tabs}while not boxes["prompt_{self.name}"].done:\n'
+        protocol_string += f'{tabs}while not boxes["prompt_{self.name}"].done_flag:\n'
         protocol_string += f'{tabs}\tyield from bps.sleep(0.1)\n'
         return protocol_string
 
