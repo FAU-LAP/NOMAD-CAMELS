@@ -113,9 +113,9 @@ class Change_DeviceConf_Config(Loop_Step_Config):
             return
         if dev_name == 'advanced configuration':
             from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
-            try:
+            if self.loop_step.device == 'advanced configuration':
                 config_widge = Channels_Check_Table(self, ['set', 'config', 'value'], True, self.loop_step.config_dict, [2], use_configs=True)
-            except:
+            else:
                 config_widge = Channels_Check_Table(self, ['set', 'config', 'value'], True, {'channel': [], 'value': []}, [2], use_configs=True)
         else:
             device = variables_handling.devices[dev_name]
