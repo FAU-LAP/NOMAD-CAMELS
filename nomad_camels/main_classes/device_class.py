@@ -68,6 +68,7 @@ class Device:
         self.config = {}
         self.passive_config = {}
         self.channels = {}
+        self.config_channels = {}
         self.non_channel_functions = non_channel_functions or []
         self.main_thread_only = main_thread_only
         self.ophyd_class_name = ophyd_class_name
@@ -79,9 +80,9 @@ class Device:
         self.get_channels()
         for comp in self.ophyd_instance.walk_components():
             name = comp.item.attr
-            cls = comp.item.cls
+            dev_class = comp.item.cls
             if name in self.ophyd_instance.configuration_attrs:
-                if check_output(cls):
+                if check_output(dev_class):
                     self.config.update({f'{name}': 0})
                 else:
                     self.passive_config.update({f'{name}': 0})
@@ -164,14 +165,23 @@ class Device:
         """
         self.channels = {}
         outputs = get_outputs(self.ophyd_instance)
-        for chan_info in get_channels(self.ophyd_instance,
-                                      include_metadata=True):
+        channels, config_channels = get_channels(self.ophyd_instance,
+                                                 include_metadata=True,
+                                                 include_config=True)
+        for chan_info in channels:
             chan, metadata = chan_info
             is_out = chan in outputs
             channel = Measurement_Channel(name=f'{self.custom_name}.{chan}',
                                           output=is_out,device=self.custom_name,
                                           metadata=metadata)
             self.channels.update({f'{self.custom_name}_{chan}': channel})
+        for config_chan_info in config_channels:
+            chan, metadata = config_chan_info
+            is_out = chan in outputs
+            channel = Measurement_Channel(name=f'{self.custom_name}.{chan}',
+                                          output=is_out, device=self.custom_name,
+                                          metadata=metadata)
+            self.config_channels.update({f'{self.custom_name}_{chan}': channel})
         return self.channels
 
     def get_additional_string(self):
@@ -224,7 +234,7 @@ def get_outputs(dev:OphydDevice):
             outputs.append(name)
     return outputs
 
-def get_channels(dev:OphydDevice, include_metadata=False):
+def get_channels(dev:OphydDevice, include_metadata=False, include_config=False):
     """returns the components of an ophyd-device that are not listed in
     the configuration
 
@@ -244,17 +254,31 @@ def get_channels(dev:OphydDevice, include_metadata=False):
         names and their metadata
     """
     channels = []
+    config_channels = []
     for comp in dev.walk_components():
         name = comp.item.attr
         if name not in dev.configuration_attrs:
-            if include_metadata:
-                if hasattr(comp.item, 'kwargs') and 'metadata' in comp.item.kwargs:
-                    metadata = comp.item.kwargs['metadata']
-                else:
-                    metadata = {}
+            real_channel = True
+        else:
+            real_channel = False
+            if not include_config:
+                continue
+        if include_metadata:
+            if hasattr(comp.item, 'kwargs') and 'metadata' in comp.item.kwargs:
+                metadata = comp.item.kwargs['metadata']
+            else:
+                metadata = {}
+            if real_channel:
                 channels.append((name, metadata))
             else:
+                config_channels.append((name, metadata))
+        else:
+            if real_channel:
                 channels.append(name)
+            else:
+                config_channels.append(name)
+    if include_config:
+        return channels, config_channels
     return channels
 
 

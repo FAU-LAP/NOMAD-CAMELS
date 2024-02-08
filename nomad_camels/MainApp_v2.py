@@ -886,8 +886,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         variables_handling.channels.clear()
         for key, dev in self.active_instruments.items():
-            for channel in dev.get_channels():
-                variables_handling.channels.update({channel: dev.channels[channel]})
+            # for channel in dev.get_channels():
+            variables_handling.channels.update(dev.channels)
+            variables_handling.config_channels.update(dev.config_channels)
 
     # --------------------------------------------------
     # manual controls
