@@ -26,10 +26,10 @@ class Password_Dialog(QDialog):
         self.compare_hash = compare_hash
         self.setWindowTitle('Enter Password - NOMAD CAMELS')
         self.double_pass = double_pass
-        if double_pass:
-            self.label_text = QLabel('Enter password:')
-        else:
-            self.label_text = QLabel('Enter password to save changes:')
+        # if double_pass:
+        self.label_text = QLabel('Enter password:')
+        # else:
+        #     self.label_text = QLabel('Enter password to save changes:')
         self.label_2 = QLabel('Confirm password:')
         self.lineEdit_password = QLineEdit()
         self.lineEdit_password.setEchoMode(QLineEdit.Password)

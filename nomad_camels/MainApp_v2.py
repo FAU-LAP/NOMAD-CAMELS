@@ -186,14 +186,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
 
-
-
-    def manage_extensions(self):
+    def check_password_protection(self):
         if 'password_protection' in self.preferences and self.preferences['password_protection']:
             from nomad_camels.utility.password_widgets import Password_Dialog
             dialog = Password_Dialog(self, compare_hash=self.preferences['password_hash'])
             if not dialog.exec():
-                return
+                return False
+        return True
+
+    def manage_extensions(self):
+        if not self.check_password_protection():
+            return
         self.setCursor(Qt.WaitCursor)
         from nomad_camels.extensions.extension_management import Extension_Manager
         from nomad_camels.utility.update_camels import restart_camels
@@ -1185,6 +1188,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         """
         # IMPORT Protocol_Config only if needed
+        if not self.check_password_protection():
+            return
         from nomad_camels.frontpanels.protocol_config import Protocol_Config
         dialog = Protocol_Config(self.protocols_dict[prot_name])
         dialog.show()
