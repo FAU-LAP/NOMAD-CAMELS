@@ -826,21 +826,21 @@ class Simple_Config_Sub(Device_Config_Sub):
             else:
                 raise Exception(f'Type of {name} with value {val} not supported for simple device config!')
         for widge in self.setting_checks.values():
-            widge.stateChanged.connect(self.config_changed.emit)
+            widge.stateChanged.connect(lambda x=None: self.config_changed.emit())
         for widge in self.setting_combos.values():
-            widge.currentTextChanged.connect(self.config_changed.emit)
+            widge.currentTextChanged.connect(lambda x=None: self.config_changed.emit())
         for widge in self.setting_strings.values():
-            widge.returnPressed.connect(self.config_changed.emit)
+            widge.returnPressed.connect(lambda x=None: self.config_changed.emit())
         for widge in self.setting_floats.values():
-            widge.returnPressed.connect(self.config_changed.emit)
+            widge.returnPressed.connect(lambda x=None: self.config_changed.emit())
         for widge in self.config_checks.values():
-            widge.stateChanged.connect(self.config_changed.emit)
+            widge.stateChanged.connect(lambda x=None: self.config_changed.emit())
         for widge in self.config_combos.values():
-            widge.currentTextChanged.connect(self.config_changed.emit)
+            widge.currentTextChanged.connect(lambda x=None: self.config_changed.emit())
         for widge in self.config_strings.values():
-            widge.returnPressed.connect(self.config_changed.emit)
+            widge.returnPressed.connect(lambda x=None: self.config_changed.emit())
         for widge in self.config_floats.values():
-            widge.returnPressed.connect(self.config_changed.emit)
+            widge.returnPressed.connect(lambda x=None: self.config_changed.emit())
 
         col = 0
         row = 0
