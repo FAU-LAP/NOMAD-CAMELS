@@ -170,7 +170,7 @@ class Instrument_Config(Ui_Form, QWidget):
             for instrument in self.active_instruments[instr]:
                 instruments[instrument.custom_name] = instrument
         for key, dev in instruments.items():
-            variables_handling.channels.update(dev.channels)
+            variables_handling.channels.update(dev.get_channels())
             variables_handling.config_channels.update(dev.config_channels)
 
     def add_instance(self):
