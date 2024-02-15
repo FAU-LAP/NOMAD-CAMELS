@@ -668,12 +668,16 @@ class Local_VISA(Connection_Config):
         label_error_retry = QLabel('Retries on error:')
         self.lineEdit_error_retry = QLineEdit('0')
         self.layout().addWidget(label_error_retry, 3, 0)
-        self.layout().addWidget(self.lineEdit_error_retry, 3, 1, 1, 3)
+        self.layout().addWidget(self.lineEdit_error_retry, 3, 1)
+
+        self.checkbox_retry_on_timeout = QCheckBox('retry on timeout')
+        self.layout().addWidget(self.checkbox_retry_on_timeout, 3, 2, 1, 2)
         self.widgets_to_hide = [label_baud, self.lineEdit_baud,
                                 label_timeout, self.lineEdit_timeout,
                                 label_in_term, self.lineEdit_in_term,
                                 label_out_term, self.lineEdit_out_term,
-                                label_error_retry, self.lineEdit_error_retry]
+                                label_error_retry, self.lineEdit_error_retry,
+                                self.checkbox_retry_on_timeout]
 
     def get_settings(self):
         """ """
@@ -684,7 +688,8 @@ class Local_VISA(Connection_Config):
                 'timeout': int(self.lineEdit_timeout.text()),
                 'read_termination': self.lineEdit_in_term.text().replace('\\r', '\r').replace('\\n', '\n'),
                 'write_termination': self.lineEdit_out_term.text().replace('\\r', '\r').replace('\\n', '\n'),
-                'retry_on_error': int(self.lineEdit_error_retry.text())}
+                'retry_on_error': int(self.lineEdit_error_retry.text()),
+                'retry_on_timeout': self.checkbox_retry_on_timeout.isChecked()}
 
     def load_settings(self, settings_dict):
         """
@@ -712,6 +717,8 @@ class Local_VISA(Connection_Config):
             self.lineEdit_out_term.setText(settings_dict['write_termination'].replace('\r', '\\r').replace('\n', '\\n'))
         if 'retry_on_error' in settings_dict:
             self.lineEdit_error_retry.setText(str(settings_dict['retry_on_error']))
+        if 'retry_on_timeout' in settings_dict:
+            self.checkbox_retry_on_timeout.setChecked(settings_dict['retry_on_timeout'])
     
     def set_only_resource_name(self):
         for widge in self.widgets_to_hide:
