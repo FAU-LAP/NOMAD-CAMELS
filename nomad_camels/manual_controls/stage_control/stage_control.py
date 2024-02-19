@@ -139,7 +139,13 @@ class Stage_Control(Manual_Control, Ui_Form):
             if channel is not None:
                 read_not_none = True
                 break
+        positions = [np.nan, np.nan, np.nan]
         if read_not_none:
+            for i in range(3):
+                try:
+                    positions[i] = self.read_channels[i].get()
+                except:
+                    pass
             self.read_thread = Readback_Thread(self, self.read_channels, self.control_data['read_frequ'])
             self.read_thread.data_sig.connect(self.update_readback)
             self.read_thread.start()
@@ -152,7 +158,8 @@ class Stage_Control(Manual_Control, Ui_Form):
         speeds = [manual_X, manual_Y, manual_Z]
         self.move_thread = Move_Thread(self, self.set_channels, speeds,
                                        manual_functions=self.manual_funcs,
-                                       stop_functions=self.stop_funcs)
+                                       stop_functions=self.stop_funcs,
+                                       starting_positions=positions)
         self.move_thread.start()
         for child in self.children():
             if isinstance(child, QWidget):
@@ -354,7 +361,7 @@ class Stage_Control(Manual_Control, Ui_Form):
 class Move_Thread(QThread):
     """ """
     def __init__(self, parent=None, channels=None, move_speeds=None,
-                 manual_functions=None, stop_functions=None):
+                 manual_functions=None, stop_functions=None, starting_positions=None):
         super().__init__(parent=parent)
         self.channels = channels or []
         self.manual_functions = manual_functions or []
@@ -364,7 +371,7 @@ class Move_Thread(QThread):
         self.move_speeds = move_speeds or [0, 0, 0]
         self.move_starts = [np.nan, np.nan, np.nan]
         self.up_dir = [True, True, True]
-        self.last_set = [np.nan, np.nan, np.nan]
+        self.last_set = starting_positions or [np.nan, np.nan, np.nan]
         self.moving_started = [False, False, False]
 
     def run(self) -> None:
