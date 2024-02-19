@@ -207,8 +207,10 @@ class Stage_Control(Manual_Control, Ui_Form):
 
     def close(self) -> bool:
         """ """
-        self.read_thread.still_running = False
-        self.move_thread.still_running = False
+        if self.read_thread:
+            self.read_thread.still_running = False
+        if self.move_thread:
+            self.move_thread.still_running = False
         return super().close()
 
     def closeEvent(self, a0) -> None:

@@ -110,11 +110,13 @@ class Set_Panel(Manual_Control):
             self.button_groups[n].setExclusive(True)
 
     def close(self) -> bool:
-        self.read_thread.still_running = False
+        if self.read_thread:
+            self.read_thread.still_running = False
         return super().close()
 
     def closeEvent(self, a0) -> None:
-        self.read_thread.still_running = False
+        if self.read_thread:
+            self.read_thread.still_running = False
         return super().closeEvent(a0)
 
 
