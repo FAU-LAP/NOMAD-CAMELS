@@ -16,7 +16,7 @@ class LoadingScreen(QDialog):
     """ """
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("NOMAD-CAMELS - Loading...")
+        self.setWindowTitle("NOMAD CAMELS - Loading...")
         self.setCursor(Qt.WaitCursor)
         layout = QGridLayout()
         self.setLayout(layout)
@@ -68,7 +68,8 @@ class LoadingScreen(QDialog):
 
 
 # Show the loading screen and import your packages
-if __name__ == '__main__':
+def start_camels():
+    import os
     appdata_path = f'{os.getenv("LOCALAPPDATA")}/nomad_camels'
     app = QCoreApplication.instance()
     if app is None:
@@ -109,7 +110,7 @@ if __name__ == '__main__':
                     pass
                 except AttributeError:
                     pass
-            self.update_text.emit('starting NOMAD-CAMELS...')
+            self.update_text.emit('starting NOMAD CAMELS...')
             self.update_progress.emit(int((n-1)/n * 96))
             from nomad_camels import MainApp_v2
 
@@ -134,3 +135,6 @@ if __name__ == '__main__':
     main_window.show()
 
     app.exec()
+
+if __name__ == '__main__':
+    start_camels()

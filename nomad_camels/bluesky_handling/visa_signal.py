@@ -23,7 +23,7 @@ class VISA_Signal(Signal):
                  labels=None, kind='hinted', tolerance=None, rtolerance=None,
                  metadata=None, cl=None, attr_name='',
                  write=None, parse=None, parse_return_type=None,
-                 retry_on_error=0):
+                 retry_on_error=0, write_delay=0, retry_on_timeout=False):
         """
         Parameters
         ----------
@@ -56,8 +56,10 @@ class VISA_Signal(Signal):
                          metadata=metadata, cl=cl, attr_name=attr_name)
         self.visa_instrument = None
         self.write = write
+        self.write_delay = write_delay
         self.parse = parse
         self.retry_on_error = retry_on_error
+        self.retry_on_timeout = retry_on_timeout
         if parse_return_type == 'str':
             self.parse_return_type = str
         elif parse_return_type == 'float':
@@ -96,12 +98,21 @@ class VISA_Signal(Signal):
         if not self.write:
             write_text = str(value)
         elif isinstance(self.write, str):
-            write_text = self.write.format(value=value)
+            val = value
+            if 'value:g' in self.write:
+                val = float(value)
+            elif re.search(r'{value:\.\df}', self.write) is not None:
+                val = float(value)
+            elif 'value:d' in self.write:
+                val = int(value)
+            write_text = self.write.format(value=val)
         else:
             write_text = self.write(value)
         if self.parse is not None:
             val = retry_query_or_write(write_text, self.visa_instrument,
-                                       self.retry_on_error)
+                                       self.retry_on_error,
+                                       write_delay=self.write_delay,
+                                       retry_on_timeout=self.retry_on_timeout)
             if self.parse:
                 try:
                     if isinstance(self.parse, str):
@@ -117,7 +128,9 @@ class VISA_Signal(Signal):
                     value = val
         else:
             retry_query_or_write(write_text, self.visa_instrument,
-                                 self.retry_on_error, True)
+                                 self.retry_on_error, True,
+                                 write_delay=self.write_delay,
+                                 retry_on_timeout=self.retry_on_timeout)
         super().put(value, timestamp=timestamp, force=force, metadata=metadata, **kwargs)
 
     def describe(self):
@@ -129,26 +142,37 @@ class VISA_Signal(Signal):
 
 
 
-def retry_query_or_write(write_text, visa_instrument, retries, just_write=False):
+def retry_query_or_write(write_text, visa_instrument, retries, just_write=False, write_delay=0, retry_on_timeout=False):
     excs = []
     while visa_instrument.currently_reading:
         time.sleep(0.1)
-    if not just_write:
-        visa_instrument.currently_reading = True
+    visa_instrument.currently_reading = True
+    if write_delay:
+        time.sleep(write_delay)
     for i in range(retries + 1):
         try:
-            if just_write:
-                visa_instrument.write(write_text)
-                return
+            if retry_on_timeout:
+                try:
+                    return single_query_or_write(write_text, visa_instrument, just_write)
+                except pyvisa.errors.VisaIOError as e:
+                    visa_instrument.clear()
+                    return single_query_or_write(write_text, visa_instrument, just_write)
             else:
-                val = visa_instrument.query(write_text)
-                visa_instrument.currently_reading = False
-                return val
+                return single_query_or_write(write_text, visa_instrument, just_write)
         except Exception as e:
             if i == retries:
                 print(excs)
                 raise Exception(e)
             excs.append(e)
+
+def single_query_or_write(write_text, visa_instrument, just_write=False):
+    val = None
+    if just_write:
+        visa_instrument.write(write_text)
+    else:
+        val = visa_instrument.query(write_text)
+    visa_instrument.currently_reading = False
+    return val
 
 
 class VISA_Signal_RO(SignalRO):
@@ -157,7 +181,7 @@ class VISA_Signal_RO(SignalRO):
                  kind='hinted', tolerance=None, rtolerance=None, metadata=None,
                  cl=None, attr_name='',
                  query='', parse=None, parse_return_type='float',
-                 retry_on_error=0):
+                 retry_on_error=0, write_delay=0, retry_on_timeout=False):
         """
         Parameters
         ----------
@@ -185,7 +209,9 @@ class VISA_Signal_RO(SignalRO):
         self.visa_instrument = None
         self.query = query
         self.parse = parse
+        self.write_delay = write_delay
         self.retry_on_error = retry_on_error
+        self.retry_on_timeout = retry_on_timeout
         if parse_return_type == 'str':
             self.parse_return_type = str
         elif parse_return_type == 'float':
@@ -208,7 +234,9 @@ class VISA_Signal_RO(SignalRO):
         else:
             query = self.query()
         val = retry_query_or_write(query, self.visa_instrument,
-                                   self.retry_on_error)
+                                   self.retry_on_error,
+                                   write_delay=self.write_delay,
+                                   retry_on_timeout=self.retry_on_timeout)
         if self.parse is not None:
             try:
                 if isinstance(self.parse, str):
@@ -261,7 +289,8 @@ class VISA_Device(Device):
     def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
                  configuration_attrs=None, parent=None, resource_name='',
                  read_termination='\r\n', write_termination='\r\n',
-                 baud_rate=9600, timeout=2000, retry_on_error=0, **kwargs):
+                 baud_rate=9600, timeout=2000, retry_on_error=0,
+                 retry_on_timeout=False, **kwargs):
         super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
                          configuration_attrs=configuration_attrs, parent=parent, **kwargs)
         self.visa_instrument = None
@@ -282,4 +311,5 @@ class VISA_Device(Device):
             it.visa_instrument = self.visa_instrument
             if hasattr(it, 'retry_on_error') and not it.retry_on_error:
                 it.retry_on_error = retry_on_error
+                it.retry_on_timeout = retry_on_timeout
 

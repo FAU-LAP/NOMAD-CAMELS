@@ -79,13 +79,13 @@ def question_message_box(parent=None):
     available_version = get_latest_version()
     if installed_version == available_version:
         warn_popup.WarnPopup(parent,
-                             'Your version of NOMAD-CAMELS is already up to date',
+                             'Your version of NOMAD CAMELS is already up to date',
                              'Already up to date', info_icon=True)
         return
-    update_dialog = QMessageBox.question(parent, 'Update NOMAD-CAMELS',
-                                         f'Your current version of NOMAD-CAMELS is {installed_version}\n'
+    update_dialog = QMessageBox.question(parent, 'Update NOMAD CAMELS',
+                                         f'Your current version of NOMAD CAMELS is {installed_version}\n'
                                          f'The newest available version is {available_version}\n'
-                                         f'Do you want to update now? (NOMAD-CAMELS will have to restart)',
+                                         f'Do you want to update now? (NOMAD CAMELS will have to restart)',
                                          QMessageBox.Yes | QMessageBox.No)
     if update_dialog != QMessageBox.Yes:
         return
@@ -106,8 +106,8 @@ def restart_camels(parent=None, ask_restart=True):
         If True, the user is asked whether to restart CAMELS.
     """
     if ask_restart:
-        restart_dialog = QMessageBox.question(parent, 'Restart NOMAD-CAMELS now?',
-                                              'Do you want to restart NOMAD-CAMELS now?',
+        restart_dialog = QMessageBox.question(parent, 'Restart NOMAD CAMELS now?',
+                                              'Do you want to restart NOMAD CAMELS now?',
                                               QMessageBox.Yes | QMessageBox.No)
         if restart_dialog != QMessageBox.Yes:
             return

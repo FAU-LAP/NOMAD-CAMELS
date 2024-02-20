@@ -29,10 +29,16 @@
    <item row="1" column="0" rowspan="2" colspan="2">
     <widget class="QTableWidget" name="tableWidget_instruments"/>
    </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="lineEdit_search">
-     <property name="placeholderText">
-      <string>Search</string>
+   <item row="0" column="3">
+    <widget class="QLabel" name="label_config">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Configure:</string>
      </property>
     </widget>
    </item>
@@ -41,32 +47,69 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
+     <property name="maximumSize">
+      <size>
+       <width>89999</width>
+       <height>27</height>
+      </size>
+     </property>
      <property name="font">
       <font>
-       <pointsize>9</pointsize>
-       <weight>75</weight>
+       <pointsize>-1</pointsize>
        <bold>true</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+                                background-color:  #FF3333; 
+                                color: white; 
+                                border: none; 
+                                padding: 0px; 
+                                padding-bottom: 5px;
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 18px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+            QPushButton:hover {
+                background-color: #B22222;
+            }
+QPushButton:disabled {
+        background-color:#808080;
+    }</string>
      </property>
      <property name="text">
       <string>-</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="3">
-    <widget class="QPushButton" name="pushButton_add">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
+   <item row="0" column="4">
+    <widget class="QPushButton" name="pushButton_info">
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: #2a4cdf; /* This is a lighter shade of blue */
+    color: white;
+    border: none;
+    padding: 2px 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 13px;
+    margin: 2px 2px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */
+}</string>
      </property>
      <property name="text">
-      <string>+</string>
+      <string>hide info</string>
      </property>
     </widget>
    </item>
@@ -74,6 +117,13 @@
     <widget class="QLabel" name="label">
      <property name="text">
       <string>Search name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="lineEdit_search">
+     <property name="placeholderText">
+      <string>Search</string>
      </property>
     </widget>
    </item>
@@ -98,24 +148,49 @@
      </widget>
     </widget>
    </item>
-   <item row="0" column="3">
-    <widget class="QLabel" name="label_config">
+   <item row="1" column="3">
+    <widget class="QPushButton" name="pushButton_add">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>99999</width>
+       <height>27</height>
+      </size>
+     </property>
      <property name="font">
       <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
+       <pointsize>-1</pointsize>
        <bold>true</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
       </font>
      </property>
-     <property name="text">
-      <string>Configure:</string>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+                                background-color: #4CAF50; 
+                                color: white; 
+                                border: none; 
+                                padding: 0px; 
+                                padding-bottom: 5px;
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 18px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+                            QPushButton:hover {
+                                background-color: #45a049;
+                            }
+QPushButton:disabled {
+        background-color: #808080;
+    }</string>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="4">
-    <widget class="QPushButton" name="pushButton_info">
      <property name="text">
-      <string>hide info</string>
+      <string>+</string>
      </property>
     </widget>
    </item>

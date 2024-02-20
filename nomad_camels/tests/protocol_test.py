@@ -504,8 +504,7 @@ def ensure_demo_in_devices():
     assert 'demo_instrument' in variables_handling.devices
     variables_handling.channels.clear()
     for key, dev in variables_handling.devices.items():
-        for channel in dev.get_channels():
-            variables_handling.channels.update({channel: dev.channels[channel]})
+        variables_handling.channels.update(dev.get_channels())
 
 
 def catalog_maker(tmp_path):

@@ -161,6 +161,10 @@ def build_protocol(protocol, file_path,
     variable_string += f'session_name = "{protocol.session_name}"\n'
     variable_string += f'export_to_csv = {protocol.export_csv}\n'
     variable_string += f'export_to_json={protocol.export_json}\n'
+    if 'new_file_each_run' in variables_handling.preferences:
+        variable_string += f'new_file_each_run={variables_handling.preferences["new_file_each_run"]}\n'
+    else:
+        variable_string += f'new_file_each_run=False\n'
     additional_string_devices = ''
     final_string = '\t\tfor name, device in devs.items():\n'
     final_string += '\t\t\tif hasattr(device, "finalize_steps") and callable(device.finalize_steps):\n'
@@ -187,7 +191,10 @@ def build_protocol(protocol, file_path,
     for dev in protocol.get_used_devices():
         device = variables_handling.devices[dev]
         classname = device.ophyd_class_name
-        config = copy.deepcopy(device.get_config())
+        if protocol.skip_config:
+            config = {}
+        else:
+            config = copy.deepcopy(device.get_config())
         settings = copy.deepcopy(device.get_settings())
         additional_info = copy.deepcopy(device.get_additional_info())
         # informations on the connection is reshaped to be useful
@@ -311,10 +318,11 @@ def build_protocol(protocol, file_path,
         standard_save_string += f'\t\t\tnexus_mapper = {nexus_dict}\n\n'
         # TODO finish this
     else:
-        standard_save_string += f'\t\t\tbroker_to_NX(runs, save_path, plots,' \
-                                f'session_name=session_name,' \
-                                f'export_to_csv=export_to_csv,' \
-                                f'export_to_json=export_to_json)\n\n'
+        standard_save_string += '\t\t\tbroker_to_NX(runs, save_path, plots,' \
+                                'session_name=session_name,' \
+                                'export_to_csv=export_to_csv,' \
+                                'export_to_json=export_to_json,' \
+                                'new_file_each_run=new_file_each_run)\n\n'
 
     protocol_string += standard_start_string
 

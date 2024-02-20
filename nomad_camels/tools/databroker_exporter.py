@@ -184,7 +184,7 @@ class Datbroker_Exporter(QDialog):
             protocol_overview = metadata['protocol_overview']
         self.textedit_overview.setText(protocol_overview)
         exit_status = ''
-        if 'exit_status' in stopdata:
+        if stopdata and 'exit_status' in stopdata:
             exit_status = stopdata['exit_status']
         self.label_exit.setText(exit_status)
 

@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit
+from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit, QMessageBox
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtCore import Signal
 
@@ -71,6 +71,7 @@ class Measurement_Protocol:
         self.export_csv = kwargs['export_csv'] if 'export_csv' in kwargs else False
         self.export_json = kwargs['export_json'] if 'export_json' in kwargs else False
         self.session_name = kwargs['session_name'] if 'session_name' in kwargs else ''
+        self.skip_config = kwargs['skip_config'] if 'skip_config' in kwargs else False
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -467,17 +468,29 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             self.textEdit_desc.setText(self.protocol.description)
         self.checkBox_csv_exp.setChecked(self.protocol.export_csv)
         self.checkBox_json_exp.setChecked(self.protocol.export_json)
+        self.checkBox_no_config.setChecked(self.protocol.skip_config)
+        self.checkBox_no_config.clicked.connect(self.enable_disable_config)
 
-        self.layout().addWidget(self.textEdit_desc, 5, 0, 1, 4)
-        self.layout().addWidget(self.plot_widge, 6, 0, 1, 4)
-        self.layout().addWidget(self.checkBox_NeXus, 7, 0, 1, 4)
-        self.layout().addWidget(self.table_channel_NX_paths, 9, 0, 1, 4)
-        self.layout().addWidget(self.table_config_NX_paths, 10, 0, 1, 4)
-        self.layout().addWidget(self.table_metadata, 11, 0, 1, 4)
+        self.layout().addWidget(self.textEdit_desc, 5, 0, 1, 6)
+        self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
+        self.layout().addWidget(self.checkBox_NeXus, 7, 0, 1, 6)
+        self.layout().addWidget(self.table_channel_NX_paths, 9, 0, 1, 6)
+        self.layout().addWidget(self.table_config_NX_paths, 10, 0, 1, 6)
+        self.layout().addWidget(self.table_metadata, 11, 0, 1, 6)
 
         self.checkBox_NeXus.setHidden(True)
         self.enable_nexus()
 
+    def enable_disable_config(self):
+        disabling = self.checkBox_no_config.isChecked()
+        if disabling:
+            msgBox = QMessageBox()
+            msgBox.setText("Are you sure you want to disable configuration of the used instruments?\nThis may lead to unexpected behaviour of the instruments, if they are not configured correctly beforehand!")
+            msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            msgBox.setDefaultButton(QMessageBox.No)
+            result = msgBox.exec()
+            if result != QMessageBox.Yes:
+                self.checkBox_no_config.setChecked(False)
 
 
     def enable_nexus(self):
@@ -575,6 +588,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.config_metadata = self.table_config_NX_paths.update_table_data()
         self.protocol.export_csv = self.checkBox_csv_exp.isChecked()
         self.protocol.export_json = self.checkBox_json_exp.isChecked()
+        self.protocol.skip_config = self.checkBox_no_config.isChecked()
         self.update_variables()
         self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
 

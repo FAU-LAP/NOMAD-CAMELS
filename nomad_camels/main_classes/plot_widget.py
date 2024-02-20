@@ -31,7 +31,8 @@ stdCols = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 dark_mode = False
 def activate_dark_mode():
-    """Changes the plot-style to dark-mode."""
+    """Changes the plot-style to dark-mode.
+    """
     global dark_mode
     dark_mode = True
     plt.style.use('dark_background')
@@ -133,7 +134,7 @@ class PlotWidget(QWidget):
                  ylim=None, epoch='run', parent=None, namespace=None, ylabel='',
                  xlabel='', title='', stream_name='primary', fits=None,
                  do_plot=True, multi_stream=False, y_axes=None,
-                 logX=False, logY=False, logY2=False, **kwargs):
+                 logX=False, logY=False, logY2=False, maxlen=np.inf, **kwargs):
         super().__init__(parent=parent)
         canvas = MPLwidget()
         if isinstance(y_names, str):
@@ -194,7 +195,8 @@ class PlotWidget(QWidget):
             self.liveFitPlots.append(Fit_Plot_No_Init_Guess(livefit, ax=ax,
                                                             legend_keys=[name],
                                                             ax_is2=ax_is2,
-                                                            color=col))
+                                                            color=col,
+                                                            display_values=fit['display_values']))
         self.livePlot = MultiLivePlot(y_names, x_name, legend_keys=legend_keys,
                                       xlim=xlim, ylim=ylim, epoch=epoch,
                                       ax=canvas.axes, evaluator=eva,
@@ -215,7 +217,7 @@ class PlotWidget(QWidget):
         self.pushButton_clear.clicked.connect(self.clear_plot)
         self.plot_options = Plot_Options(self, self.ax, self.livePlot, self.ax2)
         label_n_data = QLabel('# data points:')
-        self.lineEdit_n_data = QLineEdit(str(np.inf))
+        self.lineEdit_n_data = QLineEdit(str(maxlen))
         self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
 
         layout = QGridLayout()
@@ -241,6 +243,7 @@ class PlotWidget(QWidget):
             self.plot_options.checkBox_log_y2.setChecked(logY2)
             self.plot_options.set_log()
         place_widget(self)
+        self.change_maxlen()
 
     def change_maxlen(self):
         """ """
@@ -293,10 +296,13 @@ class PlotWidget(QWidget):
             self.pushButton_show_options.setText('Hide Options')
             self.options_open = True
             self.plot_options.show()
+            self.plot_options.setup_table()
         self.adjustSize()
 
     def closeEvent(self, a0):
         """
+        Overwrite the closeEvent to emit the closing signal before closing the
+        window.
 
         Parameters
         ----------
@@ -533,10 +539,12 @@ class Fit_Ophyd(Device):
 
         Parameters
         ----------
-        result :
+        result : lmfit.model.ModelResult
+            The result of the fit.
             
-        timestamp :
-            
+        timestamp : float
+            The timestamp of the fit. Used to update the timestamp metadata of
+            the components.
 
         Returns
         -------
@@ -555,14 +563,6 @@ class Fit_Ophyd(Device):
     def read(self):
         """Overwrites the `read` method from `Device`.
         Stops reading, as soon as the number of parameters is reached.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        
         """
         res = BlueskyInterface.read(self)
         i = 1
@@ -578,11 +578,12 @@ class Fit_Ophyd(Device):
 class Fit_Plot_No_Init_Guess(LiveFitPlot):
     """A subclass of LiveFitPlot that doesn't plot the initial guess for the fit."""
     def __init__(self, livefit, *, num_points=100, legend_keys=None, xlim=None,
-                 ylim=None, ax=None, ax_is2=False, **kwargs):
+                 ylim=None, ax=None, ax_is2=False, display_values=False, **kwargs):
         # super().__init__(livefit, num_points=num_points, legend_keys=legend_keys,
         #                  xlim=xlim, ylim=ylim, ax=ax, **kwargs)
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
+        self.display_values = display_values
         if len(livefit.independent_vars) != 1:
             raise NotImplementedError("LiveFitPlot supports models with one "
                                       "independent variable only.")
@@ -629,6 +630,8 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         self.x = None
         self.ax_is2 = ax_is2
         self.__setup = setup
+        self.line_position = None
+        self.text_objects = []
 
 
     def start(self, doc):
@@ -731,11 +734,36 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         """Sets the current x and y data, then calls the `parent_plot` to update."""
         self.current_line.set_data(self.x_data, self.y_data)
         self.parent_plot.update_plot()
+        if self.display_values:
+            for text_object in self.text_objects:
+                text_object.remove()
+            self.text_objects.clear()
+            vals = self.livefit.result.values
+            if self.line_position is None:
+                self.line_position = self.parent_plot.line_number
+                self.parent_plot.line_number += len(vals)
+            color = self.current_line.get_color()
+            for i, (key, value) in enumerate(vals.items()):
+                text_object = self.parent_plot.ax.text(0.05, 0.95 - (i + self.line_position) * 0.05, f"{key}: {value:.2e}", transform=self.ax.transAxes, verticalalignment='top', color=color)
+                self.text_objects.append(text_object)
+        
 
 
 
 class Plot_Options(Ui_Plot_Options, QWidget):
-    """ """
+    """Widget for setting the options of a plot.
+
+    Parameters
+    ----------
+    parent : QWidget, optional
+        The parent widget.
+    ax : matplotlib.axes.Axes, optional
+        The axes to plot on.
+    livePlot : LivePlot, optional
+        The LivePlot to set the options for.
+    ax2 : matplotlib.axes.Axes, optional
+        The second (y) axes to plot on.
+    """
     def __init__(self, parent=None, ax=None, livePlot=None, ax2=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -756,8 +784,8 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.marker_dict = {}
         self.linestyle_dict = {}
 
-    def setup_table(self):
-        """ """
+    def setup_table(self, x=None, y=None):
+        """Sets up the table with the current lines in the plot."""
         self.tableWidget.setColumnCount(5)
         self.tableWidget.setMinimumWidth(400)
         self.tableWidget.setHorizontalHeaderLabels(['Name', 'marker',
@@ -802,16 +830,12 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.tableWidget.resizeColumnsToContents()
 
     def change_linestyle(self, row):
-        """
+        """Changes the linestyle of the selected line in the plot.
 
         Parameters
         ----------
-        row :
-            
-
-        Returns
-        -------
-
+        row : int
+            The row of the line in the table.
         """
         linestyle = self.linestyle_widges[row].currentText()
         name = self.ax.lines[row].get_label()
@@ -963,6 +987,7 @@ class MultiLivePlot(LivePlot, QObject):
         self.current_lines = {}
         self.descs_fit_readying = {}
         self.legend = None
+        self.line_number = 0
 
     def change_maxlen(self, maxlen):
         """
@@ -1000,11 +1025,11 @@ class MultiLivePlot(LivePlot, QObject):
         """
         self.__setup()
         # The doc is not used; we just use the signal that a new run began.
-        self._epoch_offset = doc['time']  # used if self.x == 'time'
-        self.x_data = []
-        self.y_data = {}
-        for y in self.ys:
-            self.y_data[y] = []
+        # self._epoch_offset = doc['time']  # used if self.x == 'time'
+        # self.x_data = []
+        # self.y_data = {}
+        # for y in self.ys:
+        #     self.y_data[y] = []
         # label = " :: ".join(
             # [str(doc.get(name, name)) for name in self.legend_keys])
         kwargs = ChainMap({'ls': 'None', 'marker': 'x'})
@@ -1187,7 +1212,7 @@ class MultiLivePlot(LivePlot, QObject):
 class PlotWidget_NoBluesky(QWidget):
     """ """
     def __init__(self, xlabel='', ylabel='', parent=None, title='', ylabel2='',
-                 y_axes=None, labels=(), first_hidden=None, show_plot=True):
+                 y_axes=None, labels=(), first_hidden=None, show_plot=True, maxlen=np.inf):
         app = QCoreApplication.instance()
         if app is None:
             app = QApplication(sys.argv)
@@ -1206,8 +1231,9 @@ class PlotWidget_NoBluesky(QWidget):
         self.pushButton_clear.clicked.connect(self.clear_plot)
         self.plot_options = Plot_Options(self, self.ax, self.plot)
         label_n_data = QLabel('# data points:')
-        self.lineEdit_n_data = QLineEdit(str(np.inf))
+        self.lineEdit_n_data = QLineEdit(str(maxlen))
         self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
+        self.change_maxlen()
 
         self.setWindowTitle(title or f'{xlabel} vs. {ylabel}')
         self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))

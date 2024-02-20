@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'protocol_view.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.0
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -20,19 +20,7 @@ from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHeaderView,
     QToolButton, QTreeView, QWidget)
 
 class Ui_Protocol_View(object):
-    """ """
     def setupUi(self, Protocol_View):
-        """
-
-        Parameters
-        ----------
-        Protocol_View :
-            
-
-        Returns
-        -------
-
-        """
         if not Protocol_View.objectName():
             Protocol_View.setObjectName(u"Protocol_View")
         Protocol_View.resize(617, 522)
@@ -52,7 +40,24 @@ class Ui_Protocol_View(object):
         self.pushButton_remove_step = QPushButton(self.sequence_main_widget)
         self.pushButton_remove_step.setObjectName(u"pushButton_remove_step")
         self.pushButton_remove_step.setMinimumSize(QSize(30, 23))
-        self.pushButton_remove_step.setMaximumSize(QSize(30, 16777215))
+        self.pushButton_remove_step.setMaximumSize(QSize(30, 30))
+        self.pushButton_remove_step.setStyleSheet(u"QPushButton {\n"
+"                                background-color:  #FF3333; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 0px; \n"
+"                                padding-bottom: 5px;\n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 18px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"								font-weight: bold;\n"
+"                            }\n"
+"\n"
+"            QPushButton:hover {\n"
+"                background-color: #B22222;\n"
+"            }")
 
         self.gridLayout_8.addWidget(self.pushButton_remove_step, 3, 2, 1, 1)
 
@@ -64,7 +69,24 @@ class Ui_Protocol_View(object):
         sizePolicy.setHeightForWidth(self.toolButton_add_step.sizePolicy().hasHeightForWidth())
         self.toolButton_add_step.setSizePolicy(sizePolicy)
         self.toolButton_add_step.setMinimumSize(QSize(30, 23))
-        self.toolButton_add_step.setMaximumSize(QSize(30, 16777215))
+        self.toolButton_add_step.setMaximumSize(QSize(30, 30))
+        self.toolButton_add_step.setStyleSheet(u"QToolButton {\n"
+"                                background-color: #4CAF50; \n"
+"                                color: white; \n"
+"                                border: none; \n"
+"                                padding: 0px; \n"
+"                                padding-bottom: 5px;\n"
+"                                text-align: center; \n"
+"                                text-decoration: none; \n"
+"                                font-size: 18px; \n"
+"                                margin: 2px 2px; \n"
+"                                border-radius: 6px;\n"
+"								font-weight: bold;\n"
+"                            }\n"
+"\n"
+"                            QToolButton:hover {\n"
+"                                background-color: #45a049;\n"
+"                            }")
 
         self.gridLayout_8.addWidget(self.toolButton_add_step, 2, 2, 1, 1)
 
@@ -80,6 +102,22 @@ class Ui_Protocol_View(object):
 
         self.pushButton_move_step_up = QPushButton(self.sequence_main_widget)
         self.pushButton_move_step_up.setObjectName(u"pushButton_move_step_up")
+        self.pushButton_move_step_up.setStyleSheet(u"QPushButton {\n"
+"    background-color: #2a4cdf; /* This is a lighter shade of blue */\n"
+"    color: white;\n"
+"    border: none;\n"
+"    padding: 2px 10px;\n"
+"    text-align: center;\n"
+"    text-decoration: none;\n"
+"    font-size: 13px;\n"
+"    margin: 2px 2px;\n"
+"    border-radius: 6px;\n"
+"    font-weight: bold;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */\n"
+"}")
 
         self.gridLayout_8.addWidget(self.pushButton_move_step_up, 2, 0, 1, 1)
 
@@ -90,16 +128,64 @@ class Ui_Protocol_View(object):
 
         self.pushButton_move_step_down = QPushButton(self.sequence_main_widget)
         self.pushButton_move_step_down.setObjectName(u"pushButton_move_step_down")
+        self.pushButton_move_step_down.setStyleSheet(u"QPushButton {\n"
+"    background-color: #2a4cdf; /* This is a lighter shade of blue */\n"
+"    color: white;\n"
+"    border: none;\n"
+"    padding: 2px 10px;\n"
+"    text-align: center;\n"
+"    text-decoration: none;\n"
+"    font-size: 13px;\n"
+"    margin: 2px 2px;\n"
+"    border-radius: 6px;\n"
+"    font-weight: bold;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */\n"
+"}")
 
         self.gridLayout_8.addWidget(self.pushButton_move_step_down, 3, 0, 1, 1)
 
         self.pushButton_move_step_out = QPushButton(self.sequence_main_widget)
         self.pushButton_move_step_out.setObjectName(u"pushButton_move_step_out")
+        self.pushButton_move_step_out.setStyleSheet(u"QPushButton {\n"
+"    background-color: #2a4cdf; /* This is a lighter shade of blue */\n"
+"    color: white;\n"
+"    border: none;\n"
+"    padding: 2px 10px;\n"
+"    text-align: center;\n"
+"    text-decoration: none;\n"
+"    font-size: 13px;\n"
+"    margin: 2px 2px;\n"
+"    border-radius: 6px;\n"
+"    font-weight: bold;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */\n"
+"}")
 
         self.gridLayout_8.addWidget(self.pushButton_move_step_out, 3, 1, 1, 1)
 
         self.pushButton_move_step_in = QPushButton(self.sequence_main_widget)
         self.pushButton_move_step_in.setObjectName(u"pushButton_move_step_in")
+        self.pushButton_move_step_in.setStyleSheet(u"QPushButton {\n"
+"    background-color: #2a4cdf; /* This is a lighter shade of blue */\n"
+"    color: white;\n"
+"    border: none;\n"
+"    padding: 2px 10px;\n"
+"    text-align: center;\n"
+"    text-decoration: none;\n"
+"    font-size: 13px;\n"
+"    margin: 2px 2px;\n"
+"    border-radius: 6px;\n"
+"    font-weight: bold;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */\n"
+"}")
 
         self.gridLayout_8.addWidget(self.pushButton_move_step_in, 2, 1, 1, 1)
 
@@ -135,25 +221,14 @@ class Ui_Protocol_View(object):
     # setupUi
 
     def retranslateUi(self, Protocol_View):
-        """
-
-        Parameters
-        ----------
-        Protocol_View :
-            
-
-        Returns
-        -------
-
-        """
         Protocol_View.setWindowTitle(QCoreApplication.translate("Protocol_View", u"Form", None))
         self.pushButton_remove_step.setText(QCoreApplication.translate("Protocol_View", u"-", None))
         self.toolButton_add_step.setText(QCoreApplication.translate("Protocol_View", u"+", None))
         self.label_sequence.setText(QCoreApplication.translate("Protocol_View", u"Sequence", None))
-        self.pushButton_move_step_up.setText(QCoreApplication.translate("Protocol_View", u"move up", None))
-        self.pushButton_move_step_down.setText(QCoreApplication.translate("Protocol_View", u"move down", None))
-        self.pushButton_move_step_out.setText(QCoreApplication.translate("Protocol_View", u"move out", None))
-        self.pushButton_move_step_in.setText(QCoreApplication.translate("Protocol_View", u"move in", None))
+        self.pushButton_move_step_up.setText(QCoreApplication.translate("Protocol_View", u"move up \u2191", None))
+        self.pushButton_move_step_down.setText(QCoreApplication.translate("Protocol_View", u"move down \u2193", None))
+        self.pushButton_move_step_out.setText(QCoreApplication.translate("Protocol_View", u"move out \u2190", None))
+        self.pushButton_move_step_in.setText(QCoreApplication.translate("Protocol_View", u"move in \u2192", None))
         self.label_configuration.setText(QCoreApplication.translate("Protocol_View", u"Configuration", None))
     # retranslateUi
 

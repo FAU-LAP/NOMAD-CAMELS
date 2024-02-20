@@ -31,16 +31,6 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QCheckBox" name="checkBox_plot">
-     <property name="text">
-      <string>plot?</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="3" column="0" colspan="4">
     <widget class="Line" name="line">
      <property name="orientation">
@@ -72,7 +62,14 @@
    <item row="1" column="0" colspan="4">
     <widget class="QWidget" name="y_axes" native="true"/>
    </item>
-   <item row="5" column="0" rowspan="4" colspan="2">
+   <item row="4" column="2" rowspan="5">
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" rowspan="5" colspan="2">
     <widget class="QWidget" name="plotting_group" native="true">
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="leftMargin">
@@ -87,68 +84,10 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>x-label:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>y-label:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLineEdit" name="lineEdit_ylabel"/>
-      </item>
-      <item row="2" column="0" colspan="4">
-       <widget class="QCheckBox" name="checkBox_xlog">
-        <property name="text">
-         <string>x logarithmic?</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0" colspan="2">
-       <widget class="QCheckBox" name="checkBox_ylog">
-        <property name="text">
-         <string>y logarithmic?</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1" colspan="3">
-       <widget class="QLineEdit" name="lineEdit_xlabel"/>
-      </item>
-      <item row="3" column="2">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>y-label 2</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="2" colspan="2">
-       <widget class="QCheckBox" name="checkBox_ylog2">
-        <property name="text">
-         <string>y2 logarithmic?</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="3">
-       <widget class="QLineEdit" name="lineEdit_ylabel2"/>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>title:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" colspan="3">
        <widget class="QLineEdit" name="lineEdit_title"/>
       </item>
-      <item row="6" column="0" colspan="4">
+      <item row="7" column="0" colspan="4">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -161,14 +100,75 @@
         </property>
        </spacer>
       </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>x-label:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="4">
+       <widget class="QCheckBox" name="checkBox_xlog">
+        <property name="text">
+         <string>x logarithmic?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkBox_ylog">
+        <property name="text">
+         <string>y logarithmic?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>y-label 2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2" colspan="2">
+       <widget class="QCheckBox" name="checkBox_ylog2">
+        <property name="text">
+         <string>y2 logarithmic?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>title:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>y-label:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="3">
+       <widget class="QLineEdit" name="lineEdit_ylabel2"/>
+      </item>
+      <item row="2" column="1" colspan="3">
+       <widget class="QLineEdit" name="lineEdit_xlabel"/>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="lineEdit_ylabel"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string># points:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="3">
+       <widget class="QLineEdit" name="lineEdit_nPoints"/>
+      </item>
      </layout>
-    </widget>
-   </item>
-   <item row="4" column="2" rowspan="5">
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
     </widget>
    </item>
   </layout>

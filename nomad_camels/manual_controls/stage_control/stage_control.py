@@ -20,7 +20,7 @@ class Stage_Control(Manual_Control, Ui_Form):
             name = 'Stage Control'
         super().__init__(parent=parent, title=name)
         self.setupUi(self)
-        self.setWindowTitle(f'NOMAD-CAMELS - {name}')
+        self.setWindowTitle(f'{name} - NOMAD CAMELS')
         self.control_data = control_data
 
         self.pushButton_up.setIcon(self.style().standardIcon(QStyle.SP_ArrowUp))
@@ -116,21 +116,37 @@ class Stage_Control(Manual_Control, Ui_Form):
         if 'None' in channels:
             channels.remove('None')
         channels = list(channels)
-        self.device_list, _ = device_handling.start_devices_from_channel_list(channels)
-        self.set_channels = device_handling.get_channels_from_string_list(set_channels)
-        self.read_channels = device_handling.get_channels_from_string_list(read_channels)
-        self.ref_funcs = device_handling.get_functions_from_string_list(ref_functions)
-        self.stop_funcs = device_handling.get_functions_from_string_list(stop_functions)
-        self.manual_funcs = device_handling.get_functions_from_string_list(manual_functions)
+        self.set_channels = set_channels
+        self.read_channels = read_channels
+        self.ref_funcs = ref_functions
+        self.stop_funcs = stop_functions
+        self.manual_funcs = manual_functions
+        self.read_thread = None
+        self.move_thread = None
+        self.start_multiple_devices(channels, True)
+
+
+    def device_ready(self):
+        super().device_ready()
+        self.set_channels = device_handling.get_channels_from_string_list(self.set_channels)
+        self.read_channels = device_handling.get_channels_from_string_list(self.read_channels)
+        self.ref_funcs = device_handling.get_functions_from_string_list(self.ref_funcs)
+        self.stop_funcs = device_handling.get_functions_from_string_list(self.stop_funcs)
+        self.manual_funcs = device_handling.get_functions_from_string_list(self.manual_funcs)
 
         read_not_none = False
         for channel in self.read_channels:
             if channel is not None:
                 read_not_none = True
                 break
-        self.read_thread = None
+        positions = [np.nan, np.nan, np.nan]
         if read_not_none:
-            self.read_thread = Readback_Thread(self, self.read_channels, control_data['read_frequ'])
+            for i in range(3):
+                try:
+                    positions[i] = self.read_channels[i].get()
+                except:
+                    pass
+            self.read_thread = Readback_Thread(self, self.read_channels, self.control_data['read_frequ'])
             self.read_thread.data_sig.connect(self.update_readback)
             self.read_thread.start()
         else:
@@ -142,17 +158,18 @@ class Stage_Control(Manual_Control, Ui_Form):
         speeds = [manual_X, manual_Y, manual_Z]
         self.move_thread = Move_Thread(self, self.set_channels, speeds,
                                        manual_functions=self.manual_funcs,
-                                       stop_functions=self.stop_funcs)
+                                       stop_functions=self.stop_funcs,
+                                       starting_positions=positions)
         self.move_thread.start()
         for child in self.children():
             if isinstance(child, QWidget):
                 child.setFocusPolicy(Qt.ClickFocus)
         self.setFocusPolicy(Qt.ClickFocus)
         self.show()
-        for i, auto in enumerate(control_data['auto_reference']):
+        for i, auto in enumerate(self.control_data['auto_reference']):
             self.checks[i].setChecked(auto)
         self.reference_drive()
-        for i, auto in enumerate(control_data['auto_reference']):
+        for i, auto in enumerate(self.control_data['auto_reference']):
             self.checks[i].setChecked(True)
 
 
@@ -197,8 +214,10 @@ class Stage_Control(Manual_Control, Ui_Form):
 
     def close(self) -> bool:
         """ """
-        self.read_thread.still_running = False
-        self.move_thread.still_running = False
+        if self.read_thread:
+            self.read_thread.still_running = False
+        if self.move_thread:
+            self.move_thread.still_running = False
         return super().close()
 
     def closeEvent(self, a0) -> None:
@@ -235,7 +254,10 @@ class Stage_Control(Manual_Control, Ui_Form):
         step_size = self.control_data[f'stepSize_{ax_names[axis]}']
         if not up:
             step_size *= -1
-        before = self.set_channels[axis].get()
+        if self.read_channels[axis] is not None:
+            before = self.read_channels[axis].get()
+        else:
+            before = self.set_channels[axis].get()
         self.set_channels[axis].put(before + step_size)
 
     def reference_drive(self):
@@ -339,7 +361,7 @@ class Stage_Control(Manual_Control, Ui_Form):
 class Move_Thread(QThread):
     """ """
     def __init__(self, parent=None, channels=None, move_speeds=None,
-                 manual_functions=None, stop_functions=None):
+                 manual_functions=None, stop_functions=None, starting_positions=None):
         super().__init__(parent=parent)
         self.channels = channels or []
         self.manual_functions = manual_functions or []
@@ -349,7 +371,7 @@ class Move_Thread(QThread):
         self.move_speeds = move_speeds or [0, 0, 0]
         self.move_starts = [np.nan, np.nan, np.nan]
         self.up_dir = [True, True, True]
-        self.last_set = [np.nan, np.nan, np.nan]
+        self.last_set = starting_positions or [np.nan, np.nan, np.nan]
         self.moving_started = [False, False, False]
 
     def run(self) -> None:
@@ -413,9 +435,9 @@ class Readback_Thread(QThread):
 
     def run(self):
         """ """
-        self.do_reading()
         accum = 0
         while self.still_running:
+            self.do_reading()
             if self.read_time > 5:
                 if self.read_time - accum > 5:
                     time.sleep(5)
@@ -426,7 +448,6 @@ class Readback_Thread(QThread):
                     accum = 0
             else:
                 time.sleep(self.read_time)
-            self.do_reading()
 
     def do_reading(self):
         """ """

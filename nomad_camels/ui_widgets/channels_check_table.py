@@ -8,9 +8,13 @@ from nomad_camels.utility import variables_handling
 class Channels_Check_Table(QWidget):
     """ """
     def __init__(self, parent, headerLabels=None, only_output=False,
-                 info_dict=None, checkstrings=None, title='', channels=None):
+                 info_dict=None, checkstrings=None, title='', channels=None,
+                 use_configs=False):
         super().__init__(parent)
-        self.channels = channels or variables_handling.channels
+        if use_configs:
+            self.channels = channels or variables_handling.config_channels
+        else:
+            self.channels = channels or variables_handling.channels
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         self.only_output = only_output
@@ -219,7 +223,9 @@ class Channels_Check_Table(QWidget):
         for i, channel in enumerate(sorted(self.channels, key=lambda x: x.lower())):
             if searchtext.lower() not in channel.lower() or (not isinstance(self.channels, list) and self.only_output and not self.channels[channel].output):
                 continue
-            metadata = self.channels[channel].get_meta_str()
+            metadata = ''
+            if not isinstance(self.channels, list):
+                metadata = self.channels[channel].get_meta_str()
             self.tableWidget_channels.setRowCount(n+1)
             item = QTableWidgetItem()
             item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
@@ -322,16 +328,6 @@ class Call_Functions_Table(QWidget):
                 func_list.append(name)
             elif name in func_list and self.tableWidget_functions.item(i, 0).checkState() == Qt.CheckState.Unchecked:
                 func_list.remove(name)
-            if name in func_list:
-                n = func_list.index(name)
-                # for j, lab in enumerate(self.headerLabels[2:]):
-                #     while len(self.info_dict[lab]) < n+1:
-                #         self.info_dict[lab].append(None)
-                #     item = self.tableWidget_functions.item(i, 2 + j)
-                #     t = item.text()
-                #     if not t:
-                #         raise Exception(f'You need to enter a value for channel {name}!')
-                #     self.info_dict[lab][n] = t
         rems = []
         for func in func_list:
             if func not in self.functions:

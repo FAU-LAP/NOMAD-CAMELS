@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QDialog, QStyleFactory
+from PySide6.QtWidgets import QDialog, QStyleFactory, QMessageBox
 from PySide6.QtCore import Qt, QCoreApplication
 from PySide6.QtGui import QKeyEvent
 import qt_material
@@ -13,7 +13,7 @@ class Settings_Window(Ui_settings_window, QDialog):
     def __init__(self, parent=None, settings=None):
         super().__init__(parent)
         self.setupUi(self)
-        self.setWindowTitle('NOMAD-CAMELS - Settings')
+        self.setWindowTitle('Settings - NOMAD CAMELS')
         themes = QStyleFactory.keys()
         themes.append('qt-material')
         self.comboBox_theme.addItems(themes)
@@ -118,6 +118,13 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.spinBox_logfile_number.setValue(settings['logfile_backups'])
         else:
             self.spinBox_logfile_number.setValue(standard_pref['logfile_backups'])
+        if 'backups' in settings:
+            if settings['backups'] == 'all':
+                self.radioButton_all_backups.setChecked(True)
+            elif settings['backups'] == 'number':
+                self.radioButton_n_backups.setChecked(True)
+            else:
+                self.radioButton_smart_backups.setChecked(True)
 
         if 'NOMAD_URL' in settings:
             self.lineEdit_oasis.setText(settings['NOMAD_URL'])
@@ -127,6 +134,23 @@ class Settings_Window(Ui_settings_window, QDialog):
         self.radioButton_mixed.clicked.connect(self.number_change)
         self.radioButton_plain_numbers.clicked.connect(self.number_change)
         self.radioButton_scientific.clicked.connect(self.number_change)
+        if 'extensions' in settings:
+            self.extensions = settings['extensions']
+        else:
+            self.extensions = standard_pref['extensions']
+
+        if 'new_file_each_run' in settings:
+            self.checkBox_new_file_each_run.setChecked(settings['new_file_each_run'])
+        else:
+            self.checkBox_new_file_each_run.setChecked(standard_pref['new_file_each_run'])
+        
+        if 'password_protection' in settings:
+            self.checkBox_password.setChecked(settings['password_protection'])
+        else:
+            self.checkBox_password.setChecked(standard_pref['password_protection'])
+        self.password_hash = ''
+        if 'password_hash' in settings:
+            self.password_hash = settings['password_hash']
 
 
     def autosave_run_change(self):
@@ -138,7 +162,26 @@ class Settings_Window(Ui_settings_window, QDialog):
         mixed = self.radioButton_mixed.isChecked()
         self.spinBox_n_decimals.setEnabled(mixed)
 
-
+    def accept(self):
+        if self.password_hash:
+            from nomad_camels.utility.password_widgets import Password_Dialog
+            pw = Password_Dialog(parent=self, compare_hash=self.password_hash)
+            if not pw.exec():
+                return
+        if self.checkBox_password.isChecked() and self.password_hash:
+            msg_box = QMessageBox()
+            msg_box.setWindowTitle('Change Password?')
+            msg_box.setText('Do you want to change the password?')
+            msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            if msg_box.exec() != QMessageBox.Yes:
+                super().accept()
+        if self.checkBox_password.isChecked() and not self.password_hash:
+            from nomad_camels.utility import password_widgets
+            pw = password_widgets.Password_Dialog(parent=self, double_pass=True)
+            if not pw.exec():
+                return
+            self.password_hash = password_widgets.hash_password(pw.password)
+        super().accept()
 
     def change_theme(self):
         """ """
@@ -160,12 +203,20 @@ class Settings_Window(Ui_settings_window, QDialog):
         -------
 
         """
+        if not self.checkBox_password.isChecked():
+            self.password_hash = None
         if self.radioButton_plain_numbers.isChecked():
             numbers = 'plain'
         elif self.radioButton_scientific.isChecked():
             numbers = 'scientific'
         else:
             numbers = 'mixed'
+        if self.radioButton_all_backups.isChecked():
+            backups = 'all'
+        elif self.radioButton_n_backups.isChecked():
+            backups = 'number'
+        else:
+            backups = 'smart'
         return {'autosave': self.checkBox_autosave.isChecked(),
                 'autosave_run': self.checkBox_autosave_run.isChecked(),
                 'backup_before_run': self.checkBox_backup_before_run.isChecked(),
@@ -187,7 +238,12 @@ class Settings_Window(Ui_settings_window, QDialog):
                 'log_level': self.comboBox_log_level.currentText(),
                 'logfile_size': self.spinBox_logfile_size.value(),
                 'logfile_backups': self.spinBox_logfile_number.value(),
-                'NOMAD_URL': self.lineEdit_oasis.text()}
+                'backups': backups,
+                'NOMAD_URL': self.lineEdit_oasis.text(),
+                'password_protection': self.checkBox_password.isChecked(),
+                'password_hash': self.password_hash,
+                'new_file_each_run': self.checkBox_new_file_each_run.isChecked()
+                }
 
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

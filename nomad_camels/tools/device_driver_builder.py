@@ -22,7 +22,7 @@ class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
             self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
         except:
             pass
-        self.setWindowTitle('NOMAD Camels - driver-builder')
+        self.setWindowTitle('Driver-builder - NOMAD CAMELS')
 
         label_custom = QLabel('Custom Channels')
         label_in = QLabel('Read Channels - VISA')
@@ -242,7 +242,7 @@ class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
         toml_string = '[build-system]\nrequires = ["setuptools>=61.0"]\nbuild-backend = "setuptools.build_meta"\n\n'
         toml_string += f'[project]\nname = "nomad_camels_driver_{dev_name}"\nversion = "0.1.0"\n'
         toml_string += 'authors = [\n\t{name="enter your name here!", email="contact@email.com"}\n]\n'
-        toml_string += f'description = "Instrument driver for {dev_name} for NOMAD-CAMELS"\n'
+        toml_string += f'description = "Instrument driver for {dev_name} for NOMAD CAMELS"\n'
         toml_string += 'readme = "README.md"\n'
         toml_string += 'requires-python = ">=3.9.6"\n'
         toml_string += 'classifiers = [\n\t"Programming Language :: Python :: 3",\n\t"License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",\n]\n\n'
@@ -255,18 +255,18 @@ class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
         toml_string += '"CAMELS Drivers GitHub" = "https://github.com/FAU-LAP/CAMELS_drivers"\n'
         toml_string += '"NOMAD Camels Documentation" = "https://fau-lap.github.io/NOMAD-CAMELS/doc/instruments/instruments.html"\n'
 
-        with open(f'{driver_dir}/{dev_name}.py', 'w', encoding='utf-8') as f:
+        with open(os.path.join(driver_dir, f'{dev_name}.py'), 'w', encoding='utf-8') as f:
             f.write(class_string)
-        with open(f'{driver_dir}/{dev_name}_ophyd.py', 'w', encoding='utf-8') as f:
+        with open(os.path.join(driver_dir, f'{dev_name}_ophyd.py'), 'w', encoding='utf-8') as f:
             f.write(ophyd_string)
-        with open(f'{driver_dir}/__init__.py', 'w', encoding='utf-8') as f:
+        with open(os.path.join(driver_dir, '__init__.py'), 'w', encoding='utf-8') as f:
             pass
-        with open(f'{module_dir}/README.md', 'w', encoding='utf-8') as f:
+        with open(os.path.join(module_dir, 'README.md'), 'w', encoding='utf-8') as f:
             f.write(readme_string)
-        with open(f'{module_dir}/pyproject.toml', 'w', encoding='utf-8') as f:
+        with open(os.path.join(module_dir, 'pyproject.toml'), 'w', encoding='utf-8') as f:
             f.write(toml_string)
-        copyfile(f'{os.path.dirname(__file__)}/../../LICENSE.txt',
-                 f'{module_dir}/LICENSE.txt')
+        copyfile(os.path.join(os.path.dirname(__file__), '../../LICENSE.txt'),
+                 os.path.join(module_dir, 'LICENSE.txt'))
 
         QMessageBox.information(self, 'Build finished!',
                                 f'The driver "{dev_name}" has been built!')

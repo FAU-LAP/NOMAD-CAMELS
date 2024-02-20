@@ -13,9 +13,37 @@ NOMAD CAMELS is a configurable measurement software, targeted towards the requir
 
 ## Documentation
 
-For more information and documentation visit [this page](https://fau-lap.github.io/NOMAD-CAMELS/).
+For more information and documentation visit [the documentation](https://fau-lap.github.io/NOMAD-CAMELS/).
 
 # Changelog
+
+## 1.0.0 (in progress)
+Features:
+- Fit values can now be displayed directly in the plot
+- Refactor device instantiation to be handled in another thread to keep the UI responsive, this might cause some problems with instrument-specific manual controls that are not yet updated accordingly
+- Added the plot point number to the definition already
+- It is now possible to not configure instruments when starting a protocol, this feature has to be used with caution!
+- Number of backuped preset files can now be curated. Possibilities are to keep all, only a certain number or "smart" way: all backups of the last 7 days, one for each of the last 30 days, one for each of the last 12 months and one for each year.
+- Old databroker files may now be removed.
+- Password protection may be enabled for changing settings or presets. May be useful if the responsible person does not want users to change anything, or for lab courses.
+- There is now an extension feature, the first extension provides a compatibility with eLabFTW
+- Can now save each run in its own file.
+- Can now open the save file path when right-clicking on a protocol.
+- Added a tool to export CAMELS hdf5 files to csv / json
+- Can now run from command line using "nomad-camels"
+
+Changes:
+- the imports needed at a later time are now running in another thread after starting the main app to improve speed
+- Changed displayed window titles to show "NOMAD CAMELS" last
+- Changed displayed name to "NOMAD CAMELS" wherever found
+- Removed checkbox whether to plot an xy-plot, it is now always plotted
+- Added color to GUI buttons for better usability
+
+Fixes:
+- fixed export from databroker if the run failed such that no "stop" is in metadata
+- plot widget now shows the table to change linestyle and markerstyle
+- Refactor file paths for cross-platform compatibility in device_driver_builder.py
+- Fix issue of stage control not updating set_channel when moving manually
 
 
 ## 0.2.3

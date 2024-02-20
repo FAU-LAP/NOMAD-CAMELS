@@ -28,7 +28,14 @@ class Change_DeviceConf(Loop_Step):
 
     def update_used_devices(self):
         """Includes self.device to the used devices."""
-        self.used_devices = [self.device]
+        if self.device == 'advanced configuration':
+            self.used_devices = []
+            for conf in self.config_dict['channel']:
+                dev = variables_handling.config_channels[conf].device
+                if dev not in self.used_devices:
+                    self.used_devices.append(dev)
+        else:
+            self.used_devices = [self.device]
 
     def get_protocol_string(self, n_tabs=1):
         """Creates an instance of `self.device` and uses `self.config_dict` to
@@ -37,24 +44,39 @@ class Change_DeviceConf(Loop_Step):
         the config_dict."""
         tabs = '\t' * n_tabs
         dev_name = self.device
-        device = variables_handling.devices[dev_name]
-        dev_type = device.name
-        py_package = importlib.import_module(f'nomad_camels_driver_{dev_type}.{dev_type}')
-        dev_instance = py_package.subclass()
-        dev_instance.config = self.config_dict
-        config_dict = dev_instance.get_config()
-        extra_config = {}
-        non_strings = []
-        for key in config_dict:
-            if key.startswith('!non_string!_'):
-                extra_config[key.replace('!non_string!_', '')] = config_dict[key]
-                non_strings.append(key)
-        for s in non_strings:
-            config_dict.pop(s)
-        config_dict.update(extra_config)
         protocol_string = super().get_protocol_string(n_tabs)
-        protocol_string += f'{tabs}config = {config_dict}\n'
-        protocol_string += f'{tabs}devs["{self.device}"].configure(config)\n'
+        if dev_name != 'advanced configuration':
+            device = variables_handling.devices[dev_name]
+            dev_type = device.name
+            py_package = importlib.import_module(f'nomad_camels_driver_{dev_type}.{dev_type}')
+            dev_instance = py_package.subclass()
+            dev_instance.config = self.config_dict
+            config_dict = dev_instance.get_config()
+            extra_config = {}
+            non_strings = []
+            for key in config_dict:
+                if key.startswith('!non_string!_'):
+                    extra_config[key.replace('!non_string!_', '')] = config_dict[key]
+                    non_strings.append(key)
+            for s in non_strings:
+                config_dict.pop(s)
+            config_dict.update(extra_config)
+            protocol_string += f'{tabs}config = {config_dict}\n'
+            protocol_string += f'{tabs}devs["{self.device}"].configure(config)\n'
+        else:
+            self.update_used_devices()
+            for dev in self.used_devices:
+                protocol_string += f'{tabs}config_dict = ' + '{'
+                for i, conf in enumerate(self.config_dict['channel']):
+                    dev_name, conf_name = variables_handling.config_channels[conf].name.split('.')
+                    if dev_name != dev:
+                        continue
+                    if conf not in variables_handling.config_channels:
+                        raise Exception(f'Trying to configure {conf} in {self.full_name}, but it does not exist!')
+                    val = self.config_dict['value'][i]
+                    protocol_string += f'"{conf_name}": eva.eval("{val}"), '
+                protocol_string = protocol_string[:-2] + '}\n'
+                protocol_string += f'{tabs}devs["{dev}"].configure(config_dict)\n'
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
@@ -71,7 +93,7 @@ class Change_DeviceConf_Config(Loop_Step_Config):
         self.loop_step = loop_step
         label_dev = QLabel('Device:')
         self.comboBox_device = QComboBox()
-        devs = variables_handling.devices.keys()
+        devs = list(variables_handling.devices.keys()) + ['advanced configuration']
         self.comboBox_device.addItems(devs)
         if loop_step.device in devs:
             self.comboBox_device.setCurrentText(loop_step.device)
@@ -89,27 +111,34 @@ class Change_DeviceConf_Config(Loop_Step_Config):
         dev_name = self.comboBox_device.currentText()
         if not dev_name:
             return
-        device = variables_handling.devices[dev_name]
-        dev_type = device.name
-        py_package = importlib.import_module(f'nomad_camels_driver_{dev_type}.{dev_type}')
-        if dev_name == self.loop_step.device:
-            settings = self.loop_step.settings_dict
-            config = self.loop_step.config_dict
+        if dev_name == 'advanced configuration':
+            from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
+            if self.loop_step.device == 'advanced configuration':
+                config_widge = Channels_Check_Table(self, ['set', 'config', 'value'], True, self.loop_step.config_dict, [2], use_configs=True)
+            else:
+                config_widge = Channels_Check_Table(self, ['set', 'config', 'value'], True, {'channel': [], 'value': []}, [2], use_configs=True)
         else:
-            settings = dict(device.settings)
-            config = dict(device.config)
-        try:
-            config_widge = py_package.subclass_config_sub(parent=self,
-                                                          settings_dict=settings,
-                                                          config_dict=config)
-        except AttributeError:
+            device = variables_handling.devices[dev_name]
+            dev_type = device.name
+            py_package = importlib.import_module(f'nomad_camels_driver_{dev_type}.{dev_type}')
+            if dev_name == self.loop_step.device:
+                settings = self.loop_step.settings_dict
+                config = self.loop_step.config_dict
+            else:
+                settings = dict(device.settings)
+                config = dict(device.config)
             try:
-                widge = py_package.subclass_config(parent=self,
-                                                   settings_dict=settings,
-                                                   config_dict=config)
-                config_widge = widge.sub_widget
+                config_widge = py_package.subclass_config_sub(parent=self,
+                                                            settings_dict=settings,
+                                                            config_dict=config)
             except AttributeError:
-                config_widge = Device_Config_Sub(parent=self)
+                try:
+                    widge = py_package.subclass_config(parent=self,
+                                                    settings_dict=settings,
+                                                    config_dict=config)
+                    config_widge = widge.sub_widget
+                except AttributeError:
+                    config_widge = Device_Config_Sub(parent=self)
         self.layout().replaceWidget(self.config_widget, config_widge)
         self.config_widget.deleteLater()
         self.config_widget = config_widge
@@ -117,6 +146,10 @@ class Change_DeviceConf_Config(Loop_Step_Config):
     def update_step_config(self):
         """ """
         super().update_step_config()
-        self.loop_step.device = self.comboBox_device.currentText()
-        self.loop_step.config_dict = self.config_widget.get_config()
-        self.loop_step.settings_dict = self.config_widget.get_settings()
+        dev_name = self.comboBox_device.currentText()
+        self.loop_step.device = dev_name
+        if dev_name == 'advanced configuration':
+            self.loop_step.config_dict = self.config_widget.get_info()
+        else:
+            self.loop_step.config_dict = self.config_widget.get_config()
+            self.loop_step.settings_dict = self.config_widget.get_settings()

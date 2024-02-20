@@ -395,7 +395,7 @@ def get_inner_range(start, stop, points, sweep_mode, endpoint):
 class Prompt_Box(QMessageBox):
     """
     A subclass of QMessageBox that is used in the prompt-step.
-    The protocol is paused until `self.done` is True.
+    The protocol is paused until `self.done_flag` is True.
 
     Parameters
     ----------
@@ -420,15 +420,15 @@ class Prompt_Box(QMessageBox):
         self.helper = BoxHelper()
         self.helper.executor.connect(self.start_execution)
         self.buttonClicked.connect(self.set_done)
-        self.done = False
+        self.done_flag = False
 
     def set_done(self):
-        """Sets `self.done` to True."""
-        self.done = True
+        """Sets `self.done_flag` to True."""
+        self.done_flag = True
 
     def start_execution(self):
-        """Sets `self.done` to False and starts `self.exec()`."""
-        self.done = False
+        """Sets `self.done_flag` to False and starts `self.exec()`."""
+        self.done_flag = False
         self.exec()
 
 class BoxHelper(QWidget):
@@ -475,7 +475,7 @@ class Value_Box(QDialog):
 
         self.helper = BoxHelper()
         self.helper.executor.connect(self.start_execution)
-        self.done = False
+        self.done_flag = False
 
         channels_label = QLabel('Channels')
         font = QFont()
@@ -540,15 +540,15 @@ class Value_Box(QDialog):
         self.set_channels = {}
 
     def start_execution(self):
-        """Sets `self.done` to False and starts `self.exec()`."""
-        self.done = False
+        """Sets `self.done_flag` to False and starts `self.exec()`."""
+        self.done_flag = False
         self.exec()
 
     def accept(self) -> None:
         """
         Reads all the values to be set to channels / variables and saves them in
         `self.set_channels` and `self.set_variables` respectively, then sets
-        `self.done` to True, allowing the protocol to go on and accepts the dialog.
+        `self.done_flag` to True, allowing the protocol to go on and accepts the dialog.
         """
         self.set_variables = {}
         self.set_channels = {}
@@ -581,15 +581,15 @@ class Value_Box(QDialog):
                     return
                 self.set_channels[channel] = channel_table_data['value'][i]
         self.was_accepted = True
-        self.done = True
+        self.done_flag = True
         return super().accept()
 
     def reject(self) -> None:
         """
-        Sets `self.done` to True, allowing the protocol to go on before
+        Sets `self.done_flag` to True, allowing the protocol to go on before
         rejecting the dialog.
         """
-        self.done = True
+        self.done_flag = True
         return super().reject()
 
 
@@ -654,7 +654,7 @@ class Waiting_Bar(QWidget):
         self.hide()
 
     def start_execution(self):
-        """Sets `self.done` to False and starts `self.exec()`."""
+        """Sets `self.done_flag` to False and starts `self.exec()`."""
         self.skip = False
         self.setHidden(False)
         self.show()

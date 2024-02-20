@@ -23,7 +23,7 @@ class New_Manual_Control_Dialog(QDialog):
         layout = QGridLayout()
         self.setLayout(layout)
 
-        self.setWindowTitle('New Manual Control - NOMAD-CAMELS')
+        self.setWindowTitle('New Manual Control - NOMAD CAMELS')
 
         self.buttonBox = QDialogButtonBox()
         self.buttonBox.setOrientation(Qt.Horizontal)

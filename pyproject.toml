@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nomad_camels"
-version = "0.2.3"
+version = "1.0.0"
 authors = [
     { name="FAIRmat - HU Berlin", email="nomad-camels@fau.de" }
 ]
@@ -26,3 +26,6 @@ exclude = [".desertenv",".git",".idea",".gitignore"]  # exclude packages matchin
 [project.urls]
 "GitHub Page" = "https://github.com/FAU-LAP/NOMAD-CAMELS"
 "Documentation" = "https://fau-lap.github.io/NOMAD-CAMELS/"
+
+[project.gui-scripts]
+nomad-camels = "nomad_camels:start_camels"

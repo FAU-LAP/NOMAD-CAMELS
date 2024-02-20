@@ -59,6 +59,7 @@ preferences = {}
 protocols = {}
 protocol_variables = {}
 channels = {}
+config_channels = {}
 loop_step_variables = {}
 devices = {}
 current_protocol = None

@@ -16,7 +16,7 @@ class ManageInstruments(QDialog):
         self.buttonBox.rejected.connect(self.reject)
         self.buttonBox.accepted.connect(self.accept)
 
-        self.setWindowTitle('Manage Instruments - NOMAD-CAMELS')
+        self.setWindowTitle('Manage Instruments - NOMAD CAMELS')
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
 
         self.active_instruments = active_instruments or {}
