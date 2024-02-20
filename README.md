@@ -13,7 +13,7 @@ NOMAD CAMELS is a configurable measurement software, targeted towards the requir
 
 ## Documentation
 
-For more information and documentation visit [this page](https://fau-lap.github.io/NOMAD-CAMELS/).
+For more information and documentation visit [the documentation](https://fau-lap.github.io/NOMAD-CAMELS/).
 
 # Changelog
 
