@@ -45,6 +45,3 @@ def make_yml(datapath, catalog_name='CAMELS_CATALOG', ask_restart=False):
         WarnPopup('Could not load the databroker catalog, you might have to restart CAMELS', 'Databroker catalog not loaded')
         update_camels.restart_camels(ask_restart=True)
 
-
-if __name__ == '__main__':
-    make_yml(load_save_functions.standard_pref['meas_files_path'], 'test')

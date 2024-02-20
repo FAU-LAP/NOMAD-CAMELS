@@ -26,6 +26,7 @@ from os import makedirs, getenv, listdir
 from shutil import copyfile
 import importlib
 from glob import glob
+import platform
 
 import numpy as np
 import pandas as pd
@@ -53,6 +54,22 @@ save_string_list = [QComboBox, QLineEdit, QTreeView, QListView]
 save_dict_skip = [QWidget, QSplitter, QLabel, QPushButton, QMenu, QMenuBar,
                   QAction, QStatusBar, QGridLayout]
 
+# Get the current operating system
+os_name = platform.system()
+
+if os_name == 'Windows':
+    # Use the APPDATA environment variable on Windows
+    data_path = os.path.join(os.environ.get('USERPROFILE'), 'Documents', 'NOMAD_CAMELS_data')
+elif os_name == 'Linux':
+    # Use the XDG_DATA_HOME environment variable on Linux, defaulting to ~/.local/share
+    data_path = os.environ.get('XDG_DATA_HOME') or os.path.join(os.path.expanduser('~'), '.local', 'share')
+elif os_name == 'Darwin':
+    # Use ~/Library/Application Support on MacOS
+    data_path = os.path.join(os.path.expanduser('~'), 'Library', 'Application Support')
+else:
+    # Default to the home directory
+    data_path = os.path.expanduser('~')
+
 
 standard_pref = {'autosave': True,
                  'autosave_run': True,
@@ -63,7 +80,7 @@ standard_pref = {'autosave': True,
                  'number_format': 'mixed',
                  'mixed_from': 3,
                  'py_files_path': f'{appdata_path}/python_files'.replace('\\','/'),
-                 'meas_files_path': os.path.expanduser('~/NOMAD_CAMELS_data').replace('\\','/'),
+                 'meas_files_path': data_path,
                  'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/'),
                  'databroker_catalog_name': 'CAMELS_CATALOG',
                  'driver_repository': 'https://github.com/FAU-LAP/CAMELS_drivers',
@@ -524,6 +541,17 @@ def get_preferences():
     """
     if 'preferences.json' not in os.listdir(appdata_path):
         with open(f'{appdata_path}/preferences.json', 'w', encoding='utf-8') as file:
+            from nomad_camels.ui_widgets.path_button_edit import Path_Button_Dialog
+            dialog = Path_Button_Dialog(path=data_path,
+                                        default_dir=os.path.dirname(data_path),
+                                        select_directory=True,
+                                        title='Select data path',
+                                        text='Please select the directory where the measurement data should be saved')
+            if dialog.exec():
+                global standard_pref
+                standard_pref['meas_files_path'] = dialog.path
+            else:
+                WarnPopup(text='No data path selected, a default path will be used.\nYou can change the path in the settings.', title='No data path selected', info_icon=True)
             json.dump(standard_pref, file, indent=2)
     with open(f'{appdata_path}/preferences.json', 'r', encoding='utf-8') as file:
         prefs = json.load(file)

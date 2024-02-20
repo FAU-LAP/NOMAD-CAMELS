@@ -17,7 +17,11 @@ For more information and documentation visit [the documentation](https://fau-lap
 
 # Changelog
 
-## 1.0.0 (in progress)
+## 1.0.1 (in progress)
+Features:
+- Now asking for the path, where to save measurement data when starting up CAMELS for the first time (or there is no preferences.json)
+
+## 1.0.0
 Features:
 - Fit values can now be displayed directly in the plot
 - Refactor device instantiation to be handled in another thread to keep the UI responsive, this might cause some problems with instrument-specific manual controls that are not yet updated accordingly
