@@ -1,14 +1,22 @@
 import os.path
-from PySide6.QtWidgets import QApplication, QDialog, QLabel, QLineEdit, QGridLayout, QDialogButtonBox, QComboBox
+from PySide6.QtWidgets import (
+    QApplication,
+    QDialog,
+    QLabel,
+    QLineEdit,
+    QGridLayout,
+    QDialogButtonBox,
+    QComboBox,
+)
 
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.nomad_integration import nomad_communication
 
 
-
 class UploadDialog(QDialog):
     """UI widget to handle uploading data to NOMAD."""
-    def __init__(self, parent=None, file_set='', upload_path=''):
+
+    def __init__(self, parent=None, file_set="", upload_path=""):
         super().__init__(parent)
 
         label_file = QLabel("File:")
@@ -19,13 +27,15 @@ class UploadDialog(QDialog):
         uploads = nomad_communication.get_user_upload_names(self)
         self.combobox_upload.addItems(uploads)
 
-        label_upload_path = QLabel('Directory in upload:')
+        label_upload_path = QLabel("Directory in upload:")
         if upload_path:
             self.lineEdit_upload_path = QLineEdit(upload_path)
         else:
-            self.lineEdit_upload_path = QLineEdit('CAMELS_data')
+            self.lineEdit_upload_path = QLineEdit("CAMELS_data")
 
-        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+        )
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
 
@@ -43,18 +53,17 @@ class UploadDialog(QDialog):
 
         self.setLayout(layout)
         if file_set:
-            mid = os.path.basename(file_set) + ' '
+            mid = os.path.basename(file_set) + " "
             self.pathEdit_file.setHidden(True)
             label_file.setHidden(True)
         else:
-            mid = ''
-        self.setWindowTitle(f'Upload {mid}to NOMAD')
+            mid = ""
+        self.setWindowTitle(f"Upload {mid}to NOMAD")
         self.adjustSize()
         self.exec()
 
-
     def accept(self) -> None:
-        """"Before calling the super method, the upload is done."""
+        """ "Before calling the super method, the upload is done."""
         f = self.pathEdit_file.get_path()
         upload = self.combobox_upload.currentText()
         path = self.lineEdit_upload_path.text()
@@ -62,11 +71,9 @@ class UploadDialog(QDialog):
         super().accept()
 
 
-
-
-
 if __name__ == "__main__":
     import sys
+
     app = QApplication(sys.argv)
     dialog = UploadDialog()
     dialog.exec()

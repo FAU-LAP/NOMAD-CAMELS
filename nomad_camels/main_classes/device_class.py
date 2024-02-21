@@ -1,5 +1,13 @@
-from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QComboBox,\
-    QFrame, QCheckBox, QTextEdit
+from PySide6.QtWidgets import (
+    QWidget,
+    QGridLayout,
+    QLabel,
+    QLineEdit,
+    QComboBox,
+    QFrame,
+    QCheckBox,
+    QTextEdit,
+)
 from PySide6.QtGui import QFont
 from PySide6.QtCore import Signal
 
@@ -12,7 +20,7 @@ from nomad_camels.main_classes.measurement_channel import Measurement_Channel
 
 class Device:
     """General class for all devices/instruments.
-    
+
     If subclassing this in a driver, subclass should be called "subclass", it
     will be imported via importlib in that way.
     Any derived device should also provide the name of its ophyd-class
@@ -39,9 +47,18 @@ class Device:
         Dictionary of additional manual controls this device provides
     """
 
-    def __init__(self, name='', virtual=False, tags=None, ophyd_device=None,
-                 ophyd_class_name='', additional_info=None,
-                 non_channel_functions=None, main_thread_only=False, **kwargs):
+    def __init__(
+        self,
+        name="",
+        virtual=False,
+        tags=None,
+        ophyd_device=None,
+        ophyd_class_name="",
+        additional_info=None,
+        non_channel_functions=None,
+        main_thread_only=False,
+        **kwargs,
+    ):
         """
         Parameters
         ----------
@@ -76,16 +93,16 @@ class Device:
             ophyd_device = OphydDevice
         # self.ophyd_device = ophyd_device
         self.ophyd_class = ophyd_device
-        self.ophyd_instance = ophyd_device(name='test')
+        self.ophyd_instance = ophyd_device(name="test")
         self.get_channels()
         for comp in self.ophyd_instance.walk_components():
             name = comp.item.attr
             dev_class = comp.item.cls
             if name in self.ophyd_instance.configuration_attrs:
                 if check_output(dev_class):
-                    self.config.update({f'{name}': 0})
+                    self.config.update({f"{name}": 0})
                 else:
-                    self.passive_config.update({f'{name}': 0})
+                    self.passive_config.update({f"{name}": 0})
         self.controls = {}
 
     def get_necessary_devices(self):
@@ -106,7 +123,7 @@ class Device:
     def get_non_channel_functions(self):
         funcs = []
         for func in self.non_channel_functions:
-            funcs.append(f'{self.custom_name}.{func}')
+            funcs.append(f"{self.custom_name}.{func}")
         return funcs
 
     def get_finalize_steps(self):
@@ -165,23 +182,29 @@ class Device:
         """
         self.channels = {}
         outputs = get_outputs(self.ophyd_instance)
-        channels, config_channels = get_channels(self.ophyd_instance,
-                                                 include_metadata=True,
-                                                 include_config=True)
+        channels, config_channels = get_channels(
+            self.ophyd_instance, include_metadata=True, include_config=True
+        )
         for chan_info in channels:
             chan, metadata = chan_info
             is_out = chan in outputs
-            channel = Measurement_Channel(name=f'{self.custom_name}.{chan}',
-                                          output=is_out,device=self.custom_name,
-                                          metadata=metadata)
-            self.channels.update({f'{self.custom_name}_{chan}': channel})
+            channel = Measurement_Channel(
+                name=f"{self.custom_name}.{chan}",
+                output=is_out,
+                device=self.custom_name,
+                metadata=metadata,
+            )
+            self.channels.update({f"{self.custom_name}_{chan}": channel})
         for config_chan_info in config_channels:
             chan, metadata = config_chan_info
             is_out = chan in outputs
-            channel = Measurement_Channel(name=f'{self.custom_name}.{chan}',
-                                          output=is_out, device=self.custom_name,
-                                          metadata=metadata)
-            self.config_channels.update({f'{self.custom_name}_{chan}': channel})
+            channel = Measurement_Channel(
+                name=f"{self.custom_name}.{chan}",
+                output=is_out,
+                device=self.custom_name,
+                metadata=metadata,
+            )
+            self.config_channels.update({f"{self.custom_name}_{chan}": channel})
         return self.channels
 
     def get_additional_string(self):
@@ -192,7 +215,7 @@ class Device:
         -------
         additional_str : str
         """
-        return ''
+        return ""
 
     def get_special_steps(self):
         """returns a dictionary containing containing device-specific
@@ -205,13 +228,15 @@ class Device:
         """
         return {}
 
+
 def check_output(cls) -> bool:
     """Returns False if the give `cls` is an instance of a read-only Signal."""
     output = not issubclass(cls, EpicsSignalRO)
     output = output and not issubclass(cls, SignalRO)
     return output
 
-def get_outputs(dev:OphydDevice):
+
+def get_outputs(dev: OphydDevice):
     """walks through the components of an ophyd-device and checks
     whether they can be written
 
@@ -219,7 +244,7 @@ def get_outputs(dev:OphydDevice):
     ----------
     dev : ophyd.Device
         The device that should be checked
-        
+
 
     Returns
     -------
@@ -234,7 +259,8 @@ def get_outputs(dev:OphydDevice):
             outputs.append(name)
     return outputs
 
-def get_channels(dev:OphydDevice, include_metadata=False, include_config=False):
+
+def get_channels(dev: OphydDevice, include_metadata=False, include_config=False):
     """returns the components of an ophyd-device that are not listed in
     the configuration
 
@@ -264,8 +290,8 @@ def get_channels(dev:OphydDevice, include_metadata=False, include_config=False):
             if not include_config:
                 continue
         if include_metadata:
-            if hasattr(comp.item, 'kwargs') and 'metadata' in comp.item.kwargs:
-                metadata = comp.item.kwargs['metadata']
+            if hasattr(comp.item, "kwargs") and "metadata" in comp.item.kwargs:
+                metadata = comp.item.kwargs["metadata"]
             else:
                 metadata = {}
             if real_channel:
@@ -282,7 +308,6 @@ def get_channels(dev:OphydDevice, include_metadata=False, include_config=False):
     return channels
 
 
-
 class Device_Config(QWidget):
     """Parent class for the configuration-widgets
     (shown on the frontpanel) of the devices.
@@ -294,10 +319,18 @@ class Device_Config(QWidget):
     -------
 
     """
+
     name_change = Signal(str)
 
-    def __init__(self, parent=None, device_name='', data='', settings_dict=None,
-                 config_dict=None, additional_info=None):
+    def __init__(
+        self,
+        parent=None,
+        device_name="",
+        data="",
+        settings_dict=None,
+        config_dict=None,
+        additional_info=None,
+    ):
         """
         Parameters
         ----------
@@ -324,12 +357,12 @@ class Device_Config(QWidget):
         layout = QGridLayout()
         self.setLayout(layout)
 
-        label_title = QLabel(f'{device_name} - Configuration')
-        title_font = QFont('MS Shell Dlg 2', 10)
+        label_title = QLabel(f"{device_name} - Configuration")
+        title_font = QFont("MS Shell Dlg 2", 10)
         title_font.setWeight(QFont.Bold)
         label_title.setFont(title_font)
 
-        self.label_custom_name = QLabel('Custom name:')
+        self.label_custom_name = QLabel("Custom name:")
         self.lineEdit_custom_name = QLineEdit(data)
 
         self.line_2 = QFrame(self)
@@ -338,17 +371,19 @@ class Device_Config(QWidget):
         self.line_2.setObjectName("line_2")
 
         self.textEdit_desc = QTextEdit(parent=self)
-        self.textEdit_desc.setPlaceholderText('Enter your description here.')
-        if additional_info and 'description' in additional_info:
-            self.textEdit_desc.setText(additional_info['description'])
+        self.textEdit_desc.setPlaceholderText("Enter your description here.")
+        if additional_info and "description" in additional_info:
+            self.textEdit_desc.setText(additional_info["description"])
 
-        self.label_connection = QLabel('Connection-type:')
+        self.label_connection = QLabel("Connection-type:")
         self.comboBox_connection_type = QComboBox()
         self.connector = Connection_Config()
         layout.addWidget(self.label_connection, 4, 0)
         layout.addWidget(self.comboBox_connection_type, 4, 1, 1, 2)
         layout.addWidget(self.connector, 6, 0, 1, 5)
-        self.comboBox_connection_type.currentTextChanged.connect(self.connection_type_changed)
+        self.comboBox_connection_type.currentTextChanged.connect(
+            self.connection_type_changed
+        )
 
         layout.addWidget(label_title, 0, 0, 1, 5)
         layout.addWidget(self.label_custom_name, 1, 0)
@@ -359,9 +394,10 @@ class Device_Config(QWidget):
         self.settings_dict = settings_dict
         self.config_dict = config_dict
         self.additional_info = additional_info or {}
-        self.lineEdit_custom_name.textChanged.connect(lambda x: self.name_change.emit(x))
+        self.lineEdit_custom_name.textChanged.connect(
+            lambda x: self.name_change.emit(x)
+        )
         self.load_settings()
-
 
     def connection_type_changed(self):
         """Called when the comboBox_connection_type is changed. Switches
@@ -376,7 +412,7 @@ class Device_Config(QWidget):
 
         """
         conn_old = self.connector
-        if self.comboBox_connection_type.currentText() == 'Local VISA':
+        if self.comboBox_connection_type.currentText() == "Local VISA":
             self.connector = Local_VISA()
         self.connector.load_settings(self.settings_dict)
         self.layout().replaceWidget(conn_old, self.connector)
@@ -395,8 +431,10 @@ class Device_Config(QWidget):
         -------
 
         """
-        self.settings_dict.update({'connection': {'type': self.comboBox_connection_type.currentText()}})
-        self.settings_dict['connection'].update(self.connector.get_settings())
+        self.settings_dict.update(
+            {"connection": {"type": self.comboBox_connection_type.currentText()}}
+        )
+        self.settings_dict["connection"].update(self.connector.get_settings())
         return self.settings_dict
 
     def load_settings(self):
@@ -432,19 +470,20 @@ class Device_Config(QWidget):
 
     def get_info(self):
         """ """
-        self.additional_info['description'] = self.textEdit_desc.toPlainText()
+        self.additional_info["description"] = self.textEdit_desc.toPlainText()
         return self.additional_info
 
 
 class Device_Config_Sub(QWidget):
     """ """
+
     def __init__(self, settings_dict=None, parent=None, config_dict=None):
         super().__init__()
         self.settings_dict = settings_dict or {}
         self.config_dict = config_dict or {}
         if settings_dict is None and config_dict is None:
             self.setLayout(QGridLayout())
-            self.layout().addWidget(QLabel('Nothing to configure!'))
+            self.layout().addWidget(QLabel("Nothing to configure!"))
 
     def get_config(self):
         """ """
@@ -466,6 +505,7 @@ class Connection_Config(QWidget):
     -------
 
     """
+
     connection_change = Signal()
 
     def __init__(self, parent=None):
@@ -485,7 +525,7 @@ class Connection_Config(QWidget):
         Parameters
         ----------
         settings_dict :
-            
+
 
         Returns
         -------
@@ -628,16 +668,17 @@ class Connection_Config(QWidget):
 #             self.comboBox_port.setCurrentText(settings_dict['Port'])
 
 
-
 class Local_VISA(Connection_Config):
     """ """
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.only_resource_name = False
 
-        label_port = QLabel('Resource-Name:')
+        label_port = QLabel("Resource-Name:")
         self.comboBox_port = QComboBox()
         import pyvisa
+
         rm = pyvisa.ResourceManager()
         self.ports = rm.list_resources()
         self.comboBox_port.addItems(self.ports)
@@ -645,51 +686,64 @@ class Local_VISA(Connection_Config):
         self.layout().addWidget(label_port, 0, 0)
         self.layout().addWidget(self.comboBox_port, 0, 1, 1, 4)
 
-        label_baud = QLabel('Baud-Rate:')
-        self.lineEdit_baud = QLineEdit('9600')
+        label_baud = QLabel("Baud-Rate:")
+        self.lineEdit_baud = QLineEdit("9600")
         self.layout().addWidget(label_baud, 1, 0)
         self.layout().addWidget(self.lineEdit_baud, 1, 1)
 
-        label_timeout = QLabel('Timeout (ms):')
-        self.lineEdit_timeout = QLineEdit('2000')
+        label_timeout = QLabel("Timeout (ms):")
+        self.lineEdit_timeout = QLineEdit("2000")
         self.layout().addWidget(label_timeout, 1, 2)
         self.layout().addWidget(self.lineEdit_timeout, 1, 3)
 
-        label_in_term = QLabel('In-Terminator:')
-        self.lineEdit_in_term = QLineEdit('\\r\\n')
+        label_in_term = QLabel("In-Terminator:")
+        self.lineEdit_in_term = QLineEdit("\\r\\n")
         self.layout().addWidget(label_in_term, 2, 0)
         self.layout().addWidget(self.lineEdit_in_term, 2, 1)
 
-        label_out_term = QLabel('Out-Terminator:')
-        self.lineEdit_out_term = QLineEdit('\\r\\n')
+        label_out_term = QLabel("Out-Terminator:")
+        self.lineEdit_out_term = QLineEdit("\\r\\n")
         self.layout().addWidget(label_out_term, 2, 2)
         self.layout().addWidget(self.lineEdit_out_term, 2, 3)
 
-        label_error_retry = QLabel('Retries on error:')
-        self.lineEdit_error_retry = QLineEdit('0')
+        label_error_retry = QLabel("Retries on error:")
+        self.lineEdit_error_retry = QLineEdit("0")
         self.layout().addWidget(label_error_retry, 3, 0)
         self.layout().addWidget(self.lineEdit_error_retry, 3, 1)
 
-        self.checkbox_retry_on_timeout = QCheckBox('retry on timeout')
+        self.checkbox_retry_on_timeout = QCheckBox("retry on timeout")
         self.layout().addWidget(self.checkbox_retry_on_timeout, 3, 2, 1, 2)
-        self.widgets_to_hide = [label_baud, self.lineEdit_baud,
-                                label_timeout, self.lineEdit_timeout,
-                                label_in_term, self.lineEdit_in_term,
-                                label_out_term, self.lineEdit_out_term,
-                                label_error_retry, self.lineEdit_error_retry,
-                                self.checkbox_retry_on_timeout]
+        self.widgets_to_hide = [
+            label_baud,
+            self.lineEdit_baud,
+            label_timeout,
+            self.lineEdit_timeout,
+            label_in_term,
+            self.lineEdit_in_term,
+            label_out_term,
+            self.lineEdit_out_term,
+            label_error_retry,
+            self.lineEdit_error_retry,
+            self.checkbox_retry_on_timeout,
+        ]
 
     def get_settings(self):
         """ """
         if self.only_resource_name:
-            return {'resource_name': self.comboBox_port.currentText()}
-        return {'resource_name': self.comboBox_port.currentText(),
-                'baud_rate': int(self.lineEdit_baud.text()),
-                'timeout': int(self.lineEdit_timeout.text()),
-                'read_termination': self.lineEdit_in_term.text().replace('\\r', '\r').replace('\\n', '\n'),
-                'write_termination': self.lineEdit_out_term.text().replace('\\r', '\r').replace('\\n', '\n'),
-                'retry_on_error': int(self.lineEdit_error_retry.text()),
-                'retry_on_timeout': self.checkbox_retry_on_timeout.isChecked()}
+            return {"resource_name": self.comboBox_port.currentText()}
+        return {
+            "resource_name": self.comboBox_port.currentText(),
+            "baud_rate": int(self.lineEdit_baud.text()),
+            "timeout": int(self.lineEdit_timeout.text()),
+            "read_termination": self.lineEdit_in_term.text()
+            .replace("\\r", "\r")
+            .replace("\\n", "\n"),
+            "write_termination": self.lineEdit_out_term.text()
+            .replace("\\r", "\r")
+            .replace("\\n", "\n"),
+            "retry_on_error": int(self.lineEdit_error_retry.text()),
+            "retry_on_timeout": self.checkbox_retry_on_timeout.isChecked(),
+        }
 
     def load_settings(self, settings_dict):
         """
@@ -697,51 +751,77 @@ class Local_VISA(Connection_Config):
         Parameters
         ----------
         settings_dict :
-            
+
 
         Returns
         -------
 
         """
-        if 'connection' in settings_dict:
-            settings_dict = settings_dict['connection']
-        if 'resource_name' in settings_dict and settings_dict['resource_name'] in self.ports:
-            self.comboBox_port.setCurrentText(settings_dict['resource_name'])
-        if 'baud_rate' in settings_dict:
-            self.lineEdit_baud.setText(str(settings_dict['baud_rate']))
-        if 'timeout' in settings_dict:
-            self.lineEdit_timeout.setText(str(settings_dict['timeout']))
-        if 'read_termination' in settings_dict:
-            self.lineEdit_in_term.setText(settings_dict['read_termination'].replace('\r', '\\r').replace('\n', '\\n'))
-        if 'write_termination' in settings_dict:
-            self.lineEdit_out_term.setText(settings_dict['write_termination'].replace('\r', '\\r').replace('\n', '\\n'))
-        if 'retry_on_error' in settings_dict:
-            self.lineEdit_error_retry.setText(str(settings_dict['retry_on_error']))
-        if 'retry_on_timeout' in settings_dict:
-            self.checkbox_retry_on_timeout.setChecked(settings_dict['retry_on_timeout'])
-    
+        if "connection" in settings_dict:
+            settings_dict = settings_dict["connection"]
+        if (
+            "resource_name" in settings_dict
+            and settings_dict["resource_name"] in self.ports
+        ):
+            self.comboBox_port.setCurrentText(settings_dict["resource_name"])
+        if "baud_rate" in settings_dict:
+            self.lineEdit_baud.setText(str(settings_dict["baud_rate"]))
+        if "timeout" in settings_dict:
+            self.lineEdit_timeout.setText(str(settings_dict["timeout"]))
+        if "read_termination" in settings_dict:
+            self.lineEdit_in_term.setText(
+                settings_dict["read_termination"]
+                .replace("\r", "\\r")
+                .replace("\n", "\\n")
+            )
+        if "write_termination" in settings_dict:
+            self.lineEdit_out_term.setText(
+                settings_dict["write_termination"]
+                .replace("\r", "\\r")
+                .replace("\n", "\\n")
+            )
+        if "retry_on_error" in settings_dict:
+            self.lineEdit_error_retry.setText(str(settings_dict["retry_on_error"]))
+        if "retry_on_timeout" in settings_dict:
+            self.checkbox_retry_on_timeout.setChecked(settings_dict["retry_on_timeout"])
+
     def set_only_resource_name(self):
         for widge in self.widgets_to_hide:
             widge.setHidden(True)
         self.only_resource_name = True
 
 
-
 class Simple_Config(Device_Config):
     """ """
-    def __init__(self, parent=None, device_name='', data='', settings_dict=None,
-                 config_dict=None, additional_info=None,
-                 comboBoxes=None, config_types=None, labels=None):
-        super().__init__(parent, device_name=device_name, data=data,
-                         settings_dict=settings_dict,
-                         config_dict=config_dict,
-                         additional_info=additional_info)
-        self.sub_widget = Simple_Config_Sub(settings_dict=settings_dict,
-                                            parent=self,
-                                            config_dict=config_dict,
-                                            comboBoxes=comboBoxes,
-                                            config_types=config_types,
-                                            labels=labels)
+
+    def __init__(
+        self,
+        parent=None,
+        device_name="",
+        data="",
+        settings_dict=None,
+        config_dict=None,
+        additional_info=None,
+        comboBoxes=None,
+        config_types=None,
+        labels=None,
+    ):
+        super().__init__(
+            parent,
+            device_name=device_name,
+            data=data,
+            settings_dict=settings_dict,
+            config_dict=config_dict,
+            additional_info=additional_info,
+        )
+        self.sub_widget = Simple_Config_Sub(
+            settings_dict=settings_dict,
+            parent=self,
+            config_dict=config_dict,
+            comboBoxes=comboBoxes,
+            config_types=config_types,
+            labels=labels,
+        )
         self.layout().addWidget(self.sub_widget, 10, 0, 1, 5)
         self.load_settings()
 
@@ -758,16 +838,25 @@ class Simple_Config(Device_Config):
 
 class Simple_Config_Sub(Device_Config_Sub):
     """ """
+
     config_changed = Signal()
-    
-    def __init__(self, settings_dict=None, parent=None, config_dict=None,
-                 comboBoxes=None, config_types=None, labels=None):
-        super().__init__(settings_dict=settings_dict, parent=parent,
-                         config_dict=config_dict)
+
+    def __init__(
+        self,
+        settings_dict=None,
+        parent=None,
+        config_dict=None,
+        comboBoxes=None,
+        config_types=None,
+        labels=None,
+    ):
+        super().__init__(
+            settings_dict=settings_dict, parent=parent, config_dict=config_dict
+        )
         settings_dict = settings_dict or {}
         config_dict = config_dict or {}
         self.setLayout(QGridLayout())
-        self.layout().setContentsMargins(0,0,0,0)
+        self.layout().setContentsMargins(0, 0, 0, 0)
         comboBoxes = comboBoxes or {}
         config_types = config_types or {}
         labels = labels or {}
@@ -777,32 +866,40 @@ class Simple_Config_Sub(Device_Config_Sub):
         self.setting_combos = {}
         labels = labels or {}
         for name, val in settings_dict.items():
-            if name == 'connection':
+            if name == "connection":
                 continue
             if name in comboBoxes:
                 self.setting_combos[name] = QComboBox()
                 self.setting_combos[name].addItems(comboBoxes[name])
                 self.setting_combos[name].setCurrentText(val)
             elif name in config_types:
-                if config_types[name] == 'bool':
-                    self.setting_checks[name] = QCheckBox(labels[name] if name in labels else name)
+                if config_types[name] == "bool":
+                    self.setting_checks[name] = QCheckBox(
+                        labels[name] if name in labels else name
+                    )
                     if isinstance(val, bool):
                         self.setting_checks[name].setChecked(val)
-                elif config_types[name] == 'float':
+                elif config_types[name] == "float":
                     self.setting_floats[name] = QLineEdit(str(val))
-                elif config_types[name] == 'str':
+                elif config_types[name] == "str":
                     self.setting_strings[name] = QLineEdit(str(val))
                 else:
-                    raise Exception(f'Named config_type {config_types[name]} of {name} is not supported in Simple_Device_Config!')
+                    raise Exception(
+                        f"Named config_type {config_types[name]} of {name} is not supported in Simple_Device_Config!"
+                    )
             elif isinstance(val, bool):
-                self.setting_checks[name] = QCheckBox(labels[name] if name in labels else name)
+                self.setting_checks[name] = QCheckBox(
+                    labels[name] if name in labels else name
+                )
                 self.setting_checks[name].setChecked(val)
             elif isinstance(val, float) or isinstance(val, int):
                 self.setting_floats[name] = QLineEdit(str(val))
             elif isinstance(val, str):
                 self.setting_strings[name] = QLineEdit(val)
             else:
-                raise Exception(f'Type of {name} with value {val} not supported for simple device config!')
+                raise Exception(
+                    f"Type of {name} with value {val} not supported for simple device config!"
+                )
         self.config_checks = {}
         self.config_floats = {}
         self.config_strings = {}
@@ -813,25 +910,33 @@ class Simple_Config_Sub(Device_Config_Sub):
                 self.config_combos[name].addItems(comboBoxes[name])
                 self.config_combos[name].setCurrentText(val)
             elif name in config_types:
-                if config_types[name] == 'bool':
-                    self.config_checks[name] = QCheckBox(labels[name] if name in labels else name)
+                if config_types[name] == "bool":
+                    self.config_checks[name] = QCheckBox(
+                        labels[name] if name in labels else name
+                    )
                     if isinstance(val, bool):
                         self.config_checks[name].setChecked(val)
-                elif config_types[name] == 'float':
+                elif config_types[name] == "float":
                     self.config_floats[name] = QLineEdit(str(val))
-                elif config_types[name] == 'str':
+                elif config_types[name] == "str":
                     self.config_strings[name] = QLineEdit(str(val))
                 else:
-                    raise Exception(f'Named config_type {config_types[name]} of {name} is not supported in Simple_Device_Config!')
+                    raise Exception(
+                        f"Named config_type {config_types[name]} of {name} is not supported in Simple_Device_Config!"
+                    )
             elif isinstance(val, bool):
-                self.config_checks[name] = QCheckBox(labels[name] if name in labels else name)
+                self.config_checks[name] = QCheckBox(
+                    labels[name] if name in labels else name
+                )
                 self.config_checks[name].setChecked(val)
             elif isinstance(val, float) or isinstance(val, int):
                 self.config_floats[name] = QLineEdit(str(val))
             elif isinstance(val, str):
                 self.config_strings[name] = QLineEdit(val)
             else:
-                raise Exception(f'Type of {name} with value {val} not supported for simple device config!')
+                raise Exception(
+                    f"Type of {name} with value {val} not supported for simple device config!"
+                )
         for widge in self.setting_checks.values():
             widge.stateChanged.connect(lambda x=None: self.config_changed.emit())
         for widge in self.setting_combos.values():
@@ -863,7 +968,7 @@ class Simple_Config_Sub(Device_Config_Sub):
             else:
                 self.layout().addWidget(QLabel(name), row, col)
 
-            self.layout().addWidget(widge, row, col+1)
+            self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
@@ -874,7 +979,7 @@ class Simple_Config_Sub(Device_Config_Sub):
             else:
                 self.layout().addWidget(QLabel(name), row, col)
 
-            self.layout().addWidget(widge, row, col+1)
+            self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
@@ -884,7 +989,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 self.layout().addWidget(QLabel(labels[name]), row, col)
             else:
                 self.layout().addWidget(QLabel(name), row, col)
-            self.layout().addWidget(widge, row, col+1)
+            self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
@@ -900,7 +1005,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 self.layout().addWidget(QLabel(labels[name]), row, col)
             else:
                 self.layout().addWidget(QLabel(name), row, col)
-            self.layout().addWidget(widge, row, col+1)
+            self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
@@ -910,7 +1015,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 self.layout().addWidget(QLabel(labels[name]), row, col)
             else:
                 self.layout().addWidget(QLabel(name), row, col)
-            self.layout().addWidget(widge, row, col+1)
+            self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
@@ -920,7 +1025,7 @@ class Simple_Config_Sub(Device_Config_Sub):
                 self.layout().addWidget(QLabel(labels[name]), row, col)
             else:
                 self.layout().addWidget(QLabel(name), row, col)
-            self.layout().addWidget(widge, row, col+1)
+            self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
@@ -955,10 +1060,6 @@ class Simple_Config_Sub(Device_Config_Sub):
             except:
                 self.config_dict[name] = float(widge.text())
         return super().get_config()
-
-
-
-
 
 
 #

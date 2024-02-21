@@ -1,5 +1,14 @@
 import os.path
-from PySide6.QtWidgets import QApplication, QDialog, QLabel, QLineEdit, QGridLayout, QDialogButtonBox, QComboBox, QTextEdit
+from PySide6.QtWidgets import (
+    QApplication,
+    QDialog,
+    QLabel,
+    QLineEdit,
+    QGridLayout,
+    QDialogButtonBox,
+    QComboBox,
+    QTextEdit,
+)
 from PySide6.QtCore import Qt
 
 import yaml
@@ -7,49 +16,54 @@ import yaml
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.nomad_integration import nomad_communication
 
+
 class Sample_Selector(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        entries = nomad_communication.get_entries(parent)['data']
+        entries = nomad_communication.get_entries(parent)["data"]
         if not entries:
-            raise Exception('No Entries found!')
+            raise Exception("No Entries found!")
         self.entry_metadata = []
         self.entry_names = []
         self.entry_uploads = []
         self.entry_types = []
         self.entry_data = []
         for entry in entries:
-            if 'archive' not in entry:
+            if "archive" not in entry:
                 continue
-            arch = entry['archive']
-            if 'data' not in arch:
+            arch = entry["archive"]
+            if "data" not in arch:
                 continue
-            self.entry_data.append(arch['data'])
-            self.entry_metadata.append(arch['metadata'])
-            self.entry_names.append(arch['metadata']['entry_name'])
-            self.entry_types.append(arch['metadata']['entry_type'])
-            if 'upload_name' in arch['metadata']:
-                self.entry_uploads.append(arch['metadata']['upload_name'])
+            self.entry_data.append(arch["data"])
+            self.entry_metadata.append(arch["metadata"])
+            self.entry_names.append(arch["metadata"]["entry_name"])
+            self.entry_types.append(arch["metadata"]["entry_type"])
+            if "upload_name" in arch["metadata"]:
+                self.entry_uploads.append(arch["metadata"]["upload_name"])
             else:
-                self.entry_uploads.append(arch['metadata']['upload_id'])
+                self.entry_uploads.append(arch["metadata"]["upload_id"])
 
-        label_upload = QLabel('Upload:')
+        label_upload = QLabel("Upload:")
         self.upload_box = QComboBox()
         self.upload_box.addItems(sorted(list(set(self.entry_uploads))))
 
-        label_entry_type = QLabel('Entry Type:')
+        label_entry_type = QLabel("Entry Type:")
         self.entry_type_box = QComboBox()
         self.entry_type_box.addItems(sorted(list(set(self.entry_types))))
 
-        label_entry = QLabel('Entry:')
+        label_entry = QLabel("Entry:")
         self.entry_box = QComboBox()
         self.entry_box.addItems(sorted(self.entry_names))
 
         self.entry_info = QTextEdit()
-        self.entry_info.setTextInteractionFlags(Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse)
+        self.entry_info.setTextInteractionFlags(
+            Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse
+        )
 
-        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+        )
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
 
@@ -94,9 +108,8 @@ class Sample_Selector(QDialog):
                 return self.entry_data[i]
         return {}
 
-
     def accept(self):
         self.sample_data = self.get_current_entry_data()
-        if 'name' not in self.sample_data and 'Name' not in self.sample_data:
-            self.sample_data['name'] = self.entry_box.currentText().split('.')[0]
+        if "name" not in self.sample_data and "Name" not in self.sample_data:
+            self.sample_data["name"] = self.entry_box.currentText().split(".")[0]
         super().accept()

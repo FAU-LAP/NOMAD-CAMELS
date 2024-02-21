@@ -1,20 +1,23 @@
 """Provides a function to rename typical names for fit-variables to valid
 python-names"""
 
-fit_variable_changer = {'+': 'plus',
-                        '-': 'minus',
-                        '=': 'equals',
-                        '==': 'equals',
-                        '/': 'devide',
-                        '*': 'times',
-                        '**': 'power',
-                        '<': 'less',
-                        '>': 'greater',
-                        '(': 'bracketL',
-                        ')': 'bracketR',
-                        '.': 'dot',
-                        ',': 'comma',
-                        ' ': '_'}
+fit_variable_changer = {
+    "+": "plus",
+    "-": "minus",
+    "=": "equals",
+    "==": "equals",
+    "/": "devide",
+    "*": "times",
+    "**": "power",
+    "<": "less",
+    ">": "greater",
+    "(": "bracketL",
+    ")": "bracketR",
+    ".": "dot",
+    ",": "comma",
+    " ": "_",
+}
+
 
 def replace_name(var_name):
     """

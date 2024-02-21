@@ -16,8 +16,6 @@ from pkg_resources import resource_filename
 from nomad_camels.utility import logging_settings
 
 
-
-
 class ErrorMessage(QMessageBox):
     """A popUp-box describing an Error.
 
@@ -30,9 +28,10 @@ class ErrorMessage(QMessageBox):
     parent : QWidget
         The parent widget of this Messagebox
     """
-    def __init__(self, msg, info_text='', parent=None):
+
+    def __init__(self, msg, info_text="", parent=None):
         super().__init__(parent)
-        self.setWindowTitle('ERROR')
+        self.setWindowTitle("ERROR")
         self.setIcon(QMessageBox.Warning)
         self.setStandardButtons(QMessageBox.Ok)
         self.setText(msg)
@@ -57,9 +56,17 @@ def exception_hook(*exc_info):
         return
     elif issubclass(exc_info[0], RunEngineInterrupted):
         return
-    logging.exception(f'{exc_info[1]} - {print_tb(exc_info[2])}')
-    if variables_handling.preferences['play_camel_on_error']:
+    logging.exception(f"{exc_info[1]} - {print_tb(exc_info[2])}")
+    if variables_handling.preferences["play_camel_on_error"]:
         effect = QSoundEffect()
-        effect.setSource(QUrl.fromLocalFile(resource_filename('nomad_camels','graphics/Camel-Groan-2-QuickSounds.com.wav')))
+        effect.setSource(
+            QUrl.fromLocalFile(
+                resource_filename(
+                    "nomad_camels", "graphics/Camel-Groan-2-QuickSounds.com.wav"
+                )
+            )
+        )
         effect.play()
-    ErrorMessage(exc_info[0].__name__, str(exc_info[1]) + '\n' + str(print_tb(exc_info[2]))).exec()
+    ErrorMessage(
+        exc_info[0].__name__, str(exc_info[1]) + "\n" + str(print_tb(exc_info[2]))
+    ).exec()

@@ -54,9 +54,19 @@ class Measurement_Protocol:
     use_nexus : bool
         Currently deprecated. Only used for specific nexus output.
     """
-    def __init__(self, loop_steps=None, plots=None, channels=None, name='',
-                 channel_metadata=None, metadata=None, use_nexus=False,
-                 config_metadata=None, **kwargs):
+
+    def __init__(
+        self,
+        loop_steps=None,
+        plots=None,
+        channels=None,
+        name="",
+        channel_metadata=None,
+        metadata=None,
+        use_nexus=False,
+        config_metadata=None,
+        **kwargs,
+    ):
         if plots is None:
             plots = []
         if loop_steps is None:
@@ -67,21 +77,21 @@ class Measurement_Protocol:
             channel_metadata = {}
         if metadata is None:
             metadata = {}
-        self.description = kwargs['description'] if 'description' in kwargs else ''
-        self.export_csv = kwargs['export_csv'] if 'export_csv' in kwargs else False
-        self.export_json = kwargs['export_json'] if 'export_json' in kwargs else False
-        self.session_name = kwargs['session_name'] if 'session_name' in kwargs else ''
-        self.skip_config = kwargs['skip_config'] if 'skip_config' in kwargs else False
+        self.description = kwargs["description"] if "description" in kwargs else ""
+        self.export_csv = kwargs["export_csv"] if "export_csv" in kwargs else False
+        self.export_json = kwargs["export_json"] if "export_json" in kwargs else False
+        self.session_name = kwargs["session_name"] if "session_name" in kwargs else ""
+        self.skip_config = kwargs["skip_config"] if "skip_config" in kwargs else False
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
             update_all_children(self.loop_step_dict, step)
         self.plots = plots
-        self.filename = ''
+        self.filename = ""
         self.variables = {}
         self.loop_step_variables = {}
         self.channels = channels
-        self.name = name or 'Protocol'
+        self.name = name or "Protocol"
         self.channel_metadata = channel_metadata
         self.config_metadata = config_metadata
         self.metadata = metadata
@@ -99,22 +109,26 @@ class Measurement_Protocol:
         """Get a dictionary containing the paths used for the output
         NeXus-file. Currently deprecated."""
         paths = {}
-        for i, name in enumerate(self.metadata['Name']):
-            paths[self.metadata['NeXus-path'][i]] = f'metadata_start/{name}'
-        for i, name in enumerate(self.channel_metadata['Channel']):
-            paths[self.channel_metadata['NeXus-path'][i]] = f'data/{name}'
-        for i, name in enumerate(self.config_metadata['Configuration']):
-            path = ''
+        for i, name in enumerate(self.metadata["Name"]):
+            paths[self.metadata["NeXus-path"][i]] = f"metadata_start/{name}"
+        for i, name in enumerate(self.channel_metadata["Channel"]):
+            paths[self.channel_metadata["NeXus-path"][i]] = f"data/{name}"
+        for i, name in enumerate(self.config_metadata["Configuration"]):
+            path = ""
             for dev in variables_handling.devices:
                 if dev in name:
                     rn = name.split(dev)[1][1:]
                     device = variables_handling.devices[dev]
-                    if rn in device.get_config() or rn in device.get_config() or rn in device.get_passive_config():
-                        path = f'metadata_start/device_config/{dev}/{name}'
+                    if (
+                        rn in device.get_config()
+                        or rn in device.get_config()
+                        or rn in device.get_passive_config()
+                    ):
+                        path = f"metadata_start/device_config/{dev}/{name}"
                         break
             if not path:
                 raise Exception(f"Cannot find {name} in any configuration!")
-            paths[self.config_metadata['NeXus-path'][i]] = path
+            paths[self.config_metadata["NeXus-path"][i]] = path
         return paths
 
     def add_loop_step(self, loop_step, position=-1, parent_step_name=None, model=None):
@@ -150,7 +164,9 @@ class Measurement_Protocol:
             loop_step.append_to_model(model)
         self.loop_step_dict.update({loop_step.full_name: loop_step})
 
-    def add_loop_step_rec(self, loop_step, model=None, parent_step_name=None, position=-1):
+    def add_loop_step_rec(
+        self, loop_step, model=None, parent_step_name=None, position=-1
+    ):
         """Recursively adds the loop_step and all its children to the
         protocol. Steps are added to the list if they have no parent,
         otherwise to the parent. All are added to the dictionary.
@@ -172,7 +188,12 @@ class Measurement_Protocol:
             Where in the list to add the step
         """
         if parent_step_name is None:
-            self.add_loop_step(loop_step, model=model, parent_step_name=parent_step_name, position=position)
+            self.add_loop_step(
+                loop_step,
+                model=model,
+                parent_step_name=parent_step_name,
+                position=position,
+            )
         else:
             if model is not None:
                 loop_step.append_to_model(model, parent=parent_step_name)
@@ -180,7 +201,9 @@ class Measurement_Protocol:
                 self.loop_step_dict[parent_step_name].add_child(loop_step, position)
             self.loop_step_dict.update({loop_step.full_name: loop_step})
         for child in loop_step.children:
-            self.add_loop_step_rec(child, parent_step_name=loop_step.full_name, model=model)
+            self.add_loop_step_rec(
+                child, parent_step_name=loop_step.full_name, model=model
+            )
 
     def remove_loop_step(self, loop_step_name):
         """Removes the step with the given name from the sequence-list
@@ -196,7 +219,6 @@ class Measurement_Protocol:
             self.loop_step_dict[step.parent_step].remove_child(step)
         else:
             self.loop_steps.remove(step)
-
 
     def load_loop_steps(self, loop_steps, model=None):
         """Takes a list of loop_steps, creates them (with the input data
@@ -226,7 +248,7 @@ class Measurement_Protocol:
             This dictionary should hold all information needed to create the
             step. Specifically there should be "step_type" to decide on the
             class of step and "full_name" to give the step its name.
-            
+
 
         Returns
         -------
@@ -236,13 +258,15 @@ class Measurement_Protocol:
         # children = None
         # if step_info['has_children']:
         children = []
-        if 'children' in step_info:
-            for child in step_info['children']:
+        if "children" in step_info:
+            for child in step_info["children"]:
                 child_step = self.make_step(child)
-                child_step.parent_step = step_info['full_name']
+                child_step.parent_step = step_info["full_name"]
                 children.append(child_step)
-        st = make_step_of_type.make_step(step_info['step_type'], step_info, children, protocol=self)
-        st.full_name = step_info['full_name']
+        st = make_step_of_type.make_step(
+            step_info["step_type"], step_info, children, protocol=self
+        )
+        st.full_name = step_info["full_name"]
         return st
 
     def rearrange_loop_steps(self, step_list):
@@ -265,7 +289,9 @@ class Measurement_Protocol:
         self.loop_steps = []
         for step, children in step_list:
             self.loop_step_dict[step].children = []
-            append_all_children(children, self.loop_step_dict[step], self.loop_step_dict)
+            append_all_children(
+                children, self.loop_step_dict[step], self.loop_step_dict
+            )
             self.loop_steps.append(self.loop_step_dict[step])
 
     def get_plan_string(self):
@@ -273,33 +299,35 @@ class Measurement_Protocol:
         variables_handling.current_protocol = self
         plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, eva=None, stream_name="primary"):\n'
         prot_vars = dict(variables_handling.protocol_variables)
-        if 'StartTime' in prot_vars:
-            prot_vars.pop('StartTime')
-            prot_vars.pop('ElapsedTime')
+        if "StartTime" in prot_vars:
+            prot_vars.pop("StartTime")
+            prot_vars.pop("ElapsedTime")
         if prot_vars:
-            plan_string += '\tglobal '
+            plan_string += "\tglobal "
             for i, var in enumerate(prot_vars.keys()):
                 if i > 0:
-                    plan_string += ', '
+                    plan_string += ", "
                 plan_string += var
-            plan_string += '\n'
+            plan_string += "\n"
         for step in self.loop_steps:
             if not step.is_active:
                 continue
             plan_string += step.get_protocol_string(n_tabs=1)
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
-        plan_string += '\teva = Evaluator(namespace=namespace)\n'
-        plan_string += '\trunEngine.subscribe(eva)\n'
-        plan_string += '\tyield from bps.open_run(md=md)\n'
+        plan_string += "\teva = Evaluator(namespace=namespace)\n"
+        plan_string += "\trunEngine.subscribe(eva)\n"
+        plan_string += "\tyield from bps.open_run(md=md)\n"
         plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name)\n'
-        plan_string += '\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n'
-        plan_string += '\tyield from bps.close_run()\n'
+        plan_string += (
+            "\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
+        )
+        plan_string += "\tyield from bps.close_run()\n"
         return plan_string
 
     def get_short_string(self):
         """Goes through all steps and creates an overview of what is happening
         in the protocol."""
-        short_string = ''
+        short_string = ""
         for step in self.loop_steps:
             if not step.is_active:
                 continue
@@ -309,13 +337,13 @@ class Measurement_Protocol:
     def get_add_main_string(self):
         """Gets all the steps that should be executed in the protocol's main
         function."""
-        add_main_string = 'def steps_add_main(RE, devs):\n'
-        add_main_string += '\treturner = {}\n'
+        add_main_string = "def steps_add_main(RE, devs):\n"
+        add_main_string += "\treturner = {}\n"
         for step in self.loop_steps:
             if not step.is_active:
                 continue
             add_main_string += step.get_add_main_string()
-        add_main_string += '\treturn returner\n\n\n'
+        add_main_string += "\treturn returner\n\n\n"
         return add_main_string
 
     def get_total_steps(self):
@@ -331,7 +359,7 @@ class Measurement_Protocol:
     def get_outer_string(self):
         """Strings outside of all other functions of the script, e.g. more
         functions to create step-specific plots."""
-        outer_string = ''
+        outer_string = ""
         for step in self.loop_steps:
             if not step.is_active:
                 continue
@@ -353,6 +381,7 @@ class Measurement_Protocol:
         devices = list(set(devices))
         devices = sorted(devices, key=lambda x: x in adds, reverse=True)
         return devices
+
 
 def append_all_children(child_list, step, step_dict):
     """Takes a list of the kind specified in rearrange_loop_steps, does
@@ -377,6 +406,7 @@ def append_all_children(child_list, step, step_dict):
         append_all_children(grandchildren, child_step, step_dict)
         child_step.parent_step = step.full_name
         step.children.append(child_step)
+
 
 def update_all_children(step_dict, step):
     """Similar to append_all_children, but only updating the step_dict
@@ -407,6 +437,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
     -------
 
     """
+
     name_changed = Signal()
 
     def __init__(self, parent=None, protocol=Measurement_Protocol()):
@@ -417,8 +448,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.lineEdit_protocol_name.setText(self.protocol.name)
 
         self.variable_model = QStandardItemModel()
-        self.variable_model.setHorizontalHeaderLabels(['Name', 'Value',
-                                                       'Data-Type'])
+        self.variable_model.setHorizontalHeaderLabels(["Name", "Value", "Data-Type"])
         self.tableView_variables.setModel(self.variable_model)
         self.load_variables()
 
@@ -429,14 +459,16 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
         self.plot_widge = Plot_Button_Overview(self, self.protocol.plots)
 
-        cols = ['Channel', 'NeXus-path']
-        comboBoxes = {'Channel': list(variables_handling.channels.keys())}
-        self.table_channel_NX_paths = AddRemoveTable(headerLabels=cols,
-                                                     title='Channel-NeXus-Path',
-                                                     comboBoxes=comboBoxes,
-                                                     tableData=self.protocol.channel_metadata)
+        cols = ["Channel", "NeXus-path"]
+        comboBoxes = {"Channel": list(variables_handling.channels.keys())}
+        self.table_channel_NX_paths = AddRemoveTable(
+            headerLabels=cols,
+            title="Channel-NeXus-Path",
+            comboBoxes=comboBoxes,
+            tableData=self.protocol.channel_metadata,
+        )
 
-        cols = ['Configuration', 'NeXus-path']
+        cols = ["Configuration", "NeXus-path"]
         configs = []
         for dev in variables_handling.devices:
             device = variables_handling.devices[dev]
@@ -444,26 +476,28 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             allconf += list(device.get_passive_config().keys())
             allconf += list(device.get_config().keys())
             for key in allconf:
-                configs.append(f'{device.name}_{key}')
-        comboBoxes = {'Configuration': configs}
-        self.table_config_NX_paths = AddRemoveTable(headerLabels=cols,
-                                                    title='Config-NeXus-Path',
-                                                    comboBoxes=comboBoxes,
-                                                    tableData=self.protocol.config_metadata)
+                configs.append(f"{device.name}_{key}")
+        comboBoxes = {"Configuration": configs}
+        self.table_config_NX_paths = AddRemoveTable(
+            headerLabels=cols,
+            title="Config-NeXus-Path",
+            comboBoxes=comboBoxes,
+            tableData=self.protocol.config_metadata,
+        )
 
-        cols = ['Name', 'NeXus-path', 'Value']
-        self.table_metadata = AddRemoveTable(headerLabels=cols,
-                                             title='NeXus-Metadata',
-                                             tableData=self.protocol.metadata)
+        cols = ["Name", "NeXus-path", "Value"]
+        self.table_metadata = AddRemoveTable(
+            headerLabels=cols, title="NeXus-Metadata", tableData=self.protocol.metadata
+        )
 
-        self.checkBox_NeXus = QCheckBox('Use NeXus-output')
+        self.checkBox_NeXus = QCheckBox("Use NeXus-output")
         self.checkBox_NeXus.clicked.connect(self.enable_nexus)
         self.checkBox_NeXus.setChecked(self.protocol.use_nexus)
         self.lineEdit_protocol_name.textChanged.connect(self.name_change)
         self.name_change()
 
         self.textEdit_desc = QTextEdit(parent=self)
-        self.textEdit_desc.setPlaceholderText('Enter your description here.')
+        self.textEdit_desc.setPlaceholderText("Enter your description here.")
         if self.protocol.description:
             self.textEdit_desc.setText(self.protocol.description)
         self.checkBox_csv_exp.setChecked(self.protocol.export_csv)
@@ -485,13 +519,14 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         disabling = self.checkBox_no_config.isChecked()
         if disabling:
             msgBox = QMessageBox()
-            msgBox.setText("Are you sure you want to disable configuration of the used instruments?\nThis may lead to unexpected behaviour of the instruments, if they are not configured correctly beforehand!")
+            msgBox.setText(
+                "Are you sure you want to disable configuration of the used instruments?\nThis may lead to unexpected behaviour of the instruments, if they are not configured correctly beforehand!"
+            )
             msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
             msgBox.setDefaultButton(QMessageBox.No)
             result = msgBox.exec()
             if result != QMessageBox.Yes:
                 self.checkBox_no_config.setChecked(False)
-
 
     def enable_nexus(self):
         """When the checkBox_NeXus is clicked, enables / disables the
@@ -509,8 +544,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.table_metadata.setHidden(not nx)
         self.table_config_NX_paths.setHidden(not nx)
 
-
-    def get_unique_name(self, name='name'):
+    def get_unique_name(self, name="name"):
         """Checks whether name already exists in the variables of the
         protocol and returns a unique name (with added _i).
 
@@ -525,8 +559,8 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         """
         i = 1
         while name in self.protocol.variables:
-            if '_' not in name:
-                name += f'_{i}'
+            if "_" not in name:
+                name += f"_{i}"
             else:
                 name = f'{name.split("_")[0]}_{i}'
             i += 1
@@ -543,10 +577,10 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         -------
 
         """
-        self.append_variable(self.get_unique_name('name'))
+        self.append_variable(self.get_unique_name("name"))
         self.update_variables()
 
-    def append_variable(self, name='name', value='value'):
+    def append_variable(self, name="name", value="value"):
         """Append the variable with name and value to the item_model,
         also add an item that shows the datatype of the value.
 
@@ -572,7 +606,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         try:
             index = self.tableView_variables.selectedIndexes()[0]
         except IndexError:
-            raise Exception('You need to select a row first!')
+            raise Exception("You need to select a row first!")
         if index.row() >= 0:
             self.variable_model.removeRow(index.row())
             self.update_variables()
@@ -630,7 +664,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         if ind.column() == 0 and item.text() in self.protocol.variables:
             new_name = self.get_unique_name(item.text())
             item.setText(new_name)
-            raise Exception('Variable names must be unique!')
+            raise Exception("Variable names must be unique!")
         if ind.column() == 1:
             d_type = variables_handling.check_data_type(item.text())
             self.variable_model.item(ind.row(), 2).setText(d_type)
@@ -648,6 +682,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
     def name_change(self):
         """ """
         name = self.lineEdit_protocol_name.text()
-        self.label_title.setText(f'{name} - General Configuration')
+        self.label_title.setText(f"{name} - General Configuration")
         self.protocol.name = name
         self.name_changed.emit()

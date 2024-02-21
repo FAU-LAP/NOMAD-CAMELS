@@ -5,7 +5,15 @@ import importlib
 import pkg_resources
 
 from nomad_camels.gui.device_installer import Ui_Form
-from PySide6.QtWidgets import QWidget, QTableWidgetItem, QCheckBox, QMessageBox, QTextBrowser, QGridLayout, QSplitter
+from PySide6.QtWidgets import (
+    QWidget,
+    QTableWidgetItem,
+    QCheckBox,
+    QMessageBox,
+    QTextBrowser,
+    QGridLayout,
+    QSplitter,
+)
 from PySide6.QtGui import QBrush, QColor, QFont
 from PySide6.QtCore import Qt, QThread, Signal
 
@@ -24,10 +32,10 @@ else:
 
 all_instr = {}
 installed_instr = {}
-last_repo = ''
-last_branch = ''
-last_dir = ''
-repo_url = ''
+last_repo = ""
+last_branch = ""
+last_dir = ""
+repo_url = ""
 
 
 def getInstalledDevices(force=False, return_packages=False):
@@ -50,17 +58,19 @@ def getInstalledDevices(force=False, return_packages=False):
         return installed_instr
     installed_instr.clear()
     for x in importlib_metadata.distributions():
-        name = x.metadata['Name']
+        name = x.metadata["Name"]
         version = x.version
-        camels_driver_regex = r'^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$'
+        camels_driver_regex = r"^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$"
         if re.match(camels_driver_regex, name):
-            installed_instr[name[20:].replace('-', '_')] = version
+            installed_instr[name[20:].replace("-", "_")] = version
     packages = dict(device_handling.load_local_packages())
     for package in packages:
-        installed_instr[package] = 'local'
+        installed_instr[package] = "local"
     for instr in installed_instr:
         if instr not in packages:
-            packages[instr] = importlib.import_module(f'nomad_camels_driver_{instr}.{instr}')
+            packages[instr] = importlib.import_module(
+                f"nomad_camels_driver_{instr}.{instr}"
+            )
     if return_packages:
         return installed_instr, packages
     return installed_instr
@@ -79,51 +89,62 @@ def getAllDevices():
     """
     global all_instr, last_repo, last_branch, last_dir, repo_url
     try:
-        repo = variables_handling.preferences['driver_repository']
-        branch = variables_handling.preferences['repo_branch']
-        directory = variables_handling.preferences['repo_directory']
+        repo = variables_handling.preferences["driver_repository"]
+        branch = variables_handling.preferences["repo_branch"]
+        directory = variables_handling.preferences["repo_directory"]
     except:
-        repo, branch, directory = '', '', ''
-    if all_instr and last_repo == repo and branch == last_branch and directory == last_dir:
+        repo, branch, directory = "", "", ""
+    if (
+        all_instr
+        and last_repo == repo
+        and branch == last_branch
+        and directory == last_dir
+    ):
         return all_instr
     last_repo, last_branch, last_dir = repo, branch, directory
     all_instr = {}
     try:
-        repo_part = repo.split('.com/')[1].split('.git')[0]
-        repo_url = f'https://raw.githubusercontent.com/{repo_part}/{branch}/{directory}'
-        url = f'{repo_url}/driver_list.txt'
+        repo_part = repo.split(".com/")[1].split(".git")[0]
+        repo_url = f"https://raw.githubusercontent.com/{repo_part}/{branch}/{directory}"
+        url = f"{repo_url}/driver_list.txt"
         devices_str = requests.get(url).text
     except:
-        repo_url = 'https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main'
-        url = f'{repo_url}/driver_list.txt'
+        repo_url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main"
+        url = f"{repo_url}/driver_list.txt"
         devices_str = requests.get(url).text
     warned = False
     for x in devices_str.splitlines():
-        if '==' not in x:
+        if "==" not in x:
             continue
         try:
-            name, version = x.split('==')
+            name, version = x.split("==")
         except:
             if not warned:
-                WarnPopup(None, 'Could not (completely) read driver_list.txt from repo.\n'
-                                'Check settings if repository and branch are correct.',
-                          'No online-drivers found')
+                WarnPopup(
+                    None,
+                    "Could not (completely) read driver_list.txt from repo.\n"
+                    "Check settings if repository and branch are correct.",
+                    "No online-drivers found",
+                )
             warned = True
             continue
-        all_instr[name.replace('-', '_')] = version
+        all_instr[name.replace("-", "_")] = version
     return all_instr
 
+
 def get_instr_readme_text(instr_name):
-    url = f'{repo_url}/{instr_name}/README.md'
+    url = f"{repo_url}/{instr_name}/README.md"
     return requests.get(url).text
 
+
 def get_instr_license_text(instr_name):
-    url = f'{repo_url}/{instr_name}/LICENSE.txt'
+    url = f"{repo_url}/{instr_name}/LICENSE.txt"
     return requests.get(url).text
 
 
 bold_font = QFont()
 bold_font.setBold(True)
+
 
 class Info_Widget(QSplitter):
     def __init__(self, parent=None):
@@ -132,12 +153,20 @@ class Info_Widget(QSplitter):
 
         self.info_text = QTextBrowser()
         self.info_text.setOpenExternalLinks(True)
-        self.info_text.setTextInteractionFlags(Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
+        self.info_text.setTextInteractionFlags(
+            Qt.TextSelectableByKeyboard
+            | Qt.TextSelectableByMouse
+            | Qt.LinksAccessibleByMouse
+        )
         self.addWidget(self.info_text)
 
         self.license_text = QTextBrowser()
         self.license_text.setOpenExternalLinks(True)
-        self.license_text.setTextInteractionFlags(Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
+        self.license_text.setTextInteractionFlags(
+            Qt.TextSelectableByKeyboard
+            | Qt.TextSelectableByMouse
+            | Qt.LinksAccessibleByMouse
+        )
         self.addWidget(self.license_text)
         self.info = False
 
@@ -150,8 +179,8 @@ class Info_Widget(QSplitter):
             self.info_text.setHidden(True)
             self.info_text.clear()
             try:
-                meta = importlib_metadata.metadata(f'nomad_camels_driver_{instr}')
-                text = meta.json['description']
+                meta = importlib_metadata.metadata(f"nomad_camels_driver_{instr}")
+                text = meta.json["description"]
             except:
                 text = get_instr_readme_text(instr)
             self.info_text.setMarkdown(text)
@@ -163,16 +192,18 @@ class Info_Widget(QSplitter):
             self.license_text.setHidden(True)
             self.license_text.clear()
             try:
-                text = ''
+                text = ""
                 for p in pkg_resources.working_set:
-                    if not p.key.startswith(f'nomad-camels-driver-{instr.replace("_", "-")}'):
+                    if not p.key.startswith(
+                        f'nomad-camels-driver-{instr.replace("_", "-")}'
+                    ):
                         continue
-                    lic = p.get_metadata_lines('LICENSE.txt')
+                    lic = p.get_metadata_lines("LICENSE.txt")
                     for l in lic:
-                        text += f'{l}\n'
+                        text += f"{l}\n"
                     break
                 if not text:
-                    raise Exception('')
+                    raise Exception("")
                 self.license_text.setText(text)
             except:
                 text = get_instr_license_text(instr)
@@ -187,6 +218,7 @@ class Info_Widget(QSplitter):
 
 class Instrument_Installer(Ui_Form, QWidget):
     """ """
+
     instruments_updated = Signal()
 
     """
@@ -202,7 +234,9 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.active_instruments = active_instruments or {}
 
         self.device_table.setColumnCount(3)
-        self.device_table.setHorizontalHeaderLabels(['instrument', 'available', 'installed'])
+        self.device_table.setHorizontalHeaderLabels(
+            ["instrument", "available", "installed"]
+        )
         self.device_table.verticalHeader().setVisible(False)
 
         self.all_devs = getAllDevices()
@@ -211,8 +245,12 @@ class Instrument_Installer(Ui_Form, QWidget):
 
         self.disables = []
         for c in self.children():
-            if c not in [self.progressBar, self.textEdit_device_info, self.label,
-                         self.label_2]:
+            if c not in [
+                self.progressBar,
+                self.textEdit_device_info,
+                self.label,
+                self.label_2,
+            ]:
                 self.disables.append(c)
 
         self.pushButton_sel_all.clicked.connect(self.select_all)
@@ -232,14 +270,13 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.info_widge.setHidden(True)
         self.layout().addWidget(self.info_widge, 0, 5, 5, 1)
 
-
     def checkBox_change(self, row):
         """
 
         Parameters
         ----------
         row :
-            
+
 
         Returns
         -------
@@ -248,7 +285,7 @@ class Instrument_Installer(Ui_Form, QWidget):
         for i in range(3):
             checked = self.device_table.cellWidget(row, 0).isChecked()
             item = self.device_table.item(row, i)
-            brush = QBrush(QColor(get_color('blue' if checked else 'white')))
+            brush = QBrush(QColor(get_color("blue" if checked else "white")))
             item.setBackground(brush)
 
     def get_checked_devs(self, ignore_version=False):
@@ -269,14 +306,20 @@ class Instrument_Installer(Ui_Form, QWidget):
                 continue
             dev = box.text()
             if ignore_version:
-                remove_dialog = QMessageBox.question(self, 'Uninstall instrument?',
-                                                     f'You are trying to uninstall the instrument "{dev}", but it may still be in use.\nContinue?',
-                                                     QMessageBox.Yes | QMessageBox.No)
+                remove_dialog = QMessageBox.question(
+                    self,
+                    "Uninstall instrument?",
+                    f'You are trying to uninstall the instrument "{dev}", but it may still be in use.\nContinue?',
+                    QMessageBox.Yes | QMessageBox.No,
+                )
                 if remove_dialog != QMessageBox.Yes:
                     continue
                 devs.append(dev)
                 continue
-            if dev in self.installed_devs and self.all_devs[dev] == self.installed_devs[dev]:
+            if (
+                dev in self.installed_devs
+                and self.all_devs[dev] == self.installed_devs[dev]
+            ):
                 continue
             devs.append(dev)
         return devs
@@ -348,7 +391,9 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.checkboxes.clear()
         self.device_table.clear()
         self.device_table.setRowCount(0)
-        self.device_table.setHorizontalHeaderLabels(['instrument', 'available', 'installed'])
+        self.device_table.setHorizontalHeaderLabels(
+            ["instrument", "available", "installed"]
+        )
         i = 0
         for dev in sorted(self.all_devs.keys()):
             if search_text.lower() not in dev.lower():
@@ -364,11 +409,16 @@ class Instrument_Installer(Ui_Form, QWidget):
             item_v = QTableWidgetItem(self.all_devs[dev])
             item_v.setFont(bold_font)
             item_v.setFlags(item_v.flags() & ~Qt.ItemIsEditable)
-            inst_v = self.installed_devs[dev] if dev in self.installed_devs else ''
+            inst_v = self.installed_devs[dev] if dev in self.installed_devs else ""
             item_inst = QTableWidgetItem(inst_v)
             if inst_v:
-                brush = QBrush(QColor(
-                    get_color('dark_green' if inst_v == self.all_devs[dev] else 'orange')))
+                brush = QBrush(
+                    QColor(
+                        get_color(
+                            "dark_green" if inst_v == self.all_devs[dev] else "orange"
+                        )
+                    )
+                )
                 item_inst.setForeground(brush)
             item_inst.setFlags(item_inst.flags() & ~Qt.ItemIsEditable)
             item_inst.setFont(bold_font)
@@ -388,8 +438,10 @@ class Instrument_Installer(Ui_Form, QWidget):
         finally:
             self.setCursor(Qt.ArrowCursor)
 
+
 class Install_Thread(QThread):
     """ """
+
     info_step = Signal(str)
     val_step = Signal(int)
 
@@ -406,32 +458,41 @@ class Install_Thread(QThread):
             if self.uninstall:
                 device_name = dev.replace("_", "-")
                 flags = 0
-                if os.name == 'nt':
+                if os.name == "nt":
                     flags = subprocess.CREATE_NO_WINDOW
-                ret = subprocess.Popen([sys.executable, '-m', 'pip',
-                                        'uninstall', '-y',
-                                        f'nomad-camels-driver-{device_name}'],
-                                       stdout=subprocess.PIPE,
-                                       stderr=subprocess.STDOUT,
-                                       stdin=subprocess.PIPE,
-                                       creationflags=flags)
+                ret = subprocess.Popen(
+                    [
+                        sys.executable,
+                        "-m",
+                        "pip",
+                        "uninstall",
+                        "-y",
+                        f"nomad-camels-driver-{device_name}",
+                    ],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    stdin=subprocess.PIPE,
+                    creationflags=flags,
+                )
                 if ret.returncode:
-                    raise OSError(f'Failed to uninstall nomad-camels-driver-{device_name}')
+                    raise OSError(
+                        f"Failed to uninstall nomad-camels-driver-{device_name}"
+                    )
             else:
                 device_name = dev.replace("_", "-")
                 ret = install_instrument(device_name)
-            for line in iter(ret.stdout.readline, b''):
+            for line in iter(ret.stdout.readline, b""):
                 text = line.decode().rstrip()
                 self.info_step.emit(text)
         getInstalledDevices(True)
         for i, dev in enumerate(self.devs):
             if self.uninstall and dev in installed_instr:
-                raise Warning(f'Uninstall of {dev} failed!')
+                raise Warning(f"Uninstall of {dev} failed!")
                 # WarnPopup(self.parent(),
                 #           f'Uninstall of {dev} failed!',
                 #           f'Uninstall of {dev} failed!')
             elif not self.uninstall and dev not in installed_instr:
-                raise Warning(f'Installation of {dev} failed!')
+                raise Warning(f"Installation of {dev} failed!")
                 # WarnPopup(self.parent(),
                 #           f'Installation of {dev} failed!',
                 #           f'Installation of {dev} failed!')
@@ -444,7 +505,7 @@ def install_instrument(device_name):
     Parameters
     ----------
     device_name :
-        
+
 
     Returns
     -------
@@ -452,24 +513,31 @@ def install_instrument(device_name):
     """
     # pypi_url = r'https://test.pypi.org/simple/'  # TODO Change to regular PyPi
     flags = 0
-    if os.name == 'nt':
+    if os.name == "nt":
         flags = subprocess.CREATE_NO_WINDOW
-    ret = subprocess.Popen([sys.executable, '-m', 'pip', 'install',
-                            # '--no-cache-dir',
-                            # '--index-url', pypi_url,
-                            # '--extra-index-url',
-                            # 'https://pypi.org/simple',
-                            f'nomad-camels-driver-{device_name}'],
-                           stdout=subprocess.PIPE,
-                           stderr=subprocess.STDOUT,
-                           stdin=subprocess.PIPE,
-                           creationflags=flags)
+    ret = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            # '--no-cache-dir',
+            # '--index-url', pypi_url,
+            # '--extra-index-url',
+            # 'https://pypi.org/simple',
+            f"nomad-camels-driver-{device_name}",
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        stdin=subprocess.PIPE,
+        creationflags=flags,
+    )
     if ret.returncode:
-        raise OSError(f'Failed to install nomad-camels-driver-{device_name}')
+        raise OSError(f"Failed to install nomad-camels-driver-{device_name}")
     return ret
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from PySide6.QtWidgets import QApplication
 
     app = QApplication([])

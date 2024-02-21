@@ -21,19 +21,26 @@ class Set_Channels(Loop_Step):
         Whether to wait after setting for the set channels to have the finished
         status.
     """
-    def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
+
+    def __init__(self, name="", parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
-        self.step_type = 'Set Channels'
+        self.step_type = "Set Channels"
         if step_info is None:
             step_info = {}
-        self.channels_values = step_info['channels_values'] if 'channels_values' in step_info else {'Channels': [], 'Values': []}
-        self.wait_for_set = step_info['wait_for_set'] if 'wait_for_set' in step_info else True
+        self.channels_values = (
+            step_info["channels_values"]
+            if "channels_values" in step_info
+            else {"Channels": [], "Values": []}
+        )
+        self.wait_for_set = (
+            step_info["wait_for_set"] if "wait_for_set" in step_info else True
+        )
         self.update_used_devices()
 
     def update_used_devices(self):
         """All devices with a channel that is to be set are added."""
         self.used_devices = []
-        for channel in self.channels_values['Channels']:
+        for channel in self.channels_values["Channels"]:
             if channel in variables_handling.channels:
                 device = variables_handling.channels[channel].device
                 if device not in self.used_devices:
@@ -43,13 +50,15 @@ class Set_Channels(Loop_Step):
         """If `wait_for_set` is True, then after setting, bps.wait for
         the set group is called. In any case, all the channels are set to their
         specified value"""
-        tabs = '\t' * n_tabs
+        tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
-        for i, channel in enumerate(self.channels_values['Channels']):
+        for i, channel in enumerate(self.channels_values["Channels"]):
             if channel not in variables_handling.channels:
-                raise Exception(f'Trying to set channel {channel} in {self.full_name}, but it does not exist!')
-            dev, chan = variables_handling.channels[channel].name.split('.')
-            val = self.channels_values['Values'][i]
+                raise Exception(
+                    f"Trying to set channel {channel} in {self.full_name}, but it does not exist!"
+                )
+            dev, chan = variables_handling.channels[channel].name.split(".")
+            val = self.channels_values["Values"][i]
             protocol_string += f'{tabs}yield from bps.abs_set(devs["{dev}"].{chan}, eva.eval("{val}"), group="A")\n'
         if self.wait_for_set:
             protocol_string += f'{tabs}yield from bps.wait("A")\n'
@@ -58,7 +67,7 @@ class Set_Channels(Loop_Step):
     def get_protocol_short_string(self, n_tabs=0):
         """Displays the channels and their values."""
         short_string = super().get_protocol_short_string(n_tabs)
-        short_string = f'{short_string[:-1]} - {self.channels_values}\n'
+        short_string = f"{short_string[:-1]} - {self.channels_values}\n"
         return short_string
 
 
@@ -73,20 +82,25 @@ class Set_Channels_Config(Loop_Step_Config):
     -------
 
     """
-    def __init__(self, loop_step:Set_Channels, parent=None):
+
+    def __init__(self, loop_step: Set_Channels, parent=None):
         super().__init__(parent, loop_step)
         box = []
         for channel in variables_handling.channels:
             if variables_handling.channels[channel].output:
                 box.append(channel)
-        info_dict = {'channel': self.loop_step.channels_values['Channels'],
-                     'value': self.loop_step.channels_values['Values']}
+        info_dict = {
+            "channel": self.loop_step.channels_values["Channels"],
+            "value": self.loop_step.channels_values["Values"],
+        }
         # self.sub_widget = AddRemoveTable(headerLabels=['Channels', 'Values'],
         #                                  comboBoxes={'Channels': box},
         #                                  tableData=loop_step.channels_values,
         #                                  checkstrings=1)
-        self.sub_widget = Channels_Check_Table(self, ['set', 'channel', 'value'], True, info_dict, [2])
-        self.checkBox_wait_for_set = QCheckBox('Wait for set')
+        self.sub_widget = Channels_Check_Table(
+            self, ["set", "channel", "value"], True, info_dict, [2]
+        )
+        self.checkBox_wait_for_set = QCheckBox("Wait for set")
         self.checkBox_wait_for_set.setChecked(True)
         self.checkBox_wait_for_set.stateChanged.connect(self.check_change)
         self.layout().addWidget(self.checkBox_wait_for_set, 1, 0, 1, 5)
@@ -100,8 +114,9 @@ class Set_Channels_Config(Loop_Step_Config):
         """ """
         super().update_step_config()
         info = self.sub_widget.get_info()
-        self.loop_step.channels_values = {'Channels': info['channel'],
-                                          'Values': info['value']}
+        self.loop_step.channels_values = {
+            "Channels": info["channel"],
+            "Values": info["value"],
+        }
         # self.sub_widget.update_table_data()
         # self.loop_step.channels_values = self.sub_widget.tableData
-

@@ -7,7 +7,6 @@ from PySide6.QtCore import QThread
 import importlib
 
 
-
 # class Run_Protocol(QThread):
 #     """
 #     DEPRECATED
@@ -277,17 +276,16 @@ import importlib
 #             self.info_step.emit(f'{msg}\n')
 
 
-
-
-
-
 class Manual_Device_Thread(QThread):
     """DEPRECATED"""
+
     def __init__(self, device, ophyd_class):
         super().__init__()
-        self.device = ophyd_class(f'{device.custom_name}:',
-                                  name=f'manual_{device.custom_name}',
-                                  **device.get_settings())
+        self.device = ophyd_class(
+            f"{device.custom_name}:",
+            name=f"manual_{device.custom_name}",
+            **device.get_settings(),
+        )
         self.device.wait_for_connection()
         self.device.configure(device.get_config())
 
@@ -329,8 +327,12 @@ class Additional_Imports_Thread(QThread):
         from nomad_camels.bluesky_handling import make_catalog
         import warnings
         from nomad_camels.frontpanels.settings_window import Settings_Window
-        from nomad_camels.manual_controls.get_manual_controls import New_Manual_Control_Dialog
-        from nomad_camels.manual_controls.get_manual_controls import get_control_by_type_name
+        from nomad_camels.manual_controls.get_manual_controls import (
+            New_Manual_Control_Dialog,
+        )
+        from nomad_camels.manual_controls.get_manual_controls import (
+            get_control_by_type_name,
+        )
         from nomad_camels.frontpanels.protocol_config import Protocol_Config
         from nomad_camels.ui_widgets.path_button_edit import Path_Button_Dialog
         import importlib, bluesky, ophyd, time
@@ -340,6 +342,7 @@ class Additional_Imports_Thread(QThread):
         from nomad_camels.tools import device_driver_builder
         from nomad_camels.tools import EPICS_driver_builder
         from nomad_camels.tools import databroker_exporter
+
         self.imports.append(RunEngine)
         self.imports.append(BestEffortCallback)
         self.imports.append(databroker)

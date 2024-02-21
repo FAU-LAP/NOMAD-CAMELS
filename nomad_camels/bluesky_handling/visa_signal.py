@@ -7,9 +7,11 @@ import re
 rm = pyvisa.ResourceManager()
 open_resources = {}
 
+
 def list_resources():
     """Gives the results of `ResourceManager.list_resources`."""
     return rm.list_resources()
+
 
 def close_resources():
     """Goes throug all the opened resources and closes them."""
@@ -17,13 +19,30 @@ def close_resources():
         open_resources[res].close()
     open_resources.clear()
 
+
 class VISA_Signal(Signal):
     """ """
-    def __init__(self,  name, value=0., timestamp=None, parent=None,
-                 labels=None, kind='hinted', tolerance=None, rtolerance=None,
-                 metadata=None, cl=None, attr_name='',
-                 write=None, parse=None, parse_return_type=None,
-                 retry_on_error=0, write_delay=0, retry_on_timeout=False):
+
+    def __init__(
+        self,
+        name,
+        value=0.0,
+        timestamp=None,
+        parent=None,
+        labels=None,
+        kind="hinted",
+        tolerance=None,
+        rtolerance=None,
+        metadata=None,
+        cl=None,
+        attr_name="",
+        write=None,
+        parse=None,
+        parse_return_type=None,
+        retry_on_error=0,
+        write_delay=0,
+        retry_on_timeout=False,
+    ):
         """
         Parameters
         ----------
@@ -32,14 +51,14 @@ class VISA_Signal(Signal):
             Determines what is written to the instrument. As a string it should have '{value}' in it (could include further formatting). The given value will be put into the string there, e.g. if `write='VOLT{value:03d}'`, the value will be given as an integer of three digits with leading zeroes.
             If `write` is a function, it should return a string. Everytime a value is set, the function will be executed and the resulting string will be sent to the instrument.
             If it is None, the value will be simply converted to a string.
-        
+
         parse : str or function
             (Default value = None)
             This gives how the returned string from the instrument is being parsed.
             If str, it should be a regular expression. The first result from the regex will become the new value.
             If function, it will take the returned string and the new value will be the value returned from this function.
             If `parse` is not None, a query to the instrument will be executed, instead of a simple write. If it is used to just clear the buffer, it could be an empty string.
-        
+
         parse_return_type : str, class or None
             (Default = None)
             If `parse` is a string or None, the returned string (either from the instrument or from `parse`) will be converted to the given class.
@@ -51,22 +70,32 @@ class VISA_Signal(Signal):
             The number of times the reading / setting should be tried again if
             there is an error (e.g. a VISA-IO-error).
         """
-        super().__init__(name=name, value=value, timestamp=timestamp, parent=parent,
-                         labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance,
-                         metadata=metadata, cl=cl, attr_name=attr_name)
+        super().__init__(
+            name=name,
+            value=value,
+            timestamp=timestamp,
+            parent=parent,
+            labels=labels,
+            kind=kind,
+            tolerance=tolerance,
+            rtolerance=rtolerance,
+            metadata=metadata,
+            cl=cl,
+            attr_name=attr_name,
+        )
         self.visa_instrument = None
         self.write = write
         self.write_delay = write_delay
         self.parse = parse
         self.retry_on_error = retry_on_error
         self.retry_on_timeout = retry_on_timeout
-        if parse_return_type == 'str':
+        if parse_return_type == "str":
             self.parse_return_type = str
-        elif parse_return_type == 'float':
+        elif parse_return_type == "float":
             self.parse_return_type = float
-        elif parse_return_type == 'int':
+        elif parse_return_type == "int":
             self.parse_return_type = int
-        elif parse_return_type == 'bool':
+        elif parse_return_type == "bool":
             self.parse_return_type = bool
         else:
             self.parse_return_type = parse_return_type
@@ -87,8 +116,7 @@ class VISA_Signal(Signal):
                 self.visa_instrument = rm.open_resource(resource_name)
                 open_resources[resource_name] = self.visa_instrument
 
-    def put(self, value, *, timestamp=None, force=False, metadata=None,
-            **kwargs):
+    def put(self, value, *, timestamp=None, force=False, metadata=None, **kwargs):
         """
         Overwrites `ophyd.Signal.put`. The value is converted to a string, using
         `self.write`. If `self.parse` is not None, a query instead of a simple
@@ -99,20 +127,23 @@ class VISA_Signal(Signal):
             write_text = str(value)
         elif isinstance(self.write, str):
             val = value
-            if 'value:g' in self.write:
+            if "value:g" in self.write:
                 val = float(value)
-            elif re.search(r'{value:\.\df}', self.write) is not None:
+            elif re.search(r"{value:\.\df}", self.write) is not None:
                 val = float(value)
-            elif 'value:d' in self.write:
+            elif "value:d" in self.write:
                 val = int(value)
             write_text = self.write.format(value=val)
         else:
             write_text = self.write(value)
         if self.parse is not None:
-            val = retry_query_or_write(write_text, self.visa_instrument,
-                                       self.retry_on_error,
-                                       write_delay=self.write_delay,
-                                       retry_on_timeout=self.retry_on_timeout)
+            val = retry_query_or_write(
+                write_text,
+                self.visa_instrument,
+                self.retry_on_error,
+                write_delay=self.write_delay,
+                retry_on_timeout=self.retry_on_timeout,
+            )
             if self.parse:
                 try:
                     if isinstance(self.parse, str):
@@ -127,22 +158,34 @@ class VISA_Signal(Signal):
                 except:
                     value = val
         else:
-            retry_query_or_write(write_text, self.visa_instrument,
-                                 self.retry_on_error, True,
-                                 write_delay=self.write_delay,
-                                 retry_on_timeout=self.retry_on_timeout)
-        super().put(value, timestamp=timestamp, force=force, metadata=metadata, **kwargs)
+            retry_query_or_write(
+                write_text,
+                self.visa_instrument,
+                self.retry_on_error,
+                True,
+                write_delay=self.write_delay,
+                retry_on_timeout=self.retry_on_timeout,
+            )
+        super().put(
+            value, timestamp=timestamp, force=force, metadata=metadata, **kwargs
+        )
 
     def describe(self):
         """Adding "VISA" as the source for the description."""
         info = super().describe()
-        info[self.name]['source'] = 'VISA'
+        info[self.name]["source"] = "VISA"
         # info[self.name].update(self.metadata)
         return info
 
 
-
-def retry_query_or_write(write_text, visa_instrument, retries, just_write=False, write_delay=0, retry_on_timeout=False):
+def retry_query_or_write(
+    write_text,
+    visa_instrument,
+    retries,
+    just_write=False,
+    write_delay=0,
+    retry_on_timeout=False,
+):
     excs = []
     while visa_instrument.currently_reading:
         time.sleep(0.1)
@@ -153,10 +196,14 @@ def retry_query_or_write(write_text, visa_instrument, retries, just_write=False,
         try:
             if retry_on_timeout:
                 try:
-                    return single_query_or_write(write_text, visa_instrument, just_write)
+                    return single_query_or_write(
+                        write_text, visa_instrument, just_write
+                    )
                 except pyvisa.errors.VisaIOError as e:
                     visa_instrument.clear()
-                    return single_query_or_write(write_text, visa_instrument, just_write)
+                    return single_query_or_write(
+                        write_text, visa_instrument, just_write
+                    )
             else:
                 return single_query_or_write(write_text, visa_instrument, just_write)
         except Exception as e:
@@ -164,6 +211,7 @@ def retry_query_or_write(write_text, visa_instrument, retries, just_write=False,
                 print(excs)
                 raise Exception(e)
             excs.append(e)
+
 
 def single_query_or_write(write_text, visa_instrument, just_write=False):
     val = None
@@ -177,11 +225,27 @@ def single_query_or_write(write_text, visa_instrument, just_write=False):
 
 class VISA_Signal_RO(SignalRO):
     """ """
-    def __init__(self,  name, value=0., timestamp=None, parent=None, labels=None,
-                 kind='hinted', tolerance=None, rtolerance=None, metadata=None,
-                 cl=None, attr_name='',
-                 query='', parse=None, parse_return_type='float',
-                 retry_on_error=0, write_delay=0, retry_on_timeout=False):
+
+    def __init__(
+        self,
+        name,
+        value=0.0,
+        timestamp=None,
+        parent=None,
+        labels=None,
+        kind="hinted",
+        tolerance=None,
+        rtolerance=None,
+        metadata=None,
+        cl=None,
+        attr_name="",
+        query="",
+        parse=None,
+        parse_return_type="float",
+        retry_on_error=0,
+        write_delay=0,
+        retry_on_timeout=False,
+    ):
         """
         Parameters
         ----------
@@ -205,20 +269,32 @@ class VISA_Signal_RO(SignalRO):
             The number of times the reading / setting should be tried again if
             there is an error (e.g. a VISA-IO-error).
         """
-        super().__init__(name=name, value=value, timestamp=timestamp, parent=parent, labels=labels, kind=kind, tolerance=tolerance, rtolerance=rtolerance, metadata=metadata, cl=cl, attr_name=attr_name)
+        super().__init__(
+            name=name,
+            value=value,
+            timestamp=timestamp,
+            parent=parent,
+            labels=labels,
+            kind=kind,
+            tolerance=tolerance,
+            rtolerance=rtolerance,
+            metadata=metadata,
+            cl=cl,
+            attr_name=attr_name,
+        )
         self.visa_instrument = None
         self.query = query
         self.parse = parse
         self.write_delay = write_delay
         self.retry_on_error = retry_on_error
         self.retry_on_timeout = retry_on_timeout
-        if parse_return_type == 'str':
+        if parse_return_type == "str":
             self.parse_return_type = str
-        elif parse_return_type == 'float':
+        elif parse_return_type == "float":
             self.parse_return_type = float
-        elif parse_return_type == 'int':
+        elif parse_return_type == "int":
             self.parse_return_type = int
-        elif parse_return_type == 'bool':
+        elif parse_return_type == "bool":
             self.parse_return_type = bool
         else:
             self.parse_return_type = parse_return_type
@@ -233,10 +309,13 @@ class VISA_Signal_RO(SignalRO):
             query = self.query
         else:
             query = self.query()
-        val = retry_query_or_write(query, self.visa_instrument,
-                                   self.retry_on_error,
-                                   write_delay=self.write_delay,
-                                   retry_on_timeout=self.retry_on_timeout)
+        val = retry_query_or_write(
+            query,
+            self.visa_instrument,
+            self.retry_on_error,
+            write_delay=self.write_delay,
+            retry_on_timeout=self.retry_on_timeout,
+        )
         if self.parse is not None:
             try:
                 if isinstance(self.parse, str):
@@ -256,10 +335,9 @@ class VISA_Signal_RO(SignalRO):
     def describe(self):
         """Adding "VISA" as the source for the description."""
         info = super().describe()
-        info[self.name]['source'] = 'VISA'
+        info[self.name]["source"] = "VISA"
         # info[self.name].update(self.metadata)
         return info
-
 
 
 class VISA_Device(Device):
@@ -286,13 +364,34 @@ class VISA_Device(Device):
         there is an error (e.g. a VISA-IO-error). It is handed to all components
         that do not have a retry_on_error already defined.
     """
-    def __init__(self, prefix='', *, name, kind=None, read_attrs=None,
-                 configuration_attrs=None, parent=None, resource_name='',
-                 read_termination='\r\n', write_termination='\r\n',
-                 baud_rate=9600, timeout=2000, retry_on_error=0,
-                 retry_on_timeout=False, **kwargs):
-        super().__init__(prefix=prefix, name=name, kind=kind, read_attrs=read_attrs,
-                         configuration_attrs=configuration_attrs, parent=parent, **kwargs)
+
+    def __init__(
+        self,
+        prefix="",
+        *,
+        name,
+        kind=None,
+        read_attrs=None,
+        configuration_attrs=None,
+        parent=None,
+        resource_name="",
+        read_termination="\r\n",
+        write_termination="\r\n",
+        baud_rate=9600,
+        timeout=2000,
+        retry_on_error=0,
+        retry_on_timeout=False,
+        **kwargs,
+    ):
+        super().__init__(
+            prefix=prefix,
+            name=name,
+            kind=kind,
+            read_attrs=read_attrs,
+            configuration_attrs=configuration_attrs,
+            parent=parent,
+            **kwargs,
+        )
         self.visa_instrument = None
         if resource_name:
             if resource_name in open_resources:
@@ -309,7 +408,6 @@ class VISA_Device(Device):
         for comp in self.walk_signals():
             it = comp.item
             it.visa_instrument = self.visa_instrument
-            if hasattr(it, 'retry_on_error') and not it.retry_on_error:
+            if hasattr(it, "retry_on_error") and not it.retry_on_error:
                 it.retry_on_error = retry_on_error
                 it.retry_on_timeout = retry_on_timeout
-

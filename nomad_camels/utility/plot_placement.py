@@ -38,7 +38,7 @@ horizontal_margin = 5
 vertical_margin = 5
 
 
-def place_widget(widget:QWidget):
+def place_widget(widget: QWidget):
     """
     This function places the given `widget` on the next free spot on the screen.
     First all widgets are placed next to each other in a row, until one would be
@@ -74,7 +74,11 @@ def place_widget(widget:QWidget):
                 iteration += 1
             screen_geometry = screens[current_screen].availableGeometry()
             current_pos[1] += 5 * iteration * vertical_margin
-    widget.move(current_pos[0] + screen_geometry.x(), current_pos[1] + screen_geometry.y())
+    widget.move(
+        current_pos[0] + screen_geometry.x(), current_pos[1] + screen_geometry.y()
+    )
     # print(current_pos[0] + screen_geometry.x(), current_pos[1] + screen_geometry.y())
     current_pos[0] += s.width() + vertical_margin
-    max_height_in_row = s.height() if s.height() > max_height_in_row else max_height_in_row
+    max_height_in_row = (
+        s.height() if s.height() > max_height_in_row else max_height_in_row
+    )

@@ -5,10 +5,9 @@ import time
 
 starttime = time.time()
 
-base_namespace = {"numpy": np, "np": np, 'time': 0}
+base_namespace = {"numpy": np, "np": np, "time": 0}
 base_namespace.update({name: getattr(np, name) for name in np.__all__})
-base_namespace.update({'StartTime': starttime,
-                       'ElapsedTime': time.time() - starttime})
+base_namespace.update({"StartTime": starttime, "ElapsedTime": time.time() - starttime})
 
 
 class Evaluator(CallbackBase):
@@ -16,6 +15,7 @@ class Evaluator(CallbackBase):
     This class can be used to evaluate strings with names known in bluesky at
     any point, as well inside the run itself.
     """
+
     def __init__(self, *args, namespace=None, **kwargs):
         """
         Parameters
@@ -31,7 +31,7 @@ class Evaluator(CallbackBase):
         self.update_namespace()
         self.last_update = 0
 
-    def eval_string(self, eval_str:str):
+    def eval_string(self, eval_str: str):
         """
         Evaluates the given string through the provided namespace to another
         string. The string is split at quotation marks and the parts of the
@@ -43,7 +43,7 @@ class Evaluator(CallbackBase):
         ----------
         eval_str : str
             The string to be evaluated.
-            
+
 
         Returns
         -------
@@ -58,7 +58,7 @@ class Evaluator(CallbackBase):
         """
         self.update_namespace()
         try:
-            return_str = ''
+            return_str = ""
             for part in eval_str.split('"' if '"' in eval_str else "'"):
                 try:
                     return_str += str(eval(part, self.namespace))
@@ -68,7 +68,7 @@ class Evaluator(CallbackBase):
         except Exception as err:
             raise ValueError(f"Could not evaluate {eval_str!r}") from err
 
-    def eval(self, eval_str:str):
+    def eval(self, eval_str: str):
         """
         Evaluates the string within the given namespace.
         Checks if the namespace is up to date before evaluating.
@@ -77,7 +77,7 @@ class Evaluator(CallbackBase):
         ----------
         eval_str : str
             The string to be evaluated.
-            
+
 
         Returns
         -------
@@ -94,7 +94,7 @@ class Evaluator(CallbackBase):
         namespace.
         See bluesky's documentation for more information.
         """
-        self.namespace['StartTime'] = doc['time']
+        self.namespace["StartTime"] = doc["time"]
         super().start(doc)
 
     def event(self, doc):
@@ -104,10 +104,10 @@ class Evaluator(CallbackBase):
         evaluation.
         See bluesky's documentation for more information.
         """
-        self.namespace['time'] = doc['time']
-        self.namespace.update(doc['data'])
+        self.namespace["time"] = doc["time"]
+        self.namespace.update(doc["data"])
         # self.update_namespace()
-        self.last_update = doc['time']
+        self.last_update = doc["time"]
 
     def update_namespace(self):
         """
@@ -117,7 +117,7 @@ class Evaluator(CallbackBase):
         Also the variable 'ElapsedTime' is added to the namespace.
         """
         self.namespace.update(self.add_namespace)
-        self.namespace['ElapsedTime'] = time.time() - self.namespace['StartTime']
+        self.namespace["ElapsedTime"] = time.time() - self.namespace["StartTime"]
 
     def is_to_date(self, t):
         """
@@ -141,9 +141,13 @@ def get_eval(eval_str, namespace):
     try:
         ast.parse(eval_str)
     except SyntaxError as err:
-        raise ValueError(f"Could not find {eval_str!r} in namespace or parse it as a Python expression.") from err
+        raise ValueError(
+            f"Could not find {eval_str!r} in namespace or parse it as a Python expression."
+        ) from err
     # Try to evaluate it as a Python expression in the namespace.
     try:
         return eval(eval_str, namespace)
     except Exception as err:
-        raise ValueError(f"Could not find {eval_str!r} in namespace or evaluate it.") from err
+        raise ValueError(
+            f"Could not find {eval_str!r} in namespace or evaluate it."
+        ) from err

@@ -1,9 +1,18 @@
-from PySide6.QtWidgets import QApplication, QWidget, QGridLayout, QPushButton, QScrollArea, QMainWindow
+from PySide6.QtWidgets import (
+    QApplication,
+    QWidget,
+    QGridLayout,
+    QPushButton,
+    QScrollArea,
+    QMainWindow,
+)
 from PySide6.QtGui import QDrag
 from PySide6.QtCore import Qt, QMimeData, Signal
 
+
 class DragButton(QPushButton):
     """ """
+
     def __init__(self, text):
         super().__init__(text)
 
@@ -13,7 +22,7 @@ class DragButton(QPushButton):
         Parameters
         ----------
         event :
-            
+
 
         Returns
         -------
@@ -25,8 +34,10 @@ class DragButton(QPushButton):
             drag.setMimeData(mimeData)
             drag.exec_(Qt.MoveAction)
 
+
 class BidirectionalDict:
     """ """
+
     def __init__(self):
         self._forward = {}
         self._reverse = {}
@@ -66,7 +77,7 @@ class BidirectionalDict:
         Parameters
         ----------
         value :
-            
+
 
         Returns
         -------
@@ -80,7 +91,7 @@ class BidirectionalDict:
         Parameters
         ----------
         key :
-            
+
 
         Returns
         -------
@@ -94,7 +105,7 @@ class BidirectionalDict:
         Parameters
         ----------
         key :
-            
+
 
         Returns
         -------
@@ -112,19 +123,19 @@ class BidirectionalDict:
         self._reverse.clear()
 
 
-
 class DropArea(QWidget):
     """ """
+
     order_changed = Signal(list)
 
-    def __init__(self, button_wdith:int):
+    def __init__(self, button_wdith: int):
         super().__init__()
         # self.initUI()
         self.buttons = BidirectionalDict()
         self.button_order = []
         layout = QGridLayout()
         layout.setSpacing(0)
-        layout.setContentsMargins(0,0,0,0)
+        layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
         self.setAcceptDrops(True)
         self.columnCount = 0
@@ -132,14 +143,13 @@ class DropArea(QWidget):
 
         self.min_column_width = button_wdith + 1
 
-
     def dragEnterEvent(self, event):
         """
 
         Parameters
         ----------
         event :
-            
+
 
         Returns
         -------
@@ -153,7 +163,7 @@ class DropArea(QWidget):
         Parameters
         ----------
         event :
-            
+
 
         Returns
         -------
@@ -190,7 +200,7 @@ class DropArea(QWidget):
         Parameters
         ----------
         pos :
-            
+
 
         Returns
         -------
@@ -200,13 +210,11 @@ class DropArea(QWidget):
         center = rect.center()
         width = self.width()
         height = self.height()
-        x_dist = (pos - center).x() + width/2
-        y_dist = (pos - center).y() + height/2
+        x_dist = (pos - center).x() + width / 2
+        y_dist = (pos - center).y() + height / 2
         column_width = width / self.columnCount
         row_height = height / self.rowCount
         return int(y_dist // row_height), int(x_dist // column_width)
-
-
 
     def updateLayout(self):
         """ """
@@ -218,13 +226,16 @@ class DropArea(QWidget):
         # calculate new positions of buttons based on columns
         positions = [(i // columns, i % columns) for i in range(len(self.buttons))]
         self.columnCount = columns
-        self.rowCount = len(positions) // columns + (1 if len(positions) % columns else 0)
+        self.rowCount = len(positions) // columns + (
+            1 if len(positions) % columns else 0
+        )
         for button, position in zip(self.button_order, positions):
             self.layout().addWidget(self.buttons[button], *position)
 
 
 class Drop_Scroll_Area(QScrollArea):
     """ """
+
     order_changed = Signal(list)
 
     def __init__(self, parent=None, button_width=120, button_height=120):
@@ -245,7 +256,7 @@ class Drop_Scroll_Area(QScrollArea):
         Parameters
         ----------
         a0 :
-            
+
 
         Returns
         -------
@@ -264,9 +275,9 @@ class Drop_Scroll_Area(QScrollArea):
         Parameters
         ----------
         button :
-            
+
         name :
-            
+
 
         Returns
         -------
@@ -283,7 +294,7 @@ class Drop_Scroll_Area(QScrollArea):
         Parameters
         ----------
         name :
-            
+
 
         Returns
         -------
@@ -310,9 +321,9 @@ class Drop_Scroll_Area(QScrollArea):
         Parameters
         ----------
         old_name :
-            
+
         new_name :
-            
+
 
         Returns
         -------
@@ -342,7 +353,7 @@ class Drop_Scroll_Area(QScrollArea):
         Parameters
         ----------
         name :
-            
+
 
         Returns
         -------
@@ -357,7 +368,7 @@ class Drop_Scroll_Area(QScrollArea):
         Parameters
         ----------
         name :
-            
+
 
         Returns
         -------
@@ -367,13 +378,12 @@ class Drop_Scroll_Area(QScrollArea):
             self.drop_area.buttons[name].small_button.setEnabled(True)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication([])
     main_window = QMainWindow()
     area = Drop_Scroll_Area()
     main_window.setCentralWidget(area)
     for i in range(15):
-        area.add_button(DragButton(f'Button {i}'), str(i))
+        area.add_button(DragButton(f"Button {i}"), str(i))
     main_window.show()
     app.exec()

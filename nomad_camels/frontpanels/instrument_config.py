@@ -1,12 +1,21 @@
 import importlib
 
 import importlib_metadata
-from PySide6.QtWidgets import QWidget, QTableWidgetItem, QLabel, QMessageBox, QTextBrowser
+from PySide6.QtWidgets import (
+    QWidget,
+    QTableWidgetItem,
+    QLabel,
+    QMessageBox,
+    QTextBrowser,
+)
 from PySide6.QtCore import Qt
 
 from nomad_camels.gui.instrument_config import Ui_Form
 
-from nomad_camels.frontpanels.instrument_installer import getInstalledDevices, Info_Widget
+from nomad_camels.frontpanels.instrument_installer import (
+    getInstalledDevices,
+    Info_Widget,
+)
 
 from nomad_camels.utility import variables_handling, device_handling
 
@@ -15,6 +24,7 @@ from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
 class Instrument_Config(Ui_Form, QWidget):
     """ """
+
     def __init__(self, active_instruments=None, parent=None):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
@@ -32,12 +42,15 @@ class Instrument_Config(Ui_Form, QWidget):
                 self.active_instruments[k] = []
         for k in self.active_instruments:
             if k not in self.installed_instr:
-                WarnPopup(text=f'Instrument type "{k}" in active instruments, but is not installed!', title='instrument not installed')
+                WarnPopup(
+                    text=f'Instrument type "{k}" in active instruments, but is not installed!',
+                    title="instrument not installed",
+                )
                 # raise Warning(f'Instrument type "{k}" in active instruments, but is not installed!')
         self.tableWidget_instruments.setColumnCount(2)
 
         self.tableWidget_instruments.verticalHeader().setHidden(True)
-        self.current_instr = ''
+        self.current_instr = ""
 
         self.build_table()
         self.tableWidget_instruments.setMaximumWidth(350)
@@ -55,18 +68,16 @@ class Instrument_Config(Ui_Form, QWidget):
         self.toggle_info_hidden()
         self.pushButton_info.clicked.connect(self.toggle_info_hidden)
 
-
     def toggle_info_hidden(self):
         if self.hide_info:
-            self.pushButton_info.setText('hide info')
+            self.pushButton_info.setText("hide info")
         else:
-            self.pushButton_info.setText('show info')
+            self.pushButton_info.setText("show info")
         self.hide_info = not self.hide_info
         self.show_hide_info()
 
     def show_hide_info(self):
         self.info_widge.setHidden(self.hide_info)
-
 
     def table_click(self):
         """ """
@@ -76,23 +87,30 @@ class Instrument_Config(Ui_Form, QWidget):
             instr = self.tableWidget_instruments.item(ind.row(), 0).text()
             self.get_current_config()
             self.current_instr = instr
-            self.label_config.setText(f'Configure: {instr}')
+            self.label_config.setText(f"Configure: {instr}")
             if instr not in self.packages:
-                self.packages[instr] = importlib.import_module(f'nomad_camels_driver_{instr}.{instr}')
+                self.packages[instr] = importlib.import_module(
+                    f"nomad_camels_driver_{instr}.{instr}"
+                )
             self.config_tabs.clear()
             if not self.active_instruments[instr]:
-                self.config_tabs.addTab(QLabel('Add an instrument\ninstance by clicking "+"'), 'no instrument')
+                self.config_tabs.addTab(
+                    QLabel('Add an instrument\ninstance by clicking "+"'),
+                    "no instrument",
+                )
                 self.pushButton_remove.setEnabled(False)
             else:
                 self.pushButton_remove.setEnabled(True)
                 pack = self.packages[instr]
                 for instrument in self.active_instruments[instr]:
                     name = instrument.custom_name
-                    inst_widge = pack.subclass_config(parent=self,
-                                                      data=name,
-                                                      settings_dict=instrument.settings,
-                                                      config_dict=instrument.config,
-                                                      additional_info=instrument.additional_info)
+                    inst_widge = pack.subclass_config(
+                        parent=self,
+                        data=name,
+                        settings_dict=instrument.settings,
+                        config_dict=instrument.config,
+                        additional_info=instrument.additional_info,
+                    )
                     self.config_tabs.addTab(inst_widge, name)
                     inst_widge.name_change.connect(self.name_config_changed)
             self.pushButton_add.setEnabled(True)
@@ -102,14 +120,13 @@ class Instrument_Config(Ui_Form, QWidget):
         finally:
             self.setCursor(Qt.ArrowCursor)
 
-
     def name_config_changed(self, new_name):
         """
 
         Parameters
         ----------
         new_name :
-            
+
 
         Returns
         -------
@@ -120,11 +137,10 @@ class Instrument_Config(Ui_Form, QWidget):
         ind = self.tableWidget_instruments.selectedIndexes()[0]
         instr = self.tableWidget_instruments.item(ind.row(), 0).text()
 
-        if hasattr(conf, 'data') and new_name not in self.get_all_names():
+        if hasattr(conf, "data") and new_name not in self.get_all_names():
             self.active_instruments[instr][current_tab].custom_name = new_name
             conf.data = new_name
             self.config_tabs.setTabText(current_tab, new_name)
-
 
     def get_config(self):
         """ """
@@ -139,17 +155,24 @@ class Instrument_Config(Ui_Form, QWidget):
         """ """
         for i in range(self.config_tabs.count()):
             tab = self.config_tabs.widget(i)
-            if not hasattr(tab, 'data'):
+            if not hasattr(tab, "data"):
                 continue
             cust_name = self.active_instruments[self.current_instr][i].custom_name
             given_name = tab.lineEdit_custom_name.text()
             if given_name != cust_name:
-                WarnPopup(self, f'Instrument name "{given_name}" is either already in use or not allowed (e.g. the instrument`s class is named that way). Using "{cust_name}" instead.', 'Instrument name not possible')
-            variables_handling.check_variable_name(cust_name, parent=self,
-                                                   raise_not_warn=True)
+                WarnPopup(
+                    self,
+                    f'Instrument name "{given_name}" is either already in use or not allowed (e.g. the instrument`s class is named that way). Using "{cust_name}" instead.',
+                    "Instrument name not possible",
+                )
+            variables_handling.check_variable_name(
+                cust_name, parent=self, raise_not_warn=True
+            )
             self.active_instruments[self.current_instr][i].settings = tab.get_settings()
             self.active_instruments[self.current_instr][i].config = tab.get_config()
-            self.active_instruments[self.current_instr][i].additional_info = tab.get_info()
+            self.active_instruments[self.current_instr][
+                i
+            ].additional_info = tab.get_info()
         self.update_channels()
 
     def update_channels(self):
@@ -189,18 +212,22 @@ class Instrument_Config(Ui_Form, QWidget):
                 i = 1
                 names = self.get_all_names()
                 while name in names:
-                    name = f'{instr}_{i}'
+                    name = f"{instr}_{i}"
                     i += 1
             instr_instance = pack.subclass()
             instr_instance.custom_name = name
             self.active_instruments[instr].append(instr_instance)
-            single_widge = pack.subclass_config(data=name,
-                                                settings_dict=instr_instance.settings,
-                                                config_dict=instr_instance.config,
-                                                additional_info=instr_instance.additional_info)
+            single_widge = pack.subclass_config(
+                data=name,
+                settings_dict=instr_instance.settings,
+                config_dict=instr_instance.config,
+                additional_info=instr_instance.additional_info,
+            )
             self.config_tabs.addTab(single_widge, name)
             single_widge.name_change.connect(self.name_config_changed)
-            self.tableWidget_instruments.item(ind.row(), 1).setText(str(len(self.active_instruments[instr])))
+            self.tableWidget_instruments.item(ind.row(), 1).setText(
+                str(len(self.active_instruments[instr]))
+            )
         finally:
             self.setCursor(Qt.ArrowCursor)
 
@@ -211,17 +238,19 @@ class Instrument_Config(Ui_Form, QWidget):
             if self.active_instruments[instr]:
                 names += [x.custom_name for x in self.active_instruments[instr]]
                 names += [self.active_instruments[instr][0].ophyd_class_name]
-                names += ['numpy', 'np', 'StartTime', 'ElapsedTime']
+                names += ["numpy", "np", "StartTime", "ElapsedTime"]
         return names
-
 
     def remove_instance(self):
         """ """
         ind = self.config_tabs.currentIndex()
         name = self.config_tabs.tabText(ind)
-        remove_dialog = QMessageBox.question(self, 'Remove instrument?',
-                                             f'Are you sure you want to remove the instrument {name}?',
-                                             QMessageBox.Yes | QMessageBox.No)
+        remove_dialog = QMessageBox.question(
+            self,
+            "Remove instrument?",
+            f"Are you sure you want to remove the instrument {name}?",
+            QMessageBox.Yes | QMessageBox.No,
+        )
         if remove_dialog != QMessageBox.Yes:
             return
         self.config_tabs.removeTab(ind)
@@ -229,10 +258,13 @@ class Instrument_Config(Ui_Form, QWidget):
         instr = self.tableWidget_instruments.item(instr_ind.row(), 0).text()
         self.active_instruments[instr].pop(ind)
         if not self.active_instruments[instr]:
-            self.config_tabs.addTab(QLabel('Add an instrument\ninstance by clicking "+"'), 'no instrument')
+            self.config_tabs.addTab(
+                QLabel('Add an instrument\ninstance by clicking "+"'), "no instrument"
+            )
             self.pushButton_remove.setEnabled(False)
-        self.tableWidget_instruments.item(instr_ind.row(), 1).setText(str(len(self.active_instruments[instr])))
-
+        self.tableWidget_instruments.item(instr_ind.row(), 1).setText(
+            str(len(self.active_instruments[instr]))
+        )
 
     def build_table(self):
         """ """
@@ -240,14 +272,16 @@ class Instrument_Config(Ui_Form, QWidget):
         self.installed_instr = getInstalledDevices()
         self.tableWidget_instruments.clear()
         self.tableWidget_instruments.setRowCount(0)
-        self.tableWidget_instruments.setHorizontalHeaderLabels(['instrument', 'number of instruments'])
+        self.tableWidget_instruments.setHorizontalHeaderLabels(
+            ["instrument", "number of instruments"]
+        )
         i = 0
         for dev in sorted(self.installed_instr.keys()):
             if dev in device_handling.from_manual_controls:
                 continue
             if search_text.lower() not in dev.lower():
                 continue
-            self.tableWidget_instruments.setRowCount(i+1)
+            self.tableWidget_instruments.setRowCount(i + 1)
             item = QTableWidgetItem(dev)
             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
 
@@ -261,10 +295,9 @@ class Instrument_Config(Ui_Form, QWidget):
         self.tableWidget_instruments.resizeColumnsToContents()
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     from PySide6.QtWidgets import QApplication
+
     app = QApplication([])
 
     widge = Instrument_Config()

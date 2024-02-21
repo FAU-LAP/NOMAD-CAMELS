@@ -30,9 +30,20 @@ import platform
 
 import numpy as np
 import pandas as pd
-from PySide6.QtWidgets import QComboBox, QLineEdit, QWidget, QSplitter, QLabel,\
-    QPushButton, QTreeView, QListView, QMenuBar, QMenu, QStatusBar,\
-    QGridLayout
+from PySide6.QtWidgets import (
+    QComboBox,
+    QLineEdit,
+    QWidget,
+    QSplitter,
+    QLabel,
+    QPushButton,
+    QTreeView,
+    QListView,
+    QMenuBar,
+    QMenu,
+    QStatusBar,
+    QGridLayout,
+)
 from PySide6.QtGui import QAction
 
 from datetime import datetime, timedelta
@@ -48,59 +59,78 @@ from nomad_camels.ui_widgets.warn_popup import WarnPopup
 appdata_path = f'{getenv("LOCALAPPDATA")}/nomad_camels'
 if not isdir(appdata_path):
     makedirs(appdata_path)
-preset_path = f'{appdata_path}/Presets/'
-backup_path = f'{preset_path}Backup/'
+preset_path = f"{appdata_path}/Presets/"
+backup_path = f"{preset_path}Backup/"
 save_string_list = [QComboBox, QLineEdit, QTreeView, QListView]
-save_dict_skip = [QWidget, QSplitter, QLabel, QPushButton, QMenu, QMenuBar,
-                  QAction, QStatusBar, QGridLayout]
+save_dict_skip = [
+    QWidget,
+    QSplitter,
+    QLabel,
+    QPushButton,
+    QMenu,
+    QMenuBar,
+    QAction,
+    QStatusBar,
+    QGridLayout,
+]
 
 # Get the current operating system
 os_name = platform.system()
 
-if os_name == 'Windows':
+if os_name == "Windows":
     # Use the APPDATA environment variable on Windows
-    data_path = os.path.join(os.environ.get('USERPROFILE'), 'Documents', 'NOMAD_CAMELS_data')
-elif os_name == 'Linux':
+    data_path = os.path.join(
+        os.environ.get("USERPROFILE"), "Documents", "NOMAD_CAMELS_data"
+    )
+elif os_name == "Linux":
     # Use the XDG_DATA_HOME environment variable on Linux, defaulting to ~/.local/share
-    data_path = os.environ.get('XDG_DATA_HOME') or os.path.join(os.path.expanduser('~'), '.local', 'share', 'nomad_camels_data')
-elif os_name == 'Darwin':
+    data_path = os.environ.get("XDG_DATA_HOME") or os.path.join(
+        os.path.expanduser("~"), ".local", "share", "nomad_camels_data"
+    )
+elif os_name == "Darwin":
     # Use ~/Library/Application Support on MacOS
-    data_path = os.path.join(os.path.expanduser('~'), 'Library', 'Application Support', 'nomad_camels_data')
+    data_path = os.path.join(
+        os.path.expanduser("~"), "Library", "Application Support", "nomad_camels_data"
+    )
 else:
     # Default to the home directory
-    data_path = os.path.expanduser('~', 'nomad_camels_data')
+    data_path = os.path.expanduser("~", "nomad_camels_data")
 
 
-standard_pref = {'autosave': True,
-                 'autosave_run': True,
-                 'backup_before_run': True,
-                 'dark_mode': False,
-                 'graphic_theme': 'Fusion',
-                 'n_decimals': 3,
-                 'number_format': 'mixed',
-                 'mixed_from': 3,
-                 'py_files_path': f'{appdata_path}/python_files'.replace('\\','/'),
-                 'meas_files_path': data_path,
-                 'device_driver_path': os.path.join(os.getcwd(), 'devices', 'devices_drivers').replace('\\','/'),
-                 'databroker_catalog_name': 'CAMELS_CATALOG',
-                 'driver_repository': 'https://github.com/FAU-LAP/CAMELS_drivers',
-                 'repo_branch': 'main',
-                 'repo_directory': '',
-                 'play_camel_on_error': False,
-                 'auto_check_updates': False,
-                 'log_level': 'Warning',
-                 'logfile_size': 1,
-                 'logfile_backups': 1,
-                 'NOMAD_URL': '',
-                 'backups': 'smart',
-                 'backup_number': 30,
-                 'number_databroker_files': 30,
-                 'extension_path': os.path.join(os.getcwd(), 'extensions').replace('\\','/'),
-                 'extensions': [],
-                 'password_protection': False,
-                 'password_hash': '',
-                 'new_file_each_run': True
-                }
+standard_pref = {
+    "autosave": True,
+    "autosave_run": True,
+    "backup_before_run": True,
+    "dark_mode": False,
+    "graphic_theme": "Fusion",
+    "n_decimals": 3,
+    "number_format": "mixed",
+    "mixed_from": 3,
+    "py_files_path": f"{appdata_path}/python_files".replace("\\", "/"),
+    "meas_files_path": data_path,
+    "device_driver_path": os.path.join(
+        os.getcwd(), "devices", "devices_drivers"
+    ).replace("\\", "/"),
+    "databroker_catalog_name": "CAMELS_CATALOG",
+    "driver_repository": "https://github.com/FAU-LAP/CAMELS_drivers",
+    "repo_branch": "main",
+    "repo_directory": "",
+    "play_camel_on_error": False,
+    "auto_check_updates": False,
+    "log_level": "Warning",
+    "logfile_size": 1,
+    "logfile_backups": 1,
+    "NOMAD_URL": "",
+    "backups": "smart",
+    "backup_number": 30,
+    "number_databroker_files": 30,
+    "extension_path": os.path.join(os.getcwd(), "extensions").replace("\\", "/"),
+    "extensions": [],
+    "password_protection": False,
+    "password_hash": "",
+    "new_file_each_run": True,
+}
+
 
 def get_preset_list():
     """
@@ -111,18 +141,19 @@ def get_preset_list():
     appdata_path. If the directory does not exist, it is created."""
     if isdir(preset_path):
         names = listdir(preset_path)
-        if 'Backup' not in names:
-            makedirs(preset_path + 'Backup')
+        if "Backup" not in names:
+            makedirs(preset_path + "Backup")
         presets = []
         for name in names:
-            if name.endswith('.preset'):
+            if name.endswith(".preset"):
                 presets.append(name[:-7])
         return sorted(presets, key=lambda x: x.lower())
     else:
         makedirs(preset_path)
         return get_preset_list()
 
-def autosave_preset(preset:str, preset_data, do_backup=True):
+
+def autosave_preset(preset: str, preset_data, do_backup=True):
     """Saves the given preset and makes a backup of the former one in
     the backup-folder (if do_backup).
 
@@ -136,15 +167,16 @@ def autosave_preset(preset:str, preset_data, do_backup=True):
         if True, the old preset file will be copied into the backup folder, with
         timestamp
     """
-    preset_file = f'{preset}.preset'
+    preset_file = f"{preset}.preset"
     if not os.path.isdir(preset_path):
         makedirs(preset_path)
-    with open(f'{preset_path}{preset_file}', 'w', encoding='utf-8') as json_file:
+    with open(f"{preset_path}{preset_file}", "w", encoding="utf-8") as json_file:
         json.dump(preset_data, json_file, indent=2)
     if do_backup:
         make_backup(preset_file)
 
-def save_preset(path, preset_data:dict):
+
+def save_preset(path, preset_data: dict):
     """Saves the given preset_data under the specified path.
     Further, `autosave_preset` is called.
 
@@ -155,12 +187,13 @@ def save_preset(path, preset_data:dict):
     preset_data : dict
         the data of the preset, to be dumped as json
     """
-    preset_name = path.split('/')[-1][:-7]
-    with open(path, 'w', encoding='utf-8') as json_file:
+    preset_name = path.split("/")[-1][:-7]
+    with open(path, "w", encoding="utf-8") as json_file:
         json.dump(preset_data, json_file, indent=2)
     autosave_preset(preset_name, preset_data)
 
-def save_dictionary(path, dictionary:dict):
+
+def save_dictionary(path, dictionary: dict):
     """
     Processes the given `dictionary` using `get_save_str`, then saves it as json
     to the given `path`.
@@ -177,10 +210,11 @@ def save_dictionary(path, dictionary:dict):
         add_string = get_save_str(val)
         if add_string is not None:
             save_dict[key] = add_string
-    with open(path, 'w', encoding='utf-8') as file:
+    with open(path, "w", encoding="utf-8") as file:
         json.dump(save_dict, file, indent=2)
 
-def make_backup(preset_file:str):
+
+def make_backup(preset_file: str):
     """
     Puts a copy of the given `preset_file` into the backup-folder of
     the preset. The current datetime is added to the filename.
@@ -190,53 +224,82 @@ def make_backup(preset_file:str):
     preset_file : str
         The name of the preset file. The file needs to be in the `preset_path`.
     """
-    backup_save_path = f'{backup_path}{preset_file[:-7]}/'
+    backup_save_path = f"{backup_path}{preset_file[:-7]}/"
     if not isdir(backup_save_path):
         makedirs(backup_save_path)
     now = datetime.now()
     backup_name = f'{backup_save_path}{now.strftime("%Y-%m-%d_%H-%M-%S")}_{preset_file}'
-    copyfile(f'{preset_path}{preset_file}', backup_name)
+    copyfile(f"{preset_path}{preset_file}", backup_name)
 
-    if not 'backups' in variables_handling.preferences:
+    if not "backups" in variables_handling.preferences:
         return
-    backups = sorted(glob(f'{backup_save_path}*.preset'), key=os.path.getmtime)
-    if variables_handling.preferences['backups'] == 'number':
-        if 'backup_number' in variables_handling.preferences:
-            backup_number = variables_handling.preferences['backup_number']
+    backups = sorted(glob(f"{backup_save_path}*.preset"), key=os.path.getmtime)
+    if variables_handling.preferences["backups"] == "number":
+        if "backup_number" in variables_handling.preferences:
+            backup_number = variables_handling.preferences["backup_number"]
             while len(backups) > backup_number:
                 os.remove(backups.pop(0))
-    elif variables_handling.preferences['backups'] == 'smart':
-        backups = [b for b in backups if datetime.fromtimestamp(os.path.getmtime(b)) < now - timedelta(days=7)]
+    elif variables_handling.preferences["backups"] == "smart":
+        backups = [
+            b
+            for b in backups
+            if datetime.fromtimestamp(os.path.getmtime(b)) < now - timedelta(days=7)
+        ]
         for day in range(8, 31):
             day_ago = now - timedelta(days=day)
-            daily_backups = [b for b in backups if datetime.fromtimestamp(os.path.getmtime(b)).date() == day_ago.date()]
+            daily_backups = [
+                b
+                for b in backups
+                if datetime.fromtimestamp(os.path.getmtime(b)).date() == day_ago.date()
+            ]
             while len(daily_backups) > 1:
                 backup = daily_backups.pop(0)
                 os.remove(backup)
                 backups.remove(backup)
-        backups = [b for b in backups if datetime.fromtimestamp(os.path.getmtime(b)) < now - timedelta(days=30)]
+        backups = [
+            b
+            for b in backups
+            if datetime.fromtimestamp(os.path.getmtime(b)) < now - timedelta(days=30)
+        ]
         for month in range(1, 13):
-            month_ago = now - timedelta(days=30*month)
-            monthly_backups = [b for b in backups if datetime.fromtimestamp(os.path.getmtime(b)).month == month_ago.month]
+            month_ago = now - timedelta(days=30 * month)
+            monthly_backups = [
+                b
+                for b in backups
+                if datetime.fromtimestamp(os.path.getmtime(b)).month == month_ago.month
+            ]
             while len(monthly_backups) > 1:
                 backup = monthly_backups.pop(0)
                 os.remove(backup)
                 backups.remove(backup)
-        backups = [b for b in backups if datetime.fromtimestamp(os.path.getmtime(b)) < now - timedelta(days=365)]
+        backups = [
+            b
+            for b in backups
+            if datetime.fromtimestamp(os.path.getmtime(b)) < now - timedelta(days=365)
+        ]
         if not backups:
             return
-        for year in range(1, now.year - datetime.fromtimestamp(os.path.getmtime(backups[0])).year + 1):
-            year_ago = now - timedelta(days=365*year)
-            yearly_backups = [b for b in backups if datetime.fromtimestamp(os.path.getmtime(b)).year == year_ago.year]
+        for year in range(
+            1, now.year - datetime.fromtimestamp(os.path.getmtime(backups[0])).year + 1
+        ):
+            year_ago = now - timedelta(days=365 * year)
+            yearly_backups = [
+                b
+                for b in backups
+                if datetime.fromtimestamp(os.path.getmtime(b)).year == year_ago.year
+            ]
             while len(yearly_backups) > 1:
                 backup = yearly_backups.pop(0)
                 os.remove(backup)
                 backups.remove(backup)
 
 
-
-
-def load_save_dict(string_dict:dict, object_dict:dict, update_missing_key=False, remove_extra_key=False):
+def load_save_dict(
+    string_dict: dict,
+    object_dict: dict,
+    update_missing_key=False,
+    remove_extra_key=False,
+):
     """For all keys both given dictionaries have in common, the value of
     the object in object_dict will be updated to the corresponding value
     of the string in string_dict. Depending on the type of the objects already
@@ -274,13 +337,13 @@ def load_save_dict(string_dict:dict, object_dict:dict, update_missing_key=False,
                 obj.setCurrentText(val)
             elif issubclass(type(obj), QLineEdit):
                 obj.setText(val)
-            elif key == 'protocols_dict':
+            elif key == "protocols_dict":
                 load_protocols_dict(val, obj)
-            elif key in ['active_devices_dict', 'active_instruments']:
+            elif key in ["active_devices_dict", "active_instruments"]:
                 load_devices_dict(val, obj)
             elif isinstance(obj, dict):
                 load_save_dict(val, obj, True, True)
-            elif hasattr(obj, '__save_dict__') or hasattr(obj, '__dict__'):
+            elif hasattr(obj, "__save_dict__") or hasattr(obj, "__dict__"):
                 load_save_dict(val, obj.__dict__)
             elif type(obj) is list:
                 obj.clear()
@@ -295,6 +358,7 @@ def load_save_dict(string_dict:dict, object_dict:dict, update_missing_key=False,
                 rem_keys.append(key)
         for key in rem_keys:
             object_dict.pop(key)
+
 
 def get_save_str(obj):
     """Utility function to create the string with which to save the
@@ -317,7 +381,7 @@ def get_save_str(obj):
     the string-representation of `obj`
 
     """
-    if hasattr(obj, '__save_dict__'):
+    if hasattr(obj, "__save_dict__"):
         make_save_dict(obj)
         return obj.__save_dict__
     if type(obj) in save_dict_skip:
@@ -331,15 +395,15 @@ def get_save_str(obj):
             return obj.text()
         return None
     if type(obj) is pd.DataFrame:
-        obj.to_dict('list')
-    if hasattr(obj, '__dict__') or type(obj) is dict:
+        obj.to_dict("list")
+    if hasattr(obj, "__dict__") or type(obj) is dict:
         savedic = {}
         if isinstance(obj, dict):
             dictionary = obj
         else:
             dictionary = obj.__dict__
         for key in dictionary:
-            if key == 'py_package':
+            if key == "py_package":
                 continue
             savedic.update({key: get_save_str(dictionary[key])})
         return savedic
@@ -354,6 +418,7 @@ def get_save_str(obj):
         return obj_list
     return str(obj)
 
+
 def make_save_dict(obj):
     """Utility function to update the __save_dict__ of the given obj.
     Goes through all the keys in __dict__ and calls get_save_str on the
@@ -366,9 +431,25 @@ def make_save_dict(obj):
         The object of which the `__save_dict__` should be updated.
     """
     for key in obj.__dict__:
-        if key == '__save_dict__' or (isinstance(obj, device_class.Device) and key in ['controls', 'ophyd_class', 'ophyd_class_no_epics', 'channels', 'virtual', 'tags', 'files', 'directory', 'requirements', 'ophyd_class_name', 'connection']):
+        if key == "__save_dict__" or (
+            isinstance(obj, device_class.Device)
+            and key
+            in [
+                "controls",
+                "ophyd_class",
+                "ophyd_class_no_epics",
+                "channels",
+                "virtual",
+                "tags",
+                "files",
+                "directory",
+                "requirements",
+                "ophyd_class_name",
+                "connection",
+            ]
+        ):
             continue
-        if key == 'protocol' and isinstance(obj, loop_step.Loop_Step):
+        if key == "protocol" and isinstance(obj, loop_step.Loop_Step):
             continue
         add_string = get_save_str(obj.__dict__[key])
         if add_string is not None:
@@ -393,12 +474,13 @@ def load_protocol(path):
     prot_name = os.path.basename(path)[:-6]
     if not os.path.isfile(path):
         return
-    with open(path, 'r', encoding='utf-8') as f:
+    with open(path, "r", encoding="utf-8") as f:
         prot_dict = json.load(f)
     prot_string_dict = {prot_name: prot_dict}
     sub_protocol = {}
     load_protocols_dict(prot_string_dict, sub_protocol)
     return sub_protocol[prot_name]
+
 
 # def load_manuals_dict(string_dict, manuals_dict):
 #     manuals_dict.clear()
@@ -425,29 +507,30 @@ def load_protocols_dict(string_dict, prot_dict):
         prot_data = string_dict[key]
         prot = protocol_class.Measurement_Protocol()
         prot.name = key
-        if 'loop_steps' in prot_data:
-            prot.load_loop_steps(prot_data['loop_steps'])
-        if 'plots' in prot_data:
-            prot.plots = load_plots([], prot_data['plots'])
-        if 'filename' in prot_data:
-            prot.filename = prot_data['filename']
-        if 'variables' in prot_data:
-            prot.variables = prot_data['variables']
-        if 'metadata' in prot_data:
-            prot.metadata = prot_data['metadata']
-        if 'channel_metadata' in prot_data:
-            prot.channel_metadata = prot_data['channel_metadata']
-        if 'config_metadata' in prot_data:
-            prot.config_metadata = prot_data['config_metadata']
-        if 'use_nexus' in prot_data:
-            prot.use_nexus = prot_data['use_nexus']
-        if 'description' in prot_data:
-            prot.description = prot_data['description']
-        if 'export_json' in prot_data:
-            prot.export_json = prot_data['export_json']
-        if 'export_csv' in prot_data:
-            prot.export_csv = prot_data['export_csv']
+        if "loop_steps" in prot_data:
+            prot.load_loop_steps(prot_data["loop_steps"])
+        if "plots" in prot_data:
+            prot.plots = load_plots([], prot_data["plots"])
+        if "filename" in prot_data:
+            prot.filename = prot_data["filename"]
+        if "variables" in prot_data:
+            prot.variables = prot_data["variables"]
+        if "metadata" in prot_data:
+            prot.metadata = prot_data["metadata"]
+        if "channel_metadata" in prot_data:
+            prot.channel_metadata = prot_data["channel_metadata"]
+        if "config_metadata" in prot_data:
+            prot.config_metadata = prot_data["config_metadata"]
+        if "use_nexus" in prot_data:
+            prot.use_nexus = prot_data["use_nexus"]
+        if "description" in prot_data:
+            prot.description = prot_data["description"]
+        if "export_json" in prot_data:
+            prot.export_json = prot_data["export_json"]
+        if "export_csv" in prot_data:
+            prot.export_csv = prot_data["export_csv"]
         prot_dict.update({key: prot})
+
 
 def load_devices_dict(string_dict, devices_dict):
     """Specific function to load the dictionary of devices/instruments.
@@ -464,48 +547,50 @@ def load_devices_dict(string_dict, devices_dict):
     devices_dict.clear()
     local_packages = load_local_packages()
 
-    path = f'{os.path.dirname(os.path.dirname(__file__))}/manual_controls/set_panel'
+    path = f"{os.path.dirname(os.path.dirname(__file__))}/manual_controls/set_panel"
     print(path)
     sys.path.append(path)
     for key in string_dict:
         dev_data = string_dict[key]
-        name = dev_data['name']
+        name = dev_data["name"]
         if name in local_packages:
             dev_lib = local_packages[name]
         else:
             try:
-                dev_lib = importlib.import_module(f'nomad_camels_driver_{name}.{name}')
+                dev_lib = importlib.import_module(f"nomad_camels_driver_{name}.{name}")
             except Exception as e:
                 try:
-                    dev_lib = importlib.import_module(f'{name}.{name}')
+                    dev_lib = importlib.import_module(f"{name}.{name}")
                 except Exception as e2:
-                    WarnPopup(text=f'Could not import instrument module "{name}"\n{e}\n{e2}', title='instrument import failed')
+                    WarnPopup(
+                        text=f'Could not import instrument module "{name}"\n{e}\n{e2}',
+                        title="instrument import failed",
+                    )
                     continue
                     # raise Exception(f'Could not import device module {name}\n{e}\n{e2}')
         dev = dev_lib.subclass()
         dev.name = name
-        if 'connection' in dev_data:
-            dev.connection = dev_data['connection']
-        if 'virtual' in dev_data:
-            dev.virtual = dev_data['virtual']
-        if 'tags' in dev_data:
-            dev.tags = dev_data['tags']
-        if 'files' in dev_data:
-            dev.files = dev_data['files']
-        if 'directory' in dev_data:
-            dev.directory = dev_data['directory']
-        if 'requirements' in dev_data:
-            dev.requirements = dev_data['requirements']
-        if 'settings' in dev_data:
-            dev.settings = dev_data['settings'] or dev.settings
-        if 'config' in dev_data:
-            dev.config = dev_data['config'] or dev.config
-        if 'custom_name' in dev_data:
-            dev.custom_name = dev_data['custom_name']
-        if 'additional_info' in dev_data:
-            dev.additional_info = dev_data['additional_info']
+        if "connection" in dev_data:
+            dev.connection = dev_data["connection"]
+        if "virtual" in dev_data:
+            dev.virtual = dev_data["virtual"]
+        if "tags" in dev_data:
+            dev.tags = dev_data["tags"]
+        if "files" in dev_data:
+            dev.files = dev_data["files"]
+        if "directory" in dev_data:
+            dev.directory = dev_data["directory"]
+        if "requirements" in dev_data:
+            dev.requirements = dev_data["requirements"]
+        if "settings" in dev_data:
+            dev.settings = dev_data["settings"] or dev.settings
+        if "config" in dev_data:
+            dev.config = dev_data["config"] or dev.config
+        if "custom_name" in dev_data:
+            dev.custom_name = dev_data["custom_name"]
+        if "additional_info" in dev_data:
+            dev.additional_info = dev_data["additional_info"]
         devices_dict.update({key: dev})
-
 
 
 def get_most_recent_presets():
@@ -520,13 +605,16 @@ def get_most_recent_presets():
     if not os.path.isdir(preset_path):
         makedirs(preset_path)
     for name in listdir(preset_path):
-        if name.endswith('.preset'):
+        if name.endswith(".preset"):
             presets.append(name)
     if presets:
-        preset = sorted(presets, key=lambda x: os.path.getmtime(f'{preset_path}{x}'))[-1][:-7]
+        preset = sorted(presets, key=lambda x: os.path.getmtime(f"{preset_path}{x}"))[
+            -1
+        ][:-7]
     else:
         preset = None
     return preset
+
 
 def get_preferences():
     """If a file 'preferences.json' exists in the `appdata_path`, its content
@@ -539,28 +627,36 @@ def get_preferences():
     prefs : dict
         the loaded preferences dictionary
     """
-    if 'preferences.json' not in os.listdir(appdata_path):
-        with open(f'{appdata_path}/preferences.json', 'w', encoding='utf-8') as file:
+    if "preferences.json" not in os.listdir(appdata_path):
+        with open(f"{appdata_path}/preferences.json", "w", encoding="utf-8") as file:
             from nomad_camels.ui_widgets.path_button_edit import Path_Button_Dialog
-            dialog = Path_Button_Dialog(path=data_path,
-                                        default_dir=os.path.dirname(data_path),
-                                        select_directory=True,
-                                        title='Select data path',
-                                        text='Please select the directory where the measurement data should be saved')
+
+            dialog = Path_Button_Dialog(
+                path=data_path,
+                default_dir=os.path.dirname(data_path),
+                select_directory=True,
+                title="Select data path",
+                text="Please select the directory where the measurement data should be saved",
+            )
             if dialog.exec():
                 global standard_pref
-                standard_pref['meas_files_path'] = dialog.path
+                standard_pref["meas_files_path"] = dialog.path
             else:
-                WarnPopup(text='No data path selected, a default path will be used.\nYou can change the path in the settings.', title='No data path selected', info_icon=True)
+                WarnPopup(
+                    text="No data path selected, a default path will be used.\nYou can change the path in the settings.",
+                    title="No data path selected",
+                    info_icon=True,
+                )
             json.dump(standard_pref, file, indent=2)
-    with open(f'{appdata_path}/preferences.json', 'r', encoding='utf-8') as file:
+    with open(f"{appdata_path}/preferences.json", "r", encoding="utf-8") as file:
         prefs = json.load(file)
     for key, value in standard_pref.items():
         if key not in prefs:
             prefs[key] = value
     return prefs
 
-def save_preferences(prefs:dict):
+
+def save_preferences(prefs: dict):
     """Saves the given dictionary prefs as 'preferences.json' in the `appdata_path`
 
     Parameters
@@ -568,5 +664,5 @@ def save_preferences(prefs:dict):
     prefs : dict
         the preferences dictionary to be saved as json
     """
-    with open(f'{appdata_path}/preferences.json', 'w', encoding='utf-8') as file:
+    with open(f"{appdata_path}/preferences.json", "w", encoding="utf-8") as file:
         json.dump(prefs, file, indent=2)

@@ -1,4 +1,4 @@
-def getItemIndex(item_model, data:str, starts_with=False):
+def getItemIndex(item_model, data: str, starts_with=False):
     """Iteration over the item_model to return the index of an item with
     given data.
 
@@ -11,12 +11,12 @@ def getItemIndex(item_model, data:str, starts_with=False):
     starts_with : bool, default False
         also return an item, if it only starts with the searched data (Default value = False)
     data:str :
-        
+
 
     Returns
     -------
 
-    
+
     """
     rows = item_model.rowCount()
     cols = item_model.columnCount()
@@ -25,7 +25,9 @@ def getItemIndex(item_model, data:str, starts_with=False):
             item = item_model.item(r, c)
             if item is None:
                 continue
-            tester = item.data().startswith(data) if starts_with else item.data() == data
+            tester = (
+                item.data().startswith(data) if starts_with else item.data() == data
+            )
             if tester:
                 return item.index()
             if item.hasChildren():
@@ -52,7 +54,7 @@ def iterItem(item, data, startWith=False):
     Returns
     -------
 
-    
+
     """
     rows = item.rowCount()
     cols = item.columnCount()
@@ -67,7 +69,9 @@ def iterItem(item, data, startWith=False):
             child = item.child(r, c)
             if child is None:
                 continue
-            tester = child.data().startswith(data) if startWith else child.data() == data
+            tester = (
+                child.data().startswith(data) if startWith else child.data() == data
+            )
             if tester:
                 return True, child.index()
             if child.hasChildren():
@@ -81,7 +85,7 @@ def get_substeps(parent):
     Parameters
     ----------
     parent :
-        
+
 
     Returns
     -------

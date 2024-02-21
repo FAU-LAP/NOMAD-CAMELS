@@ -15,13 +15,22 @@ class TriggerEpicsSignalRO(EpicsSignalRO):
     Returns
     -------
 
-    
+
     """
-    def __init__(self, read_pv, *, timeout=10, string=False, name=None,
-                 no_mdel=False, **kwargs):
-        super().__init__(read_pv, string=string, name=name, timeout=timeout, auto_monitor=False, **kwargs)
+
+    def __init__(
+        self, read_pv, *, timeout=10, string=False, name=None, no_mdel=False, **kwargs
+    ):
+        super().__init__(
+            read_pv,
+            string=string,
+            name=name,
+            timeout=timeout,
+            auto_monitor=False,
+            **kwargs,
+        )
         self.stat = None
-        self.trigger_pv = self.cl.get_pv(f'{read_pv}:trig')
+        self.trigger_pv = self.cl.get_pv(f"{read_pv}:trig")
         self.subscribe(self.callback_method)
         self.last_time = self.timestamp
         self.no_mdel = no_mdel
@@ -34,7 +43,7 @@ class TriggerEpicsSignalRO(EpicsSignalRO):
         Parameters
         ----------
         **kwargs :
-            
+
 
         Returns
         -------

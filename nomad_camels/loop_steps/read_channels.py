@@ -24,19 +24,22 @@ class Read_Channels(Loop_Step):
     channel_list : list[str]
         The list of channels that should be read in this step.
     """
-    def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
+
+    def __init__(self, name="", parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
-        self.step_type = 'Read Channels'
+        self.step_type = "Read Channels"
         if step_info is None:
             step_info = {}
-        self.read_all = step_info['read_all'] if 'read_all' in step_info else False
-        self.split_trigger = step_info['split_trigger'] if 'split_trigger' in step_info else False
-        if 'channel_list' in step_info:
-            self.channel_list = step_info['channel_list']
+        self.read_all = step_info["read_all"] if "read_all" in step_info else False
+        self.split_trigger = (
+            step_info["split_trigger"] if "split_trigger" in step_info else False
+        )
+        if "channel_list" in step_info:
+            self.channel_list = step_info["channel_list"]
         else:
             self.channel_list = []
-        if 'read_variables' in step_info:
-            self.read_variables = step_info['read_variables']
+        if "read_variables" in step_info:
+            self.read_variables = step_info["read_variables"]
         else:
             self.read_variables = False
         self.update_used_devices()
@@ -71,9 +74,9 @@ class Read_Channels(Loop_Step):
         tabs : str
             A string including the tabs for intendation.
         """
-        channel_string = f'{tabs}channels_{self.variable_name()} = ['
+        channel_string = f"{tabs}channels_{self.variable_name()} = ["
         if not self.read_all and not self.channel_list:
-            raise Exception(f'Trying to read no channel in {self.full_name}!')
+            raise Exception(f"Trying to read no channel in {self.full_name}!")
         if self.read_all:
             for channel in variables_handling.channels:
                 channel_string += get_channel_string(channel)
@@ -81,8 +84,8 @@ class Read_Channels(Loop_Step):
             for channel in self.channel_list:
                 channel_string += get_channel_string(channel)
         if self.read_variables:
-            channel_string += f'{self.protocol.name}_variable_signal, '
-        channel_string = channel_string[:-2] + ']\n'
+            channel_string += f"{self.protocol.name}_variable_signal, "
+        channel_string = channel_string[:-2] + "]\n"
         return channel_string
 
     def variable_name(self):
@@ -108,22 +111,23 @@ class Read_Channels(Loop_Step):
             if n > 0:
                 variables_handling.read_channel_names.append(f'f"{{stream_name}}_{n}"')
             else:
-                variables_handling.read_channel_names.append('stream_name')
+                variables_handling.read_channel_names.append("stream_name")
         stream_name = variables_handling.read_channel_names[n]
-        tabs = '\t' * n_tabs
+        tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.split_trigger:
-            protocol_string += f'{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream_name})\n'
+            protocol_string += f"{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream_name})\n"
         else:
             protocol_string += self.get_channels_string(tabs)
-            protocol_string += f'{tabs}yield from bps.trigger_and_read(channels_{self.variable_name()}, name={stream_name})\n'
+            protocol_string += f"{tabs}yield from bps.trigger_and_read(channels_{self.variable_name()}, name={stream_name})\n"
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
         """Includes the channel list in the string."""
         short_string = super().get_protocol_short_string(n_tabs)
-        short_string = f'{short_string[:-1]} - {self.channel_list}\n'
+        short_string = f"{short_string[:-1]} - {self.channel_list}\n"
         return short_string
+
 
 def get_channel_string(channel):
     """
@@ -136,17 +140,17 @@ def get_channel_string(channel):
         The channel that should be converted.
     """
     name = variables_handling.channels[channel].name
-    if '.' in name:
-        dev, chan = name.split('.')
+    if "." in name:
+        dev, chan = name.split(".")
         return f'devs["{dev}"].{chan}, '
     else:
         return f'devs["{name}"], '
 
 
-
 class Read_Channels_Config(Loop_Step_Config):
     """ """
-    def __init__(self, loop_step:Read_Channels, parent=None):
+
+    def __init__(self, loop_step: Read_Channels, parent=None):
         super().__init__(parent, loop_step)
         self.sub_widget = Read_Channels_Config_Sub(loop_step, self)
         self.layout().addWidget(self.sub_widget, 1, 0, 1, 5)
@@ -155,6 +159,7 @@ class Read_Channels_Config(Loop_Step_Config):
         """ """
         super().update_step_config()
         self.sub_widget.update_step_config()
+
 
 class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
     """Config for the Read_Channels it provides a table of channels with
@@ -168,7 +173,8 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
     -------
 
     """
-    def __init__(self, loop_step:Read_Channels, parent=None):
+
+    def __init__(self, loop_step: Read_Channels, parent=None):
         super().__init__(parent)
         self.setupUi(self)
         self.loop_step = loop_step
@@ -177,10 +183,11 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         # self.comboBox_readType.addItems(['read all', 'read selected'])
         # self.comboBox_readType.currentTextChanged.connect(self.read_type_changed)
         self.load_data()
-        labels = ['read', 'channel']
-        info_dict = {'channel': self.loop_step.channel_list}
-        self.read_table = Channels_Check_Table(self, labels, info_dict=info_dict,
-                                               title='Read-Channels')
+        labels = ["read", "channel"]
+        info_dict = {"channel": self.loop_step.channel_list}
+        self.read_table = Channels_Check_Table(
+            self, labels, info_dict=info_dict, title="Read-Channels"
+        )
         self.read_type_changed()
         self.layout().addWidget(self.read_table, 5, 0, 1, 3)
         # self.tableWidget_channels.setHorizontalHeaderLabels(['read',
@@ -216,7 +223,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
 
         """
         read_all = self.checkBox_read_all.isChecked()
-        if hasattr(self, 'read_table'):
+        if hasattr(self, "read_table"):
             self.read_table.setEnabled(not read_all)
         # if read_all:
         #     self.tableWidget_channels.setEnabled(False)
@@ -239,7 +246,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
 
     def update_step_config(self):
         """ """
-        self.loop_step.channel_list = self.read_table.get_info()['channel']
+        self.loop_step.channel_list = self.read_table.get_info()["channel"]
         self.loop_step.read_variables = self.checkBox_read_variables.isChecked()
         # self.lineEdit_search.clear()
         # self.build_channels_table()
@@ -256,7 +263,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         Parameters
         ----------
         pos :
-            
+
 
         Returns
         -------
@@ -266,7 +273,10 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         c = pos.column()
         if c == 0:
             name = self.tableWidget_channels.item(r, 1).text()
-            if self.tableWidget_channels.item(r, c).checkState() != Qt.CheckState.Unchecked:
+            if (
+                self.tableWidget_channels.item(r, c).checkState()
+                != Qt.CheckState.Unchecked
+            ):
                 self.loop_step.channel_list.append(name)
                 self.loop_step.channel_list = list(set(self.loop_step.channel_list))
             elif name in self.loop_step.channel_list:
@@ -277,20 +287,21 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         # if c == 2 and variables_handling.channels[name].output:
         #     self.loop_step.channel_dict[name]['use set'] = self.tableWidget_channels.item(r, c).checkState() > 0
 
-
     def build_channels_table(self):
         """This creates the table for all channels."""
         self.tableWidget_channels.clear()
         self.tableWidget_channels.setColumnCount(2)
         # self.tableWidget_channels.setRowCount(len(variables_handling.channels))
         self.tableWidget_channels.setRowCount(0)
-        self.tableWidget_channels.setHorizontalHeaderLabels(['read', 'channel name'])
+        self.tableWidget_channels.setHorizontalHeaderLabels(["read", "channel name"])
         searchtext = self.lineEdit_search.text()
         n = 0
-        for i, channel in enumerate(sorted(variables_handling.channels, key=lambda x: x.lower())):
+        for i, channel in enumerate(
+            sorted(variables_handling.channels, key=lambda x: x.lower())
+        ):
             if searchtext not in channel:
                 continue
-            self.tableWidget_channels.setRowCount(n+1)
+            self.tableWidget_channels.setRowCount(n + 1)
             item = QTableWidgetItem()
             item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
             if channel in self.loop_step.channel_list:
@@ -330,47 +341,50 @@ class Trigger_Channels_Step(Loop_Step):
         triggering.
     """
 
-    def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
+    def __init__(self, name="", parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
-        self.step_type = 'Trigger Channels'
+        self.step_type = "Trigger Channels"
         if step_info is None:
             step_info = {}
-        self.read_step = step_info['read_step'] if 'read_step' in step_info else ''
+        self.read_step = step_info["read_step"] if "read_step" in step_info else ""
 
     def get_protocol_string(self, n_tabs=1):
         """In the protocol, at first a list `channels` is defined,
         including all the channels, that are selected to be read. Then
         these channels are triggered with `helper_functions.trigger_multi`."""
-        tabs = '\t' * n_tabs
+        tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.read_step not in variables_handling.current_protocol.loop_step_dict:
-            raise Exception(f'Trying to trigger channels for read_channels "{self.read_step}" but it is not there.\n{self.full_name}')
+            raise Exception(
+                f'Trying to trigger channels for read_channels "{self.read_step}" but it is not there.\n{self.full_name}'
+            )
         read_step = variables_handling.current_protocol.loop_step_dict[self.read_step]
         protocol_string += read_step.get_channels_string(tabs)
         step_name = read_step.variable_name()
         protocol_string += f'{tabs}grp_{step_name} = bps._short_uid("trigger")\n'
-        protocol_string += f'{tabs}yield from helper_functions.trigger_multi(channels_{step_name}, grp_{step_name})\n'
+        protocol_string += f"{tabs}yield from helper_functions.trigger_multi(channels_{step_name}, grp_{step_name})\n"
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
         """The corresponding read step is displayed."""
         short_string = super().get_protocol_short_string(n_tabs)
         read_step = variables_handling.current_protocol.loop_step_dict[self.read_step]
-        short_string = f'{short_string[:-1]} - {read_step.channel_list}\n'
+        short_string = f"{short_string[:-1]} - {read_step.channel_list}\n"
         return short_string
 
 
 class Trigger_Channels_Config(Loop_Step_Config):
     """ """
-    def __init__(self, loop_step:Trigger_Channels_Step, parent=None):
+
+    def __init__(self, loop_step: Trigger_Channels_Step, parent=None):
         super().__init__(parent, loop_step)
-        label = QLabel('Corresponding Read-Step:')
+        label = QLabel("Corresponding Read-Step:")
         self.comboBox_read_step = QComboBox()
         self.layout().addWidget(label, 1, 0)
         self.layout().addWidget(self.comboBox_read_step, 1, 1, 1, 4)
         triggerable = []
         for name, step in variables_handling.current_protocol.loop_step_dict.items():
-            if step.step_type == 'Read Channels' and step.split_trigger:
+            if step.step_type == "Read Channels" and step.split_trigger:
                 triggerable.append(name)
         self.comboBox_read_step.addItems(triggerable)
 
