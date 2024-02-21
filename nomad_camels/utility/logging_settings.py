@@ -28,6 +28,11 @@ def update_log_settings():
     the logfile, the number of old logfiles, when one is full."""
     global my_handler
     logfile = os.path.join(load_save_functions.appdata_path, "nomad_camels.log")
+    if not os.path.isfile(logfile):
+        if not os.path.isdir(load_save_functions.appdata_path):
+            os.makedirs(load_save_functions.appdata_path)
+        with open(logfile, "w") as f:
+            pass
     app_log = logging.getLogger("root")
     if my_handler is None:
         my_handler = RotatingFileHandler(logfile, mode="a")
