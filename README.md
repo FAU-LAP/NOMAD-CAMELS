@@ -21,6 +21,7 @@ For more information and documentation visit [the documentation](https://fau-lap
 Features:
 - Now asking for the path, where to save measurement data when starting up CAMELS for the first time (or there is no preferences.json)
 - Added "Quit" button to file menu
+- changed the default configuration files path for linux and mac; now the user is asked at the first startup where to put configuration files and can set the path in the settings
 
 ## 1.0.0
 Features:

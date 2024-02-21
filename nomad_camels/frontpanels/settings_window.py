@@ -4,7 +4,7 @@ from PySide6.QtGui import QKeyEvent
 import qt_material
 
 from nomad_camels.gui.settings_window import Ui_settings_window
-from nomad_camels.utility.load_save_functions import standard_pref
+from nomad_camels.utility import load_save_functions
 from nomad_camels.utility.theme_changing import change_theme
 from nomad_camels.utility.logging_settings import log_levels
 
@@ -16,6 +16,10 @@ class Settings_Window(Ui_settings_window, QDialog):
         super().__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("Settings - NOMAD CAMELS")
+
+        self.pathButton_config_path.set_path(load_save_functions.appdata_path)
+        self.pathButton_config_path.select_directory = True
+
         themes = QStyleFactory.keys()
         themes.append("qt-material")
         self.comboBox_theme.addItems(themes)
@@ -40,6 +44,9 @@ class Settings_Window(Ui_settings_window, QDialog):
         self.comboBox_material_theme.currentTextChanged.connect(self.change_theme)
         self.checkBox_dark.clicked.connect(self.change_theme)
         self.change_theme()
+
+        standard_pref = load_save_functions.standard_pref
+
         if "autosave" in settings:
             self.checkBox_autosave.setChecked(settings["autosave"])
         else:
@@ -104,18 +111,6 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.checkBox_play_camel_on_error.setChecked(
                 standard_pref["play_camel_on_error"]
             )
-        if "driver_repository" in settings:
-            self.lineEdit_repo.setText(settings["driver_repository"])
-        else:
-            self.lineEdit_repo.setText(standard_pref["driver_repository"])
-        if "repo_directory" in settings:
-            self.lineEdit_directory.setText(settings["repo_directory"])
-        else:
-            self.lineEdit_directory.setText(standard_pref["repo_directory"])
-        if "repo_branch" in settings:
-            self.lineEdit_branch.setText(settings["repo_branch"])
-        else:
-            self.lineEdit_branch.setText(standard_pref["repo_branch"])
 
         for level in log_levels:
             self.comboBox_log_level.addItem(level)
@@ -218,6 +213,7 @@ class Settings_Window(Ui_settings_window, QDialog):
         -------
 
         """
+        load_save_functions.update_config_path(self.pathButton_config_path.get_path())
         if not self.checkBox_password.isChecked():
             self.password_hash = None
         if self.radioButton_plain_numbers.isChecked():
@@ -247,9 +243,6 @@ class Settings_Window(Ui_settings_window, QDialog):
             "meas_files_path": self.pathButton_meas_files.get_path(),
             "device_driver_path": self.pathButton_device_path.get_path(),
             "databroker_catalog_name": self.lineEdit_catalog_name.text(),
-            "driver_repository": self.lineEdit_repo.text(),
-            "repo_branch": self.lineEdit_branch.text(),
-            "repo_directory": self.lineEdit_directory.text(),
             "play_camel_on_error": self.checkBox_play_camel_on_error.isChecked(),
             "log_level": self.comboBox_log_level.currentText(),
             "logfile_size": self.spinBox_logfile_size.value(),

@@ -56,11 +56,40 @@ from nomad_camels.utility.device_handling import load_local_packages
 from nomad_camels.utility import variables_handling
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
-appdata_path = f'{getenv("LOCALAPPDATA")}/nomad_camels'
-if not isdir(appdata_path):
-    makedirs(appdata_path)
-preset_path = f"{appdata_path}/Presets/"
-backup_path = f"{preset_path}Backup/"
+
+os_name = platform.system()
+
+if os_name == "Windows":
+    # Use the APPDATA environment variable on Windows
+    data_path = os.path.join(getenv("USERPROFILE"), "Documents", "NOMAD_CAMELS_data")
+    appdata_path = os.path.join(getenv("LOCALAPPDATA"), "nomad_camels")
+elif os_name == "Linux":
+    # Use the XDG_DATA_HOME environment variable on Linux, defaulting to ~/.local/share
+    data_path = os.path.join(
+        getenv("XDG_DATA_HOME")
+        or os.path.join(os.path.expanduser("~"), ".local", "share"),
+        "nomad_camels_data",
+    )
+    appdata_path = os.path.join(
+        getenv("XDG_CONFIG_HOME") or os.path.join(os.path.expanduser("~"), ".config"),
+        "nomad_camels",
+    )
+elif os_name == "Darwin":
+    # Use ~/Library/Application Support on MacOS
+    data_path = os.path.join(
+        os.path.expanduser("~"), "Library", "Application Support", "nomad_camels_data"
+    )
+    appdata_path = os.path.join(
+        os.path.expanduser("~"), "Library", "Application Support", "nomad_camels"
+    )
+else:
+    # Default to the home directory
+    data_path = os.path.expanduser("~", "nomad_camels_data")
+    appdata_path = os.path.expanduser("~", ".nomad_camels")
+
+
+preset_path = os.path.join(appdata_path, "Presets")
+backup_path = os.path.join(preset_path, "Backup")
 save_string_list = [QComboBox, QLineEdit, QTreeView, QListView]
 save_dict_skip = [
     QWidget,
@@ -75,26 +104,6 @@ save_dict_skip = [
 ]
 
 # Get the current operating system
-os_name = platform.system()
-
-if os_name == "Windows":
-    # Use the APPDATA environment variable on Windows
-    data_path = os.path.join(
-        os.environ.get("USERPROFILE"), "Documents", "NOMAD_CAMELS_data"
-    )
-elif os_name == "Linux":
-    # Use the XDG_DATA_HOME environment variable on Linux, defaulting to ~/.local/share
-    data_path = os.environ.get("XDG_DATA_HOME") or os.path.join(
-        os.path.expanduser("~"), ".local", "share", "nomad_camels_data"
-    )
-elif os_name == "Darwin":
-    # Use ~/Library/Application Support on MacOS
-    data_path = os.path.join(
-        os.path.expanduser("~"), "Library", "Application Support", "nomad_camels_data"
-    )
-else:
-    # Default to the home directory
-    data_path = os.path.expanduser("~", "nomad_camels_data")
 
 
 standard_pref = {
@@ -132,6 +141,46 @@ standard_pref = {
 }
 
 
+def update_config_path(path):
+    global appdata_path, preset_path, backup_path
+    appdata_path = path
+    with open(
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "config_path"), "w"
+    ) as f:
+        f.write(appdata_path)
+    preset_path = os.path.join(appdata_path, "Presets")
+    backup_path = os.path.join(preset_path, "Backup")
+
+
+def check_config_path():
+    global appdata_path
+    config_path_file = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)), "config_path"
+    )
+    if os.path.isfile(config_path_file):
+        with open(config_path_file, "r") as f:
+            appdata_path = f.read().strip()
+    else:
+        from nomad_camels.ui_widgets.path_button_edit import Path_Button_Dialog
+
+        dialog = Path_Button_Dialog(
+            path=appdata_path,
+            default_dir=os.path.dirname(appdata_path),
+            select_directory=True,
+            title="Select path for configuration files",
+            text="Please select where NOMAD CAMELS should save its configuration files",
+        )
+        if dialog.exec():
+            appdata_path = dialog.path
+        else:
+            WarnPopup(
+                text="No path selected, a default path will be used.\nYou can change the path in the settings.",
+                title="No path selected",
+                info_icon=True,
+            )
+    update_config_path(appdata_path)
+
+
 def get_preset_list():
     """
     DEPRECATED
@@ -142,7 +191,7 @@ def get_preset_list():
     if isdir(preset_path):
         names = listdir(preset_path)
         if "Backup" not in names:
-            makedirs(preset_path + "Backup")
+            makedirs(os.path.join(preset_path, "Backup"))
         presets = []
         for name in names:
             if name.endswith(".preset"):
@@ -170,7 +219,9 @@ def autosave_preset(preset: str, preset_data, do_backup=True):
     preset_file = f"{preset}.preset"
     if not os.path.isdir(preset_path):
         makedirs(preset_path)
-    with open(f"{preset_path}{preset_file}", "w", encoding="utf-8") as json_file:
+    with open(
+        os.path.join(preset_path, preset_file), "w", encoding="utf-8"
+    ) as json_file:
         json.dump(preset_data, json_file, indent=2)
     if do_backup:
         make_backup(preset_file)
@@ -224,16 +275,18 @@ def make_backup(preset_file: str):
     preset_file : str
         The name of the preset file. The file needs to be in the `preset_path`.
     """
-    backup_save_path = f"{backup_path}{preset_file[:-7]}/"
+    backup_save_path = os.path.join(backup_path, preset_file[:-7])
     if not isdir(backup_save_path):
         makedirs(backup_save_path)
     now = datetime.now()
-    backup_name = f'{backup_save_path}{now.strftime("%Y-%m-%d_%H-%M-%S")}_{preset_file}'
-    copyfile(f"{preset_path}{preset_file}", backup_name)
+    backup_name = os.path.join(
+        backup_save_path, f'{now.strftime("%Y-%m-%d_%H-%M-%S")}_{preset_file}'
+    )
+    copyfile(os.path.join(preset_path, preset_file), backup_name)
 
     if not "backups" in variables_handling.preferences:
         return
-    backups = sorted(glob(f"{backup_save_path}*.preset"), key=os.path.getmtime)
+    backups = sorted(glob(f"{backup_save_path}/*.preset"), key=os.path.getmtime)
     if variables_handling.preferences["backups"] == "number":
         if "backup_number" in variables_handling.preferences:
             backup_number = variables_handling.preferences["backup_number"]
@@ -608,9 +661,9 @@ def get_most_recent_presets():
         if name.endswith(".preset"):
             presets.append(name)
     if presets:
-        preset = sorted(presets, key=lambda x: os.path.getmtime(f"{preset_path}{x}"))[
-            -1
-        ][:-7]
+        preset = sorted(
+            presets, key=lambda x: os.path.getmtime(os.path.join(preset_path, x))
+        )[-1][:-7]
     else:
         preset = None
     return preset
@@ -627,6 +680,7 @@ def get_preferences():
     prefs : dict
         the loaded preferences dictionary
     """
+    check_config_path()
     if "preferences.json" not in os.listdir(appdata_path):
         with open(f"{appdata_path}/preferences.json", "w", encoding="utf-8") as file:
             from nomad_camels.ui_widgets.path_button_edit import Path_Button_Dialog

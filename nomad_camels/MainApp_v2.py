@@ -933,7 +933,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         try:
             with open(
-                f"{load_save_functions.preset_path}{preset}.preset",
+                os.path.join(load_save_functions.preset_path, f'{preset}.preset'),
                 "r",
                 encoding="utf-8",
             ) as f:
