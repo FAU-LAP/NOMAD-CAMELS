@@ -153,6 +153,8 @@ def update_config_path(path):
     standard_pref["py_files_path"] = os.path.join(appdata_path, "python_files").replace(
         "\\", "/"
     )
+    if not os.path.isdir(appdata_path):
+        makedirs(appdata_path)
 
 
 def check_config_path():
