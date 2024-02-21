@@ -19,23 +19,28 @@ log_levels = {
     "Critical": logging.CRITICAL,
 }
 
-
-logfile = os.path.join(load_save_functions.appdata_path, "nomad_camels.log")
-my_handler = RotatingFileHandler(logfile, mode="a")
-log_formatter = logging.Formatter(
-    "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-my_handler.setFormatter(log_formatter)
-
-app_log = logging.getLogger("root")
-app_log.addHandler(my_handler)
+my_handler = None
 
 
 def update_log_settings():
     """Reads the logging settings from the current preferences and sets them for
     the logfile-handler. Including: the level of logging, the maximum size for
     the logfile, the number of old logfiles, when one is full."""
+    logfile = os.path.join(load_save_functions.appdata_path, "nomad_camels.log")
+    if my_handler is None:
+        my_handler = RotatingFileHandler(logfile, mode="a")
+
+        log_formatter = logging.Formatter(
+            "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+        my_handler.setFormatter(log_formatter)
+
+        app_log = logging.getLogger("root")
+        app_log.addHandler(my_handler)
+
+    my_handler.rotation_filename = logfile
+    
     prefs = variables_handling.preferences
     if "log_level" in prefs and prefs["log_level"]:
         log_level = prefs["log_level"]
