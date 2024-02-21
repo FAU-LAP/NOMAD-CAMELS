@@ -35,9 +35,9 @@ Contact
 =======
 If you have any questions or feedback you can reach the development team of CAMELS via:
 
-E-mail [nomad-camels@fau.de](mailto:nomad-camels@fau.de)
+E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
-Join the discussion on [GitHub](https://github.com/FAU-LAP/NOMAD-CAMELS/discussions)
+Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussions>`_
 
 .. toctree::
    :maxdepth: 2
