@@ -141,6 +141,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionDocumentation.triggered.connect(lambda x: os.startfile(camels_github_pages))
         self.actionUpdate_CAMELS.triggered.connect(lambda x: update_camels.question_message_box(self))
         self.actionExport_CAMELS_hdf5_to_csv_json.triggered.connect(self.launch_hdf5_exporter)
+        self.actionQuit.triggered.connect(self.close)
 
         # buttons
         self.pushButton_add_manual.clicked.connect(self.add_manual_control)

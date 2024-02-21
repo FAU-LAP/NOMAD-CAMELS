@@ -20,6 +20,7 @@ For more information and documentation visit [the documentation](https://fau-lap
 ## 1.0.1 (in progress)
 Features:
 - Now asking for the path, where to save measurement data when starting up CAMELS for the first time (or there is no preferences.json)
+- Added "Quit" button to file menu
 
 ## 1.0.0
 Features:
