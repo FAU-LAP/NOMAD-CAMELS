@@ -5,6 +5,9 @@ import numpy as np
 import lmfit
 from collections import deque
 
+import matplotlib
+
+matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 from bluesky.callbacks.mpl_plotting import LivePlot, LiveFitPlot
 from bluesky.callbacks import LiveFit
