@@ -39,7 +39,7 @@ class Error_Writer(io.StringIO):
 class Text_Writer(io.StringIO):
     """ """
 
-    def __init__(self, textEdit, text_signal_handler, use_old_stdout=False):
+    def __init__(self, text_signal_handler, use_old_stdout=False):
         super().__init__()
         self.text_signal_handler = text_signal_handler
         self.old_stdout = sys.stdout
