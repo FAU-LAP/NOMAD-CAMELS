@@ -34,13 +34,30 @@ pip install nomad-camels
 
 ## 4. Run CAMELS
 
-CAMELS is a python package that is saved under the python environment created above. Python packages are typically saved under the path:
+You can then run
+
+```bash
+nomad-camels
 ```
+
+ or  
+
+```bash
+python -m nomad_camels
+```
+
+to start CAMELS.
+
+If this does not work for you you can try this.
+CAMELS is a python package that is saved under the python environment created above. Python packages are typically saved under the path:
+
+```bash
 /<python_env>/Lib/site-packages/<package_name>
 ``` 
+
 so in our case when using Anaconda on Windows it will be something like
 
-```
+```bash
 C:\Users\<User_Name>\AppData\Local\conda\conda\envs\desertenv\Lib\site-packages
 ```
 
@@ -52,13 +69,17 @@ pip list -v
 which lists all the paths to your packages.
 
 Now go to the `nomad-camels` package 
-```
+
+```bash
 cd C:\Users\<User_Name>\AppData\Local\conda\conda\envs\desertenv\Lib\site-packages\nomad-camels\
 ```
-and run 
+
+and run
+
 ```bash
 python CAMELS_start.py
 ```
+
 this starts CAMELS.
 
 ```{note}

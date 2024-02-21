@@ -37,7 +37,30 @@ This uses `homebrew` to install pyenv ([see here](https://brew.sh/) for more inf
   ```
   to install CAMELS.
 ## 4. Run CAMELS
-Go to `/.desertenv/Lib/site-packages/nomad_camels/` and run CAMELS using
+
+You can then run
+
 ```bash
-python CAMELS_start.py
+nomad-camels
 ```
+
+ or  
+
+```bash
+python -m nomad_camels
+```
+
+to start CAMELS.
+
+If this does not work for you you can go to `/.desertenv/Lib/site-packages/nomad_camels/` and run CAMELS using
+
+```bash
+python .\CAMELS_start.py
+```
+
+or run:
+
+```bash
+python ./desertenv/lib/python<version>/site-packages/nomad_camels/CAMELS_start.py
+```
+

@@ -7,3 +7,4 @@ __pycache__/
 .python-version
 **/html_out/
 docs/source/doc/programmers_guide/drivers/backup.md
+CAMELS_Docu.code-workspace

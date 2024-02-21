@@ -8,6 +8,26 @@ In the most basics cases a simple installation using _pip_ is sufficient. To ins
 pip install nomad-camels
 ```
 
+You can then run 
+
+```bash
+nomad-camels
+```
+
+ or  
+
+```bash
+python -m nomad_camels
+```
+
+to start CAMELS.
+
+If this does not work you can go to `/.desertenv/Lib/site-packages/nomad_camels/` and run
+
+```bash
+python .\CAMELS_start.py
+```
+
 ## Setup Correct Python Environment
 
 There are several ways to set up the correct Python environment and install CAMELS depending on your operating system:

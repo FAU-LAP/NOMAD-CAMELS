@@ -40,7 +40,23 @@ pyenv install 3.11.3
   ```
    to install CAMELS.
 ## 4. Run CAMELS
-Go to `/.desertenv/Lib/site-packages/nomad_camels/` and run CAMELS using
+
+You can then run 
+
+```bash
+nomad-camels
+```
+
+ or  
+
+```bash
+python -m nomad_camels
+```
+
+to start CAMELS.
+
+If this does not work for you you can go to `/.desertenv/Lib/site-packages/nomad_camels/` and run CAMELS using
+
 ```bash
 python .\CAMELS_start.py
 ```
