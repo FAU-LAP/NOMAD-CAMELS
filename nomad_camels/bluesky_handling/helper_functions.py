@@ -318,7 +318,7 @@ def get_range(
     evaluator,
     start,
     stop,
-    points,
+    points: int,
     min_val=np.nan,
     max_val=np.nan,
     loop_type="start - stop",
@@ -339,7 +339,7 @@ def get_range(
         The starting position for the sweep / loop.
     stop : float, str
         The end position for the sweep / loop.
-    points : float, str
+    points : int, str
         The number of points in the range. If using `min_val` / `max_val`,
         `points` is the distance between those two.
     min_val : float, str
@@ -369,7 +369,7 @@ def get_range(
     """
     start = evaluator.eval(start)
     stop = evaluator.eval(stop)
-    points = evaluator.eval(points)
+    points = int(evaluator.eval(points))
     min_val = evaluator.eval(min_val)
     max_val = evaluator.eval(max_val)
     if loop_type == "start - stop":
