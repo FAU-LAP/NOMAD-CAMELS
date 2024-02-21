@@ -1,3 +1,6 @@
+from unittest.mock import patch
+import tempfile
+
 def test_startup(qtbot, capfd):
     """Simply try to start and run CAMELS.
     By default, the autosave is enabled, so if it works correctly and closes,
@@ -5,8 +8,16 @@ def test_startup(qtbot, capfd):
     # import sys
     import nomad_camels.MainApp_v2
     from nomad_camels.utility import exception_hook
-    # sys.excepthook = exception_hook.exception_hook
-    main_window = nomad_camels.MainApp_v2.MainWindow()
+    
+    class MockDialog:
+        def __init__(self, *args, **kwargs):
+            # Create a temporary directory for the test
+            with tempfile.TemporaryDirectory() as temp_dir:
+                self.path = temp_dir
+
+        def exec(self):
+            return True
+        
 
     def close_save_message():
         """ """
@@ -16,6 +27,8 @@ def test_startup(qtbot, capfd):
         print(out)
         assert 'current state saved!' in out
 
-    qtbot.waitUntil(close_save_message)
+    with patch('nomad_camels.ui_widgets.path_button_edit.Path_Button_Dialog', new=MockDialog):
+        main_window = nomad_camels.MainApp_v2.MainWindow()
+        qtbot.waitUntil(close_save_message)
 
 

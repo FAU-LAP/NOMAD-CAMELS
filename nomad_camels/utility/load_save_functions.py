@@ -62,13 +62,13 @@ if os_name == 'Windows':
     data_path = os.path.join(os.environ.get('USERPROFILE'), 'Documents', 'NOMAD_CAMELS_data')
 elif os_name == 'Linux':
     # Use the XDG_DATA_HOME environment variable on Linux, defaulting to ~/.local/share
-    data_path = os.environ.get('XDG_DATA_HOME') or os.path.join(os.path.expanduser('~'), '.local', 'share')
+    data_path = os.environ.get('XDG_DATA_HOME') or os.path.join(os.path.expanduser('~'), '.local', 'share', 'nomad_camels_data')
 elif os_name == 'Darwin':
     # Use ~/Library/Application Support on MacOS
-    data_path = os.path.join(os.path.expanduser('~'), 'Library', 'Application Support')
+    data_path = os.path.join(os.path.expanduser('~'), 'Library', 'Application Support', 'nomad_camels_data')
 else:
     # Default to the home directory
-    data_path = os.path.expanduser('~')
+    data_path = os.path.expanduser('~', 'nomad_camels_data')
 
 
 standard_pref = {'autosave': True,
