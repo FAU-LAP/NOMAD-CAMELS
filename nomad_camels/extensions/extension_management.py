@@ -56,7 +56,8 @@ def get_local_extensions():
     if 'extension_path' in variables_handling.preferences:
         local_extension_path = variables_handling.preferences['extension_path']
     else:
-        local_extension_path = r'C:\Users\od93yces\FAIRmat\CAMELS_extensions'
+        from nomad_camels.utility.load_save_functions import standard_pref
+        local_extension_path = standard_pref['extension_path']
     if not os.path.isdir(local_extension_path):
         return local_extensions
     sys.path.append(local_extension_path)

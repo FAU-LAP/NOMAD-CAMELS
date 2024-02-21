@@ -12,8 +12,6 @@ import xarray
 
 from PySide6.QtWidgets import QDialog, QComboBox, QPushButton, QGridLayout, QLabel, QCheckBox
 
-sys.path.append(r'C:\Users\od93yces\FAIRmat\CAMELS')
-from nomad_camels.utility.fit_variable_renaming import replace_name
 
 
 def recourse_entry_dict(entry, metadata):
@@ -626,6 +624,3 @@ def clean_filename(filename):
     filename = filename.replace('"', '_quote_')
     return filename
 
-if __name__ == '__main__':
-    f = r"C:\Users\od93yces\NOMAD_CAMELS_data\Johannes Lehmeyer\default_sample\data.h5"
-    export_h5_to_csv_json(f)

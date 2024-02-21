@@ -230,19 +230,3 @@ def get_entries(parent=None, owner='user'):
     return response.json()
 
 
-
-
-
-if __name__ == '__main__':
-    import sys
-    from PySide6.QtWidgets import QApplication
-    app = QApplication(sys.argv)
-    # f = r"C:\Users\od93yces\Downloads\sic_TS.blend"
-    # up = get_user_upload_names()[0]
-    # dat = get_user_information()
-    # print(dat)
-    # print(get_user_upload_names())
-    # fi = r"C:\Users\od93yces\Downloads\Estuary-PRINT-AT-HOME-pattern-pieces.pdf"
-    # upload_file(fi, 'testload')
-    dat = get_entries()
-    print(dat)
