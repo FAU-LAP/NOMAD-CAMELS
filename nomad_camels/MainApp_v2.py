@@ -524,7 +524,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         userdic = {"active_user": self.active_user}
         userdic.update(self.userdata)
         load_save_functions.save_dictionary(
-            f"{load_save_functions.appdata_path}/userdata.json", userdic
+            os.path.join(load_save_functions.appdata_path, "userdata.json"), userdic
         )
 
     def load_user_data(self):
@@ -539,12 +539,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         """
         userdat = {}
-        if os.path.isfile(f"{load_save_functions.appdata_path}/userdata.json"):
-            with open(
-                f"{load_save_functions.appdata_path}/userdata.json",
-                "r",
-                encoding="utf-8",
-            ) as f:
+        userfile = os.path.join(load_save_functions.appdata_path, "userdata.json")
+        if os.path.isfile(userfile):
+            with open(userfile, "r", encoding="utf-8") as f:
                 string_dict = json.load(f)
             load_save_functions.load_save_dict(
                 string_dict, userdat, update_missing_key=True
@@ -615,7 +612,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         sampledic = {"active_sample": self.active_sample}
         sampledic.update(self.sampledata)
         load_save_functions.save_dictionary(
-            f"{load_save_functions.appdata_path}/sampledata.json", sampledic
+            os.path.join(load_save_functions.appdata_path, "sampledata.json"), sampledic
         )
 
     def load_sample_data(self):
@@ -630,12 +627,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         """
         sampledat = {}
-        if os.path.isfile(f"{load_save_functions.appdata_path}/sampledata.json"):
-            with open(
-                f"{load_save_functions.appdata_path}/sampledata.json",
-                "r",
-                encoding="utf-8",
-            ) as f:
+        samplefile = os.path.join(load_save_functions.appdata_path, "sampledata.json")
+        if os.path.isfile(samplefile):
+            with open(samplefile, "r", encoding="utf-8") as f:
                 string_dict = json.load(f)
             load_save_functions.load_save_dict(
                 string_dict, sampledat, update_missing_key=True
@@ -883,7 +877,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         """
         file = QFileDialog.getOpenFileName(
-            self, "Open Preset", f"{load_save_functions.preset_path}", "*.preset"
+            self, "Open Preset", load_save_functions.preset_path, "*.preset"
         )[0]
         if not file:
             return
@@ -933,7 +927,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         try:
             with open(
-                os.path.join(load_save_functions.preset_path, f'{preset}.preset'),
+                os.path.join(load_save_functions.preset_path, f"{preset}.preset"),
                 "r",
                 encoding="utf-8",
             ) as f:
@@ -1726,21 +1720,3 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         exporter = databroker_export.ExportH5_dialog(self)
         exporter.exec()
-
-
-if __name__ == "__main__":
-    sys.excepthook = exception_hook.exception_hook
-    app = QCoreApplication.instance()
-    if app is None:
-        app = QApplication(sys.argv)
-    file_dir = os.path.dirname(__file__)
-    appdata_path = f'{os.getenv("LOCALAPPDATA")}/nomad_camels'
-    package_file = f"{appdata_path}/startup_packages.txt"
-    with open(package_file, "w", encoding="utf-8") as f:
-        for i, (mod_name, mod) in enumerate(sys.modules.items()):
-            if mod_name.startswith("_") or mod is None:
-                continue
-            f.write(f"{mod_name}\n")
-    main_window = MainWindow()
-    main_window.show()
-    app.exec()

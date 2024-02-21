@@ -77,7 +77,6 @@ class LoadingScreen(QDialog):
 def start_camels():
     import os
 
-    appdata_path = f'{os.getenv("LOCALAPPDATA")}/nomad_camels'
     app = QCoreApplication.instance()
     if app is None:
         # sys.argv += ['-platform', 'windows:darkmode=1']
@@ -89,8 +88,7 @@ def start_camels():
     import os.path
 
     file_dir = os.path.dirname(__file__)
-    package_file = f"{appdata_path}/startup_packages.txt"
-    # package_file = f'{file_dir}/packages.txt'
+    package_file = os.path.join(file_dir, "startup_packages.txt")
     if os.path.isfile(package_file):
         with open(package_file, "r", encoding="utf-8") as f:
             package_list = [x.rstrip() for x in f.readlines()]

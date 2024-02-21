@@ -51,7 +51,7 @@ def update_camels():
         for a in sys.argv:
             s += f"{a} "
         s += "\nexit"
-        f_path = Path(f"{appdata_path}/camels_update.bat")
+        f_path = Path(os.path.join(appdata_path, "camels_update.bat"))
         with open(f_path, "w+") as f:
             f.write(s)
         subprocess.Popen(["start", "cmd", "/k", f_path], shell=True)
@@ -62,7 +62,7 @@ def update_camels():
         s += f"{exe} "
         for a in sys.argv:
             s += f"'{a}' "
-        f_path = Path(f"{appdata_path}/camels_update.sh")
+        f_path = Path(os.path.join(appdata_path, "camels_update.sh"))
         with open(f_path, "w+") as f:
             f.write("#!/bin/bash\n")
             f.write(s)

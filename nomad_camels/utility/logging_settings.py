@@ -3,9 +3,10 @@ The logfile is put into the `appdata_path`, a filehandler with specific
 formatting is added to logging's app_log"""
 
 import logging
+import os
 from logging.handlers import RotatingFileHandler
 
-from nomad_camels.utility.load_save_functions import appdata_path
+from nomad_camels.utility import load_save_functions
 from nomad_camels.utility import variables_handling
 from nomad_camels.utility.load_save_functions import standard_pref
 
@@ -19,7 +20,7 @@ log_levels = {
 }
 
 
-logfile = f"{appdata_path}/logging.log"
+logfile = os.path.join(load_save_functions.appdata_path, "nomad_camels.log")
 my_handler = RotatingFileHandler(logfile, mode="a")
 log_formatter = logging.Formatter(
     "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s",

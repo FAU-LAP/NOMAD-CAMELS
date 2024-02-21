@@ -115,7 +115,7 @@ standard_pref = {
     "n_decimals": 3,
     "number_format": "mixed",
     "mixed_from": 3,
-    "py_files_path": f"{appdata_path}/python_files".replace("\\", "/"),
+    "py_files_path": os.path.join(appdata_path, "python_files").replace("\\", "/"),
     "meas_files_path": data_path,
     "device_driver_path": os.path.join(
         os.getcwd(), "devices", "devices_drivers"
@@ -150,6 +150,9 @@ def update_config_path(path):
         f.write(appdata_path)
     preset_path = os.path.join(appdata_path, "Presets")
     backup_path = os.path.join(preset_path, "Backup")
+    standard_pref["py_files_path"] = os.path.join(appdata_path, "python_files").replace(
+        "\\", "/"
+    )
 
 
 def check_config_path():
@@ -681,8 +684,9 @@ def get_preferences():
         the loaded preferences dictionary
     """
     check_config_path()
+    pref_file = os.path.join(appdata_path, "preferences.json")
     if "preferences.json" not in os.listdir(appdata_path):
-        with open(f"{appdata_path}/preferences.json", "w", encoding="utf-8") as file:
+        with open(pref_file, "w", encoding="utf-8") as file:
             from nomad_camels.ui_widgets.path_button_edit import Path_Button_Dialog
 
             dialog = Path_Button_Dialog(
@@ -702,7 +706,7 @@ def get_preferences():
                     info_icon=True,
                 )
             json.dump(standard_pref, file, indent=2)
-    with open(f"{appdata_path}/preferences.json", "r", encoding="utf-8") as file:
+    with open(pref_file, "r", encoding="utf-8") as file:
         prefs = json.load(file)
     for key, value in standard_pref.items():
         if key not in prefs:
@@ -718,5 +722,7 @@ def save_preferences(prefs: dict):
     prefs : dict
         the preferences dictionary to be saved as json
     """
-    with open(f"{appdata_path}/preferences.json", "w", encoding="utf-8") as file:
+    with open(
+        os.path.join(appdata_path, "preferences.json"), "w", encoding="utf-8"
+    ) as file:
         json.dump(prefs, file, indent=2)
