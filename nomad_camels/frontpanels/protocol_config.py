@@ -153,7 +153,10 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.protocol.update_variables()
         self.configuration_main_widget.setHidden(False)
         config = None
-        index = self.treeView_protocol_sequence.selectedIndexes()[0]
+        index = self.treeView_protocol_sequence.selectedIndexes()
+        if not index:
+            return
+        index = index[0]
         dat = self.item_model_sequence.itemFromIndex(index).data()
         if dat is not None:
             step = self.protocol.loop_step_dict[dat]
@@ -516,14 +519,17 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         parent = item.parent()
         if ind.row() > 0:
             self.pushButton_move_step_up.setEnabled(True)
-            above = self.item_model_sequence.item(ind.row() - 1, 0)
-            step = self.protocol.loop_step_dict[above.data()]
-            if step.step_type == "If":
-                above = above.child(above.rowCount() - 1, 0)
-            if self.protocol.loop_step_dict[above.data()].has_children:
-                self.pushButton_move_step_in.setEnabled(True)
+            if parent is not None:
+                above = parent.child(ind.row() - 1, 0)
             else:
-                self.pushButton_move_step_in.setEnabled(False)
+                above = self.item_model_sequence.item(ind.row() - 1, 0)
+            self.pushButton_move_step_in.setEnabled(True)
+            if above is not None:
+                step = self.protocol.loop_step_dict[above.data()]
+                if step.step_type == "If":
+                    above = above.child(above.rowCount() - 1, 0)
+                if not self.protocol.loop_step_dict[above.data()].has_children:
+                    self.pushButton_move_step_in.setEnabled(False)
         else:
             self.pushButton_move_step_up.setEnabled(False)
             self.pushButton_move_step_in.setEnabled(False)
