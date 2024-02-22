@@ -12,7 +12,8 @@ from PySide6.QtCore import Signal, Qt
 
 from nomad_camels.utility import device_handling, variables_handling
 
-from pkg_resources import resource_filename
+from importlib import resources
+from nomad_camels import graphics
 
 
 class Manual_Control(QWidget):
@@ -45,9 +46,7 @@ class Manual_Control(QWidget):
         self.control_data = control_data or {}
 
         self.setWindowTitle(f"{title} - NOMAD CAMELS")
-        self.setWindowIcon(
-            QIcon(resource_filename("nomad_camels", "graphics/camels_icon.png"))
-        )
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
         self.name = title
         self.device = None
         self.ophyd_device = None

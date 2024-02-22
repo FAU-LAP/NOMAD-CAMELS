@@ -22,7 +22,8 @@ from nomad_camels.utility import variables_handling, treeView_functions
 from nomad_camels.ui_widgets import drag_drop_tree_view
 from nomad_camels.commands import change_sequence
 
-from pkg_resources import resource_filename
+from importlib import resources
+from nomad_camels import graphics
 
 
 class Protocol_Config(Ui_Protocol_View, QWidget):
@@ -41,9 +42,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             self.old_name = protocol.name
         self.setupUi(self)
         self.setWindowTitle(f"{protocol.name} - Measurement Protocol - NOMAD CAMELS")
-        self.setWindowIcon(
-            QIcon(resource_filename("nomad_camels", "graphics/camels_icon.png"))
-        )
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
         self.configuration_main_widget.setHidden(True)
         self.general_settings = General_Protocol_Settings(protocol=protocol)
         self.meas_splitter.insertWidget(0, self.general_settings)

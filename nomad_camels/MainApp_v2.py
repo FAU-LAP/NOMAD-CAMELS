@@ -6,13 +6,13 @@ sys.path.append(os.path.dirname(__file__))
 import json
 import pathlib
 
-from PySide6.QtWidgets import QMainWindow, QApplication, QStyle, QFileDialog
-from PySide6.QtCore import QCoreApplication, Qt, Signal, QThread
+from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog
+from PySide6.QtCore import Qt, Signal, QThread
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
-from nomad_camels.utility import exception_hook
 from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
-from pkg_resources import resource_filename
+from importlib import resources
+from nomad_camels import graphics
 
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import (
     Drop_Scroll_Area,
@@ -61,12 +61,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.setWindowTitle(
             "NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems"
         )
-        self.setWindowIcon(
-            QIcon(resource_filename("nomad_camels", "graphics/camels_icon.png"))
-        )
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
 
         image = QPixmap()
-        image.load(resource_filename("nomad_camels", "graphics/CAMELS_horizontal.png"))
+        image.load(str(resources.files(graphics) / "CAMELS_horizontal.png"))
         self.label_logo.setPixmap(image)
 
         arrow = self.style().standardIcon(QStyle.SP_ArrowUp)

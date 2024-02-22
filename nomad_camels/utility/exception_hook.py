@@ -9,7 +9,8 @@ import logging
 from bluesky.utils import RunEngineInterrupted
 
 from nomad_camels.utility import variables_handling
-from pkg_resources import resource_filename
+from importlib import resources
+from nomad_camels import graphics
 
 # imported, so that it is run once, before the logging in
 # `exception_hook` is connected
@@ -61,9 +62,7 @@ def exception_hook(*exc_info):
         effect = QSoundEffect()
         effect.setSource(
             QUrl.fromLocalFile(
-                resource_filename(
-                    "nomad_camels", "graphics/Camel-Groan-2-QuickSounds.com.wav"
-                )
+                str(resources.files(graphics) / "Camel-Groan-2-QuickSounds.com.wav")
             )
         )
         effect.play()
