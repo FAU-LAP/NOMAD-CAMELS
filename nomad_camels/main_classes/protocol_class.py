@@ -514,6 +514,10 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
         self.checkBox_NeXus.setHidden(True)
         self.enable_nexus()
+        self.update_variable_select()
+        self.tableView_variables.selectionModel().selectionChanged.connect(
+            self.update_variable_select
+        )
 
     def enable_disable_config(self):
         disabling = self.checkBox_no_config.isChecked()
@@ -678,6 +682,13 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             value = variables_handling.get_data(self.variable_model.item(i, 1).text())
             self.protocol.variables.update({name: value})
         variables_handling.protocol_variables = self.protocol.variables
+        self.update_variable_select()
+
+    def update_variable_select(self):
+        if self.tableView_variables.selectedIndexes():
+            self.pushButton_remove_variable.setEnabled(True)
+        else:
+            self.pushButton_remove_variable.setEnabled(False)
 
     def name_change(self):
         """ """
