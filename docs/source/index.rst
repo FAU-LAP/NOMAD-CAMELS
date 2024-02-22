@@ -75,6 +75,7 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    :maxdepth: 1
    :caption: Contribute to CAMELS
 
+   Running Tests <doc/contribute/running_tests.md>
    General Process <doc/contribute/general_process.md>
    Code of Conduct <doc/contribute/code_of_conduct.md>
 
