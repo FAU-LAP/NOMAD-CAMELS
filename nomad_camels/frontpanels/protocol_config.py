@@ -117,6 +117,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         ).activated.connect(self.comment_shortcut)
 
         self.build_protocol_sequence()
+        self.check_movability()
 
     def update_add_step_actions(self):
         """Called when the devices change, updating the possible
@@ -176,6 +177,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             self.loop_step_configuration_widget.active_changed.connect(
                 self.change_step_name
             )
+        self.check_movability()
 
     def build_protocol_sequence(self):
         """Shows / builds the protocol sequence in the treeView
@@ -501,6 +503,39 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             self.protocol.loop_step_dict[step_name]
         )
 
+    def check_movability(self):
+        """ """
+        ind = self.treeView_protocol_sequence.selectedIndexes()
+        if not ind:
+            self.enable_step_move(False)
+            self.pushButton_remove_step.setEnabled(False)
+            return
+        ind = ind[0]
+        item = self.item_model_sequence.itemFromIndex(ind)
+        self.pushButton_remove_step.setEnabled(True)
+        parent = item.parent()
+        if ind.row() > 0:
+            self.pushButton_move_step_up.setEnabled(True)
+            above = self.item_model_sequence.item(ind.row() - 1, 0)
+            step = self.protocol.loop_step_dict[above.data()]
+            if step.step_type == "If":
+                above = above.child(above.rowCount() - 1, 0)
+            if self.protocol.loop_step_dict[above.data()].has_children:
+                self.pushButton_move_step_in.setEnabled(True)
+            else:
+                self.pushButton_move_step_in.setEnabled(False)
+        else:
+            self.pushButton_move_step_up.setEnabled(False)
+            self.pushButton_move_step_in.setEnabled(False)
+        if ind.row() < self.item_model_sequence.rowCount() - 1:
+            self.pushButton_move_step_down.setEnabled(True)
+        else:
+            self.pushButton_move_step_down.setEnabled(False)
+        if parent is None:
+            self.pushButton_move_step_out.setEnabled(False)
+        else:
+            self.pushButton_move_step_out.setEnabled(True)
+
     def move_loop_step(self, up_down=0, in_out=0):
         """Moves a loop_step up or down in the sequence. It can also be
         moved in or out (into the loop_step above, it if accepts children).
@@ -526,6 +561,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             self.update_loop_step_order,
         )
         self.undo_stack.push(move_command)
+        self.tree_click_sequence()
 
     def comment_loop_step(self, step_name):
         step = self.protocol.loop_step_dict[step_name]
@@ -608,6 +644,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             if not ask or remove_dialog == QMessageBox.Yes:
                 self.protocol.remove_loop_step(name)
                 self.build_protocol_sequence()
+                self.check_movability()
 
     def update_loop_step_order(self):
         """Goes through all the loop_steps in the sequence, then

@@ -67,7 +67,10 @@
 
             QPushButton:hover {
                 background-color: #B22222;
-            }</string>
+            }
+QPushButton:disabled {
+        background-color: #808080;
+    }</string>
          </property>
          <property name="text">
           <string>-</string>
@@ -129,6 +132,7 @@
          <property name="font">
           <font>
            <pointsize>12</pointsize>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -155,7 +159,10 @@
 
 QPushButton:hover {
     background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */
-}</string>
+}
+QPushButton:disabled {
+        background-color: #808080;
+    }</string>
          </property>
          <property name="text">
           <string>move up ↑</string>
@@ -183,7 +190,10 @@ QPushButton:hover {
 
 QPushButton:hover {
     background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */
-}</string>
+}
+QPushButton:disabled {
+        background-color: #808080;
+    }</string>
          </property>
          <property name="text">
           <string>move down ↓</string>
@@ -208,7 +218,10 @@ QPushButton:hover {
 
 QPushButton:hover {
     background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */
-}</string>
+}
+QPushButton:disabled {
+        background-color: #808080;
+    }</string>
          </property>
          <property name="text">
           <string>move out ←</string>
@@ -233,7 +246,10 @@ QPushButton:hover {
 
 QPushButton:hover {
     background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */
-}</string>
+}
+QPushButton:disabled {
+        background-color: #808080;
+    }</string>
          </property>
          <property name="text">
           <string>move in →</string>
@@ -264,6 +280,7 @@ QPushButton:hover {
          <property name="font">
           <font>
            <pointsize>12</pointsize>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
