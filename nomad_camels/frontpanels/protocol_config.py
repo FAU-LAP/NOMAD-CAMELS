@@ -80,7 +80,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             lambda state: self.move_loop_step(0, -1)
         )
         self.treeView_protocol_sequence.clicked.connect(
-            lambda x: self.tree_click_sequence(False)
+            lambda x: self.tree_click_sequence()
         )
         self.pushButton_remove_step.clicked.connect(
             lambda x: self.remove_loop_step(True)
@@ -145,36 +145,21 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         if self.device_actions:
             self.toolButton_add_step.addActions(self.device_actions)
 
-    def tree_click_sequence(self, general=False):
-        """Called when clicking the treeView_protocol_sequence.
-
-        Parameters
-        ----------
-        general :
-             (Default value = False)
-
-        Returns
-        -------
-
-        """
+    def tree_click_sequence(self):
+        """Called when clicking the treeView_protocol_sequence."""
         self.update_loop_step_order()
         self.get_step_config()
         self.protocol.update_variables()
         self.configuration_main_widget.setHidden(False)
         config = None
-        if general:
-            config = General_Protocol_Settings(self, self.protocol)
-            self.enable_step_move(False)
-            self.label_configuration.setText("Configuration: General Protocol Settings")
-        else:
-            index = self.treeView_protocol_sequence.selectedIndexes()[0]
-            dat = self.item_model_sequence.itemFromIndex(index).data()
-            if dat is not None:
-                step = self.protocol.loop_step_dict[dat]
-                config = make_step_of_type.get_config(step)
-                enable = step.step_type not in make_step_of_type.non_addables
-                self.enable_step_move(enable)
-                self.label_configuration.setText(f"Configuration: {step.full_name}")
+        index = self.treeView_protocol_sequence.selectedIndexes()[0]
+        dat = self.item_model_sequence.itemFromIndex(index).data()
+        if dat is not None:
+            step = self.protocol.loop_step_dict[dat]
+            config = make_step_of_type.get_config(step)
+            enable = step.step_type not in make_step_of_type.non_addables
+            self.enable_step_move(enable)
+            self.label_configuration.setText(f"Configuration: {step.full_name}")
         if config is not None:
             if self.loop_step_configuration_widget is not None:
                 self.configuration_main_widget.layout().removeWidget(
@@ -185,13 +170,12 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             self.configuration_main_widget.layout().addWidget(
                 self.loop_step_configuration_widget, 1, 0
             )
-            if not general:
-                self.loop_step_configuration_widget.name_changed.connect(
-                    self.change_step_name
-                )
-                self.loop_step_configuration_widget.active_changed.connect(
-                    self.change_step_name
-                )
+            self.loop_step_configuration_widget.name_changed.connect(
+                self.change_step_name
+            )
+            self.loop_step_configuration_widget.active_changed.connect(
+                self.change_step_name
+            )
 
     def build_protocol_sequence(self):
         """Shows / builds the protocol sequence in the treeView
