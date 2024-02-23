@@ -35,7 +35,7 @@ There are several ways to set up the correct Python environment and install CAME
 
 Windows Installer <installation_installer.md>
 pyenv on Windows <installation_custom_windows.md>
-pyenv on Linux <installation_custom_linux.md>
+pyenv on Linux <installation_custom_unix.md>
 pyenv on macOS <installation_custom_macos.md>
 Anaconda <installation_custom_anaconda/installation_custom_anaconda.md>
 ```
