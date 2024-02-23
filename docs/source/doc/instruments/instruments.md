@@ -28,3 +28,14 @@
 - Trinamic TMCM 1110
 - [Voltcraft PPS](voltcraft_pps/voltcraft_pps.md)
 
+```{toctree}
+:maxdepth: 2
+:hidden:
+Agilent 34401A  <agilent_34401a/agilent_34401a.md>
+Cam-Control by PyLabLib <cam_control_pylablib/cam_control_pylablib.md>
+Keithley 237 <keithley_237/keithley_237.md>
+Keithley 2000 <keithley_2000/keithley_2000.md>
+Keysight B2912A <keysight_b2912a/keysight_b2912a.md>
+Keysight E5270B <keysight_e5270b/keysight_e5270b.md>
+Voltcraft PPS <voltcraft_pps/voltcraft_pps.md>
+```
