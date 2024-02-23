@@ -3,7 +3,6 @@ from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QDropEvent, QKeyEvent
 
 
-
 class Drag_Drop_TreeView(QTreeView):
     """This Class is used for the protocol sequence. Most importantly it
     emits the dragdrop signal when something is dragged / dropped.
@@ -15,6 +14,7 @@ class Drag_Drop_TreeView(QTreeView):
     -------
 
     """
+
     dragdrop = Signal()
     del_clicked = Signal()
 
@@ -30,7 +30,7 @@ class Drag_Drop_TreeView(QTreeView):
         Parameters
         ----------
         e: QDropEvent :
-            
+
 
         Returns
         -------
@@ -45,7 +45,7 @@ class Drag_Drop_TreeView(QTreeView):
         Parameters
         ----------
         event: QKeyEvent :
-            
+
 
         Returns
         -------

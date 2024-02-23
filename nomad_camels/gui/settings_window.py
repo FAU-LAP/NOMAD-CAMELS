@@ -26,7 +26,7 @@ class Ui_settings_window(object):
     def setupUi(self, settings_window):
         if not settings_window.objectName():
             settings_window.setObjectName(u"settings_window")
-        settings_window.resize(634, 495)
+        settings_window.resize(603, 514)
         self.gridLayout = QGridLayout(settings_window)
         self.gridLayout.setObjectName(u"gridLayout")
         self.right = QWidget(settings_window)
@@ -40,22 +40,6 @@ class Ui_settings_window(object):
         self.gridLayout_10 = QGridLayout(self.drivers)
         self.gridLayout_10.setObjectName(u"gridLayout_10")
         self.gridLayout_10.setContentsMargins(0, 0, 0, 0)
-        self.label_12 = QLabel(self.drivers)
-        self.label_12.setObjectName(u"label_12")
-
-        self.gridLayout_10.addWidget(self.label_12, 1, 0, 1, 1)
-
-        self.label_8 = QLabel(self.drivers)
-        self.label_8.setObjectName(u"label_8")
-        self.label_8.setMaximumSize(QSize(16777215, 17))
-
-        self.gridLayout_10.addWidget(self.label_8, 3, 0, 1, 1)
-
-        self.lineEdit_branch = QLineEdit(self.drivers)
-        self.lineEdit_branch.setObjectName(u"lineEdit_branch")
-
-        self.gridLayout_10.addWidget(self.lineEdit_branch, 2, 1, 1, 1)
-
         self.label_13 = QLabel(self.drivers)
         self.label_13.setObjectName(u"label_13")
         font = QFont()
@@ -64,25 +48,11 @@ class Ui_settings_window(object):
 
         self.gridLayout_10.addWidget(self.label_13, 0, 0, 1, 1)
 
-        self.lineEdit_directory = QLineEdit(self.drivers)
-        self.lineEdit_directory.setObjectName(u"lineEdit_directory")
+        self.label_8 = QLabel(self.drivers)
+        self.label_8.setObjectName(u"label_8")
+        self.label_8.setMaximumSize(QSize(16777215, 17))
 
-        self.gridLayout_10.addWidget(self.lineEdit_directory, 2, 2, 1, 1)
-
-        self.label_14 = QLabel(self.drivers)
-        self.label_14.setObjectName(u"label_14")
-
-        self.gridLayout_10.addWidget(self.label_14, 2, 0, 1, 1)
-
-        self.lineEdit_repo = QLineEdit(self.drivers)
-        self.lineEdit_repo.setObjectName(u"lineEdit_repo")
-
-        self.gridLayout_10.addWidget(self.lineEdit_repo, 1, 1, 1, 2)
-
-        self.pathButton_device_path = Path_Button_Edit(self.drivers)
-        self.pathButton_device_path.setObjectName(u"pathButton_device_path")
-
-        self.gridLayout_10.addWidget(self.pathButton_device_path, 3, 1, 1, 2)
+        self.gridLayout_10.addWidget(self.label_8, 1, 0, 1, 1)
 
         self.line_5 = QFrame(self.drivers)
         self.line_5.setObjectName(u"line_5")
@@ -90,7 +60,12 @@ class Ui_settings_window(object):
         self.line_5.setLineWidth(5)
         self.line_5.setFrameShape(QFrame.HLine)
 
-        self.gridLayout_10.addWidget(self.line_5, 4, 0, 1, 3)
+        self.gridLayout_10.addWidget(self.line_5, 2, 0, 1, 3)
+
+        self.pathButton_device_path = Path_Button_Edit(self.drivers)
+        self.pathButton_device_path.setObjectName(u"pathButton_device_path")
+
+        self.gridLayout_10.addWidget(self.pathButton_device_path, 1, 1, 1, 2)
 
 
         self.gridLayout_9.addWidget(self.drivers, 1, 0, 1, 1)
@@ -345,34 +320,6 @@ class Ui_settings_window(object):
 
         self.gridLayout_2.addWidget(self.radioButton_smart_backups, 3, 2, 1, 1)
 
-        self.spinBox_backup_number = QSpinBox(self.saving)
-        self.spinBox_backup_number.setObjectName(u"spinBox_backup_number")
-
-        self.gridLayout_2.addWidget(self.spinBox_backup_number, 4, 1, 1, 1)
-
-        self.radioButton_all_backups = QRadioButton(self.saving)
-        self.radioButton_all_backups.setObjectName(u"radioButton_all_backups")
-
-        self.gridLayout_2.addWidget(self.radioButton_all_backups, 3, 0, 1, 1)
-
-        self.radioButton_n_backups = QRadioButton(self.saving)
-        self.radioButton_n_backups.setObjectName(u"radioButton_n_backups")
-
-        self.gridLayout_2.addWidget(self.radioButton_n_backups, 3, 1, 1, 1)
-
-        self.line_4 = QFrame(self.saving)
-        self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShadow(QFrame.Raised)
-        self.line_4.setLineWidth(5)
-        self.line_4.setFrameShape(QFrame.HLine)
-
-        self.gridLayout_2.addWidget(self.line_4, 6, 0, 1, 3)
-
-        self.checkBox_autosave_run = QCheckBox(self.saving)
-        self.checkBox_autosave_run.setObjectName(u"checkBox_autosave_run")
-
-        self.gridLayout_2.addWidget(self.checkBox_autosave_run, 2, 2, 1, 1)
-
         self.checkBox_backup_before_run = QCheckBox(self.saving)
         self.checkBox_backup_before_run.setObjectName(u"checkBox_backup_before_run")
 
@@ -398,10 +345,48 @@ class Ui_settings_window(object):
 
         self.gridLayout_2.addWidget(self.checkBox_password, 1, 0, 1, 3)
 
+        self.checkBox_autosave_run = QCheckBox(self.saving)
+        self.checkBox_autosave_run.setObjectName(u"checkBox_autosave_run")
+
+        self.gridLayout_2.addWidget(self.checkBox_autosave_run, 2, 2, 1, 1)
+
         self.checkBox_new_file_each_run = QCheckBox(self.saving)
         self.checkBox_new_file_each_run.setObjectName(u"checkBox_new_file_each_run")
 
         self.gridLayout_2.addWidget(self.checkBox_new_file_each_run, 5, 0, 1, 3)
+
+        self.line_4 = QFrame(self.saving)
+        self.line_4.setObjectName(u"line_4")
+        self.line_4.setFrameShadow(QFrame.Raised)
+        self.line_4.setLineWidth(5)
+        self.line_4.setFrameShape(QFrame.HLine)
+
+        self.gridLayout_2.addWidget(self.line_4, 7, 0, 1, 3)
+
+        self.spinBox_backup_number = QSpinBox(self.saving)
+        self.spinBox_backup_number.setObjectName(u"spinBox_backup_number")
+
+        self.gridLayout_2.addWidget(self.spinBox_backup_number, 4, 1, 1, 1)
+
+        self.radioButton_all_backups = QRadioButton(self.saving)
+        self.radioButton_all_backups.setObjectName(u"radioButton_all_backups")
+
+        self.gridLayout_2.addWidget(self.radioButton_all_backups, 3, 0, 1, 1)
+
+        self.radioButton_n_backups = QRadioButton(self.saving)
+        self.radioButton_n_backups.setObjectName(u"radioButton_n_backups")
+
+        self.gridLayout_2.addWidget(self.radioButton_n_backups, 3, 1, 1, 1)
+
+        self.label_12 = QLabel(self.saving)
+        self.label_12.setObjectName(u"label_12")
+
+        self.gridLayout_2.addWidget(self.label_12, 6, 0, 1, 1)
+
+        self.pathButton_config_path = Path_Button_Edit(self.saving)
+        self.pathButton_config_path.setObjectName(u"pathButton_config_path")
+
+        self.gridLayout_2.addWidget(self.pathButton_config_path, 6, 1, 1, 2)
 
 
         self.gridLayout_3.addWidget(self.saving, 0, 0, 1, 1)
@@ -546,12 +531,8 @@ class Ui_settings_window(object):
 
     def retranslateUi(self, settings_window):
         settings_window.setWindowTitle(QCoreApplication.translate("settings_window", u"Dialog", None))
-        self.label_12.setText(QCoreApplication.translate("settings_window", u"Driver Repository URL", None))
-        self.label_8.setText(QCoreApplication.translate("settings_window", u"Local drivers path", None))
-        self.lineEdit_branch.setPlaceholderText(QCoreApplication.translate("settings_window", u"branch", None))
         self.label_13.setText(QCoreApplication.translate("settings_window", u"Drivers", None))
-        self.lineEdit_directory.setPlaceholderText(QCoreApplication.translate("settings_window", u"directory", None))
-        self.label_14.setText(QCoreApplication.translate("settings_window", u"Branch / Directory", None))
+        self.label_8.setText(QCoreApplication.translate("settings_window", u"Local drivers path", None))
         self.label_19.setText(QCoreApplication.translate("settings_window", u"NOMAD Oasis URL", None))
         self.label_18.setText(QCoreApplication.translate("settings_window", u"ELN integration", None))
         self.label_7.setText(QCoreApplication.translate("settings_window", u"Measurement-Data Path", None))
@@ -571,14 +552,15 @@ class Ui_settings_window(object):
         self.label_16.setText(QCoreApplication.translate("settings_window", u"max. logfile size (MB)", None))
         self.label_15.setText(QCoreApplication.translate("settings_window", u"Log-Level", None))
         self.radioButton_smart_backups.setText(QCoreApplication.translate("settings_window", u"\"smart\" backups", None))
-        self.radioButton_all_backups.setText(QCoreApplication.translate("settings_window", u"keep all backups", None))
-        self.radioButton_n_backups.setText(QCoreApplication.translate("settings_window", u"keep only...", None))
-        self.checkBox_autosave_run.setText(QCoreApplication.translate("settings_window", u"autosave before run", None))
         self.checkBox_backup_before_run.setText(QCoreApplication.translate("settings_window", u"backup before run", None))
         self.label.setText(QCoreApplication.translate("settings_window", u"Saving", None))
         self.checkBox_autosave.setText(QCoreApplication.translate("settings_window", u"autosave on closing", None))
         self.checkBox_password.setText(QCoreApplication.translate("settings_window", u"password protection", None))
+        self.checkBox_autosave_run.setText(QCoreApplication.translate("settings_window", u"autosave before run", None))
         self.checkBox_new_file_each_run.setText(QCoreApplication.translate("settings_window", u"save each measurement run in new file", None))
+        self.radioButton_all_backups.setText(QCoreApplication.translate("settings_window", u"keep all backups", None))
+        self.radioButton_n_backups.setText(QCoreApplication.translate("settings_window", u"keep only...", None))
+        self.label_12.setText(QCoreApplication.translate("settings_window", u"path for configuration files:", None))
         self.checkBox_play_camel_on_error.setText(QCoreApplication.translate("settings_window", u"Play Camel-Roar on error", None))
         self.label_11.setText(QCoreApplication.translate("settings_window", u"Sounds", None))
         self.label_3.setText(QCoreApplication.translate("settings_window", u"Number-Formatting (only visual)", None))

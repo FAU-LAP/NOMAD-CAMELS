@@ -1,5 +1,6 @@
 from tqdm import tqdm
 
+
 class ProgressBar:
     """Provides a progress bar for protocols run directly from the script.
     With the `emit` method, the bar can be updated the same way signals are
@@ -12,6 +13,7 @@ class ProgressBar:
     bar : tqdm
         the actual progress bar
     """
+
     def __init__(self, n_steps):
         self.n_steps = n_steps
         self.bar = tqdm(total=n_steps)
@@ -28,4 +30,3 @@ class ProgressBar:
             has no function, only there to be able to give this method a value
         """
         self.bar.update()
-

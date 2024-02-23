@@ -1,4 +1,10 @@
-from PySide6.QtWidgets import QDialog, QDialogButtonBox, QGridLayout, QTabWidget, QMessageBox
+from PySide6.QtWidgets import (
+    QDialog,
+    QDialogButtonBox,
+    QGridLayout,
+    QTabWidget,
+    QMessageBox,
+)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QCloseEvent, QKeyEvent
 
@@ -7,6 +13,7 @@ from nomad_camels.frontpanels import instrument_installer, instrument_config
 
 class ManageInstruments(QDialog):
     """ """
+
     def __init__(self, active_instruments=None, parent=None):
         super().__init__(parent=parent)
         self.buttonBox = QDialogButtonBox()
@@ -16,7 +23,7 @@ class ManageInstruments(QDialog):
         self.buttonBox.rejected.connect(self.reject)
         self.buttonBox.accepted.connect(self.accept)
 
-        self.setWindowTitle('Manage Instruments - NOMAD CAMELS')
+        self.setWindowTitle("Manage Instruments - NOMAD CAMELS")
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
 
         self.active_instruments = active_instruments or {}
@@ -27,10 +34,10 @@ class ManageInstruments(QDialog):
         self.tabs = QTabWidget()
 
         self.installer = instrument_installer.Instrument_Installer()
-        self.tabs.addTab(self.installer, 'Install Instruments')
+        self.tabs.addTab(self.installer, "Install Instruments")
 
         self.config_widget = instrument_config.Instrument_Config(active_instruments)
-        self.tabs.addTab(self.config_widget, 'Configure Instruments')
+        self.tabs.addTab(self.config_widget, "Configure Instruments")
 
         self.installer.instruments_updated.connect(self.config_widget.build_table)
 
@@ -52,15 +59,18 @@ class ManageInstruments(QDialog):
         Parameters
         ----------
         a0: QCloseEvent :
-            
+
 
         Returns
         -------
 
         """
-        discard_dialog = QMessageBox.question(self, 'Discard Changes?',
-                                              f'All changes to instrument configurations will be lost!',
-                                              QMessageBox.Yes | QMessageBox.No)
+        discard_dialog = QMessageBox.question(
+            self,
+            "Discard Changes?",
+            f"All changes to instrument configurations will be lost!",
+            QMessageBox.Yes | QMessageBox.No,
+        )
         if discard_dialog != QMessageBox.Yes:
             a0.ignore()
             return
@@ -73,7 +83,7 @@ class ManageInstruments(QDialog):
         Parameters
         ----------
         a0: QKeyEvent :
-            
+
 
         Returns
         -------
@@ -84,8 +94,9 @@ class ManageInstruments(QDialog):
         super().keyPressEvent(a0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from PySide6.QtWidgets import QApplication
+
     app = QApplication([])
 
     widge = ManageInstruments()

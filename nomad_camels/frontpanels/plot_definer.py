@@ -1,8 +1,16 @@
 import copy
 import numpy as np
 
-from PySide6.QtWidgets import QDialog, QWidget, QDialogButtonBox, QGridLayout,\
-    QLabel, QMessageBox, QPushButton, QCheckBox
+from PySide6.QtWidgets import (
+    QDialog,
+    QWidget,
+    QDialogButtonBox,
+    QGridLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QCheckBox,
+)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QKeyEvent
 
@@ -17,18 +25,34 @@ from nomad_camels.utility import variables_handling
 from nomad_camels.utility.fit_variable_renaming import replace_name
 
 
-plot_types = ['X-Y plot', 'Value-List', '2D plot']
+plot_types = ["X-Y plot", "Value-List", "2D plot"]
 
 
 class Plot_Info:
     """ """
-    def __init__(self, plt_type='X-Y plot', x_axis='', y_axes=None, title='',
-                 xlabel='', ylabel='', ylabel2='', do_plot=True, zlabel='',
-                 same_fit=False, fits=None, all_fit=None, z_axis='',
-                 logX=False, logY=False, logY2=False):
+
+    def __init__(
+        self,
+        plt_type="X-Y plot",
+        x_axis="",
+        y_axes=None,
+        title="",
+        xlabel="",
+        ylabel="",
+        ylabel2="",
+        do_plot=True,
+        zlabel="",
+        same_fit=False,
+        fits=None,
+        all_fit=None,
+        z_axis="",
+        logX=False,
+        logY=False,
+        logY2=False,
+    ):
         self.plt_type = plt_type
         self.x_axis = x_axis
-        self.y_axes = y_axes or {'formula': [], 'axis': []}
+        self.y_axes = y_axes or {"formula": [], "axis": []}
         self.z_axis = z_axis
         self.title = title
         self.xlabel = xlabel
@@ -43,7 +67,7 @@ class Plot_Info:
         self.fits = fits or []
         self.plot_all_available = True
         self.all_fit = all_fit or Fit_Info()
-        self.name = ''
+        self.name = ""
         self.maxlen = np.inf
         self.update_name()
 
@@ -51,29 +75,30 @@ class Plot_Info:
         """ """
         if self.title:
             self.name = self.title
-        elif self.plt_type == 'X-Y plot':
+        elif self.plt_type == "X-Y plot":
             if self.xlabel and self.ylabel:
-                self.name = f'{self.ylabel} vs. {self.xlabel}'
-            elif self.x_axis and self.y_axes['formula']:
+                self.name = f"{self.ylabel} vs. {self.xlabel}"
+            elif self.x_axis and self.y_axes["formula"]:
                 self.name = f'{self.y_axes["formula"][0]} vs. {self.x_axis}'
-            elif self.y_axes['formula']:
-                self.name = self.y_axes['formula'][0]
+            elif self.y_axes["formula"]:
+                self.name = self.y_axes["formula"][0]
             else:
                 self.name = self.x_axis
-        elif self.plt_type == 'Value-List':
-            self.name = 'Current Values'
-        elif self.plt_type == '2D plot':
+        elif self.plt_type == "Value-List":
+            self.name = "Current Values"
+        elif self.plt_type == "2D plot":
             if self.zlabel and self.xlabel and self.ylabel:
-                self.name = f'{self.zlabel} vs. ({self.xlabel}; {self.ylabel})'
+                self.name = f"{self.zlabel} vs. ({self.xlabel}; {self.ylabel})"
             elif self.zlabel:
-                self.name = f'{self.zlabel} 2D'
-            if self.z_axis and self.x_axis and self.y_axes['formula']:
-                self.name = f'{self.z_axis} vs. ({self.x_axis}; {self.y_axes["formula"][0]})'
+                self.name = f"{self.zlabel} 2D"
+            if self.z_axis and self.x_axis and self.y_axes["formula"]:
+                self.name = (
+                    f'{self.z_axis} vs. ({self.x_axis}; {self.y_axes["formula"][0]})'
+                )
             elif self.z_axis:
-                self.name = f'{self.z_axis} 2D'
+                self.name = f"{self.z_axis} 2D"
 
-
-    def get_fit_vars(self, stream=''):
+    def get_fit_vars(self, stream=""):
         """
 
         Parameters
@@ -89,7 +114,7 @@ class Plot_Info:
         if self.same_fit:
             if self.all_fit.do_fit:
                 self.all_fit.x = self.x_axis
-                for y in self.y_axes['formula']:
+                for y in self.y_axes["formula"]:
                     fit = copy.deepcopy(self.all_fit)
                     fit.y = y
                     variables.update(fit.get_variables(stream))
@@ -100,28 +125,40 @@ class Plot_Info:
         return variables
 
 
-
 class Fit_Info:
     """ """
-    def __init__(self, do_fit=False, predef_func='Linear', custom_func='',
-                 use_custom_func=False, guess_params=True, initial_params=None,
-                 y='', x='', additional_data=None, display_values=False):
+
+    def __init__(
+        self,
+        do_fit=False,
+        predef_func="Linear",
+        custom_func="",
+        use_custom_func=False,
+        guess_params=True,
+        initial_params=None,
+        y="",
+        x="",
+        additional_data=None,
+        display_values=False,
+    ):
         self.do_fit = do_fit
         self.predef_func = predef_func
         self.custom_func = custom_func
         self.use_custom_func = use_custom_func
         self.guess_params = guess_params
-        self.name = ''
+        self.name = ""
         self.display_values = display_values
-        self.initial_params = initial_params or {'name': [],
-                                                 'initial value': [],
-                                                 'lower bound': [],
-                                                 'upper bound': []}
+        self.initial_params = initial_params or {
+            "name": [],
+            "initial value": [],
+            "lower bound": [],
+            "upper bound": [],
+        }
         self.additional_data = additional_data or []
-        self.y = y or ''
-        self.x = x or ''
+        self.y = y or ""
+        self.x = x or ""
 
-    def get_name(self, stream=''):
+    def get_name(self, stream=""):
         """
 
         Parameters
@@ -134,13 +171,13 @@ class Fit_Info:
 
         """
         if self.use_custom_func:
-            label = 'custom'
+            label = "custom"
         else:
             label = self.predef_func
-        self.name = f'{label}_{self.y}_v_{self.x}_{stream}'.replace(' ', '_')
+        self.name = f"{label}_{self.y}_v_{self.x}_{stream}".replace(" ", "_")
         return self.name
 
-    def get_variables(self, stream=''):
+    def get_variables(self, stream=""):
         """
 
         Parameters
@@ -154,41 +191,47 @@ class Fit_Info:
         """
         variables = {}
         name = self.get_name(stream)
-        for var in self.initial_params['name']:
-            var_name = f'{name}_{var}'
+        for var in self.initial_params["name"]:
+            var_name = f"{name}_{var}"
             var_name = replace_name(var_name)
             variables[var_name] = 1
         return variables
 
 
-
 class Plot_Definer(QDialog):
     """ """
+
     def __init__(self, parent=None, plot_data=None):
         self.plot_data = plot_data or []
         super().__init__(parent)
-        self.setWindowTitle('Define plot - NOMAD CAMELS')
+        self.setWindowTitle("Define plot - NOMAD CAMELS")
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
-        cols = ['plot-type', 'name']
-        comboBoxes = {'plot-type': plot_types}
-        tableData = {'plot-type': [], 'name': []}
+        cols = ["plot-type", "name"]
+        comboBoxes = {"plot-type": plot_types}
+        tableData = {"plot-type": [], "name": []}
         for plt in self.plot_data:
-            tableData['plot-type'].append(plt.plt_type)
-            tableData['name'].append(plt.name)
-        self.plot_table = AddRemoveTable(headerLabels=cols, title='Plots',
-                                         editables=[], comboBoxes=comboBoxes,
-                                         tableData=tableData, askdelete=True)
+            tableData["plot-type"].append(plt.plt_type)
+            tableData["name"].append(plt.name)
+        self.plot_table = AddRemoveTable(
+            headerLabels=cols,
+            title="Plots",
+            editables=[],
+            comboBoxes=comboBoxes,
+            tableData=tableData,
+            askdelete=True,
+        )
         self.plot_table.table.clicked.connect(self.change_plot_def)
         self.plot_table.added.connect(self.plot_added)
         self.plot_table.removed.connect(self.plot_removed)
-        self.plot_def = QLabel('Select a plot!')
+        self.plot_def = QLabel("Select a plot!")
         self.dialog_buttons = QDialogButtonBox()
         self.dialog_buttons.setOrientation(Qt.Horizontal)
-        self.dialog_buttons.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.dialog_buttons.setStandardButtons(
+            QDialogButtonBox.Cancel | QDialogButtonBox.Ok
+        )
         self.dialog_buttons.accepted.connect(self.accept)
         self.dialog_buttons.rejected.connect(self.reject)
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
-
 
         layout = QGridLayout()
         layout.addWidget(self.plot_table, 0, 0)
@@ -204,13 +247,15 @@ class Plot_Definer(QDialog):
 
     def reject(self):
         """ """
-        discard_dialog = QMessageBox.question(self, 'Discard Changes?',
-                                             f'All changes to the defined plots / fits will be lost!',
-                                             QMessageBox.Yes | QMessageBox.No)
+        discard_dialog = QMessageBox.question(
+            self,
+            "Discard Changes?",
+            f"All changes to the defined plots / fits will be lost!",
+            QMessageBox.Yes | QMessageBox.No,
+        )
         if discard_dialog != QMessageBox.Yes:
             return
         super().reject()
-
 
     def change_plot_def(self, a0):
         """
@@ -218,7 +263,7 @@ class Plot_Definer(QDialog):
         Parameters
         ----------
         a0 :
-            
+
 
         Returns
         -------
@@ -229,19 +274,19 @@ class Plot_Definer(QDialog):
         plot_dat = self.plot_data[a0.row()]
         ind = self.plot_table.table_model.index(a0.row(), 0)
         plot_dat.plt_type = self.plot_table.table.indexWidget(ind).currentText()
-        tableData = {'plot-type': [], 'name': []}
+        tableData = {"plot-type": [], "name": []}
         for plt in self.plot_data:
-            tableData['plot-type'].append(plt.plt_type)
-            tableData['name'].append(plt.name)
+            tableData["plot-type"].append(plt.plt_type)
+            tableData["name"].append(plt.name)
         self.plot_table.change_table_data(tableData)
-        if plot_dat.plt_type == 'X-Y plot':
+        if plot_dat.plt_type == "X-Y plot":
             plot_def = Single_Plot_Definer_XY(plot_dat, self)
-        elif plot_dat.plt_type == 'Value-List':
+        elif plot_dat.plt_type == "Value-List":
             plot_def = Single_Plot_Definer_List(plot_dat, self)
-        elif plot_dat.plt_type == '2D plot':
+        elif plot_dat.plt_type == "2D plot":
             plot_def = Single_Plot_Definer_2D(plot_dat, self)
         else:
-            plot_def = QLabel('Not implemented yet!')
+            plot_def = QLabel("Not implemented yet!")
         self.layout().replaceWidget(self.plot_def, plot_def)
         self.plot_def.deleteLater()
         self.plot_def = plot_def
@@ -254,7 +299,7 @@ class Plot_Definer(QDialog):
         Parameters
         ----------
         n :
-            
+
 
         Returns
         -------
@@ -269,7 +314,7 @@ class Plot_Definer(QDialog):
         Parameters
         ----------
         n :
-            
+
 
         Returns
         -------
@@ -280,7 +325,8 @@ class Plot_Definer(QDialog):
 
 class Single_Plot_Definer(QWidget):
     """ """
-    def __init__(self, plot_data:Plot_Info, parent=None):
+
+    def __init__(self, plot_data: Plot_Info, parent=None):
         super().__init__(parent)
         self.plot_data = plot_data
 
@@ -294,7 +340,7 @@ class Single_Plot_Definer(QWidget):
         Parameters
         ----------
         n :
-            
+
 
         Returns
         -------
@@ -309,7 +355,7 @@ class Single_Plot_Definer(QWidget):
         Parameters
         ----------
         n :
-            
+
 
         Returns
         -------
@@ -320,14 +366,18 @@ class Single_Plot_Definer(QWidget):
 
 class Single_Plot_Definer_List(Single_Plot_Definer):
     """ """
-    def __init__(self, plot_data:Plot_Info, parent=None):
+
+    def __init__(self, plot_data: Plot_Info, parent=None):
         super().__init__(plot_data, parent)
         self.plot_data = plot_data
-        self.checkBox_plot_all = QCheckBox('plot all available channels')
+        self.checkBox_plot_all = QCheckBox("plot all available channels")
         self.checkBox_plot_all.setChecked(plot_data.plot_all_available)
-        self.table = AddRemoveTable(title='Values', headerLabels=[],
-                                    tableData=plot_data.y_axes['formula'],
-                                    checkstrings=[0])
+        self.table = AddRemoveTable(
+            title="Values",
+            headerLabels=[],
+            tableData=plot_data.y_axes["formula"],
+            checkstrings=[0],
+        )
         self.table.added.connect(self.add_y)
         self.table.removed.connect(self.remove_y)
         self.layout = QGridLayout()
@@ -339,22 +389,23 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
     def get_data(self):
         """ """
         self.plot_data.plot_all_available = self.checkBox_plot_all.isChecked()
-        self.plot_data.y_axes['formula'] = self.table.update_table_data()
-        self.plot_data.y_axes['axis'] = [1] * len(self.plot_data.y_axes['formula'])
+        self.plot_data.y_axes["formula"] = self.table.update_table_data()
+        self.plot_data.y_axes["axis"] = [1] * len(self.plot_data.y_axes["formula"])
         self.plot_data.update_name()
         return super().get_data()
 
 
 class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
     """ """
-    def __init__(self, plot_data:Plot_Info, parent=None):
+
+    def __init__(self, plot_data: Plot_Info, parent=None):
         super().__init__(plot_data, parent)
         self.setupUi(self)
         self.lineEdit_x_axis.setText(self.plot_data.x_axis)
-        if not self.plot_data.y_axes['formula']:
-            self.plot_data.y_axes['formula'].append('')
-            self.plot_data.y_axes['axis'].append(1)
-        self.lineEdit_y_axis.setText(self.plot_data.y_axes['formula'][0])
+        if not self.plot_data.y_axes["formula"]:
+            self.plot_data.y_axes["formula"].append("")
+            self.plot_data.y_axes["axis"].append(1)
+        self.lineEdit_y_axis.setText(self.plot_data.y_axes["formula"][0])
         self.lineEdit_z_axis.setText(self.plot_data.z_axis)
         self.lineEdit_xlabel.setText(self.plot_data.xlabel)
         self.lineEdit_ylabel.setText(self.plot_data.ylabel)
@@ -368,7 +419,7 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.plot_data.ylabel = self.lineEdit_ylabel.text()
         self.plot_data.zlabel = self.lineEdit_zlabel.text()
         self.plot_data.x_axis = self.lineEdit_x_axis.text()
-        self.plot_data.y_axes['formula'][0] = self.lineEdit_y_axis.text()
+        self.plot_data.y_axes["formula"][0] = self.lineEdit_y_axis.text()
         self.plot_data.z_axis = self.lineEdit_z_axis.text()
         self.plot_data.title = self.lineEdit_title.text()
         self.plot_data.update_name()
@@ -377,17 +428,21 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
 
 class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
     """ """
-    def __init__(self, plot_data:Plot_Info, parent=None):
+
+    def __init__(self, plot_data: Plot_Info, parent=None):
         super().__init__(plot_data, parent)
         self.fit_definer = None
         self.setupUi(self)
 
-        cols = ['formula', 'axis']
-        comboBoxes = {'axis': ['left', 'right']}
-        self.y_table = AddRemoveTable(headerLabels=cols, title='y-axes',
-                                      comboBoxes=comboBoxes,
-                                      tableData=plot_data.y_axes,
-                                      checkstrings=[0])
+        cols = ["formula", "axis"]
+        comboBoxes = {"axis": ["left", "right"]}
+        self.y_table = AddRemoveTable(
+            headerLabels=cols,
+            title="y-axes",
+            comboBoxes=comboBoxes,
+            tableData=plot_data.y_axes,
+            checkstrings=[0],
+        )
         self.y_table.added.connect(self.add_y)
         self.y_table.removed.connect(self.remove_y)
         self.y_table.table.clicked.connect(self.fit_change)
@@ -441,7 +496,7 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         if self.plot_data.all_fit:
             self.plot_data.all_fit.x = self.plot_data.x_axis
         for i, fit in enumerate(self.plot_data.fits):
-            fit.y = self.plot_data.y_axes['formula'][i]
+            fit.y = self.plot_data.y_axes["formula"][i]
             fit.x = self.plot_data.x_axis
         return super().get_data()
 
@@ -451,7 +506,7 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
             self.fit_definer.get_data()
         if self.checkBox_same_fit.isChecked():
             fit_dat = self.plot_data.all_fit
-            fit_to = 'all y-axes'
+            fit_to = "all y-axes"
         else:
             ind = self.y_table.table.selectedIndexes()
             if ind:
@@ -462,7 +517,7 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
                 fit_dat = None
                 fit_to = None
         if fit_dat is None:
-            fit_definer = QLabel('No y-axis selected')
+            fit_definer = QLabel("No y-axis selected")
         else:
             fit_definer = Fit_Definer(fit_dat, self, fit_to)
         self.layout().replaceWidget(self.fit_definer, fit_definer)
@@ -470,23 +525,25 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.fit_definer = fit_definer
 
 
-
 class Fit_Definer(Ui_Fit_Definer, QWidget):
     """ """
-    def __init__(self, fit_info:Fit_Info, parent=None, fit_to=''):
+
+    def __init__(self, fit_info: Fit_Info, parent=None, fit_to=""):
         super().__init__(parent)
         self.setupUi(self)
         self.fit_info = fit_info
-        self.label.setText(f'Fit to: {fit_to}')
+        self.label.setText(f"Fit to: {fit_to}")
         self.comboBox_predef_func.addItems(sorted(models_names.keys()))
-        cols = ['name', 'initial value', 'lower bound', 'upper bound']
-        self.start_params = AddRemoveTable(headerLabels=cols,
-                                           title='Fit Parameters',
-                                           editables=[1, 2, 3],
-                                           tableData=fit_info.initial_params)
-        self.add_data = AddRemoveTable(headerLabels=[],
-                                       title='Additional Data',
-                                       tableData=fit_info.additional_data)
+        cols = ["name", "initial value", "lower bound", "upper bound"]
+        self.start_params = AddRemoveTable(
+            headerLabels=cols,
+            title="Fit Parameters",
+            editables=[1, 2, 3],
+            tableData=fit_info.initial_params,
+        )
+        self.add_data = AddRemoveTable(
+            headerLabels=[], title="Additional Data", tableData=fit_info.additional_data
+        )
         self.start_params.addButton.setHidden(True)
         self.start_params.removeButton.setHidden(True)
         self.load_data()
@@ -527,19 +584,27 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
                 try:
                     mod = models.ExpressionModel(self.lineEdit_custom_func.text())
                 except (ValueError, SyntaxError):
-                    self.lineEdit_custom_func.setStyleSheet(f'background-color: rgb{variables_handling.get_color("red", True)}')
+                    self.lineEdit_custom_func.setStyleSheet(
+                        f'background-color: rgb{variables_handling.get_color("red", True)}'
+                    )
                     return
-                self.lineEdit_custom_func.setStyleSheet(f'background-color: rgb{variables_handling.get_color("green", True)}')
+                self.lineEdit_custom_func.setStyleSheet(
+                    f'background-color: rgb{variables_handling.get_color("green", True)}'
+                )
             else:
                 mod = models_names[func]()
             params = mod.param_names
-            par_vals = {'name': [], 'initial value': [], 'lower bound': [],
-                        'upper bound': []}
+            par_vals = {
+                "name": [],
+                "initial value": [],
+                "lower bound": [],
+                "upper bound": [],
+            }
             for param in params:
-                par_vals['name'].append(param)
-                par_vals['initial value'].append(1)
-                par_vals['lower bound'].append('')
-                par_vals['upper bound'].append('')
+                par_vals["name"].append(param)
+                par_vals["initial value"].append(1)
+                par_vals["lower bound"].append("")
+                par_vals["upper bound"].append("")
             self.start_params.change_table_data(par_vals)
             self.fit_info.predef_func = func
 
@@ -570,9 +635,9 @@ def add_fit(tableData, fit):
     Parameters
     ----------
     tableData :
-        
+
     fit :
-        
+
 
     Returns
     -------
@@ -580,9 +645,10 @@ def add_fit(tableData, fit):
     """
     custom = fit.use_custom_func
     if custom:
-        tableData['fit'].append(fit.custom_func)
+        tableData["fit"].append(fit.custom_func)
     else:
-        tableData['fit'].append(fit.predef_func)
+        tableData["fit"].append(fit.predef_func)
+
 
 def make_table_data(plot_data):
     """
@@ -590,16 +656,16 @@ def make_table_data(plot_data):
     Parameters
     ----------
     plot_data :
-        
+
 
     Returns
     -------
 
     """
-    tableData = {'plot-type': [], 'name': [], 'fit': []}
+    tableData = {"plot-type": [], "name": [], "fit": []}
     for plt in plot_data:
-        tableData['plot-type'].append(plt.plt_type)
-        tableData['name'].append(plt.name)
+        tableData["plot-type"].append(plt.plt_type)
+        tableData["name"].append(plt.name)
         if plt.all_fit and plt.all_fit.do_fit and plt.same_fit:
             add_fit(tableData, plt.all_fit)
         elif plt.fits:
@@ -611,42 +677,49 @@ def make_table_data(plot_data):
                 added = True
                 break
             if not added:
-                tableData['fit'].append('None')
+                tableData["fit"].append("None")
         else:
-            tableData['fit'].append('None')
+            tableData["fit"].append("None")
     return tableData
 
 
 class Plot_Button_Overview(QWidget):
     """ """
+
     def __init__(self, parent, plot_data=None):
         self.plot_data = plot_data
         super().__init__(parent)
         tableData = make_table_data(plot_data)
-        cols = ['plot-type', 'name', 'fit']
-        self.plot_table = AddRemoveTable(headerLabels=cols,
-                                         title='plot-overview', editables=[],
-                                         tableData=tableData, askdelete=True,
-                                         horizontal=False)
+        cols = ["plot-type", "name", "fit"]
+        self.plot_table = AddRemoveTable(
+            headerLabels=cols,
+            title="plot-overview",
+            editables=[],
+            tableData=tableData,
+            askdelete=True,
+            horizontal=False,
+        )
         self.plot_table.addButton.setHidden(True)
         self.plot_table.removeButton.setHidden(True)
-        self.plot_button = QPushButton('Define Plots / Fits')
+        self.plot_button = QPushButton("Define Plots / Fits")
         font = QFont()
         font.setBold(True)
-        self.plot_button.setStyleSheet(u"QPushButton {\n"
-"                                background-color: #808080; \n"
-"                                color: white; \n"
-"                                border: none; \n"
-"                                padding: 2px 10px; \n"
-"                                text-align: center; \n"
-"                                text-decoration: none; \n"
-"                                font-size: 13px; \n"
-"                                margin: 2px 2px; \n"
-"                                border-radius: 6px;\n"
-"                            }\n"
-"                            QPushButton:hover {\n"
-"                                background-color: #a0a0a0;\n"
-"                            }")
+        self.plot_button.setStyleSheet(
+            "QPushButton {\n"
+            "                                background-color: #808080; \n"
+            "                                color: white; \n"
+            "                                border: none; \n"
+            "                                padding: 2px 10px; \n"
+            "                                text-align: center; \n"
+            "                                text-decoration: none; \n"
+            "                                font-size: 13px; \n"
+            "                                margin: 2px 2px; \n"
+            "                                border-radius: 6px;\n"
+            "                            }\n"
+            "                            QPushButton:hover {\n"
+            "                                background-color: #a0a0a0;\n"
+            "                            }"
+        )
         self.plot_button.setFont(font)
         self.plot_button.clicked.connect(self.define_plots)
 
@@ -671,7 +744,7 @@ class Plot_Button_Overview(QWidget):
         Parameters
         ----------
         a0: QKeyEvent :
-            
+
 
         Returns
         -------
@@ -683,4 +756,4 @@ class Plot_Button_Overview(QWidget):
 
 
 models_names = dict(models.lmfit_models)
-models_names.pop('Expression')
+models_names.pop("Expression")

@@ -204,7 +204,10 @@
 
             QPushButton:hover {
                 background-color: #B22222;
-            }</string>
+            }
+QPushButton:disabled {
+        background-color: #808080;
+    }</string>
      </property>
      <property name="text">
       <string>-</string>

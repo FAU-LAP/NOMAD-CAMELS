@@ -8,7 +8,8 @@ import databroker
 from nomad_camels.utility import load_save_functions, update_camels
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
-def make_yml(datapath, catalog_name='CAMELS_CATALOG', ask_restart=False):
+
+def make_yml(datapath, catalog_name="CAMELS_CATALOG", ask_restart=False):
     """
     Creates the yml file for the databroker (where it is looking for them) to
     configure a simple catalog for measurements with CAMELS.
@@ -28,23 +29,24 @@ def make_yml(datapath, catalog_name='CAMELS_CATALOG', ask_restart=False):
         catalog_path = pathlib.Path(catalog_path)
     if not os.path.isdir(catalog_path):
         os.makedirs(catalog_path)
-    fname = (catalog_path / catalog_name).with_suffix('.yml')
-    brokerpath = datapath / 'databroker' / catalog_name
+    fname = (catalog_path / catalog_name).with_suffix(".yml")
+    brokerpath = datapath / "databroker" / catalog_name
     if not os.path.isdir(brokerpath):
         os.makedirs(brokerpath)
-    with open(fname, 'w', encoding='utf-8') as f:
-        f.write('sources:\n'
-                f'  {catalog_name}:\n'
-                '    driver: "bluesky-msgpack-catalog"\n'
-                '    args:\n'
-                '      paths:\n'
-                f'        - "{brokerpath.as_posix()}/*.msgpack"')
+    with open(fname, "w", encoding="utf-8") as f:
+        f.write(
+            "sources:\n"
+            f"  {catalog_name}:\n"
+            '    driver: "bluesky-msgpack-catalog"\n'
+            "    args:\n"
+            "      paths:\n"
+            f'        - "{brokerpath.as_posix()}/*.msgpack"'
+        )
     if catalog_name not in list(databroker.catalog):
         databroker.catalog.force_reload()
     if ask_restart and catalog_name not in list(databroker.catalog):
-        WarnPopup('Could not load the databroker catalog, you might have to restart CAMELS', 'Databroker catalog not loaded')
+        WarnPopup(
+            "Could not load the databroker catalog, you might have to restart CAMELS",
+            "Databroker catalog not loaded",
+        )
         update_camels.restart_camels(ask_restart=True)
-
-
-if __name__ == '__main__':
-    make_yml(load_save_functions.standard_pref['meas_files_path'], 'test')

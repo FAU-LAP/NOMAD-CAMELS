@@ -1,7 +1,16 @@
-from PySide6.QtWidgets import QWidget, QGridLayout, QPushButton, QTableView,\
-    QLabel, QComboBox, QMenu, QDialog, QDialogButtonBox, QMessageBox
-from PySide6.QtGui import QStandardItemModel, QStandardItem, QFont, QBrush,\
-    QKeyEvent
+from PySide6.QtWidgets import (
+    QWidget,
+    QGridLayout,
+    QPushButton,
+    QTableView,
+    QLabel,
+    QComboBox,
+    QMenu,
+    QDialog,
+    QDialogButtonBox,
+    QMessageBox,
+)
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QFont, QBrush, QKeyEvent
 from PySide6.QtCore import Qt, Signal
 
 import numpy as np
@@ -21,15 +30,31 @@ class AddRemoveTable(QWidget):
     -------
 
     """
+
     sizechange = Signal()
     added = Signal(int)
     removed = Signal(int)
 
-    def __init__(self, addLabel='+', removeLabel='-', horizontal=True,
-                 editables=None, checkables=(), headerLabels=None, orderBy=None,
-                 parent=None, tableData=None, title='', comboBoxes=None,
-                 subtables=None, growsize=False, checkstrings=None,
-                 askdelete=False, fixedsize=False, enableds=None):
+    def __init__(
+        self,
+        addLabel="+",
+        removeLabel="-",
+        horizontal=True,
+        editables=None,
+        checkables=(),
+        headerLabels=None,
+        orderBy=None,
+        parent=None,
+        tableData=None,
+        title="",
+        comboBoxes=None,
+        subtables=None,
+        growsize=False,
+        checkstrings=None,
+        askdelete=False,
+        fixedsize=False,
+        enableds=None,
+    ):
         """
 
         Parameters
@@ -84,13 +109,15 @@ class AddRemoveTable(QWidget):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         layout = QGridLayout()
-        layout.setContentsMargins(0,0,0,0)
+        layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
         self.askdelete = askdelete
         self.checkables = checkables if not type(checkables) is int else [checkables]
         if checkstrings is None:
             checkstrings = []
-        self.checkstrings = checkstrings if not type(checkstrings) is int else [checkstrings]
+        self.checkstrings = (
+            checkstrings if not type(checkstrings) is int else [checkstrings]
+        )
         self.horizontal = horizontal
         self.orderBy = orderBy
         self.comboBoxes = {} if comboBoxes is None else comboBoxes
@@ -104,12 +131,16 @@ class AddRemoveTable(QWidget):
         elif tableData is None and headerLabels is not None:
             tableData = {}
         elif tableData is None and headerLabels is None:
-            raise Exception('Cannot create a table without Data Format (AddRemoveTable)')
+            raise Exception(
+                "Cannot create a table without Data Format (AddRemoveTable)"
+            )
         if isinstance(tableData, dict):
             tableData = pd.DataFrame(tableData)
         for label in headerLabels:
             if label not in tableData:
-                tableData.insert(headerLabels.index(label), label, ['']*len(tableData))
+                tableData.insert(
+                    headerLabels.index(label), label, [""] * len(tableData)
+                )
         self.tableData = tableData
         if editables is None:
             editables = range(len(headerLabels))
@@ -120,52 +151,56 @@ class AddRemoveTable(QWidget):
 
         self.addButton = QPushButton(addLabel)
         self.addButton.setMaximumHeight(24)
-        self.addButton.setStyleSheet(u"QPushButton {\n"
-        "                                background-color: #4CAF50; \n"
-        "                                color: white; \n"
-        "                                border: none; \n"
-        "                                padding: 0px; \n"
-        "                                padding-bottom: 5px;\n"
-        "                                text-align: center; \n"
-        "                                text-decoration: none; \n"
-        "                                font-size: 15px; \n"
-        "                                margin: 2px 2px; \n"
-        "                                border-radius: 6px;\n"
-        "								font-weight: bold;\n"
-        "                            }\n"
-        "\n"
-        "                            QPushButton:hover {\n"
-        "                                background-color: #45a049;\n"
-        "                            }\n"
-        "\n"
-        "                            QPushButton:disabled {\n"
-        "                                background-color: #808080;\n"
-        "                                color: white;\n"
-        "                            }")
+        self.addButton.setStyleSheet(
+            "QPushButton {\n"
+            "                                background-color: #4CAF50; \n"
+            "                                color: white; \n"
+            "                                border: none; \n"
+            "                                padding: 0px; \n"
+            "                                padding-bottom: 5px;\n"
+            "                                text-align: center; \n"
+            "                                text-decoration: none; \n"
+            "                                font-size: 15px; \n"
+            "                                margin: 2px 2px; \n"
+            "                                border-radius: 6px;\n"
+            "								font-weight: bold;\n"
+            "                            }\n"
+            "\n"
+            "                            QPushButton:hover {\n"
+            "                                background-color: #45a049;\n"
+            "                            }\n"
+            "\n"
+            "                            QPushButton:disabled {\n"
+            "                                background-color: #808080;\n"
+            "                                color: white;\n"
+            "                            }"
+        )
         self.removeButton = QPushButton(removeLabel)
         self.removeButton.setMaximumHeight(24)
-        self.removeButton.setStyleSheet(u"QPushButton {\n"
-"                                background-color:  #FF3333; \n"
-"                                color: white; \n"
-"                                border: none; \n"
-"                                padding: 0px; \n"
-"                                padding-bottom: 5px;\n"
-"                                text-align: center; \n"
-"                                text-decoration: none; \n"
-"                                font-size: 15px; \n"
-"                                margin: 2px 2px; \n"
-"                                border-radius: 6px;\n"
-"								font-weight: bold;\n"
-"                            }\n"
-"\n"
-"            QPushButton:hover {\n"
-"                background-color: #B22222;\n"
-"            }"
-        "\n"
-        "                            QPushButton:disabled {\n"
-        "                                background-color: #808080;\n"
-        "                                color: white;\n"
-        "                            }")
+        self.removeButton.setStyleSheet(
+            "QPushButton {\n"
+            "                                background-color:  #FF3333; \n"
+            "                                color: white; \n"
+            "                                border: none; \n"
+            "                                padding: 0px; \n"
+            "                                padding-bottom: 5px;\n"
+            "                                text-align: center; \n"
+            "                                text-decoration: none; \n"
+            "                                font-size: 15px; \n"
+            "                                margin: 2px 2px; \n"
+            "                                border-radius: 6px;\n"
+            "								font-weight: bold;\n"
+            "                            }\n"
+            "\n"
+            "            QPushButton:hover {\n"
+            "                background-color: #B22222;\n"
+            "            }"
+            "\n"
+            "                            QPushButton:disabled {\n"
+            "                                background-color: #808080;\n"
+            "                                color: white;\n"
+            "                            }"
+        )
         self.table = QTableView()
         self.table_model = QStandardItemModel()
         self.table.setModel(self.table_model)
@@ -175,12 +210,12 @@ class AddRemoveTable(QWidget):
             layout.addWidget(label, 0, 0)
             font = QFont()
             font.setBold(True)
-            label.setStyleSheet('font-size: 9pt')
+            label.setStyleSheet("font-size: 9pt")
             label.setFont(font)
             mover = 1
-        layout.addWidget(self.addButton, 0, 0+mover)
-        layout.addWidget(self.removeButton, 0, 1+mover)
-        layout.addWidget(self.table, 1, 0, 1, 2+mover)
+        layout.addWidget(self.addButton, 0, 0 + mover)
+        layout.addWidget(self.removeButton, 0, 1 + mover)
+        layout.addWidget(self.table, 1, 0, 1, 2 + mover)
 
         self.headerLabels = headerLabels
         if horizontal:
@@ -209,11 +244,19 @@ class AddRemoveTable(QWidget):
         self.table.resizeRowsToContents()
         self.update_max_hight()
         self.table_model.itemChanged.connect(self.check_string)
+        self.table.selectionModel().selectionChanged.connect(self.check_selection)
+        self.check_selection()
+
+    def check_selection(self):
+        if self.table.selectedIndexes():
+            self.removeButton.setEnabled(True)
+        else:
+            self.removeButton.setEnabled(False)
 
     def update_max_hight(self):
         """ """
         if self.growsize:
-            self.setMaximumHeight(90 + self.table_model.rowCount()*100)
+            self.setMaximumHeight(90 + self.table_model.rowCount() * 100)
             self.sizechange.emit()
         elif self.fixedsize:
             self.setMaximumHeight(100)
@@ -227,7 +270,7 @@ class AddRemoveTable(QWidget):
         Parameters
         ----------
         tableData :
-            
+
 
         Returns
         -------
@@ -258,7 +301,7 @@ class AddRemoveTable(QWidget):
         Parameters
         ----------
         pos :
-            
+
 
         Returns
         -------
@@ -267,15 +310,17 @@ class AddRemoveTable(QWidget):
         menu = QMenu()
         # putting the returned actions somewhere is necessary, otherwise
         # there will be none inside the single menus
-        (channel_menu, variable_menu, function_menu), _ =\
-            variables_handling.get_menus(self.insert_variable)
+        (channel_menu, variable_menu, function_menu), _ = variables_handling.get_menus(
+            self.insert_variable
+        )
         menu.addMenu(channel_menu)
         menu.addMenu(variable_menu)
         menu.addMenu(function_menu)
         # menu.addMenu(operator_menu)
         menu.addSeparator()
-        (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ =\
-            variables_handling.get_menus(self.append_variable, 'Append')
+        (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ = (
+            variables_handling.get_menus(self.append_variable, "Append")
+        )
         menu.addMenu(channel_menu2)
         menu.addMenu(variable_menu2)
         menu.addMenu(function_menu2)
@@ -288,7 +333,7 @@ class AddRemoveTable(QWidget):
         Parameters
         ----------
         val :
-            
+
 
         Returns
         -------
@@ -297,7 +342,7 @@ class AddRemoveTable(QWidget):
         ind = self.table.selectedIndexes()[0]
         item = self.table_model.itemFromIndex(ind)
         text = item.text()
-        item.setText(f'{text}{val}')
+        item.setText(f"{text}{val}")
 
     def insert_variable(self, val):
         """Used for the single actions of the context menu.
@@ -305,7 +350,7 @@ class AddRemoveTable(QWidget):
         Parameters
         ----------
         val :
-            
+
 
         Returns
         -------
@@ -313,7 +358,7 @@ class AddRemoveTable(QWidget):
         """
         ind = self.table.selectedIndexes()[0]
         item = self.table_model.itemFromIndex(ind)
-        item.setText(f'{val}')
+        item.setText(f"{val}")
 
     def check_string(self, item):
         """If an element is part of the checkstrings, the item becomes
@@ -322,7 +367,7 @@ class AddRemoveTable(QWidget):
         Parameters
         ----------
         item :
-            
+
 
         Returns
         -------
@@ -330,13 +375,15 @@ class AddRemoveTable(QWidget):
         """
         ind = item.index()
         pos = ind.column() if self.horizontal else ind.row()
-        if pos not in self.checkstrings or item.text() == '':
-            color = variables_handling.get_color('white')
+        if pos not in self.checkstrings or item.text() == "":
+            color = variables_handling.get_color("white")
         elif variables_handling.check_eval(item.text()):
-            color = variables_handling.get_color('green')
+            color = variables_handling.get_color("green")
         else:
-            color = variables_handling.get_color('red')
-        self.table_model.setData(self.table_model.indexFromItem(item), QBrush(color), Qt.BackgroundRole)
+            color = variables_handling.get_color("red")
+        self.table_model.setData(
+            self.table_model.indexFromItem(item), QBrush(color), Qt.BackgroundRole
+        )
 
     def add(self, vals=None):
         """Add the `vals` to the table as a new line. Checks are done
@@ -352,7 +399,7 @@ class AddRemoveTable(QWidget):
 
         """
         if vals is None:
-            vals = [''] * len(self.headerLabels) if len(self.headerLabels) else ''
+            vals = [""] * len(self.headerLabels) if len(self.headerLabels) else ""
         items = []
         box_indexes = []
         boxes = []
@@ -373,10 +420,14 @@ class AddRemoveTable(QWidget):
                 if type(vals[i]) is not list:
                     vals[i] = []
                 checksting = 0 if i in self.checkstrings else None
-                table = AddRemoveTable(horizontal=self.horizontal,
-                                       headerLabels=[], tableData=vals[i],
-                                       growsize=False, checkstrings=checksting,
-                                       fixedsize=True)
+                table = AddRemoveTable(
+                    horizontal=self.horizontal,
+                    headerLabels=[],
+                    tableData=vals[i],
+                    growsize=False,
+                    checkstrings=checksting,
+                    fixedsize=True,
+                )
                 self.tables.append(table)
                 table_indexes.append(i)
                 tables.append(table)
@@ -402,18 +453,18 @@ class AddRemoveTable(QWidget):
         if self.horizontal:
             self.table_model.appendRow(items)
             for j, i in enumerate(box_indexes):
-                index = self.table_model.index(self.table_model.rowCount()-1, i)
+                index = self.table_model.index(self.table_model.rowCount() - 1, i)
                 self.table.setIndexWidget(index, boxes[j])
             for j, i in enumerate(table_indexes):
-                index = self.table_model.index(self.table_model.rowCount()-1, i)
+                index = self.table_model.index(self.table_model.rowCount() - 1, i)
                 self.table.setIndexWidget(index, tables[j])
         else:
             self.table_model.appendColumn(items)
             for j, i in enumerate(box_indexes):
-                index = self.table_model.index(i, self.table_model.columnCount()-1)
+                index = self.table_model.index(i, self.table_model.columnCount() - 1)
                 self.table.setIndexWidget(index, boxes[j])
             for j, i in enumerate(table_indexes):
-                index = self.table_model.index(i, self.table_model.columnCount()-1)
+                index = self.table_model.index(i, self.table_model.columnCount() - 1)
                 self.table.setIndexWidget(index, tables[j])
         for item in items:
             self.check_string(item)
@@ -424,18 +475,22 @@ class AddRemoveTable(QWidget):
             self.added.emit(items[0].row())
         else:
             self.added.emit(items[0].column())
+        self.check_selection()
 
     def remove(self):
         """ """
         try:
             index = self.table.selectedIndexes()[0]
         except IndexError:
-            raise Exception('You need to select a row first!')
+            raise Exception("You need to select a row first!")
         if self.askdelete:
             entry = self.table_model.itemFromIndex(index).text()
-            remove_dialog = QMessageBox.question(self, 'Remove entry?',
-                                                 f'Are you sure you want to remove the entry {entry}?',
-                                                 QMessageBox.Yes | QMessageBox.No)
+            remove_dialog = QMessageBox.question(
+                self,
+                "Remove entry?",
+                f"Are you sure you want to remove the entry {entry}?",
+                QMessageBox.Yes | QMessageBox.No,
+            )
             if remove_dialog != QMessageBox.Yes:
                 return
         row = index.row()
@@ -452,6 +507,7 @@ class AddRemoveTable(QWidget):
             self.removed.emit(col)
         self.update_table_data()
         self.update_max_hight()
+        self.check_selection()
 
     def update_table_data(self):
         """Reading all the data of the table, putting it as dict into
@@ -478,7 +534,10 @@ class AddRemoveTable(QWidget):
                         tab.update_table_data()
                         vals.append(tab.tableData)
                     elif i in self.checkables:
-                        vals.append(self.table_model.item(j, i).checkState() != Qt.CheckState.Unchecked)
+                        vals.append(
+                            self.table_model.item(j, i).checkState()
+                            != Qt.CheckState.Unchecked
+                        )
                     else:
                         try:
                             vals.append(int(self.table_model.item(j, i).text()))
@@ -515,30 +574,59 @@ class AddRemoveTable(QWidget):
             else:
                 for j in range(self.table_model.columnCount()):
                     try:
-                        self.tableData.append(float(self.table_model.item(0,j).text()))
+                        self.tableData.append(float(self.table_model.item(0, j).text()))
                     except:
-                        self.tableData.append(self.table_model.item(0,j).text())
+                        self.tableData.append(self.table_model.item(0, j).text())
         return self.tableData
 
 
 class AddRemoveDialoge(QDialog):
     """A QDialog providing an AddRemoveTable."""
 
-    def __init__(self, addLabel='+', removeLabel='-', horizontal=True,
-                 editables=None, checkables=(), headerLabels=None, orderBy=None,
-                 parent=None, tableData=None, title='', comboBoxes=None,
-                 subtables=None, checkstrings=None, askdelete=False):
+    def __init__(
+        self,
+        addLabel="+",
+        removeLabel="-",
+        horizontal=True,
+        editables=None,
+        checkables=(),
+        headerLabels=None,
+        orderBy=None,
+        parent=None,
+        tableData=None,
+        title="",
+        comboBoxes=None,
+        subtables=None,
+        checkstrings=None,
+        askdelete=False,
+    ):
         super().__init__(parent)
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
         self.buttonBox = QDialogButtonBox(self)
         self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
 
         self.buttonBox.rejected.connect(self.reject)
         self.buttonBox.accepted.connect(self.accept)
 
-        self.table = AddRemoveTable(addLabel=addLabel, removeLabel=removeLabel, horizontal=horizontal, editables=editables, checkables=checkables, headerLabels=headerLabels, orderBy=orderBy, parent=self, tableData=tableData, title=title, comboBoxes=comboBoxes, subtables=subtables, growsize=False, checkstrings=checkstrings, askdelete=askdelete)
+        self.table = AddRemoveTable(
+            addLabel=addLabel,
+            removeLabel=removeLabel,
+            horizontal=horizontal,
+            editables=editables,
+            checkables=checkables,
+            headerLabels=headerLabels,
+            orderBy=orderBy,
+            parent=self,
+            tableData=tableData,
+            title=title,
+            comboBoxes=comboBoxes,
+            subtables=subtables,
+            growsize=False,
+            checkstrings=checkstrings,
+            askdelete=askdelete,
+        )
 
         layout = QGridLayout()
         self.setLayout(layout)
@@ -560,7 +648,7 @@ class AddRemoveDialoge(QDialog):
         Parameters
         ----------
         a0: QKeyEvent :
-            
+
 
         Returns
         -------

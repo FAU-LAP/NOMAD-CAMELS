@@ -10,3 +10,5 @@ dist/
 *.egg-info
 /nomad_camels/test.py
 CAMELS.code-workspace
+**/config_path
+startup_packages.txt

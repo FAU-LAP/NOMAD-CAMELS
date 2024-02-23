@@ -992,6 +992,8 @@ QPushButton:disabled {
     <addaction name="actionLoad_Backup_Preset"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1158,6 +1160,11 @@ QPushButton:disabled {
   <action name="actionExport_CAMELS_hdf5_to_csv_json">
    <property name="text">
     <string>Export CAMELS hdf5 to csv/json</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
    </property>
   </action>
  </widget>

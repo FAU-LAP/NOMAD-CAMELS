@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>634</width>
-    <height>495</height>
+    <width>603</width>
+    <height>514</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,33 +47,6 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>Driver Repository URL</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_8">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>17</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Local drivers path</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="lineEdit_branch">
-           <property name="placeholderText">
-            <string>branch</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_13">
            <property name="font">
@@ -87,27 +60,20 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
-          <widget class="QLineEdit" name="lineEdit_directory">
-           <property name="placeholderText">
-            <string>directory</string>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>17</height>
+            </size>
            </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_14">
            <property name="text">
-            <string>Branch / Directory</string>
+            <string>Local drivers path</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1" colspan="2">
-          <widget class="QLineEdit" name="lineEdit_repo"/>
-         </item>
-         <item row="3" column="1" colspan="2">
-          <widget class="Path_Button_Edit" name="pathButton_device_path" native="true"/>
-         </item>
-         <item row="4" column="0" colspan="3">
+         <item row="2" column="0" colspan="3">
           <widget class="Line" name="line_5">
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
@@ -119,6 +85,9 @@
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <widget class="Path_Button_Edit" name="pathButton_device_path" native="true"/>
          </item>
         </layout>
        </widget>
@@ -558,43 +527,6 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
-          <widget class="QSpinBox" name="spinBox_backup_number"/>
-         </item>
-         <item row="3" column="0">
-          <widget class="QRadioButton" name="radioButton_all_backups">
-           <property name="text">
-            <string>keep all backups</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QRadioButton" name="radioButton_n_backups">
-           <property name="text">
-            <string>keep only...</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0" colspan="3">
-          <widget class="Line" name="line_4">
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <property name="lineWidth">
-            <number>5</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QCheckBox" name="checkBox_autosave_run">
-           <property name="text">
-            <string>autosave before run</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="1">
           <widget class="QCheckBox" name="checkBox_backup_before_run">
            <property name="text">
@@ -636,12 +568,59 @@
            </property>
           </widget>
          </item>
+         <item row="2" column="2">
+          <widget class="QCheckBox" name="checkBox_autosave_run">
+           <property name="text">
+            <string>autosave before run</string>
+           </property>
+          </widget>
+         </item>
          <item row="5" column="0" colspan="3">
           <widget class="QCheckBox" name="checkBox_new_file_each_run">
            <property name="text">
             <string>save each measurement run in new file</string>
            </property>
           </widget>
+         </item>
+         <item row="7" column="0" colspan="3">
+          <widget class="Line" name="line_4">
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <property name="lineWidth">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QSpinBox" name="spinBox_backup_number"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QRadioButton" name="radioButton_all_backups">
+           <property name="text">
+            <string>keep all backups</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QRadioButton" name="radioButton_n_backups">
+           <property name="text">
+            <string>keep only...</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>path for configuration files:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1" colspan="2">
+          <widget class="Path_Button_Edit" name="pathButton_config_path" native="true"/>
          </item>
         </layout>
        </widget>

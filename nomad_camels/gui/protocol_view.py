@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'protocol_view.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.2
+## Created by: Qt User Interface Compiler version 6.5.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -57,7 +57,10 @@ class Ui_Protocol_View(object):
 "\n"
 "            QPushButton:hover {\n"
 "                background-color: #B22222;\n"
-"            }")
+"            }\n"
+"QPushButton:disabled {\n"
+"        background-color: #808080;\n"
+"    }")
 
         self.gridLayout_8.addWidget(self.pushButton_remove_step, 3, 2, 1, 1)
 
@@ -117,7 +120,10 @@ class Ui_Protocol_View(object):
 "\n"
 "QPushButton:hover {\n"
 "    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */\n"
-"}")
+"}\n"
+"QPushButton:disabled {\n"
+"        background-color: #808080;\n"
+"    }")
 
         self.gridLayout_8.addWidget(self.pushButton_move_step_up, 2, 0, 1, 1)
 
@@ -143,7 +149,10 @@ class Ui_Protocol_View(object):
 "\n"
 "QPushButton:hover {\n"
 "    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */\n"
-"}")
+"}\n"
+"QPushButton:disabled {\n"
+"        background-color: #808080;\n"
+"    }")
 
         self.gridLayout_8.addWidget(self.pushButton_move_step_down, 3, 0, 1, 1)
 
@@ -164,7 +173,10 @@ class Ui_Protocol_View(object):
 "\n"
 "QPushButton:hover {\n"
 "    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */\n"
-"}")
+"}\n"
+"QPushButton:disabled {\n"
+"        background-color: #808080;\n"
+"    }")
 
         self.gridLayout_8.addWidget(self.pushButton_move_step_out, 3, 1, 1, 1)
 
@@ -185,7 +197,10 @@ class Ui_Protocol_View(object):
 "\n"
 "QPushButton:hover {\n"
 "    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */\n"
-"}")
+"}\n"
+"QPushButton:disabled {\n"
+"        background-color: #808080;\n"
+"    }")
 
         self.gridLayout_8.addWidget(self.pushButton_move_step_in, 2, 1, 1, 1)
 

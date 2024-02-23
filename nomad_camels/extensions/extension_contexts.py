@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QComboBox, QWidget
 
+
 class ELN_Context:
     def __init__(self, ui):
         self.comboBox_user_type = ui.comboBox_user_type

@@ -147,7 +147,10 @@ class Ui_Protocol_Settings(object):
 "\n"
 "            QPushButton:hover {\n"
 "                background-color: #B22222;\n"
-"            }")
+"            }\n"
+"QPushButton:disabled {\n"
+"        background-color: #808080;\n"
+"    }")
 
         self.gridLayout.addWidget(self.pushButton_remove_variable, 7, 2, 1, 1)
 

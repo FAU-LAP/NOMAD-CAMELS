@@ -1,10 +1,19 @@
-from PySide6.QtWidgets import QGridLayout, QDialog, QDialogButtonBox, QLabel, QLineEdit, QMessageBox, QWidget
+from PySide6.QtWidgets import (
+    QGridLayout,
+    QDialog,
+    QDialogButtonBox,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QWidget,
+)
 from PySide6.QtGui import QIcon, QCloseEvent
 from PySide6.QtCore import Signal, Qt
 
 from nomad_camels.utility import device_handling, variables_handling
 
-from pkg_resources import resource_filename
+from importlib import resources
+from nomad_camels import graphics
 
 
 class Manual_Control(QWidget):
@@ -27,16 +36,17 @@ class Manual_Control(QWidget):
     ophyd_device : ophyd.Device
         The device's representation in ophyd.
     """
+
     closing = Signal()
 
-    def __init__(self, parent=None, title='Manual Control', control_data=None):
+    def __init__(self, parent=None, title="Manual Control", control_data=None):
         super().__init__()
         # layout = QGridLayout()
         # self.setLayout(layout)
         self.control_data = control_data or {}
 
-        self.setWindowTitle(f'{title} - NOMAD CAMELS')
-        self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
+        self.setWindowTitle(f"{title} - NOMAD CAMELS")
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
         self.name = title
         self.device = None
         self.ophyd_device = None
@@ -82,16 +92,20 @@ class Manual_Control(QWidget):
             if self.device.name in self.device_list:
                 self.device_list.remove(self.device.custom_name)
             self.device_list.append(self.device.custom_name)
-            self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(self.device_list)
+            self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(
+                self.device_list
+            )
             self.instantiate_devices_thread.finished.connect(self.device_ready)
             self.setCursor(Qt.WaitCursor)
             self.setEnabled(False)
-            self.instantiate_devices_thread.exception_raised.connect(self.propagate_exception)
+            self.instantiate_devices_thread.exception_raised.connect(
+                self.propagate_exception
+            )
             self.instantiate_devices_thread.start()
 
     def start_multiple_devices(self, device_names, channels=False):
         """Starts multiple devices at once.
-        
+
         Parameters
         ----------
         device_names : list
@@ -99,10 +113,14 @@ class Manual_Control(QWidget):
         channels : bool
             Whether 'device_names' are channel names or device names.
         """
-        self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(device_names, channels)
+        self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(
+            device_names, channels
+        )
         self.instantiate_devices_thread.finished.connect(self.device_ready)
         self.setEnabled(False)
-        self.instantiate_devices_thread.exception_raised.connect(self.propagate_exception)
+        self.instantiate_devices_thread.exception_raised.connect(
+            self.propagate_exception
+        )
         self.instantiate_devices_thread.start()
 
     def device_ready(self):
@@ -115,17 +133,23 @@ class Manual_Control(QWidget):
         self.setEnabled(True)
 
 
-
 class Manual_Control_Config(QDialog):
     """ """
-    def __init__(self, parent=None, control_data=None, title='Manual Control Config', control_type=''):
+
+    def __init__(
+        self,
+        parent=None,
+        control_data=None,
+        title="Manual Control Config",
+        control_type="",
+    ):
         super().__init__(parent=parent)
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
         layout = QGridLayout()
         self.setLayout(layout)
-        self.control_type = control_type or 'Manual_Control'
+        self.control_type = control_type or "Manual_Control"
 
-        self.setWindowTitle(f'{title} - NOMAD CAMELS')
+        self.setWindowTitle(f"{title} - NOMAD CAMELS")
 
         self.buttonBox = QDialogButtonBox()
         self.buttonBox.setOrientation(Qt.Horizontal)
@@ -134,10 +158,10 @@ class Manual_Control_Config(QDialog):
         self.buttonBox.rejected.connect(self.reject)
         self.buttonBox.accepted.connect(self.accept)
 
-        name_label = QLabel('Name:')
+        name_label = QLabel("Name:")
         self.control_data = control_data or {}
-        if 'name' in self.control_data:
-            name = self.control_data['name']
+        if "name" in self.control_data:
+            name = self.control_data["name"]
         else:
             name = self.control_type
         self.lineEdit_name = QLineEdit(name)
@@ -148,8 +172,8 @@ class Manual_Control_Config(QDialog):
 
     def accept(self):
         """ """
-        self.control_data['name'] = self.lineEdit_name.text()
-        self.control_data['control_type'] = self.control_type
+        self.control_data["name"] = self.lineEdit_name.text()
+        self.control_data["control_type"] = self.control_type
         super().accept()
 
     def closeEvent(self, a0: QCloseEvent) -> None:
@@ -158,17 +182,19 @@ class Manual_Control_Config(QDialog):
         Parameters
         ----------
         a0: QCloseEvent :
-            
+
 
         Returns
         -------
 
         """
-        discard_dialog = QMessageBox.question(self, 'Discard Changes?',
-                                              f'All changes will be lost!',
-                                              QMessageBox.Yes | QMessageBox.No)
+        discard_dialog = QMessageBox.question(
+            self,
+            "Discard Changes?",
+            f"All changes will be lost!",
+            QMessageBox.Yes | QMessageBox.No,
+        )
         if discard_dialog != QMessageBox.Yes:
             a0.ignore()
             return
         super().closeEvent(a0)
-

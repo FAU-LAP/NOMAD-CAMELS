@@ -8,6 +8,7 @@ from nomad_camels.utility import variables_handling
 from nomad_camels.bluesky_handling import builder_helper_functions
 from nomad_camels.frontpanels.plot_definer import Plot_Info
 
+
 class Gradient_Descent_Step(Loop_Step):
     """
     A step performing a gradient descent with a given channel to optimize a
@@ -52,24 +53,31 @@ class Gradient_Descent_Step(Loop_Step):
     plot_steps : bool
         Whether to plot the single steps of the algorithm at runtime.
     """
-    def __init__(self, name='', parent_step=None, step_info=None, **kwargs):
+
+    def __init__(self, name="", parent_step=None, step_info=None, **kwargs):
         super().__init__(name, parent_step, step_info, **kwargs)
-        self.step_type = 'Gradient Descent'
+        self.step_type = "Gradient Descent"
         step_info = step_info or {}
-        self.read_channels = step_info['read_channels'] if 'read_channels' in step_info else []
-        self.extremum = step_info['extremum'] if 'extremum' in step_info else 'Minimum'
-        self.out_channel = step_info['out_channel'] if 'out_channel' in step_info else ''
-        self.opt_func = step_info['opt_func'] if 'opt_func' in step_info else ''
-        self.start_val = step_info['start_val'] if 'start_val' in step_info else ''
-        self.min_val = step_info['min_val'] if 'min_val' in step_info else ''
-        self.max_val = step_info['max_val'] if 'max_val' in step_info else ''
-        self.learning_rate = step_info['learning_rate'] if 'learning_rate' in step_info else ''
-        self.threshold = step_info['threshold'] if 'threshold' in step_info else ''
-        self.momentum = step_info['momentum'] if 'momentum' in step_info else ''
-        self.min_step = step_info['min_step'] if 'min_step' in step_info else ''
-        self.max_step = step_info['max_step'] if 'max_step' in step_info else ''
-        self.n_steps = step_info['n_steps'] if 'n_steps' in step_info else ''
-        self.plot_steps = step_info['plot_steps'] if 'plot_steps' in step_info else True
+        self.read_channels = (
+            step_info["read_channels"] if "read_channels" in step_info else []
+        )
+        self.extremum = step_info["extremum"] if "extremum" in step_info else "Minimum"
+        self.out_channel = (
+            step_info["out_channel"] if "out_channel" in step_info else ""
+        )
+        self.opt_func = step_info["opt_func"] if "opt_func" in step_info else ""
+        self.start_val = step_info["start_val"] if "start_val" in step_info else ""
+        self.min_val = step_info["min_val"] if "min_val" in step_info else ""
+        self.max_val = step_info["max_val"] if "max_val" in step_info else ""
+        self.learning_rate = (
+            step_info["learning_rate"] if "learning_rate" in step_info else ""
+        )
+        self.threshold = step_info["threshold"] if "threshold" in step_info else ""
+        self.momentum = step_info["momentum"] if "momentum" in step_info else ""
+        self.min_step = step_info["min_step"] if "min_step" in step_info else ""
+        self.max_step = step_info["max_step"] if "max_step" in step_info else ""
+        self.n_steps = step_info["n_steps"] if "n_steps" in step_info else ""
+        self.plot_steps = step_info["plot_steps"] if "plot_steps" in step_info else True
 
     def update_used_devices(self):
         """Uses all devices in self.read_channels and of self.out_channel"""
@@ -86,47 +94,54 @@ class Gradient_Descent_Step(Loop_Step):
         """Adds the plot, if self.plot_steps is True. The plot displays the
         formula to be optimized vs the out_channel."""
         if self.plot_steps:
-            plot = Plot_Info(x_axis=self.out_channel,
-                              y_axes={'formula': [self.opt_func],
-                                      'axis':['left']},
-                              title='gradient-descent')
-            return builder_helper_functions.plot_creator([plot], f'create_plots_{self.name}')[0]
-        return ''
+            plot = Plot_Info(
+                x_axis=self.out_channel,
+                y_axes={"formula": [self.opt_func], "axis": ["left"]},
+                title="gradient-descent",
+            )
+            return builder_helper_functions.plot_creator(
+                [plot], f"create_plots_{self.name}"
+            )[0]
+        return ""
 
     def get_add_main_string(self):
         """Adds the call of creating the plots if self.plot_steps."""
-        add_main_string = ''
+        add_main_string = ""
         if self.plot_steps:
             stream = f'"{self.name}"'
-            add_main_string += builder_helper_functions.get_plot_add_string(self.name, stream)
+            add_main_string += builder_helper_functions.get_plot_add_string(
+                self.name, stream
+            )
         return add_main_string
 
     def get_protocol_string(self, n_tabs=1):
         """Evaluates all / most of the values with the protocol's evaluator and
         calls the helper function gradient_descent to perform the algorithm."""
-        tabs = '\t'*n_tabs
+        tabs = "\t" * n_tabs
         func_text = f'"{self.opt_func}"'
-        if self.extremum == 'Maximum':
+        if self.extremum == "Maximum":
             func_text = f'"-({self.opt_func})"'
 
         protocol_string = super().get_protocol_string(n_tabs)
-        protocol_string += f'{tabs}channels = ['
+        protocol_string += f"{tabs}channels = ["
         for i, channel in enumerate(self.read_channels):
             if channel not in variables_handling.channels:
-                raise Exception(f'Trying to read channel {channel} in {self.full_name}, but it does not exist!')
+                raise Exception(
+                    f"Trying to read channel {channel} in {self.full_name}, but it does not exist!"
+                )
             if i > 0:
-                protocol_string += ', '
+                protocol_string += ", "
             name = variables_handling.channels[channel].name
-            if '.' in name:
-                dev, chan = name.split('.')
+            if "." in name:
+                dev, chan = name.split(".")
                 protocol_string += f'devs["{dev}"].{chan}'
             else:
                 protocol_string += f'devs["{name}"]'
-        protocol_string += ']\n'
+        protocol_string += "]\n"
 
         name = variables_handling.channels[self.out_channel].name
-        if '.' in name:
-            dev, chan = name.split('.')
+        if "." in name:
+            dev, chan = name.split(".")
             setter = f'devs["{dev}"].{chan}'
         else:
             setter = f'devs["{name}"]'
@@ -137,13 +152,16 @@ class Gradient_Descent_Step(Loop_Step):
     def get_protocol_short_string(self, n_tabs=0):
         """Describes the kind of extremum, the opt_func and the out_channel."""
         short_string = super().get_protocol_short_string(n_tabs)[:-1]
-        short_string += f' - {self.extremum} of {self.opt_func} via {self.out_channel}\n'
+        short_string += (
+            f" - {self.extremum} of {self.opt_func} via {self.out_channel}\n"
+        )
         return short_string
 
 
 class Gradient_Descent_Config(Loop_Step_Config):
     """ """
-    def __init__(self, loop_step:Gradient_Descent_Step, parent=None):
+
+    def __init__(self, loop_step: Gradient_Descent_Step, parent=None):
         super().__init__(parent, loop_step)
         self.sub_widget = Gradient_Descent_Config_Sub(loop_step, self)
         self.layout().addWidget(self.sub_widget, 1, 0, 1, 5)
@@ -156,15 +174,19 @@ class Gradient_Descent_Config(Loop_Step_Config):
 
 class Gradient_Descent_Config_Sub(Ui_Grad_Desc, QWidget):
     """ """
-    def __init__(self, loop_step:Gradient_Descent_Step, parent=None):
+
+    def __init__(self, loop_step: Gradient_Descent_Step, parent=None):
         super().__init__(parent)
         self.setupUi(self)
         self.loop_step = loop_step
-        self.read_table = AddRemoveTable(title='Read Channels', headerLabels=[],
-                                         tableData=loop_step.read_channels,
-                                         comboBoxes=variables_handling.channels.keys())
+        self.read_table = AddRemoveTable(
+            title="Read Channels",
+            headerLabels=[],
+            tableData=loop_step.read_channels,
+            comboBoxes=variables_handling.channels.keys(),
+        )
         self.layout().addWidget(self.read_table, 20, 0, 1, 3)
-        self.comboBox_extremum_type.addItems(['Minimum', 'Maximum'])
+        self.comboBox_extremum_type.addItems(["Minimum", "Maximum"])
         self.comboBox_extremum_type.setCurrentText(loop_step.extremum)
 
         out_box = []

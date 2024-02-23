@@ -1,10 +1,16 @@
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtCore import Qt, QSize, Signal
-from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QTextEdit, QCheckBox
+from PySide6.QtWidgets import (
+    QWidget,
+    QGridLayout,
+    QLabel,
+    QLineEdit,
+    QTextEdit,
+    QCheckBox,
+)
 
 
 from nomad_camels.utility import treeView_functions, variables_handling
-
 
 
 class Loop_Step:
@@ -19,30 +25,32 @@ class Loop_Step:
     step_info : dict, default None
         Dictionary containing all the relevant information of the step.
     """
-    def __init__(self, name='', parent_step=None, step_info=None,
-                 protocol=None, **kwargs):
-        self.step_type = 'Default'
+
+    def __init__(
+        self, name="", parent_step=None, step_info=None, protocol=None, **kwargs
+    ):
+        self.step_type = "Default"
         self.__save_dict__ = {}
         self.has_children = False
         self.children = []
         self.name = name
-        self.full_name = f'{self.step_type} ({name})'
+        self.full_name = f"{self.step_type} ({name})"
         self.parent_step = parent_step
         self.time_weight = 1
         self.used_devices = []
         self.protocol = protocol or None
-        if step_info and 'description' in step_info:
-            self.description = step_info['description']
+        if step_info and "description" in step_info:
+            self.description = step_info["description"]
         else:
-            self.description = ''
-        if step_info and 'is_active' in step_info:
-            self.is_active = step_info['is_active']
+            self.description = ""
+        if step_info and "is_active" in step_info:
+            self.is_active = step_info["is_active"]
         else:
             self.is_active = True
 
     def update_full_name(self):
         """Updates the full_name by combination of step_type and name"""
-        self.full_name = f'{self.step_type} ({self.name})'
+        self.full_name = f"{self.step_type} ({self.name})"
 
     def append_to_model(self, item_model, parent=None):
         """Ensures that the full_name of the loop_step is unique and
@@ -61,27 +69,29 @@ class Loop_Step:
             active = self.is_active
         else:
             p = parent if isinstance(parent, str) else parent.text()
-            active = self.is_active and not p.startswith('# ')
+            active = self.is_active and not p.startswith("# ")
         if type(parent) is str:
-            parent = item_model.itemFromIndex(treeView_functions.getItemIndex(item_model, parent))
-        self.full_name = f'{self.step_type} ({self.name})'
+            parent = item_model.itemFromIndex(
+                treeView_functions.getItemIndex(item_model, parent)
+            )
+        self.full_name = f"{self.step_type} ({self.name})"
         name = self.full_name
         if treeView_functions.getItemIndex(item_model, name) is not None:
             i = 1
-            name = f'{name[:-1]}_{i})'
+            name = f"{name[:-1]}_{i})"
             while treeView_functions.getItemIndex(item_model, name) is not None:
-                name = f'{name[:-3]}_{i})'
+                name = f"{name[:-3]}_{i})"
                 i += 1
-            self.name = name[len(self.step_type)+2:-1]
+            self.name = name[len(self.step_type) + 2 : -1]
         if not active:
-            name = f'# {name}'
+            name = f"# {name}"
         item = QStandardItem(name)
         item.setData(name)
         if not active:
             item.setForeground(Qt.gray)
         parent.appendRow(item)
         index = treeView_functions.getItemIndex(item_model, name)
-        item_model.setData(index, QSize(20,20), Qt.SizeHintRole)
+        item_model.setData(index, QSize(20, 20), Qt.SizeHintRole)
         item.setDropEnabled(False)
         self.full_name = name
         return item
@@ -102,13 +112,15 @@ class Loop_Step:
         protocol_string : str
             The string representing the step
         """
-        tabs = '\t'*n_tabs
+        tabs = "\t" * n_tabs
         desc = self.description.replace("\n", f"\n{tabs}")
         protocol_string = f'\n{tabs}"""{desc}"""\n'
         # protocol_string += f'{tabs}print("starting loop_step {self.full_name}")\n'
         protocol_string += f'{tabs}protocol_step_information["protocol_stepper_signal"].emit(protocol_step_information["protocol_step_counter"] / protocol_step_information["total_protocol_steps"] * 100)\n'
-        protocol_string += f'{tabs}protocol_step_information["protocol_step_counter"] += 1\n'
-        protocol_string += f'{tabs}yield from bps.checkpoint()\n'
+        protocol_string += (
+            f'{tabs}protocol_step_information["protocol_step_counter"] += 1\n'
+        )
+        protocol_string += f"{tabs}yield from bps.checkpoint()\n"
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
@@ -127,20 +139,19 @@ class Loop_Step:
         short_string : str
             The string representing the step
         """
-        tabs = '\t' * n_tabs
-        short_string = f'{tabs}{self.step_type} \'{self.name}\'\n'
+        tabs = "\t" * n_tabs
+        short_string = f"{tabs}{self.step_type} '{self.name}'\n"
         return short_string
-
 
     def get_outer_string(self):
         """Returns the string for the protocol, where for example special plots
         for the step are created."""
-        return ''
+        return ""
 
     def get_add_main_string(self):
         """Adds for example a call to the protocol function to the
         steps_add_main function of the script."""
-        return ''
+        return ""
 
     def update_variables(self):
         """Should update the variables_handling, if the loopstep
@@ -167,15 +178,18 @@ class Loop_Step_Container(Loop_Step):
         A list of the children inside this step (in the order, they are
         to be executed)
     """
-    def __init__(self, name='', children=None, parent_step=None, step_info=None, **kwargs):
+
+    def __init__(
+        self, name="", children=None, parent_step=None, step_info=None, **kwargs
+    ):
         super().__init__(name, parent_step=parent_step, step_info=step_info, **kwargs)
-        self.step_type = 'Container'
+        self.step_type = "Container"
         self.has_children = True
         if children is None:
             children = []
         self.children = children
 
-    def append_to_model(self, item_model:QStandardItemModel, parent=None):
+    def append_to_model(self, item_model: QStandardItemModel, parent=None):
         """Overwrites this function to additionally append all children
         to the model."""
         item = super().append_to_model(item_model, parent)
@@ -227,19 +241,19 @@ class Loop_Step_Container(Loop_Step):
         """This is overwritten to include the strings from the children"""
         short_string = super().get_protocol_short_string(n_tabs)
         for child in self.children:
-            short_string += child.get_protocol_short_string(n_tabs+1)
+            short_string += child.get_protocol_short_string(n_tabs + 1)
         return short_string
 
     def get_outer_string(self):
         """This is overwritten to include the strings from the children"""
-        outer_string = ''
+        outer_string = ""
         for child in self.children:
             outer_string += child.get_outer_string()
         return outer_string
 
     def get_add_main_string(self):
         """This is overwritten to include the strings from the children"""
-        add_main_string = ''
+        add_main_string = ""
         for child in self.children:
             add_main_string += child.get_add_main_string()
         return add_main_string
@@ -250,7 +264,6 @@ class Loop_Step_Container(Loop_Step):
         for child in self.children:
             child.update_time_weight()
             self.time_weight += child.time_weight
-
 
     def get_children_strings(self, n_tabs=1):
         """Returns the protocol_strings of all the children.
@@ -266,7 +279,7 @@ class Loop_Step_Container(Loop_Step):
         child_string : str
             The string of all children's protocol strings.
         """
-        child_string = ''
+        child_string = ""
         for child in self.children:
             child_string += child.get_protocol_string(n_tabs)
         return child_string
@@ -285,7 +298,6 @@ class Loop_Step_Container(Loop_Step):
         self.used_devices = list(set(self.used_devices))
 
 
-
 class Loop_Step_Config(QWidget):
     """Parent class for the configuration Widget of the loop_step.
     Provides the main layout and a lineEdit for changing the loop_steps
@@ -298,6 +310,7 @@ class Loop_Step_Config(QWidget):
     -------
 
     """
+
     name_changed = Signal()
     add_other_step = Signal(dict)
     active_changed = Signal()
@@ -305,8 +318,9 @@ class Loop_Step_Config(QWidget):
     def __init__(self, parent=None, loop_step=None):
         super(Loop_Step_Config, self).__init__(parent)
         layout = QGridLayout()
-        self.name_widget = Loop_Step_Name_Widget(self, loop_step.name,
-                                                 loop_step.is_active)
+        self.name_widget = Loop_Step_Name_Widget(
+            self, loop_step.name, loop_step.is_active
+        )
         self.loop_step = loop_step
         self.name_widget.name_changed.connect(self.change_name)
         self.name_widget.active_changed.connect(self.change_active)
@@ -314,7 +328,7 @@ class Loop_Step_Config(QWidget):
         self.setLayout(layout)
 
         self.textEdit_desc = QTextEdit(loop_step.description, self)
-        self.textEdit_desc.setPlaceholderText('Enter step description here.')
+        self.textEdit_desc.setPlaceholderText("Enter step description here.")
 
         layout.addWidget(self.textEdit_desc, 500, 0, 1, 5)
 
@@ -325,7 +339,7 @@ class Loop_Step_Config(QWidget):
         Parameters
         ----------
         name :
-            
+
 
         Returns
         -------
@@ -356,6 +370,7 @@ class Loop_Step_Config(QWidget):
         variables_handling.check_variable_name(self.loop_step.name, True, self)
         self.loop_step.description = self.textEdit_desc.toPlainText()
 
+
 class Loop_Step_Name_Widget(QWidget):
     """Simple class that provides the necessary widgets for the step's
     name.
@@ -367,14 +382,15 @@ class Loop_Step_Name_Widget(QWidget):
     -------
 
     """
+
     name_changed = Signal(str)
     active_changed = Signal(bool)
 
-    def __init__(self, parent=None, name='', is_active=True):
+    def __init__(self, parent=None, name="", is_active=True):
         super().__init__(parent)
-        label = QLabel('Name:')
+        label = QLabel("Name:")
         self.lineEdit_name = QLineEdit(name, self)
-        self.checkBox_active = QCheckBox('active')
+        self.checkBox_active = QCheckBox("active")
         self.checkBox_active.setChecked(is_active)
 
         layout = QGridLayout()

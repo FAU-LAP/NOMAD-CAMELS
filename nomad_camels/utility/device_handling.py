@@ -33,7 +33,8 @@ local_packages = {}
 local_package_paths = {}
 running_devices = {}
 from_manual_controls = []
-last_path = ''
+last_path = ""
+
 
 def load_local_packages(tell_local=False):
     """
@@ -62,29 +63,29 @@ def load_local_packages(tell_local=False):
     if not os.path.isdir(local_instr_path):
         return local_packages
     sys.path.append(local_instr_path)
-    for f in pathlib.Path(local_instr_path).rglob('*'):
-        match = re.match(r'^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$', f.name)
+    for f in pathlib.Path(local_instr_path).rglob("*"):
+        match = re.match(r"^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$", f.name)
         if match:
             try:
                 sys.path.append(str(f.parent))
-                package = importlib.import_module(f'.{match.group(2)}', match.group(0))
+                package = importlib.import_module(f".{match.group(2)}", match.group(0))
                 device = package.subclass()
                 if tell_local:
-                    local_packages[f'local {device.name}'] = package
+                    local_packages[f"local {device.name}"] = package
                 else:
                     local_packages[device.name] = package
                 local_package_paths[device.name] = str(f.parent)
             except Exception as e:
                 print(f, e)
-    for f in pathlib.Path('manual_controls').resolve().rglob('*'):
-        match = re.match(r'^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$', f.name)
+    for f in pathlib.Path("manual_controls").resolve().rglob("*"):
+        match = re.match(r"^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$", f.name)
         if match:
             try:
                 sys.path.append(str(f.parent))
-                package = importlib.import_module(f'.{match.group(2)}', match.group(0))
+                package = importlib.import_module(f".{match.group(2)}", match.group(0))
                 device = package.subclass()
                 if tell_local:
-                    local_packages[f'local {device.name}'] = package
+                    local_packages[f"local {device.name}"] = package
                 else:
                     local_packages[device.name] = package
                 local_package_paths[device.name] = str(f.parent)
@@ -109,18 +110,20 @@ def get_channel_from_string(channel):
     ophyd.Signal
         The signal / channel found from the string
     """
-    dev, chan = channel.split('.')
+    dev, chan = channel.split(".")
     if dev not in running_devices:
-        raise Exception(f'Device {dev} is needed, but not yet instantiated!')
+        raise Exception(f"Device {dev} is needed, but not yet instantiated!")
     device = running_devices[dev]
     return getattr(device, chan)
 
+
 def get_funtion_from_string(func_name):
-    dev, func = func_name.split('.')
+    dev, func = func_name.split(".")
     if dev not in running_devices:
-        raise Exception(f'Device {dev} is needed, but not yet instantiated!')
+        raise Exception(f"Device {dev} is needed, but not yet instantiated!")
     device = running_devices[dev]
     return getattr(device, func)
+
 
 def get_channels_from_string_list(channel_list, as_dict=False):
     """
@@ -150,7 +153,7 @@ def get_channels_from_string_list(channel_list, as_dict=False):
         channels = []
     for channel in channel_list:
         chan = channel
-        if chan == 'None':
+        if chan == "None":
             channels.append(None)
             continue
         if channel in variables_handling.channels:
@@ -161,14 +164,16 @@ def get_channels_from_string_list(channel_list, as_dict=False):
             channels.append(get_channel_from_string(chan.name))
     return channels
 
+
 def get_functions_from_string_list(func_list):
     funcs = []
     for func in func_list:
-        if func == 'None':
+        if func == "None":
             funcs.append(None)
             continue
         funcs.append(get_funtion_from_string(func))
     return funcs
+
 
 def start_devices_from_channel_list(channel_list, skip_config=False):
     """
@@ -194,6 +199,7 @@ def start_devices_from_channel_list(channel_list, skip_config=False):
     dev_list = list(dev_list)
     devs, dev_data = instantiate_devices(dev_list, skip_config=skip_config)
     return devs, dev_data
+
 
 def instantiate_devices(device_list, skip_config=False):
     """
@@ -227,29 +233,29 @@ def instantiate_devices(device_list, skip_config=False):
                 config = copy.deepcopy(device.get_config())
             settings = copy.deepcopy(device.get_settings())
             additional_info = copy.deepcopy(device.get_additional_info())
-            if 'connection' in settings:
-                conn = settings.pop('connection')
-                if 'type' in conn:
-                    conn.pop('type')
+            if "connection" in settings:
+                conn = settings.pop("connection")
+                if "type" in conn:
+                    conn.pop("type")
                 settings.update(conn)
-            if 'idn' in settings:
-                settings.pop('idn')
+            if "idn" in settings:
+                settings.pop("idn")
             extra_settings = {}
             non_strings = []
             for key in settings:
-                if key.startswith('!non_string!_'):
-                    extra_settings[key.replace('!non_string!_', '')] = settings[key]
+                if key.startswith("!non_string!_"):
+                    extra_settings[key.replace("!non_string!_", "")] = settings[key]
                     non_strings.append(key)
             for s in non_strings:
                 settings.pop(s)
-            additional_info['device_class_name'] = classname
+            additional_info["device_class_name"] = classname
             extra_settings.update(settings)
 
             extra_config = {}
             non_strings = []
             for key in config:
-                if key.startswith('!non_string!_'):
-                    extra_config[key.replace('!non_string!_', '')] = config[key]
+                if key.startswith("!non_string!_"):
+                    extra_config[key.replace("!non_string!_", "")] = config[key]
                     non_strings.append(key)
             for s in non_strings:
                 config.pop(s)
@@ -261,7 +267,7 @@ def instantiate_devices(device_list, skip_config=False):
                 ophyd_device = running_devices[dev]
                 ophyd_device.device_run_count += 1
             else:
-                ophyd_device = device.ophyd_class(f'{dev}:', name=dev, **extra_settings)
+                ophyd_device = device.ophyd_class(f"{dev}:", name=dev, **extra_settings)
                 ophyd_device.device_run_count = 1
                 running_devices[dev] = ophyd_device
             ophyd_device.wait_for_connection()
@@ -279,10 +285,12 @@ def instantiate_devices(device_list, skip_config=False):
         raise Exception(e)
     return devices, device_config
 
+
 class InstantiateDevicesThread(QThread):
     """
     Thread for starting devices in the background.
     """
+
     exception_raised = Signal(Exception)
 
     def __init__(self, device_list, channels=False, skip_config=False):
@@ -294,17 +302,23 @@ class InstantiateDevicesThread(QThread):
         if channels:
             for channel in device_list:
                 if channel not in variables_handling.channels:
-                    raise Warning(f'Trying to use channel {channel}, but it is not defined!')
+                    raise Warning(
+                        f"Trying to use channel {channel}, but it is not defined!"
+                    )
                 chan = variables_handling.channels[channel]
                 if chan.device not in variables_handling.devices:
-                    raise Warning(f'Trying to use channel {channel}, but the corresponding device {chan.device} is not defined!')
+                    raise Warning(
+                        f"Trying to use channel {channel}, but the corresponding device {chan.device} is not defined!"
+                    )
                 dev = variables_handling.devices[chan.device]
                 if dev.main_thread_only:
                     main_thread_devs.append(channel)
         else:
             for device in device_list:
                 if device not in variables_handling.devices:
-                    raise Warning(f'Trying to start device {device}, but it is not even defined!')
+                    raise Warning(
+                        f"Trying to start device {device}, but it is not even defined!"
+                    )
                 dev = variables_handling.devices[device]
                 if dev.main_thread_only:
                     main_thread_devs.append(device)
@@ -313,20 +327,29 @@ class InstantiateDevicesThread(QThread):
         for dev in main_thread_devs:
             self.device_list.remove(dev)
         if self.channels:
-            self.devices, self.device_config = start_devices_from_channel_list(main_thread_devs, skip_config=skip_config)
+            self.devices, self.device_config = start_devices_from_channel_list(
+                main_thread_devs, skip_config=skip_config
+            )
         else:
-            self.devices, self.device_config = instantiate_devices(main_thread_devs, skip_config=skip_config)
+            self.devices, self.device_config = instantiate_devices(
+                main_thread_devs, skip_config=skip_config
+            )
 
     def run(self):
         try:
             if self.channels:
-                devices, device_config = start_devices_from_channel_list(self.device_list, skip_config=self.skip_config)
+                devices, device_config = start_devices_from_channel_list(
+                    self.device_list, skip_config=self.skip_config
+                )
             else:
-                devices, device_config = instantiate_devices(self.device_list, skip_config=self.skip_config)
+                devices, device_config = instantiate_devices(
+                    self.device_list, skip_config=self.skip_config
+                )
             self.devices.update(devices)
             self.device_config.update(device_config)
         except Exception as e:
             self.exception_raised.emit(e)
+
 
 def close_devices(device_list):
     """
@@ -340,13 +363,12 @@ def close_devices(device_list):
     """
     for dev in reversed(device_list):
         if dev not in running_devices:
-            raise Warning(f'Trying to close device {dev}, but it is not even running!')
+            raise Warning(f"Trying to close device {dev}, but it is not even running!")
         ophyd_dev = running_devices[dev]
         ophyd_dev.device_run_count -= 1
         if ophyd_dev.device_run_count == 0:
             running_devices.pop(dev)
-            if hasattr(ophyd_dev, 'finalize_steps') and callable(ophyd_dev.finalize_steps):
+            if hasattr(ophyd_dev, "finalize_steps") and callable(
+                ophyd_dev.finalize_steps
+            ):
                 ophyd_dev.finalize_steps()
-
-
-

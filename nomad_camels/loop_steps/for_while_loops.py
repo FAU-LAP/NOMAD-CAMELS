@@ -9,6 +9,7 @@ from nomad_camels.ui_widgets.variable_tool_tip_box import Variable_Box
 
 from nomad_camels.gui.for_loop import Ui_for_loop_config
 
+
 class While_Loop_Step(Loop_Step_Container):
     """A loopstep that adds a simple While Loop with a condition, that
     may be just written as python-code.
@@ -23,21 +24,27 @@ class While_Loop_Step(Loop_Step_Container):
         the progress bar. Ideally rather too large than to small (otherwise the
         progress bar reaches 100% too early).
     """
-    def __init__(self, name='', children=None, parent_step=None, step_info=None,
-                 **kwargs):
+
+    def __init__(
+        self, name="", children=None, parent_step=None, step_info=None, **kwargs
+    ):
         super().__init__(name, children, parent_step, step_info, **kwargs)
-        self.step_type = 'While Loop'
+        self.step_type = "While Loop"
         if step_info is None:
             step_info = {}
-        self.condition = step_info['condition'] if 'condition' in step_info else '!'
-        self.expected_interations = step_info['expected_interations'] if 'expected_interations' in step_info else 1
+        self.condition = step_info["condition"] if "condition" in step_info else "!"
+        self.expected_interations = (
+            step_info["expected_interations"]
+            if "expected_interations" in step_info
+            else 1
+        )
 
     def update_variables(self):
         """Here the Count of the while-loop is included as a variable."""
         variables = {f'{self.name.replace(" ", "_")}_Count': 0}
         for variable in variables:
             if variable in variables_handling.loop_step_variables:
-                raise Exception('Variable already defined!')
+                raise Exception("Variable already defined!")
         variables_handling.loop_step_variables.update(variables)
         super().update_variables()
 
@@ -46,14 +53,14 @@ class While_Loop_Step(Loop_Step_Container):
         while loop with the desired condition is started. After all the
         children-steps, the count-variable increased by 1."""
         self.update_time_weight()
-        tabs = '\t'*n_tabs
+        tabs = "\t" * n_tabs
         count_var = f'{self.name.replace(" ", "_")}_Count'
         protocol_string = super().get_protocol_string(n_tabs)
-        protocol_string += f'{tabs}{count_var} = 0\n'
+        protocol_string += f"{tabs}{count_var} = 0\n"
         protocol_string += f'{tabs}while eva.eval("{self.condition}"):\n'
         protocol_string += f'{tabs}\tnamespace["{count_var}"] = {count_var}\n'
-        protocol_string += self.get_children_strings(n_tabs+1)
-        protocol_string += f'{tabs}\t{count_var} += 1\n'
+        protocol_string += self.get_children_strings(n_tabs + 1)
+        protocol_string += f"{tabs}\t{count_var} += 1\n"
         return protocol_string
 
     def update_time_weight(self):
@@ -64,16 +71,17 @@ class While_Loop_Step(Loop_Step_Container):
 
     def get_protocol_short_string(self, n_tabs=0):
         """Adds the condition to the string"""
-        tabs = '\t' * n_tabs
-        short_string = f'{tabs}\'{self.name}\' while {self.condition}:\n'
+        tabs = "\t" * n_tabs
+        short_string = f"{tabs}'{self.name}' while {self.condition}:\n"
         for child in self.children:
-            short_string += child.get_protocol_short_string(n_tabs+1)
+            short_string += child.get_protocol_short_string(n_tabs + 1)
         return short_string
 
 
 class While_Loop_Step_Config(Loop_Step_Config):
     """Configuration-Widget for the while-loop step."""
-    def __init__(self, loop_step:While_Loop_Step, parent=None):
+
+    def __init__(self, loop_step: While_Loop_Step, parent=None):
         super().__init__(parent, loop_step)
         self.sub_widget = While_Loop_Step_Config_Sub(loop_step, self)
         self.layout().addWidget(self.sub_widget, 1, 0, 1, 5)
@@ -90,12 +98,13 @@ class While_Loop_Step_Config_Sub(QWidget):
     -------
 
     """
-    def __init__(self, loop_step:While_Loop_Step, parent=None):
+
+    def __init__(self, loop_step: While_Loop_Step, parent=None):
         super().__init__(parent)
         self.loop_step = loop_step
 
-        label = QLabel('Condition:')
-        label_it = QLabel('Expected number of iterations:')
+        label = QLabel("Condition:")
+        label_it = QLabel("Expected number of iterations:")
         self.lineEdit_condition = Variable_Box(self)
         self.lineEdit_condition.setText(loop_step.condition)
         self.lineEdit_expection = QLineEdit(str(loop_step.expected_interations))
@@ -160,56 +169,73 @@ class For_Loop_Step(Loop_Step_Container):
     include_end_points : bool
         whether to include the `stop_val` into the iteration
     """
-    def __init__(self, name='', children=None, parent_step=None, step_info=None,
-                 **kwargs):
+
+    def __init__(
+        self, name="", children=None, parent_step=None, step_info=None, **kwargs
+    ):
         super().__init__(name, children, parent_step, step_info, **kwargs)
-        self.step_type = 'For Loop'
+        self.step_type = "For Loop"
         if step_info is None:
             step_info = {}
-        self.loop_type = step_info['loop_type'] if 'loop_type' in step_info else 'start - stop'
-        self.start_val = step_info['start_val'] if 'start_val' in step_info else ''
-        self.stop_val = step_info['stop_val'] if 'stop_val' in step_info else ''
-        self.min_val = step_info['min_val'] if 'min_val' in step_info else ''
-        self.max_val = step_info['max_val'] if 'max_val' in step_info else ''
-        self.n_points = step_info['n_points'] if 'n_points' in step_info else ''
-        self.sweep_mode = step_info['sweep_mode'] if 'sweep_mode' in step_info else 'linear'
-        self.n_iterations = step_info['n_iterations'] if 'n_iterations' in step_info else 0
+        self.loop_type = (
+            step_info["loop_type"] if "loop_type" in step_info else "start - stop"
+        )
+        self.start_val = step_info["start_val"] if "start_val" in step_info else ""
+        self.stop_val = step_info["stop_val"] if "stop_val" in step_info else ""
+        self.min_val = step_info["min_val"] if "min_val" in step_info else ""
+        self.max_val = step_info["max_val"] if "max_val" in step_info else ""
+        self.n_points = step_info["n_points"] if "n_points" in step_info else ""
+        self.sweep_mode = (
+            step_info["sweep_mode"] if "sweep_mode" in step_info else "linear"
+        )
+        self.n_iterations = (
+            step_info["n_iterations"] if "n_iterations" in step_info else 0
+        )
         # self.point_array = step_info['point_array'] if 'point_array' in step_info else []
-        self.val_list = step_info['val_list'] if 'val_list' in step_info else []
-        self.file_path = step_info['file_path'] if 'file_path' in step_info else ''
-        self.include_end_points = step_info['include_end_points'] if 'include_end_points' in step_info else True
+        self.val_list = step_info["val_list"] if "val_list" in step_info else []
+        self.file_path = step_info["file_path"] if "file_path" in step_info else ""
+        self.include_end_points = (
+            step_info["include_end_points"]
+            if "include_end_points" in step_info
+            else True
+        )
         # self.update_variables()
 
     def update_variables(self):
         """Includes the value and iteration-count of the loop."""
-        variables = {f'{self.name.replace(" ", "_")}_Count': 0,
-                     f'{self.name.replace(" ", "_")}_Value': 0}
+        variables = {
+            f'{self.name.replace(" ", "_")}_Count': 0,
+            f'{self.name.replace(" ", "_")}_Value': 0,
+        }
         for variable in variables:
             if variable in variables_handling.loop_step_variables:
-                raise Exception('Variable already defined!')
+                raise Exception("Variable already defined!")
         variables_handling.loop_step_variables.update(variables)
         super().update_variables()
 
     def get_protocol_string(self, n_tabs=1):
         """The loop is enumerating over the selected points. When using a range,
         the get_range helper function is used."""
-        tabs = '\t'*n_tabs
-        if self.loop_type in ['start - stop', 'start - min - max - stop',
-                              'start - max - min - stop']:
+        tabs = "\t" * n_tabs
+        if self.loop_type in [
+            "start - stop",
+            "start - min - max - stop",
+            "start - max - min - stop",
+        ]:
             enumerator = f'helper_functions.get_range(eva, "{self.start_val}", "{self.stop_val}", "{self.n_points}", "{self.min_val or np.nan}", "{self.max_val or np.nan}", "{self.loop_type}", "{self.sweep_mode}", "{self.include_end_points}")'
             # enumerator = get_space_string(self.start_val, self.stop_val,
             #                               self.n_points, self.min_val,
             #                               self.max_val, self.loop_type,
             #                               self.sweep_mode,
             #                               self.include_end_points)
-        elif self.loop_type == 'Value-List':
+        elif self.loop_type == "Value-List":
             enumerator = self.val_list
         else:
             enumerator = f'np.loadtxt("{self.file_path}")'
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}for {self.name.replace(" ", "_")}_Count, {self.name.replace(" ", "_")}_Value in enumerate({enumerator}):\n'
         protocol_string += f'{tabs}\tnamespace.update({{"{self.name.replace(" ", "_")}_Count": {self.name.replace(" ", "_")}_Count, "{self.name.replace(" ", "_")}_Value": {self.name.replace(" ", "_")}_Value}})\n'
-        protocol_string += self.get_children_strings(n_tabs+1)
+        protocol_string += self.get_children_strings(n_tabs + 1)
         self.update_time_weight()
         return protocol_string
 
@@ -221,33 +247,39 @@ class For_Loop_Step(Loop_Step_Container):
 
     def get_protocol_short_string(self, n_tabs=0):
         """Shows the type of loop and the range in the short string as well"""
-        tabs = '\t' * n_tabs
-        if self.loop_type == 'Value-List':
+        tabs = "\t" * n_tabs
+        if self.loop_type == "Value-List":
             vals = self.val_list
-        elif self.loop_type in ['start - stop', 'start - min - max - stop',
-                                'start - max - min - stop']:
-            vals = f'(start: {self.start_val}, stop: {self.stop_val}, '
-            if 'max' in self.loop_type:
-                vals += f'min: {self.min_val}, max: {self.max_val}, '
-            vals += f'points: {self.n_points})'
+        elif self.loop_type in [
+            "start - stop",
+            "start - min - max - stop",
+            "start - max - min - stop",
+        ]:
+            vals = f"(start: {self.start_val}, stop: {self.stop_val}, "
+            if "max" in self.loop_type:
+                vals += f"min: {self.min_val}, max: {self.max_val}, "
+            vals += f"points: {self.n_points})"
         else:
             vals = self.file_path
-        short_string = f'{tabs}\'{self.name}\' for {vals}:\n'
+        short_string = f"{tabs}'{self.name}' for {vals}:\n"
         for child in self.children:
-            short_string += child.get_protocol_short_string(n_tabs+1)
+            short_string += child.get_protocol_short_string(n_tabs + 1)
         return short_string
 
 
 class For_Loop_Step_Config(Loop_Step_Config):
     """Configuration-Widget for the for-loop step."""
-    def __init__(self, loop_step:For_Loop_Step, parent=None):
+
+    def __init__(self, loop_step: For_Loop_Step, parent=None):
         super().__init__(parent, loop_step)
         self.sub_widget = For_Loop_Step_Config_Sub(parent=self, loop_step=loop_step)
         self.layout().addWidget(self.sub_widget, 1, 0, 1, 5)
 
+
 class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
     """Provides the main config for the For Loop."""
-    def __init__(self, loop_step:For_Loop_Step, parent=None):
+
+    def __init__(self, loop_step: For_Loop_Step, parent=None):
         super().__init__(parent)
         self.setupUi(self)
         self.loop_step = loop_step
@@ -284,7 +316,6 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
         self.checkBox_include_endpoints.setChecked(self.loop_step.include_end_points)
         self.path_line_button.set_path(self.loop_step.file_path)
 
-
     def loop_type_change(self):
         """Enables / disables the respective elements that are used for
         the single loop-types, then builds the preview.
@@ -297,7 +328,7 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
 
         """
         combo_text = self.comboBox_loop_type.currentText()
-        if self.comboBox_loop_type.currentText() == 'start - stop':
+        if self.comboBox_loop_type.currentText() == "start - stop":
             self.path_line_button.setEnabled(False)
             self.sweep_widget.setEnabled(True)
             self.lineEdit_max.setEnabled(False)
@@ -306,8 +337,7 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
             self.pushButton_del_point.setEnabled(False)
             self.label_min.setEnabled(False)
             self.label_max.setEnabled(False)
-        elif combo_text in ['start - min - max - stop',
-                            'start - max - min - stop']:
+        elif combo_text in ["start - min - max - stop", "start - max - min - stop"]:
             self.path_line_button.setEnabled(False)
             self.sweep_widget.setEnabled(True)
             self.lineEdit_max.setEnabled(True)
@@ -316,7 +346,7 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
             self.pushButton_del_point.setEnabled(False)
             self.label_min.setEnabled(True)
             self.label_max.setEnabled(True)
-        elif combo_text == 'Value-List':
+        elif combo_text == "Value-List":
             self.path_line_button.setEnabled(False)
             self.sweep_widget.setEnabled(False)
             self.pushButton_add_point.setEnabled(True)
@@ -370,7 +400,7 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
         stop = self.lineEdit_stop.text()
         points = self.lineEdit_n_points.text()
         self.loop_step.n_points = points
-        if self.comboBox_sweep_mode.currentText() == 'linear':
+        if self.comboBox_sweep_mode.currentText() == "linear":
             vals = self.get_space(start, stop, points)
             distance = vals[1] - vals[0] if len(vals) > 1 else np.nan
         else:
@@ -392,7 +422,7 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
         -------
 
         """
-        if self.comboBox_sweep_mode.currentText() == 'linear':
+        if self.comboBox_sweep_mode.currentText() == "linear":
             self.lineEdit_point_distance.setEnabled(True)
         else:
             self.lineEdit_point_distance.setEnabled(False)
@@ -412,9 +442,11 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
         """
         self.tableWidget_points.clear()
         self.tableWidget_points.setRowCount(0)
-        if self.comboBox_loop_type.currentText() in ['start - stop',
-                                                     'start - min - max - stop',
-                                                     'start - max - min - stop']:
+        if self.comboBox_loop_type.currentText() in [
+            "start - stop",
+            "start - min - max - stop",
+            "start - max - min - stop",
+        ]:
             try:
                 start = self.lineEdit_start.text()
                 self.loop_step.start_val = start
@@ -430,7 +462,7 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
                 self.loop_step.n_points = points
             except ValueError:
                 points = 0
-            if self.comboBox_loop_type.currentText() == 'start - stop':
+            if self.comboBox_loop_type.currentText() == "start - stop":
                 vals = self.get_space(start, stop, points)
             else:
                 try:
@@ -449,26 +481,41 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
                     min_val_val = variables_handling.get_eval(min_val)
                     max_val_val = variables_handling.get_eval(max_val)
                     points_val = variables_handling.get_eval(points)
-                    if self.comboBox_loop_type.currentText() == 'start - min - max - stop':
-                        part_points1 = round(points_val * np.abs(start_val - min_val_val) /
-                                             np.abs(max_val_val - min_val_val))
-                        part_points2 = round(points_val * np.abs(stop_val - max_val_val) /
-                                             np.abs(max_val_val - min_val_val))
+                    if (
+                        self.comboBox_loop_type.currentText()
+                        == "start - min - max - stop"
+                    ):
+                        part_points1 = round(
+                            points_val
+                            * np.abs(start_val - min_val_val)
+                            / np.abs(max_val_val - min_val_val)
+                        )
+                        part_points2 = round(
+                            points_val
+                            * np.abs(stop_val - max_val_val)
+                            / np.abs(max_val_val - min_val_val)
+                        )
                         vals1 = self.get_space(start, min_val, str(part_points1))
                         vals2 = self.get_space(min_val, max_val, points)
                         vals3 = self.get_space(max_val, stop, str(part_points2))
                     else:
-                        part_points1 = round(points_val * np.abs(start_val - max_val_val) /
-                                             np.abs(max_val_val - min_val_val))
-                        part_points2 = round(points_val * np.abs(stop_val - min_val_val) /
-                                             np.abs(max_val_val - min_val_val))
+                        part_points1 = round(
+                            points_val
+                            * np.abs(start_val - max_val_val)
+                            / np.abs(max_val_val - min_val_val)
+                        )
+                        part_points2 = round(
+                            points_val
+                            * np.abs(stop_val - min_val_val)
+                            / np.abs(max_val_val - min_val_val)
+                        )
                         vals1 = self.get_space(start, max_val, str(part_points1))
                         vals2 = self.get_space(max_val, min_val, points)
                         vals3 = self.get_space(min_val, stop, str(part_points2))
                     vals = np.concatenate([vals1, vals2, vals3])
                 except ValueError:
                     return [np.nan]
-        elif self.comboBox_loop_type.currentText() == 'Value-List':
+        elif self.comboBox_loop_type.currentText() == "Value-List":
             vals = self.loop_step.val_list
         else:
             try:
@@ -485,7 +532,7 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
             item = QTableWidgetItem(format_number(val))
             item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.tableWidget_points.setItem(i, 0, item)
-        if self.comboBox_loop_type.currentText() == 'Value-List':
+        if self.comboBox_loop_type.currentText() == "Value-List":
             for i in range(self.tableWidget_points.rowCount()):
                 item = self.tableWidget_points.item(i, 0)
                 item.setFlags(item.flags() | Qt.ItemIsEditable)
@@ -493,9 +540,9 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
     def add_point(self):
         """Used to add a point when using the "Value-List" loop-type."""
         rows = self.tableWidget_points.rowCount()
-        self.tableWidget_points.setRowCount(rows+1)
+        self.tableWidget_points.setRowCount(rows + 1)
         self.loop_step.val_list.append(0)
-        item = QTableWidgetItem('0')
+        item = QTableWidgetItem("0")
         self.tableWidget_points.setItem(rows, 0, item)
         item.setFlags(Qt.ItemIsEditable | Qt.ItemIsEnabled)
 
@@ -512,16 +559,17 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
         Parameters
         ----------
         row :
-            
+
 
         Returns
         -------
 
         """
-        if self.comboBox_loop_type.currentText() == 'Value-List':
+        if self.comboBox_loop_type.currentText() == "Value-List":
             try:
-                self.loop_step.val_list[row] =\
-                    float(self.tableWidget_points.item(row, 0).text())
+                self.loop_step.val_list[row] = float(
+                    self.tableWidget_points.item(row, 0).text()
+                )
             except ValueError:
                 return
 
@@ -532,11 +580,11 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
         Parameters
         ----------
         start :
-            
+
         stop :
-            
+
         points :
-            
+
 
         Returns
         -------
@@ -549,45 +597,73 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
             return [np.nan]
         points = int(points)
         try:
-            if self.comboBox_sweep_mode.currentText() == 'linear':
-                vals = np.linspace(start, stop, points, endpoint=self.checkBox_include_endpoints.isChecked())
-            elif self.comboBox_sweep_mode.currentText() == 'logarithmic':
+            if self.comboBox_sweep_mode.currentText() == "linear":
+                vals = np.linspace(
+                    start,
+                    stop,
+                    points,
+                    endpoint=self.checkBox_include_endpoints.isChecked(),
+                )
+            elif self.comboBox_sweep_mode.currentText() == "logarithmic":
                 # logspace is achieved by exponential of linspace
                 # between the logarithmic values
                 start = np.log(start)
                 stop = np.log(stop)
-                vals = np.linspace(start, stop, points, endpoint=self.checkBox_include_endpoints.isChecked())
+                vals = np.linspace(
+                    start,
+                    stop,
+                    points,
+                    endpoint=self.checkBox_include_endpoints.isChecked(),
+                )
                 vals = np.exp(vals)
-            elif self.comboBox_sweep_mode.currentText() == 'exponential':
+            elif self.comboBox_sweep_mode.currentText() == "exponential":
                 # logspace is achieved by logarithm of linspace
                 # between the exponential values
                 start = np.exp(start)
                 stop = np.exp(stop)
-                vals = np.linspace(start, stop, points, endpoint=self.checkBox_include_endpoints.isChecked())
+                vals = np.linspace(
+                    start,
+                    stop,
+                    points,
+                    endpoint=self.checkBox_include_endpoints.isChecked(),
+                )
                 vals = np.log(vals)
             else:
-                start = 1/start
-                stop = 1/stop
-                vals = np.linspace(start, stop, points, endpoint=self.checkBox_include_endpoints.isChecked())
-                vals = 1/vals
+                start = 1 / start
+                stop = 1 / stop
+                vals = np.linspace(
+                    start,
+                    stop,
+                    points,
+                    endpoint=self.checkBox_include_endpoints.isChecked(),
+                )
+                vals = 1 / vals
         except ValueError:
             vals = [np.nan]
         return vals
 
-def get_space_string(start, stop, points, min_val=np.nan, max_val=np.nan,
-                     loop_type='start - stop',  sweep_mode='linear',
-                     endpoint=True):
+
+def get_space_string(
+    start,
+    stop,
+    points,
+    min_val=np.nan,
+    max_val=np.nan,
+    loop_type="start - stop",
+    sweep_mode="linear",
+    endpoint=True,
+):
     """Creates the string for the protocol depending on the selections
     made, similar to `For_Loop_Step_Config_Sub.get_space()`.
 
     Parameters
     ----------
     start :
-        
+
     stop :
-        
+
     points :
-        
+
     min_val :
          (Default value = np.nan)
     max_val :
@@ -603,28 +679,37 @@ def get_space_string(start, stop, points, min_val=np.nan, max_val=np.nan,
     -------
 
     """
-    if loop_type == 'start - stop':
-        return get_inner_space_string(start, stop, points, sweep_mode,
-                                      endpoint)
-    elif loop_type == 'start - min - max - stop':
-        part_points1 = round(points * np.abs(start-min_val)/np.abs(max_val-min_val))
-        part_points2 = round(points * np.abs(stop-max_val)/np.abs(max_val-min_val))
-        vals1 = get_inner_space_string(start, min_val, part_points1, sweep_mode,
-                                       endpoint)
-        vals2 = get_inner_space_string(min_val, max_val, points, sweep_mode,
-                                       endpoint)
-        vals3 = get_inner_space_string(max_val, stop, part_points2, sweep_mode,
-                                       endpoint)
+    if loop_type == "start - stop":
+        return get_inner_space_string(start, stop, points, sweep_mode, endpoint)
+    elif loop_type == "start - min - max - stop":
+        part_points1 = round(
+            points * np.abs(start - min_val) / np.abs(max_val - min_val)
+        )
+        part_points2 = round(
+            points * np.abs(stop - max_val) / np.abs(max_val - min_val)
+        )
+        vals1 = get_inner_space_string(
+            start, min_val, part_points1, sweep_mode, endpoint
+        )
+        vals2 = get_inner_space_string(min_val, max_val, points, sweep_mode, endpoint)
+        vals3 = get_inner_space_string(
+            max_val, stop, part_points2, sweep_mode, endpoint
+        )
     else:
-        part_points1 = round(points * np.abs(start-max_val)/np.abs(max_val-min_val))
-        part_points2 = round(points * np.abs(stop-min_val)/np.abs(max_val-min_val))
-        vals1 = get_inner_space_string(start, max_val, part_points1, sweep_mode,
-                                       endpoint)
-        vals2 = get_inner_space_string(max_val, min_val, points, sweep_mode,
-                                       endpoint)
-        vals3 = get_inner_space_string(min_val, stop, part_points2, sweep_mode,
-                                       endpoint)
-    return f'np.concatenate([{vals1}, {vals2}, {vals3}])'
+        part_points1 = round(
+            points * np.abs(start - max_val) / np.abs(max_val - min_val)
+        )
+        part_points2 = round(
+            points * np.abs(stop - min_val) / np.abs(max_val - min_val)
+        )
+        vals1 = get_inner_space_string(
+            start, max_val, part_points1, sweep_mode, endpoint
+        )
+        vals2 = get_inner_space_string(max_val, min_val, points, sweep_mode, endpoint)
+        vals3 = get_inner_space_string(
+            min_val, stop, part_points2, sweep_mode, endpoint
+        )
+    return f"np.concatenate([{vals1}, {vals2}, {vals3}])"
 
 
 def get_inner_space_string(start, stop, points, sweep_mode, endpoint):
@@ -634,36 +719,39 @@ def get_inner_space_string(start, stop, points, sweep_mode, endpoint):
     Parameters
     ----------
     start :
-        
+
     stop :
-        
+
     points :
-        
+
     sweep_mode :
-        
+
     endpoint :
-        
+
 
     Returns
     -------
 
     """
     try:
-        if sweep_mode == 'linear':
-            valstring = f'np.linspace({start}, {stop}, {points}, endpoint={endpoint})'
-        elif sweep_mode == 'logarithmic':
-            start = f'np.log({start})'
-            stop = f'np.log({stop})'
-            valstring = f'np.exp(np.linspace({start}, {stop}, {points}, endpoint={endpoint}))'
-        elif sweep_mode == 'exponential':
-            start = f'np.exp({start})'
-            stop = f'np.exp({stop})'
-            valstring = f'np.log(np.linspace({start}, {stop}, {points}, endpoint={endpoint}))'
+        if sweep_mode == "linear":
+            valstring = f"np.linspace({start}, {stop}, {points}, endpoint={endpoint})"
+        elif sweep_mode == "logarithmic":
+            start = f"np.log({start})"
+            stop = f"np.log({stop})"
+            valstring = (
+                f"np.exp(np.linspace({start}, {stop}, {points}, endpoint={endpoint}))"
+            )
+        elif sweep_mode == "exponential":
+            start = f"np.exp({start})"
+            stop = f"np.exp({stop})"
+            valstring = (
+                f"np.log(np.linspace({start}, {stop}, {points}, endpoint={endpoint}))"
+            )
         else:
-            valstring = f'1/np.linspace(1/{start}, 1/{stop}, {points}, endpoint={endpoint})'
+            valstring = (
+                f"1/np.linspace(1/{start}, 1/{stop}, {points}, endpoint={endpoint})"
+            )
     except ValueError:
-        valstring = '[np.nan]'
+        valstring = "[np.nan]"
     return valstring
-
-
-

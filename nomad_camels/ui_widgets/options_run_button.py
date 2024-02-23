@@ -1,4 +1,13 @@
-from PySide6.QtWidgets import QPushButton, QApplication, QMainWindow, QLabel, QStyle, QFrame, QMenu, QMessageBox
+from PySide6.QtWidgets import (
+    QPushButton,
+    QApplication,
+    QMainWindow,
+    QLabel,
+    QStyle,
+    QFrame,
+    QMenu,
+    QMessageBox,
+)
 from PySide6.QtGui import QPainter, QColor, QBrush, QAction, QDrag
 from PySide6.QtCore import Qt, QSize, QMimeData, Signal
 
@@ -7,12 +16,12 @@ from nomad_camels.utility.variables_handling import get_color
 
 class SimpleWrapLabel(QLabel):
     """ """
-    def __init__(self, text='', parent=None):
-        if ' ' not in text:
-            text = text.replace('_', ' ')
-            text = text.replace('-', ' ')
-        super().__init__(text=text, parent=parent)
 
+    def __init__(self, text="", parent=None):
+        if " " not in text:
+            text = text.replace("_", " ")
+            text = text.replace("-", " ")
+        super().__init__(text=text, parent=parent)
 
     def setText(self, a0: str) -> None:
         """
@@ -20,20 +29,21 @@ class SimpleWrapLabel(QLabel):
         Parameters
         ----------
         a0: str :
-            
+
 
         Returns
         -------
 
         """
-        if ' ' not in a0:
-            a0 = a0.replace('_', ' ')
-            a0 = a0.replace('-', ' ')
+        if " " not in a0:
+            a0 = a0.replace("_", " ")
+            a0 = a0.replace("-", " ")
         super().setText(a0)
 
 
 class Dots_Button(QPushButton):
     """ """
+
     def __init__(self, parent=None, size=100):
         super().__init__(parent)
         self.setFixedSize(size, size)
@@ -48,7 +58,7 @@ class Dots_Button(QPushButton):
         Parameters
         ----------
         event :
-            
+
 
         Returns
         -------
@@ -58,15 +68,15 @@ class Dots_Button(QPushButton):
         painter.setRenderHint(QPainter.Antialiasing)
 
         # Set the brush and pen for the painter
-        brush = QBrush(QColor(get_color('black')))
+        brush = QBrush(QColor(get_color("black")))
         painter.setBrush(brush)
         painter.setPen(Qt.NoPen)
 
         # Draw three dots using the painter
         size = self.size().width()
-        painter.drawEllipse(size-10, size-20, 4, 4)
-        painter.drawEllipse(size-10, size-13, 4, 4)
-        painter.drawEllipse(size-10, size-6, 4, 4)
+        painter.drawEllipse(size - 10, size - 20, 4, 4)
+        painter.drawEllipse(size - 10, size - 13, 4, 4)
+        painter.drawEllipse(size - 10, size - 6, 4, 4)
         super().paintEvent(event)
 
     def sizeHint(self):
@@ -76,26 +86,28 @@ class Dots_Button(QPushButton):
 
 class Options_Run_Button(QFrame):
     """ """
+
     build_asked = Signal()
     external_asked = Signal()
     data_path_asked = Signal()
     del_asked = Signal()
 
-    def __init__(self, text='', size=120, small_text='run',
-                 protocol_options=True):
+    def __init__(self, text="", size=120, small_text="run", protocol_options=True):
         super().__init__()
         self.label = SimpleWrapLabel(text, parent=self)
-        self.label.setGeometry(5,0,size-20,size)
+        self.label.setGeometry(5, 0, size - 20, size)
         self.label.setWordWrap(True)
-        self.label.setStyleSheet("QLabel {font-weight: bold; font-size: 11pt; font-family: Calibri;}")
+        self.label.setStyleSheet(
+            "QLabel {font-weight: bold; font-size: 11pt; font-family: Calibri;}"
+        )
         self.label.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
         self.button = Dots_Button(parent=self, size=size)
-        self.button.setGeometry(0,0,size,size)
+        self.button.setGeometry(0, 0, size, size)
         self.small_button = QPushButton(small_text, parent=self)
         icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
         self.small_button.setIcon(icon)
-        self.small_button.setIconSize(QSize(int(size/4), int(size/4)))
-        self.small_button.setGeometry(5,5,size-10,int(size/3))
+        self.small_button.setIconSize(QSize(int(size / 4), int(size / 4)))
+        self.small_button.setGeometry(5, 5, size - 10, int(size / 3))
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.options_menu)
         self.config_function = None
@@ -105,7 +117,7 @@ class Options_Run_Button(QFrame):
         self.data_path_function = None
         self.del_function = None
 
-        self.setFixedSize(size,size)
+        self.setFixedSize(size, size)
         self.setFrameStyle(1)
         self.protocol_options = protocol_options
 
@@ -130,7 +142,7 @@ class Options_Run_Button(QFrame):
         Parameters
         ----------
         pos :
-            
+
 
         Returns
         -------
@@ -139,14 +151,14 @@ class Options_Run_Button(QFrame):
         menu = QMenu()
         actions = []
         if self.protocol_options:
-            action_export = QAction('Export Protocol')
+            action_export = QAction("Export Protocol")
             action_export.triggered.connect(self.build_asked.emit)
-            action_open = QAction('Open Externally')
+            action_open = QAction("Open Externally")
             action_open.triggered.connect(self.external_asked.emit)
-            action_datapath = QAction('Open Data Path')
+            action_datapath = QAction("Open Data Path")
             action_datapath.triggered.connect(self.data_path_asked.emit)
             actions += [action_export, action_open, action_datapath]
-        action_delete = QAction('Delete')
+        action_delete = QAction("Delete")
         action_delete.triggered.connect(self.delete_button)
         actions.append(action_delete)
         menu.addActions(actions)
@@ -154,9 +166,12 @@ class Options_Run_Button(QFrame):
 
     def delete_button(self):
         """ """
-        del_dialog = QMessageBox.question(self, f'Delete {self.label.text()}?',
-                                          f'{self.label.text()} will be removed completely',
-                                          QMessageBox.Yes | QMessageBox.No)
+        del_dialog = QMessageBox.question(
+            self,
+            f"Delete {self.label.text()}?",
+            f"{self.label.text()} will be removed completely",
+            QMessageBox.Yes | QMessageBox.No,
+        )
         if del_dialog == QMessageBox.Yes:
             self.del_asked.emit()
 
@@ -166,7 +181,7 @@ class Options_Run_Button(QFrame):
         Parameters
         ----------
         event :
-            
+
 
         Returns
         -------
@@ -184,7 +199,7 @@ class Options_Run_Button(QFrame):
         Parameters
         ----------
         new_name :
-            
+
 
         Returns
         -------
@@ -203,11 +218,10 @@ class Options_Run_Button(QFrame):
             self.del_asked.disconnect(self.del_function)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication([])
     widge = QMainWindow()
-    widget = Options_Run_Button('super mega test')
+    widget = Options_Run_Button("super mega test")
     # widge.setLayout(QHBoxLayout())
     # button = Options_Run_Button('s;aiouf;lwkeja;slkjfasd;lje')
     # widge.layout().addWidget(button)

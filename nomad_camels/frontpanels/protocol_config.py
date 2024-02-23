@@ -2,20 +2,33 @@ from copy import deepcopy
 
 from PySide6.QtWidgets import QWidget, QToolButton, QMenu, QMessageBox, QDialogButtonBox
 from PySide6.QtCore import QItemSelectionModel, Qt, Signal
-from PySide6.QtGui import QStandardItemModel, QAction, QCloseEvent, QKeyEvent, QShortcut, QIcon, QUndoStack
+from PySide6.QtGui import (
+    QStandardItemModel,
+    QAction,
+    QCloseEvent,
+    QKeyEvent,
+    QShortcut,
+    QIcon,
+    QUndoStack,
+)
 
 from nomad_camels.gui.protocol_view import Ui_Protocol_View
-from nomad_camels.main_classes.protocol_class import Measurement_Protocol, General_Protocol_Settings
+from nomad_camels.main_classes.protocol_class import (
+    Measurement_Protocol,
+    General_Protocol_Settings,
+)
 from nomad_camels.loop_steps import make_step_of_type
 from nomad_camels.utility import variables_handling, treeView_functions
 from nomad_camels.ui_widgets import drag_drop_tree_view
 from nomad_camels.commands import change_sequence
 
-from pkg_resources import resource_filename
+from importlib import resources
+from nomad_camels import graphics
 
 
 class Protocol_Config(Ui_Protocol_View, QWidget):
     """ """
+
     accepted = Signal(Measurement_Protocol)
     closing = Signal()
 
@@ -28,8 +41,8 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             protocol = deepcopy(protocol)
             self.old_name = protocol.name
         self.setupUi(self)
-        self.setWindowTitle(f'{protocol.name} - Measurement Protocol - NOMAD CAMELS')
-        self.setWindowIcon(QIcon(resource_filename('nomad_camels', 'graphics/camels_icon.png')))
+        self.setWindowTitle(f"{protocol.name} - Measurement Protocol - NOMAD CAMELS")
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
         self.configuration_main_widget.setHidden(True)
         self.general_settings = General_Protocol_Settings(protocol=protocol)
         self.meas_splitter.insertWidget(0, self.general_settings)
@@ -42,20 +55,36 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.device_actions = []
         self.is_accepted = False
 
-        self.item_model_sequence = QStandardItemModel(0,1)
+        self.item_model_sequence = QStandardItemModel(0, 1)
         self.treeView_protocol_sequence = drag_drop_tree_view.Drag_Drop_TreeView()
         self.treeView_protocol_sequence.del_clicked.connect(self.remove_loop_step)
-        self.sequence_main_widget.layout().addWidget(self.treeView_protocol_sequence, 5, 0, 1, 3)
+        self.sequence_main_widget.layout().addWidget(
+            self.treeView_protocol_sequence, 5, 0, 1, 3
+        )
         self.treeView_protocol_sequence.setModel(self.item_model_sequence)
-        self.treeView_protocol_sequence.customContextMenuRequested.connect(self.sequence_right_click)
+        self.treeView_protocol_sequence.customContextMenuRequested.connect(
+            self.sequence_right_click
+        )
         self.treeView_protocol_sequence.dragdrop.connect(self.update_loop_step_order)
 
-        self.pushButton_move_step_up.clicked.connect(lambda state: self.move_loop_step(-1,0))
-        self.pushButton_move_step_down.clicked.connect(lambda state: self.move_loop_step(1,0))
-        self.pushButton_move_step_in.clicked.connect(lambda state: self.move_loop_step(0,1))
-        self.pushButton_move_step_out.clicked.connect(lambda state: self.move_loop_step(0,-1))
-        self.treeView_protocol_sequence.clicked.connect(lambda x: self.tree_click_sequence(False))
-        self.pushButton_remove_step.clicked.connect(lambda x: self.remove_loop_step(True))
+        self.pushButton_move_step_up.clicked.connect(
+            lambda state: self.move_loop_step(-1, 0)
+        )
+        self.pushButton_move_step_down.clicked.connect(
+            lambda state: self.move_loop_step(1, 0)
+        )
+        self.pushButton_move_step_in.clicked.connect(
+            lambda state: self.move_loop_step(0, 1)
+        )
+        self.pushButton_move_step_out.clicked.connect(
+            lambda state: self.move_loop_step(0, -1)
+        )
+        self.treeView_protocol_sequence.clicked.connect(
+            lambda x: self.tree_click_sequence()
+        )
+        self.pushButton_remove_step.clicked.connect(
+            lambda x: self.remove_loop_step(True)
+        )
         self.general_settings.name_changed.connect(self.change_name)
 
         self.buttonBox = QDialogButtonBox()
@@ -74,13 +103,21 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         # QShortcut('Ctrl+z', self).activated.connect(self.undo)
         # QShortcut('Ctrl+y', self).activated.connect(self.redo)
 
-        QShortcut('Ctrl+x', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.cut_shortcut)
-        QShortcut('Ctrl+v', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.paste_shortcut)
-        QShortcut('Ctrl+c', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.copy_shortcut)
-        QShortcut('Ctrl+k', self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut).activated.connect(self.comment_shortcut)
+        QShortcut(
+            "Ctrl+x", self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut
+        ).activated.connect(self.cut_shortcut)
+        QShortcut(
+            "Ctrl+v", self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut
+        ).activated.connect(self.paste_shortcut)
+        QShortcut(
+            "Ctrl+c", self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut
+        ).activated.connect(self.copy_shortcut)
+        QShortcut(
+            "Ctrl+k", self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut
+        ).activated.connect(self.comment_shortcut)
 
         self.build_protocol_sequence()
-
+        self.check_movability()
 
     def update_add_step_actions(self):
         """Called when the devices change, updating the possible
@@ -95,7 +132,9 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         """
         self.add_actions.clear()
         self.device_actions.clear()
-        for stp in sorted(make_step_of_type.step_type_config.keys(), key=lambda x: x.lower()):
+        for stp in sorted(
+            make_step_of_type.step_type_config.keys(), key=lambda x: x.lower()
+        ):
             action = QAction(stp)
             action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
             self.add_actions.append(action)
@@ -107,47 +146,41 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         if self.device_actions:
             self.toolButton_add_step.addActions(self.device_actions)
 
-
-
-    def tree_click_sequence(self, general=False):
-        """Called when clicking the treeView_protocol_sequence.
-
-        Parameters
-        ----------
-        general :
-             (Default value = False)
-
-        Returns
-        -------
-
-        """
+    def tree_click_sequence(self):
+        """Called when clicking the treeView_protocol_sequence."""
         self.update_loop_step_order()
         self.get_step_config()
         self.protocol.update_variables()
         self.configuration_main_widget.setHidden(False)
         config = None
-        if general:
-            config = General_Protocol_Settings(self, self.protocol)
-            self.enable_step_move(False)
-            self.label_configuration.setText('Configuration: General Protocol Settings')
-        else:
-            index = self.treeView_protocol_sequence.selectedIndexes()[0]
-            dat = self.item_model_sequence.itemFromIndex(index).data()
-            if dat is not None:
-                step = self.protocol.loop_step_dict[dat]
-                config = make_step_of_type.get_config(step)
-                enable = step.step_type not in make_step_of_type.non_addables
-                self.enable_step_move(enable)
-                self.label_configuration.setText(f'Configuration: {step.full_name}')
+        index = self.treeView_protocol_sequence.selectedIndexes()
+        if not index:
+            return
+        index = index[0]
+        dat = self.item_model_sequence.itemFromIndex(index).data()
+        if dat is not None:
+            step = self.protocol.loop_step_dict[dat]
+            config = make_step_of_type.get_config(step)
+            enable = step.step_type not in make_step_of_type.non_addables
+            self.enable_step_move(enable)
+            self.label_configuration.setText(f"Configuration: {step.full_name}")
         if config is not None:
             if self.loop_step_configuration_widget is not None:
-                self.configuration_main_widget.layout().removeWidget(self.loop_step_configuration_widget)
+                self.configuration_main_widget.layout().removeWidget(
+                    self.loop_step_configuration_widget
+                )
                 self.loop_step_configuration_widget.deleteLater()
             self.loop_step_configuration_widget = config
-            self.configuration_main_widget.layout().addWidget(self.loop_step_configuration_widget, 1, 0)
-            if not general:
-                self.loop_step_configuration_widget.name_changed.connect(self.change_step_name)
-                self.loop_step_configuration_widget.active_changed.connect(self.change_step_name)
+            self.configuration_main_widget.layout().addWidget(
+                self.loop_step_configuration_widget, 1, 0
+            )
+            self.loop_step_configuration_widget.name_changed.connect(
+                self.change_step_name
+            )
+            self.loop_step_configuration_widget.active_changed.connect(
+                self.change_step_name
+            )
+        self.check_movability()
 
     def build_protocol_sequence(self):
         """Shows / builds the protocol sequence in the treeView
@@ -161,7 +194,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
         """
         ind_seq = self.treeView_protocol_sequence.selectedIndexes()
-        sel_data = ''
+        sel_data = ""
         if ind_seq:
             sel_data = self.item_model_sequence.data(ind_seq[0])
         variables_handling.current_protocol = self.protocol
@@ -173,9 +206,13 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.treeView_protocol_sequence.expandAll()
         self.sequence_main_widget.setEnabled(True)
         if sel_data is not None:
-            new_index = treeView_functions.getItemIndex(self.item_model_sequence, sel_data)
+            new_index = treeView_functions.getItemIndex(
+                self.item_model_sequence, sel_data
+            )
             if new_index:
-                self.treeView_protocol_sequence.selectionModel().select(new_index, QItemSelectionModel.Select)
+                self.treeView_protocol_sequence.selectionModel().select(
+                    new_index, QItemSelectionModel.Select
+                )
 
     def enable_step_move(self, enable):
         """
@@ -183,7 +220,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         Parameters
         ----------
         enable :
-            
+
 
         Returns
         -------
@@ -213,7 +250,6 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         if self.loop_step_configuration_widget is not None:
             self.loop_step_configuration_widget.update_step_config()
 
-
     def sequence_right_click(self, pos):
         """Opens a specific Menu on right click in the protocol-sequence.
         If selection is not on a loop_step, it consists only of Add Step,
@@ -222,7 +258,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         Parameters
         ----------
         pos :
-            
+
 
         Returns
         -------
@@ -241,13 +277,27 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             parent = item.parent()
             if parent is not None:
                 parent = parent.data()
-            for stp in sorted(make_step_of_type.step_type_config.keys(), key=lambda x: x.lower()):
+            for stp in sorted(
+                make_step_of_type.step_type_config.keys(), key=lambda x: x.lower()
+            ):
                 action = QAction(stp)
                 action_a = QAction(stp)
                 action_in = QAction(stp)
-                action.triggered.connect(lambda state=None, x=stp, y=row+1, z=parent: self.add_loop_step(x, y, z))
-                action_a.triggered.connect(lambda state=None, x=stp, y=row, z=parent: self.add_loop_step(x, y, z))
-                action_in.triggered.connect(lambda state=None, x=stp, y=-1, z=item.data(): self.add_loop_step(x,y,z))
+                action.triggered.connect(
+                    lambda state=None, x=stp, y=row + 1, z=parent: self.add_loop_step(
+                        x, y, z
+                    )
+                )
+                action_a.triggered.connect(
+                    lambda state=None, x=stp, y=row, z=parent: self.add_loop_step(
+                        x, y, z
+                    )
+                )
+                action_in.triggered.connect(
+                    lambda state=None, x=stp, y=-1, z=item.data(): self.add_loop_step(
+                        x, y, z
+                    )
+                )
                 below_actions.append(action)
                 above_actions.append(action_a)
                 into_actions.append(action_in)
@@ -258,15 +308,27 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 action = QAction(stp)
                 action_a = QAction(stp)
                 action_in = QAction(stp)
-                action.triggered.connect(lambda state=None, x=stp, y=row+1, z=parent: self.add_loop_step(x, y, z))
-                action_a.triggered.connect(lambda state=None, x=stp, y=row, z=parent: self.add_loop_step(x, y, z))
-                action_in.triggered.connect(lambda state=None, x=stp, y=-1, z=item.data(): self.add_loop_step(x,y,z))
+                action.triggered.connect(
+                    lambda state=None, x=stp, y=row + 1, z=parent: self.add_loop_step(
+                        x, y, z
+                    )
+                )
+                action_a.triggered.connect(
+                    lambda state=None, x=stp, y=row, z=parent: self.add_loop_step(
+                        x, y, z
+                    )
+                )
+                action_in.triggered.connect(
+                    lambda state=None, x=stp, y=-1, z=item.data(): self.add_loop_step(
+                        x, y, z
+                    )
+                )
                 device_actions.append(action)
                 device_actions_a.append(action_a)
                 device_actions_in.append(action_in)
-            insert_above_menu = QMenu('Insert Above')
+            insert_above_menu = QMenu("Insert Above")
             insert_above_menu.addActions(above_actions)
-            insert_below_menu = QMenu('Insert Below')
+            insert_below_menu = QMenu("Insert Below")
             insert_below_menu.addActions(below_actions)
             if device_actions:
                 insert_above_menu.addSeparator()
@@ -274,7 +336,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 insert_below_menu.addSeparator()
                 insert_below_menu.addActions(device_actions)
             if self.protocol.loop_step_dict[item.data()].has_children:
-                add_in_menu = QMenu('Add Into')
+                add_in_menu = QMenu("Add Into")
                 add_in_menu.addActions(into_actions)
                 menu.addMenu(add_in_menu)
                 if device_actions:
@@ -283,19 +345,35 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             menu.addMenu(insert_above_menu)
             menu.addMenu(insert_below_menu)
             menu.addSeparator()
-            cut_action = QAction('Cut\tCtrl + X')
-            cut_action.triggered.connect(lambda state=None, x=item.data(): self.cut_loop_step(x))
-            copy_action = QAction('Copy\tCtrl + C')
-            copy_action.triggered.connect(lambda state=None, x=item.data(): self.copy_loop_step(x))
-            paste_menu = QMenu('Paste\tCtrl + V')
+            cut_action = QAction("Cut\tCtrl + X")
+            cut_action.triggered.connect(
+                lambda state=None, x=item.data(): self.cut_loop_step(x)
+            )
+            copy_action = QAction("Copy\tCtrl + C")
+            copy_action.triggered.connect(
+                lambda state=None, x=item.data(): self.copy_loop_step(x)
+            )
+            paste_menu = QMenu("Paste\tCtrl + V")
             if variables_handling.copied_step is not None:
-                paste_above = QAction('Paste Above')
-                paste_above.triggered.connect(lambda state=None, x=True, y=row, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
-                paste_below = QAction('Paste Below')
-                paste_below.triggered.connect(lambda state=None, x=True, y=row+1, z=parent: self.add_loop_step(copied_step=x, position=y, parent=z))
+                paste_above = QAction("Paste Above")
+                paste_above.triggered.connect(
+                    lambda state=None, x=True, y=row, z=parent: self.add_loop_step(
+                        copied_step=x, position=y, parent=z
+                    )
+                )
+                paste_below = QAction("Paste Below")
+                paste_below.triggered.connect(
+                    lambda state=None, x=True, y=row + 1, z=parent: self.add_loop_step(
+                        copied_step=x, position=y, parent=z
+                    )
+                )
                 if self.protocol.loop_step_dict[item.data()].has_children:
-                    paste_into = QAction('Paste Into')
-                    paste_into.triggered.connect(lambda state=None, x=True, y=-1, z=item.data(): self.add_loop_step(copied_step=x,position=y,parent=z))
+                    paste_into = QAction("Paste Into")
+                    paste_into.triggered.connect(
+                        lambda state=None, x=True, y=-1, z=item.data(): self.add_loop_step(
+                            copied_step=x, position=y, parent=z
+                        )
+                    )
                     paste_menu.addAction(paste_into)
                 paste_menu.addActions([paste_above, paste_below])
             else:
@@ -303,36 +381,51 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             menu.addAction(cut_action)
             menu.addAction(copy_action)
             menu.addMenu(paste_menu)
-            if self.protocol.loop_step_dict[item.data()].step_type not in make_step_of_type.non_addables:
-                del_action = QAction('Delete Step\tDel')
+            if (
+                self.protocol.loop_step_dict[item.data()].step_type
+                not in make_step_of_type.non_addables
+            ):
+                del_action = QAction("Delete Step\tDel")
                 del_action.triggered.connect(lambda x: self.remove_loop_step(True))
                 menu.addAction(del_action)
             menu.addSeparator()
-            if item.text().startswith('# '):
-                comment_action = QAction('Uncomment\tCtrl + K')
+            if item.text().startswith("# "):
+                comment_action = QAction("Uncomment\tCtrl + K")
             else:
-                comment_action = QAction('Comment\tCtrl + K')
-            comment_action.triggered.connect(lambda state=None, x=item.data(): self.comment_loop_step(x))
+                comment_action = QAction("Comment\tCtrl + K")
+            comment_action.triggered.connect(
+                lambda state=None, x=item.data(): self.comment_loop_step(x)
+            )
             menu.addAction(comment_action)
         else:
             add_actions = []
-            for stp in sorted(make_step_of_type.step_type_config, key=lambda x: x.lower()):
+            for stp in sorted(
+                make_step_of_type.step_type_config, key=lambda x: x.lower()
+            ):
                 action = QAction(stp)
-                action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
+                action.triggered.connect(
+                    lambda state=None, x=stp: self.add_loop_step(x)
+                )
                 add_actions.append(action)
             device_actions = []
             for stp in make_step_of_type.get_device_steps():
                 action = QAction(stp)
-                action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
+                action.triggered.connect(
+                    lambda state=None, x=stp: self.add_loop_step(x)
+                )
                 device_actions.append(action)
-            add_menu = QMenu('Add Step')
+            add_menu = QMenu("Add Step")
             add_menu.addActions(add_actions)
             if device_actions:
                 add_menu.addSeparator()
                 add_menu.addActions(device_actions)
-            paste_action = QAction('Paste')
+            paste_action = QAction("Paste")
             if variables_handling.copied_step is not None:
-                paste_action.triggered.connect(lambda state=None, x=True, y=-1, z=None: self.add_loop_step(copied_step=x, position=y, parent=z))
+                paste_action.triggered.connect(
+                    lambda state=None, x=True, y=-1, z=None: self.add_loop_step(
+                        copied_step=x, position=y, parent=z
+                    )
+                )
             else:
                 paste_action.setEnabled(False)
             menu.addMenu(add_menu)
@@ -381,14 +474,13 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         item = self.item_model_sequence.itemFromIndex(inds[0])
         self.comment_loop_step(item.data())
 
-
     def cut_loop_step(self, step_name):
         """Copies the given step, then removes it.
 
         Parameters
         ----------
         step_name :
-            
+
 
         Returns
         -------
@@ -404,13 +496,51 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         Parameters
         ----------
         step_name :
-            
+
 
         Returns
         -------
 
         """
-        variables_handling.copied_step = deepcopy(self.protocol.loop_step_dict[step_name])
+        variables_handling.copied_step = deepcopy(
+            self.protocol.loop_step_dict[step_name]
+        )
+
+    def check_movability(self):
+        """ """
+        ind = self.treeView_protocol_sequence.selectedIndexes()
+        if not ind:
+            self.enable_step_move(False)
+            self.pushButton_remove_step.setEnabled(False)
+            return
+        ind = ind[0]
+        item = self.item_model_sequence.itemFromIndex(ind)
+        self.pushButton_remove_step.setEnabled(True)
+        parent = item.parent()
+        if ind.row() > 0:
+            self.pushButton_move_step_up.setEnabled(True)
+            if parent is not None:
+                above = parent.child(ind.row() - 1, 0)
+            else:
+                above = self.item_model_sequence.item(ind.row() - 1, 0)
+            self.pushButton_move_step_in.setEnabled(True)
+            if above is not None:
+                step = self.protocol.loop_step_dict[above.data()]
+                if step.step_type == "If":
+                    above = above.child(above.rowCount() - 1, 0)
+                if not self.protocol.loop_step_dict[above.data()].has_children:
+                    self.pushButton_move_step_in.setEnabled(False)
+        else:
+            self.pushButton_move_step_up.setEnabled(False)
+            self.pushButton_move_step_in.setEnabled(False)
+        if ind.row() < self.item_model_sequence.rowCount() - 1:
+            self.pushButton_move_step_down.setEnabled(True)
+        else:
+            self.pushButton_move_step_down.setEnabled(False)
+        if parent is None:
+            self.pushButton_move_step_out.setEnabled(False)
+        else:
+            self.pushButton_move_step_out.setEnabled(True)
 
     def move_loop_step(self, up_down=0, in_out=0):
         """Moves a loop_step up or down in the sequence. It can also be
@@ -426,18 +556,25 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         Returns
         -------
 
-        
+
         """
-        move_command = change_sequence.CommandMoveStep(self.treeView_protocol_sequence, self.item_model_sequence, up_down, in_out, self.protocol.loop_step_dict, self.update_loop_step_order)
+        move_command = change_sequence.CommandMoveStep(
+            self.treeView_protocol_sequence,
+            self.item_model_sequence,
+            up_down,
+            in_out,
+            self.protocol.loop_step_dict,
+            self.update_loop_step_order,
+        )
         self.undo_stack.push(move_command)
+        self.tree_click_sequence()
 
     def comment_loop_step(self, step_name):
         step = self.protocol.loop_step_dict[step_name]
         step.is_active = not step.is_active
         self.build_protocol_sequence()
 
-    def add_loop_step(self, step_type='', position=-1, parent=None,
-                      copied_step=False):
+    def add_loop_step(self, step_type="", position=-1, parent=None, copied_step=False):
         """Add a loop_step of given step_type. Updates the current
         sequence into the protocol, then initializes the new step.
 
@@ -455,7 +592,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         Returns
         -------
 
-        
+
         """
 
         self.update_loop_step_order()
@@ -463,12 +600,21 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             step = variables_handling.copied_step
         else:
             step = make_step_of_type.make_step(step_type, protocol=self.protocol)
-        self.protocol.add_loop_step_rec(step, model=self.item_model_sequence, position=position, parent_step_name=parent)
+        self.protocol.add_loop_step_rec(
+            step,
+            model=self.item_model_sequence,
+            position=position,
+            parent_step_name=parent,
+        )
         self.build_protocol_sequence()
         if copied_step:
             self.copy_loop_step(variables_handling.copied_step.full_name)
-        new_ind = treeView_functions.getItemIndex(self.item_model_sequence, step.full_name)
-        self.treeView_protocol_sequence.selectionModel().select(new_ind, QItemSelectionModel.Select)
+        new_ind = treeView_functions.getItemIndex(
+            self.item_model_sequence, step.full_name
+        )
+        self.treeView_protocol_sequence.selectionModel().select(
+            new_ind, QItemSelectionModel.Select
+        )
         self.tree_click_sequence()
 
     def remove_loop_step(self, ask=True):
@@ -489,13 +635,22 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         name = self.item_model_sequence.itemFromIndex(ind).data()
         if name is not None:
             remove_dialog = None
-            if self.protocol.loop_step_dict[name].step_type in make_step_of_type.non_addables:
+            if (
+                self.protocol.loop_step_dict[name].step_type
+                in make_step_of_type.non_addables
+            ):
                 return
             if ask:
-                remove_dialog = QMessageBox.question(self, 'Delete Step?', f'Are you sure you want to delete the step {name}?', QMessageBox.Yes | QMessageBox.No)
+                remove_dialog = QMessageBox.question(
+                    self,
+                    "Delete Step?",
+                    f"Are you sure you want to delete the step {name}?",
+                    QMessageBox.Yes | QMessageBox.No,
+                )
             if not ask or remove_dialog == QMessageBox.Yes:
                 self.protocol.remove_loop_step(name)
                 self.build_protocol_sequence()
+                self.check_movability()
 
     def update_loop_step_order(self):
         """Goes through all the loop_steps in the sequence, then
@@ -538,7 +693,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         Parameters
         ----------
         a0: QCloseEvent :
-            
+
 
         Returns
         -------
@@ -546,9 +701,12 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         """
         name = self.general_settings.lineEdit_protocol_name.text()
         if not self.is_accepted:
-            discard_dialog = QMessageBox.question(self, f'{name} - Discard Changes?',
-                                                  f'All changes to {name} will be lost!',
-                                                  QMessageBox.Yes | QMessageBox.No)
+            discard_dialog = QMessageBox.question(
+                self,
+                f"{name} - Discard Changes?",
+                f"All changes to {name} will be lost!",
+                QMessageBox.Yes | QMessageBox.No,
+            )
             if discard_dialog != QMessageBox.Yes:
                 a0.ignore()
                 return
@@ -558,7 +716,9 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
     def change_name(self):
         """ """
-        self.setWindowTitle(f'{self.protocol.name} - Measurement Protocol - NOMAD CAMELS')
+        self.setWindowTitle(
+            f"{self.protocol.name} - Measurement Protocol - NOMAD CAMELS"
+        )
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
         """Overwrites the keyPressEvent of the QDialog so that it does
@@ -567,7 +727,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         Parameters
         ----------
         a0: QKeyEvent :
-            
+
 
         Returns
         -------
@@ -578,9 +738,10 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         super().keyPressEvent(a0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
     from PySide6.QtWidgets import QApplication
+
     app = QApplication(sys.argv)
     widge = Protocol_Config()
     widge.show()

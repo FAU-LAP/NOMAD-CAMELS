@@ -49,10 +49,10 @@ from nomad_camels.bluesky_handling import evaluation_helper
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
 
-preset = ''
-device_driver_path = ''
-meas_files_path = ''
-CAMELS_path = ''
+preset = ""
+device_driver_path = ""
+meas_files_path = ""
+CAMELS_path = ""
 
 preferences = {}
 
@@ -71,42 +71,42 @@ read_channel_sets = []
 read_channel_names = []
 
 evaluation_functions_names = {
-    'randint()': 'randint(x) - random integer below x',
-    'rand()': 'rand() - random float between 0 and 1',
-    'round()': 'round(x) - round number to nearest integer',
-    'exp()': 'exp(x) - exponential function of x',
-    'sqrt()': 'sqrt(x) - square root of x',
-    'log()': 'ln(x) - natural logarithm of x',
-    'sin()': 'sin(x) - sine of x',
-    'cos()': 'cos(x) - cosine of x',
-    'tan()': 'tan(x) - tangent of x',
-    'sinh()': 'sinh(x) - hyperbolic sine of x',
-    'cosh()': 'cosh(x) - hyperbolic cosine of x',
-    'tanh()': 'tanh(x) - hyperbolic tangent of x',
-    'arctan()': 'arctan(x) - arcus tangent of x',
-    'arcsin()': 'arcsin(x) - arcus sine of x',
-    'arccos()': 'arccos(x) - arcus cosine of x',
-    'arcsinh()': 'arcsinh(x) - area hyperbolic sine of x',
-    'arccosh()': 'arccosh(x) - area hyperbolic cosine of x',
-    'arctanh()': 'arctanh(x) - area hyperbolic tangent of x',
-    'sinc()': 'sinc(x) - sinc function of x'
+    "randint()": "randint(x) - random integer below x",
+    "rand()": "rand() - random float between 0 and 1",
+    "round()": "round(x) - round number to nearest integer",
+    "exp()": "exp(x) - exponential function of x",
+    "sqrt()": "sqrt(x) - square root of x",
+    "log()": "ln(x) - natural logarithm of x",
+    "sin()": "sin(x) - sine of x",
+    "cos()": "cos(x) - cosine of x",
+    "tan()": "tan(x) - tangent of x",
+    "sinh()": "sinh(x) - hyperbolic sine of x",
+    "cosh()": "cosh(x) - hyperbolic cosine of x",
+    "tanh()": "tanh(x) - hyperbolic tangent of x",
+    "arctan()": "arctan(x) - arcus tangent of x",
+    "arcsin()": "arcsin(x) - arcus sine of x",
+    "arccos()": "arccos(x) - arcus cosine of x",
+    "arcsinh()": "arcsinh(x) - area hyperbolic sine of x",
+    "arccosh()": "arccosh(x) - area hyperbolic cosine of x",
+    "arctanh()": "arctanh(x) - area hyperbolic tangent of x",
+    "sinc()": "sinc(x) - sinc function of x",
 }
 
 operator_names = {
-    '+': 'add',
-    '-': 'subtract',
-    '/': 'devide',
-    '*': 'multiply',
-    '**': 'to the power of',
-    '%': 'modulus',
-    '==': 'equals',
-    '<': 'less than',
-    '>': 'greater than',
-    '<=': 'less or equal',
-    '>=': 'greater or equal',
-    'and': 'logical AND',
-    'or': 'logical OR',
-    'not': 'logical negation'
+    "+": "add",
+    "-": "subtract",
+    "/": "devide",
+    "*": "multiply",
+    "**": "to the power of",
+    "%": "modulus",
+    "==": "equals",
+    "<": "less than",
+    ">": "greater than",
+    "<=": "less or equal",
+    ">=": "greater or equal",
+    "and": "logical AND",
+    "or": "logical OR",
+    "not": "logical negation",
 }
 
 
@@ -126,7 +126,8 @@ def get_output_channels():
             outputs.append(channel)
     return outputs
 
-def get_color(color='', string=False):
+
+def get_color(color="", string=False):
     """Returns the respective QColor or rgb-code(if `string`) for
     `color`, taking dark-mode into account.
 
@@ -142,29 +143,29 @@ def get_color(color='', string=False):
         (Default value = False)
         If True, only the string of the rgb will be returned, not the QColor.
     """
-    if color == 'red' or color == 'r':
+    if color == "red" or color == "r":
         rgb = (255, 180, 180)
         if dark_mode:
             rgb = (75, 0, 0)
-    elif color == 'strong_red':
+    elif color == "strong_red":
         rgb = (230, 0, 0)
-    elif color == 'green' or color == 'g':
+    elif color == "green" or color == "g":
         rgb = (180, 255, 180)
         if dark_mode:
             rgb = (0, 75, 0)
-    elif color == 'dark_green':
+    elif color == "dark_green":
         rgb = (32, 175, 32)
-    elif color == 'grey' or color == 'gray':
+    elif color == "grey" or color == "gray":
         rgb = (169, 169, 169)
-    elif color == 'blue' or color == 'b':
+    elif color == "blue" or color == "b":
         rgb = (180, 180, 255)
         if dark_mode:
             rgb = (0, 0, 75)
-    elif color == 'black':
+    elif color == "black":
         rgb = (0, 0, 0)
         if dark_mode:
             rgb = (255, 255, 255)
-    elif color == 'orange':
+    elif color == "orange":
         rgb = (255, 170, 25)
     else:
         rgb = (255, 255, 255)
@@ -174,7 +175,8 @@ def get_color(color='', string=False):
         return str(rgb)
     return QColor(*rgb)
 
-def get_menus(connect_function, pretext='Insert'):
+
+def get_menus(connect_function, pretext="Insert"):
     """Providing QMenus with the `connect_function` for each action,
     containing all the variables, channels, functions and operators.
 
@@ -194,10 +196,10 @@ def get_menus(connect_function, pretext='Insert'):
     actions : list[list[QAction]]
         lists of the individual actions in the menus
     """
-    variable_menu = QMenu(f'{pretext} Variable')
-    channel_menu = QMenu(f'{pretext} Channel-Value')
-    function_menu = QMenu(f'{pretext} Function')
-    operator_menu = QMenu(f'{pretext} Operator')
+    variable_menu = QMenu(f"{pretext} Variable")
+    channel_menu = QMenu(f"{pretext} Channel-Value")
+    function_menu = QMenu(f"{pretext} Function")
+    operator_menu = QMenu(f"{pretext} Operator")
     channel_actions = []
     operator_actions = []
     actions = []
@@ -205,16 +207,16 @@ def get_menus(connect_function, pretext='Insert'):
     add_actions_from_dict(channels, channel_actions, connect_function)
     add_actions_from_dict(protocol_variables, actions, connect_function)
     add_actions_from_dict(loop_step_variables, actions, connect_function)
-    add_actions_from_dict({'StartTime': 1, 'ElapsedTime': 1}, actions,
-                          connect_function)
+    add_actions_from_dict({"StartTime": 1, "ElapsedTime": 1}, actions, connect_function)
     add_actions_from_dict(operator_names, operator_actions, connect_function)
-    add_actions_from_dict(evaluation_functions_names, function_actions,
-                          connect_function)
+    add_actions_from_dict(
+        evaluation_functions_names, function_actions, connect_function
+    )
     channel_menu.addActions(channel_actions)
     variable_menu.addActions(actions)
     operator_menu.addActions(operator_actions)
     function_menu.addActions(function_actions)
-    if pretext == 'Insert':
+    if pretext == "Insert":
         menus = [channel_menu, variable_menu, function_menu]
         actions = [channel_actions, actions, function_actions]
     else:
@@ -222,7 +224,8 @@ def get_menus(connect_function, pretext='Insert'):
         actions = [channel_actions, actions, operator_actions, function_actions]
     return menus, actions
 
-def add_actions_from_dict(dictionary, actions, connect_function, add_string=''):
+
+def add_actions_from_dict(dictionary, actions, connect_function, add_string=""):
     """
     The values of `dictionary` are handed to the `connect_function` when
     clicking on the respective action named with the keys of the dictionary. The
@@ -243,13 +246,13 @@ def add_actions_from_dict(dictionary, actions, connect_function, add_string=''):
     """
     for var in sorted(dictionary, key=lambda x: x.lower()):
         if isinstance(dictionary[var], dict):
-            add_actions_from_dict(dictionary[var], actions, connect_function,
-                                  f'{var}:')
+            add_actions_from_dict(dictionary[var], actions, connect_function, f"{var}:")
         else:
-            addvar = f'{add_string}{var}'
+            addvar = f"{add_string}{var}"
             action = QAction(addvar)
             action.triggered.connect(lambda state=None, x=addvar: connect_function(x))
             actions.append(action)
+
 
 def check_eval(s):
     """Checks, whether the string `s` can be evaluated. Returns True if it is
@@ -271,6 +274,7 @@ def check_eval(s):
         return True
     except Exception:
         return False
+
 
 def get_eval(s):
     """
@@ -304,7 +308,7 @@ def get_data(s):
         the string to be evaluated
     """
     if not s:
-        return ''
+        return ""
     try:
         lit = literal_eval(s)
     except ValueError:
@@ -312,6 +316,7 @@ def get_data(s):
     except SyntaxError:
         return s
     return lit
+
 
 def check_data_type(s):
     """Returns the datatype of the string-evaluation of s.
@@ -324,21 +329,22 @@ def check_data_type(s):
     if not isinstance(s, str):
         return str(type(s))
     if not s:
-        return ''
+        return ""
     try:
         lit = literal_eval(s)
     except ValueError:
-        return 'String'
+        return "String"
     except SyntaxError:
-        return 'String'
+        return "String"
     return str(type(lit))
+
 
 def get_write_from_data_type(s):
     """Used for writing longer strings. Since the strings should stay strings in
     the written files, if the evaluated datatype of `s` is str, quatation marks
     will be added around the value, otherwise nothing is done."""
     t = check_data_type(s)
-    if t == 'String':
+    if t == "String":
         return f'"{s}"'
     return s
 
@@ -366,17 +372,19 @@ def check_variable_name(name, raise_not_warn=False, parent=None):
     except:
         built_check = name in __builtins__
     if built_check:
-        text = f'The name "{name}" is a python builtin function! Please use another name.'
+        text = (
+            f'The name "{name}" is a python builtin function! Please use another name.'
+        )
         if raise_not_warn:
             raise Exception(text)
-        WarnPopup(parent, text, 'Invalid Name')
+        WarnPopup(parent, text, "Invalid Name")
         return False
     try:
-        parse(f'{name} = None')
+        parse(f"{name} = None")
     except (ValueError, SyntaxError, TypeError):
         text = f'The name "{name}" is not a valid name! Remove e.g. spaces or special characters.'
         if raise_not_warn:
             raise Exception(text)
-        WarnPopup(parent, text, 'Invalid Name')
+        WarnPopup(parent, text, "Invalid Name")
         return False
     return True

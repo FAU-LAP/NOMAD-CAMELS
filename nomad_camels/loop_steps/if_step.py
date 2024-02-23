@@ -1,5 +1,4 @@
-from PySide6.QtWidgets import QWidget, QLabel, QCheckBox, QGridLayout,\
-    QMessageBox
+from PySide6.QtWidgets import QWidget, QLabel, QCheckBox, QGridLayout, QMessageBox
 from PySide6.QtCore import Signal
 from PySide6.QtGui import QStandardItemModel
 
@@ -22,19 +21,21 @@ class If_Loop_Step(Loop_Step_Container):
     elifs : list of str
         string-list of the conditions for a variable number of `elif` cases
     """
-    def __init__(self, name='', children=None, parent_step=None, step_info=None,
-                 **kwargs):
+
+    def __init__(
+        self, name="", children=None, parent_step=None, step_info=None, **kwargs
+    ):
         super().__init__(name, children, parent_step, step_info, **kwargs)
-        self.step_type = 'If'
+        self.step_type = "If"
         self.has_children = False
         if step_info is None:
             step_info = {}
-        self.condition = step_info['condition'] if 'condition' in step_info else '!'
-        self.use_else = step_info['use_else'] if 'use_else' in step_info else False
-        self.elifs = step_info['elifs'] if 'elifs' in step_info else []
+        self.condition = step_info["condition"] if "condition" in step_info else "!"
+        self.use_else = step_info["use_else"] if "use_else" in step_info else False
+        self.elifs = step_info["elifs"] if "elifs" in step_info else []
         self.update_children()
 
-    def append_to_model(self, item_model:QStandardItemModel, parent=None):
+    def append_to_model(self, item_model: QStandardItemModel, parent=None):
         """Overwritten, so that nothing can be dropped into the main step."""
         item = super(If_Loop_Step, self).append_to_model(item_model, parent)
         item.setDropEnabled(False)
@@ -44,21 +45,21 @@ class If_Loop_Step(Loop_Step_Container):
         """Updates the if-substeps provided by this step, giving them
         the names corresponding to the conditions."""
         if not self.children:
-            self.children.append(If_Sub_Step(f'{self.name}_{self.condition}'))
+            self.children.append(If_Sub_Step(f"{self.name}_{self.condition}"))
         n_children = 1 + len(self.elifs) + (1 if self.use_else else 0)
         if self.use_else and not isinstance(self.children[-1], Else_Sub_Step):
-            self.children.append(Else_Sub_Step(f'{self.name}_Else'))
+            self.children.append(Else_Sub_Step(f"{self.name}_Else"))
         elif not self.use_else and isinstance(self.children[-1], Else_Sub_Step):
             self.children.pop()
         pops = []
         for i, child in enumerate(self.children):
             if i == 0:
-                child.name = f'{self.name}_{self.condition}'
+                child.name = f"{self.name}_{self.condition}"
             elif self.use_else and i == len(self.children) - 1:
-                child.name = f'{self.name}_Else'
+                child.name = f"{self.name}_Else"
             else:
                 try:
-                    child.name = f'{self.name}_{self.elifs[i-1]}'
+                    child.name = f"{self.name}_{self.elifs[i-1]}"
                 except IndexError:
                     pops.append(i)
         for i in reversed(pops):
@@ -67,56 +68,54 @@ class If_Loop_Step(Loop_Step_Container):
         if diff > 0:
             for cond in self.elifs[-diff:]:
                 if self.use_else:
-                    self.children.insert(-1,
-                                         Elif_Sub_Step(f'{self.name}_{cond}'))
+                    self.children.insert(-1, Elif_Sub_Step(f"{self.name}_{cond}"))
                 else:
-                    self.children.append(Elif_Sub_Step(f'{self.name}_{cond}'))
+                    self.children.append(Elif_Sub_Step(f"{self.name}_{cond}"))
         elif diff < 0:
-            raise Exception('something went wrong with if-children!')
+            raise Exception("something went wrong with if-children!")
 
     def get_protocol_string(self, n_tabs=1):
         """Putting together the children of all if-substeps and the conditions"""
-        tabs = '\t' * n_tabs
+        tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}if eva.eval("{self.condition}"):\n'
-        protocol_string += self.children[0].get_children_strings(n_tabs+1)
+        protocol_string += self.children[0].get_children_strings(n_tabs + 1)
         for i, el in enumerate(self.elifs):
-            child = self.children[i+1]
+            child = self.children[i + 1]
             protocol_string += f'{tabs}elif eva.eval("{el}"):\n'
-            protocol_string += child.get_children_strings(n_tabs+1)
+            protocol_string += child.get_children_strings(n_tabs + 1)
         if self.use_else:
-            protocol_string += f'{tabs}else:\n'
-            protocol_string += self.children[-1].get_children_strings(n_tabs+1)
+            protocol_string += f"{tabs}else:\n"
+            protocol_string += self.children[-1].get_children_strings(n_tabs + 1)
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
         """Shows all the conditions and the steps' children"""
-        tabs = '\t' * n_tabs
-        short_string = f'{tabs}if {self.condition}:\n'
+        tabs = "\t" * n_tabs
+        short_string = f"{tabs}if {self.condition}:\n"
         for child in self.children[0].children:
-            short_string += child.get_protocol_short_string(n_tabs+1)
+            short_string += child.get_protocol_short_string(n_tabs + 1)
         for i, el in enumerate(self.elifs):
-            short_string += f'{tabs}else if {el}:\n'
-            for child in self.children[i+1].children:
-                short_string += child.get_protocol_short_string(n_tabs+1)
+            short_string += f"{tabs}else if {el}:\n"
+            for child in self.children[i + 1].children:
+                short_string += child.get_protocol_short_string(n_tabs + 1)
         if self.use_else:
-            short_string += f'{tabs}else:\n'
+            short_string += f"{tabs}else:\n"
             for child in self.children[-1].children:
-                short_string += child.get_protocol_short_string(n_tabs+1)
+                short_string += child.get_protocol_short_string(n_tabs + 1)
         return short_string
-
-
-
 
 
 class If_Sub_Step(Loop_Step_Container):
     """Simple sub-step that represents the if-condition."""
-    def __init__(self, name='', children=None, parent_step=None, step_info=None,
-                 **kwargs):
-        super().__init__(name, children, parent_step, step_info, **kwargs)
-        self.step_type = 'If_Sub'
 
-    def append_to_model(self, item_model:QStandardItemModel, parent=None):
+    def __init__(
+        self, name="", children=None, parent_step=None, step_info=None, **kwargs
+    ):
+        super().__init__(name, children, parent_step, step_info, **kwargs)
+        self.step_type = "If_Sub"
+
+    def append_to_model(self, item_model: QStandardItemModel, parent=None):
         """Overwritten, so that nothing can be dropped into the main step. The
         Sub-Step cannot be dragged out from the main step."""
         item = super().append_to_model(item_model, parent)
@@ -124,32 +123,39 @@ class If_Sub_Step(Loop_Step_Container):
         item.setEnabled(False)
         return item
 
+
 class Elif_Sub_Step(If_Sub_Step):
     """Simple sub-step that represents an elif-condition."""
-    def __init__(self, name='', children=None, parent_step=None, step_info=None,
-                 **kwargs):
+
+    def __init__(
+        self, name="", children=None, parent_step=None, step_info=None, **kwargs
+    ):
         super().__init__(name, children, parent_step, step_info, **kwargs)
-        self.step_type = 'Elif_Sub'
+        self.step_type = "Elif_Sub"
+
 
 class Else_Sub_Step(If_Sub_Step):
     """Simple sub-step that represents the else-condition."""
-    def __init__(self, name='', children=None, parent_step=None, step_info=None,
-                 **kwargs):
-        super().__init__(name, children, parent_step, step_info, **kwargs)
-        self.step_type = 'Else_Sub'
 
+    def __init__(
+        self, name="", children=None, parent_step=None, step_info=None, **kwargs
+    ):
+        super().__init__(name, children, parent_step, step_info, **kwargs)
+        self.step_type = "Else_Sub"
 
 
 class Sub_Step_Config(Loop_Step_Config):
     """Configuration for the substeps, disabling the name-widget."""
-    def __init__(self, loop_step:Loop_Step_Container, parent=None):
+
+    def __init__(self, loop_step: Loop_Step_Container, parent=None):
         super().__init__(parent, loop_step)
         self.name_widget.setEnabled(False)
 
 
 class If_Step_Config(Loop_Step_Config):
     """Configuration-Widget for the if-loop step."""
-    def __init__(self, loop_step:If_Loop_Step, parent=None):
+
+    def __init__(self, loop_step: If_Loop_Step, parent=None):
         super().__init__(parent, loop_step)
         self.sub_widget = If_Step_Config_Sub(loop_step, self)
         self.layout().addWidget(self.sub_widget, 1, 0, 1, 5)
@@ -171,8 +177,6 @@ class If_Step_Config(Loop_Step_Config):
         super().update_step_config()
 
 
-
-
 class If_Step_Config_Sub(QWidget):
     """This widget consists of a line for the if-condition an
     AddRemoveTable for the elif-conditions and a checkbox for whether to
@@ -185,25 +189,29 @@ class If_Step_Config_Sub(QWidget):
     -------
 
     """
+
     update_config = Signal()
 
-    def __init__(self, loop_step:If_Loop_Step, parent=None):
+    def __init__(self, loop_step: If_Loop_Step, parent=None):
         super().__init__(parent)
         self.loop_step = loop_step
 
-        label = QLabel('Condition:')
+        label = QLabel("Condition:")
         self.lineEdit_condition = Variable_Box(self)
         self.lineEdit_condition.setText(loop_step.condition)
         self.lineEdit_condition.textChanged.connect(self.update_condition)
 
-        self.elif_table = AddRemoveTable(parent=self,
-                                         headerLabels=[],
-                                         tableData=self.loop_step.elifs,
-                                         title='Elif-cases:',
-                                         checkstrings=0, askdelete=True)
+        self.elif_table = AddRemoveTable(
+            parent=self,
+            headerLabels=[],
+            tableData=self.loop_step.elifs,
+            title="Elif-cases:",
+            checkstrings=0,
+            askdelete=True,
+        )
         self.elif_table.sizechange.connect(self.update_condition)
 
-        self.checkBox_use_else = QCheckBox('Use Else')
+        self.checkBox_use_else = QCheckBox("Use Else")
         self.checkBox_use_else.setChecked(self.loop_step.use_else)
         self.checkBox_use_else.clicked.connect(self.else_change)
 
@@ -227,10 +235,12 @@ class If_Step_Config_Sub(QWidget):
 
         """
         if self.loop_step.use_else:
-            dialog = QMessageBox.question(self,
-                                          'Remove Else case?',
-                                          'Removing the Else-case also deletes its children',
-                                          QMessageBox.Yes | QMessageBox.No)
+            dialog = QMessageBox.question(
+                self,
+                "Remove Else case?",
+                "Removing the Else-case also deletes its children",
+                QMessageBox.Yes | QMessageBox.No,
+            )
             if dialog != QMessageBox.Yes:
                 self.checkBox_use_else.setChecked(True)
                 return
