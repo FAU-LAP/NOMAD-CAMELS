@@ -28,7 +28,6 @@ If this does not work you can go to `/.desertenv/Lib/site-packages/nomad_camels/
 python .\CAMELS_start.py
 ```
 
-## Setup Correct Python Environment
 
 There are several ways to set up the correct Python environment and install CAMELS depending on your operating system:
 ```{toctree}
