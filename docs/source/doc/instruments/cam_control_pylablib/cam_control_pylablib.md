@@ -29,6 +29,8 @@ You must set up _Cam-Control_ via its own GUI and you can then use CAMELS to act
 Under `Manage Instruments` in the `Configure Instruments`-tab you can set:
 
 - `Exposure time`: Exposure time of the camera. You can check the `Overwrite exposure time` checkbox to always overwrite the currently set value with the value given in this field. The value is then set every time a protocol with the device is run. This will overwrite any manual setting of the exposure time of the GUI at protocol startup.
+
+  If you do not check the box, no exposure time will be set when starting a protocol.
 - `Host IP`: Set the host IP address of the cam-control server visible in the GUI at the bottom of the `Plugins`-tab. Format should be `xxx.xxx.xxx.xxx`
 - `Port`: Set the correct port of the server, normally `18923`, but can be changed in the `settings.cfg` file of _Cam-Control_.
 - `Byte length`: Number of bytes that are read. Usually some large number (>9.000.000) should work fine. A 1920x1080 frame has `1920 * 1080 * 2 = 4.147.200` bytes.
