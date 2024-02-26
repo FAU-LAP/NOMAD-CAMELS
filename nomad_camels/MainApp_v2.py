@@ -593,6 +593,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # changing the returned dict to dataframe and back to have a
             # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
+            try:
+                # Check if 'name' contains any special characters excluding whitespace
+                if re.search(r'[^\w\s]', str(dat['name'][0])):
+                    raise ValueError("Sample name contains special characters.\nPlease use only letters, numbers and whitespace.")
+            except ValueError as e:
+                raise ValueError("Sample name contains special characters.\nPlease use only letters, numbers and whitespace.")
             dat["Name2"] = dat["name"]
             data = pd.DataFrame(dat)
             data.set_index("Name2", inplace=True)
