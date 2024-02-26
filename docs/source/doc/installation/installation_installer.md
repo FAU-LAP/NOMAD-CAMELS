@@ -9,7 +9,7 @@ The installer automatically does the following steps:
 - Creates the correct python environment (called `.desertenv` using the pyenv 3.11.3 python version)
 - Installs CAMELS (using pip in the `.desertenv` environment)
 
-This takes about 2-3 minutes depending on your systems performance.
+This takes about 2-3 minutes depending on your system's performance.
 
 ```{note}
   Try to always use this option as it minimizes any unwanted errors during setup and makes running and uninstalling easy.
@@ -17,7 +17,7 @@ This takes about 2-3 minutes depending on your systems performance.
 
 If the installer fails or if you want more control over your installation you can also use [pyenv](installation_custom_windows.md) or [Anaconda](installation_custom_anaconda) to install CAMELS.
 
-# Troubleshooting
+## Troubleshooting
 If your installation fails randomly (setup of Python environment takes less than a few seconds) and you can't run CAMELS with the created shortcuts then it is possible that your pyenv PATH variables are not set correctly. Open powershell and  see if the `pyenv` command works.\
 Set the correct PATH variables for pyenv and retry the installation again.\
 **Alternative:**\

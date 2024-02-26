@@ -94,3 +94,9 @@ or run:
 ```bash
 python ./desertenv/lib/python<version>/site-packages/nomad_camels/CAMELS_start.py
 ```
+
+## 5. Troubleshooting
+Sometimes packages that are needed to run the `qt` libraries used for the GUI need to be installed addiitonally. The following should install all necessary packages:
+```bash
+sudo apt-get install build-essential libssl-dev libffi-dev libegl1 libdbus-1-3 libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0 x11-utils libxcb-cursor0 libopengl0 libegl1-mesa libgl1-mesa-glx libpulse0
+```

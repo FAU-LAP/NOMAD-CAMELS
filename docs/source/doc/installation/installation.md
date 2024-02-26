@@ -28,29 +28,14 @@ If this does not work you can go to `/.desertenv/Lib/site-packages/nomad_camels/
 python .\CAMELS_start.py
 ```
 
-## Setup Correct Python Environment
 
 There are several ways to set up the correct Python environment and install CAMELS depending on your operating system:
+```{toctree}
+:maxdepth: 2
 
-### Windows
-
-* [Windows installer](installation_installer.md) 
-  ```{tip}
-  We recommended this if you do not want to deal with installing your own Python environment.
-  ```
-* [Installation using pyenv](installation_custom_windows.md)
-* [Installation using Anaconda](installation_custom_anaconda/installation_custom_anaconda.md)
-
----
-
-### UNIX
-
-* [Installation using pyenv](installation_custom_unix.md)
-* [Installation using Anaconda](installation_custom_anaconda/installation_custom_anaconda.md)
-
----
-
-### macOS
-
-* [Installation using pyenv](installation_custom_macos.md) 
-* [Installation using Anaconda](installation_custom_anaconda/installation_custom_anaconda.md)
+Windows Installer <installation_installer.md>
+pyenv on Windows <installation_custom_windows.md>
+pyenv on Linux <installation_custom_unix.md>
+pyenv on macOS <installation_custom_macos.md>
+Anaconda <installation_custom_anaconda/installation_custom_anaconda.md>
+```
