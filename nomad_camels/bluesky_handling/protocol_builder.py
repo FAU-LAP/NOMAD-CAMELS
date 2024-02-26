@@ -280,7 +280,7 @@ def build_protocol(
 
     # finishing up the device initialization
     devices_string += '\t\tprint("devices connected")\n'
-    devices_string += f'\t\tmd = {{"devices": device_config, "description": "{protocol.description}"}}\n'
+    devices_string += f'\t\tmd = {{"devices": device_config, "description": "{repr(protocol.description)}"}}\n'
 
     # if using special nexus-format, some restructuring of metadata is done
     if protocol.use_nexus:

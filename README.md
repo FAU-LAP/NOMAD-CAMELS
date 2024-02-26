@@ -16,6 +16,11 @@ NOMAD CAMELS is a configurable measurement software, targeted towards the requir
 For more information and documentation visit [the documentation](https://fau-lap.github.io/NOMAD-CAMELS/).
 
 # Changelog
+## 1.0.2
+Fixes:
+
+- You can now use new lines and special characters in the protocol description field.
+
 
 ## 1.0.1
 Features:
