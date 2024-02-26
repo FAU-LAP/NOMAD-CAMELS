@@ -244,6 +244,14 @@ class AddRemoveTable(QWidget):
         self.table.resizeRowsToContents()
         self.update_max_hight()
         self.table_model.itemChanged.connect(self.check_string)
+        self.table.selectionModel().selectionChanged.connect(self.check_selection)
+        self.check_selection()
+
+    def check_selection(self):
+        if self.table.selectedIndexes():
+            self.removeButton.setEnabled(True)
+        else:
+            self.removeButton.setEnabled(False)
 
     def update_max_hight(self):
         """ """
@@ -467,6 +475,7 @@ class AddRemoveTable(QWidget):
             self.added.emit(items[0].row())
         else:
             self.added.emit(items[0].column())
+        self.check_selection()
 
     def remove(self):
         """ """
@@ -498,6 +507,7 @@ class AddRemoveTable(QWidget):
             self.removed.emit(col)
         self.update_table_data()
         self.update_max_hight()
+        self.check_selection()
 
     def update_table_data(self):
         """Reading all the data of the table, putting it as dict into

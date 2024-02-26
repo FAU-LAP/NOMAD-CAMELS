@@ -8,7 +8,8 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
-from pkg_resources import resource_filename
+from importlib import resources
+from nomad_camels import graphics
 
 # Import your main application form
 # from main_window import MainWindow
@@ -25,12 +26,10 @@ class LoadingScreen(QDialog):
         layout = QGridLayout()
         self.setLayout(layout)
         self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-        self.setWindowIcon(
-            QIcon(resource_filename("nomad_camels", "graphics/camels_icon.png"))
-        )
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
 
         image = QPixmap()
-        image.load(resource_filename("nomad_camels", "graphics/CAMELS_vertical.png"))
+        image.load(str(resources.files(graphics) / "CAMELS_vertical.png"))
         image = image.scaled(403, 308)
         image_label = QLabel()
         image_label.setPixmap(image)

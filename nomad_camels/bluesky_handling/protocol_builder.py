@@ -155,6 +155,10 @@ def build_protocol(
          Metadata that describes the sample.
     """
     # first the path is prepared
+    if not protocol.loop_steps:
+        raise Exception(
+            f'The protocol "{protocol.name}" is empty.\nYou cannot run or build an empty protocol.'
+        )
     if not isinstance(save_path, pathlib.Path):
         save_path = pathlib.Path(save_path)
     if isinstance(save_path, pathlib.WindowsPath):

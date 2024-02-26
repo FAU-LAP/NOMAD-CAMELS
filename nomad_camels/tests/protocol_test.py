@@ -496,6 +496,7 @@ def select_step_by_name(conf, name):
     conf.treeView_protocol_sequence.selectionModel().select(
         index, QItemSelectionModel.Select
     )
+    conf.check_movability()
 
 
 def get_row_from_channel_table(name, table):

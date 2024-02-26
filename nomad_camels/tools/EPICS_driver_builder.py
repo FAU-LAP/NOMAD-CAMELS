@@ -16,7 +16,8 @@ from PySide6.QtGui import QIcon, QCloseEvent
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.utility import variables_handling, fit_variable_renaming
 
-from pkg_resources import resource_filename
+from importlib import resources
+from nomad_camels import graphics
 
 
 class EPICS_Driver_Builder(QDialog):
@@ -25,7 +26,7 @@ class EPICS_Driver_Builder(QDialog):
 
         try:
             self.setWindowIcon(
-                QIcon(resource_filename("nomad_camels", "graphics/camels_icon.png"))
+                QIcon(str(resources.files(graphics) / "camels_icon.png"))
             )
         except:
             pass

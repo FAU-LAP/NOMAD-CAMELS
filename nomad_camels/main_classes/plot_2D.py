@@ -17,7 +17,8 @@ from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 from nomad_camels.main_classes.plot_widget import MPLwidget
 
 from nomad_camels.utility.plot_placement import place_widget
-from pkg_resources import resource_filename
+from importlib import resources
+from nomad_camels import graphics
 
 stdCols = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 
@@ -82,9 +83,7 @@ class PlotWidget_2D(QWidget):
         self.setLayout(layout)
 
         self.setWindowTitle(title or f"{z_name} 2D")
-        self.setWindowIcon(
-            QIcon(resource_filename("nomad_camels", "graphics/camels_icon.png"))
-        )
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
         place_widget(self)
 
     def autoscale(self):

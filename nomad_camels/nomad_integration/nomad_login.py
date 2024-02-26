@@ -12,7 +12,8 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QPixmap, Qt
 
-from pkg_resources import resource_filename
+from importlib import resources
+from nomad_camels import graphics
 
 from nomad_camels.utility import variables_handling
 
@@ -139,13 +140,9 @@ class LoginDialog(QDialog):
         oasis = self.comboBox_nomad_choice.currentText() == "NOMAD Oasis"
         image = QPixmap()
         if oasis:
-            image.load(
-                resource_filename("nomad_camels", "graphics/oasis-horizontal.png")
-            )
+            image.load(str(resources.files(graphics) / "oasis-horizontal.png"))
         else:
-            image.load(
-                resource_filename("nomad_camels", "graphics/nomad-horizontal.png")
-            )
+            image.load(str(resources.files(graphics) / "nomad-horizontal.png"))
         self.label_logo.setPixmap(image)
 
         self.label_oasis_url.setHidden(not oasis)

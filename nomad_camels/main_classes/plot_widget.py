@@ -36,7 +36,8 @@ from bluesky import plan_stubs as bps
 
 from nomad_camels.utility.plot_placement import place_widget
 
-from pkg_resources import resource_filename
+from importlib import resources
+from nomad_camels import graphics
 
 stdCols = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 
@@ -291,9 +292,7 @@ class PlotWidget(QWidget):
         self.setLayout(layout)
 
         self.setWindowTitle(title or f"{x_name} vs. {y_names[0]}")
-        self.setWindowIcon(
-            QIcon(resource_filename("nomad_camels", "graphics/camels_icon.png"))
-        )
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
 
         self.plot_options.hide()
         self.options_open = False
@@ -1433,9 +1432,7 @@ class PlotWidget_NoBluesky(QWidget):
         self.change_maxlen()
 
         self.setWindowTitle(title or f"{xlabel} vs. {ylabel}")
-        self.setWindowIcon(
-            QIcon(resource_filename("nomad_camels", "graphics/camels_icon.png"))
-        )
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
 
         layout = QGridLayout()
         layout.addWidget(canvas, 0, 1, 1, 6)

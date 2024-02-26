@@ -9,7 +9,8 @@ from PySide6.QtGui import QIcon
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 
 from nomad_camels.utility.plot_placement import place_widget
-from pkg_resources import resource_filename
+from importlib import resources
+from nomad_camels import graphics
 
 from PySide6.QtCore import Signal as pySignal
 
@@ -54,9 +55,7 @@ class Values_List_Plot(QWidget):
             self.setWindowTitle(f"{value_list[0]} ...")
         else:
             self.setWindowTitle("Current Value List")
-        self.setWindowIcon(
-            QIcon(resource_filename("nomad_camels", "graphics/camels_icon.png"))
-        )
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
         self.stream_name = stream_name
         place_widget(self)
 
