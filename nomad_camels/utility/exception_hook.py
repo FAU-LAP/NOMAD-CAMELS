@@ -54,16 +54,24 @@ class ErrorMessage(QMessageBox):
         self.text_edit.setVisible(False)
         self.text_edit.setPlainText("".join(tb))
 
-        self.layout().addWidget(self.more_info_button, 2, 0, 1, 5)
+        self.layout().addWidget(self.more_info_button, 3, 0, 1, 5)
         self.layout().addWidget(self.text_edit, 2, 0, 1, 5)
-        self.layout().addWidget(self.button(QMessageBox.Ok), 3, 0, 1, 5)
+        self.layout().addWidget(self.button(QMessageBox.Ok), 4, 0, 1, 5)
+        self.showing_more_info = False
         self.adjustSize()
 
     def show_more_info(self):
-        self.text_edit.setVisible(True)
-        self.more_info_button.setVisible(False)
-        self.text_edit.setMinimumHeight(500)
-        self.text_edit.setMinimumWidth(800)
+        if self.showing_more_info:
+            self.text_edit.setVisible(False)
+            self.more_info_button.setText("more information")
+            self.adjustSize()
+            self.showing_more_info = False
+        else:
+            self.text_edit.setVisible(True)
+            self.more_info_button.setText("hide additional information")
+            self.text_edit.setMinimumHeight(500)
+            self.text_edit.setMinimumWidth(800)
+            self.showing_more_info = True
         self.adjustSize()
 
 
