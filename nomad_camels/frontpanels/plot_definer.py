@@ -483,7 +483,15 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.plot_data.y_axes = self.y_table.update_table_data()
         self.plot_data.x_axis = self.lineEdit_x_axis.text()
         self.plot_data.title = self.lineEdit_title.text()
+        if re.search(r"[^\w\s]", self.plot_data.title):
+                raise ValueError(
+                    "Title contains special characters.\nPlease use only letters, numbers and whitespace."
+                )
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
+        if re.search(r"[^\w\s]", self.plot_data.xlabel):
+                raise ValueError(
+                    "x-label contains special characters.\nPlease use only letters, numbers and whitespace."
+                )
         self.plot_data.ylabel = self.lineEdit_ylabel.text()
         if re.search(r"[^\w\s]", self.plot_data.ylabel):
                 raise ValueError(
