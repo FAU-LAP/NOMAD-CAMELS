@@ -503,6 +503,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     raise ValueError(
                         "Name contains special characters.\nPlease use only letters, numbers and whitespace."
                     )
+            # remove trailing whitespace from name
+            dat["name"][0] = dat["name"][0].strip()
             dat["Name2"] = dat["name"]
             data = pd.DataFrame(dat)
             data.set_index("Name2", inplace=True)
@@ -595,6 +597,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 raise ValueError(
                     "Sample name contains special characters.\nPlease use only letters, numbers and whitespace."
                 )
+            dat["name"][0] = dat["name"][0].strip()
             dat["Name2"] = dat["name"]
             data = pd.DataFrame(dat)
             data.set_index("Name2", inplace=True)
@@ -1625,6 +1628,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.progressBar_protocols.setValue(0)
         protocol = self.protocols_dict[protocol_name]
         protocol.session_name = self.lineEdit_session.text()
+        if re.search(r"[^\w\s]", protocol.session_name):
+                    raise ValueError(
+                        "Session name contains special characters.\nPlease use only letters, numbers and whitespace."
+                    )
+
         self.running_protocol = protocol
         if ask_file:
             path = QFileDialog.getSaveFileName(
