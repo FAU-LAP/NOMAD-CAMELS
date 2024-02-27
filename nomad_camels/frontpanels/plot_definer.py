@@ -1,5 +1,6 @@
 import copy
 import numpy as np
+import re
 
 from PySide6.QtWidgets import (
     QDialog,
@@ -417,6 +418,10 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         """ """
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
         self.plot_data.ylabel = self.lineEdit_ylabel.text()
+        if re.search(r"[^\w\s]", self.plot_data.ylabel):
+                raise ValueError(
+                    "y-label contains special characters.\nPlease use only letters, numbers and whitespace."
+                )
         self.plot_data.zlabel = self.lineEdit_zlabel.text()
         self.plot_data.x_axis = self.lineEdit_x_axis.text()
         self.plot_data.y_axes["formula"][0] = self.lineEdit_y_axis.text()
@@ -480,7 +485,15 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.plot_data.title = self.lineEdit_title.text()
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
         self.plot_data.ylabel = self.lineEdit_ylabel.text()
+        if re.search(r"[^\w\s]", self.plot_data.ylabel):
+                raise ValueError(
+                    "y-label contains special characters.\nPlease use only letters, numbers and whitespace."
+                )
         self.plot_data.ylabel2 = self.lineEdit_ylabel2.text()
+        if re.search(r"[^\w\s]", self.plot_data.ylabel2):
+                raise ValueError(
+                    "y-label 2 contains special characters.\nPlease use only letters, numbers and whitespace."
+                )
         # self.plot_data.do_plot = self.checkBox_plot.isChecked()
         try:
             self.plot_data.maxlen = int(self.lineEdit_nPoints.text())
