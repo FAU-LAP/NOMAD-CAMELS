@@ -308,7 +308,7 @@ class PlotWidget(QWidget):
     def change_maxlen(self):
         """ """
         text = self.lineEdit_n_data.text()
-        if not text:
+        if not text or text == "None" or text == "none" or text == "inf" or text == "np.inf":
             maxlen = np.inf
         else:
             try:
