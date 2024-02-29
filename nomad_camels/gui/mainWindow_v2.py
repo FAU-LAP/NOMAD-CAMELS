@@ -835,7 +835,7 @@ class Ui_MainWindow(object):
             QCoreApplication.translate("MainWindow", "Export from databroker", None)
         )
         self.actionManage_Extensions.setText(
-            QCoreApplication.translate("MainWindow", "Managa Extensions", None)
+            QCoreApplication.translate("MainWindow", "Manage Extensions", None)
         )
         self.actionExport_CAMELS_hdf5_to_csv_json.setText(
             QCoreApplication.translate(

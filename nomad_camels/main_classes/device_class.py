@@ -276,7 +276,7 @@ def get_channels(dev: OphydDevice, include_metadata=False, include_config=False)
     -------
     channels : list
         list of the device's channels
-        if metadata is True, it will be a list of tuples conaining the channels'
+        if metadata is True, it will be a list of tuples containing the channels'
         names and their metadata
     """
     channels = []

@@ -26,7 +26,7 @@ from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
 def trigger_multi(devices, grp=None):
     """
-    This function triggers mutliple devices
+    This function triggers multiple devices
 
     Parameters
     ----------
@@ -191,7 +191,7 @@ def gradient_descent(
     evaluator : Evaluator
         Used to evaluate the read values.
     set_channel : ophyd.Signal
-        The channel wich is used for the optimization.
+        The channel which is used for the optimization.
     read_channels : list
         A list of all the channels which are read for the optimization.
     min_step : float
@@ -344,10 +344,10 @@ def get_range(
         `points` is the distance between those two.
     min_val : float, str
          (Default value = np.nan)
-         Minimum value of the loop / sweep. Usefull for hysteresis-sweeps.
+         Minimum value of the loop / sweep. Useful for hysteresis-sweeps.
     max_val : float, str
          (Default value = np.nan)
-         Minimum value of the loop / sweep. Usefull for hysteresis-sweeps.
+         Minimum value of the loop / sweep. Useful for hysteresis-sweeps.
     loop_type : str
          (Default value = 'start - stop')
          Possible values: 'start - stop', ignoring `min_val` and `max_val`
@@ -447,7 +447,7 @@ class Prompt_Box(QMessageBox):
     Parameters
     ----------
     icon : str
-        If 'Error', the `QMessagebox.Critical` icon is desplayed, if 'Warning',
+        If 'Error', the `QMessagebox.Critical` icon is displayed, if 'Warning',
         then `QMessagebox.Warning` is used, otherwise `QMessagebox.Information`.
     text : str
         The text to be displayed by the prompt.
