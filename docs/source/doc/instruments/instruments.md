@@ -1,7 +1,7 @@
 # Instruments
 
 - [Agilent 34401A](agilent_34401a/agilent_34401a.md)
-- Andor Newton CCD
+- [Andor Newton CCD](andor_newton/andor_newton.md)
 - Andor Shamrock 500
 - [Cam-Control by PyLabLib](cam_control_pylablib/cam_control_pylablib.md).\
    Allows control of cameras by the following manufacturers:
