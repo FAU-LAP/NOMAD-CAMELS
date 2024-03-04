@@ -95,7 +95,7 @@ evaluation_functions_names = {
 operator_names = {
     "+": "add",
     "-": "subtract",
-    "/": "devide",
+    "/": "divide",
     "*": "multiply",
     "**": "to the power of",
     "%": "modulus",
@@ -341,7 +341,7 @@ def check_data_type(s):
 
 def get_write_from_data_type(s):
     """Used for writing longer strings. Since the strings should stay strings in
-    the written files, if the evaluated datatype of `s` is str, quatation marks
+    the written files, if the evaluated datatype of `s` is str, quotation marks
     will be added around the value, otherwise nothing is done."""
     t = check_data_type(s)
     if t == "String":

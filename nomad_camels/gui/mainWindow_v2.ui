@@ -1154,7 +1154,7 @@ QPushButton:disabled {
   </action>
   <action name="actionManage_Extensions">
    <property name="text">
-    <string>Managa Extensions</string>
+    <string>Manage Extensions</string>
    </property>
   </action>
   <action name="actionExport_CAMELS_hdf5_to_csv_json">

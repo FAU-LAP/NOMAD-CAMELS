@@ -18,7 +18,7 @@ auth = {"Authorization": f"Bearer {token}"}
 
 def login_to_nomad(parent=None):
     """Opens a login dialog and uses the resulting username/password to login to
-    NOMAD. The recieved authentification token is saved to the module's global
+    NOMAD. The received authentication token is saved to the module's global
     variable `token`.
 
     Parameters
@@ -28,7 +28,7 @@ def login_to_nomad(parent=None):
 
     Returns
     -------
-    the authentification token
+    the authentication token
     """
     global token, auth, nomad_url
     dialog = LoginDialog(parent)
@@ -89,7 +89,7 @@ def check_response(response, fail_info=""):
     fail_info : str
         (Default value = '')
         If this string is not empty, it will display as the first part of the
-        raised exception. Usefull to specify, what went wrong.
+        raised exception. Useful to specify, what went wrong.
     """
     if response.status_code != 200:
         info = response.json()

@@ -23,7 +23,7 @@ class Prompt_Loop_Step(Loop_Step):
     long_test : str
         This will be the full text, displayed inside the window.
     icon : str
-        If 'Error', the `QMessagebox.Critical` icon is desplayed, if 'Warning',
+        If 'Error', the `QMessagebox.Critical` icon is displayed, if 'Warning',
         then `QMessagebox.Warning` is used, otherwise `QMessagebox.Information`.
     """
 

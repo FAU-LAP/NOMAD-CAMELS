@@ -64,7 +64,7 @@ class LoginDialog(QDialog):
         self.password_input = QLineEdit()
         self.password_input.setEchoMode(QLineEdit.Password)
 
-        self.label_token = QLabel("Authentification Token:")
+        self.label_token = QLabel("Authentication Token:")
         self.lineEdit_token = QLineEdit()
         self.lineEdit_token.setEchoMode(QLineEdit.Password)
 

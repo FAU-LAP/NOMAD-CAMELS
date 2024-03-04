@@ -62,7 +62,7 @@ class Loop_Step:
             The item model that manages the view of the steps.
         parent : QStandardItem
             (Default value = None)
-            The parent of the step inside the item modle
+            The parent of the step inside the item model
         """
         if parent is None:
             parent = item_model

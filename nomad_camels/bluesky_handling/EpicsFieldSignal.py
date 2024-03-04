@@ -6,7 +6,7 @@ from epics import caput, caget
 
 
 class EpicsFieldSignal(Signal):
-    """A Signal used to adress a single field of an EPICS PV."""
+    """A Signal used to address a single field of an EPICS PV."""
 
     def __init__(
         self,

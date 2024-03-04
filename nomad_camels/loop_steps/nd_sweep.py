@@ -25,7 +25,7 @@ from nomad_camels.loop_steps.for_while_loops import (
 
 class ND_Sweep(Loop_Step):
     """
-    An n-dimensional sweep with the read values. Usefull for e.g. an xy-scan.
+    An n-dimensional sweep with the read values. Useful for e.g. an xy-scan.
 
     Attributes
     ----------

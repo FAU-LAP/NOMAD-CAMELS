@@ -6,7 +6,7 @@ fit_variable_changer = {
     "-": "minus",
     "=": "equals",
     "==": "equals",
-    "/": "devide",
+    "/": "divide",
     "*": "times",
     "**": "power",
     "<": "less",

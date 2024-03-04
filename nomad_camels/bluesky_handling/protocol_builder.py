@@ -218,7 +218,7 @@ def build_protocol(
             config = copy.deepcopy(device.get_config())
         settings = copy.deepcopy(device.get_settings())
         additional_info = copy.deepcopy(device.get_additional_info())
-        # informations on the connection is reshaped to be useful
+        # information on the connection is reshaped to be useful
         if "connection" in settings:
             conn = settings.pop("connection")
             if "type" in conn:

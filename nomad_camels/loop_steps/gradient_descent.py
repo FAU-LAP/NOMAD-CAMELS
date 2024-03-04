@@ -22,7 +22,7 @@ class Gradient_Descent_Step(Loop_Step):
     extremum : str ('Minimum', 'Maximum')
         The extremum type that should be found.
     out_channel : str
-        The channel wich is used for the optimization.
+        The channel which is used for the optimization.
     opt_func : str
         This string is evaluated by the given to give the target function.
     start_val : str, float

@@ -412,7 +412,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.show_nomad_upload()
 
     def login_nomad(self):
-        """Handles the login to NOMAD. If the login is successfull, the UI is
+        """Handles the login to NOMAD. If the login is successful, the UI is
         adapted to show all the NOMAD-related buttons."""
         # IMPORT nomad_communication only if it is needed
         from nomad_camels.nomad_integration import nomad_communication
@@ -727,7 +727,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.toggle_dark_mode()
 
     def toggle_dark_mode(self):
-        """Turning dark mode on / off, called whenever the settigns are
+        """Turning dark mode on / off, called whenever the settings are
         changed. Using qdarkstyle to provide the stylesheets.
 
         Parameters
@@ -1652,7 +1652,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol_builder.build_protocol(
             protocol, path, savepath, userdata=userdata, sampledata=sampledata
         )
-        print("\n\nBuild successfull!\n")
+        print("\n\nBuild successful!\n")
         self.progressBar_protocols.setValue(100 if ask_file else 1)
 
     def get_user_name_data(self):
