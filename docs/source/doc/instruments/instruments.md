@@ -2,7 +2,7 @@
 
 - [Agilent 34401A](agilent_34401a/agilent_34401a.md)
 - [Andor Newton CCD](andor_newton/andor_newton.md)
-- Andor Shamrock 500
+- [Andor Shamrock 500](andor_shamrock/andor_shamrock.md)
 - [Cam-Control by PyLabLib](cam_control_pylablib/cam_control_pylablib.md).\
    Allows control of cameras by the following manufacturers:
   - Andor
@@ -40,6 +40,8 @@
 :maxdepth: 2
 :hidden:
 Agilent 34401A  <agilent_34401a/agilent_34401a.md>
+Andor Newton CCD <andor_newton/andor_newton.md>
+Andor Shamrock 500 <andor_shamrock/andor_shamrock.md>
 Cam-Control by PyLabLib <cam_control_pylablib/cam_control_pylablib.md>
 Keithley 237 <keithley_237/keithley_237.md>
 Keithley 2000 <keithley_2000/keithley_2000.md>
