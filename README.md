@@ -17,9 +17,12 @@ For more information and documentation visit [the documentation](https://fau-lap
 
 # Changelog
 ## 1.0.2
-Fixes:
+Features:
+- Added functionality to select path for exporting hdf5 to csv/json
 
+Fixes:
 - You can now use new lines and special characters in the protocol description field.
+- If exporting hdf5 to csv/json and not specifying the path for the export, the path of the hdf5 should now be selected correctly
 
 
 ## 1.0.1
