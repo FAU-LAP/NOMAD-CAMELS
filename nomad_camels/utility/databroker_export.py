@@ -395,20 +395,27 @@ def broker_to_NX(
 
 
 def export_h5_to_csv_json(
-    filename, entry_name=None, export_data=True, export_metadata=True
+    filename, entry_name=None, export_data=True, export_metadata=True, export_path=None
 ):
     # read the h5 file and list the entries
+
     with h5py.File(filename, "r") as file:
         entries = list(file.keys())
     if entry_name is not None and entry_name in entries:
         entries = [entry_name]
+    if export_path is None:
+        fpath = os.path.join(
+            os.path.dirname(filename), os.path.basename(filename).split(".")[0]
+        )
+    else:
+        fpath = export_path
     for entry_name in entries:
         with h5py.File(filename, "r") as file:
             entry = file[entry_name]
             entry_name_non_iso = clean_filename(entry_name)
             if export_metadata:
                 metadata = h5_group_to_dict(entry)
-                fname = f'{filename.split(".")[0]}/{entry_name_non_iso}_metadata.json'
+                fname = os.path.join(fpath, f"{entry_name_non_iso}_metadata.json")
                 if not os.path.isdir(os.path.dirname(fname)):
                     os.makedirs(os.path.dirname(fname))
                 with open(fname, "w", encoding="utf-8") as json_file:
@@ -418,7 +425,7 @@ def export_h5_to_csv_json(
                     continue
                 data = entry["data"]
                 export_h5_group_to_csv(
-                    data, f'{filename.split(".")[0]}/{entry_name_non_iso}/primary.csv'
+                    data, os.path.join(fpath, entry_name_non_iso, "primary.csv")
                 )
 
 
@@ -523,6 +530,12 @@ class ExportH5_dialog(QDialog):
         self.checkbox_all_entries = QCheckBox("export all entries")
         self.checkbox_all_entries.stateChanged.connect(self.all_entries)
 
+        self.checkbox_export_to_dir = QCheckBox("export to directory of hdf5 file")
+        self.export_path = Path_Button_Edit(select_directory=True)
+        self.export_path.setEnabled(False)
+        self.checkbox_export_to_dir.stateChanged.connect(self.export_path.setDisabled)
+        self.checkbox_export_to_dir.setChecked(True)
+
         self.checkbox_data = QCheckBox("export data")
         self.checkbox_data.setChecked(True)
         self.checkbox_metadata = QCheckBox("export metadata")
@@ -538,10 +551,13 @@ class ExportH5_dialog(QDialog):
         layout.addWidget(self.checkbox_all_entries, 2, 0, 1, 2)
         layout.addWidget(self.checkbox_data, 3, 0)
         layout.addWidget(self.checkbox_metadata, 3, 1)
-        layout.addWidget(self.export_button, 4, 0)
-        layout.addWidget(self.cancel_button, 4, 1)
+        layout.addWidget(self.checkbox_export_to_dir, 5, 0)
+        layout.addWidget(self.export_path, 5, 1)
+        layout.addWidget(self.export_button, 10, 0)
+        layout.addWidget(self.cancel_button, 10, 1)
 
         self.show()
+        self.adjustSize()
 
     def all_entries(self):
         if self.checkbox_all_entries.isChecked():
@@ -566,11 +582,24 @@ class ExportH5_dialog(QDialog):
             entry = self.entry_name.currentText()
         export_data = self.checkbox_data.isChecked()
         export_metadata = self.checkbox_metadata.isChecked()
+        export_path = (
+            self.export_path.get_path()
+            if not self.checkbox_export_to_dir.isChecked()
+            else None
+        )
         export_h5_to_csv_json(
             self.filename.get_path(),
             entry_name=entry,
             export_data=export_data,
             export_metadata=export_metadata,
+            export_path=export_path,
+        )
+        from nomad_camels.ui_widgets.warn_popup import WarnPopup
+
+        WarnPopup(
+            text="Successfully exported data to csv and json",
+            title="Export successful",
+            info_icon=True,
         )
         super().accept()
 

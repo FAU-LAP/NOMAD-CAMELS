@@ -240,7 +240,7 @@ class For_Loop_Step(Loop_Step_Container):
         return protocol_string
 
     def update_time_weight(self):
-        """Multiplies the childrens time_weight (-1 for the step itself) by the
+        """Multiplies the children time_weight (-1 for the step itself) by the
         number of iterations and adds 1 (for the step itself)."""
         super().update_time_weight()
         self.time_weight = (self.time_weight - 1) * self.n_iterations + 1

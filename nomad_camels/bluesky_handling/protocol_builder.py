@@ -218,7 +218,7 @@ def build_protocol(
             config = copy.deepcopy(device.get_config())
         settings = copy.deepcopy(device.get_settings())
         additional_info = copy.deepcopy(device.get_additional_info())
-        # informations on the connection is reshaped to be useful
+        # information on the connection is reshaped to be useful
         if "connection" in settings:
             conn = settings.pop("connection")
             if "type" in conn:
@@ -280,7 +280,7 @@ def build_protocol(
 
     # finishing up the device initialization
     devices_string += '\t\tprint("devices connected")\n'
-    devices_string += f'\t\tmd = {{"devices": device_config, "description": "{protocol.description}"}}\n'
+    devices_string += f'\t\tmd = {{"devices": device_config, "description": "{repr(protocol.description)}"}}\n'
 
     # if using special nexus-format, some restructuring of metadata is done
     if protocol.use_nexus:

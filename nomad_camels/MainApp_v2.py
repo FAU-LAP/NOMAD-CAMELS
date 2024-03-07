@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 sys.path.append(os.path.dirname(__file__))
@@ -411,7 +412,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.show_nomad_upload()
 
     def login_nomad(self):
-        """Handles the login to NOMAD. If the login is successfull, the UI is
+        """Handles the login to NOMAD. If the login is successful, the UI is
         adapted to show all the NOMAD-related buttons."""
         # IMPORT nomad_communication only if it is needed
         from nomad_camels.nomad_integration import nomad_communication
@@ -498,6 +499,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # changing the returned dict to dataframe and back to have a
             # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
+            if re.search(r"[^\w\s]", str(dat["name"][0])):
+                    raise ValueError(
+                        "Name contains special characters.\nPlease use only letters, numbers and whitespace."
+                    )
+            # remove trailing whitespace from name
+            dat["name"][0] = dat["name"][0].strip()
             dat["Name2"] = dat["name"]
             data = pd.DataFrame(dat)
             data.set_index("Name2", inplace=True)
@@ -586,6 +593,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # changing the returned dict to dataframe and back to have a
             # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
+            if re.search(r"[^\w\s]", str(dat["name"][0])):
+                raise ValueError(
+                    "Sample name contains special characters.\nPlease use only letters, numbers and whitespace."
+                )
+            dat["name"][0] = dat["name"][0].strip()
             dat["Name2"] = dat["name"]
             data = pd.DataFrame(dat)
             data.set_index("Name2", inplace=True)
@@ -715,7 +727,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.toggle_dark_mode()
 
     def toggle_dark_mode(self):
-        """Turning dark mode on / off, called whenever the settigns are
+        """Turning dark mode on / off, called whenever the settings are
         changed. Using qdarkstyle to provide the stylesheets.
 
         Parameters
@@ -1616,6 +1628,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.progressBar_protocols.setValue(0)
         protocol = self.protocols_dict[protocol_name]
         protocol.session_name = self.lineEdit_session.text()
+        if re.search(r"[^\w\s]", protocol.session_name):
+                    raise ValueError(
+                        "Session name contains special characters.\nPlease use only letters, numbers and whitespace."
+                    )
+
         self.running_protocol = protocol
         if ask_file:
             path = QFileDialog.getSaveFileName(
@@ -1635,7 +1652,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol_builder.build_protocol(
             protocol, path, savepath, userdata=userdata, sampledata=sampledata
         )
-        print("\n\nBuild successfull!\n")
+        print("\n\nBuild successful!\n")
         self.progressBar_protocols.setValue(100 if ask_file else 1)
 
     def get_user_name_data(self):

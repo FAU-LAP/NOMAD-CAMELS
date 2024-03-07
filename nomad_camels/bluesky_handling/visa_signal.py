@@ -14,7 +14,7 @@ def list_resources():
 
 
 def close_resources():
-    """Goes throug all the opened resources and closes them."""
+    """Goes through all the opened resources and closes them."""
     for res in open_resources:
         open_resources[res].close()
     open_resources.clear()
@@ -49,7 +49,7 @@ class VISA_Signal(Signal):
         write : str or function with str as a return value
             (Default = None)
             Determines what is written to the instrument. As a string it should have '{value}' in it (could include further formatting). The given value will be put into the string there, e.g. if `write='VOLT{value:03d}'`, the value will be given as an integer of three digits with leading zeroes.
-            If `write` is a function, it should return a string. Everytime a value is set, the function will be executed and the resulting string will be sent to the instrument.
+            If `write` is a function, it should return a string. Every time a value is set, the function will be executed and the resulting string will be sent to the instrument.
             If it is None, the value will be simply converted to a string.
 
         parse : str or function

@@ -308,7 +308,7 @@ class PlotWidget(QWidget):
     def change_maxlen(self):
         """ """
         text = self.lineEdit_n_data.text()
-        if not text:
+        if not text or text == "None" or text == "none" or text == "inf" or text == "np.inf":
             maxlen = np.inf
         else:
             try:
@@ -845,7 +845,7 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
         """
         if self.livefit.result is not None:
             # Evaluate the model function at equally-spaced points.
-            # To determine the domain of x, use xlim if availabe. Otherwise,
+            # To determine the domain of x, use xlim if available. Otherwise,
             # use the range of x points measured up to this point.
             if self._xlim is None:
                 x_data = self.livefit.independent_vars_data[self.__x_key]
@@ -857,7 +857,7 @@ class Fit_Plot_No_Init_Guess(LiveFitPlot):
             kwargs.update(self.livefit.result.values)
             self.y_data = self.livefit.result.model.eval(**kwargs)
             self.x_data = x_points
-            # update kwargs to inital guess
+            # update kwargs to initial guess
             kwargs.update(self.livefit.result.init_values)
             self.update_plot()
         # Intentionally override LivePlot.event. Do not call super().

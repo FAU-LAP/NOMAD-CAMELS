@@ -159,7 +159,7 @@ class Datbroker_Exporter(QDialog):
             catalog_name=catalog,
         )
         self.setCursor(Qt.CursorShape.ArrowCursor)
-        warn_popup.WarnPopup(self, "Succesfully exported data!", "Data exported", True)
+        warn_popup.WarnPopup(self, "Successfully exported data!", "Data exported", True)
         self.accept()
 
     def change_catalog(self):

@@ -372,8 +372,8 @@ class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
         ) as f:
             f.write(toml_string)
         copyfile(
-            os.path.join(os.path.dirname(__file__), "../../LICENSE.txt"),
-            os.path.join(module_dir, "LICENSE.txt"),
+            os.path.join(os.path.dirname(__file__), "../../LICENSE"),
+            os.path.join(module_dir, "LICENSE"),
         )
 
         QMessageBox.information(
