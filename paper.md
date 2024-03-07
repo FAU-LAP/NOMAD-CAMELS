@@ -45,7 +45,7 @@ Research data management has piqued greater and greater interest in recent years
 While one ingredient, electronic lab notebooks (ELNs), are an important step towards FAIR data, it is equally important to record the measurement data and related metadata along FAIR principles as early as possible in the research workflow. 
 
 In experimental physics many custom-built measurement setups are controlled by very specific software written by individual researchers.
-This results in a heterogeneous landscape of software fragments for measurements written in many different languages, and with often incomplete documentation, making it almost impossible for other researchers to extend existing code.
+This results in a heterogeneous landscape of software fragments for measurements written in many different languages and with often incomplete documentation, making it almost impossible for other researchers to extend existing code.
 The degree to which the stored raw data is understandable varies greatly but is often unintelligible even for researchers from the same lab.
 Important metadata such as instrument settings or the actual measurement steps performed to obtain the final raw data are rarely recorded, making it virtually impossible to reproduce experiments. Therefore, the documentation of experiments is incomplete, preventing FAIR research data.
 Although there are some tools available (e.g. _SweepMe!_ [@SweepMe], _iC_ [@pernstich2012], PyMoDAQ [@PyMoDAQ]) to realise control of arbitrary measurement instruments, they are frequently not open-source or their data output is not compliant with the FAIR principles.
