@@ -37,7 +37,7 @@ bibliography: paper.bib
 
 # Summary
 
-NOMAD CAMELS (short: CAMELS) is a configurable, open-source measurement software that records fully self-describing experimental data. It has its origins in the field of experimental physics where a wide variety of measurement instruments are used in frequently changing experimental setups and measurement protocols. CAMELS provides a graphical user interface (GUI) which allows the user to configure experiments without the need of programming skills or deep understanding of instrument communication. CAMELS translates user-defined measurement protocols into stand-alone executable Python code for full transparency of the actual measurement sequences. Existing large-scale, distributed control systems (e.g. EPICS [@EPICS]) can be natively implemented. CAMELS is designed with a focus on full recording of data and metadata. When shared with others, data produced with CAMELS allow full understanding of the measurement and the resulting data in accordance with the **FAIR** (**F**indable, **A**ccessible, **I**nteroperable and **R**e-usable) principles [@Wilkinson2016].
+NOMAD CAMELS (short: CAMELS) is a configurable, open-source measurement software that records fully self-describing experimental data. It has its origins in the field of experimental physics where a wide variety of measurement instruments are used in frequently changing experimental setups and measurement protocols. CAMELS provides a graphical user interface (GUI) which allows the user to configure experiments without the need of programming skills or deep understanding of instrument communication. CAMELS translates user-defined measurement protocols into stand-alone executable Python code for full transparency of the actual measurement sequences. Existing large-scale, distributed control systems [@EPICS] can be natively implemented. CAMELS is designed with a focus on full recording of data and metadata. When shared with others, data produced with CAMELS allow full understanding of the measurement and the resulting data in accordance with the **FAIR** (**F**indable, **A**ccessible, **I**nteroperable and **R**e-usable) principles [@Wilkinson2016].
 
 
 # Statement of need
@@ -48,9 +48,9 @@ In experimental physics many custom-built measurement setups are controlled by v
 This results in a heterogeneous landscape of software fragments for measurements written in many different languages and with often incomplete documentation, making it almost impossible for other researchers to extend existing code.
 The degree to which the stored raw data is understandable varies greatly but is often unintelligible even for researchers from the same lab.
 Important metadata such as instrument settings or the actual measurement steps performed to obtain the final raw data are rarely recorded, making it virtually impossible to reproduce experiments. Therefore, the documentation of experiments is incomplete, preventing FAIR research data.
-Although there are some tools available (e.g. _SweepMe!_ [@SweepMe], _iC_ [@pernstich2012], PyMoDAQ [@PyMoDAQ]) to realise control of arbitrary measurement instruments, they are frequently not open-source or their data output is not compliant with the FAIR principles.
+Although there are some tools available to realise control of arbitrary measurement instruments, such as _SweepMe!_ [@SweepMe], _iC_ [@pernstich2012], and PyMoDAQ [@PyMoDAQ], they are frequently not open-source or their data output is not compliant with the FAIR principles.
 
-![Visualization of CAMELS functionality and workflow. CAMELS connects directly with local instruments and/or large-scale lab infrastructure running network protocols, e.g. EPICS. Customizable measurements protocols are translated into Python code and executed. The output is FAIR-compliant measurement data. \label{fig:camels_overview}](pictures/Bild_CAMELS.png){ width=80% }
+![Visualization of CAMELS functionality and workflow. CAMELS connects directly with local instruments and/or large-scale lab infrastructure running network protocols, e.g., EPICS. Customizable measurements protocols are translated into Python code and executed. The output is FAIR-compliant measurement data. \label{fig:camels_overview}](pictures/Bild_CAMELS.png){ width=80% }
 
 # NOMAD CAMELS
 CAMELS is an open-source tool that automatically collects all computer-accessible experimental metadata. It features a user-friendly graphical interface that enables the creation and customization of measurements without the need for programming knowledge. By default, the data is stored in a structured HDF5 file format that closely resembles the structure of the NeXus standard [@Konnecke2015; @FAIRmatNeXusProposal].
@@ -58,8 +58,8 @@ The final HDF5 file contains both the actual measurement data and metadata in a 
 
 CAMELS is a stand-alone desktop application. It allows for direct access to the _NOMAD_ repository [@scheidgenFAIRResearchData2023; @scheidgenNOMADDistributedWebbased2023] or its on-premise installation called _NOMAD Oasis_ enabling direct linking to electronic lab notebook entries. The user can for example connect measurements to previous experiment workflows documented in _NOMAD_ ELNs. CAMELS can subsequently upload measurement results directly into the ELN providing a simple and stream-lined data workflow.
 
-CAMELS builds on _bluesky_ [@Allan2019; @bluesky] initially developed to control instruments at large-scale research institutions using EPICS [@Knott1994; @EPICS]. In CAMELS, _bluesky_ is employed to orchestrate the instrument communication either directly (e.g. via PyVISA [@PyVISA])
-or via using network protocols. Existing lab infrastructure controlled by EPICS is therefore immediately accessible. A schematic overview of the functionality of CAMELS is displayed in \autoref{fig:camels_overview}.
+CAMELS builds on _bluesky_ [@Allan2019; @bluesky] initially developed to control instruments at large-scale research institutions using EPICS [@Knott1994; @EPICS]. In CAMELS, _bluesky_ is employed to orchestrate the instrument communication either directly, e.g., via @PyVISA
+or using network protocols. Existing lab infrastructure controlled by EPICS is therefore immediately accessible. A schematic overview of the functionality of CAMELS is displayed in \autoref{fig:camels_overview}.
 
 CAMELS provides a comprehensive set of functionalities that can be split into three primary components: instrument management, measurement protocols, and manual controls. 
 
@@ -81,7 +81,7 @@ CAMELS translates the protocol created in the GUI into a Python script, which is
 
 
 ## Manual controls
-Certain scientific instruments require manual control before starting predefined measurement routines, e.g. adjusting stages, controlling temperature, valves, pumps, etc. In CAMELS this is achieved through the _manual controls_ functionality which can be applied to any writable instrument channel.
+Certain scientific instruments require manual control before starting predefined measurement routines, e.g., adjusting stages, controlling temperature, valves, pumps, etc. In CAMELS this is achieved through the _manual controls_ functionality which can be applied to any writable instrument channel.
 
 ## Data output
 
@@ -94,8 +94,8 @@ The stored data can be divided into distinct sections:
 - Time-stamped raw data obtained during the execution of the measurement protocol.
 - Instrument settings.
 - Human-readable summary of the measurement protocol information (see \autoref{fig:h5_data}a).
-- Complete Python script that recorded the data (see \autoref{fig:h5_data}b) as well as information on the Python environment, i.e. a list of used packages and versions.
-- User-defined metadata, e.g. sample and user information.
+- Complete Python script that recorded the data (see \autoref{fig:h5_data}b) as well as information on the Python environment, i.e., a list of used packages and versions.
+- User-defined metadata, e.g., sample and user information.
 
 ## Documentation
 In-depth documentation and guides for installing, using and troubleshooting can be found on the [CAMELS documentation webpage](https://fau-lap.github.io/NOMAD-CAMELS/) [@fuchsCAMELSConfigurableApplication].
