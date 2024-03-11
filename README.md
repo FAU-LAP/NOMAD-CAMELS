@@ -15,6 +15,14 @@ NOMAD CAMELS is a configurable measurement software, targeted towards the requir
 
 For more information and documentation visit [the documentation](https://fau-lap.github.io/NOMAD-CAMELS/).
 
+
+## Publication
+
+Please also see our publication in the Journal of Open Source Software (JOSS):
+
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.06371/status.svg)](https://doi.org/10.21105/joss.06371)
+
+
 # Changelog
 ## 1.0.2
 Features:
