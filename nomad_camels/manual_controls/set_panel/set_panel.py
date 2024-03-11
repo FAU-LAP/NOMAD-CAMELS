@@ -93,21 +93,22 @@ class Set_Panel(Manual_Control):
             for data in group_data.values():
                 channels += data["channel"]
         self.channel_list = list(set(channels))
-        self.channels = device_handling.get_channels_from_string_list(
-            self.channel_list, True
-        )
         self.adjustSize()
         self.read_thread = None
+        self.channels = None
         self.start_multiple_devices(self.channel_list, True)
 
     def device_ready(self):
-        super().device_ready()
+        self.channels = device_handling.get_channels_from_string_list(
+            self.channel_list, True
+        )
         control_data = self.control_data
         t = control_data["readback_time"] if "readback_time" in control_data else 5
         self.read_thread = Readback_Thread(self, self.channels, t)
         if "readback" in control_data and control_data["readback"]:
             self.read_thread.data_sig.connect(self.check_readback)
             self.read_thread.start()
+        super().device_ready()
 
     def button_pushed(self):
         for n, group in enumerate(self.buttons):

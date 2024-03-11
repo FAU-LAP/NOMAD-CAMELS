@@ -16,6 +16,10 @@ NOMAD CAMELS is a configurable measurement software, targeted towards the requir
 For more information and documentation visit [the documentation](https://fau-lap.github.io/NOMAD-CAMELS/).
 
 # Changelog
+## 1.0.3
+Fixes:
+- fixed bug that prevented set panels from starting
+
 ## 1.0.2
 Features:
 - Added functionality to select path for exporting hdf5 to csv/json
