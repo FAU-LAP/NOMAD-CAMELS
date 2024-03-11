@@ -1,0 +1,56 @@
+cff-version: "1.2.0"
+authors:
+- family-names: Fuchs
+  given-names: Alexander D.
+  orcid: "https://orcid.org/0000-0003-1896-9242"
+- family-names: Lehmeyer
+  given-names: Johannes A. F.
+  orcid: "https://orcid.org/0000-0003-2041-9987"
+- family-names: Junkes
+  given-names: Heinz
+  orcid: "https://orcid.org/0000-0002-0218-4873"
+- family-names: Weber
+  given-names: Heiko B.
+  orcid: "https://orcid.org/0000-0002-6403-9022"
+- family-names: Krieger
+  given-names: Michael
+  orcid: "https://orcid.org/0000-0003-1480-9161"
+contact:
+- family-names: Krieger
+  given-names: Michael
+  orcid: "https://orcid.org/0000-0003-1480-9161"
+doi: 10.5281/zenodo.10793952
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
+  - family-names: Fuchs
+    given-names: Alexander D.
+    orcid: "https://orcid.org/0000-0003-1896-9242"
+  - family-names: Lehmeyer
+    given-names: Johannes A. F.
+    orcid: "https://orcid.org/0000-0003-2041-9987"
+  - family-names: Junkes
+    given-names: Heinz
+    orcid: "https://orcid.org/0000-0002-0218-4873"
+  - family-names: Weber
+    given-names: Heiko B.
+    orcid: "https://orcid.org/0000-0002-6403-9022"
+  - family-names: Krieger
+    given-names: Michael
+    orcid: "https://orcid.org/0000-0003-1480-9161"
+  date-published: 2024-03-11
+  doi: 10.21105/joss.06371
+  issn: 2475-9066
+  issue: 95
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: 6371
+  title: "NOMAD CAMELS: Configurable Application for Measurements,
+    Experiments and Laboratory Systems"
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.06371"
+  volume: 9
+title: "NOMAD CAMELS: Configurable Application for Measurements,
+  Experiments and Laboratory Systems"
