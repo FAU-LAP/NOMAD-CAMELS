@@ -62,7 +62,7 @@ def recourse_entry_dict(entry, metadata):
                     no_dict = True
                     break
             if no_dict:
-                if type(val) is list:
+                if any(isinstance(item, str) for item in val):
                     entry[key] = np.array(val).astype("S")
                 else:
                     entry[key] = val
