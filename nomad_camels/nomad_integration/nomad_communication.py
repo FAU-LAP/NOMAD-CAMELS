@@ -177,7 +177,7 @@ def upload_file(
         if "upload_name" not in upload and upload["upload_id"] == upload_name:
             upload_id = upload_name
             break
-        if upload["upload_name"] == upload_name:
+        if "upload_name" in upload and upload["upload_name"] == upload_name:
             upload_id = upload["upload_id"]
             break
     if not upload_id:
