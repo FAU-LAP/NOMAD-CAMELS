@@ -17,8 +17,13 @@ For more information and documentation visit [the documentation](https://fau-lap
 
 # Changelog
 ## 1.0.3
+Changes:
+- Removed "environment" from saved hdf5 files, moved instrument information up on step in hirarchy
+- changed file extension to .nxs for better NOMAD integration
+
 Fixes:
 - fixed bug that prevented set panels from starting
+- fixed issue with uploads to NOMAD if an unnamed upload exists
 
 ## 1.0.2
 Features:
