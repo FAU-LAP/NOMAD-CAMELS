@@ -96,6 +96,7 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    :caption: Links
 
    Find us on GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS>
+   Cite NOMAD CAMELS <https://joss.theoj.org/papers/10.21105/joss.06371>
    NOMAD Website <https://nomad-lab.eu/nomad-lab/>
    FAIRmat Website <https://www.fairmat-nfdi.eu/fairmat>
    FAU/LAP Website <https://www.lap.physik.nat.fau.eu/>
