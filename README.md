@@ -24,6 +24,7 @@ Changes:
 Fixes:
 - fixed bug that prevented set panels from starting
 - fixed issue with uploads to NOMAD if an unnamed upload exists
+- fixed trigger for Custom_Function_SignalRO
 
 ## 1.0.2
 Features:

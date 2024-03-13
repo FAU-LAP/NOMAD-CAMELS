@@ -102,14 +102,13 @@ class Custom_Function_Signal(Signal):
         info = super().describe()
         info[self.name]["source"] = "Custom Function"
         return info
-    
+
     def read_configuration(self):
         if self._readback is not None:
             value = self._readback
         else:
             value = self.get()
         return {self.name: {"value": value, "timestamp": self.timestamp}}
-        
 
 
 def retry_function(func, retries: int, *args, error_retry_function=None, **kwargs):
@@ -195,7 +194,7 @@ class Custom_Function_SignalRO(SignalRO):
         """
         if self.trigger_function:
             retry_function(
-                self.trigger_function(),
+                self.trigger_function,
                 self.retry_on_error,
                 error_retry_function=self.error_retry_function,
             )
@@ -206,7 +205,7 @@ class Custom_Function_SignalRO(SignalRO):
         info = super().describe()
         info[self.name]["source"] = "Custom Function"
         return info
-    
+
     def read_configuration(self):
         if self._readback is not None:
             value = self._readback
