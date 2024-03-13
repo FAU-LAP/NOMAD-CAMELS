@@ -62,7 +62,10 @@ def recourse_entry_dict(entry, metadata):
                     no_dict = True
                     break
             if no_dict:
-                entry[key] = val
+                if any(isinstance(item, str) for item in val):
+                    entry[key] = np.array(val).astype("S")
+                else:
+                    entry[key] = val
         elif val is None:
             continue
         else:
@@ -202,10 +205,10 @@ def broker_to_NX(
         entry_name_non_iso = clean_filename(entry_name)
         # check if the filename already exists, if yes, add entry_name to filename
         if new_file_each_run and os.path.isfile(filename):
-            filename = filename.split(".")[0] + f"_{entry_name_non_iso}.h5"
+            filename = filename.split(".")[0] + f"_{entry_name_non_iso}.nxs"
         filename = (
             os.path.dirname(filename)
-            + f'/{clean_filename(os.path.basename(filename).split(".")[0])}.h5'
+            + f'/{clean_filename(os.path.basename(filename).split(".")[0])}.nxs'
         )
         if export_to_json:
             if not os.path.isdir(filename.split(".")[0]):
@@ -256,10 +259,9 @@ def broker_to_NX(
 
             instr = entry.create_group("instrument")
             instr.attrs["NX_class"] = "NXinstrument"
-            environ = instr.create_group("environment")
-            environ.attrs["NX_class"] = "NXenvironment"
             for dev, dat in meta_start.pop("devices").items():
-                dev_group = environ.create_group(dev)
+                dev_group = instr.create_group(dev)
+                dev_group.attrs["NX_class"] = "NXsensor"
                 if "idn" in dat:
                     dev_group["model"] = dat.pop("idn")
                 else:

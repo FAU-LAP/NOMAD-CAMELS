@@ -1362,7 +1362,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         user = self.get_user_name_data()[0]
         sample = self.get_sample_name_data()[0]
         protocol = self.protocols_dict[protocol_name]
-        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
+        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.nxs'
         savepath = os.path.normpath(savepath)
         while not os.path.exists(savepath):
             savepath = os.path.dirname(savepath)
@@ -1644,7 +1644,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
         user, userdata = self.get_user_name_data()
         sample, sampledata = self.get_sample_name_data()
-        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.h5'
+        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.nxs'
         self.protocol_savepath = savepath
         # IMPORT protocol_builder only if needed
         from nomad_camels.bluesky_handling import protocol_builder

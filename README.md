@@ -24,6 +24,17 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 
 # Changelog
+## 1.0.3
+Changes:
+- Removed "environment" from saved hdf5 files, moved instrument information up on step in hirarchy
+- changed file extension to .nxs for better NOMAD integration
+
+Fixes:
+- fixed bug that prevented set panels from starting
+- fixed issue with uploads to NOMAD if an unnamed upload exists
+- fixed trigger for Custom_Function_SignalRO
+- fixed parameters for custom function in fits
+
 ## 1.0.2
 Features:
 - Added functionality to select path for exporting hdf5 to csv/json

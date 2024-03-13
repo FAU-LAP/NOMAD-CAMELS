@@ -31,7 +31,7 @@ class Datbroker_Exporter(QDialog):
         file_label = QLabel("Filename:")
         data_path = variables_handling.meas_files_path
         self.file_box = path_button_edit.Path_Button_Edit(
-            self, default_dir=data_path, save_file=True, file_extension="*.h5"
+            self, default_dir=data_path, save_file=True, file_extension="*.nxs"
         )
         session_label = QLabel("Session name:")
         self.lineEdit_session = QLineEdit()

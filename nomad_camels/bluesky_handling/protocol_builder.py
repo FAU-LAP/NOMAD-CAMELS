@@ -128,7 +128,7 @@ standard_nexus_dict = {
 def build_protocol(
     protocol,
     file_path,
-    save_path="test.h5",
+    save_path="test.nxs",
     catalog="CAMELS_CATALOG",
     userdata=None,
     sampledata=None,
@@ -142,7 +142,7 @@ def build_protocol(
     file_path : str, path
         The path, where the file should be saved.
     save_path : str, path
-         (Default value = 'test.h5')
+         (Default value = 'test.nxs')
          The path, where the data should be saved to.
     catalog : str
          (Default value = 'CAMELS_CATALOG')

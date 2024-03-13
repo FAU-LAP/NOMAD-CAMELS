@@ -570,7 +570,7 @@ def run_test_protocol(tmp_path, protocol):
     from nomad_camels.bluesky_handling import protocol_builder
 
     file = tmp_path / (protocol.name + ".py")
-    savepath = tmp_path / (protocol.name + ".h5")
+    savepath = tmp_path / (protocol.name + ".nxs")
     protocol_builder.build_protocol(protocol, file, savepath, "test_catalog")
     sys.path.append(str(tmp_path))
     py_package = importlib.import_module(protocol.name)

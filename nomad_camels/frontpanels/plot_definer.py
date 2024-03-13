@@ -419,9 +419,9 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
         self.plot_data.ylabel = self.lineEdit_ylabel.text()
         if re.search(r"[^\w\s]", self.plot_data.ylabel):
-                raise ValueError(
-                    "y-label contains special characters.\nPlease use only letters, numbers and whitespace."
-                )
+            raise ValueError(
+                "y-label contains special characters.\nPlease use only letters, numbers and whitespace."
+            )
         self.plot_data.zlabel = self.lineEdit_zlabel.text()
         self.plot_data.x_axis = self.lineEdit_x_axis.text()
         self.plot_data.y_axes["formula"][0] = self.lineEdit_y_axis.text()
@@ -484,24 +484,24 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.plot_data.x_axis = self.lineEdit_x_axis.text()
         self.plot_data.title = self.lineEdit_title.text()
         if re.search(r"[^\w\s]", self.plot_data.title):
-                raise ValueError(
-                    "Title contains special characters.\nPlease use only letters, numbers and whitespace."
-                )
+            raise ValueError(
+                "Title contains special characters.\nPlease use only letters, numbers and whitespace."
+            )
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
         if re.search(r"[^\w\s]", self.plot_data.xlabel):
-                raise ValueError(
-                    "x-label contains special characters.\nPlease use only letters, numbers and whitespace."
-                )
+            raise ValueError(
+                "x-label contains special characters.\nPlease use only letters, numbers and whitespace."
+            )
         self.plot_data.ylabel = self.lineEdit_ylabel.text()
         if re.search(r"[^\w\s]", self.plot_data.ylabel):
-                raise ValueError(
-                    "y-label contains special characters.\nPlease use only letters, numbers and whitespace."
-                )
+            raise ValueError(
+                "y-label contains special characters.\nPlease use only letters, numbers and whitespace."
+            )
         self.plot_data.ylabel2 = self.lineEdit_ylabel2.text()
         if re.search(r"[^\w\s]", self.plot_data.ylabel2):
-                raise ValueError(
-                    "y-label 2 contains special characters.\nPlease use only letters, numbers and whitespace."
-                )
+            raise ValueError(
+                "y-label 2 contains special characters.\nPlease use only letters, numbers and whitespace."
+            )
         # self.plot_data.do_plot = self.checkBox_plot.isChecked()
         try:
             self.plot_data.maxlen = int(self.lineEdit_nPoints.text())
@@ -590,12 +590,15 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
         self.comboBox_predef_func.setEnabled(fit and not custom)
         self.lineEdit_custom_func.setEnabled(fit and custom)
         # self.start_params.setEnabled(fit and not guess)
-        if guess:
-            self.start_params.editables = [2, 3]
-            self.start_params.enableds = [0, 2, 3]
-        else:
-            self.start_params.editables = [1, 2, 3]
-            self.start_params.enableds = [0, 1, 2, 3]
+        self.start_params.enableds = [0, 2, 3]
+        self.start_params.editables = [2, 3]
+        self.start_params.addButton.setHidden(not custom)
+        self.start_params.removeButton.setHidden(not custom)
+        if custom:
+            self.start_params.editables += [0]
+        if not guess:
+            self.start_params.editables += [1]
+            self.start_params.enableds += [1]
         par_vals = self.start_params.update_table_data()
         self.start_params.change_table_data(par_vals)
 
