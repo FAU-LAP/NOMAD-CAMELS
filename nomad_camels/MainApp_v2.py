@@ -1485,7 +1485,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
         nomad = self.nomad_user is not None
-        self.run_done_file_signal.emit(self.protocol_savepath)
+        file = self.last_save_file or self.protocol_savepath
+        self.run_done_file_signal.emit(file)
         if not nomad:
             return
         while self.still_running:
@@ -1504,7 +1505,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             from nomad_camels.nomad_integration import nomad_communication
 
             upload = self.comboBox_upload_choice.currentText()
-            file = self.last_save_file or self.protocol_savepath
             nomad_communication.upload_file(
                 file, upload, f"CAMELS_data{name}", parent=self
             )
@@ -1512,7 +1512,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # IMPORT file_uploading only if needed
             from nomad_camels.nomad_integration import file_uploading
 
-            file = self.last_save_file or self.protocol_savepath
             dialog = file_uploading.UploadDialog(self, file, f"CAMELS_data{name}")
 
     def add_subs_and_plots_from_dict(self, dictionary):
