@@ -2,7 +2,7 @@
 
 CAMELS is written in Python and requires the correct Python environment to run properly.
 
-In the most basics cases a simple installation using _pip_ is sufficient. To install CAMELS to an existing Python environment (must be Python version 3.9.6 or newer) simply run
+In the most basics cases a simple installation using _pip_ is sufficient. To install CAMELS to an existing Python environment (must be Python version 3.11.3 or newer) simply run
 
 ```bash
 pip install nomad-camels
