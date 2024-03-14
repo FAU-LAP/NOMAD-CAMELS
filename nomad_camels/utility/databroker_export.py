@@ -394,6 +394,7 @@ def broker_to_NX(
                 group.attrs["axes"] = axes
                 group.attrs["NX_class"] = "NXdata"
     # print('Successfully saved protocol data!')
+    return filename
 
 
 def export_h5_to_csv_json(
