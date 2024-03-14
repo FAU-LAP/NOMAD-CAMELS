@@ -16,6 +16,11 @@ NOMAD CAMELS is a configurable measurement software, targeted towards the requir
 For more information and documentation visit [the documentation](https://fau-lap.github.io/NOMAD-CAMELS/).
 
 # Changelog
+## 1.0.4
+Fixes:
+- NOMAD upload now uses the correct file if new file for every run
+- Dependency updated to python>=3.11.3
+
 ## 1.0.3
 Changes:
 - Removed "environment" from saved hdf5 files, moved instrument information up on step in hirarchy

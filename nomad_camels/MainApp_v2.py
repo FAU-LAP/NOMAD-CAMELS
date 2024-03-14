@@ -121,6 +121,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.nomad_user = None
         self.nomad_sample = None
+        self.last_save_file = None
 
         self.comboBox_upload_type.addItems(
             ["auto upload", "ask after run", "don't upload"]
@@ -500,9 +501,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
             if re.search(r"[^\w\s]", str(dat["name"][0])):
-                    raise ValueError(
-                        "Name contains special characters.\nPlease use only letters, numbers and whitespace."
-                    )
+                raise ValueError(
+                    "Name contains special characters.\nPlease use only letters, numbers and whitespace."
+                )
             # remove trailing whitespace from name
             dat["name"][0] = dat["name"][0].strip()
             dat["Name2"] = dat["name"]
@@ -1503,16 +1504,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             from nomad_camels.nomad_integration import nomad_communication
 
             upload = self.comboBox_upload_choice.currentText()
+            file = self.last_save_file or self.protocol_savepath
             nomad_communication.upload_file(
-                self.protocol_savepath, upload, f"CAMELS_data{name}", parent=self
+                file, upload, f"CAMELS_data{name}", parent=self
             )
         elif self.comboBox_upload_type.currentText() == "ask after run":
             # IMPORT file_uploading only if needed
             from nomad_camels.nomad_integration import file_uploading
 
-            dialog = file_uploading.UploadDialog(
-                self, self.protocol_savepath, f"CAMELS_data{name}"
-            )
+            file = self.last_save_file or self.protocol_savepath
+            dialog = file_uploading.UploadDialog(self, file, f"CAMELS_data{name}")
 
     def add_subs_and_plots_from_dict(self, dictionary):
         """
@@ -1576,7 +1577,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             and self.protocol_module.uids
         ):
             runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
-            databroker_export.broker_to_NX(
+            self.last_save_file = databroker_export.broker_to_NX(
                 runs,
                 self.protocol_savepath,
                 self.protocol_module.plots,
@@ -1629,9 +1630,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol = self.protocols_dict[protocol_name]
         protocol.session_name = self.lineEdit_session.text()
         if re.search(r"[^\w\s]", protocol.session_name):
-                    raise ValueError(
-                        "Session name contains special characters.\nPlease use only letters, numbers and whitespace."
-                    )
+            raise ValueError(
+                "Session name contains special characters.\nPlease use only letters, numbers and whitespace."
+            )
 
         self.running_protocol = protocol
         if ask_file:
