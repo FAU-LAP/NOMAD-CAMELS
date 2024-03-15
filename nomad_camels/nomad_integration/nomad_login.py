@@ -27,7 +27,7 @@ class LoginDialog(QDialog):
         super().__init__(parent)
 
         info_label = QLabel(
-            "We strongly recommend you to use NOMAD's app token for connecting.\nCopy the token from NOMAD (link below)."
+            "We strongly recommend to use NOMAD's app token for connecting.\nCopy the token from NOMAD (button below)."
         )
 
         oasis_url = ""
@@ -52,7 +52,7 @@ class LoginDialog(QDialog):
         self.label_info_oasis = QLabel(
             "Hint: You can set the URL for the Oasis also in the settings of CAMELS.\nCurrently we only support direct login for NOMAD Oasis via username/password.\nIf you use Single-Sing-On for your Oasis, you need to use NOMAD's app token."
         )
-        self.label_auth_type = QLabel("Authentification-Type:")
+        self.label_auth_type = QLabel("Authentication type:")
         self.comboBox_auth_type = QComboBox()
         self.comboBox_auth_type.addItems(["user/password", "token"])
         self.comboBox_auth_type.setCurrentText("token")
@@ -64,7 +64,7 @@ class LoginDialog(QDialog):
         self.password_input = QLineEdit()
         self.password_input.setEchoMode(QLineEdit.Password)
 
-        self.label_token = QLabel("Authentication Token:")
+        self.label_token = QLabel("Authentication token:")
         self.lineEdit_token = QLineEdit()
         self.lineEdit_token.setEchoMode(QLineEdit.Password)
 
