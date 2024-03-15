@@ -5,6 +5,7 @@ current version."""
 import os
 import sys
 import subprocess
+import re
 from importlib.metadata import distributions
 import nomad_camels  # has to be imported for the distribution version number!
 from nomad_camels.ui_widgets import warn_popup
@@ -22,16 +23,19 @@ def get_version():
 
 
 def get_latest_version():
-    latest_version = str(
-        subprocess.run(
-            [sys.executable, "-m", "pip", "install", "nomad-camels==random"],
-            capture_output=True,
-            text=True,
-        )
+    completed_process = subprocess.run(
+        [sys.executable, "-m", "pip", "install", "nomad-camels==random"],
+        capture_output=True,
+        text=True,
     )
-    latest_version = latest_version[latest_version.find("(from versions:") + 15 :]
-    latest_version = latest_version[: latest_version.find(")")]
-    return latest_version.replace(" ", "").split(",")[-1]
+    stderr_output = completed_process.stderr
+    versions_string = re.search(r'\(from versions: (.*)\)', stderr_output)
+    if versions_string:
+        versions = versions_string.group(1).replace(" ", "").split(",")
+        latest_version = versions[-1]
+        return latest_version
+    else:
+        return None
 
 
 def update_camels():
