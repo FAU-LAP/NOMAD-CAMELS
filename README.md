@@ -25,6 +25,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 ## 1.0.4
+Changes:
+- Driver versions now have a separate branch on CAMELS_drivers to improve keeping them up to date
+
 Fixes:
 - NOMAD upload now uses the correct file if new file for every run
 - Dependency updated to python>=3.11.3
