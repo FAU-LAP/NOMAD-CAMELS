@@ -28,6 +28,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Fixes:
 - NOMAD upload now uses the correct file if new file for every run
 - Dependency updated to python>=3.11.3
+- Fixed checking for currently used version
 
 ## 1.0.3
 Changes:
