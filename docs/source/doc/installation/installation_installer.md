@@ -1,5 +1,5 @@
 # Using the CAMELS Installer on Windows
-Download the CAMELS installer (.exe file) from [GitHub](https://github.com/A-D-Fuchs/CAMELS_installer/blob/main/Output/NOMAD-CAMELS_installer.exe).\
+[Download the CAMELS installer (.exe file)](https://raw.githubusercontent.com/A-D-Fuchs/CAMELS_installer/main/Output/NOMAD-CAMELS_installer.exe).\
 Run the installer. Admin rights should not be required. 
 
 The installer automatically does the following steps:
