@@ -27,11 +27,13 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ## 1.0.5
 Changes:
 - Driver versions now have a separate branch on CAMELS_drivers to improve keeping them up to date
+- Same for extensions
 - Now checking filenames of protocols for invalid characters
 - Improved speed of looking for updates
 
 Fixes:
 - Fixed checking for currently used version
+- Extensions can now actually be downloaded
 
 ## 1.0.4
 Fixes:
