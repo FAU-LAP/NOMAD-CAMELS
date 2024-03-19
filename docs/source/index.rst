@@ -10,7 +10,10 @@ What is NOMAD CAMELS?
 
 CAMELS provides a graphical user interface (GUI) that can be used to setup instrument control and measurement protocols. The GUI then generates Python code that interfaces with `bluesky <https://blueskyproject.io/>`_ to communicate with the instruments and orchestrate the measurement. CAMELS can also be used to communicate with large-scale, distributed systems implemented with `EPICS <https://epics-controls.org/>`_.
 
-Learn more about CAMELS in our peer-reviewed paper `JOSS, 2024 <https://joss.theoj.org/papers/10.21105/joss.06371>`_.
+Learn more about CAMELS in our peer-reviewed paper
+
+.. image:: https://joss.theoj.org/papers/10.21105/joss.06371/status.svg
+   :target: https://doi.org/10.21105/joss.06371
 
 Why CAMELS?
 ===========
