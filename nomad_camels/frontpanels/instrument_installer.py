@@ -104,13 +104,12 @@ def getAllDevices():
     last_repo, last_branch, last_dir = repo, branch, directory
     all_instr = {}
     try:
-        repo_part = repo.split(".com/")[1].split(".git")[0]
-        repo_url = f"https://raw.githubusercontent.com/{repo_part}/{branch}/{directory}"
-        url = f"{repo_url}/driver_list.txt"
+        # repo_part = repo.split(".com/")[1].split(".git")[0]
+        # repo_url = f"https://raw.githubusercontent.com/{repo_part}/{branch}/{directory}"
+        url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/driver_list/driver_list.txt"
         devices_str = requests.get(url).text
     except:
-        repo_url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main"
-        url = f"{repo_url}/driver_list.txt"
+        url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt"
         devices_str = requests.get(url).text
     warned = False
     for x in devices_str.splitlines():

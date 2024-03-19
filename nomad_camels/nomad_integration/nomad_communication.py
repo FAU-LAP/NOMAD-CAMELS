@@ -7,6 +7,32 @@ from PySide6.QtWidgets import QDialog
 from nomad_camels.nomad_integration.nomad_login import LoginDialog
 from nomad_camels.utility.dict_recursive_string import dict_recursive_string
 from nomad_camels.utility import variables_handling
+import re
+
+
+def correct_timestamp(file_path):
+    """Corrects the timestamp in the file path to be compatible with NOMAD. Replaces the plus symbol with p."""
+    # Define the regex for the timestamp
+    timestamp_regex = r"\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}_\d{6}\+\d{2}-\d{2}"
+
+    # Find the timestamp in the file path
+    match = re.search(timestamp_regex, file_path)
+
+    if match:
+        # Extract the timestamp
+        timestamp = match.group()
+
+        # Replace the plus symbol with "p"
+        timestamp_with_p = timestamp.replace("+", "p")
+
+        # Replace the timestamp in the file path with the new timestamp
+        new_file_path = file_path.replace(timestamp, timestamp_with_p)
+
+        return new_file_path
+
+    else:
+        return file_path
+
 
 # by default the url of the central NOMAD at first
 central_url = "http://nomad-lab.eu/prod/v1/staging/api/v1"
@@ -182,9 +208,10 @@ def upload_file(
             break
     if not upload_id:
         raise Exception(f"Could not find upload {upload_name}!")
+    file_corrected_timestamp = correct_timestamp(file)
     params = {
         "overwrite_if_exists": "true" if overwrite_if_exists else "false",
-        "file_name": os.path.basename(file),
+        "file_name": os.path.basename(file_corrected_timestamp),
     }
     head = {"accept": "application/json"}
     head.update(auth)

@@ -99,6 +99,7 @@ class Settings_Window(Ui_settings_window, QDialog):
         self.pathButton_py_files.select_directory = True
         self.pathButton_meas_files.select_directory = True
         self.pathButton_device_path.select_directory = True
+        self.pathButton_extension_path.select_directory = True
         if "databroker_catalog_name" in settings:
             self.lineEdit_catalog_name.setText(settings["databroker_catalog_name"])
         else:
@@ -146,6 +147,10 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.extensions = settings["extensions"]
         else:
             self.extensions = standard_pref["extensions"]
+        if "extension_path" in settings:
+            self.pathButton_extension_path.set_path(settings["extension_path"])
+        else:
+            self.pathButton_extension_path.set_path(standard_pref["extension_path"])
 
         if "new_file_each_run" in settings:
             self.checkBox_new_file_each_run.setChecked(settings["new_file_each_run"])
@@ -252,6 +257,8 @@ class Settings_Window(Ui_settings_window, QDialog):
             "password_protection": self.checkBox_password.isChecked(),
             "password_hash": self.password_hash,
             "new_file_each_run": self.checkBox_new_file_each_run.isChecked(),
+            "extensions": self.extensions,
+            "extension_path": self.pathButton_extension_path.get_path(),
         }
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

@@ -5,7 +5,7 @@ current version."""
 import os
 import sys
 import subprocess
-from importlib.metadata import distributions
+import re
 import nomad_camels  # has to be imported for the distribution version number!
 from nomad_camels.ui_widgets import warn_popup
 
@@ -13,25 +13,41 @@ from PySide6.QtWidgets import QMessageBox
 
 
 def get_version():
-    """Goes through all imported distributions and returns the version of
-    nomad-camels"""
-    for d in distributions():
-        if d.metadata["Name"] == "nomad-camels":
-            return d.version
-    return None
+    """checks the installed version of nomad-camels and returns it."""
+    try:
+        return nomad_camels.__version__
+    except AttributeError:
+        try:
+            import pkg_resources
+
+            return pkg_resources.get_distribution("nomad-camels").version
+        except Exception:
+            return None
 
 
 def get_latest_version():
-    latest_version = str(
-        subprocess.run(
+    """Checks the latest version of nomad-camels and returns it."""
+    import requests
+
+    try:
+        response = requests.get("https://pypi.org/pypi/nomad-camels/json", timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        return data["info"]["version"]
+    except requests.exceptions.RequestException:
+        completed_process = subprocess.run(
             [sys.executable, "-m", "pip", "install", "nomad-camels==random"],
             capture_output=True,
             text=True,
         )
-    )
-    latest_version = latest_version[latest_version.find("(from versions:") + 15 :]
-    latest_version = latest_version[: latest_version.find(")")]
-    return latest_version.replace(" ", "").split(",")[-1]
+        stderr_output = completed_process.stderr
+        versions_string = re.search(r"\(from versions: (.*)\)", stderr_output)
+        if versions_string:
+            versions = versions_string.group(1).replace(" ", "").split(",")
+            latest_version = versions[-1]
+            return latest_version
+        else:
+            return None
 
 
 def update_camels():

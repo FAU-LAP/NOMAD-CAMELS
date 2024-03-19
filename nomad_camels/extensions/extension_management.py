@@ -32,7 +32,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtGui import QFont
 
-url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_extensions/main/extension_list.txt"
+url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_extensions/extension_list/extension_list.txt"
 repo_url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_extensions/main"
 camels_extension_regex = r"^(nomad[-_]{1}camels[-_]{1}extension[-_]{1})(.*)$"
 
@@ -98,13 +98,13 @@ def get_local_extensions():
 
 
 def get_readme_text(extension):
-    url = f"{repo_url}/{extension}/README.md"
-    return requests.get(url).text
+    text_url = f"{repo_url}/{extension}/README.md"
+    return requests.get(text_url).text
 
 
 def get_license_text(extension):
-    url = f"{repo_url}/{extension}/LICENSE.txt"
-    return requests.get(url).text
+    text_url = f"{repo_url}/{extension}/LICENSE.txt"
+    return requests.get(text_url).text
 
 
 class Extension_Manager(QDialog):
@@ -197,11 +197,11 @@ class Extension_Manager(QDialog):
         if self.info_hidden:
             self.info_widget.setHidden(False)
             self.show_hide_info_button.setText("Hide Info")
-            self.table_click()
         else:
             self.info_widget.setHidden(True)
             self.show_hide_info_button.setText("Show Info")
         self.info_hidden = not self.info_hidden
+        self.table_click()
 
     def update_config(self):
         try:
@@ -429,6 +429,9 @@ class Install_Thread(QThread):
                     stderr=subprocess.PIPE,
                     creationflags=flags,
                 )
+            for line in iter(ret.stdout.readline, b""):
+                text = line.decode().rstrip()
+                print(text)
             errs = ret.stderr.read().decode()
             if ret.returncode or errs:
                 self.exception_signal.emit(Exception(errs))

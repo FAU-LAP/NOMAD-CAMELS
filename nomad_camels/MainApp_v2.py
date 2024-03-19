@@ -253,21 +253,24 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.preferences["extension_path"] = standard_pref["extension_path"]
         sys.path.append(self.preferences["extension_path"])
         for f in pathlib.Path(self.preferences["extension_path"]).rglob("*"):
-            for extension in self.preferences["extensions"]:
-                if not f.name == extension:
-                    continue
+            # check if f is a directory that starts with 'nomad_camels_extension_'
+            if f.is_dir() and f.name.startswith("nomad_camels_extension_"):
                 sys.path.append(str(f.parent))
-                try:
-                    extension_module = importlib.import_module(extension)
-                except (ModuleNotFoundError, AttributeError) as e:
-                    print(f"Could not load extension {extension}.\n{e}")
-                    continue
-                config = getattr(extension_module, "EXTENSION_CONFIG")
-                name = config["name"]
-                contexts = {}
-                for context in config["required_contexts"]:
-                    contexts[context] = self.extension_contexts[context]
-                self.extensions.append(getattr(extension_module, name)(**contexts))
+        for extension in self.preferences["extensions"]:
+            # if not f.name == extension:
+            #     continue
+            # sys.path.append(str(f.parent))
+            try:
+                extension_module = importlib.import_module(extension)
+            except (ModuleNotFoundError, AttributeError) as e:
+                print(f"Could not load extension {extension}.\n{e}")
+                continue
+            config = getattr(extension_module, "EXTENSION_CONFIG")
+            name = config["name"]
+            contexts = {}
+            for context in config["required_contexts"]:
+                contexts[context] = self.extension_contexts[context]
+            self.extensions.append(getattr(extension_module, name)(**contexts))
 
     def bluesky_setup(self):
         # IMPORT bluesky only if it is needed
