@@ -676,9 +676,43 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.update_loop_step_order()
         self.get_step_config()
         self.check_protocol_name()
+        self.check_file_name()
         self.accepted.emit(self.protocol)
         self.is_accepted = True
         self.close()
+
+    def check_file_name(self):
+        """check if the filename contains any characters that might cause problems"""
+        name = self.general_settings.lineEdit_filename.text()
+        invalid_characters = [
+            "/",
+            "\\",
+            ":",
+            "*",
+            "?",
+            '"',
+            "<",
+            ">",
+            "|",
+            "+",
+            "%",
+            "&",
+            "#",
+            "@",
+            "!",
+            "$",
+            "^",
+            "`",
+            "~",
+        ]
+        invals = []
+        for char in invalid_characters:
+            if char in name:
+                invals.append(char)
+        if invals:
+            raise Exception(
+                f"Filename contains invalid characters:\n{' '.join(invals)}"
+            )
 
     def check_protocol_name(self):
         """ """
