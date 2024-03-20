@@ -24,6 +24,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 
 # Changelog
+## 1.0.6
+Fixes:
+- "Hide info" button in instrument installer now working
+
 ## 1.0.5
 Changes:
 - Driver versions now have a separate branch on CAMELS_drivers to improve keeping them up to date
