@@ -12,6 +12,22 @@ on:
       - testing
 
 jobs:
+  requirement_test:
+    runs-on: ubuntu-latest
+    env:
+      DISPLAY: ':99.0'
+    steps:
+      - name: Install Python 3
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - uses: tlambert03/setup-qt-libs@v1
+      - name: Install dependencies
+        run: sudo apt install libgl1-mesa-glx libegl1-mesa libegl1 libopengl0 libpulse0
+      - name: Install CAMELS
+        run: python -m pipx install nomad-camels
+      - name: run CAMELS
+        run: nomad-camels
   windows_test:
     runs-on: windows-latest
     steps:
