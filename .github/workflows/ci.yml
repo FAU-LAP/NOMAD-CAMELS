@@ -36,6 +36,12 @@ jobs:
           sleep 30
           pgrep -f nomad-camels || exit 1
           pgrep -f nomad-camels | xargs kill
+      - name: install pytest
+        run: pipx inject nomad-camels pytest pytest-qt pytest-xvfb
+      - name: run tests
+        run: |
+          PACKAGE_DIR=$(pipx list --json | jq -r '.venvs["nomad-camels"].metadata.package_dir')
+          pytest $PACKAGE_DIR
   windows_test:
     runs-on: windows-latest
     steps:
