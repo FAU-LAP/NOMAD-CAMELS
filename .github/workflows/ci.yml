@@ -23,7 +23,10 @@ jobs:
           python-version: 3.11
       - uses: tlambert03/setup-qt-libs@v1
       - name: Install dependencies
-        run: sudo apt install libgl1-mesa-glx libegl1-mesa libegl1 libopengl0 libpulse0
+        run: |
+          sudo apt install libgl1-mesa-glx libegl1-mesa libegl1 libopengl0 libpulse0
+          python -m pip install --upgrade pip
+          pip install pipx
       - name: Install CAMELS
         run: python -m pipx install nomad-camels
       - name: run CAMELS
