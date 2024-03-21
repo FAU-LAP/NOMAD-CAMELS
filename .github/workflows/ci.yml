@@ -31,7 +31,11 @@ jobs:
       - name: Install CAMELS
         run: python -m pipx install nomad-camels
       - name: run CAMELS
-        run: nomad-camels
+        run: |
+          nomad-camels &
+          sleep 30
+          pgrep -f nomad-camels || exit 1
+          pgrep -f nomad-camels | xargs kill
   windows_test:
     runs-on: windows-latest
     steps:
