@@ -24,7 +24,8 @@ jobs:
       - uses: tlambert03/setup-qt-libs@v1
       - name: Install dependencies
         run: |
-          sudo apt install libgl1-mesa-glx libegl1-mesa libegl1 libopengl0 libpulse0
+          sudo apt install libgl1-mesa-glx libegl1-mesa libegl1 libopengl0 libpulse0 xvfb
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           python -m pip install --upgrade pip
           pip install pipx
       - name: Install CAMELS
