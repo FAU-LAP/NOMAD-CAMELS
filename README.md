@@ -25,6 +25,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 ## 1.0.6
+Features:
+- Added an "owner" field to the samples, it is automatically populated when a new sample is created. This should stop cluttering the samples for all users. Only the current user's samples will show in the comboBox, or those without owner.
+
 Fixes:
 - "Hide info" button in instrument installer now working
 

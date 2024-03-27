@@ -137,6 +137,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.load_sample_data()
         variables_handling.CAMELS_path = os.path.dirname(__file__)
 
+        self.comboBox_user.currentTextChanged.connect(self.change_user)
         self.comboBox_user_type.addItems(["local user", "NOMAD user"])
         self.comboBox_user_type.currentTextChanged.connect(self.change_user_type)
         self.change_user_type()
@@ -563,6 +564,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if not self.active_user == "default_user":
             self.comboBox_user.setCurrentText(self.active_user)
 
+    def change_user(self):
+        """Changes the active user to the selected user in the comboBox_user."""
+        self.active_user = self.comboBox_user.currentText()
+        self.update_shown_samples()
+
     def edit_sample_info(self):
         """Calls dialog for user-information when
         pushButton_editSampleInfo is clicked.
@@ -584,30 +590,55 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         from nomad_camels.ui_widgets import add_remove_table
 
         self.active_sample = self.comboBox_sample.currentText()
-        headers = ["name", "sample_id", "description"]
+        headers = ["name", "sample_id", "description", "owner"]
         tableData = pd.DataFrame.from_dict(self.sampledata, "index")
+        if not "owner" in tableData.columns:
+            tableData["owner"] = ""
+        # filter tableData so that only the samples are kept that have the
+        # current user as owner, or where "owner" is not set
+        tableData = tableData[
+            (tableData["owner"] == self.active_user)
+            | (tableData["owner"].isna())
+            | (tableData["owner"] == "")
+        ]
         dialog = add_remove_table.AddRemoveDialoge(
             headerLabels=headers,
             parent=self,
             title="Sample-Information",
             askdelete=True,
             tableData=tableData,
+            default_values={"owner": self.active_user},
         )
         if dialog.exec():
             # changing the returned dict to dataframe and back to have a
             # dictionary that is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
-            if re.search(r"[^\w\s]", str(dat["name"][0])):
-                raise ValueError(
-                    "Sample name contains special characters.\nPlease use only letters, numbers and whitespace."
-                )
-            dat["name"][0] = dat["name"][0].strip()
+            for i, d in enumerate(dat["name"]):
+                if re.search(r"[^\w\s]", str(d)):
+                    raise ValueError(
+                        f'Sample name "{d}" contains special characters.\nPlease use only letters, numbers and whitespace.'
+                    )
+                dat["name"][i] = d.strip()
             dat["Name2"] = dat["name"]
             data = pd.DataFrame(dat)
             data.set_index("Name2", inplace=True)
-            self.sampledata = data.to_dict("index")
+            self.sampledata.update(data.to_dict("index"))
+            self.update_shown_samples()
+
+    def update_shown_samples(self):
         self.comboBox_sample.clear()
-        self.comboBox_sample.addItems(self.sampledata.keys())
+        # filter the samples so that only the ones are shown where the user is
+        # the owner or where the owner is not set
+        self.comboBox_sample.addItems(
+            sorted(
+                [
+                    key
+                    for key in self.sampledata.keys()
+                    if self.sampledata[key]["owner"] == self.active_user
+                    or not self.sampledata[key]["owner"]
+                ]
+            )
+        )
         if self.active_sample in self.sampledata.keys():
             self.comboBox_sample.setCurrentText(self.active_sample)
 
