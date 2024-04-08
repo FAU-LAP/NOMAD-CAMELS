@@ -25,5 +25,5 @@
                 - Andor
             *   - PC mouse
                 - Generic
-                - PC mouse (provided by `SweepMe! <sweepme>`_)
+                - PC mouse (provided by `SweepMe! <sweepme_>`_)
                 - Mouse
