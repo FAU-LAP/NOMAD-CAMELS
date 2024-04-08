@@ -1,8 +1,10 @@
 .. _sweepme: https://sweep-me.net/
 
-..tabs:
-    ..tabs:: Instruments
-        ..list-table::
+.. tabs::
+
+    .. group-tab:: Instruments
+
+        .. list-table::
             :header-rows: 1
 
             *   - Manufacturer
@@ -10,7 +12,7 @@
                 - Description
                 - Type
             *   - Keysight
-                - `34401A <doc:agilent_34401a/agilent_34401a>`
+                - `34401A <doc:agilent_34401a/agilent_34401a>`_
                 - Digital Multimeter
                 - DMM
             *   - Keithley
