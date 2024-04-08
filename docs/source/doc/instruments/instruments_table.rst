@@ -4,8 +4,23 @@ Instruments
 
 .. raw:: html
 
+    <style>
+        table.sortable {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        table.sortable th, table.sortable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        table.sortable th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
     <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
-    <table class="sortable">
+    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search for instruments..">
+    <table class="sortable" id="instrumentTable">
         <thead>
             <tr>
                 <th>Manufacturer</th>
@@ -41,3 +56,23 @@ Instruments
             </tr>
         </tbody>
     </table>
+    <script>
+        function searchTable() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("instrumentTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }       
+            }
+        }
+    </script>
