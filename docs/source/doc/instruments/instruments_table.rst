@@ -1,29 +1,43 @@
-.. _sweepme: https://sweep-me.net/
+===========
+Instruments
+===========
 
-.. tabs::
+.. raw:: html
 
-    .. group-tab:: Instruments
-
-        .. list-table::
-            :header-rows: 1
-
-            *   - Manufacturer
-                - Instrument
-                - Description
-                - Type
-            *   - Keysight
-                - `34401A <doc:agilent_34401a/agilent_34401a>`_
-                - Digital Multimeter
-                - DMM
-            *   - Keithley
-                - 2000
-                - Digital Multimeter
-                - DMM
-            *   - Andor Newton
-                - CCD Camera
-                - Camera
-                - Andor
-            *   - PC mouse
-                - Generic
-                - PC mouse (provided by `SweepMe! <sweepme_>`_)
-                - Mouse
+    <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+    <table class="sortable">
+        <thead>
+            <tr>
+                <th>Manufacturer</th>
+                <th>Instrument</th>
+                <th>Description</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Keysight</td>
+                <td><a href="agilent_34401a/agilent_34401a">34401A</a></td>
+                <td>Digital Multimeter</td>
+                <td>DMM</td>
+            </tr>
+            <tr>
+                <td>Keithley</td>
+                <td>2000</td>
+                <td>Digital Multimeter</td>
+                <td>DMM</td>
+            </tr>
+            <tr>
+                <td>Andor Newton</td>
+                <td>CCD Camera</td>
+                <td>Camera</td>
+                <td>Andor</td>
+            </tr>
+            <tr>
+                <td>PC mouse</td>
+                <td>Generic</td>
+                <td>PC mouse (provided by <a href="https://sweep-me.net/">SweepMe!</a>)</td>
+                <td>Mouse</td>
+            </tr>
+        </tbody>
+    </table>
