@@ -1,4 +1,5 @@
 from ophyd import Signal, SignalRO
+import inspect
 
 
 class Custom_Function_Signal(Signal):
@@ -61,12 +62,19 @@ class Custom_Function_Signal(Signal):
         For further information see ophyd's documentation.
         """
         if self.put_function:
-            retry_function(
-                self.put_function,
-                self.retry_on_error,
-                value,
-                error_retry_function=self.error_retry_function,
-            )
+            if inspect.getfullargspec(self.put_function).args[0] == '_self_instance':
+                retry_function(
+                    self.put_function(self, value),
+                    self.retry_on_error,
+                    error_retry_function=self.error_retry_function,
+                )
+            else:
+                retry_function(
+                    self.put_function,
+                    self.retry_on_error,
+                    value,
+                    error_retry_function=self.error_retry_function,
+                )
         super().put(
             value, timestamp=timestamp, force=force, metadata=metadata, **kwargs
         )
@@ -77,11 +85,18 @@ class Custom_Function_Signal(Signal):
         For further information see ophyd's documentation.
         """
         if self.read_function:
-            self._readback = retry_function(
-                self.read_function,
-                self.retry_on_error,
-                error_retry_function=self.error_retry_function,
-            )
+            if inspect.getfullargspec(self.read_function).args[0] == '_self_instance':
+                self._readback = retry_function(
+                    self.read_function(self),
+                    self.retry_on_error,
+                    error_retry_function=self.error_retry_function,
+                )
+            else:    
+                self._readback = retry_function(
+                    self.read_function,
+                    self.retry_on_error,
+                    error_retry_function=self.error_retry_function,
+                )
         return super().get()
 
     def trigger(self):
@@ -180,11 +195,18 @@ class Custom_Function_SignalRO(SignalRO):
         For further information see ophyd's documentation.
         """
         if self.read_function:
-            self._readback = retry_function(
-                self.read_function,
-                self.retry_on_error,
-                error_retry_function=self.error_retry_function,
-            )
+            if inspect.getfullargspec(self.read_function).args[0] == '_self_instance':
+                self._readback = retry_function(
+                    self.read_function(self),
+                    self.retry_on_error,
+                    error_retry_function=self.error_retry_function,
+                )
+            else:    
+                self._readback = retry_function(
+                    self.read_function,
+                    self.retry_on_error,
+                    error_retry_function=self.error_retry_function,
+                )
         return super().get()
 
     def trigger(self):
