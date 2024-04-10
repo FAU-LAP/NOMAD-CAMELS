@@ -86,7 +86,9 @@ In the `<driver_name>.py` file you must change the following things:
         return config, passive_config
    ```
 
-The final `.py` looks like this 
+---
+
+The final `.py` looks like this:
 
 ```python
 from .test_dynamic_ophyd import Test_Dynamic
@@ -199,7 +201,7 @@ def make_ophyd_class(channel_number):
     )
 ```
 
-### 2. Create dynamic _Read Channels_: Define `read_function_generator`
+### 2. Create Dynamic _Read Channels_ : Define `read_function_generator`
 As we want to create read and write channels for each instrument channel, we iterate over all the available channels. Here you would add your own code and add the desired components to the `signal_dictionary`. We are using `CustomFunctionSignalsRO` as we only want to be able to read these channels.
 
 ```{Attention}
@@ -320,7 +322,7 @@ class Test_Dynamic(Device):
         )
 ```
 
-### 5. Adding functions to the parent class
+### 5. Adding Functions to the Parent Class
 
 In the `read_function_generator` we defined that there must be a method of the parent class called `read_power_channel` as you can see here:
 
@@ -371,7 +373,7 @@ class Test_Dynamic(Device):
 
 ## Create Dynamic _Set Channels_
 
-[Above](#2-create-dynamic-read-channels-define-read_function_generator) we created channels that can only be read. Now we want to create channels that can set values and are intended to write to instruments.
+[Above](#create-dynamic-read-channels-define-read-function-generator) we created channels that can only be read. Now we want to create channels that can set values and are intended to write to instruments.
 
 ### 1. Add _Set Channels_ to Device
 
@@ -426,9 +428,9 @@ def put_power_channel(self, channel, value):
     return f"Power of channel {channel} is set to {value}"
 ```
 
-## The Final `ophyd.py` File
+# The Final `ophyd.py` File
 
-The final file looks like this
+The final `ophyd.py` file looks like this
 
 ```python
 from ophyd import Component as Cpt
