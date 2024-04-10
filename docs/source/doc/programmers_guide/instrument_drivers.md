@@ -20,5 +20,6 @@ Tutorial: Creating your own Instrument Driver <drivers/drivers_tutorial>
 How to Write New Drivers <drivers/writing_drivers.md>
 How to Modify Existing Drivers <drivers/modifying_drivers.md>
 How to Share Your Drivers with Others <drivers/pypi_drivers.md>
+Create Driver with Dynamically Changing Channels <drivers/dynamic_channels.md>
 EPICS Instrument Drivers <drivers/EPICS_drivers.md>
 ```
