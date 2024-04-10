@@ -37,7 +37,7 @@ In the `<driver_name>.py` file you must change the following things:
    from .test_dynamic_ophyd import make_ophyd_class
    ```
 
-   The `make_ophyd_class` takes any arguments and then creates read and write channels depending on what you define in the `ophyd.py` file. How to modify the `device_name_ophyd.py` file is explained [below](#modify-the-ophydpy-file) in more detail.
+   The `make_ophyd_class` takes any arguments and then creates read and write channels depending on what you define in the `ophyd.py` file. How to modify the `device_name_ophyd.py` file is explained [below](#modify-the-ophyd-py-file) in more detail.
 5. We want to create the ophyd class with the number of channels we select from the drop down menu. Add the following two methods to the subclass:
    
    ```python
@@ -199,7 +199,7 @@ def make_ophyd_class(channel_number):
     )
 ```
 
-### 2. Define `read_function_generator`
+### 2. Create dynamic _Read Channels_: Define `read_function_generator`
 As we want to create read and write channels for each instrument channel, we iterate over all the available channels. Here you would add your own code and add the desired components to the `signal_dictionary`. We are using `CustomFunctionSignalsRO` as we only want to be able to read these channels.
 
 ```{Attention}
@@ -283,7 +283,7 @@ The instance we return here is the class we return with `make_ophyd_class`.
     )
 ```
 
-See [above](#1-define-make_ophyd_class) for more details.
+See [above](#define-make-ophyd-class) for more details.
 
 ### 4. Define the Device Class
 The _driver builder_ automatically created the default Device class depending on the name you gave in the driver builder. For us this class is called `Test_Dynamic`. 
@@ -369,7 +369,64 @@ class Test_Dynamic(Device):
         return f"Power of channel {channel} is {channel**2}"
 ```
 
-### 7. Final `ophyd.py` File
+## Create Dynamic _Set Channels_
+
+[Above](#2-create-dynamic-read-channels-define-read_function_generator) we created channels that can only be read. Now we want to create channels that can set values and are intended to write to instruments.
+
+### 1. Add _Set Channels_ to Device
+
+For this we add the new set channels to the device by adding them to the `signal_dictionary` in the `make_ophyd_class`:
+
+```python
+# For each channel add a set power function
+        signal_dictionary[f"put_power_channel_{channel}"] = Cpt(
+            Custom_Function_Signal,
+            name=f"put_power_channel_{channel}",
+            metadata={"units": "", "description": f"Sets the power of channel {channel} to the value provided in the GUI."},
+            put_function=put_function_generator(channel),
+        )
+```
+
+### 2. Define `put_funtion_generator`
+
+Now we create a generator (closure) that generates a _put_ (also called _set_) _function_ for each channel. 
+
+```python
+...
+def put_function_generator(channel):
+    def put_power_function(_self_instance, value):
+        """
+        This function returns a lambda function that sets the power of the specified channel.
+        the put_function is added to the signal as a put_function.
+        The _self_instance will later be resolved to the parent of the instance of the
+        Ibeam_smart class that the signal belongs to.
+
+        Parameters:
+        _self_instance (object): The parent instance.
+        value (float): The power to set the channel to.
+
+        Returns:
+        function: A lambda function that sets the power channel.
+
+        """
+        # It is important to pass the value to the lambda function!
+        return lambda: _self_instance.parent.put_power_channel(channel, value)
+
+    return put_power_function
+...
+```
+
+### 3. Define the `put_power_function`
+
+The last step is to define what happens when the `put_power_function` is called. This is done in the device class. For us that is `Test_Dynamic`:
+
+```python
+...
+def put_power_channel(self, channel, value):
+    return f"Power of channel {channel} is set to {value}"
+```
+
+## The Final `ophyd.py` File
 
 The final file looks like this
 
@@ -433,6 +490,27 @@ def make_ophyd_class(channel_number):
             return lambda: _self_instance.parent.read_power_channel(channel)
 
         return read_function
+    
+    def put_function_generator(channel):
+        def put_power_function(_self_instance, value):
+            """
+            This function returns a lambda function that sets the power of the specified channel.
+            the put_function is added to the signal as a put_function.
+            The _self_instance will later be resolved to the parent of the instance of the
+            Ibeam_smart class that the signal belongs to.
+
+            Parameters:
+            _self_instance (object): The parent instance.
+            value (float): The power to set the channel to.
+
+            Returns:
+            function: A lambda function that sets the power channel.
+
+            """
+            # It is important to pass the value to the lambda function!
+            return lambda: _self_instance.parent.put_power_channel(channel, value)
+
+        return put_power_function
 
     signal_dictionary = {}
     for channel in range(1, int(channel_number) + 1):
@@ -440,8 +518,15 @@ def make_ophyd_class(channel_number):
         signal_dictionary[f"read_power_channel_{channel}"] = Cpt(
             Custom_Function_SignalRO,
             name=f"read_power_channel_{channel}",
-            metadata={"units": "", "description": ""},
+            metadata={"units": "", "description": f"Read power of channel {channel} which is the square of {channel}"},
             read_function=read_function_generator(channel),
+        )
+        # For each channel add a set power function
+        signal_dictionary[f"put_power_channel_{channel}"] = Cpt(
+            Custom_Function_Signal,
+            name=f"put_power_channel_{channel}",
+            metadata={"units": "", "description": f"Sets the power of channel {channel} to the value provided in the GUI."},
+            put_function=put_function_generator(channel),
         )
 
     return type(
@@ -484,5 +569,8 @@ class Test_Dynamic(Device):
     # This function is called by the read_function_generator
     def read_power_channel(self, channel):
         return f"Power of channel {channel} is {channel**2}"
+    
+    def put_power_channel(self, channel, value):
+        return f"Power of channel {channel} is set to {value}"
 
 ```
