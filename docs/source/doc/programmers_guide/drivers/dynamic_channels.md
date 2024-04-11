@@ -428,7 +428,7 @@ def put_power_channel(self, channel, value):
     return f"Power of channel {channel} is set to {value}"
 ```
 
-# The Final `ophyd.py` File
+## The Final `ophyd.py` File
 
 The final `ophyd.py` file looks like this
 
