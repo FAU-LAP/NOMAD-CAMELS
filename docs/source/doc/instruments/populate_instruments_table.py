@@ -55,7 +55,7 @@ with open("./docs/source/doc/instruments/instruments_table_test.rst", "w") as f:
             f"                <td>{devices[device]['manufacturer']}</td>\n"
             f"                <td>{devices[device]['name']}</td>\n"
             f"                <td>{devices[device]['type']}</td>\n"
-            f"                <td>Via<a href='https://sweep-me.net/devices'>SweepMe!</a>, see <a href='{devices[device]['url']}'>GitHub</a></td>\n"
+            f"                <td>From <a href='https://sweep-me.net/devices'>SweepMe!</a>, see <a href='{devices[device]['url']}'>GitHub</a></td>\n"
             f"            </tr>\n"
         )
     f.write("        </tbody>\n")
