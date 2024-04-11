@@ -49,4 +49,5 @@ Keysight B2912A <keysight_b2912a/keysight_b2912a.md>
 Keysight E5270B <keysight_e5270b/keysight_e5270b.md>
 Voltcraft PPS <voltcraft_pps/voltcraft_pps.md>
 instruments table <instruments_table.rst>
+inttruments table test <instruments_table_test.rst>
 ```

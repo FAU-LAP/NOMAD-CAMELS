@@ -31,7 +31,7 @@ Instruments
         </thead>
         <tbody>
             <tr>
-                <td>Keysight</td>
+                <td>Keysight / Agilent</td>
                 <td><a href="agilent_34401a/agilent_34401a">34401A</a></td>
                 <td>Digital Multimeter</td>
                 <td>DMM</td>
@@ -43,10 +43,10 @@ Instruments
                 <td>DMM</td>
             </tr>
             <tr>
-                <td>Andor Newton</td>
-                <td>CCD Camera</td>
-                <td>Camera</td>
                 <td>Andor</td>
+                <td>Newton CCD</td>
+                <td>Andor</td>
+                <td>Camera</td>
             </tr>
             <tr>
                 <td>PC mouse</td>
