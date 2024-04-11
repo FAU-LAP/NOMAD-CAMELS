@@ -60,21 +60,23 @@ Instruments
         function searchTable() {
             var input, filter, table, tr, td, i, j, txtValue;
             input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
+            filter = input.value.toUpperCase().split(' ');  // Split the filter into words
             table = document.getElementById("instrumentTable");
             tr = table.getElementsByTagName("tr");
             for (i = 0; i < tr.length; i++) {
                 td = tr[i].getElementsByTagName("td");
+                var rowText = '';
                 for (j = 0; j < td.length; j++) {
                     if (td[j]) {
-                        txtValue = td[j].textContent || td[j].innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            tr[i].style.display = "";
-                            break;
-                        } else {
-                            tr[i].style.display = "none";
-                        }
-                    }       
+                        rowText += ' ' + (td[j].textContent || td[j].innerText);
+                    }
+                }
+                rowText = rowText.toUpperCase();
+                // Check if all words in the filter are present in the row
+                if (filter.every(function(word) { return rowText.indexOf(word) > -1; })) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
                 }
             }
         }
