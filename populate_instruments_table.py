@@ -41,12 +41,18 @@ for item in response:
         }
 
 
-with open("./docs/source/doc/instruments/instruments_table_test.rst", "w") as f:
+with open("./docs/source/doc/instruments/instruments.rst", "w") as f:
     f.write(
         """
 ===========
 Instruments
 ===========
+
+Below is a list of instruments that are supported by the CAMELS drivers. The table is sortable by clicking on the column headers. You can also search for specific instruments using the search bar.
+
+Please note that this page is currently under construction and the information may not be up-to-date.
+
+The table includes instruments from SweepMe! as well. These instruments are not all tested with NOMAD CAMELS yet, if you find any issues, please let us know.
 
 .. raw:: html
 
@@ -136,5 +142,12 @@ Instruments
                 }
             }
         }
-    </script>"""
+    </script>
+    
+```{toctree}
+:maxdepth: 2
+:hidden:
+SweepMe <SweepMe_drivers.md>
+Cam-Control by PyLabLib <cam_control_pylablib/cam_control_pylablib.md>
+    """
     )
