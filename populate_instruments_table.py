@@ -144,10 +144,10 @@ The table includes instruments from SweepMe! as well. These instruments are not 
         }
     </script>
     
-```{toctree}
-:maxdepth: 2
-:hidden:
-SweepMe <SweepMe_drivers.md>
-Cam-Control by PyLabLib <cam_control_pylablib/cam_control_pylablib.md>
+.. toctree::
+    :maxdepth: 2
+    :hidden:
+    SweepMe <SweepMe_drivers.md>
+    Cam-Control by PyLabLib <cam_control_pylablib/cam_control_pylablib.md>
     """
     )
