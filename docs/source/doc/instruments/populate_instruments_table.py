@@ -1,89 +1,140 @@
 import requests
+import os
+
+url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/driver_list/driver_list.txt"
+response = requests.get(url).text
+
+devices = {}
+
+for line in response.split("\n"):
+    if not line:
+        continue
+    full_name, version = line.split("==")
+    try:
+        manufacturer, name = full_name.split("_", 1)
+    except ValueError:
+        manufacturer = ""
+    devices[full_name] = {
+        "manufacturer": manufacturer,
+        "name": name,
+        "version": version,
+    }
+
+sweep_me_version = ""
+if "SweepMe_device" in devices:
+    sweep_me_version = devices.pop("SweepMe_device")["version"]
 
 url = "https://api.github.com/repos/SweepMe/instrument-drivers/contents/src"
 response = requests.get(url).json()
 
-devices = {}
+sweep_me_devices = {}
 
 for item in response:
     if item["type"] == "dir":  # A type of 'dir' indicates a directory (folder)
         device_type, full_name = item["name"].split("-", 1)
         manufacturer, name = full_name.split("_", 1)
-        devices[full_name] = {
+        sweep_me_devices[full_name] = {
             "type": device_type,
             "name": name,
             "url": item["html_url"],
             "manufacturer": manufacturer,
         }
 
+
 with open("./docs/source/doc/instruments/instruments_table_test.rst", "w") as f:
-    f.write("===========\nInstruments\n===========\n\n")
-    f.write(".. raw:: html\n\n")
-    f.write("    <style>\n")
-    f.write("        table.sortable {\n")
-    f.write("            border-collapse: collapse;\n")
-    f.write("            width: 100%;\n")
-    f.write("        }\n")
-    f.write("        table.sortable th, table.sortable td {\n")
-    f.write("            border: 1px solid #ddd;\n")
-    f.write("            padding: 8px;\n")
-    f.write("        }\n")
-    f.write("        table.sortable th {\n")
-    f.write("            background-color: #4CAF50;\n")
-    f.write("            color: white;\n")
-    f.write("        }\n")
-    f.write("    </style>\n")
     f.write(
-        '    <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>\n'
+        """
+===========
+Instruments
+===========
+
+.. raw:: html
+
+    <style>
+        table.sortable {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        table.sortable th, table.sortable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        table.sortable th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+    <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search for instruments..">
+    <table class="sortable" id="instrumentTable">
+        <thead>
+            <tr>
+                <th>Manufacturer</th>
+                <th>Instrument</th>
+                <th>Type</th>
+                <th>Version</th>
+            </tr>
+        </thead>
+        <tbody>"""
     )
-    f.write(
-        '    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search for instruments..">\n'
-    )
-    f.write('    <table class="sortable" id="instrumentTable">\n')
-    f.write("        <thead>\n")
-    f.write("            <tr>\n")
-    f.write("                <th>Manufacturer</th>\n")
-    f.write("                <th>Instrument</th>\n")
-    f.write("                <th>Type</th>\n")
-    f.write("                <th>Description</th>\n")
-    f.write("            </tr>\n")
-    f.write("        </thead>\n")
-    f.write("        <tbody>\n")
     for device in devices:
+        if os.path.exists(f"./docs/source/doc/instruments/{device}"):
+            f.write(
+                f"""
+            <tr>
+                <td>{devices[device]['manufacturer']}</td>
+                <td><a href='{device}/{device}'>{devices[device]['name']}</a></td>
+                <td></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-{device.replace('_', '-')}'>{devices[device]['version']}</a></td>
+            </tr>"""
+            )
+        else:
+            f.write(
+                f"""
+            <tr>
+                <td>{devices[device]['manufacturer']}</td>
+                <td>{devices[device]['name']}</td>
+                <td></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-{device.replace('_', '-')}'>{devices[device]['version']}</a></td>
+            </tr>"""
+            )
+    for device in sweep_me_devices:
         f.write(
-            f"            <tr>\n"
-            f"                <td>{devices[device]['manufacturer']}</td>\n"
-            f"                <td>{devices[device]['name']}</td>\n"
-            f"                <td>{devices[device]['type']}</td>\n"
-            f"                <td>From <a href='https://sweep-me.net/devices'>SweepMe!</a>, see <a href='{devices[device]['url']}'>GitHub</a></td>\n"
-            f"            </tr>\n"
+            f"""
+            <tr>
+                <td>{sweep_me_devices[device]['manufacturer']} (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>{sweep_me_devices[device]['name']}</a></td>
+                <td>{sweep_me_devices[device]['type']}</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>{sweep_me_version}</a></td>
+            </tr>"""
         )
-    f.write("        </tbody>\n")
-    f.write("    </table>\n")
-    f.write("    <script>\n")
-    f.write("        function searchTable() {\n")
-    f.write("            var input, filter, table, tr, td, i, j, txtValue;\n")
-    f.write('            input = document.getElementById("searchInput");\n')
-    f.write("            filter = input.value.toUpperCase();\n")
-    f.write('            table = document.getElementById("instrumentTable");\n')
-    f.write('            tr = table.getElementsByTagName("tr");\n')
-    f.write("            for (i = 0; i < tr.length; i++) {\n")
-    f.write('                td = tr[i].getElementsByTagName("td");\n')
-    f.write("                for (j = 0; j < td.length; j++) {\n")
-    f.write("                    if (td[j]) {\n")
     f.write(
-        "                        txtValue = td[j].textContent || td[j].innerText;\n"
+        """
+        </tbody>
+    </table>
+    <script>
+        function searchTable() {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase().split(' ');  // Split the filter into words
+            table = document.getElementById("instrumentTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td");
+                var rowText = '';
+                for (j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        rowText += ' ' + (td[j].textContent || td[j].innerText);
+                    }
+                }
+                rowText = rowText.toUpperCase();
+                // Check if all words in the filter are present in the row
+                if (filter.every(function(word) { return rowText.indexOf(word) > -1; })) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    </script>"""
     )
-    f.write(
-        "                        if (txtValue.toUpperCase().indexOf(filter) > -1) {\n"
-    )
-    f.write('                            tr[i].style.display = "";\n')
-    f.write("                            break;\n")
-    f.write("                        } else {\n")
-    f.write('                            tr[i].style.display = "none";\n')
-    f.write("                        }\n")
-    f.write("                    }\n")
-    f.write("                }\n")
-    f.write("            }\n")
-    f.write("        }\n")
-    f.write("    </script>\n")

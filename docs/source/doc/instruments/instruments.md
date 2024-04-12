@@ -27,6 +27,7 @@
 - [PID](pid/pid.md) (software implementation)
 - PI E709 piezo controller
 - SwabianInstruments TimeTagger
+- [SweepMe!](SweepMe_drivers.md)
 - Throlabs DDR25
 - Throlabs K10CR1
 - Throlabs MFF
@@ -47,7 +48,8 @@ Keithley 2000 <keithley_2000/keithley_2000.md>
 Keithley 237 <keithley_237/keithley_237.md>
 Keysight B2912A <keysight_b2912a/keysight_b2912a.md>
 Keysight E5270B <keysight_e5270b/keysight_e5270b.md>
+SweepMe! <SweepMe_drivers.md>
 Voltcraft PPS <voltcraft_pps/voltcraft_pps.md>
 instruments table <instruments_table>
-instruments table <instruments_table.rst>
+instruments table test <instruments_table_test.rst>
 ```
