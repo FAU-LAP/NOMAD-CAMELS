@@ -1,5 +1,6 @@
-from ophyd import Signal, SignalRO
+from ophyd import Signal, SignalRO, Device
 import inspect
+import time
 
 
 class Custom_Function_Signal(Signal):
@@ -62,11 +63,18 @@ class Custom_Function_Signal(Signal):
         For further information see ophyd's documentation.
         """
         if self.put_function:
+            # If the put_function requires the instance of the class, pass it as the first argument
+            # The instance is the signal, while the parent is the Device class
+            # For dynamically created signals often a call to self.parent is required
             if inspect.getfullargspec(self.put_function).args[0] == '_self_instance':
                 retry_function(
                     self.put_function(self, value),
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
+                    # self_instance is required if you want to force sequential reading
+                    # self_instance is False if there is self.parent does not have a force_sequential attribute
+                    # self_instance is None if self.parent.force_sequential is False
+                    self_instance = self if getattr(self.parent, 'force_sequential', False) else None,
                 )
             else:
                 retry_function(
@@ -74,6 +82,10 @@ class Custom_Function_Signal(Signal):
                     self.retry_on_error,
                     value,
                     error_retry_function=self.error_retry_function,
+                    # self_instance is required if you want to force sequential reading
+                    # self_instance is False if there is self.parent does not have a force_sequential attribute
+                    # self_instance is None if self.parent.force_sequential is False
+                    self_instance = self if getattr(self.parent, 'force_sequential', False) else None,
                 )
         super().put(
             value, timestamp=timestamp, force=force, metadata=metadata, **kwargs
@@ -85,17 +97,28 @@ class Custom_Function_Signal(Signal):
         For further information see ophyd's documentation.
         """
         if self.read_function:
+            # If the read_function requires the instance of the class, pass it as the first argument
+            # The instance is the signal, while the parent is the Device class
+            # For dynamically created signals often a call to self.parent is required
             if inspect.getfullargspec(self.read_function).args[0] == '_self_instance':
                 self._readback = retry_function(
                     self.read_function(self),
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
+                    # self_instance is required if you want to force sequential reading
+                    # self_instance is False if there is self.parent does not have a force_sequential attribute
+                    # self_instance is None if self.parent.force_sequential is False
+                    self_instance = self if getattr(self.parent, 'force_sequential', False) else None,
                 )
             else:    
                 self._readback = retry_function(
                     self.read_function,
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
+                    # self_instance is required if you want to force sequential reading
+                    # self_instance is False if there is self.parent does not have a force_sequential attribute
+                    # self_instance is None if self.parent.force_sequential is False
+                    self_instance = self if getattr(self.parent, 'force_sequential', False) else None,
                 )
         return super().get()
 
@@ -127,10 +150,35 @@ class Custom_Function_Signal(Signal):
 
 
 def retry_function(func, retries: int, *args, error_retry_function=None, **kwargs):
+    """
+    This function attempts to execute a given function multiple times until it succeeds or the maximum number of retries is reached.
+
+    Parameters:
+    func (callable): The function to be executed.
+    retries (int): The maximum number of times to retry executing the function.
+    *args: Variable length argument list for the function to be executed.
+    error_retry_function (callable, optional): A function to be called when an error occurs. Defaults to None.
+    **kwargs: Arbitrary keyword arguments for the function to be executed. Special keyword arguments:
+        - force_sequential (bool, optional): If True, the function execution will be forced to be sequential. Defaults to False.
+
+    Returns:
+    The return value of the function to be executed.
+
+    Raises:
+    Exception: If the function fails to execute after the specified number of retries, an exception is raised with details of the last exception encountered.
+    """
+    self_instance = kwargs.pop('self_instance', None)
+    if self_instance:
+        while self_instance.parent.currently_reading:
+            time.sleep(0.001) # wait for 1 ms
+        self_instance.parent.currently_reading = True
     excs = []
     for i in range(retries + 1):
         try:
-            return func(*args, **kwargs)
+            result = func(*args, **kwargs)
+            if self_instance:
+                self_instance.parent.currently_reading = False
+            return result
         except Exception as e:
             excs.append(e)
             if error_retry_function:
@@ -170,6 +218,7 @@ class Custom_Function_SignalRO(SignalRO):
         trigger_function=None,
         retry_on_error=0,
         error_retry_function=None,
+        force_sequential=False,
     ):
         super().__init__(
             name=name,
@@ -195,17 +244,22 @@ class Custom_Function_SignalRO(SignalRO):
         For further information see ophyd's documentation.
         """
         if self.read_function:
+            # If the read_function requires the instance of the class, pass it as the first argument
+            # The instance is the signal, while the parent is the Device class
+            # For dynamically created signals often a call to self.parent is required
             if inspect.getfullargspec(self.read_function).args[0] == '_self_instance':
                 self._readback = retry_function(
                     self.read_function(self),
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
+                    self_instance = self if getattr(self.parent, 'force_sequential', False) else None,
                 )
             else:    
                 self._readback = retry_function(
                     self.read_function,
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
+                    self_instance = self if getattr(self.parent, 'force_sequential', False) else None,
                 )
         return super().get()
 
@@ -234,3 +288,10 @@ class Custom_Function_SignalRO(SignalRO):
         else:
             value = self.get()
         return {self.name: {"value": value, "timestamp": self.timestamp}}
+
+
+class Sequential_Device(Device):
+    def __init__(self, force_sequential=False, currently_reading=False, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.force_sequential = force_sequential
+        self.currently_reading = currently_reading
