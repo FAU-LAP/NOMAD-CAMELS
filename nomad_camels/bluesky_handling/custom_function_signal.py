@@ -71,10 +71,10 @@ class Custom_Function_Signal(Signal):
                     self.put_function(self, value),
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
-                    # self_instance is required if you want to force sequential reading
-                    # self_instance is False if there is self.parent does not have a force_sequential attribute
-                    # self_instance is None if self.parent.force_sequential is False
-                    self_instance = self if getattr(self.parent, 'force_sequential', False) else None,
+                    # parent is required if you want to force sequential reading
+                    # parent is False if self.parent.force_sequential is False 
+                    # or if self.parent does not have a force_sequential attribute
+                    parent = self.parent if getattr(self.parent, 'force_sequential', None) else False,
                 )
             else:
                 retry_function(
@@ -82,10 +82,10 @@ class Custom_Function_Signal(Signal):
                     self.retry_on_error,
                     value,
                     error_retry_function=self.error_retry_function,
-                    # self_instance is required if you want to force sequential reading
-                    # self_instance is False if there is self.parent does not have a force_sequential attribute
-                    # self_instance is None if self.parent.force_sequential is False
-                    self_instance = self if getattr(self.parent, 'force_sequential', False) else None,
+                    # parent is required if you want to force sequential reading
+                    # parent is False if self.parent.force_sequential is False 
+                    # or if self.parent does not have a force_sequential attribute
+                    parent = self.parent if getattr(self.parent, 'force_sequential', None) else False
                 )
         super().put(
             value, timestamp=timestamp, force=force, metadata=metadata, **kwargs
@@ -105,20 +105,20 @@ class Custom_Function_Signal(Signal):
                     self.read_function(self),
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
-                    # self_instance is required if you want to force sequential reading
-                    # self_instance is False if there is self.parent does not have a force_sequential attribute
-                    # self_instance is None if self.parent.force_sequential is False
-                    self_instance = self if getattr(self.parent, 'force_sequential', False) else None,
+                    # parent is required if you want to force sequential reading
+                    # parent is False if self.parent.force_sequential is False 
+                    # or if self.parent does not have a force_sequential attribute
+                    parent = self.parent if getattr(self.parent, 'force_sequential', None) else False
                 )
             else:    
                 self._readback = retry_function(
                     self.read_function,
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
-                    # self_instance is required if you want to force sequential reading
-                    # self_instance is False if there is self.parent does not have a force_sequential attribute
-                    # self_instance is None if self.parent.force_sequential is False
-                    self_instance = self if getattr(self.parent, 'force_sequential', False) else None,
+                    # parent is required if you want to force sequential reading
+                    # parent is False if self.parent.force_sequential is False 
+                    # or if self.parent does not have a force_sequential attribute
+                    parent = self.parent if getattr(self.parent, 'force_sequential', None) else False
                 )
         return super().get()
 
@@ -149,17 +149,18 @@ class Custom_Function_Signal(Signal):
         return {self.name: {"value": value, "timestamp": self.timestamp}}
 
 
-def retry_function(func, retries: int, *args, error_retry_function=None, **kwargs):
+def retry_function(func, retries: int, *args, error_retry_function=None, parent=None, **kwargs):
     """
     This function attempts to execute a given function multiple times until it succeeds or the maximum number of retries is reached.
+    If a parent object is provided and it is currently reading, the function waits until the parent is no longer reading before attempting to execute the function.
 
     Parameters:
     func (callable): The function to be executed.
     retries (int): The maximum number of times to retry executing the function.
     *args: Variable length argument list for the function to be executed.
     error_retry_function (callable, optional): A function to be called when an error occurs. Defaults to None.
-    **kwargs: Arbitrary keyword arguments for the function to be executed. Special keyword arguments:
-        - force_sequential (bool, optional): If True, the function execution will be forced to be sequential. Defaults to False.
+    parent (object, optional): An object (the instrument class) that the function checks for a currently_reading attribute. If currently_reading is True, the function waits until it is False before executing. Defaults to None.
+    **kwargs: Arbitrary keyword arguments for the function to be executed.
 
     Returns:
     The return value of the function to be executed.
@@ -167,17 +168,16 @@ def retry_function(func, retries: int, *args, error_retry_function=None, **kwarg
     Raises:
     Exception: If the function fails to execute after the specified number of retries, an exception is raised with details of the last exception encountered.
     """
-    self_instance = kwargs.pop('self_instance', None)
-    if self_instance:
-        while self_instance.parent.currently_reading:
+    if parent:
+        while parent.currently_reading:
             time.sleep(0.001) # wait for 1 ms
-        self_instance.parent.currently_reading = True
+        parent.currently_reading = True
     excs = []
     for i in range(retries + 1):
         try:
             result = func(*args, **kwargs)
-            if self_instance:
-                self_instance.parent.currently_reading = False
+            if parent:
+                parent.currently_reading = False
             return result
         except Exception as e:
             excs.append(e)
@@ -252,14 +252,20 @@ class Custom_Function_SignalRO(SignalRO):
                     self.read_function(self),
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
-                    self_instance = self if getattr(self.parent, 'force_sequential', False) else None,
+                    # parent is required if you want to force sequential reading
+                    # parent is False if self.parent.force_sequential is False 
+                    # or if self.parent does not have a force_sequential attribute
+                    parent = self.parent if getattr(self.parent, 'force_sequential', None) else False
                 )
             else:    
                 self._readback = retry_function(
                     self.read_function,
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
-                    self_instance = self if getattr(self.parent, 'force_sequential', False) else None,
+                    # parent is required if you want to force sequential reading
+                    # parent is False if self.parent.force_sequential is False 
+                    # or if self.parent does not have a force_sequential attribute
+                    parent = self.parent if getattr(self.parent, 'force_sequential', None) else False
                 )
         return super().get()
 
