@@ -10,6 +10,7 @@ devices = {}
 def agilent_keysight_combi(s):
     if s.lower() in ["agilent", "keysight"]:
         return "Keysight / Agilent"
+    return s
 
 
 def capital_first_letter(s):
