@@ -6,6 +6,16 @@ response = requests.get(url).text
 
 devices = {}
 
+
+def agilent_keysight_combi(s):
+    if s.lower() in ["agilent", "keysight"]:
+        return "Keysight / Agilent"
+
+
+def capital_first_letter(s):
+    return s[0].upper() + s[1:] if s else s
+
+
 for line in response.split("\n"):
     if not line:
         continue
@@ -14,6 +24,10 @@ for line in response.split("\n"):
         manufacturer, name = full_name.split("_", 1)
     except ValueError:
         manufacturer = ""
+        name = full_name
+    manufacturer = capital_first_letter(manufacturer)
+    manufacturer = agilent_keysight_combi(manufacturer)
+    name = capital_first_letter(name)
     devices[full_name] = {
         "manufacturer": manufacturer,
         "name": name,
@@ -35,6 +49,7 @@ for item in response:
         manufacturer, name = full_name.split("_", 1)
         # make first letter caps
         manufacturer = manufacturer.capitalize()
+        manufacturer = agilent_keysight_combi(manufacturer)
         name = name.capitalize()
         sweep_me_devices[full_name] = {
             "type": device_type,
