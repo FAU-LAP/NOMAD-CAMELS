@@ -16,6 +16,16 @@ Instruments
         table.sortable th {
             background-color: #4CAF50;
             color: white;
+            cursor: pointer;
+        }
+        /* Add styles for the sorting arrows */
+        table.sortable th::after {
+            content: " ▼▲";
+            color: #ddd;
+        }
+        table.sortable th.sorttable_sorted::after,
+        table.sortable th.sorttable_sorted_reverse::after {
+            color: #000;
         }
     </style>
     <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
@@ -56,6 +66,17 @@ Instruments
             </tr>
         </tbody>
     </table>
+    <script>
+        window.onload = function() {
+            var th = document.querySelector('#instrumentTable th');
+            var evt = new window.MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            });
+            th.dispatchEvent(evt);
+        };
+    </script>
     <script>
         function searchTable() {
             var input, filter, table, tr, td, i, j, txtValue;

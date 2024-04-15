@@ -33,6 +33,9 @@ for item in response:
     if item["type"] == "dir":  # A type of 'dir' indicates a directory (folder)
         device_type, full_name = item["name"].split("-", 1)
         manufacturer, name = full_name.split("_", 1)
+        # make first letter caps
+        manufacturer = manufacturer.capitalize()
+        name = name.capitalize()
         sweep_me_devices[full_name] = {
             "type": device_type,
             "name": name,
@@ -48,7 +51,7 @@ with open("./docs/source/doc/instruments/instruments.rst", "w") as f:
 Instruments
 ===========
 
-Below is a list of instruments that are supported by the CAMELS drivers. The table is sortable by clicking on the column headers. You can also search for specific instruments using the search bar.
+Below is a list of instruments that have drivers for NOMAD CAMELS. The table is sortable by clicking on the column headers. You can also search for specific instruments using the search bar.
 
 Please note that this page is currently under construction and the information may not be up-to-date.
 
@@ -68,6 +71,16 @@ The table includes instruments from SweepMe! as well. These instruments are not 
         table.sortable th {
             background-color: #4CAF50;
             color: white;
+            cursor: pointer;
+        }
+        /* Add styles for the sorting arrows */
+        table.sortable th::after {
+            content: " ▼▲";
+            color: #ddd;
+        }
+        table.sortable th.sorttable_sorted::after,
+        table.sortable th.sorttable_sorted_reverse::after {
+            color: #000;
         }
     </style>
     <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
@@ -142,6 +155,17 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 }
             }
         }
+    </script>
+    <script>
+        window.onload = function() {
+            var th = document.querySelector('#instrumentTable th');
+            var evt = new window.MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            });
+            th.dispatchEvent(evt);
+        };
     </script>
     
 .. toctree::
