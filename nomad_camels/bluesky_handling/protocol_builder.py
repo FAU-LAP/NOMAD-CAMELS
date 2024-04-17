@@ -171,6 +171,7 @@ def build_protocol(
     # beginning of larger strings
     device_import_string = "\n"
     devices_string = ""
+    read_device_drivers_string = ""
     variable_string = "\nnamespace = {}\n"
     variable_string += "all_fits = {}\n"
     variable_string += "plots = []\n"
@@ -277,6 +278,14 @@ def build_protocol(
             device_import_string += f'sys.path.append(r"{device_handling.local_package_paths[device.name]}")\n'
         device_import_string += f"from nomad_camels_driver_{device.name}.{device.name}_ophyd import {classname}\n"
         additional_string_devices += device.get_additional_string()
+        # For each device execute the get_opyd_and_py_file_contents from the helper_functions
+        # This adds the .pya and .py files to the metadata dictionary md
+        read_device_drivers_string += f"\tmd = helper_functions.get_opyd_and_py_file_contents({classname}, md, '{dev}')\n"
+
+
+
+
+
 
     # finishing up the device initialization
     devices_string += '\t\tprint("devices connected")\n'
@@ -323,6 +332,7 @@ def build_protocol(
     # reading the file itself and adding it to the metadata
     protocol_string += '\twith open(__file__, "r", encoding="utf-8") as f:\n'
     protocol_string += '\t\tmd["python_script"] = f.read()\n'
+    protocol_string += read_device_drivers_string
     protocol_string += '\tmd["variables"] = namespace\n'
 
     # adding uid to RunEngine, calling the plan
