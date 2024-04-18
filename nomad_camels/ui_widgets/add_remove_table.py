@@ -54,6 +54,7 @@ class AddRemoveTable(QWidget):
         askdelete=False,
         fixedsize=False,
         enableds=None,
+        default_values=None,
     ):
         """
 
@@ -104,6 +105,17 @@ class AddRemoveTable(QWidget):
         askdelete : bool, default False
             Whether to have a PopUp make sure, that the user wants to
             delete the selected column
+        fixedsize : bool, default False
+            Whether the widget should have a fixed size
+        enableds : int, list of int, default None
+            Positions of the columns (if horizontal) that are enabled,
+            If None, all are
+        default_values : dict, default None
+            A dict with the default values for the table. The keys are
+            the column names and the values are the default values. If
+            a column is not in the dict, the default value is an empty
+            string. If None, all default values are empty strings.
+            The default values are used for new entries.
         """
         super().__init__(parent)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -122,6 +134,7 @@ class AddRemoveTable(QWidget):
         self.orderBy = orderBy
         self.comboBoxes = {} if comboBoxes is None else comboBoxes
         self.subtables = {} if subtables is None else subtables
+        self.default_values = {} if default_values is None else default_values
         self.growsize = growsize
         self.fixedsize = fixedsize
         self.boxes = []
@@ -400,6 +413,10 @@ class AddRemoveTable(QWidget):
         """
         if vals is None:
             vals = [""] * len(self.headerLabels) if len(self.headerLabels) else ""
+            if self.default_values:
+                for i, name in enumerate(self.headerLabels):
+                    if name in self.default_values:
+                        vals[i] = self.default_values[name]
         items = []
         box_indexes = []
         boxes = []
@@ -599,6 +616,7 @@ class AddRemoveDialoge(QDialog):
         subtables=None,
         checkstrings=None,
         askdelete=False,
+        default_values=None,
     ):
         super().__init__(parent)
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
@@ -626,6 +644,7 @@ class AddRemoveDialoge(QDialog):
             growsize=False,
             checkstrings=checkstrings,
             askdelete=askdelete,
+            default_values=default_values,
         )
 
         layout = QGridLayout()

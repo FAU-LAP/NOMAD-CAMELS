@@ -35,7 +35,7 @@ installed_instr = {}
 last_repo = ""
 last_branch = ""
 last_dir = ""
-repo_url = ""
+repo_url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main"
 
 
 def getInstalledDevices(force=False, return_packages=False):
@@ -262,12 +262,23 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.pushButton_install_update_selected.clicked.connect(self.install_selected)
         self.pushButton_uninstall.clicked.connect(self.uninstall_selected)
         self.pushButton_update_drivers.clicked.connect(self.update_installed)
+        self.pushButton_info.clicked.connect(self.show_hide_info)
 
         self.device_table.clicked.connect(self.table_click)
 
         self.info_widge = Info_Widget()
         self.info_widge.setHidden(True)
-        self.layout().addWidget(self.info_widge, 0, 5, 5, 1)
+        self.layout().addWidget(self.info_widge, 0, 5, 8, 1)
+
+    def show_hide_info(self):
+        if self.info_widge.isHidden():
+            self.info_widge.setHidden(False)
+            self.adjustSize()
+            self.pushButton_info.setText("hide info")
+        else:
+            self.info_widge.setHidden(True)
+            self.adjustSize()
+            self.pushButton_info.setText("show info")
 
     def checkBox_change(self, row):
         """
