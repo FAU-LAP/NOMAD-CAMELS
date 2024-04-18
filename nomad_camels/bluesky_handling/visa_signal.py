@@ -188,7 +188,7 @@ def retry_query_or_write(
 ):
     excs = []
     while visa_instrument.currently_reading:
-        time.sleep(0.1)
+        time.sleep(0.001)
     visa_instrument.currently_reading = True
     if write_delay:
         time.sleep(write_delay)
