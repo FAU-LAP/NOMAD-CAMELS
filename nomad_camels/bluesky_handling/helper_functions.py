@@ -23,6 +23,10 @@ from PySide6.QtGui import QFont
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
+import inspect
+import os
+import sys
+
 
 def trigger_multi(devices, grp=None):
     """
@@ -685,6 +689,89 @@ def get_channels(dev):
         if name not in dev.configuration_attrs:
             channels[f"{dev.name}_{name}"] = [dev.name, name]
     return channels
+
+
+def get_opyd_and_py_file_contents(classname, md, device_name):
+    """
+    Reads the content of the .py and _opyd.py driver files of the given instrument and adds
+    them to the metadata dictionary. If the files are not found, it adds a corresponding message
+    to the dictionary.
+
+    Parameters
+    ----------
+    classname : class or function
+        The class or function whose associated files' contents are to be read.
+    md : dict
+        The metadata dictionary where the content of the files should be added.
+    device_name : str
+        The name of the device associated with the classname.
+
+    Returns
+    -------
+    md : dict
+        The updated metadata dictionary with the content of the files added or with a message
+        indicating that the file was not found.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the .py or _opyd.py files associated with the classname are not found.
+    """
+    if inspect.isfunction(classname):
+        try:
+            with open(classname.__code__.co_filename, "r") as file:
+                md["devices"][device_name][
+                    f"python_file_{os.path.splitext(os.path.basename(classname.__code__.co_filename))[0]}"
+                ] = file.read()
+        except FileNotFoundError:
+            md["devices"][device_name][
+                os.path.splitext(os.path.basename(classname.__code__.co_filename))[0]
+            ] = "._ophyd file not found"
+        try:
+            with open(
+                classname.__code__.co_filename.replace("_ophyd.py", ".py"), "r"
+            ) as file:
+                md["devices"][device_name][
+                    f"python_file_{os.path.splitext(os.path.basename(classname.__code__.co_filename))[0]}".replace(
+                        "_ophyd", ""
+                    )
+                ] = file.read()
+        except FileNotFoundError:
+            md["devices"][device_name][
+                os.path.splitext(os.path.basename(classname.__code__.co_filename))[
+                    0
+                ].replace("_ophyd", "")
+            ] = ".py file not found"
+
+    elif inspect.isclass(classname):
+        try:
+            with open(sys.modules[classname.__module__].__file__, "r") as file:
+                md["devices"][device_name][
+                    f"python_file_{os.path.splitext(os.path.basename(sys.modules[classname.__module__].__file__))[0]}"
+                ] = file.read()
+        except FileNotFoundError:
+            md["devices"][device_name][
+                os.path.splitext(
+                    os.path.basename(sys.modules[classname.__module__].__file__)
+                )[0]
+            ] = "._ophyd file not found"
+        try:
+            with open(
+                sys.modules[classname.__module__].__file__.replace("_ophyd.py", ".py"),
+                "r",
+            ) as file:
+                md["devices"][device_name][
+                    f"python_file_{os.path.splitext(os.path.basename(sys.modules[classname.__module__].__file__))[0]}".replace(
+                        "_ophyd", ""
+                    )
+                ] = file.read()
+        except FileNotFoundError:
+            md["devices"][device_name][
+                os.path.splitext(
+                    os.path.basename(sys.modules[classname.__module__].__file__)
+                )[0].replace("_ophyd", "")
+            ] = ".py file not found"
+    return md
 
 
 class Value_Setter(QWidget):
