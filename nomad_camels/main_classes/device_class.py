@@ -99,10 +99,12 @@ class Device:
             name = comp.item.attr
             dev_class = comp.item.cls
             if name in self.ophyd_instance.configuration_attrs:
+                # use default value of the component
+                value = getattr(self.ophyd_instance, name)._readback
                 if check_output(dev_class):
-                    self.config.update({f"{name}": 0})
+                    self.config.update({f"{name}": value})
                 else:
-                    self.passive_config.update({f"{name}": 0})
+                    self.passive_config.update({f"{name}": value})
         self.controls = {}
 
     def get_necessary_devices(self):
@@ -227,6 +229,36 @@ class Device:
         steps : dict{'<step_name>': [Step_Class, Step_Config]}
         """
         return {}
+
+
+def get_configs(ophyd_instance):
+    """Returns the configuration and passive configuration of the given
+    ophyd-instance.
+
+    Parameters
+    ----------
+    ophyd_instance : ophyd.Device
+        The ophyd-device that should be checked
+
+    Returns
+    -------
+    config : dict
+        The configuration of the device
+    passive_config : dict
+        The passive configuration of the device
+    """
+    config = {}
+    passive_config = {}
+    for comp in ophyd_instance.walk_components():
+        name = comp.item.attr
+        dev_class = comp.item.cls
+        if name in ophyd_instance.configuration_attrs:
+            value = getattr(ophyd_instance, name)._readback
+            if check_output(dev_class):
+                config.update({f"{name}": value})
+            else:
+                passive_config.update({f"{name}": value})
+    return config, passive_config
 
 
 def check_output(cls) -> bool:
@@ -907,8 +939,8 @@ class Simple_Config_Sub(Device_Config_Sub):
         for name, val in config_dict.items():
             if name in comboBoxes:
                 self.config_combos[name] = QComboBox()
-                self.config_combos[name].addItems(comboBoxes[name])
-                self.config_combos[name].setCurrentText(val)
+                self.config_combos[name].addItems([str(x) for x in comboBoxes[name]])
+                self.config_combos[name].setCurrentText(str(val))
             elif name in config_types:
                 if config_types[name] == "bool":
                     self.config_checks[name] = QCheckBox(
