@@ -450,11 +450,15 @@ class AddRemoveTable(QWidget):
                 tables.append(table)
                 if vals[i] in self.subtables[name]:
                     table.setCurrentText(vals[i])
+            elif i in self.checkables:
+                item.setCheckable(True)
+                item.setCheckState(
+                    Qt.CheckState.Checked if vals[i] else Qt.CheckState.Unchecked
+                )
             else:
                 item = QStandardItem(str(vals[i]))
             item.setEditable(i in self.editables)
             item.setEnabled(i in self.enableds)
-            item.setCheckable(i in self.checkables)
             items.append(item)
         if len(self.headerLabels) == 0:
             if self.comboBoxes:
