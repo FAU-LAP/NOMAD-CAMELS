@@ -680,3 +680,71 @@ class AddRemoveDialoge(QDialog):
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)
+
+
+class MultiTableDialog(QDialog):
+    """A QDialog providing an AddRemoveTable."""
+
+    def __init__(
+        self,
+        table_args=[],  # list of dicts with arguments for AddRemoveTable
+        parent=None,
+        title="",
+    ):
+        super().__init__(parent)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
+        self.buttonBox = QDialogButtonBox(self)
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+
+        self.buttonBox.rejected.connect(self.reject)
+        self.buttonBox.accepted.connect(self.accept)
+
+        self.tables = []
+        max_labels = 0
+        for args in table_args:
+            table = AddRemoveTable(**args)
+            table.sizechange.connect(self.adjustSize)
+            self.tables.append(table)
+            if "headerLabels" in args:
+                max_labels = max(max_labels, len(args["headerLabels"]))
+
+        layout = QGridLayout()
+        self.setLayout(layout)
+        for i, table in enumerate(self.tables):
+            layout.addWidget(table, i, 0)
+        layout.addWidget(self.buttonBox, len(self.tables), 0)
+        self.setWindowTitle(title)
+        self.adjustSize()
+        self.setMinimumWidth(max_labels * 100)
+
+    def get_data(self):
+        """ """
+        data = []
+        for table in self.tables:
+            data.append(table.update_table_data())
+        return data
+
+    def keyPressEvent(self, a0: QKeyEvent) -> None:
+        """Overwrites the keyPressEvent of the QDialog so that it does
+        not close when pressing Enter/Return.
+
+        Parameters
+        ----------
+        a0: QKeyEvent :
+
+
+        Returns
+        -------
+
+        """
+        if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
+            return
+        super().keyPressEvent(a0)
+
+    def hide_add_remove_buttons(self):
+        """ """
+        for table in self.tables:
+            table.addButton.hide()
+            table.removeButton.hide()
