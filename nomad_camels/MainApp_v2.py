@@ -213,6 +213,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.importer_thread.start(priority=QThread.LowPriority)
 
     def check_password_protection(self):
+        """
+        Check if the program is password protected and if so, ask for the password.
+
+        Returns
+        -------
+        bool
+            True if no password protection or if the password is correct, False otherwise
+        """
         if (
             "password_protection" in self.preferences
             and self.preferences["password_protection"]
@@ -227,6 +235,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         return True
 
     def manage_extensions(self):
+        """
+        Open the extension manager dialog.
+        """
         if not self.check_password_protection():
             return
         self.setCursor(Qt.WaitCursor)
@@ -247,6 +258,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.setCursor(Qt.ArrowCursor)
 
     def load_extensions(self):
+        """
+        Load the extensions specified in the preferences.
+        If an extension cannot be loaded, print an error message and continue.
+        If extensions are not yet part of the preferences, add the `standard_pref` extensions.
+        """
         if not "extensions" in self.preferences:
             from nomad_camels.utility.load_save_functions import standard_pref
 
@@ -261,9 +277,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             if f.is_dir() and f.name.startswith("nomad_camels_extension_"):
                 sys.path.append(str(f.parent))
         for extension in self.preferences["extensions"]:
-            # if not f.name == extension:
-            #     continue
-            # sys.path.append(str(f.parent))
             try:
                 extension_module = importlib.import_module(extension)
             except (ModuleNotFoundError, AttributeError) as e:
@@ -271,12 +284,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 continue
             config = getattr(extension_module, "EXTENSION_CONFIG")
             name = config["name"]
+            # check the required extensions contexts and hand them to the extension
             contexts = {}
             for context in config["required_contexts"]:
                 contexts[context] = self.extension_contexts[context]
             self.extensions.append(getattr(extension_module, name)(**contexts))
 
     def bluesky_setup(self):
+        """
+        Set up the bluesky RunEngine and the databroker catalog.
+        This method is called when the first protocol is run, speeding up the startup to this point.
+        """
         # IMPORT bluesky only if it is needed
         from bluesky import RunEngine
         from bluesky.callbacks.best_effort import BestEffortCallback
@@ -302,7 +320,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.running_protocol = None
 
     def with_or_without_instruments(self):
-        """ """
+        """
+        Check if there are active instruments and hide the protocols and manual controls if no instruments are being used.
+        """
         available = False
         if self.active_instruments:
             available = True
@@ -318,7 +338,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.label_no_instruments.setHidden(available)
 
     def manage_instruments(self):
-        """ """
+        """
+        Open the instrument manager dialog.
+        """
         self.setCursor(Qt.WaitCursor)
         # IMPORT ManageInstruments only if it is needed
         from nomad_camels.frontpanels.manage_instruments import ManageInstruments
@@ -334,37 +356,33 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def add_to_open_windows(self, window):
         """
+        Add a window to the list of open windows and connect the closing signal to remove the window from the list when it is closed.
 
         Parameters
         ----------
-        window :
-
-
-        Returns
-        -------
-
+        window : QWidget
+            The window to add to the list of open windows
         """
         self.open_windows.append(window)
         window.closing.connect(lambda x=window: self.open_windows.remove(x))
 
     def add_to_plots(self, plot):
         """
+        Add a plot to the list of open plots and connect the closing signal to remove the plot from the list when it is closed. Also add the plot to the list of open windows. The plots are in an additional list, so one can close all plots at once.
 
         Parameters
         ----------
-        plot :
-
-
-        Returns
-        -------
-
+        plot : QWidget
+            The plot to add to the list of open plots
         """
         self.open_plots.append(plot)
         plot.closing.connect(lambda x=plot: self.open_plots.remove(x))
         self.add_to_open_windows(plot)
 
     def close_plots(self):
-        """ """
+        """
+        Close all plots that are currently open.
+        """
         for plot in list(self.open_plots):
             plot.close()
 
@@ -383,12 +401,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         Parameters
         ----------
-        a0 :
-
-
-        Returns
-        -------
-
+        a0 : QCloseEvent
+            The close event
         """
         for window in list(self.open_windows):
             window.close()
@@ -474,13 +488,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Affiliation, Address, ORCID and Phone of the user.
         If the dialog is canceled, nothing is changed, otherwise the new
         data will be written into self.userdata.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
         """
         # IMPORT pandas and add_remove_table only if it is needed
         import pandas as pd
@@ -525,13 +532,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def save_user_data(self):
         """Calling the save_dictionary function with the savefile as
         %localappdata%/userdata.json and self.userdata as dictionary.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
         """
         self.active_user = self.comboBox_user.currentText()
         userdic = {"active_user": self.active_user}
@@ -543,13 +543,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def load_user_data(self):
         """Loading the dictionary from %localappdata%/userdata.json,
         selecting the active user and saving the rest into self.userdata.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
         """
         userdat = {}
         userfile = os.path.join(load_save_functions.appdata_path, "userdata.json")
@@ -580,13 +573,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Identifier, and Preparation-Info.
         If the dialog is canceled, nothing is changed, otherwise the new
         data will be written into self.userdata.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
         """
         # IMPORT pandas and add_remove_table only if it is needed
         import pandas as pd
@@ -629,6 +615,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.update_shown_samples()
 
     def update_shown_samples(self):
+        """Updates the comboBox_sample with the samples that are owned by the active user or have no owner."""
         self.comboBox_sample.clear()
         # filter the samples so that only the ones are shown where the user is
         # the owner or where the owner is not set
@@ -648,13 +635,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def save_sample_data(self):
         """Calling the save_dictionary function with the savefile as
         %localappdata%/sampledata.json and self.sampledata as dictionary.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
         """
         self.active_sample = self.comboBox_sample.currentText()
         sampledic = {"active_sample": self.active_sample}
@@ -666,13 +646,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def load_sample_data(self):
         """Loading the dictionary from %localappdata%/sampledata.json,
         selecting the active sample and saving the rest into self.sampledata.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
         """
         sampledat = {}
         samplefile = os.path.join(load_save_functions.appdata_path, "sampledata.json")
