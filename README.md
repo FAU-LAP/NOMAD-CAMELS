@@ -27,6 +27,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ## 1.0.7
 Features:
 - Protocols and manual controls are now sortable into tabs!
+- added possibility to force sequential on/off for single channels
 
 Fixes:
 - Plots being placed somewhere should now not kill the program anymore

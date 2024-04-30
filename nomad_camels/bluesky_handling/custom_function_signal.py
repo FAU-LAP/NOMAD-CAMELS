@@ -37,6 +37,7 @@ class Custom_Function_Signal(Signal):
         trigger_function=None,
         retry_on_error=0,
         error_retry_function=None,
+        force_sequential=None,
     ):
         super().__init__(
             name=name,
@@ -56,6 +57,7 @@ class Custom_Function_Signal(Signal):
         self.trigger_function = trigger_function
         self.retry_on_error = retry_on_error
         self.error_retry_function = error_retry_function
+        self.force_sequential = force_sequential
 
     def put(self, value, *, timestamp=None, force=False, metadata=None, **kwargs):
         """
@@ -66,6 +68,11 @@ class Custom_Function_Signal(Signal):
             # If the put_function requires the instance of the class, pass it as the first argument
             # The instance is the signal, while the parent is the Device class
             # For dynamically created signals often a call to self.parent is required
+            parent = False
+            if self.force_sequential is not None:
+                parent = self.parent if self.force_sequential else False
+            elif getattr(self.parent, "force_sequential", None):
+                parent = self.parent
             if (
                 self.put_function
                 and inspect.getfullargspec(self.put_function).args
@@ -94,11 +101,7 @@ class Custom_Function_Signal(Signal):
                     # parent is required if you want to force sequential reading
                     # parent is False if self.parent.force_sequential is False
                     # or if self.parent does not have a force_sequential attribute
-                    parent=(
-                        self.parent
-                        if getattr(self.parent, "force_sequential", None)
-                        else False
-                    ),
+                    parent=parent,
                 )
         super().put(
             value, timestamp=timestamp, force=force, metadata=metadata, **kwargs
@@ -113,6 +116,11 @@ class Custom_Function_Signal(Signal):
             # If the read_function requires the instance of the class, pass it as the first argument
             # The instance is the signal, while the parent is the Device class
             # For dynamically created signals often a call to self.parent is required
+            parent = False
+            if self.force_sequential is not None:
+                parent = self.parent if self.force_sequential else False
+            elif getattr(self.parent, "force_sequential", None):
+                parent = self.parent
             if (
                 self.read_function
                 and inspect.getfullargspec(self.read_function).args
@@ -126,11 +134,7 @@ class Custom_Function_Signal(Signal):
                     # parent is required if you want to force sequential reading
                     # parent is False if self.parent.force_sequential is False
                     # or if self.parent does not have a force_sequential attribute
-                    parent=(
-                        self.parent
-                        if getattr(self.parent, "force_sequential", None)
-                        else False
-                    ),
+                    parent=parent,
                 )
             else:
                 self._readback = retry_function(
@@ -140,11 +144,7 @@ class Custom_Function_Signal(Signal):
                     # parent is required if you want to force sequential reading
                     # parent is False if self.parent.force_sequential is False
                     # or if self.parent does not have a force_sequential attribute
-                    parent=(
-                        self.parent
-                        if getattr(self.parent, "force_sequential", None)
-                        else False
-                    ),
+                    parent=parent,
                 )
         return super().get()
 
@@ -211,6 +211,7 @@ def retry_function(
             excs.append(e)
             if error_retry_function:
                 error_retry_function(e)
+    parent.currently_reading = False
     raise Exception(
         f"Failed to execute function {func} after {retries} retries. Last exception: {excs[-1]}"
     )
@@ -246,7 +247,7 @@ class Custom_Function_SignalRO(SignalRO):
         trigger_function=None,
         retry_on_error=0,
         error_retry_function=None,
-        force_sequential=False,
+        force_sequential=None,
     ):
         super().__init__(
             name=name,
@@ -265,6 +266,7 @@ class Custom_Function_SignalRO(SignalRO):
         self.trigger_function = trigger_function
         self.retry_on_error = retry_on_error
         self.error_retry_function = error_retry_function
+        self.force_sequential = force_sequential
 
     def get(self):
         """
@@ -275,6 +277,11 @@ class Custom_Function_SignalRO(SignalRO):
             # If the read_function requires the instance of the class, pass it as the first argument
             # The instance is the signal, while the parent is the Device class
             # For dynamically created signals often a call to self.parent is required
+            parent = False
+            if self.force_sequential is not None:
+                parent = self.parent if self.force_sequential else False
+            elif getattr(self.parent, "force_sequential", None):
+                parent = self.parent
             if (
                 self.read_function
                 and inspect.getfullargspec(self.read_function).args
@@ -288,11 +295,7 @@ class Custom_Function_SignalRO(SignalRO):
                     # parent is required if you want to force sequential reading
                     # parent is False if self.parent.force_sequential is False
                     # or if self.parent does not have a force_sequential attribute
-                    parent=(
-                        self.parent
-                        if getattr(self.parent, "force_sequential", None)
-                        else False
-                    ),
+                    parent=parent,
                 )
             else:
                 self._readback = retry_function(
@@ -302,11 +305,7 @@ class Custom_Function_SignalRO(SignalRO):
                     # parent is required if you want to force sequential reading
                     # parent is False if self.parent.force_sequential is False
                     # or if self.parent does not have a force_sequential attribute
-                    parent=(
-                        self.parent
-                        if getattr(self.parent, "force_sequential", None)
-                        else False
-                    ),
+                    parent=parent,
                 )
         return super().get()
 
