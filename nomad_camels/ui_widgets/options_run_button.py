@@ -91,6 +91,7 @@ class Options_Run_Button(QFrame):
     external_asked = Signal()
     data_path_asked = Signal()
     del_asked = Signal()
+    move_asked = Signal()
 
     def __init__(self, text="", size=120, small_text="run", protocol_options=True):
         super().__init__()
@@ -116,6 +117,7 @@ class Options_Run_Button(QFrame):
         self.external_function = None
         self.data_path_function = None
         self.del_function = None
+        self.move_function = None
 
         self.setFixedSize(size, size)
         self.setFrameStyle(1)
@@ -135,6 +137,8 @@ class Options_Run_Button(QFrame):
             self.data_path_asked.connect(self.data_path_function)
         if self.del_function is not None:
             self.del_asked.connect(self.del_function)
+        if self.move_function is not None:
+            self.move_asked.connect(self.move_function)
 
     def options_menu(self, pos):
         """
@@ -158,11 +162,18 @@ class Options_Run_Button(QFrame):
             action_datapath = QAction("Open Data Path")
             action_datapath.triggered.connect(self.data_path_asked.emit)
             actions += [action_export, action_open, action_datapath]
+        action_move = QAction("Move to other Tab")
+        action_move.triggered.connect(self.move_button)
         action_delete = QAction("Delete")
         action_delete.triggered.connect(self.delete_button)
-        actions.append(action_delete)
         menu.addActions(actions)
+        menu.addSeparator()
+        menu.addActions([action_move, action_delete])
         menu.exec_(self.mapToGlobal(pos))
+
+    def move_button(self):
+        """ """
+        self.move_asked.emit()
 
     def delete_button(self):
         """ """
@@ -216,6 +227,8 @@ class Options_Run_Button(QFrame):
             self.external_asked.disconnect(self.external_function)
         if self.del_function is not None:
             self.del_asked.disconnect(self.del_function)
+        if self.move_function is not None:
+            self.move_asked.disconnect(self.move_function)
 
 
 if __name__ == "__main__":

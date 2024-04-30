@@ -25,6 +25,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 ## 1.0.7
+Features:
+- Protocols and manual controls are now sortable into tabs!
+
 Fixes:
 - Plots being placed somewhere should now not kill the program anymore
 

@@ -17,6 +17,7 @@ from nomad_camels import graphics
 
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import (
     Drop_Scroll_Area,
+    RenameTabWidget,
 )
 from nomad_camels.utility import (
     load_save_functions,
@@ -54,8 +55,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.user_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.session_upload_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
-        self.button_area_meas = Drop_Scroll_Area(self, 120, 120)
-        self.button_area_manual = Drop_Scroll_Area(self, 120, 120)
+        self.protocol_tabs_dict = OrderedDict({"Protocols": []})
+        self.manual_tabs_dict = OrderedDict({"Manuals": []})
+        self.button_area_meas = RenameTabWidget(self, self.protocol_tabs_dict)
+        self.button_area_manual = RenameTabWidget(self, self.manual_tabs_dict)
         self.meas_widget.layout().addWidget(self.button_area_meas, 2, 0, 1, 4)
         self.manual_widget.layout().addWidget(self.button_area_manual, 2, 0, 1, 3)
 
@@ -98,6 +101,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             "active_instruments": self.active_instruments,
             "protocols_dict": self.protocols_dict,
             "manual_controls": self.manual_controls,
+            "protocol_tabs_dict": self.protocol_tabs_dict,
+            "manual_tabs_dict": self.manual_tabs_dict,
         }
         self.preferences = {}
         self.load_preferences()
@@ -107,8 +112,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.open_windows = []
         self.current_protocol_device_list = []
-
-        self.button_area_meas.order_changed.connect(self.protocol_order_changed)
 
         self.active_controls = {}
         self.open_plots = []
@@ -1003,6 +1006,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             "active_instruments": self.active_instruments,
             "protocols_dict": self.protocols_dict,
             "manual_controls": self.manual_controls,
+            "protocol_tabs_dict": self.protocol_tabs_dict,
+            "manual_tabs_dict": self.manual_tabs_dict,
         }
         for key in self.preset_save_dict:
             add_string = load_save_functions.get_save_str(self.preset_save_dict[key])
@@ -1032,22 +1037,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
     # manual controls
     # --------------------------------------------------
-
-    def manual_control_order_changed(self, order):
-        """
-
-        Parameters
-        ----------
-        order :
-
-
-        Returns
-        -------
-
-        """
-        self.manual_controls = OrderedDict(
-            sorted(self.manual_controls.items(), key=lambda x: order.index(x[0]))
-        )
 
     def add_manual_control(self):
         """ """
@@ -1096,6 +1085,26 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if not self.manual_controls:
             self.button_area_manual.setHidden(True)
 
+    def move_manual_control(self, control_name):
+        from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import (
+            MoveDialog,
+        )
+
+        control_data = self.manual_controls[control_name]
+        dialog = MoveDialog(parent=self, button_name=control_name)
+        dialog.add_tabs_from_widget(self.button_area_manual)
+
+        if dialog.exec():
+            new_tab = dialog.get_tab()
+            old_tab = self.button_area_manual.get_active_tab()
+            if new_tab == old_tab:
+                return
+            self.remove_manual_control(control_name)
+            self.add_button_to_manuals(control_name, new_tab)
+            self.manual_controls[control_name] = control_data
+            self.button_area_manual.update_order()
+            self.button_area_manual.setHidden(False)
+
     def update_man_cont_data(self, control_data, old_name):
         """
 
@@ -1138,7 +1147,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if dialog.exec():
             self.update_man_cont_data(dialog.control_data, control_name)
 
-    def add_button_to_manuals(self, name):
+    def add_button_to_manuals(self, name, tab=""):
         """
 
         Parameters
@@ -1153,7 +1162,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         button = options_run_button.Options_Run_Button(
             name, small_text="Start", protocol_options=False
         )
-        self.button_area_manual.add_button(button, name)
+        # get active tab
+        tab = tab or self.button_area_manual.get_active_tab()
+        self.button_area_manual.add_button(button, name, tab)
         self.add_functions_to_manual_button(button, name)
 
     def add_functions_to_manual_button(self, button, name):
@@ -1175,6 +1186,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         )
         button.run_function = lambda state=None, x=name: self.start_manual_control(x)
         button.del_function = lambda x=name: self.remove_manual_control(x)
+        button.move_function = lambda x=name: self.move_manual_control(x)
         button.update_functions()
 
     def populate_manuals_buttons(self):
@@ -1185,7 +1197,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         else:
             self.button_area_manual.setHidden(False)
         for control in self.manual_controls:
-            self.add_button_to_manuals(control)
+            added = False
+            for tab, controls in self.manual_tabs_dict.items():
+                if control in controls:
+                    self.add_button_to_manuals(control, tab)
+                    added = True
+                    break
+            if not added:
+                self.add_button_to_manuals(control, "manual controls")
 
     def start_manual_control(self, name):
         """
@@ -1234,21 +1253,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
     # protocols
     # --------------------------------------------------
-    def protocol_order_changed(self, order):
-        """
-
-        Parameters
-        ----------
-        order :
-
-
-        Returns
-        -------
-
-        """
-        self.protocols_dict = OrderedDict(
-            sorted(self.protocols_dict.items(), key=lambda x: order.index(x[0]))
-        )
 
     def add_measurement_protocol(self):
         """ """
@@ -1314,6 +1318,26 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if not self.protocols_dict:
             self.button_area_meas.setHidden(True)
 
+    def move_protocol(self, protocol_name):
+        from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import (
+            MoveDialog,
+        )
+
+        protocol = self.protocols_dict[protocol_name]
+        dialog = MoveDialog(parent=self, button_name=protocol_name)
+        dialog.add_tabs_from_widget(self.button_area_meas)
+
+        if dialog.exec():
+            new_tab = dialog.get_tab()
+            old_tab = self.button_area_meas.get_active_tab()
+            if new_tab == old_tab:
+                return
+            self.remove_protocol(protocol_name)
+            self.add_button_to_meas(protocol_name, new_tab)
+            self.protocols_dict[protocol_name] = protocol
+            self.button_area_meas.update_order()
+            self.button_area_meas.setHidden(False)
+
     def update_prot_data(self, protocol, old_name):
         """
 
@@ -1355,7 +1379,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         dialog.accepted.connect(lambda x, y=prot_name: self.update_prot_data(x, y))
         self.add_to_open_windows(dialog)
 
-    def add_button_to_meas(self, name):
+    def add_button_to_meas(self, name, tab=""):
         """
 
         Parameters
@@ -1368,7 +1392,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         """
         button = options_run_button.Options_Run_Button(name)
-        self.button_area_meas.add_button(button, name)
+        # get active tab
+        tab = tab or self.button_area_meas.get_active_tab()
+        self.button_area_meas.add_button(button, name, tab)
         self.add_functions_to_meas_button(button, name)
 
     def add_functions_to_meas_button(self, button, name):
@@ -1391,6 +1417,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         button.external_function = lambda x=name: self.open_protocol(x)
         button.data_path_function = lambda x=name: self.open_data_path(x)
         button.del_function = lambda x=name: self.remove_protocol(x)
+        button.move_function = lambda x=name: self.move_protocol(x)
         button.update_functions()
 
     def open_data_path(self, protocol_name):
@@ -1421,7 +1448,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         else:
             self.button_area_meas.setHidden(False)
         for prot in self.protocols_dict:
-            self.add_button_to_meas(prot)
+            added = False
+            for tab, protocols in self.protocol_tabs_dict.items():
+                if prot in protocols:
+                    self.add_button_to_meas(prot, tab)
+                    added = True
+                    break
+            if not added:
+                self.add_button_to_meas(prot, "protocols")
 
     def run_protocol(self, protocol_name):
         """
