@@ -86,11 +86,7 @@ class Custom_Function_Signal(Signal):
                     # parent is required if you want to force sequential reading
                     # parent is False if self.parent.force_sequential is False
                     # or if self.parent does not have a force_sequential attribute
-                    parent=(
-                        self.parent
-                        if getattr(self.parent, "force_sequential", None)
-                        else False
-                    ),
+                    parent=parent,
                 )
             else:
                 retry_function(
