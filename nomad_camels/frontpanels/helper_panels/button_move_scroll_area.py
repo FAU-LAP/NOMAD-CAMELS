@@ -406,6 +406,7 @@ class RenameTabWidget(QTabWidget):
         self.customContextMenuRequested.connect(self.context_menu)
         self.tab_button_dict = tab_button_dict or {}
         self.all_buttons = []
+        self.editing_old_name = ""
 
     def context_menu(self, pos):
         # show context menu only when mouse is at a tab in the tab bar
@@ -440,10 +441,11 @@ class RenameTabWidget(QTabWidget):
         )
         self.tabBar().setTabText(index, "")
         self.tabBar().setTabButton(index, QTabBar.RightSide, line_edit)
+        self.editing_old_name = old_name
         line_edit.setFocus()
 
     def handle_editing_finished(self, index, line_edit):
-        old_name = self.tabText(index)
+        old_name = self.editing_old_name
         new_name = line_edit.text()
         if new_name:
             self.tabBar().setTabText(index, new_name)
