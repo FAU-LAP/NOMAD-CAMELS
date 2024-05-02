@@ -664,6 +664,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.comboBox_sample.setCurrentText(self.active_sample)
 
     def select_nomad_sample(self):
+        """Opens a dialog to select a sample from NOMAD."""
         # IMPORT sample_selection only if it is needed
         from nomad_camels.nomad_integration import sample_selection
 
@@ -678,6 +679,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.show_nomad_sample()
 
     def show_nomad_sample(self):
+        """Shows / hides the settings for the NOMAD sample."""
         nomad = self.nomad_user is not None
         self.sample_widget_nomad.setHidden(not nomad)
         active_sample = self.nomad_sample is not None
@@ -703,18 +705,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         - meas_files_path: the path, where measurement data is stored.
         - device_driver_path: the path, where NOMAD CAMELS can find the installed devices.
         - databroker_catalog_name: the name of the databroker catalog
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
         """
         self.preferences = load_save_functions.get_preferences()
         self.update_preference_settings()
 
     def update_preference_settings(self):
+        """Updates the settings that are dependent on the preferences. This includes the number formatting, the device driver path and the databroker catalog name, as well as the graphic theme."""
         number_formatting.preferences = self.preferences
         variables_handling.preferences = self.preferences
         variables_handling.device_driver_path = self.preferences["device_driver_path"]
@@ -725,7 +721,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         logging_settings.update_log_settings()
 
     def change_theme(self):
-        """ """
+        """Changes the graphic theme of the program according to the preferences."""
         theme = self.preferences["graphic_theme"]
         if "material_theme" in self.preferences:
             material_theme = self.preferences["material_theme"]
@@ -740,19 +736,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def toggle_dark_mode(self):
         """Turning dark mode on / off, called whenever the settings are
         changed. Using qdarkstyle to provide the stylesheets.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
         """
         dark = self.preferences["dark_mode"]
         variables_handling.dark_mode = dark
 
     def change_catalog_name(self):
-        """ """
+        """Changes the name of the databroker catalog. If the catalog does not exist, a temporary catalog is used."""
         if not hasattr(self, "databroker_catalog") or not self.databroker_catalog:
             return
         # IMPORT databroker only if it is needed
@@ -782,15 +771,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def change_preferences(self):
         """Called when any preferences are changed. Makes the dictionary
-         of preferences and calls save_preferences from the
-         load_save_functions module.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
+        of preferences and calls save_preferences from the
+        load_save_functions module.
         """
         # IMPORT Settings_Window only if it is needed
         from nomad_camels.frontpanels.settings_window import Settings_Window
@@ -802,7 +784,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.update_preference_settings()
 
     def save_state(self, fromload=False, do_backup=True):
-        """Saves the current states of both presets.
+        """Saves the current states of the preset.
 
         Parameters
         ----------
@@ -811,10 +793,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         do_backup :
             (Default value = True)
-
-        Returns
-        -------
-
         """
         if (
             "password_protection" in self.preferences
@@ -866,15 +844,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self._current_preset[0] = preset_name
 
     def save_preset_as(self):
-        """Opens a QFileDialog to save the device preset.
+        """Opens a QFileDialog to save the preset.
         A backup / autosave of the preset is made automatically.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
         """
         file = QFileDialog.getSaveFileName(
             self, "Save Preset", load_save_functions.preset_path, "*.preset"
@@ -889,13 +860,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def load_backup_preset(self):
         """Opens a QFileDialog in the Backup-folder of the presets.
         If a backup is selected, the current preset is put into backup.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
         """
         file = QFileDialog.getOpenFileName(
             self, "Open Preset", load_save_functions.preset_path, "*.preset"
@@ -909,7 +873,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.load_preset(file)
 
     def load_state(self):
-        """Loads the most recent presets."""
+        """Loads the most recent preset."""
         preset = load_save_functions.get_most_recent_presets()
         if preset is not None:
             self.load_preset(preset)
@@ -919,15 +883,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def change_preset(self, preset):
         """saves the old device preset,
         then changes to / loads the new preset.
-
-        Parameters
-        ----------
-        preset :
-
-
-        Returns
-        -------
-
         """
         self.save_state()
         self._current_preset[0] = preset
@@ -939,12 +894,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         Parameters
         ----------
-        preset :
-
-
-        Returns
-        -------
-
+        preset : str
+            The name of the preset to load.
         """
         try:
             with open(
@@ -973,7 +924,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.adjustSize()
 
     def make_save_dict(self):
-        """ """
+        """Creates the save dictionary for the current preset. It includes the current preset, the active instruments, the protocols, the manual controls, the protocol tabs and the manual tabs."""
         self.preset_save_dict = {
             "_current_preset": self._current_preset,
             "active_instruments": self.active_instruments,
@@ -993,13 +944,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """Called when the active devices change.
         The channels in variables_handling are updated with the ones
         provided by the active devices.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
         """
         variables_handling.channels.clear()
         for key, dev in self.active_instruments.items():
@@ -1012,7 +956,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
 
     def add_manual_control(self):
-        """ """
+        """Opens a dialog to add a new manual control."""
         # IMPORT New_Manual_Control_Dialog only if needed
         from nomad_camels.manual_controls.get_manual_controls import (
             New_Manual_Control_Dialog,
@@ -1027,15 +971,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def add_manual_control_to_data(self, control_data):
         """
+        Add a manual control to the manual controls.
 
         Parameters
         ----------
-        control_data :
-
-
-        Returns
-        -------
-
+        control_data : dict
+            The data of the manual control to add.
         """
         self.manual_controls[control_data["name"]] = control_data
         self.add_button_to_manuals(control_data["name"])
@@ -1043,6 +984,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def remove_manual_control(self, control_name):
         """
+        
 
         Parameters
         ----------
