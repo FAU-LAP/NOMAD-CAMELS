@@ -201,6 +201,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_module = None
         self.protocol_savepath = ""
         self.running_protocol = None
+        self.run_queue = []
 
         # Extension Contexts
         self.extension_user = {}
@@ -1427,6 +1428,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         button.data_path_function = lambda x=name: self.open_data_path(x)
         button.del_function = lambda x=name: self.remove_protocol(x)
         button.move_function = lambda x=name: self.move_protocol(x)
+        button.queue_function = lambda state=None, x=name: self.queue_protocol(x)
         button.update_functions()
 
     def open_data_path(self, protocol_name):
@@ -1731,6 +1733,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         )
         print("\n\nBuild successful!\n")
         self.progressBar_protocols.setValue(100 if ask_file else 1)
+
+    def queue_protocol(self, protocol_name):
+        self.run_queue_widget.add_item(protocol_name)
+        self.run_queue.append(
+            (protocol_name, self.protocols_dict[protocol_name].variables)
+        )
 
     def get_user_name_data(self):
         if self.nomad_user:

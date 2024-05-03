@@ -35,8 +35,8 @@ class RunWidget(QWidget):
 
 
 class RunQueue(QListWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
 
         self.setDragDropMode(QAbstractItemView.InternalMove)
 
@@ -88,25 +88,6 @@ class RunQueue(QListWidget):
     def update_order_list(self):
         # Update the order list to match the current order of items in the QListWidget
         self.order_list = [self.item(i) for i in range(self.count())]
-
-class VariableWidget(QWidget):
-    def __init__(self, text):
-        super().__init__()
-        self.name = text
-
-        self.layout = QHBoxLayout(self)
-
-        self.checkbox = QCheckBox("ready")
-        self.checkbox.setToolTip(
-            "The next run will start automatically if it is set as ready.\nOtherwise the execution will pause."
-        )
-        self.label = QLabel(text)
-        self.button = QPushButton("remove")
-        self.button.setMaximumWidth(80)
-
-        self.layout.addWidget(self.label)
-        self.layout.addWidget(self.checkbox)
-        self.layout.addWidget(self.button)
 
 
 if __name__ == "__main__":

@@ -107,8 +107,18 @@ class Options_Run_Button(QFrame):
         self.small_button = QPushButton(small_text, parent=self)
         icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
         self.small_button.setIcon(icon)
-        self.small_button.setIconSize(QSize(int(size / 4), int(size / 4)))
-        self.small_button.setGeometry(5, 5, size - 10, int(size / 3))
+        if protocol_options:
+            self.small_button.setIconSize(QSize(int(size / 5), int(size / 5)))
+            self.small_button.setGeometry(5, 5, size - 10, int(size / 4))
+            self.queue_button = QPushButton("queue", parent=self)
+            icon = self.style().standardIcon(QStyle.StandardPixmap.SP_CommandLink)
+            self.queue_button.setIcon(icon)
+            self.queue_button.setIconSize(QSize(int(size / 5), int(size / 5)))
+            self.queue_button.setGeometry(5, 10 + size // 4, size - 10, int(size / 4))
+        else:
+            self.small_button.setIconSize(QSize(int(size / 4), int(size / 4)))
+            self.small_button.setGeometry(5, 5, size - 10, int(size / 3))
+            self.queue_button = None
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.options_menu)
         self.config_function = None
@@ -118,6 +128,7 @@ class Options_Run_Button(QFrame):
         self.data_path_function = None
         self.del_function = None
         self.move_function = None
+        self.queue_function = None
 
         self.setFixedSize(size, size)
         self.setFrameStyle(1)
@@ -139,6 +150,8 @@ class Options_Run_Button(QFrame):
             self.del_asked.connect(self.del_function)
         if self.move_function is not None:
             self.move_asked.connect(self.move_function)
+        if self.queue_function is not None:
+            self.queue_button.clicked.connect(self.queue_function)
 
     def options_menu(self, pos):
         """
@@ -229,6 +242,8 @@ class Options_Run_Button(QFrame):
             self.del_asked.disconnect(self.del_function)
         if self.move_function is not None:
             self.move_asked.disconnect(self.move_function)
+        if self.queue_function is not None:
+            self.queue_button.clicked.disconnect(self.queue_function)
 
 
 if __name__ == "__main__":

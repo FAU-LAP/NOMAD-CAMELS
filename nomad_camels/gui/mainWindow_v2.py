@@ -644,10 +644,10 @@ class Ui_MainWindow(object):
 
         self.gridLayout_4.addWidget(self.textEdit_console_output, 0, 3, 3, 1)
 
-        self.run_queue = RunQueue(self.widget)
-        self.run_queue.setObjectName(u"run_queue")
+        self.run_queue_widget = RunQueue(self.widget)
+        self.run_queue_widget.setObjectName(u"run_queue_widget")
 
-        self.gridLayout_4.addWidget(self.run_queue, 0, 0, 1, 3)
+        self.gridLayout_4.addWidget(self.run_queue_widget, 0, 0, 1, 3)
 
         self.progressBar_protocols = QProgressBar(self.widget)
         self.progressBar_protocols.setObjectName(u"progressBar_protocols")

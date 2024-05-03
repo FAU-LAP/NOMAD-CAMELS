@@ -981,7 +981,7 @@ QPushButton:disabled {
         </widget>
        </item>
        <item row="0" column="0" colspan="3">
-        <widget class="RunQueue" name="run_queue"/>
+        <widget class="RunQueue" name="run_queue_widget"/>
        </item>
        <item row="2" column="0" colspan="3">
         <widget class="QProgressBar" name="progressBar_protocols">
