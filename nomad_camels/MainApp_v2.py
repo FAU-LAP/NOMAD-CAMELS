@@ -186,6 +186,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.pushButton_clear_log.clicked.connect(self.textEdit_console_output.clear)
         self.pushButton_close_plots.clicked.connect(self.close_plots)
+        self.pushButton_show_log.clicked.connect(self.show_hide_log)
+        self.show_hide_log()
 
         QShortcut("Ctrl+s", self).activated.connect(self.save_state)
 
@@ -211,6 +213,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
+
+    def show_hide_log(self):
+        """ """
+        is_hidden = self.textEdit_console_output.isHidden()
+        self.textEdit_console_output.setHidden(not is_hidden)
+        self.pushButton_clear_log.setHidden(not is_hidden)
+        self.pushButton_show_log.setText("Hide Log" if is_hidden else "Show Log")
 
     def check_password_protection(self):
         if (

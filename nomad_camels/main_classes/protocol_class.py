@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit, QMessageBox
+from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit, QMessageBox, QTableView
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtCore import Signal
 
@@ -447,15 +447,18 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.lineEdit_filename.setText(self.protocol.filename)
         self.lineEdit_protocol_name.setText(self.protocol.name)
 
-        self.variable_model = QStandardItemModel()
-        self.variable_model.setHorizontalHeaderLabels(["Name", "Value", "Data-Type"])
-        self.tableView_variables.setModel(self.variable_model)
-        self.load_variables()
+        self.variable_table.set_protocol(self.protocol)
+        self.variable_table.editable_names = True
+
+        # self.variable_model = QStandardItemModel()
+        # self.variable_model.setHorizontalHeaderLabels(["Name", "Value", "Data-Type"])
+        # self.tableView_variables.setModel(self.variable_model)
+        # self.load_variables()
 
         self.pushButton_add_variable.clicked.connect(lambda x: self.add_variable())
         self.pushButton_remove_variable.clicked.connect(self.remove_variable)
 
-        self.variable_model.itemChanged.connect(self.check_variable)
+        # self.variable_model.itemChanged.connect(self.check_variable)
 
         self.plot_widge = Plot_Button_Overview(self, self.protocol.plots)
 
@@ -515,7 +518,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.checkBox_NeXus.setHidden(True)
         self.enable_nexus()
         self.update_variable_select()
-        self.tableView_variables.selectionModel().selectionChanged.connect(
+        self.variable_table.selectionModel().selectionChanged.connect(
             self.update_variable_select
         )
 
@@ -548,27 +551,27 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.table_metadata.setHidden(not nx)
         self.table_config_NX_paths.setHidden(not nx)
 
-    def get_unique_name(self, name="name"):
-        """Checks whether name already exists in the variables of the
-        protocol and returns a unique name (with added _i).
+    # def get_unique_name(self, name="name"):
+    #     """Checks whether name already exists in the variables of the
+    #     protocol and returns a unique name (with added _i).
 
-        Parameters
-        ----------
-        name :
-             (Default value = 'name')
+    #     Parameters
+    #     ----------
+    #     name :
+    #          (Default value = 'name')
 
-        Returns
-        -------
+    #     Returns
+    #     -------
 
-        """
-        i = 1
-        while name in self.protocol.variables:
-            if "_" not in name:
-                name += f"_{i}"
-            else:
-                name = f'{name.split("_")[0]}_{i}'
-            i += 1
-        return name
+    #     """
+    #     i = 1
+    #     while name in self.protocol.variables:
+    #         if "_" not in name:
+    #             name += f"_{i}"
+    #         else:
+    #             name = f'{name.split("_")[0]}_{i}'
+    #         i += 1
+    #     return name
 
     def add_variable(self):
         """Add a variable to the list, given a unique name, then updates
@@ -581,39 +584,40 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         -------
 
         """
-        self.append_variable(self.get_unique_name("name"))
-        self.update_variables()
+        self.variable_table.append_variable("name")
+        self.variable_table.update_variables()
+        self.update_variable_select()
 
-    def append_variable(self, name="name", value="value"):
-        """Append the variable with name and value to the item_model,
-        also add an item that shows the datatype of the value.
+    # def append_variable(self, name="name", value="value"):
+    #     """Append the variable with name and value to the item_model,
+    #     also add an item that shows the datatype of the value.
 
-        Parameters
-        ----------
-        name :
-             (Default value = 'name')
-        value :
-             (Default value = 'value')
+    #     Parameters
+    #     ----------
+    #     name :
+    #          (Default value = 'name')
+    #     value :
+    #          (Default value = 'value')
 
-        Returns
-        -------
+    #     Returns
+    #     -------
 
-        """
-        name_item = QStandardItem(name)
-        value_item = QStandardItem(value)
-        type_item = QStandardItem(variables_handling.check_data_type(value))
-        type_item.setEditable(False)
-        self.variable_model.appendRow([name_item, value_item, type_item])
+    #     """
+    #     name_item = QStandardItem(name)
+    #     value_item = QStandardItem(value)
+    #     type_item = QStandardItem(variables_handling.check_data_type(value))
+    #     type_item.setEditable(False)
+    #     self.variable_model.appendRow([name_item, value_item, type_item])
 
     def remove_variable(self):
         """Removes the selected variable."""
         try:
-            index = self.tableView_variables.selectedIndexes()[0]
+            index = self.variable_table.selectedIndexes()[0]
         except IndexError:
             raise Exception("You need to select a row first!")
         if index.row() >= 0:
-            self.variable_model.removeRow(index.row())
-            self.update_variables()
+            self.variable_table.model.removeRow(index.row())
+            self.variable_table.update_variables()
 
     def update_step_config(self):
         """Updates all the protocol settings."""
@@ -627,65 +631,65 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.export_csv = self.checkBox_csv_exp.isChecked()
         self.protocol.export_json = self.checkBox_json_exp.isChecked()
         self.protocol.skip_config = self.checkBox_no_config.isChecked()
-        self.update_variables()
+        self.variable_table.update_variables()
         self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
 
-    def load_variables(self):
-        """Called when starting, loads the variables from the protocol
-        into the table.
+    # def load_variables(self):
+    #     """Called when starting, loads the variables from the protocol
+    #     into the table.
 
-        Parameters
-        ----------
+    #     Parameters
+    #     ----------
 
-        Returns
-        -------
+    #     Returns
+    #     -------
 
-        """
-        for var in sorted(self.protocol.variables):
-            self.append_variable(var, str(self.protocol.variables[var]))
+    #     """
+    #     for var in sorted(self.protocol.variables):
+    #         self.append_variable(var, str(self.protocol.variables[var]))
 
-    def check_variable(self):
-        """If name of variable changed: check whether the variable is
-        unique, if not change its name and raise an error.
-        If value changed: re-evaluate the data-type.
-        Update the protocol afterwards.
+    # def check_variable(self):
+    #     """If name of variable changed: check whether the variable is
+    #     unique, if not change its name and raise an error.
+    #     If value changed: re-evaluate the data-type.
+    #     Update the protocol afterwards.
 
-        Parameters
-        ----------
+    #     Parameters
+    #     ----------
 
-        Returns
-        -------
+    #     Returns
+    #     -------
 
-        """
-        ind = self.tableView_variables.selectedIndexes()
-        if ind:
-            ind = ind[0]
-        else:
-            return
-        item = self.variable_model.itemFromIndex(ind)
-        if ind.column() == 0:
-            variables_handling.check_variable_name(item.text(), parent=self)
-        if ind.column() == 0 and item.text() in self.protocol.variables:
-            new_name = self.get_unique_name(item.text())
-            item.setText(new_name)
-            raise Exception("Variable names must be unique!")
-        if ind.column() == 1:
-            d_type = variables_handling.check_data_type(item.text())
-            self.variable_model.item(ind.row(), 2).setText(d_type)
-        self.update_variables()
+    #     """
+    #     ind = self.tableView_variables.selectedIndexes()
+    #     if ind:
+    #         ind = ind[0]
+    #     else:
+    #         return
+    #     item = self.variable_model.itemFromIndex(ind)
+    #     if ind.column() == 0:
+    #         variables_handling.check_variable_name(item.text(), parent=self)
+    #     if ind.column() == 0 and item.text() in self.protocol.variables:
+    #         new_name = self.get_unique_name(item.text())
+    #         item.setText(new_name)
+    #         raise Exception("Variable names must be unique!")
+    #     if ind.column() == 1:
+    #         d_type = variables_handling.check_data_type(item.text())
+    #         self.variable_model.item(ind.row(), 2).setText(d_type)
+    #     self.update_variables()
 
-    def update_variables(self):
-        """Taking all the variables from the list into the protocol."""
-        self.protocol.variables = {}
-        for i in range(self.variable_model.rowCount()):
-            name = self.variable_model.item(i, 0).text()
-            value = variables_handling.get_data(self.variable_model.item(i, 1).text())
-            self.protocol.variables.update({name: value})
-        variables_handling.protocol_variables = self.protocol.variables
-        self.update_variable_select()
+    # def update_variables(self):
+    #     """Taking all the variables from the list into the protocol."""
+    #     self.protocol.variables = {}
+    #     for i in range(self.variable_model.rowCount()):
+    #         name = self.variable_model.item(i, 0).text()
+    #         value = variables_handling.get_data(self.variable_model.item(i, 1).text())
+    #         self.protocol.variables.update({name: value})
+    #     variables_handling.protocol_variables = self.protocol.variables
+    #     self.update_variable_select()
 
     def update_variable_select(self):
-        if self.tableView_variables.selectedIndexes():
+        if self.variable_table.selectedIndexes():
             self.pushButton_remove_variable.setEnabled(True)
         else:
             self.pushButton_remove_variable.setEnabled(False)
