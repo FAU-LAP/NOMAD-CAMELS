@@ -201,7 +201,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_module = None
         self.protocol_savepath = ""
         self.running_protocol = None
-        self.run_queue = []
+        self.run_queue_widget.protocols_dict = self.protocols_dict
+        self.run_queue_widget.protocol_signal.connect(self.next_queued_protocol)
+        self.devices_from_queue = []
 
         # Extension Contexts
         self.extension_user = {}
@@ -1468,7 +1470,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             if not added:
                 self.add_button_to_meas(prot, "protocols")
 
-    def run_protocol(self, protocol_name):
+    def next_queued_protocol(self, protocol_name, variables):
+        if self.run_engine and self.run_engine.state != "idle":
+            return
+        self.run_protocol(protocol_name, variables)
+        self.run_queue_widget.remove_first()
+
+    def run_protocol(self, protocol_name, variables=None):
         """
         This function runs the given protocol `protocol_name`.
         First the protocol is built, then imported. The used instruments are
@@ -1493,7 +1501,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.save_state(do_backup=self.preferences["backup_before_run"])
         self.button_area_meas.disable_run_buttons()
         try:
-            self.build_protocol(protocol_name, ask_file=False)
+            self.build_protocol(protocol_name, ask_file=False, variables=variables)
             protocol = self.protocols_dict[protocol_name]
             path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
             name = os.path.basename(path)[:-3]
@@ -1524,6 +1532,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 text = "The protocol did not compile correctly, please check whether there are for example any if-statements or loops that do not have children-steps."
                 raise Exception(text).with_traceback(e.__traceback__)
             raise e
+        self.close_old_queue_devices()
 
     def propagate_exception(self, exception):
         self.protocol_finished()
@@ -1666,8 +1675,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
-        device_handling.close_devices(self.current_protocol_device_list)
+        self.devices_from_queue.append(self.current_protocol_device_list)
+        if self.run_queue_widget.check_next_protocol():
+            return
         self.current_protocol_device_list = []
+        self.close_old_queue_devices()
         self.pushButton_stop.setEnabled(False)
         self.pushButton_pause.setEnabled(False)
         self.pushButton_resume.setEnabled(False)
@@ -1688,7 +1700,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                             os.remove(f"{catalog_dir}/{file}")
         self.still_running = False
 
-    def build_protocol(self, protocol_name, ask_file=True):
+    def close_old_queue_devices(self):
+        # IMPORT device_handling only if needed
+        from nomad_camels.utility import device_handling
+
+        currently_in_use = self.current_protocol_device_list
+
+        for_close = []
+        for device_list in self.devices_from_queue:
+            for device in device_list:
+                if device not in currently_in_use:
+                    for_close.append(device)
+        for_close = list(set(for_close))
+        if for_close:
+            device_handling.close_devices(for_close)
+
+    def build_protocol(self, protocol_name, ask_file=True, variables=None):
         """Calls the build_protocol from nomad_camels.bluesky_handling.protocol_builder
         for the selected protocol and provides it with a savepath and
         user- and sample-data.
@@ -1706,6 +1733,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         self.progressBar_protocols.setValue(0)
         protocol = self.protocols_dict[protocol_name]
+        protocol.variables = variables or protocol.variables
         protocol.session_name = self.lineEdit_session.text()
         if re.search(r"[^\w\s]", protocol.session_name):
             raise ValueError(
@@ -1736,9 +1764,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def queue_protocol(self, protocol_name):
         self.run_queue_widget.add_item(protocol_name)
-        self.run_queue.append(
-            (protocol_name, self.protocols_dict[protocol_name].variables)
-        )
 
     def get_user_name_data(self):
         if self.nomad_user:

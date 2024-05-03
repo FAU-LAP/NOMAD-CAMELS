@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
     QWidget,
     QFrame,
@@ -35,15 +35,19 @@ class RunWidget(QWidget):
 
 
 class RunQueue(QListWidget):
-    def __init__(self, parent=None):
+    protocol_signal = Signal(str, dict)
+
+    def __init__(self, parent=None, protocols_dict=None):
         super().__init__(parent=parent)
 
         self.setDragDropMode(QAbstractItemView.InternalMove)
 
         self.order_list = []
+        self.protocol_name_variables = {}
 
         # Connect the rowsMoved signal to the update_order_list slot
         self.model().rowsMoved.connect(self.update_order_list)
+        self.protocols_dict = protocols_dict or {}
 
     def add_item(self, text):
         item = QListWidgetItem(self)
@@ -63,21 +67,49 @@ class RunQueue(QListWidget):
         self.setItemWidget(item, frame)
 
         item_widget.button.clicked.connect(lambda: self.remove_item(item))
+        item_widget.checkbox.clicked.connect(self.check_next_protocol)
+        item_widget.button.clicked.connect(self.update_order_list)
 
         # Add the item to the order list
         self.order_list.append(item)
+        self.protocol_name_variables[str(item)] = (
+            text,
+            self.protocols_dict[text].variables,
+        )
 
-    def remove_item(self, item):
+    def check_next_protocol(self):
+        # Check if the next protocol is ready to run
+        if len(self.order_list) == 0:
+            return False
+
+        # Get the first item in the order list
+        item = self.order_list[0]
+        widget = self.itemWidget(item)
+        checkbox = widget.layout().itemAt(0).widget().checkbox
+
+        # If the checkbox is checked, emit the run signal
+        if checkbox.isChecked():
+            self.protocol_signal.emit(*self.protocol_name_variables[str(item)])
+            return True
+        return False
+
+    def remove_first(self):
+        if len(self.order_list) == 0:
+            return
+        self.remove_item(self.order_list[0], ask=False)
+
+    def remove_item(self, item, ask=True):
         # ask the user if they are sure
         name = self.itemWidget(item).layout().itemAt(0).widget().name
-        dialog = QMessageBox()
-        dialog.setWindowTitle("Remove run")
-        dialog.setText(f"Remove {name} from the queue?")
+        if ask:
+            dialog = QMessageBox()
+            dialog.setWindowTitle("Remove run")
+            dialog.setText(f"Remove {name} from the queue?")
 
-        dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        dialog.setDefaultButton(QMessageBox.No)
-        if dialog.exec() == QMessageBox.No:
-            return
+            dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            dialog.setDefaultButton(QMessageBox.No)
+            if dialog.exec() == QMessageBox.No:
+                return
 
         # Remove the item from the order list
         self.order_list.remove(item)
@@ -88,6 +120,7 @@ class RunQueue(QListWidget):
     def update_order_list(self):
         # Update the order list to match the current order of items in the QListWidget
         self.order_list = [self.item(i) for i in range(self.count())]
+        self.check_next_protocol()
 
 
 if __name__ == "__main__":
