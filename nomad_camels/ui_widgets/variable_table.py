@@ -21,11 +21,12 @@ class VariableTable(QTableView):
         """ """
         self.protocol = protocol
         for var in sorted(self.protocol.variables):
-            self.append_variable(var, str(self.protocol.variables[var]))
+            self.append_variable(var, str(self.protocol.variables[var]), unique=False)
 
-    def append_variable(self, name="name", value="value"):
+    def append_variable(self, name="name", value="value", unique=True):
         """ """
-        name = self.get_unique_name(name)
+        if unique:
+            name = self.get_unique_name(name)
         name_item = QStandardItem(name)
         value_item = QStandardItem(value)
         type_item = QStandardItem(variables_handling.check_data_type(value))
@@ -54,12 +55,16 @@ class VariableTable(QTableView):
 
     def update_variables(self):
         """ """
-        self.protocol.variables = {}
+        variables = {}
         for i in range(self.model.rowCount()):
             name = self.model.item(i, 0).text()
             value = variables_handling.get_data(self.model.item(i, 1).text())
-            self.protocol.variables.update({name: value})
-        variables_handling.protocol_variables = self.protocol.variables
+            variables.update({name: value})
+        if self.editable_names:
+            self.protocol.variables = variables
+            variables_handling.protocol_variables = self.protocol.variables
+        else:
+            return variables
 
     def get_unique_name(self, name="name"):
         """ """
@@ -71,3 +76,10 @@ class VariableTable(QTableView):
                 name = f'{name.split("_")[0]}_{i}'
             i += 1
         return name
+
+    def clear(self):
+        """ """
+        self.model.clear()
+        self.model.setHorizontalHeaderLabels(["Name", "Value", "Data-Type"])
+        self.model.itemChanged.connect(self.check_variable)
+        self.update_variables()

@@ -829,16 +829,6 @@ Instruments</string>
        <property name="bottomMargin">
         <number>0</number>
        </property>
-       <item row="3" column="3">
-        <widget class="QPushButton" name="pushButton_clear_log">
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Clear Log</string>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="0" colspan="2">
         <widget class="QPushButton" name="pushButton_close_plots">
          <property name="styleSheet">
@@ -846,13 +836,6 @@ Instruments</string>
          </property>
          <property name="text">
           <string>Close Plots</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="2">
-        <widget class="QPushButton" name="pushButton_show_log">
-         <property name="text">
-          <string>Show Log</string>
          </property>
         </widget>
        </item>
@@ -893,6 +876,39 @@ QPushButton:disabled {
          </property>
         </widget>
        </item>
+       <item row="3" column="2">
+        <widget class="QPushButton" name="pushButton_show_log">
+         <property name="text">
+          <string>Show Log</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4" rowspan="3">
+        <widget class="Console_TextEdit" name="textEdit_console_output">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="3">
+        <widget class="QProgressBar" name="progressBar_protocols">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="value">
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="1">
         <widget class="QPushButton" name="pushButton_pause">
          <property name="enabled">
@@ -929,6 +945,9 @@ QPushButton:disabled {
           <string>Pause</string>
          </property>
         </widget>
+       </item>
+       <item row="0" column="0" colspan="3">
+        <widget class="RunQueue" name="run_queue_widget"/>
        </item>
        <item row="1" column="2">
         <widget class="QPushButton" name="pushButton_stop">
@@ -967,34 +986,18 @@ QPushButton:disabled {
          </property>
         </widget>
        </item>
-       <item row="0" column="3" rowspan="3">
-        <widget class="Console_TextEdit" name="textEdit_console_output">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
+       <item row="3" column="4">
+        <widget class="QPushButton" name="pushButton_clear_log">
+         <property name="styleSheet">
+          <string notr="true"/>
          </property>
-         <property name="textInteractionFlags">
-          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         <property name="text">
+          <string>Clear Log</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="0" colspan="3">
-        <widget class="RunQueue" name="run_queue_widget"/>
-       </item>
-       <item row="2" column="0" colspan="3">
-        <widget class="QProgressBar" name="progressBar_protocols">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="value">
-          <number>0</number>
-         </property>
-        </widget>
+       <item row="0" column="3" rowspan="4">
+        <widget class="VariableTable" name="queue_variable_table"/>
        </item>
       </layout>
      </widget>
@@ -1206,6 +1209,11 @@ QPushButton:disabled {
    <class>RunQueue</class>
    <extends>QListWidget</extends>
    <header>nomad_camels.ui_widgets.run_queue</header>
+  </customwidget>
+  <customwidget>
+   <class>VariableTable</class>
+   <extends>QTableView</extends>
+   <header>nomad_camels.ui_widgets.variable_table</header>
   </customwidget>
  </customwidgets>
  <resources/>

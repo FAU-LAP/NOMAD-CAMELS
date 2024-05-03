@@ -203,6 +203,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.running_protocol = None
         self.run_queue_widget.protocols_dict = self.protocols_dict
         self.run_queue_widget.protocol_signal.connect(self.next_queued_protocol)
+        self.run_queue_widget.variable_table = self.queue_variable_table
+        self.queue_variable_table.setHidden(True)
         self.devices_from_queue = []
 
         # Extension Contexts
@@ -1731,8 +1733,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         -------
 
         """
+        from copy import deepcopy
+
         self.progressBar_protocols.setValue(0)
-        protocol = self.protocols_dict[protocol_name]
+        protocol = deepcopy(self.protocols_dict[protocol_name])
         protocol.variables = variables or protocol.variables
         protocol.session_name = self.lineEdit_session.text()
         if re.search(r"[^\w\s]", protocol.session_name):

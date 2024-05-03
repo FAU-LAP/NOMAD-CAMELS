@@ -17,13 +17,15 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
-    QGridLayout, QHBoxLayout, QLabel, QLineEdit,
-    QListWidgetItem, QMainWindow, QMenu, QMenuBar,
-    QProgressBar, QPushButton, QSizePolicy, QSpacerItem,
-    QSplitter, QStatusBar, QVBoxLayout, QWidget)
+    QGridLayout, QHBoxLayout, QHeaderView, QLabel,
+    QLineEdit, QListWidgetItem, QMainWindow, QMenu,
+    QMenuBar, QProgressBar, QPushButton, QSizePolicy,
+    QSpacerItem, QSplitter, QStatusBar, QVBoxLayout,
+    QWidget)
 
 from nomad_camels.ui_widgets.console_redirect import Console_TextEdit
 from nomad_camels.ui_widgets.run_queue import RunQueue
+from nomad_camels.ui_widgets.variable_table import VariableTable
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -542,22 +544,11 @@ class Ui_MainWindow(object):
         self.gridLayout_4 = QGridLayout(self.widget)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.gridLayout_4.setContentsMargins(0, 0, 0, 0)
-        self.pushButton_clear_log = QPushButton(self.widget)
-        self.pushButton_clear_log.setObjectName(u"pushButton_clear_log")
-        self.pushButton_clear_log.setStyleSheet(u"")
-
-        self.gridLayout_4.addWidget(self.pushButton_clear_log, 3, 3, 1, 1)
-
         self.pushButton_close_plots = QPushButton(self.widget)
         self.pushButton_close_plots.setObjectName(u"pushButton_close_plots")
         self.pushButton_close_plots.setStyleSheet(u"")
 
         self.gridLayout_4.addWidget(self.pushButton_close_plots, 3, 0, 1, 2)
-
-        self.pushButton_show_log = QPushButton(self.widget)
-        self.pushButton_show_log.setObjectName(u"pushButton_show_log")
-
-        self.gridLayout_4.addWidget(self.pushButton_show_log, 3, 2, 1, 1)
 
         self.pushButton_resume = QPushButton(self.widget)
         self.pushButton_resume.setObjectName(u"pushButton_resume")
@@ -585,6 +576,25 @@ class Ui_MainWindow(object):
 
         self.gridLayout_4.addWidget(self.pushButton_resume, 1, 0, 1, 1)
 
+        self.pushButton_show_log = QPushButton(self.widget)
+        self.pushButton_show_log.setObjectName(u"pushButton_show_log")
+
+        self.gridLayout_4.addWidget(self.pushButton_show_log, 3, 2, 1, 1)
+
+        self.textEdit_console_output = Console_TextEdit(self.widget)
+        self.textEdit_console_output.setObjectName(u"textEdit_console_output")
+        self.textEdit_console_output.setMaximumSize(QSize(16777215, 16777215))
+        self.textEdit_console_output.setTextInteractionFlags(Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
+
+        self.gridLayout_4.addWidget(self.textEdit_console_output, 0, 4, 3, 1)
+
+        self.progressBar_protocols = QProgressBar(self.widget)
+        self.progressBar_protocols.setObjectName(u"progressBar_protocols")
+        self.progressBar_protocols.setMaximumSize(QSize(16777215, 16777215))
+        self.progressBar_protocols.setValue(0)
+
+        self.gridLayout_4.addWidget(self.progressBar_protocols, 2, 0, 1, 3)
+
         self.pushButton_pause = QPushButton(self.widget)
         self.pushButton_pause.setObjectName(u"pushButton_pause")
         self.pushButton_pause.setEnabled(False)
@@ -610,6 +620,11 @@ class Ui_MainWindow(object):
 "    }")
 
         self.gridLayout_4.addWidget(self.pushButton_pause, 1, 1, 1, 1)
+
+        self.run_queue_widget = RunQueue(self.widget)
+        self.run_queue_widget.setObjectName(u"run_queue_widget")
+
+        self.gridLayout_4.addWidget(self.run_queue_widget, 0, 0, 1, 3)
 
         self.pushButton_stop = QPushButton(self.widget)
         self.pushButton_stop.setObjectName(u"pushButton_stop")
@@ -637,24 +652,16 @@ class Ui_MainWindow(object):
 
         self.gridLayout_4.addWidget(self.pushButton_stop, 1, 2, 1, 1)
 
-        self.textEdit_console_output = Console_TextEdit(self.widget)
-        self.textEdit_console_output.setObjectName(u"textEdit_console_output")
-        self.textEdit_console_output.setMaximumSize(QSize(16777215, 16777215))
-        self.textEdit_console_output.setTextInteractionFlags(Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
+        self.pushButton_clear_log = QPushButton(self.widget)
+        self.pushButton_clear_log.setObjectName(u"pushButton_clear_log")
+        self.pushButton_clear_log.setStyleSheet(u"")
 
-        self.gridLayout_4.addWidget(self.textEdit_console_output, 0, 3, 3, 1)
+        self.gridLayout_4.addWidget(self.pushButton_clear_log, 3, 4, 1, 1)
 
-        self.run_queue_widget = RunQueue(self.widget)
-        self.run_queue_widget.setObjectName(u"run_queue_widget")
+        self.queue_variable_table = VariableTable(self.widget)
+        self.queue_variable_table.setObjectName(u"queue_variable_table")
 
-        self.gridLayout_4.addWidget(self.run_queue_widget, 0, 0, 1, 3)
-
-        self.progressBar_protocols = QProgressBar(self.widget)
-        self.progressBar_protocols.setObjectName(u"progressBar_protocols")
-        self.progressBar_protocols.setMaximumSize(QSize(16777215, 16777215))
-        self.progressBar_protocols.setValue(0)
-
-        self.gridLayout_4.addWidget(self.progressBar_protocols, 2, 0, 1, 3)
+        self.gridLayout_4.addWidget(self.queue_variable_table, 0, 3, 4, 1)
 
 
         self.gridLayout_5.addWidget(self.widget, 4, 9, 1, 2)
@@ -751,12 +758,12 @@ class Ui_MainWindow(object):
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Measurement Protocols", None))
         self.pushButton_add_meas.setText(QCoreApplication.translate("MainWindow", u"+", None))
         self.pushButton_import_protocol.setText(QCoreApplication.translate("MainWindow", u"import", None))
-        self.pushButton_clear_log.setText(QCoreApplication.translate("MainWindow", u"Clear Log", None))
         self.pushButton_close_plots.setText(QCoreApplication.translate("MainWindow", u"Close Plots", None))
-        self.pushButton_show_log.setText(QCoreApplication.translate("MainWindow", u"Show Log", None))
         self.pushButton_resume.setText(QCoreApplication.translate("MainWindow", u"Resume", None))
+        self.pushButton_show_log.setText(QCoreApplication.translate("MainWindow", u"Show Log", None))
         self.pushButton_pause.setText(QCoreApplication.translate("MainWindow", u"Pause", None))
         self.pushButton_stop.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
+        self.pushButton_clear_log.setText(QCoreApplication.translate("MainWindow", u"Clear Log", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
         self.menuTools.setTitle(QCoreApplication.translate("MainWindow", u"Tools", None))
