@@ -24,9 +24,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 
 # Changelog
-## 1.0.7
+## 1.1.0
 Features:
 - Protocols and manual controls are now sortable into tabs!
+- Protocols can now be run in a queue
 - added possibility to force sequential on/off for single channels
 
 Fixes:
