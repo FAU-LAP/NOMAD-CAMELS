@@ -998,16 +998,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def remove_manual_control(self, control_name):
         """
-        
+        Remove a manual control from the manual controls. Also remove the button from the button area.
 
         Parameters
         ----------
-        control_name :
-
-
-        Returns
-        -------
-
+        control_name : str
+            The name of the manual control to remove.
         """
         self.manual_controls.pop(control_name)
         self.button_area_manual.remove_button(control_name)
@@ -1015,6 +1011,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.button_area_manual.setHidden(True)
 
     def move_manual_control(self, control_name):
+        """
+        Move a manual control to another tab.
+
+        Parameters
+        ----------
+        control_name : str
+            The name of the manual control to move.
+        """
         from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import (
             MoveDialog,
         )
@@ -1036,17 +1040,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def update_man_cont_data(self, control_data, old_name):
         """
+        Update the data of a manual control. The old name is used to remove the old control from the manual controls. The new name is used to add the updated control to the manual controls.
 
         Parameters
         ----------
-        control_data :
+        control_data : dict
+            The updated data of the manual control.
 
-        old_name :
-
-
-        Returns
-        -------
-
+        old_name : str
+            The old name of the manual control.
         """
         self.manual_controls.pop(old_name)
         self.manual_controls[control_data["name"]] = control_data
@@ -1055,15 +1057,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def open_manual_control_config(self, control_name):
         """
+        Open the configuration dialog of a manual control. If the dialog is accepted, the data of the control is updated using the `update_man_cont_data` method.
 
         Parameters
         ----------
-        control_name :
-
-
-        Returns
-        -------
-
+        control_name : str
+            The name of the manual control to configure.
         """
         # IMPORT get_control_by_type_name only if needed
         from nomad_camels.manual_controls.get_manual_controls import (
@@ -1078,15 +1077,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def add_button_to_manuals(self, name, tab=""):
         """
+        Add a button to the manual controls area.
 
         Parameters
         ----------
-        name :
-
-
-        Returns
-        -------
-
+        name : str
+            The name of the manual control to add.
+        tab : str
+            The tab to add the button to. If not given, the button is added to the active tab.
         """
         button = options_run_button.Options_Run_Button(
             name, small_text="Start", protocol_options=False
@@ -1098,17 +1096,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def add_functions_to_manual_button(self, button, name):
         """
+        Connect the functions of the manual control button. The functions are to open the configuration dialog, to start the manual control, and to remove the manual control.
 
         Parameters
         ----------
-        button :
+        button : options_run_button.Options_Run_Button
+            The button to connect the functions to.
 
-        name :
-
-
-        Returns
-        -------
-
+        name : str
+            The name of the manual control to connect the functions to.
         """
         button.config_function = (
             lambda state=None, x=name: self.open_manual_control_config(x)
@@ -1119,7 +1115,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         button.update_functions()
 
     def populate_manuals_buttons(self):
-        """ """
+        """
+        Clears the manual controls area and adds the buttons for all manual controls."""
         self.button_area_manual.clear_area()
         if not self.manual_controls:
             self.button_area_manual.setHidden(True)
@@ -1137,15 +1134,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def start_manual_control(self, name):
         """
+        Start a manual control by instantiating the control class and adding it to the list of open windows. The control is also connected to the `close_manual_control` method.
 
         Parameters
         ----------
-        name :
-
-
-        Returns
-        -------
-
+        name : str
+            The name of the manual control to start.
         """
         # IMPORT get_control_by_type_name only if needed
         from nomad_camels.manual_controls.get_manual_controls import (
