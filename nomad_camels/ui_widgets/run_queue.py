@@ -15,6 +15,14 @@ from PySide6.QtWidgets import (
 
 
 class RunWidget(QWidget):
+    """
+    A widget that represents a single run in the run queue. It contains a label with the name of the protocol, a checkbox whether the protocol is ready to run, and a button to remove the protocol from the queue.
+
+    Parameters
+    ----------
+    text : str
+        The name of the protocol / the text to display on the label."""
+
     def __init__(self, text):
         super().__init__()
         self.name = text
@@ -35,6 +43,12 @@ class RunWidget(QWidget):
 
 
 class RunQueue(QListWidget):
+    """
+    A QListWidget that represents the run queue. It contains a list of RunWidgets, each representing a single run in the queue. When a run is removed from the queue, the corresponding RunWidget is removed from the QListWidget. The order of the runs in the queue is determined by the order of the RunWidgets in the QListWidget. The RunQueue emits a signal when a the ready status of a run is changed, so that the next run can be started automatically.
+
+    Each run can have its own variables, the values do not change the default settings for the protocol.
+    """
+
     protocol_signal = Signal(str, dict)
 
     def __init__(self, parent=None, protocols_dict=None, variable_table=None):
@@ -53,6 +67,9 @@ class RunQueue(QListWidget):
         self.last_selected = None
 
     def add_item(self, text):
+        """
+        Add a new item to the run queue. The item is represented by a RunWidget, which is added to a QListWidgetItem, which is then added to the QListWidget. The item is also added to the order list, which determines the order of the runs in the queue. The name of the protocol and its variables are stored in the protocol_name_variables dictionary.
+        """
         item = QListWidgetItem(self)
 
         # Create a QFrame
@@ -81,6 +98,14 @@ class RunQueue(QListWidget):
         ]
 
     def check_next_protocol(self):
+        """
+        Check if the first protocol in the queue is ready to run. If it is, emit the protocol_signal with the name of the protocol and its variables. If the protocol is not ready to run, do nothing.
+
+        Returns
+        -------
+        bool
+            True if the next protocol is ready to run, False otherwise.
+        """
         # Check if the next protocol is ready to run
         if len(self.order_list) == 0:
             return False
@@ -98,11 +123,24 @@ class RunQueue(QListWidget):
         return False
 
     def remove_first(self):
+        """
+        Remove the first item in the queue.
+        """
         if len(self.order_list) == 0:
             return
         self.remove_item(self.order_list[0], ask=False)
 
     def remove_item(self, item, ask=True):
+        """
+        Remove an item from the run queue. The item is removed from the order list and the QListWidget. If `ask` is True, a QMessageBox is shown to ask the user if they are sure they want to remove the item.
+
+        Parameters
+        ----------
+        item : QListWidgetItem
+            The item to remove.
+        ask : bool, optional
+            Whether to ask the user if they are sure they want to remove the item. The default is True.
+        """
         # ask the user if they are sure
         name = self.itemWidget(item).layout().itemAt(0).widget().name
         if ask:
@@ -123,11 +161,17 @@ class RunQueue(QListWidget):
         self.takeItem(self.row(item))
 
     def update_order_list(self):
-        # Update the order list to match the current order of items in the QListWidget
+        """
+        Update the order list to match the current order of items in the QListWidget
+
+        """
         self.order_list = [self.item(i) for i in range(self.count())]
         self.check_next_protocol()
 
     def change_variable_table(self):
+        """
+        Change the variables displayed in the variable table to match the selected run.
+        """
         if (
             self.last_selected is not None
             and str(self.last_selected) in self.protocol_name_variables
