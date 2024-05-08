@@ -63,7 +63,7 @@ standard_string += "from PySide6.QtWidgets import QApplication, QMessageBox\n"
 standard_string += "from PySide6.QtCore import QCoreApplication, QThread\n"
 standard_string += "import datetime\n"
 standard_string += (
-    "from nomad_camels.main_classes import plot_widget, list_plot, plot_2D\n"
+    "from nomad_camels.main_classes import plot_pyqtgraph, list_plot, plot_2D\n"
 )
 standard_string += "from nomad_camels.utility.databroker_export import broker_to_hdf5, broker_to_dict, broker_to_NX\n"
 standard_string += "from nomad_camels.utility import theme_changing\n"
@@ -281,11 +281,6 @@ def build_protocol(
         # For each device execute the get_opyd_and_py_file_contents from the helper_functions
         # This adds the .pya and .py files to the metadata dictionary md
         read_device_drivers_string += f"\tmd = helper_functions.get_opyd_and_py_file_contents({classname}, md, '{dev}')\n"
-
-
-
-
-
 
     # finishing up the device initialization
     devices_string += '\t\tprint("devices connected")\n'

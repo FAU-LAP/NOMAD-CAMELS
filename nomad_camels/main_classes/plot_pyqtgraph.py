@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QComboBox,
     QLabel,
     QLineEdit,
+    QMenuBar,
 )
 from PySide6.QtCore import Signal, QObject, Qt, QCoreApplication, QTimer, QEvent
 from PySide6.QtGui import QIcon
@@ -22,7 +23,7 @@ import pyqtgraph as pg
 
 import lmfit
 
-from bluesky.callbacks.mpl_plotting import LivePlot, LiveFitPlot, QtAwareCallback
+from bluesky.callbacks.mpl_plotting import LiveFitPlot, QtAwareCallback
 from bluesky.callbacks import LiveFit
 from bluesky.callbacks.core import get_obj_fields
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
@@ -44,7 +45,7 @@ from nomad_camels.main_classes.plot_widget import LiveFit_Eva
 #     pg.setConfigOptions(background="k", foreground="w")
 
 
-class PlotWidget(pg.PlotWidget):
+class PlotWidget(QWidget):
     """Class for creating a plot widget.
 
     Parameters
@@ -142,6 +143,7 @@ class PlotWidget(pg.PlotWidget):
         **kwargs,
     ):
         super().__init__(parent=parent)
+        self.plot_widget = pg.PlotWidget()
         self.x_name = x_name
         self.y_names = y_names
         self.stream_name = stream_name
@@ -207,11 +209,63 @@ class PlotWidget(pg.PlotWidget):
             xlabel=xlabel,
             ylabel=ylabel,
             epoch=epoch,
-            plot_item=self.getPlotItem(),
+            plot_item=self.plot_widget.getPlotItem(),
         )
+        self.livePlot.new_data.connect(self.show)
+        self.livePlot.setup_done.connect(self.make_toolbar)
+        self.toolbar = None
+        self.pushButton_show_options = QPushButton("Options")
+        self.pushButton_show_options.clicked.connect(self.show_options)
+        self.pushButton_clear = QPushButton("Clear Plot")
+        self.pushButton_clear.clicked.connect(self.clear_plot)
+        # self.plot_options = Plot_Options(self, self.livePlot)
+        self.options_open = False
+        label_n_data = QLabel("# data points:")
+        self.lineEdit_n_data = QLineEdit(str(maxlen))
+        self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
+        self.setLayout(QGridLayout())
+        self.layout().addWidget(self.plot_widget, 0, 0, 1, 4)
+        self.layout().addWidget(self.pushButton_show_options, 2, 0)
+        self.layout().addWidget(self.pushButton_clear, 2, 1)
+        self.layout().addWidget(label_n_data, 2, 2)
+        self.layout().addWidget(self.lineEdit_n_data, 2, 3)
+
+    def make_toolbar(self):
+        self.toolbar = QMenuBar()
+        for action in self.plot_widget.getPlotItem().getViewBox().menu.actions():
+            self.toolbar.addAction(action)
+        self.layout().addWidget(self.toolbar, 1, 0, 1, 4)
+
+    def change_maxlen(self):
+        text = self.lineEdit_n_data.text()
+        if not text or text.lower() in ["none", "inf", "np.inf"]:
+            maxlen = np.inf
+        else:
+            try:
+                maxlen = int(text)
+            except ValueError:
+                return
+        self.livePlot.change_maxlen(maxlen)
+
+    def show_options(self):
+        pass
+
+    def clear_plot(self):
+        pass
+
+    def closeEvent(self, event):
+        self.closing.emit()
+        super().closeEvent(event)
 
 
-class LivePlot(QtAwareCallback):
+class Plot_Options(QWidget, Ui_Plot_Options):
+    pass
+
+
+class LivePlot(QtAwareCallback, QObject):
+    new_data = Signal()
+    setup_done = Signal()
+
     def __init__(
         self,
         x_name,
@@ -232,7 +286,10 @@ class LivePlot(QtAwareCallback):
         epoch="run",
         **kwargs,
     ):
-        super().__init__(use_teleporter=kwargs.pop("use_teleporter", None))
+        QtAwareCallback.__init__(
+            self, use_teleporter=kwargs.pop("use_teleporter", None)
+        )
+        QObject.__init__(self)
         self.plotItem = plot_item
 
         def setup():
@@ -282,6 +339,7 @@ class LivePlot(QtAwareCallback):
             except Exception as e:
                 print(e)
         self.legend = self.plotItem.addLegend()
+        self.setup_done.emit()
 
     def descriptor(self, doc):
         if doc["name"] == self.stream_name:
