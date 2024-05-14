@@ -1,5 +1,6 @@
 import sys
 import os
+from typing import Tuple
 
 sys.path.append(os.path.dirname(__file__).split("nomad_camels")[0])
 import numpy as np
@@ -9,24 +10,20 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QApplication,
     QPushButton,
-    QTableWidgetItem,
-    QColorDialog,
-    QComboBox,
     QLabel,
     QLineEdit,
     QMenuBar,
+    QGraphicsSceneMouseEvent,
 )
-from PySide6.QtCore import Signal, QObject, Qt, QCoreApplication, QTimer, QEvent
-from PySide6.QtGui import QIcon
+from PySide6.QtCore import Signal, QObject, QTimer, QEvent
 import PySide6
 import pyqtgraph as pg
+from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
 
 import lmfit
 
-from bluesky.callbacks.mpl_plotting import LiveFitPlot, QtAwareCallback
-from bluesky.callbacks import LiveFit
-from bluesky.callbacks.core import get_obj_fields
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from bluesky.callbacks.mpl_plotting import QtAwareCallback
+from bluesky.callbacks.core import get_obj_fields, CallbackBase
 
 from nomad_camels.gui.plot_options import Ui_Plot_Options
 from nomad_camels.utility.fit_variable_renaming import replace_name
@@ -211,8 +208,8 @@ class PlotWidget(QWidget):
             epoch=epoch,
             plot_item=self.plot_widget.getPlotItem(),
         )
-        self.livePlot.new_data.connect(self.show)
-        self.livePlot.setup_done.connect(self.make_toolbar)
+        self.livePlot.new_data_signal.connect(self.show)
+        self.livePlot.setup_done_signal.connect(self.make_toolbar)
         self.toolbar = None
         self.pushButton_show_options = QPushButton("Options")
         self.pushButton_show_options.clicked.connect(self.show_options)
@@ -232,7 +229,15 @@ class PlotWidget(QWidget):
 
     def make_toolbar(self):
         self.toolbar = QMenuBar()
-        for action in self.plot_widget.getPlotItem().getViewBox().menu.actions():
+        viewbox = self.plot_widget.getPlotItem().getViewBox()
+        menu = viewbox.menu
+        scene = viewbox.scene()
+        # dummy mouseclickevent
+        press_event = QGraphicsSceneMouseEvent(QEvent.GraphicsSceneMousePress)
+        event = MouseClickEvent(press_event)
+        scene.addParentContextMenus(viewbox, menu, event)
+        actions = menu.actions()
+        for action in actions:
             self.toolbar.addAction(action)
         self.layout().addWidget(self.toolbar, 1, 0, 1, 4)
 
@@ -262,9 +267,9 @@ class Plot_Options(QWidget, Ui_Plot_Options):
     pass
 
 
-class LivePlot(QtAwareCallback, QObject):
-    new_data = Signal()
-    setup_done = Signal()
+class LivePlot(QObject, CallbackBase):
+    new_data_signal = Signal()
+    setup_done_signal = Signal()
 
     def __init__(
         self,
@@ -286,14 +291,22 @@ class LivePlot(QtAwareCallback, QObject):
         epoch="run",
         **kwargs,
     ):
-        QtAwareCallback.__init__(
-            self, use_teleporter=kwargs.pop("use_teleporter", None)
-        )
+        CallbackBase.__init__(self)
         QObject.__init__(self)
+        self.__teleporter = Teleporter()
+        self.__teleporter.name_doc_escape.connect(handle_teleport)
         self.plotItem = plot_item
+        import threading
+
+        self.__setup_lock = threading.Lock()
+        self.__setup_event = threading.Event()
 
         def setup():
             nonlocal y_names, x_name, title, xlabel, ylabel, epoch
+            with self.__setup_lock:
+                if self.__setup_event.is_set():
+                    return
+                self.__setup_event.set()
             # set the labels
             self.use_abs = {"x": False, "y": False, "y2": False}
             self.plots = {}
@@ -325,6 +338,12 @@ class LivePlot(QtAwareCallback, QObject):
         self.multi_stream = multi_stream
         self.__setup = setup
 
+    def __call__(self, name, doc, *, escape=False):
+        if not escape and self.__teleporter is not None:
+            self.__teleporter.name_doc_escape.emit(name, doc, self)
+        else:
+            return CallbackBase.__call__(self, name, doc)
+
     def start(self, doc):
         self.__setup()
         for i, y in enumerate(self.ys):
@@ -339,7 +358,7 @@ class LivePlot(QtAwareCallback, QObject):
             except Exception as e:
                 print(e)
         self.legend = self.plotItem.addLegend()
-        self.setup_done.emit()
+        self.setup_done_signal.emit()
 
     def descriptor(self, doc):
         if doc["name"] == self.stream_name:
@@ -390,6 +409,16 @@ class LivePlot(QtAwareCallback, QObject):
     def update_plot(self):
         for y in self.ys:
             self.current_plots[y].setData(self.x_data, self.y_data[y])
+        print(type(self.new_data_signal))
+        self.new_data_signal.emit()
+
+
+class Teleporter(QObject):
+    name_doc_escape = Signal(str, dict, object)
+
+
+def handle_teleport(name, doc, obj):
+    obj(name, doc, escape=True)
 
 
 import sys
