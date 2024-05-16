@@ -4,6 +4,7 @@ import os
 sys.path.append(os.path.dirname(__file__).split("nomad_camels")[0])
 import numpy as np
 import threading
+from collections import deque
 
 from PySide6.QtWidgets import (
     QWidget,
@@ -15,7 +16,7 @@ from PySide6.QtWidgets import (
     QMenuBar,
     QGraphicsSceneMouseEvent,
 )
-from PySide6.QtCore import Signal, QObject, QTimer, QEvent
+from PySide6.QtCore import Signal, QObject, QTimer, QEvent, Qt
 import PySide6
 import pyqtgraph as pg
 from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
@@ -32,6 +33,36 @@ from nomad_camels.main_classes.plot_widget import LiveFit_Eva
 # recognized by pyqtgraph: r, g, b, c, m, y, k, w
 colors = ["w", "r", (0, 100, 255), "g", "c", "m", "y", "k"]
 colors += ["orange", "purple", "brown", "pink", "gray", "olive", "navy", "teal"]
+
+
+symbols = {
+    "circle": "o",
+    "square": "s",
+    "triangle": "t",
+    "diamond": "d",
+    "plus": "+",
+    "upwards triangle": "t1",
+    "right triangle": "t2",
+    "left triangle": "t3",
+    "pentagon": "p",
+    "hexagon": "h",
+    "star": "star",
+    "cross": "x",
+    "arrow_up": "arrow_up",
+    "arrow_right": "arrow_right",
+    "arrow_down": "arrow_down",
+    "arrow_left": "arrow_left",
+    "crosshair": "crosshair",
+}
+
+linestyles = {
+    "solid": Qt.PenStyle.SolidLine,
+    "dashed": Qt.PenStyle.DashLine,
+    "dash-dot": Qt.PenStyle.DashDotLine,
+    "dash-dot-dot": Qt.PenStyle.DashDotDotLine,
+    "dotted": Qt.PenStyle.DotLine,
+    "none": Qt.PenStyle.NoPen,
+}
 
 # dark_mode = False
 # pg.setConfigOptions(background="w", foreground="k")
@@ -154,7 +185,7 @@ class PlotWidget(QWidget):
         if y_axes and 2 in y_axes.values():
             self.ax2_viewbox = pg.ViewBox()
             plotItem = self.plot_widget.getPlotItem()
-            self.ax2_viewbox.setParentItem(plotItem)
+            # self.ax2_viewbox.setParentItem(plotItem)
             plotItem.scene().addItem(self.ax2_viewbox)
             plotItem.getAxis("right").linkToView(self.ax2_viewbox)
             self.ax2_viewbox.setXLink(plotItem)
@@ -216,7 +247,9 @@ class PlotWidget(QWidget):
             else:
                 viewbox = self.plot_widget.getPlotItem().vb
             self.liveFitPlots.append(
-                LiveFitPlot(livefit, viewbox, display_values=fit["display_values"])
+                LiveFitPlot(
+                    livefit, viewbox, plotItem, display_values=fit["display_values"]
+                )
             )
 
         self.livePlot = LivePlot(
@@ -286,7 +319,9 @@ class PlotWidget(QWidget):
         pass
 
     def clear_plot(self):
-        pass
+        self.livePlot.clear_plot()
+        for fit in self.liveFitPlots:
+            fit.clear_plot()
 
     def closeEvent(self, event):
         self.closing.emit()
@@ -392,7 +427,10 @@ class LivePlot(QObject, CallbackBase):
                         [],
                         [],
                         label=self.y_names[i],
-                        pen=pg.mkPen(color=color, width=2),
+                        symbol="o",
+                        symbolPen=pg.mkPen(color=color),
+                        symbolBrush=pg.mkBrush(color=color),
+                        pen=pg.mkPen(color=color, width=2, style=linestyles["none"]),
                     )
                     self.ax2_viewbox.addItem(plot)
                 else:
@@ -400,7 +438,10 @@ class LivePlot(QObject, CallbackBase):
                         [],
                         [],
                         label=self.y_names[i],
-                        pen=pg.mkPen(color=color, width=2),
+                        symbol="o",
+                        symbolPen=pg.mkPen(color=color),
+                        symbolBrush=pg.mkBrush(color=color),
+                        pen=pg.mkPen(color=color, width=2, style=linestyles["none"]),
                     )
                 self.n_plots += 1
             except Exception as e:
@@ -482,12 +523,34 @@ class LivePlot(QObject, CallbackBase):
         for fit in self.fitPlots:
             fit.stop(doc)
 
+    def clear_plot(self):
+        for y in self.ys:
+            self.current_plots[y].setData([], [])
+        self.x_data = []
+        for y in self.y_data:
+            self.y_data[y] = []
+        for fit in self.fitPlots:
+            fit.clear_plot()
+        self.update_plot()
+
+    def change_maxlen(self, maxlen):
+        self.maxlen = maxlen
+        if maxlen < np.inf:
+            self.x_data = deque(self.x_data, maxlen=maxlen)
+            for y in self.y_data:
+                self.y_data[y] = deque(self.y_data[y], maxlen=maxlen)
+        else:
+            self.x_data = list(self.x_data)
+            for y in self.y_data:
+                self.y_data[y] = list(self.y_data[y])
+
 
 class LiveFitPlot(CallbackBase):
     def __init__(
         self,
         livefit,
         viewbox,
+        plotItem,
         *,
         num_points=100,
         display_values=False,
@@ -502,6 +565,7 @@ class LiveFitPlot(CallbackBase):
             )
 
         self.viewbox = viewbox
+        self.plotItem = plotItem
         self.livefit = livefit
         self.display_values = display_values
         self.num_points = num_points
@@ -544,7 +608,10 @@ class LiveFitPlot(CallbackBase):
         self.plot = pg.PlotDataItem(
             [],
             [],
-            pen=pg.mkPen(color=self.color, width=1.5),
+            pen=pg.mkPen(color=self.color, width=2, style=linestyles["solid"]),
+            symbol=None,
+            symbolPen=pg.mkPen(color=self.color),
+            symbolBrush=pg.mkBrush(color=self.color),
         )
         self.viewbox.addItem(self.plot)
         self.livefit.start(doc)
@@ -590,7 +657,7 @@ class LiveFitPlot(CallbackBase):
                 self.parent_plot.line_number += len(vals)
             for i, (name, value) in enumerate(vals.items()):
                 text = pg.TextItem(f"{name}: {value:.3e}", color=self.color)
-                text.setParentItem(self.viewbox.parentItem())
+                text.setParentItem(self.plotItem)
                 text.setPos(50, (i + self.line_position) * 20)
                 self.text_objects.append(text)
 
