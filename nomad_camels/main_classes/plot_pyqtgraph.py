@@ -4,6 +4,7 @@ from typing import Tuple
 
 sys.path.append(os.path.dirname(__file__).split("nomad_camels")[0])
 import numpy as np
+import threading
 
 from PySide6.QtWidgets import (
     QWidget,
@@ -22,7 +23,6 @@ from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
 
 import lmfit
 
-from bluesky.callbacks.mpl_plotting import QtAwareCallback
 from bluesky.callbacks.core import get_obj_fields, CallbackBase
 
 from nomad_camels.gui.plot_options import Ui_Plot_Options
@@ -147,6 +147,26 @@ class PlotWidget(QWidget):
         self.fits = fits
         self.eva = Evaluator(namespace=namespace)
         self.liveFits = []
+        self.liveFitPlots = []
+        self.ax2_viewbox = None
+        if y_axes and 2 in y_axes.values():
+            self.ax2_viewbox = pg.ViewBox()
+            plotItem = self.plot_widget.getPlotItem()
+            self.ax2_viewbox.setParentItem(plotItem)
+            plotItem.scene().addItem(self.ax2_viewbox)
+            plotItem.getAxis("right").linkToView(self.ax2_viewbox)
+            self.ax2_viewbox.setXLink(plotItem)
+            ax2 = pg.AxisItem("right")
+            ax2.setLabel(self.y_names[0])
+            ax2.linkToView(self.ax2_viewbox)
+            plotItem.layout.addItem(ax2, 2, 3)
+
+            def updateViews():
+                self.ax2_viewbox.setGeometry(plotItem.vb.sceneBoundingRect())
+                self.ax2_viewbox.linkedViewChanged(plotItem.vb, self.ax2_viewbox.XAxis)
+
+            updateViews()
+            plotItem.vb.sigResized.connect(updateViews)
         for fit in self.fits:
             if fit["use_custom_func"]:
                 model = lmfit.models.ExpressionModel(fit["custom_func"])
@@ -177,18 +197,24 @@ class PlotWidget(QWidget):
             name = f'{label}_{fit["y"]}_v_{fit["x"]}'
             name = replace_name(name)
             add_data = fit["additional_data"] or {}
-            self.liveFits.append(
-                LiveFit_Eva(
-                    model,
-                    fit["y"],
-                    {"x": fit["x"]},
-                    self.eva,
-                    init_guess,
-                    name=name,
-                    additional_data=add_data,
-                    params=params,
-                    stream_name=stream_name,
-                )
+            livefit = LiveFit_Eva(
+                model,
+                fit["y"],
+                {"x": fit["x"]},
+                self.eva,
+                init_guess,
+                name=name,
+                additional_data=add_data,
+                params=params,
+                stream_name=stream_name,
+            )
+            self.liveFits.append(livefit)
+            if y_axes and y_axes[fit["y"]] == 2:
+                viewbox = self.ax2_viewbox
+            else:
+                viewbox = self.plot_widget.getPlotItem().vb
+            self.liveFitPlots.append(
+                LiveFitPlot(livefit, viewbox, display_values=fit["display_values"])
             )
 
         self.livePlot = LivePlot(
@@ -207,6 +233,8 @@ class PlotWidget(QWidget):
             ylabel=ylabel,
             epoch=epoch,
             plot_item=self.plot_widget.getPlotItem(),
+            ax2_viewbox=self.ax2_viewbox,
+            fitPlots=self.liveFitPlots,
         )
         self.livePlot.new_data_signal.connect(self.show)
         self.livePlot.setup_done_signal.connect(self.make_toolbar)
@@ -289,6 +317,8 @@ class LivePlot(QObject, CallbackBase):
         xlabel=None,
         ylabel=None,
         epoch="run",
+        ax2_viewbox=None,
+        fitPlots=None,
         **kwargs,
     ):
         CallbackBase.__init__(self)
@@ -296,8 +326,6 @@ class LivePlot(QObject, CallbackBase):
         self.__teleporter = Teleporter()
         self.__teleporter.name_doc_escape.connect(handle_teleport)
         self.plotItem = plot_item
-        import threading
-
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
 
@@ -337,7 +365,13 @@ class LivePlot(QObject, CallbackBase):
         self.legend = None
         self.desc = []
         self.multi_stream = multi_stream
+        self.ax2_viewbox = ax2_viewbox
         self.__setup = setup
+        self.fitPlots = fitPlots or []
+        for fit in self.fitPlots:
+            fit.parent_plot = self
+        self.descs_fit_readying = {}
+        self.line_number = 0
 
     def __call__(self, name, doc, *, escape=False):
         if not escape and self.__teleporter is not None:
@@ -350,26 +384,6 @@ class LivePlot(QObject, CallbackBase):
         for i, y in enumerate(self.ys):
             try:
                 if y in self.y_axes and self.y_axes[y] == 2:
-                    if not self.ax2_viewbox:
-                        self.ax2_viewbox = pg.ViewBox()
-                        self.plotItem.scene().addItem(self.ax2_viewbox)
-                        self.plotItem.getAxis("right").linkToView(self.ax2_viewbox)
-                        self.ax2_viewbox.setXLink(self.plotItem)
-                        ax2 = pg.AxisItem("right")
-                        ax2.setLabel(self.y_names[i])
-                        ax2.linkToView(self.ax2_viewbox)
-                        self.plotItem.layout.addItem(ax2, 2, 3)
-
-                        def updateViews():
-                            self.ax2_viewbox.setGeometry(
-                                self.plotItem.vb.sceneBoundingRect()
-                            )
-                            self.ax2_viewbox.linkedViewChanged(
-                                self.plotItem.vb, self.ax2_viewbox.XAxis
-                            )
-
-                        updateViews()
-                        self.plotItem.vb.sigResized.connect(updateViews)
                     self.current_plots[y] = plot = pg.PlotDataItem(
                         [], [], label=self.y_names[i]
                     )
@@ -382,13 +396,19 @@ class LivePlot(QObject, CallbackBase):
                 print(e)
         self.legend = self.plotItem.addLegend()
         self.setup_done_signal.emit()
+        for fit in self.fitPlots:
+            fit.start(doc)
 
     def descriptor(self, doc):
         if doc["name"] == self.stream_name:
             self.desc.append(doc["uid"])
         elif doc["name"].startswith(f"{self.stream_name}_fits_readying_"):
-            # TODO
-            pass
+            for fit in self.fitPlots:
+                if (
+                    doc["name"]
+                    == f"{self.stream_name}_fits_readying_{fit.livefit.name}"
+                ):
+                    self.descs_fit_readying[doc["uid"]] = fit
         elif self.multi_stream and doc["name"].startswith(self.stream_name):
             self.desc.append(doc["uid"])
 
@@ -400,6 +420,8 @@ class LivePlot(QObject, CallbackBase):
                 print(e)
             return
         if doc["descriptor"] not in self.desc:
+            if doc["descriptor"] in self.descs_fit_readying:
+                self.descs_fit_readying[doc["descriptor"]].get_ready()
             return
         try:
             new_x = doc["data"][self.x]
@@ -422,6 +444,8 @@ class LivePlot(QObject, CallbackBase):
                     self.eva.event(doc)
                 new_y[y] = self.eva.eval(y)
         self.update_caches(new_x, new_y)
+        for fit in self.fitPlots:
+            fit.event(doc)
         self.update_plot()
 
     def update_caches(self, new_x, new_y):
@@ -433,6 +457,130 @@ class LivePlot(QObject, CallbackBase):
         for y in self.ys:
             self.current_plots[y].setData(self.x_data, self.y_data[y])
         self.new_data_signal.emit()
+
+    def stop(self, doc):
+        if not self.x_data:
+            print(
+                f"LivePlot did not get any data that corresponds to the x axis. {self.x}"
+            )
+        for y in self.y_data:
+            if not self.y_data[y]:
+                print(f"LivePlot did not get any data for {y}")
+            if len(self.y_data[y]) != len(self.x_data):
+                print(f"LivePlot has a length mismatch for {y}")
+        for fit in self.fitPlots:
+            fit.stop(doc)
+
+
+class LiveFitPlot(CallbackBase):
+    def __init__(
+        self,
+        livefit,
+        viewbox,
+        *,
+        num_points=100,
+        display_values=False,
+        **kwargs,
+    ):
+        super().__init__()
+        self.__teleporter = Teleporter()
+        self.__teleporter.name_doc_escape.connect(handle_teleport)
+        if len(livefit.independent_vars) != 1:
+            raise NotImplementedError(
+                "LiveFitPlot supports models with one independent variable only."
+            )
+
+        self.viewbox = viewbox
+        self.livefit = livefit
+        self.display_values = display_values
+        self.num_points = num_points
+        self.kwargs = kwargs
+
+        (self.__x_key,) = livefit.independent_vars.keys()
+        self._has_been_run = False
+        livefit.parent_plot = self
+        self.x_data = []
+        self.y_data = []
+        self.plot = None
+        self.x = None
+        self.line_position = None
+        self.text_objects = []
+
+        self.__setup_lock = threading.Lock()
+        self.__setup_event = threading.Event()
+
+        def setup():
+            nonlocal livefit
+            with self.__setup_lock:
+                if self.__setup_event.is_set():
+                    return
+                self.__setup_event.set()
+            (x,) = livefit.independent_vars.values()
+            if x is not None:
+                self.x, *others = get_obj_fields([x])
+            else:
+                self.x = "seq_num"
+            y = livefit.y
+            self.y, *others = get_obj_fields([y])
+
+        self.__setup = setup
+
+    def start(self, doc):
+        self.__setup()
+        self.x_data, self.y_data = [], []
+        self.plot = pg.PlotDataItem([], [])
+        self.viewbox.addItem(self.plot)
+        self.livefit.start(doc)
+        (self.x,) = self.livefit.independent_vars.keys()
+
+    def get_ready(self):
+        """Passes the command to the `_livefit`"""
+        self.livefit.get_ready()
+
+    def event(self, doc):
+        """Passes the event to the `livefit`"""
+        self.livefit.event(doc)
+
+    def fit_has_result(self):
+        if self.livefit.result is not None:
+            x_data = self.livefit.independent_vars_data[self.__x_key]
+            x_points = np.linspace(np.min(x_data), np.max(x_data), self.num_points)
+            kwargs = {self.__x_key: x_points}
+            kwargs.update(self.livefit.result.values)
+            self.y_data = self.livefit.result.model.eval(**kwargs)
+            self.x_data = x_points
+            kwargs.update(self.livefit.result.init_values)
+            self.update_plot()
+
+    def clear_plot(self):
+        if self.plot:
+            self.plot.setData([], [])
+        for text in self.text_objects:
+            self.viewbox.removeItem(text)
+        self.text_objects = []
+
+    def update_plot(self):
+        self.plot.setData(self.x_data, self.y_data)
+        self.parent_plot.update_plot()
+        if self.display_values:
+            for text in self.text_objects:
+                self.viewbox.removeItem(text)
+            self.text_objects.clear()
+            vals = self.livefit.result.values
+            if self.line_position is None:
+                self.line_position = self.parent_plot.line_number
+                self.parent_plot.line_number += len(vals)
+            for i, (name, value) in enumerate(vals.items()):
+                text = pg.TextItem(f"{name}: {value}")
+                text.setParentItem(self.viewbox.parentItem())
+                text.setPos(10, (i + self.line_position) * 20)
+                self.text_objects.append(text)
+
+    def __call__(self, name, doc, *, escape=False):
+        if not escape and self.__teleporter is not None:
+            self.__teleporter.name_doc_escape.emit(name, doc, self)
+        else:
+            return CallbackBase.__call__(self, name, doc)
 
 
 class Teleporter(QObject):
