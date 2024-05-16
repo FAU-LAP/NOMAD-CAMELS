@@ -1,6 +1,5 @@
 import sys
 import os
-from typing import Tuple
 
 sys.path.append(os.path.dirname(__file__).split("nomad_camels")[0])
 import numpy as np
@@ -30,6 +29,9 @@ from nomad_camels.utility.fit_variable_renaming import replace_name
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 from nomad_camels.main_classes.plot_widget import LiveFit_Eva
 
+# recognized by pyqtgraph: r, g, b, c, m, y, k, w
+colors = ["w", "r", (0, 100, 255), "g", "c", "m", "y", "k"]
+colors += ["orange", "purple", "brown", "pink", "gray", "olive", "navy", "teal"]
 
 # dark_mode = False
 # pg.setConfigOptions(background="w", foreground="k")
@@ -372,6 +374,7 @@ class LivePlot(QObject, CallbackBase):
             fit.parent_plot = self
         self.descs_fit_readying = {}
         self.line_number = 0
+        self.n_plots = 0
 
     def __call__(self, name, doc, *, escape=False):
         if not escape and self.__teleporter is not None:
@@ -383,15 +386,23 @@ class LivePlot(QObject, CallbackBase):
         self.__setup()
         for i, y in enumerate(self.ys):
             try:
+                color = colors[self.n_plots % len(colors)]
                 if y in self.y_axes and self.y_axes[y] == 2:
                     self.current_plots[y] = plot = pg.PlotDataItem(
-                        [], [], label=self.y_names[i]
+                        [],
+                        [],
+                        label=self.y_names[i],
+                        pen=pg.mkPen(color=color, width=2),
                     )
                     self.ax2_viewbox.addItem(plot)
                 else:
                     self.current_plots[y] = self.plotItem.plot(
-                        [], [], label=self.y_names[i]
+                        [],
+                        [],
+                        label=self.y_names[i],
+                        pen=pg.mkPen(color=color, width=2),
                     )
+                self.n_plots += 1
             except Exception as e:
                 print(e)
         self.legend = self.plotItem.addLegend()
@@ -505,6 +516,7 @@ class LiveFitPlot(CallbackBase):
         self.x = None
         self.line_position = None
         self.text_objects = []
+        self.color = "w"
 
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
@@ -528,10 +540,16 @@ class LiveFitPlot(CallbackBase):
     def start(self, doc):
         self.__setup()
         self.x_data, self.y_data = [], []
-        self.plot = pg.PlotDataItem([], [])
+        self.color = colors[self.parent_plot.n_plots % len(colors)]
+        self.plot = pg.PlotDataItem(
+            [],
+            [],
+            pen=pg.mkPen(color=self.color, width=1.5),
+        )
         self.viewbox.addItem(self.plot)
         self.livefit.start(doc)
         (self.x,) = self.livefit.independent_vars.keys()
+        self.parent_plot.n_plots += 1
 
     def get_ready(self):
         """Passes the command to the `_livefit`"""
@@ -571,9 +589,9 @@ class LiveFitPlot(CallbackBase):
                 self.line_position = self.parent_plot.line_number
                 self.parent_plot.line_number += len(vals)
             for i, (name, value) in enumerate(vals.items()):
-                text = pg.TextItem(f"{name}: {value}")
+                text = pg.TextItem(f"{name}: {value:.3e}", color=self.color)
                 text.setParentItem(self.viewbox.parentItem())
-                text.setPos(10, (i + self.line_position) * 20)
+                text.setPos(50, (i + self.line_position) * 20)
                 self.text_objects.append(text)
 
     def __call__(self, name, doc, *, escape=False):
