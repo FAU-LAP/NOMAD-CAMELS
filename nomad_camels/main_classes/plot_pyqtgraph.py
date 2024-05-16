@@ -325,6 +325,7 @@ class LivePlot(QObject, CallbackBase):
         self.x_data = []
         self.y_data = {}
         self.y_axes = y_axes or {}
+        self.ax2_viewbox = None
         self.maxlen = maxlen
         self.stream_name = stream_name
         self.eva = evaluator
@@ -349,8 +350,30 @@ class LivePlot(QObject, CallbackBase):
         for i, y in enumerate(self.ys):
             try:
                 if y in self.y_axes and self.y_axes[y] == 2:
-                    # TODO
-                    pass
+                    if not self.ax2_viewbox:
+                        self.ax2_viewbox = pg.ViewBox()
+                        self.plotItem.scene().addItem(self.ax2_viewbox)
+                        self.plotItem.getAxis("right").linkToView(self.ax2_viewbox)
+                        self.ax2_viewbox.setXLink(self.plotItem)
+                        ax2 = pg.AxisItem("right")
+                        ax2.setLabel(self.y_names[i])
+                        ax2.linkToView(self.ax2_viewbox)
+                        self.plotItem.layout.addItem(ax2, 2, 3)
+
+                        def updateViews():
+                            self.ax2_viewbox.setGeometry(
+                                self.plotItem.vb.sceneBoundingRect()
+                            )
+                            self.ax2_viewbox.linkedViewChanged(
+                                self.plotItem.vb, self.ax2_viewbox.XAxis
+                            )
+
+                        updateViews()
+                        self.plotItem.vb.sigResized.connect(updateViews)
+                    self.current_plots[y] = plot = pg.PlotDataItem(
+                        [], [], label=self.y_names[i]
+                    )
+                    self.ax2_viewbox.addItem(plot)
                 else:
                     self.current_plots[y] = self.plotItem.plot(
                         [], [], label=self.y_names[i]
@@ -409,7 +432,6 @@ class LivePlot(QObject, CallbackBase):
     def update_plot(self):
         for y in self.ys:
             self.current_plots[y].setData(self.x_data, self.y_data[y])
-        print(type(self.new_data_signal))
         self.new_data_signal.emit()
 
 
