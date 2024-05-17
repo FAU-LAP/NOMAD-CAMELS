@@ -362,9 +362,23 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.setupUi(self)
         self.livePlot = livePlot
         self.all_items = {}
+        self.items_in_2 = []
+        self.checkBox_log_x.setChecked(self.livePlot.plotItem.getAxis("bottom").logMode)
+        self.checkBox_log_y.setChecked(self.livePlot.plotItem.getAxis("left").logMode)
+        if self.livePlot.ax2_viewbox:
+            self.checkBox_log_y2.setChecked(
+                self.livePlot.plotItem.getAxis("right").logMode
+            )
+        self.checkBox_log_x.stateChanged.connect(self.set_log)
+        self.checkBox_log_y.stateChanged.connect(self.set_log)
+        self.checkBox_log_y2.stateChanged.connect(self.set_log)
+        self.checkBox_use_abs_x.stateChanged.connect(self.set_log)
+        self.checkBox_use_abs_y.stateChanged.connect(self.set_log)
+        self.checkBox_use_abs_y2.stateChanged.connect(self.set_log)
 
     def update_plot_items(self):
         self.all_items.clear()
+        self.items_in_2.clear()
         items_viewbox_1 = self.livePlot.plotItem.vb.allChildItems()
         for item in items_viewbox_1:
             if isinstance(item, pg.PlotDataItem):
@@ -374,6 +388,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
             for item in items_viewbox_2:
                 if isinstance(item, pg.PlotDataItem):
                     self.all_items[item.name()] = item
+                    self.items_in_2.append(item.name())
         self.tableWidget.clear()
         self.tableWidget.setColumnCount(4)
         self.tableWidget.setMinimumWidth(400)
@@ -445,6 +460,30 @@ class Plot_Options(Ui_Plot_Options, QWidget):
             self.all_items[name].setSymbolPen(pg.mkPen(color=color))
             self.all_items[name].setSymbolBrush(pg.mkBrush(color=color))
 
+    def set_log(self):
+        x = self.checkBox_log_x.isChecked()
+        self.checkBox_use_abs_x.setEnabled(x)
+        y = self.checkBox_log_y.isChecked()
+        self.checkBox_use_abs_y.setEnabled(y)
+        y2 = self.checkBox_log_y2.isChecked()
+        self.checkBox_use_abs_y2.setEnabled(y2)
+        for name, item in self.all_items.items():
+            if name in self.items_in_2:
+                item.setLogMode(x, y2)
+            else:
+                item.setLogMode(x, y)
+        self.livePlot.plotItem.setLogMode(x, y)
+        if self.livePlot.ax2_viewbox:
+            self.livePlot.plotItem.getAxis("right").setLogMode(y2)
+            self.livePlot.ax2_viewbox.setLogMode("y", y2)
+            self.livePlot.ax2_viewbox.enableAutoRange()
+        self.livePlot.use_abs["x"] = self.checkBox_use_abs_x.isChecked()
+        self.livePlot.use_abs["y"] = self.checkBox_use_abs_y.isChecked()
+        self.livePlot.use_abs["y2"] = self.checkBox_use_abs_y2.isChecked()
+        self.livePlot.update_plot()
+        # TODO log for y2 not correct
+        # TODO autoscale for y2 not correct
+
 
 class LivePlot(QObject, CallbackBase):
     new_data_signal = Signal()
@@ -504,7 +543,6 @@ class LivePlot(QObject, CallbackBase):
         self.x_data = []
         self.y_data = {}
         self.y_axes = y_axes or {}
-        self.ax2_viewbox = None
         self.maxlen = maxlen
         self.stream_name = stream_name
         self.eva = evaluator
@@ -622,8 +660,26 @@ class LivePlot(QObject, CallbackBase):
         self.x_data.append(new_x)
 
     def update_plot(self):
+        if self.plotItem.getAxis("bottom").logMode and self.use_abs["x"]:
+            plot_x = np.abs(self.x_data)
+        else:
+            plot_x = self.x_data
         for y in self.ys:
-            self.current_plots[y].setData(self.x_data, self.y_data[y])
+            y_abs = False
+            y2_abs = False
+            if self.plotItem.getAxis("left").logMode and self.use_abs["y"]:
+                y_abs = True
+            if (
+                self.ax2_viewbox
+                and self.plotItem.getAxis("right").logMode
+                and self.use_abs["y2"]
+            ):
+                y2_abs = True
+            if self.y_axes.get(y, 1) == 2:
+                plot_y = np.abs(self.y_data[y]) if y2_abs else self.y_data[y]
+            else:
+                plot_y = np.abs(self.y_data[y]) if y_abs else self.y_data[y]
+            self.current_plots[y].setData(plot_x, plot_y)
         self.new_data_signal.emit()
 
     def stop(self, doc):
