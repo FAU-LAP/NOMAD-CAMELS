@@ -287,6 +287,7 @@ class PlotWidget(QWidget):
             ax2_viewbox=self.ax2_viewbox,
             fitPlots=self.liveFitPlots,
         )
+        self.livePlot.plotItem.showGrid(True, True)
         self.livePlot.new_data_signal.connect(self.show)
         self.livePlot.setup_done_signal.connect(self.make_toolbar)
         self.toolbar = None
@@ -320,8 +321,15 @@ class PlotWidget(QWidget):
         scene.addParentContextMenus(viewbox, menu, event)
         actions = menu.actions()
         for action in actions:
+            if action.text() == "View All":
+                action.triggered.connect(self.auto_range)
             self.toolbar.addAction(action)
         self.layout().addWidget(self.toolbar, 1, 1, 1, 4)
+
+    def auto_range(self):
+        self.livePlot.plotItem.vb.autoRange()
+        if self.ax2_viewbox:
+            self.ax2_viewbox.autoRange()
 
     def change_maxlen(self):
         text = self.lineEdit_n_data.text()
@@ -482,7 +490,6 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.livePlot.use_abs["y2"] = self.checkBox_use_abs_y2.isChecked()
         self.livePlot.update_plot()
         # TODO log for y2 not correct
-        # TODO autoscale for y2 not correct
 
 
 class LivePlot(QObject, CallbackBase):
