@@ -9,14 +9,13 @@ from collections import deque
 from PySide6.QtWidgets import (
     QWidget,
     QGridLayout,
-    QApplication,
     QPushButton,
     QLabel,
     QLineEdit,
     QMenuBar,
     QGraphicsSceneMouseEvent,
 )
-from PySide6.QtCore import Signal, QObject, QTimer, QEvent, Qt
+from PySide6.QtCore import Signal, QObject, QEvent, Qt
 import PySide6
 import pyqtgraph as pg
 from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
@@ -31,9 +30,20 @@ from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 from nomad_camels.main_classes.plot_widget import LiveFit_Eva
 
 # recognized by pyqtgraph: r, g, b, c, m, y, k, w
-colors = ["w", "r", (0, 100, 255), "g", "c", "m", "y", "k"]
-colors += ["orange", "purple", "brown", "pink", "gray", "olive", "navy", "teal"]
+dark_mode_colors = ["w", "r", (0, 100, 255), "g", "c", "m", "y", "k"]
 
+matplotlib_default_colors = [
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    "#d62728",
+    "#9467bd",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+    "#17becf",
+]
 
 symbols = {
     "circle": "o",
@@ -64,15 +74,17 @@ linestyles = {
     "none": Qt.PenStyle.NoPen,
 }
 
-# dark_mode = False
-# pg.setConfigOptions(background="w", foreground="k")
+dark_mode = False
+pg.setConfigOptions(background="w", foreground="k")
+colors = matplotlib_default_colors
 
 
-# def activate_dark_mode():
-#     """Changes the plot-style to dark-mode."""
-#     global dark_mode
-#     dark_mode = True
-#     pg.setConfigOptions(background="k", foreground="w")
+def activate_dark_mode():
+    """Changes the plot-style to dark-mode."""
+    global dark_mode, colors
+    dark_mode = True
+    pg.setConfigOptions(background="k", foreground="w")
+    colors = dark_mode_colors
 
 
 class PlotWidget(QWidget):
@@ -646,7 +658,6 @@ class LiveFitPlot(CallbackBase):
 
     def update_plot(self):
         self.plot.setData(self.x_data, self.y_data)
-        self.parent_plot.update_plot()
         if self.display_values:
             for text in self.text_objects:
                 self.viewbox.removeItem(text)
@@ -658,8 +669,9 @@ class LiveFitPlot(CallbackBase):
             for i, (name, value) in enumerate(vals.items()):
                 text = pg.TextItem(f"{name}: {value:.3e}", color=self.color)
                 text.setParentItem(self.plotItem)
-                text.setPos(50, (i + self.line_position) * 20)
+                text.setPos(80, (i + self.line_position) * 20)
                 self.text_objects.append(text)
+        self.parent_plot.update_plot()
 
     def __call__(self, name, doc, *, escape=False):
         if not escape and self.__teleporter is not None:
@@ -674,38 +686,3 @@ class Teleporter(QObject):
 
 def handle_teleport(name, doc, obj):
     obj(name, doc, escape=True)
-
-
-import sys
-import numpy as np
-import pyqtgraph as pg
-
-
-class Plotter:
-    def __init__(self):
-        self.app = QApplication(sys.argv)
-        self.plot = pg.PlotWidget()
-        self.data = [0, 1]
-        self.data2 = [0, 1]
-        self.plot_item = self.plot.plot(self.data)
-        self.plot_item2 = self.plot.plot(self.data2, pen=pg.mkPen(color="r", width=2))
-
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update)
-        self.timer.start(1000)  # Update every 1000 ms
-
-    def update(self):
-        # Update the data
-        self.data.append(np.random.random())
-        self.data2.append(np.random.random())
-        self.plot_item.setData(self.data)
-        self.plot_item2.setData(self.data2)
-
-    def run(self):
-        self.plot.show()
-        sys.exit(self.app.exec_())
-
-
-if __name__ == "__main__":
-    plotter = Plotter()
-    plotter.run()
