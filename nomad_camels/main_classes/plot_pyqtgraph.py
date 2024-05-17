@@ -14,6 +14,9 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMenuBar,
     QGraphicsSceneMouseEvent,
+    QTableWidgetItem,
+    QComboBox,
+    QColorDialog,
 )
 from PySide6.QtCore import Signal, QObject, QEvent, Qt
 import PySide6
@@ -63,6 +66,7 @@ symbols = {
     "arrow_down": "arrow_down",
     "arrow_left": "arrow_left",
     "crosshair": "crosshair",
+    "none": None,
 }
 
 linestyles = {
@@ -286,21 +290,24 @@ class PlotWidget(QWidget):
         self.livePlot.new_data_signal.connect(self.show)
         self.livePlot.setup_done_signal.connect(self.make_toolbar)
         self.toolbar = None
-        self.pushButton_show_options = QPushButton("Options")
+        self.pushButton_show_options = QPushButton("Show Options")
         self.pushButton_show_options.clicked.connect(self.show_options)
         self.pushButton_clear = QPushButton("Clear Plot")
         self.pushButton_clear.clicked.connect(self.clear_plot)
-        # self.plot_options = Plot_Options(self, self.livePlot)
+        self.plot_options = Plot_Options(self, self.livePlot)
         self.options_open = False
         label_n_data = QLabel("# data points:")
         self.lineEdit_n_data = QLineEdit(str(maxlen))
         self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
         self.setLayout(QGridLayout())
-        self.layout().addWidget(self.plot_widget, 0, 0, 1, 4)
-        self.layout().addWidget(self.pushButton_show_options, 2, 0)
-        self.layout().addWidget(self.pushButton_clear, 2, 1)
-        self.layout().addWidget(label_n_data, 2, 2)
-        self.layout().addWidget(self.lineEdit_n_data, 2, 3)
+        self.layout().addWidget(self.plot_widget, 0, 1, 1, 4)
+        self.layout().addWidget(self.pushButton_show_options, 2, 1)
+        self.layout().addWidget(self.pushButton_clear, 2, 2)
+        self.layout().addWidget(label_n_data, 2, 3)
+        self.layout().addWidget(self.lineEdit_n_data, 2, 4)
+        self.layout().addWidget(self.plot_options, 0, 0, 3, 1)
+        self.plot_options.hide()
+        self.adjustSize()
 
     def make_toolbar(self):
         self.toolbar = QMenuBar()
@@ -314,7 +321,7 @@ class PlotWidget(QWidget):
         actions = menu.actions()
         for action in actions:
             self.toolbar.addAction(action)
-        self.layout().addWidget(self.toolbar, 1, 0, 1, 4)
+        self.layout().addWidget(self.toolbar, 1, 1, 1, 4)
 
     def change_maxlen(self):
         text = self.lineEdit_n_data.text()
@@ -328,7 +335,16 @@ class PlotWidget(QWidget):
         self.livePlot.change_maxlen(maxlen)
 
     def show_options(self):
-        pass
+        if self.options_open:
+            self.pushButton_show_options.setText("Show Options")
+            self.options_open = False
+            self.plot_options.hide()
+            self.adjustSize()
+        else:
+            self.pushButton_show_options.setText("Hide Options")
+            self.options_open = True
+            self.plot_options.show()
+            self.plot_options.update_plot_items()
 
     def clear_plot(self):
         self.livePlot.clear_plot()
@@ -340,8 +356,94 @@ class PlotWidget(QWidget):
         super().closeEvent(event)
 
 
-class Plot_Options(QWidget, Ui_Plot_Options):
-    pass
+class Plot_Options(Ui_Plot_Options, QWidget):
+    def __init__(self, parent=None, livePlot=None):
+        super().__init__(parent=parent)
+        self.setupUi(self)
+        self.livePlot = livePlot
+        self.all_items = {}
+
+    def update_plot_items(self):
+        self.all_items.clear()
+        items_viewbox_1 = self.livePlot.plotItem.vb.allChildItems()
+        for item in items_viewbox_1:
+            if isinstance(item, pg.PlotDataItem):
+                self.all_items[item.name()] = item
+        if self.livePlot.ax2_viewbox:
+            items_viewbox_2 = self.livePlot.ax2_viewbox.allChildItems()
+            for item in items_viewbox_2:
+                if isinstance(item, pg.PlotDataItem):
+                    self.all_items[item.name()] = item
+        self.tableWidget.clear()
+        self.tableWidget.setColumnCount(4)
+        self.tableWidget.setMinimumWidth(400)
+        self.tableWidget.setHorizontalHeaderLabels(
+            ["Name", "marker", "linestyle", "color"]
+        )
+        self.tableWidget.verticalHeader().setHidden(True)
+        self.tableWidget.setRowCount(len(self.all_items))
+        for i, (name, item) in enumerate(
+            sorted(self.all_items.items(), key=lambda x: x[0].lower())
+        ):
+            self.tableWidget.setItem(i, 0, QTableWidgetItem(name))
+
+            markerwidge = QComboBox()
+            markerwidge.addItems(symbols.keys())
+            marker = item.opts["symbol"]
+            if marker in symbols.values():
+                marker = list(symbols.keys())[list(symbols.values()).index(marker)]
+            markerwidge.setCurrentText(marker)
+            markerwidge.currentTextChanged.connect(
+                lambda text, n=i: self.change_symbol(text, n)
+            )
+            self.tableWidget.setCellWidget(i, 1, markerwidge)
+
+            linestylewidge = QComboBox()
+            linestylewidge.addItems(linestyles.keys())
+            linestyle = item.opts["pen"].style()
+            if linestyle in linestyles.values():
+                linestyle = list(linestyles.keys())[
+                    list(linestyles.values()).index(linestyle)
+                ]
+            linestylewidge.setCurrentText(linestyle)
+            linestylewidge.currentTextChanged.connect(
+                lambda text, item=item: item.setPen(
+                    pg.mkPen(
+                        color=item.opts["pen"].color(),
+                        width=item.opts["pen"].width(),
+                        style=linestyles[text],
+                    )
+                )
+            )
+            self.tableWidget.setCellWidget(i, 2, linestylewidge)
+
+            color = item.opts["pen"].color()
+            colorwidge = QPushButton(color.name())
+            colorwidge.clicked.connect(lambda n=i: self.change_color(n))
+            self.tableWidget.setCellWidget(i, 3, colorwidge)
+
+    def change_symbol(self, symbol, row):
+        name = self.tableWidget.item(row, 0).text()
+        self.change_color(row, just_update=True)
+        self.all_items[name].setSymbol(symbols[symbol])
+
+    def change_color(self, row, just_update=False):
+        if just_update:
+            item = self.tableWidget.cellWidget(row, 3)
+            color = item.text()
+            name = self.tableWidget.item(row, 0).text()
+            self.all_items[name].opts["pen"].setColor(color)
+            self.all_items[name].setSymbolPen(pg.mkPen(color=color))
+            self.all_items[name].setSymbolBrush(pg.mkBrush(color=color))
+            return
+        color = QColorDialog.getColor()
+        if color.isValid():
+            item = self.tableWidget.cellWidget(row, 3)
+            item.setText(color.name())
+            name = self.tableWidget.item(row, 0).text()
+            self.all_items[name].opts["pen"].setColor(color)
+            self.all_items[name].setSymbolPen(pg.mkPen(color=color))
+            self.all_items[name].setSymbolBrush(pg.mkBrush(color=color))
 
 
 class LivePlot(QObject, CallbackBase):
@@ -439,6 +541,7 @@ class LivePlot(QObject, CallbackBase):
                         [],
                         [],
                         label=self.y_names[i],
+                        name=self.y_names[i],
                         symbol="o",
                         symbolPen=pg.mkPen(color=color),
                         symbolBrush=pg.mkBrush(color=color),
@@ -450,6 +553,7 @@ class LivePlot(QObject, CallbackBase):
                         [],
                         [],
                         label=self.y_names[i],
+                        name=self.y_names[i],
                         symbol="o",
                         symbolPen=pg.mkPen(color=color),
                         symbolBrush=pg.mkBrush(color=color),
@@ -621,6 +725,7 @@ class LiveFitPlot(CallbackBase):
             [],
             [],
             pen=pg.mkPen(color=self.color, width=2, style=linestyles["solid"]),
+            name=self.livefit.name,
             symbol=None,
             symbolPen=pg.mkPen(color=self.color),
             symbolBrush=pg.mkBrush(color=self.color),
