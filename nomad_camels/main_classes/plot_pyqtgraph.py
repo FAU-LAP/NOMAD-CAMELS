@@ -198,12 +198,12 @@ class PlotWidget(QWidget):
         self.liveFits = []
         self.liveFitPlots = []
         self.ax2_viewbox = None
+        ax2 = None
         if y_axes and 2 in y_axes.values():
             self.ax2_viewbox = pg.ViewBox()
             plotItem = self.plot_widget.getPlotItem()
-            # self.ax2_viewbox.setParentItem(plotItem)
             plotItem.scene().addItem(self.ax2_viewbox)
-            plotItem.getAxis("right").linkToView(self.ax2_viewbox)
+            ax2 = plotItem.getAxis("right")
             self.ax2_viewbox.setXLink(plotItem)
             ax2 = pg.AxisItem("right")
             ax2.setLabel(self.y_names[0])
@@ -285,6 +285,7 @@ class PlotWidget(QWidget):
             epoch=epoch,
             plot_item=self.plot_widget.getPlotItem(),
             ax2_viewbox=self.ax2_viewbox,
+            ax2_axis=ax2,
             fitPlots=self.liveFitPlots,
         )
         self.livePlot.plotItem.showGrid(True, True)
@@ -475,21 +476,21 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.checkBox_use_abs_y.setEnabled(y)
         y2 = self.checkBox_log_y2.isChecked()
         self.checkBox_use_abs_y2.setEnabled(y2)
+        self.livePlot.use_abs["x"] = self.checkBox_use_abs_x.isChecked()
+        self.livePlot.use_abs["y"] = self.checkBox_use_abs_y.isChecked()
+        self.livePlot.use_abs["y2"] = self.checkBox_use_abs_y2.isChecked()
         for name, item in self.all_items.items():
             if name in self.items_in_2:
                 item.setLogMode(x, y2)
             else:
                 item.setLogMode(x, y)
-        self.livePlot.plotItem.setLogMode(x, y)
         if self.livePlot.ax2_viewbox:
-            self.livePlot.plotItem.getAxis("right").setLogMode(y2)
-            self.livePlot.ax2_viewbox.setLogMode("y", y2)
+            self.livePlot.plotItem.getAxis("right").setLogMode(x, y2)
+            self.livePlot.ax2_viewbox.setLogMode(x, y2)
+            self.livePlot.ax2_axis.setLogMode(y2)
             self.livePlot.ax2_viewbox.enableAutoRange()
-        self.livePlot.use_abs["x"] = self.checkBox_use_abs_x.isChecked()
-        self.livePlot.use_abs["y"] = self.checkBox_use_abs_y.isChecked()
-        self.livePlot.use_abs["y2"] = self.checkBox_use_abs_y2.isChecked()
+        self.livePlot.plotItem.setLogMode(x, y)
         self.livePlot.update_plot()
-        # TODO log for y2 not correct
 
 
 class LivePlot(QObject, CallbackBase):
@@ -515,6 +516,7 @@ class LivePlot(QObject, CallbackBase):
         ylabel=None,
         epoch="run",
         ax2_viewbox=None,
+        ax2_axis=None,
         fitPlots=None,
         **kwargs,
     ):
@@ -562,6 +564,7 @@ class LivePlot(QObject, CallbackBase):
         self.desc = []
         self.multi_stream = multi_stream
         self.ax2_viewbox = ax2_viewbox
+        self.ax2_axis = ax2_axis
         self.__setup = setup
         self.fitPlots = fitPlots or []
         for fit in self.fitPlots:
