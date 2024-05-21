@@ -276,9 +276,6 @@ class PlotWidget(QWidget):
             stream_name=stream_name,
             evaluator=self.eva,
             y_axes=y_axes,
-            logX=logX,
-            logY=logY,
-            logY2=logY2,
             title=title,
             xlabel=xlabel,
             ylabel=ylabel,
@@ -297,6 +294,9 @@ class PlotWidget(QWidget):
         self.pushButton_clear = QPushButton("Clear Plot")
         self.pushButton_clear.clicked.connect(self.clear_plot)
         self.plot_options = Plot_Options(self, self.livePlot)
+        self.plot_options.checkBox_log_x.setChecked(logX)
+        self.plot_options.checkBox_log_y.setChecked(logY)
+        self.plot_options.checkBox_log_y2.setChecked(logY2)
         self.options_open = False
         label_n_data = QLabel("# data points:")
         self.lineEdit_n_data = QLineEdit(str(maxlen))
@@ -326,6 +326,7 @@ class PlotWidget(QWidget):
                 action.triggered.connect(self.auto_range)
             self.toolbar.addAction(action)
         self.layout().addWidget(self.toolbar, 1, 1, 1, 4)
+        self.plot_options.set_log()
 
     def auto_range(self):
         self.livePlot.plotItem.vb.autoRange()
@@ -508,9 +509,6 @@ class LivePlot(QObject, CallbackBase):
         evaluator=None,
         stream_name="primary",
         y_axes=None,
-        logX=False,
-        logY=False,
-        logY2=False,
         title="",
         xlabel=None,
         ylabel=None,
@@ -527,6 +525,7 @@ class LivePlot(QObject, CallbackBase):
         self.plotItem = plot_item
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
+        self.use_abs = {"x": False, "y": False, "y2": False}
 
         def setup():
             nonlocal y_names, x_name, title, xlabel, ylabel, epoch
@@ -535,7 +534,6 @@ class LivePlot(QObject, CallbackBase):
                     return
                 self.__setup_event.set()
             # set the labels
-            self.use_abs = {"x": False, "y": False, "y2": False}
             self.plots = {}
             if x_name is not None:
                 self.x, *others = get_obj_fields([x_name])
