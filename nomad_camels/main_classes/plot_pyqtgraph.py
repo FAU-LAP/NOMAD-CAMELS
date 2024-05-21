@@ -866,3 +866,221 @@ class Teleporter(QObject):
 
 def handle_teleport(name, doc, obj):
     obj(name, doc, escape=True)
+
+
+class PlotWidget_2D(QWidget):
+    """ """
+
+    closing = Signal()
+
+    def __init__(
+        self,
+        x_name,
+        y_name,
+        z_name,
+        parent=None,
+        namespace=None,
+        xlabel="",
+        ylabel="",
+        zlabel="",
+        title="",
+        stream_name="primary",
+        **kwargs,
+    ):
+        super().__init__(parent=parent)
+        self.plot_widget = pg.PlotWidget()
+        self.x_name = x_name
+        self.y_name = y_name
+        self.z_name = z_name
+        self.plot = self.plot_widget.plotItem
+        self.plot.setLabel("bottom", xlabel or x_name)
+        self.plot.setLabel("left", ylabel or y_name)
+        self.plot.setLabel("right", zlabel or z_name)
+        self.stream_name = stream_name
+
+        self.toolbar = None
+        eva = Evaluator(namespace=namespace)
+        self.livePlot = LivePlot_2D(
+            x_name,
+            y_name,
+            z_name,
+            plot_widget=self.plot_widget,
+            xlabel=xlabel,
+            ylabel=ylabel,
+            zlabel=zlabel,
+            cmap="viridis",
+            evaluator=eva,
+            stream_name=stream_name,
+            **kwargs,
+        )
+
+        self.setLayout(QGridLayout())
+        self.layout().addWidget(self.plot_widget, 0, 0)
+        self.make_toolbar()
+        self.adjustSize()
+
+    def make_toolbar(self):
+        self.toolbar = QMenuBar()
+        viewbox = self.plot_widget.getPlotItem().getViewBox()
+        menu = viewbox.menu
+        scene = viewbox.scene()
+        # dummy mouseclickevent
+        press_event = QGraphicsSceneMouseEvent(QEvent.GraphicsSceneMousePress)
+        event = MouseClickEvent(press_event)
+        scene.addParentContextMenus(viewbox, menu, event)
+        actions = menu.actions()
+        for action in actions:
+            self.toolbar.addAction(action)
+        self.layout().addWidget(self.toolbar, 1, 0)
+
+    def clear_plot(self):
+        self.livePlot.clear_plot()
+
+    def closeEvent(self, event):
+        self.closing.emit()
+        super().closeEvent(event)
+
+
+class LivePlot_2D(QObject, CallbackBase):
+    """ """
+
+    new_data = Signal()
+
+    def __init__(
+        self,
+        x,
+        y,
+        z,
+        plot_widget,
+        *,
+        xlabel="",
+        ylabel="",
+        zlabel="",
+        cmap="viridis",
+        evaluator=None,
+        stream_name="primary",
+        **kwargs,
+    ):
+        CallbackBase.__init__(self)
+        QObject.__init__(self)
+        self.__teleporter = Teleporter()
+        self.__teleporter.name_doc_escape.connect(handle_teleport)
+        self.x = x
+        self.y = y
+        self.z = z
+        self.xlabel = xlabel
+        self.ylabel = ylabel
+        self.zlabel = zlabel
+        self.x_data, self.y_data, self.z_data = [], [], []
+        self.cmap = pg.colormap.get(cmap)
+        self.eva = evaluator
+        self.stream_name = stream_name
+        self.kwargs = kwargs
+        self.plot_widget = plot_widget
+        self.scatter_plot = None
+        self.image = None
+        self.desc = None
+        self._epoch_offset = None
+        self._epoch = "run"
+        self._minx = self._miny = np.inf
+        self._maxx = self._maxy = -np.inf
+
+    def __call__(self, name, doc, *, escape=False):
+        if not escape and self.__teleporter is not None:
+            self.__teleporter.name_doc_escape.emit(name, doc, self)
+        else:
+            return CallbackBase.__call__(self, name, doc)
+
+    def start(self, doc):
+        self.x_data.clear()
+        self.y_data.clear()
+        self.z_data.clear()
+        self.scatter_plot = pg.ScatterPlotItem(self.x_data, self.y_data)
+        self.plot_widget.addItem(self.scatter_plot)
+        self.image = pg.ImageItem()
+        self.plot_widget.addItem(self.image)
+        self._epoch_offset = None
+        self._epoch = "run"
+
+    def descriptor(self, doc):
+        if doc["name"] == self.stream_name:
+            self.desc = doc["uid"]
+
+    def event(self, doc):
+        if doc["descriptor"] != self.desc:
+            return
+        try:
+            x = doc["data"][self.x]
+        except KeyError:
+            if self.x in ("time", "seq_num"):
+                x = doc[self.x]
+            else:
+                if not self.eva.is_to_date(doc["time"]):
+                    self.eva.event(doc)
+                x = self.eva.eval(self.x)
+        try:
+            y = doc["data"][self.y]
+        except KeyError:
+            if not self.eva.is_to_date(doc["time"]):
+                self.eva.event(doc)
+            y = self.eva.eval(self.y)
+        try:
+            z = doc["data"][self.z]
+        except KeyError:
+            if not self.eva.is_to_date(doc["time"]):
+                self.eva.event(doc)
+            z = self.eva.eval(self.z)
+        self.update(x, y, z)
+        self.new_data.emit()
+
+    def make_colormesh(self, x_shape=None, y_shape=None):
+        if x_shape is None and y_shape is None:
+            return None
+        elif x_shape is not None and y_shape is None:
+            y_shape = int(np.array(self.x_data).size / x_shape)
+        elif x_shape is None and y_shape is not None:
+            x_shape = int(np.array(self.y_data).size / y_shape)
+        try:
+            x = np.array(self.x_data).reshape((x_shape, y_shape))
+            y = np.array(self.y_data).reshape((x_shape, y_shape))
+            c = np.array(self.z_data).reshape((x_shape, y_shape))
+            return x, y, c
+        except Exception as e:
+            return None
+
+    def update(self, x, y, z):
+        x_shape = None
+        y_shape = None
+        if np.isscalar(z):
+            z = np.array([z])
+        if np.isscalar(x):
+            x = np.full(z.shape, x)
+        if np.isscalar(y):
+            y = np.full(z.shape, y)
+
+        self.x_data.extend(x)
+        self.y_data.extend(y)
+        self.z_data.extend(z)
+        x_shape = len(set(self.x_data))
+        y_shape = len(set(self.y_data))
+        z_normed = (self.z_data - np.min(self.z_data)) / (
+            np.max(self.z_data) - np.min(self.z_data)
+        )
+        mesh = self.make_colormesh(x_shape, y_shape)
+        no_mesh = True
+        if mesh:
+            x, y, z = mesh
+            self.image.clear()
+            self.image.setImage(z)
+            self.image.setRect(pg.QtCore.QRectF(x.min(), y.min(), x.ptp(), y.ptp()))
+            self.image.setLookupTable(self.cmap.getLookupTable())
+            self.plot_widget.addItem(self.image)
+            self.scatter_plot.clear()
+            no_mesh = False
+        if no_mesh:
+            colors = self.cmap.map(z_normed)
+            self.scatter_plot.setData(x=self.x_data, y=self.y_data, brush=colors)
+            self.image.clear()
+
+    def clear_plot(self):
+        pass
