@@ -610,7 +610,12 @@ class LivePlot(QObject, CallbackBase):
                 self.n_plots += 1
             except Exception as e:
                 print(e)
-        self.legend = self.plotItem.addLegend()
+        self.legend = pg.LegendItem(
+            offset=(1, 1), horSpacing=20, verSpacing=-5, pen="w" if dark_mode else "k"
+        )
+        self.legend.setParentItem(self.plotItem.vb)
+        for plot in self.current_plots.values():
+            self.legend.addItem(plot, plot.name())
         self.setup_done_signal.emit()
         for fit in self.fitPlots:
             fit.start(doc)
@@ -833,14 +838,20 @@ class LiveFitPlot(CallbackBase):
             for text in self.text_objects:
                 self.viewbox.removeItem(text)
             self.text_objects.clear()
+            legend = self.parent_plot.legend
+            y0 = 0
+            if legend is not None:
+                legendRect = legend.boundingRect()
+                legendPos = legend.scenePos()
+                y0 = legendPos.y() + legendRect.height()
             vals = self.livefit.result.values
             if self.line_position is None:
                 self.line_position = self.parent_plot.line_number
                 self.parent_plot.line_number += len(vals)
             for i, (name, value) in enumerate(vals.items()):
                 text = pg.TextItem(f"{name}: {value:.3e}", color=self.color)
-                text.setParentItem(self.plotItem)
-                text.setPos(80, (i + self.line_position) * 20)
+                text.setParentItem(self.plotItem.vb)
+                text.setPos(5, (i + self.line_position) * 20 + y0)
                 self.text_objects.append(text)
         self.parent_plot.update_plot()
 
