@@ -888,14 +888,13 @@ class PlotWidget_2D(QWidget):
         **kwargs,
     ):
         super().__init__(parent=parent)
-        self.plot_widget = pg.PlotWidget()
+        self.graphics_layout = pg.GraphicsLayoutWidget()
+        self.plot = self.graphics_layout.addPlot(col=0, row=0)
         self.x_name = x_name
         self.y_name = y_name
         self.z_name = z_name
-        self.plot = self.plot_widget.plotItem
         self.plot.setLabel("bottom", xlabel or x_name)
         self.plot.setLabel("left", ylabel or y_name)
-        self.plot.setLabel("right", zlabel or z_name)
         self.stream_name = stream_name
 
         self.toolbar = None
@@ -904,10 +903,8 @@ class PlotWidget_2D(QWidget):
             x_name,
             y_name,
             z_name,
-            plot_widget=self.plot_widget,
-            xlabel=xlabel,
-            ylabel=ylabel,
-            zlabel=zlabel,
+            plotItem=self.plot,
+            graphics_layout=self.graphics_layout,
             cmap="viridis",
             evaluator=eva,
             stream_name=stream_name,
@@ -915,13 +912,13 @@ class PlotWidget_2D(QWidget):
         )
 
         self.setLayout(QGridLayout())
-        self.layout().addWidget(self.plot_widget, 0, 0)
+        self.layout().addWidget(self.graphics_layout, 0, 0)
         self.make_toolbar()
         self.adjustSize()
 
     def make_toolbar(self):
         self.toolbar = QMenuBar()
-        viewbox = self.plot_widget.getPlotItem().getViewBox()
+        viewbox = self.plot.getViewBox()
         menu = viewbox.menu
         scene = viewbox.scene()
         # dummy mouseclickevent
@@ -951,11 +948,9 @@ class LivePlot_2D(QObject, CallbackBase):
         x,
         y,
         z,
-        plot_widget,
+        plotItem,
+        graphics_layout,
         *,
-        xlabel="",
-        ylabel="",
-        zlabel="",
         cmap="viridis",
         evaluator=None,
         stream_name="primary",
@@ -968,17 +963,16 @@ class LivePlot_2D(QObject, CallbackBase):
         self.x = x
         self.y = y
         self.z = z
-        self.xlabel = xlabel
-        self.ylabel = ylabel
-        self.zlabel = zlabel
         self.x_data, self.y_data, self.z_data = [], [], []
         self.cmap = pg.colormap.get(cmap)
         self.eva = evaluator
         self.stream_name = stream_name
         self.kwargs = kwargs
-        self.plot_widget = plot_widget
+        self.plotItem = plotItem
+        self.graphics_layout = graphics_layout
         self.scatter_plot = None
         self.image = None
+        self.hist = None
         self.desc = None
         self._epoch_offset = None
         self._epoch = "run"
@@ -996,9 +990,15 @@ class LivePlot_2D(QObject, CallbackBase):
         self.y_data.clear()
         self.z_data.clear()
         self.scatter_plot = pg.ScatterPlotItem(self.x_data, self.y_data)
-        self.plot_widget.addItem(self.scatter_plot)
+        self.plotItem.addItem(self.scatter_plot)
         self.image = pg.ImageItem()
-        self.plot_widget.addItem(self.image)
+        self.hist = pg.HistogramLUTItem()
+        self.hist.setImageItem(self.image)
+        self.hist.autoHistogramRange()
+        self.hist.gradient.setColorMap(self.cmap)
+        self.hist.axis.setLabel(self.z)
+        self.graphics_layout.addItem(self.hist, row=0, col=1)
+        self.plotItem.addItem(self.image)
         self._epoch_offset = None
         self._epoch = "run"
 
@@ -1067,20 +1067,20 @@ class LivePlot_2D(QObject, CallbackBase):
             np.max(self.z_data) - np.min(self.z_data)
         )
         mesh = self.make_colormesh(x_shape, y_shape)
-        no_mesh = True
         if mesh:
             x, y, z = mesh
             self.image.clear()
             self.image.setImage(z)
             self.image.setRect(pg.QtCore.QRectF(x.min(), y.min(), x.ptp(), y.ptp()))
             self.image.setLookupTable(self.cmap.getLookupTable())
-            self.plot_widget.addItem(self.image)
-            self.scatter_plot.clear()
-            no_mesh = False
-        if no_mesh:
+            self.scatter_plot.hide()
+            self.image.show()
+            self.hist.show()
+        else:
             colors = self.cmap.map(z_normed)
             self.scatter_plot.setData(x=self.x_data, y=self.y_data, brush=colors)
-            self.image.clear()
+            self.image.hide()
+            self.scatter_plot.show()
 
     def clear_plot(self):
         pass
