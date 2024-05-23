@@ -1120,3 +1120,118 @@ class LivePlot_NoBluesky(QObject):
     ):
         super().__init__()
         self.plotItem = plotItem
+        self.plotItem.setLabel("bottom", xlabel)
+        self.plotItem.setLabel("left", ylabel)
+        self.plotItem.setLabel("right", ylabel2) if ylabel2 else None
+        self.labels = labels
+        self.maxlen = np.inf
+        self.xdata = []
+        self.ydata = {}
+        self.current_lines = {}
+        self.y_axes = y_axes or {}
+        self.first_hidden = first_hidden or []
+        self.use_abs = {"x": False, "y": False, "y2": False}
+
+    def add_data(self, x, ys, add=True):
+        if not self.current_lines:
+            if len(self.labels) != len(ys):
+                self.labels = list(ys.keys())
+            for i, y in enumerate(ys):
+                try:
+                    color = colors[self.n_plots % len(colors)]
+                    if y in self.y_axes and self.y_axes[y] == 2:
+                        self.current_plots[y] = plot = pg.PlotDataItem(
+                            [],
+                            [],
+                            label=self.y_names[i],
+                            name=self.y_names[i],
+                            symbol=None,
+                            symbolPen=pg.mkPen(color=color),
+                            symbolBrush=pg.mkBrush(color=color),
+                            pen=pg.mkPen(
+                                color=color,
+                                width=2,
+                                style=linestyles[
+                                    "none" if y in self.first_hidden else "solid"
+                                ],
+                            ),
+                        )
+                        self.ax2_viewbox.addItem(plot)
+                    else:
+                        self.current_plots[y] = self.plotItem.plot(
+                            [],
+                            [],
+                            label=self.y_names[i],
+                            name=self.y_names[i],
+                            symbol=None,
+                            symbolPen=pg.mkPen(color=color),
+                            symbolBrush=pg.mkBrush(color=color),
+                            pen=pg.mkPen(
+                                color=color,
+                                width=2,
+                                style=linestyles[
+                                    "none" if y in self.first_hidden else "solid"
+                                ],
+                            ),
+                        )
+                        if self.maxlen < np.inf:
+                            self.ydata[y] = deque(maxlen=self.maxlen)
+                        else:
+                            self.ydata[y] = []
+                except Exception as e:
+                    print(e)
+            self.setup_done.emit()
+        if add:
+            self.xdata.append(x)
+            for y in ys:
+                if y in self.ydata:
+                    self.ydata[y].append(ys[y])
+        else:
+            self.xdata = [x]
+            self.ydata.clear()
+            for y in ys:
+                self.ydata[y] = [ys[y]]
+        if self.show_plot:
+            self.update_plot()
+
+    def change_maxlen(self, maxlen):
+        self.maxlen = maxlen
+        if maxlen < np.inf:
+            self.xdata = deque(self.xdata, maxlen=maxlen)
+            for y in self.ydata:
+                self.ydata[y] = deque(self.ydata[y], maxlen=maxlen)
+        else:
+            self.xdata = list(self.xdata)
+            for y in self.ydata:
+                self.ydata[y] = list(self.ydata[y])
+
+    def update_plot(self):
+        if self.plotItem.getAxis("bottom").logMode and self.use_abs["x"]:
+            plot_x = np.abs(self.x_data)
+        else:
+            plot_x = self.x_data
+        for y in self.ys:
+            y_abs = False
+            y2_abs = False
+            if self.plotItem.getAxis("left").logMode and self.use_abs["y"]:
+                y_abs = True
+            if (
+                self.ax2_viewbox
+                and self.plotItem.getAxis("right").logMode
+                and self.use_abs["y2"]
+            ):
+                y2_abs = True
+            if self.y_axes.get(y, 1) == 2:
+                plot_y = np.abs(self.y_data[y]) if y2_abs else self.y_data[y]
+            else:
+                plot_y = np.abs(self.y_data[y]) if y_abs else self.y_data[y]
+            self.current_plots[y].setData(plot_x, plot_y)
+        self.new_data_signal.emit()
+
+    def clear_plot(self):
+        for y in self.ys:
+            self.current_plots[y].setData([], [])
+        self.x_data = []
+        for y in self.y_data:
+            self.y_data[y] = []
+        self.update_plot()

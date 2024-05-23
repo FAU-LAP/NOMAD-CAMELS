@@ -29,6 +29,7 @@ Features:
 - Protocols and manual controls are now sortable into tabs!
 - Protocols can now be run in a queue
 - added possibility to force sequential on/off for single channels
+- Plots are now done with pyqtgraph, improving interactivity and performance
 
 Fixes:
 - Plots being placed somewhere should now not kill the program anymore
