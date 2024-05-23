@@ -17,8 +17,10 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QComboBox,
     QColorDialog,
+    QApplication,
 )
-from PySide6.QtCore import Signal, QObject, QEvent, Qt
+from PySide6.QtCore import Signal, QObject, QEvent, Qt, QCoreApplication
+from PySide6.QtGui import QIcon
 import PySide6
 import pyqtgraph as pg
 from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
@@ -186,6 +188,7 @@ class PlotWidget(QWidget):
         logY=False,
         logY2=False,
         maxlen=np.inf,
+        use_bluesky=True,
         **kwargs,
     ):
         super().__init__(parent=parent)
@@ -268,23 +271,26 @@ class PlotWidget(QWidget):
                 )
             )
 
-        self.livePlot = LivePlot(
-            x_name=x_name,
-            y_names=y_names,
-            maxlen=maxlen,
-            multi_stream=multi_stream,
-            stream_name=stream_name,
-            evaluator=self.eva,
-            y_axes=y_axes,
-            title=title,
-            xlabel=xlabel,
-            ylabel=ylabel,
-            epoch=epoch,
-            plot_item=self.plot_widget.getPlotItem(),
-            ax2_viewbox=self.ax2_viewbox,
-            ax2_axis=ax2,
-            fitPlots=self.liveFitPlots,
-        )
+        if use_bluesky:
+            self.livePlot = LivePlot(
+                x_name=x_name,
+                y_names=y_names,
+                maxlen=maxlen,
+                multi_stream=multi_stream,
+                stream_name=stream_name,
+                evaluator=self.eva,
+                y_axes=y_axes,
+                title=title,
+                xlabel=xlabel,
+                ylabel=ylabel,
+                epoch=epoch,
+                plot_item=self.plot_widget.getPlotItem(),
+                ax2_viewbox=self.ax2_viewbox,
+                ax2_axis=ax2,
+                fitPlots=self.liveFitPlots,
+            )
+        else:
+            self.livePlot = LivePlot_NoBluesky()
         self.livePlot.plotItem.showGrid(True, True)
         self.livePlot.new_data_signal.connect(self.show)
         self.livePlot.setup_done_signal.connect(self.make_toolbar)
@@ -990,6 +996,11 @@ class LivePlot_2D(QObject, CallbackBase):
         self.y_data.clear()
         self.z_data.clear()
         self.scatter_plot = pg.ScatterPlotItem(self.x_data, self.y_data)
+        self.dummy_image = pg.ImageItem()
+        self.color_bar = pg.ColorBarItem(label=self.z, interactive=False)
+        self.color_bar.setColorMap(self.cmap)
+        self.color_bar.setImageItem(self.dummy_image)
+        # self.color_bar.sigLevelsChanged.connect(self.update_scatter)
         self.plotItem.addItem(self.scatter_plot)
         self.image = pg.ImageItem()
         self.hist = pg.HistogramLUTItem()
@@ -998,9 +1009,18 @@ class LivePlot_2D(QObject, CallbackBase):
         self.hist.gradient.setColorMap(self.cmap)
         self.hist.axis.setLabel(self.z)
         self.graphics_layout.addItem(self.hist, row=0, col=1)
+        self.graphics_layout.addItem(self.color_bar, row=0, col=2)
         self.plotItem.addItem(self.image)
         self._epoch_offset = None
         self._epoch = "run"
+
+    def update_scatter(self):
+        try:
+            current_map = self.color_bar.getColorMap()
+            colors = current_map.map(self.z_normed)
+            self.scatter_plot.setData(x=self.x_data, y=self.y_data, brush=colors)
+        except Exception as e:
+            pass
 
     def descriptor(self, doc):
         if doc["name"] == self.stream_name:
@@ -1063,9 +1083,6 @@ class LivePlot_2D(QObject, CallbackBase):
         self.z_data.extend(z)
         x_shape = len(set(self.x_data))
         y_shape = len(set(self.y_data))
-        z_normed = (self.z_data - np.min(self.z_data)) / (
-            np.max(self.z_data) - np.min(self.z_data)
-        )
         mesh = self.make_colormesh(x_shape, y_shape)
         if mesh:
             x, y, z = mesh
@@ -1074,13 +1091,32 @@ class LivePlot_2D(QObject, CallbackBase):
             self.image.setRect(pg.QtCore.QRectF(x.min(), y.min(), x.ptp(), y.ptp()))
             self.image.setLookupTable(self.cmap.getLookupTable())
             self.scatter_plot.hide()
+            self.color_bar.hide()
             self.image.show()
             self.hist.show()
         else:
-            colors = self.cmap.map(z_normed)
+            self.z_normed = (self.z_data - np.min(self.z_data)) / (
+                np.max(self.z_data) - np.min(self.z_data)
+            )
+            self.dummy_image.setImage(np.array([self.z_data]))
+            self.color_bar.setLevels((np.min(self.z_data), np.max(self.z_data)))
+            colors = self.cmap.map(self.z_normed)
             self.scatter_plot.setData(x=self.x_data, y=self.y_data, brush=colors)
             self.image.hide()
+            self.hist.hide()
             self.scatter_plot.show()
+            self.color_bar.show()
 
     def clear_plot(self):
         pass
+
+
+class LivePlot_NoBluesky(QObject):
+    new_data = Signal()
+    setup_done = Signal()
+
+    def __init__(
+        self, plotItem, xlabel, ylabel, ylabel2, y_axes, labels=(), first_hidden=None
+    ):
+        super().__init__()
+        self.plotItem = plotItem
