@@ -168,7 +168,7 @@ class PlotWidget(QWidget):
     def __init__(
         self,
         x_name,
-        y_names,
+        y_names=None,
         *,
         legend_keys=None,
         xlim=None,
@@ -178,6 +178,7 @@ class PlotWidget(QWidget):
         namespace=None,
         ylabel="",
         xlabel="",
+        ylabel2="",
         title="",
         stream_name="primary",
         fits=None,
@@ -189,14 +190,16 @@ class PlotWidget(QWidget):
         logY2=False,
         maxlen=np.inf,
         use_bluesky=True,
+        labels=(),
+        first_hidden=None,
         **kwargs,
     ):
         super().__init__(parent=parent)
         self.plot_widget = pg.PlotWidget()
         self.x_name = x_name
-        self.y_names = y_names
+        self.y_names = y_names or y_axes.keys()
         self.stream_name = stream_name
-        self.fits = fits
+        self.fits = fits or []
         self.eva = Evaluator(namespace=namespace)
         self.liveFits = []
         self.liveFitPlots = []
@@ -209,7 +212,7 @@ class PlotWidget(QWidget):
             ax2 = plotItem.getAxis("right")
             self.ax2_viewbox.setXLink(plotItem)
             ax2 = pg.AxisItem("right")
-            ax2.setLabel(self.y_names[0])
+            ax2.setLabel(ylabel2 or self.y_names[0])
             ax2.linkToView(self.ax2_viewbox)
             plotItem.layout.addItem(ax2, 2, 3)
 
@@ -290,7 +293,17 @@ class PlotWidget(QWidget):
                 fitPlots=self.liveFitPlots,
             )
         else:
-            self.livePlot = LivePlot_NoBluesky()
+            self.livePlot = LivePlot_NoBluesky(
+                self.plot_widget.getPlotItem(),
+                ax2_viewbox=self.ax2_viewbox,
+                ax2_axis=ax2,
+                xlabel=xlabel,
+                ylabel=ylabel,
+                ylabel2=ylabel2,
+                y_axes=y_axes,
+                labels=labels,
+                first_hidden=first_hidden,
+            )
         self.livePlot.plotItem.showGrid(True, True)
         self.livePlot.new_data_signal.connect(self.show)
         self.livePlot.setup_done_signal.connect(self.make_toolbar)
@@ -1112,28 +1125,41 @@ class LivePlot_2D(QObject, CallbackBase):
 
 
 class LivePlot_NoBluesky(QObject):
-    new_data = Signal()
-    setup_done = Signal()
+    new_data_signal = Signal()
+    setup_done_signal = Signal()
 
     def __init__(
-        self, plotItem, xlabel, ylabel, ylabel2, y_axes, labels=(), first_hidden=None
+        self,
+        plotItem,
+        xlabel,
+        ylabel,
+        ylabel2,
+        y_axes,
+        ax2_viewbox=None,
+        ax2_axis=None,
+        labels=(),
+        first_hidden=None,
     ):
         super().__init__()
         self.plotItem = plotItem
         self.plotItem.setLabel("bottom", xlabel)
         self.plotItem.setLabel("left", ylabel)
-        self.plotItem.setLabel("right", ylabel2) if ylabel2 else None
+        self.ax2_viewbox = ax2_viewbox
+        self.ax2_axis = ax2_axis
+        self.ax2_axis.setLabel("right", ylabel2)
         self.labels = labels
         self.maxlen = np.inf
-        self.xdata = []
-        self.ydata = {}
-        self.current_lines = {}
+        self.x_data = []
+        self.y_data = {}
         self.y_axes = y_axes or {}
         self.first_hidden = first_hidden or []
         self.use_abs = {"x": False, "y": False, "y2": False}
+        self.current_plots = {}
+        self.n_plots = 0
+        self.show_plot = True
 
     def add_data(self, x, ys, add=True):
-        if not self.current_lines:
+        if not self.current_plots:
             if len(self.labels) != len(ys):
                 self.labels = list(ys.keys())
             for i, y in enumerate(ys):
@@ -1143,8 +1169,8 @@ class LivePlot_NoBluesky(QObject):
                         self.current_plots[y] = plot = pg.PlotDataItem(
                             [],
                             [],
-                            label=self.y_names[i],
-                            name=self.y_names[i],
+                            label=self.labels[i],
+                            name=self.labels[i],
                             symbol=None,
                             symbolPen=pg.mkPen(color=color),
                             symbolBrush=pg.mkBrush(color=color),
@@ -1161,8 +1187,8 @@ class LivePlot_NoBluesky(QObject):
                         self.current_plots[y] = self.plotItem.plot(
                             [],
                             [],
-                            label=self.y_names[i],
-                            name=self.y_names[i],
+                            label=self.labels[i],
+                            name=self.labels[i],
                             symbol=None,
                             symbolPen=pg.mkPen(color=color),
                             symbolBrush=pg.mkBrush(color=color),
@@ -1174,43 +1200,44 @@ class LivePlot_NoBluesky(QObject):
                                 ],
                             ),
                         )
-                        if self.maxlen < np.inf:
-                            self.ydata[y] = deque(maxlen=self.maxlen)
-                        else:
-                            self.ydata[y] = []
+                    if self.maxlen < np.inf:
+                        self.y_data[y] = deque(maxlen=self.maxlen)
+                    else:
+                        self.y_data[y] = []
+                    self.n_plots += 1
                 except Exception as e:
                     print(e)
-            self.setup_done.emit()
+            self.setup_done_signal.emit()
         if add:
-            self.xdata.append(x)
+            self.x_data.append(x)
             for y in ys:
-                if y in self.ydata:
-                    self.ydata[y].append(ys[y])
+                if y in self.y_data:
+                    self.y_data[y].append(ys[y])
         else:
-            self.xdata = [x]
-            self.ydata.clear()
+            self.x_data = [x]
+            self.y_data.clear()
             for y in ys:
-                self.ydata[y] = [ys[y]]
+                self.y_data[y] = [ys[y]]
         if self.show_plot:
             self.update_plot()
 
     def change_maxlen(self, maxlen):
         self.maxlen = maxlen
         if maxlen < np.inf:
-            self.xdata = deque(self.xdata, maxlen=maxlen)
-            for y in self.ydata:
-                self.ydata[y] = deque(self.ydata[y], maxlen=maxlen)
+            self.x_data = deque(self.x_data, maxlen=maxlen)
+            for y in self.y_data:
+                self.y_data[y] = deque(self.y_data[y], maxlen=maxlen)
         else:
-            self.xdata = list(self.xdata)
-            for y in self.ydata:
-                self.ydata[y] = list(self.ydata[y])
+            self.x_data = list(self.x_data)
+            for y in self.y_data:
+                self.y_data[y] = list(self.y_data[y])
 
     def update_plot(self):
         if self.plotItem.getAxis("bottom").logMode and self.use_abs["x"]:
             plot_x = np.abs(self.x_data)
         else:
             plot_x = self.x_data
-        for y in self.ys:
+        for y in self.labels:
             y_abs = False
             y2_abs = False
             if self.plotItem.getAxis("left").logMode and self.use_abs["y"]:
@@ -1229,7 +1256,7 @@ class LivePlot_NoBluesky(QObject):
         self.new_data_signal.emit()
 
     def clear_plot(self):
-        for y in self.ys:
+        for y in self.y_data:
             self.current_plots[y].setData([], [])
         self.x_data = []
         for y in self.y_data:
