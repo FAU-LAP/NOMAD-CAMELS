@@ -1,3 +1,5 @@
+"""This module contains the classes for the plot widgets, based on pyqtgraph."""
+
 import sys
 import os
 
@@ -37,6 +39,7 @@ from nomad_camels.main_classes.plot_widget import LiveFit_Eva
 # recognized by pyqtgraph: r, g, b, c, m, y, k, w
 dark_mode_colors = ["w", "r", (0, 100, 255), "g", "c", "m", "y", "k"]
 
+# these are the colors used by matplotlib, they are used as default colors in light mode
 matplotlib_default_colors = [
     "#1f77b4",
     "#ff7f0e",
@@ -50,6 +53,7 @@ matplotlib_default_colors = [
     "#17becf",
 ]
 
+# these are the symbols recognized by pyqtgraph
 symbols = {
     "circle": "o",
     "square": "s",
@@ -71,6 +75,7 @@ symbols = {
     "none": None,
 }
 
+# these are the linestyles recognized by pyqtgraph
 linestyles = {
     "solid": Qt.PenStyle.SolidLine,
     "dashed": Qt.PenStyle.DashLine,
@@ -86,7 +91,7 @@ colors = matplotlib_default_colors
 
 
 def activate_dark_mode():
-    """Changes the plot-style to dark-mode."""
+    """Changes the plot-style to dark-mode, by changing the config options of pyqtgraph."""
     global dark_mode, colors
     dark_mode = True
     pg.setConfigOptions(background="k", foreground="w")
@@ -102,65 +107,46 @@ class PlotWidget(QWidget):
         The name of the x-axis variable
     y_names : Union[str, Tuple[str]]
         The name(s) of the y-axis variable(s)
-    legend_keys : List[str], optional
-        The keys for the legend, by default None
-    xlim : Tuple[float, float], optional
-        passed to Axes.set_xlim
-    ylim : Tuple[float, float], optional
-        passed to Axes.set_ylim
-    epoch : {'run', 'unix'}, optional
+    legend_keys : List[str]
+        deprecated
+    xlim : Tuple[float, float]
+        deprecated
+    ylim : Tuple[float, float]
+        deprecated
+    epoch : {'run', 'unix'}
         If 'run' t=0 is the time recorded in the RunStart document. If 'unix',
         t=0 is 1 Jan 1970 ("the UNIX epoch"). Default is 'run'.
     parent : QWidget, optional
         The parent widget, by default None
-    namespace : Optional[Mapping[str, Any]]
+    namespace : Mapping[str, Any], optional
         The namespace to use for the `Evaluator`, by default None
     ylabel : str, optional
-        The y-axis label, by default ''
+        The y-axis label, if empty the first y_name is used, by default ''
     xlabel : str, optional
-        The x-axis label, by default ''
+        The x-axis label, if empty the x_name is used, by default ''
     title : str, optional
         The title of the plot, by default ''
-    stream_name : str, optional
-        The name of the stream to be used for the plot. Default is 'primary'
+    stream_name : str
+        The name of the bluesky stream to be used for the plot. If multi_stream is True, streams including this name are used. Default is 'primary'
     fits : List[Dict[str, Union[str, bool, List[str], Tuple[float, float], Dict[str, Union[str, float]]]]], optional
         The fits for the plot, by default None
-    do_plot : bool, optional
-        Whether to show the plot, by default True
+    do_plot : bool
+        deprecated
+    multi_stream : bool, optional
+        Whether to use multiple streams, see stream name, by default False
+    y_axes : Dict[str, int], optional
+        The y-axis to use for each y_name, the ints should be 1 or 2, if 2, the respective y-value is plotted on the right axis, by default None
+    logX : bool
+        Whether to use a logarithmic x-axis, by default False
+    logY : bool
+        Whether to use a logarithmic y-axis, by default False
+    logY2 : bool
+        Whether to use a logarithmic y-axis for the right axis, by default False
+    maxlen : int
+        The maximum number of data points to show, by default np.inf
+    use_bluesky : bool
     **kwargs : Any, optional
         Additional keyword arguments to pass to `MultiLivePlot`
-
-    Returns
-    -------
-
-    Attributes
-    ----------
-    ax : Axes
-        The matplotlib axes of the plot
-    x_name : str
-        The name of the x-axis variable
-    y_names : List[str]
-        The name(s) of the y-axis variable(s)
-    stream_name : str
-        The name of the stream
-    fits : List[Dict[str, Union[str, bool, List[str], Tuple[float, float], Dict[str, Union[str, float]]]]]
-        The fits for the plot as they come from the fit/plot definer.
-    liveFits : List[LiveFit_Eva]
-        The live fit objects for the plot, handled by the liveFitPlots
-    liveFitPlots : List[Fit_Plot_No_Init_Guess]
-        The live fit plots for the plot, used to display the fits
-    livePlot : MultiLivePlot
-        The live plot, using the canvas etc.
-    toolbar : NavigationToolbar2QT
-        The toolbar for the plot
-    pushButton_show_options : QPushButton
-        The push button to show the plot options
-    pushButton_autoscale : QPushButton
-        The push button to autoscale the plot
-    plot_options : Plot_Options
-        The options widget for the plot
-    options_open : bool
-        Whether the options are currently open
     """
 
     closing = Signal()
