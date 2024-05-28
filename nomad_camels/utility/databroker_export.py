@@ -242,7 +242,6 @@ def broker_to_NX(
             vers_group = proc.create_group("versions")
             py_environment = proc.create_group("python_environment")
             py_environment.attrs["python_version"] = sys.version
-            d = importlib.metadata.distributions()
             for x in importlib.metadata.distributions():
                 name = x.metadata["Name"]
                 if name not in py_environment.keys():
