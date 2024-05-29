@@ -73,6 +73,12 @@ standard_string += (
 standard_string += (
     "from nomad_camels.bluesky_handling import helper_functions, variable_reading\n"
 )
+standard_string += "from event_model import RunRouter\n"
+standard_string += "from suitcase.nomad_camels_hdf5 import Serializer\n\n"
+standard_string += "def factory(name, start_doc):\n"
+standard_string += (
+    '\treturn [Serializer("C:/Users/od93yces/FAIRmat/test", start_doc["uid"])], []\n\n'
+)
 standard_string += "darkmode = False\n"
 standard_string += 'theme = "default"\n'
 standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "total_protocol_steps": 0, "protocol_stepper_signal": None}\n'
@@ -175,6 +181,7 @@ def build_protocol(
     variable_string = "\nnamespace = {}\n"
     variable_string += "all_fits = {}\n"
     variable_string += "plots = []\n"
+    variable_string += "plot_info = []\n"
     variable_string += "boxes = {}\n"
     variable_string += "app = None\n"
     variable_string += f'save_path = "{save_path}"\n'
@@ -329,9 +336,12 @@ def build_protocol(
     protocol_string += '\t\tmd["python_script"] = f.read()\n'
     protocol_string += read_device_drivers_string
     protocol_string += '\tmd["variables"] = namespace\n'
+    protocol_string += '\tmd["plot_info"] = plot_info\n'
 
     # adding uid to RunEngine, calling the plan
     protocol_string += '\tRE.subscribe(uid_collector, "start")\n'
+    protocol_string += "\trr = RunRouter([factory])\n"
+    protocol_string += "\tRE.subscribe(rr)\n"
     protocol_string += f"\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
 
     # wait for RunEngine to finish, then save the data
