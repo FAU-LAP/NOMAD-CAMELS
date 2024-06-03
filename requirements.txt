@@ -87,3 +87,4 @@ pyserial>=3.5
 pyvisa>=1.13.0
 pyvisa-py>=0.7.0
 importlib-metadata>=6.6.0
+pyqtgraph>=0.13.1
