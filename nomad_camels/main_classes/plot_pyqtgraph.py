@@ -191,9 +191,9 @@ class PlotWidget(QWidget):
         self.liveFitPlots = []
         self.ax2_viewbox = None
         ax2 = None
+        plotItem = self.plot_widget.getPlotItem()
         if y_axes and 2 in y_axes.values():
             self.ax2_viewbox = pg.ViewBox()
-            plotItem = self.plot_widget.getPlotItem()
             plotItem.scene().addItem(self.ax2_viewbox)
             ax2 = plotItem.getAxis("right")
             self.ax2_viewbox.setXLink(plotItem)
@@ -685,6 +685,34 @@ class LivePlot(QObject, CallbackBase):
         else:
             return CallbackBase.__call__(self, name, doc)
 
+    def add_plot(self, y):
+        i = self.ys.index(y)
+        color = colors[self.n_plots % len(colors)]
+        if y in self.y_axes and self.y_axes[y] == 2:
+            self.current_plots[y] = plot = pg.PlotDataItem(
+                [],
+                [],
+                label=self.y_names[i],
+                name=self.y_names[i],
+                symbol="o",
+                symbolPen=pg.mkPen(color=color),
+                symbolBrush=pg.mkBrush(color=color),
+                pen=pg.mkPen(color=color, width=2, style=linestyles["none"]),
+            )
+            self.ax2_viewbox.addItem(plot)
+        else:
+            self.current_plots[y] = self.plotItem.plot(
+                [],
+                [],
+                label=self.y_names[i],
+                name=self.y_names[i],
+                symbol="o",
+                symbolPen=pg.mkPen(color=color),
+                symbolBrush=pg.mkBrush(color=color),
+                pen=pg.mkPen(color=color, width=2, style=linestyles["none"]),
+            )
+        self.n_plots += 1
+
     def start(self, doc):
         """
         This method is called when the RunStart document is received. It sets up the plot and the fits.
@@ -697,31 +725,7 @@ class LivePlot(QObject, CallbackBase):
         self.__setup()
         for i, y in enumerate(self.ys):
             try:
-                color = colors[self.n_plots % len(colors)]
-                if y in self.y_axes and self.y_axes[y] == 2:
-                    self.current_plots[y] = plot = pg.PlotDataItem(
-                        [],
-                        [],
-                        label=self.y_names[i],
-                        name=self.y_names[i],
-                        symbol="o",
-                        symbolPen=pg.mkPen(color=color),
-                        symbolBrush=pg.mkBrush(color=color),
-                        pen=pg.mkPen(color=color, width=2, style=linestyles["none"]),
-                    )
-                    self.ax2_viewbox.addItem(plot)
-                else:
-                    self.current_plots[y] = self.plotItem.plot(
-                        [],
-                        [],
-                        label=self.y_names[i],
-                        name=self.y_names[i],
-                        symbol="o",
-                        symbolPen=pg.mkPen(color=color),
-                        symbolBrush=pg.mkBrush(color=color),
-                        pen=pg.mkPen(color=color, width=2, style=linestyles["none"]),
-                    )
-                self.n_plots += 1
+                self.add_plot(y)
             except Exception as e:
                 print(e)
         self.legend = pg.LegendItem(
@@ -824,6 +828,8 @@ class LivePlot(QObject, CallbackBase):
                 plot_y = np.abs(self.y_data[y]) if y2_abs else self.y_data[y]
             else:
                 plot_y = np.abs(self.y_data[y]) if y_abs else self.y_data[y]
+            if not y in self.current_plots:
+                self.add_plot(y)
             self.current_plots[y].setData(plot_x, plot_y)
         self.new_data_signal.emit()
 
@@ -841,7 +847,7 @@ class LivePlot(QObject, CallbackBase):
             fit.stop(doc)
 
     def clear_plot(self):
-        for y in self.ys:
+        for y in self.current_plots:
             self.current_plots[y].setData([], [])
         self.x_data = []
         for y in self.y_data:
