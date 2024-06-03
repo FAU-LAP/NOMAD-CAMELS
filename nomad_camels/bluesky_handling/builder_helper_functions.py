@@ -12,7 +12,7 @@ standard_plot_string += "\tif app is None:\n"
 standard_plot_string += "\t\tapp = QApplication(sys.argv)\n"
 # standard_plot_string += '\tapp.aboutToQuit.connect(wait_for_workers_to_quit)\n'
 standard_plot_string += "\tif darkmode:\n"
-standard_plot_string += "\t\tplot_widget.activate_dark_mode()\n"
+standard_plot_string += "\t\tplot_pyqtgraph.activate_dark_mode()\n"
 # standard_plot_string += '\ttheme_changing.change_theme(theme, app)\n'
 # standard_plot_string += '\t\timport qdarkstyle\n'
 # standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())\n'
@@ -118,7 +118,7 @@ def plot_creator(plot_data, func_name="create_plots", multi_stream=False):
                     ylabel2 = f
             xlabel = plot.xlabel if plot.xlabel else plot.x_axis or "time"
             ylabel = plot.ylabel if plot.ylabel else plot.y_axes["formula"][0]
-            plot_string += f'\tplot_{i} = plot_widget.PlotWidget(x_name="{plot.x_axis or "time"}", y_names={plot.y_axes["formula"]}, ylabel="{ylabel}", xlabel="{xlabel}", title="{plot.title}", stream_name=stream, namespace=namespace, fits=fits, multi_stream={multi_stream}, y_axes={y_axes}, ylabel2="{ylabel2}", logX={plot.logX}, logY={plot.logY}, logY2={plot.logY2}, maxlen="{plot.maxlen}")\n'
+            plot_string += f'\tplot_{i} = plot_pyqtgraph.PlotWidget(x_name="{plot.x_axis or "time"}", y_names={plot.y_axes["formula"]}, ylabel="{ylabel}", xlabel="{xlabel}", title="{plot.title}", stream_name=stream, namespace=namespace, fits=fits, multi_stream={multi_stream}, y_axes={y_axes}, ylabel2="{ylabel2}", logX={plot.logX}, logY={plot.logY}, logY2={plot.logY2}, maxlen="{plot.maxlen}")\n'
             plot_string += f"\tplots.append(plot_{i})\n"
             plot_string += f"\tplot_{i}.show()\n"
             plot_string += f"\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n"
@@ -134,7 +134,7 @@ def plot_creator(plot_data, func_name="create_plots", multi_stream=False):
             plot_string += f"\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n"
         elif plot.plt_type == "2D plot":
             plotting = True
-            plot_string += f'\tplot_{i} = plot_2D.PlotWidget_2D("{plot.x_axis}", "{plot.y_axes["formula"][0]}", "{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", title="{plot.title}", stream_name=stream, namespace=namespace)\n'
+            plot_string += f'\tplot_{i} = plot_pyqtgraph.PlotWidget_2D("{plot.x_axis}", "{plot.y_axes["formula"][0]}", "{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", title="{plot.title}", stream_name=stream, namespace=namespace)\n'
             plot_string += f"\tplots.append(plot_{i})\n"
             plot_string += f"\tplot_{i}.show()\n"
             plot_string += f"\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n"
