@@ -38,6 +38,16 @@ horizontal_margin = 5
 vertical_margin = 5
 
 
+def reset_variables():
+    global current_screen, current_pos, max_height_in_row, iteration, screens
+    screens = app.screens()
+    current_screen = 0
+    current_pos = [0, 0]
+    max_height_in_row = 0
+    iteration = 0
+    screen_geometry = screens[current_screen].availableGeometry()
+
+
 def place_widget(widget: QWidget):
     """
     This function places the given `widget` on the next free spot on the screen.
@@ -60,12 +70,7 @@ def place_widget(widget: QWidget):
     try:
         screen_geometry = screens[current_screen].availableGeometry()
     except:
-        screens = app.screens()
-        current_screen = 0
-        current_pos = [0, 0]
-        max_height_in_row = 0
-        iteration = 0
-        screen_geometry = screens[current_screen].availableGeometry()
+        reset_variables()
     if current_pos[0] + s.width() > screen_geometry.width():
         current_pos[1] += max_height_in_row + horizontal_margin
         current_pos[0] = 0

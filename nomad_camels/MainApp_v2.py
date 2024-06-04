@@ -27,6 +27,7 @@ from nomad_camels.utility import (
     update_camels,
     logging_settings,
     qthreads,
+    plot_placement,
 )
 from nomad_camels.ui_widgets import options_run_button, warn_popup
 from nomad_camels.extensions import extension_contexts
@@ -399,6 +400,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         for plot in list(self.open_plots):
             plot.close()
+        plot_placement.reset_variables()
 
     # --------------------------------------------------
     # Overwriting parent-methods
