@@ -35,6 +35,7 @@ from nomad_camels.gui.plot_options import Ui_Plot_Options
 from nomad_camels.utility.fit_variable_renaming import replace_name
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 from nomad_camels.main_classes.plot_widget import LiveFit_Eva
+from nomad_camels.utility.plot_placement import place_widget
 
 # recognized by pyqtgraph: r, g, b, c, m, y, k, w
 dark_mode_colors = ["w", "r", (0, 100, 255), "g", "c", "m", "y", "k"]
@@ -319,6 +320,7 @@ class PlotWidget(QWidget):
         self.layout().addWidget(self.plot_options, 0, 0, 3, 1)
         self.plot_options.hide()
         self.adjustSize()
+        place_widget(self)
 
     def make_toolbar(self):
         """Creates the toolbar for the plot widget. This toolbar is based on the context menu of the plot. The View All is connected with `auto_range`."""
@@ -1053,6 +1055,7 @@ class PlotWidget_2D(QWidget):
         self.layout().addWidget(self.graphics_layout, 0, 0)
         self.make_toolbar()
         self.adjustSize()
+        place_widget(self)
 
     def make_toolbar(self):
         self.toolbar = QMenuBar()
