@@ -24,6 +24,17 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 
 # Changelog
+## 1.1.0
+Features:
+- Protocols and manual controls are now sortable into tabs!
+- Protocols can now be run in a queue
+- added possibility to force sequential on/off for single channels
+- Plots are now done with pyqtgraph, improving interactivity and performance
+
+Fixes:
+- Plots being placed somewhere should now not kill the program anymore
+
+
 ## 1.0.6
 Features:
 - Added an "owner" field to the samples, it is automatically populated when a new sample is created. This should stop cluttering the samples for all users. Only the current user's samples will show in the comboBox, or those without owner.

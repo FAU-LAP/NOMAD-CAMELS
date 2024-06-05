@@ -14,7 +14,34 @@ from .ui_stage_control import Ui_Form
 
 
 class Stage_Control(Manual_Control, Ui_Form):
-    """ """
+    """
+    A class that provides a GUI for controlling a stage.
+
+    Parameters
+    ----------
+    parent : QWidget
+        The parent widget.
+    control_data : dict
+        A dictionary containing the control data.
+        The following keys are expected:
+        - name: The name of the control.
+        - use_axis: A list of three booleans, indicating which axes are used.
+        - axis_channel: A list of three strings, indicating the channels used for each axis.
+        - read_axis: A list of three booleans, indicating which axes are read back.
+        - read_channel: A list of three strings, indicating the channels used for reading back. If an axis is not read back, the corresponding entry should be None.
+        - axis_ref: A list of three functions, indicating the reference drive functions for each axis. If an axis is does not have a reference, the corresponding entry should be None.
+        - axis_stop: A list of three functions, indicating the stop functions for each axis. If an axis does not have a stop function, the corresponding entry should be None.
+        - auto_reference: A list of three booleans, indicating whether the axes should automatically perform their reference function at start.
+        - manual_function: A list of three functions, indicating the manual move functions for each axis. If an axis does not have a manual move function, the corresponding entry should be None.
+        - read_frequ: A float, indicating the frequency at which the axes are read back.
+        - manual_active: A boolean, indicating whether manual control is active by default.
+        - stepSize_X: A float, indicating the step size for the X axis.
+        - stepSize_Y: A float, indicating the step size for the Y axis.
+        - stepSize_Z: A float, indicating the step size for the Z axis.
+        - manual_X: A float, indicating the manual move speed for the X axis.
+        - manual_Y: A float, indicating the manual move speed for the Y axis.
+        - manual_Z: A float, indicating the manual move speed for the Z axis.
+    """
 
     def __init__(self, parent=None, control_data=None):
         control_data = control_data or {}
@@ -162,6 +189,9 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.start_multiple_devices(channels, True)
 
     def device_ready(self):
+        """
+        Overwrites the `device_ready` method from the `Manual_Control` class. This method is called when the device is ready. It sets the channels, read channels, reference functions, stop functions, and manual functions from the instantiated devices. It also starts the readback thread and the move thread.
+        """
         super().device_ready()
         self.set_channels = device_handling.get_channels_from_string_list(
             self.set_channels
@@ -222,7 +252,10 @@ class Stage_Control(Manual_Control, Ui_Form):
             self.checks[i].setChecked(True)
 
     def line_change(self):
-        """ """
+        """
+        Updates the control data when a line edit is changed.
+        This method is connected to the `textChanged` signal of the line edits, including the read frequency, step sizes, manual speeds, and go-to positions.
+        """
         for i, line in enumerate(self.lines):
             try:
                 self.control_data[self.line_names[i]] = float(line.text())
@@ -236,32 +269,34 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.move_thread.move_speeds = [manual_X, manual_Y, manual_Z]
 
     def check_change(self):
-        """ """
+        """
+        Updates the control data when a check box is changed. This method is connected to the `clicked` signal of the check boxes, including the reference checks and the manual active check.
+        """
         for i, check in enumerate(self.checks):
             self.control_data[self.check_names[i]] = check.isChecked()
 
     def update_readback(self, x, y, z):
         """
+        Updates the readback values in the GUI. This method is connected to the `data_sig` signal of the readback thread.
 
         Parameters
         ----------
-        x :
+        x : float
+            The readback value of the X axis.
 
-        y :
+        y : float
+            The readback value of the Y axis.
 
-        z :
-
-
-        Returns
-        -------
-
+        z : float
+            The readback value of the Z axis.
         """
         self.lineEdit_currentX.setText(number_formatting.format_number(x))
         self.lineEdit_currentY.setText(number_formatting.format_number(y))
         self.lineEdit_currentZ.setText(number_formatting.format_number(z))
 
     def close(self) -> bool:
-        """ """
+        """
+        Stops the readback and move threads when the control is closed."""
         if self.read_thread:
             self.read_thread.still_running = False
         if self.move_thread:
@@ -270,15 +305,11 @@ class Stage_Control(Manual_Control, Ui_Form):
 
     def closeEvent(self, a0) -> None:
         """
+        Stops the readback and move threads when the control is closed.
 
         Parameters
         ----------
-        a0 :
-
-
-        Returns
-        -------
-
+        a0 : QCloseEvent
         """
         self.read_thread.still_running = False
         self.move_thread.still_running = False

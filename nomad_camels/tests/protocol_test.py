@@ -133,8 +133,8 @@ def test_if_and_set_variables(qtbot, tmp_path):
     qtbot.mouseClick(
         conf.general_settings.pushButton_add_variable, Qt.MouseButton.LeftButton
     )
-    conf.general_settings.variable_model.item(0, 0).setText("condition")
-    conf.general_settings.variable_model.item(0, 1).setText("1")
+    conf.general_settings.variable_table.model.item(0, 0).setText("condition")
+    conf.general_settings.variable_table.model.item(0, 1).setText("1")
     single_variable_if(qtbot, conf, 1)
     assert "If (If)" in prot.loop_step_dict
     assert "If_Sub (If_condition != 1)" in prot.loop_step_dict
