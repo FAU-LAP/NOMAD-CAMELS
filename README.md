@@ -24,6 +24,13 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 
 # Changelog
+## 1.1.1
+Changes:
+- Now displaying errors together with fit values
+
+Fixes:
+- Too little characters were allowed in plot labels, now most characters are allowed again
+
 ## 1.1.0
 Features:
 - Protocols and manual controls are now sortable into tabs!

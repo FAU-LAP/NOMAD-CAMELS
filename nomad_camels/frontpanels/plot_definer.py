@@ -417,12 +417,20 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
     def get_data(self):
         """ """
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
-        self.plot_data.ylabel = self.lineEdit_ylabel.text()
-        if re.search(r"[^\w\s]", self.plot_data.ylabel):
+        if re.search(r"[\\'\"`]", self.plot_data.xlabel):
             raise ValueError(
-                "y-label contains special characters.\nPlease use only letters, numbers and whitespace."
+                "x-label contains special characters.\nYou cannot use ' \" or `."
+            )
+        self.plot_data.ylabel = self.lineEdit_ylabel.text()
+        if re.search(r"[\\'\"`]", self.plot_data.ylabel):
+            raise ValueError(
+                "y-label contains special characters.\nYou cannot use ' \" or `."
             )
         self.plot_data.zlabel = self.lineEdit_zlabel.text()
+        if re.search(r"[\\'\"`]", self.plot_data.zlabel):
+            raise ValueError(
+                "z-label contains special characters.\nYou cannot use ' \" or `."
+            )
         self.plot_data.x_axis = self.lineEdit_x_axis.text()
         self.plot_data.y_axes["formula"][0] = self.lineEdit_y_axis.text()
         self.plot_data.z_axis = self.lineEdit_z_axis.text()
@@ -483,24 +491,24 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.plot_data.y_axes = self.y_table.update_table_data()
         self.plot_data.x_axis = self.lineEdit_x_axis.text()
         self.plot_data.title = self.lineEdit_title.text()
-        if re.search(r"[^\w\s]", self.plot_data.title):
+        if re.search(r"[\\'\"`]", self.plot_data.title):
             raise ValueError(
-                "Title contains special characters.\nPlease use only letters, numbers and whitespace."
+                "Title contains special characters.\nYou cannot use ' \" or `."
             )
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
-        if re.search(r"[^\w\s]", self.plot_data.xlabel):
+        if re.search(r"[\\'\"`]", self.plot_data.xlabel):
             raise ValueError(
-                "x-label contains special characters.\nPlease use only letters, numbers and whitespace."
+                "x-label contains special characters.\nYou cannot use ' \" or `."
             )
         self.plot_data.ylabel = self.lineEdit_ylabel.text()
-        if re.search(r"[^\w\s]", self.plot_data.ylabel):
+        if re.search(r"[\\'\"`]", self.plot_data.ylabel):
             raise ValueError(
-                "y-label contains special characters.\nPlease use only letters, numbers and whitespace."
+                "y-label contains special characters.\nYou cannot use ' \" or `."
             )
         self.plot_data.ylabel2 = self.lineEdit_ylabel2.text()
-        if re.search(r"[^\w\s]", self.plot_data.ylabel2):
+        if re.search(r"[\\'\"`]", self.plot_data.zlabel):
             raise ValueError(
-                "y-label 2 contains special characters.\nPlease use only letters, numbers and whitespace."
+                "z-label contains special characters.\nYou cannot use ' \" or `."
             )
         # self.plot_data.do_plot = self.checkBox_plot.isChecked()
         try:

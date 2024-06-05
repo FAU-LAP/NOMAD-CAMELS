@@ -987,7 +987,10 @@ class LiveFitPlot(CallbackBase):
                 self.line_position = self.parent_plot.line_number
                 self.parent_plot.line_number += len(vals)
             for i, (name, value) in enumerate(vals.items()):
-                text = pg.TextItem(f"{name}: {value:.3e}", color=self.color)
+                error = np.sqrt(self.livefit.result.covar[i, i])
+                text = pg.TextItem(
+                    f"{name}: {value:.3e} ± {error:.3e}", color=self.color
+                )
                 text.setParentItem(self.plotItem.vb)
                 text.setPos(5, (i + self.line_position) * 20 + y0)
                 self.text_objects.append(text)
