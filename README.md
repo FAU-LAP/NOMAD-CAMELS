@@ -25,6 +25,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 ## 1.1.1
+Features:
+- parsing now understands physical constants with `const.<constant_name>` by using `scipy.constants` as `const`
+
 Changes:
 - Now displaying errors together with fit values
 
