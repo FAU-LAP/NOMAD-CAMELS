@@ -24,6 +24,18 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 
 # Changelog
+## 1.1.1
+Features:
+- parsing now understands physical constants with `const.<constant_name>` by using `scipy.constants` as `const`
+
+Changes:
+- Now displaying errors together with fit values
+
+Fixes:
+- Too little characters were allowed in plot labels, now most characters are allowed again
+- Failed fits do not throw an error that crashes the protocol anymore
+- Title and icon of plot windows
+
 ## 1.1.0
 Features:
 - Protocols and manual controls are now sortable into tabs!

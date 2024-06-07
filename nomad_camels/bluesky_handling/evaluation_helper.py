@@ -2,10 +2,11 @@ from bluesky.callbacks.core import CallbackBase
 import numpy as np
 import ast
 import time
+import scipy.constants as const
 
 starttime = time.time()
 
-base_namespace = {"numpy": np, "np": np, "time": 0}
+base_namespace = {"numpy": np, "np": np, "time": 0, "const": const}
 base_namespace.update({name: getattr(np, name) for name in np.__all__})
 base_namespace.update({"StartTime": starttime, "ElapsedTime": time.time() - starttime})
 
@@ -27,7 +28,7 @@ class Evaluator(CallbackBase):
         self.add_namespace = {}
         if namespace is not None:
             self.add_namespace = namespace
-        self.namespace = base_namespace
+        self.namespace = dict(base_namespace)
         self.update_namespace()
         self.last_update = 0
 
