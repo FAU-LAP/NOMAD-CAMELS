@@ -33,6 +33,7 @@ Changes:
 
 Fixes:
 - Too little characters were allowed in plot labels, now most characters are allowed again
+- Failed fits do not throw an error that crashes the protocol anymore
 
 ## 1.1.0
 Features:
