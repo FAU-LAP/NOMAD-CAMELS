@@ -28,6 +28,8 @@ import pyqtgraph as pg
 from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
 
 import lmfit
+from importlib import resources
+from nomad_camels import graphics
 
 from bluesky.callbacks.core import get_obj_fields, CallbackBase
 
@@ -191,6 +193,9 @@ class PlotWidget(QWidget):
         self.liveFits = []
         self.liveFitPlots = []
         self.ax2_viewbox = None
+        self.setWindowTitle(title or f"{x_name} vs. {y_names[0]}")
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+
         ax2 = None
         plotItem = self.plot_widget.getPlotItem()
         if y_axes and 2 in y_axes.values():
