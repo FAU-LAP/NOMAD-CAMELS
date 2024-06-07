@@ -37,6 +37,12 @@ jobs:
           ref: 'documentation'
           path: './docbranch'
       - run: rm -rf ./docs/
+      - name: make instrument table
+        run: |
+          cd ./docbranch/
+          python -m pip install requests
+          python populate_instruments_table.py
+          cd ..
       - run: cp -r ./docbranch/docs ./docs
       - run: rm -rf ./docbranch/
       - uses: actions/setup-python@v4
@@ -44,8 +50,9 @@ jobs:
           python-version: 3.11
       - name: Install dependencies
         run: |
+          brew install hdf5
           python -m pip install --upgrade pip
-          pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton
+          pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs
           pip install -r requirements.txt
       - name: Sphinx build
         run: |
