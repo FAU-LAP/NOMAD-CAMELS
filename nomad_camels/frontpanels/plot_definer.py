@@ -652,6 +652,13 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
     def get_data(self):
         """ """
         self.fit_info.initial_params = self.start_params.update_table_data()
+        rems = []
+        for i, param in enumerate(self.fit_info.initial_params["name"]):
+            if not param:
+                rems.append(i)
+        for i in rems[::-1]:
+            for key in self.fit_info.initial_params:
+                self.fit_info.initial_params[key].pop(i)
         self.fit_info.additional_data = self.add_data.update_table_data()
         self.fit_info.do_fit = self.checkBox_fit.isChecked()
         self.fit_info.predef_func = self.comboBox_predef_func.currentText()

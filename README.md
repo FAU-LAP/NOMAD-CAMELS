@@ -24,6 +24,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 
 # Changelog
+## 1.1.2
+Fixes:
+- Removed empty fit parameters, which would cause an error before
+
 ## 1.1.1
 Features:
 - parsing now understands physical constants with `const.<constant_name>` by using `scipy.constants` as `const`
