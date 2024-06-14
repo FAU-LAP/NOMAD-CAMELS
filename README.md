@@ -27,6 +27,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ## 1.1.2
 Fixes:
 - Removed empty fit parameters, which would cause an error before
+- Fixed requirement of pyepics, version 3.5.3 seems broken on windows, going back to version 3.5.2
 
 ## 1.1.1
 Features:
