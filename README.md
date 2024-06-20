@@ -24,8 +24,17 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 
 # Changelog
+
+## 1.1.3
+
+Features:
+
+- Added the `Execute Python File` loop step. This allows the user to specify a python file and a python exe to run the file with.
+
 ## 1.1.2
+
 Fixes:
+
 - Removed empty fit parameters, which would cause an error before
 - Fixed requirement of pyepics, version 3.5.3 seems broken on windows, going back to version 3.5.2
 
