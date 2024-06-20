@@ -208,7 +208,7 @@ def broker_to_NX(
             filename = os.path.splitext(filename)[0] + f"_{entry_name_non_iso}.nxs"
         filename = os.path.join(
             os.path.abspath(os.path.dirname(filename))
-            , os.path.normpath(f'{os.path.splitext(clean_filename(os.path.basename(filename)))[0]}.nxs')
+            , os.path.normpath(f'{clean_filename(os.path.splitext(os.path.basename(filename))[0])}.nxs')
         )
         if export_to_json:
             if not os.path.isdir(filename.split(".")[0]):
