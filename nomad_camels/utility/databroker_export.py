@@ -205,10 +205,10 @@ def broker_to_NX(
         entry_name_non_iso = clean_filename(entry_name)
         # check if the filename already exists, if yes, add entry_name to filename
         if new_file_each_run and os.path.isfile(filename):
-            filename = filename.split(".")[0] + f"_{entry_name_non_iso}.nxs"
-        filename = (
-            os.path.dirname(filename)
-            + f'/{clean_filename(os.path.basename(filename).split(".")[0])}.nxs'
+            filename = os.path.splitext(filename)[0] + f"_{entry_name_non_iso}.nxs"
+        filename = os.path.join(
+            os.path.abspath(os.path.dirname(filename))
+            , os.path.normpath(f'{os.path.splitext(clean_filename(os.path.basename(filename)))[0]}.nxs')
         )
         if export_to_json:
             if not os.path.isdir(filename.split(".")[0]):
