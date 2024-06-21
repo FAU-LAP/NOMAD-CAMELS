@@ -41,6 +41,26 @@ class Execute_Python_File(Loop_Step):
             else None
         )
 
+        self.python_packages_versions = (
+            step_info["python_packages_versions"]
+            if "python_packages_versions" in step_info
+            else []
+        )
+
+        self.use_existing_env = (
+            step_info["use_existing_env"] if "use_existing_env" in step_info else False
+        )
+        self.use_specific_packages = (
+            step_info["use_specific_packages"]
+            if "use_specific_packages" in step_info
+            else False
+        )
+        self.use_camels_python = (
+            step_info["use_camels_python"]
+            if "use_camels_python" in step_info
+            else False
+        )
+
     def get_protocol_string(self, n_tabs=1):
         """
         This function runs the python file with the python exe using the subprocess module.
@@ -49,7 +69,15 @@ class Execute_Python_File(Loop_Step):
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         # use subprocess to run the python file
-        protocol_string += f'{tabs}subprocess.run([r"{os.path.abspath(self.python_exe_path)}", r"{os.path.abspath(self.file_path)}"], cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}")\n'
+        if self.use_existing_env:
+            protocol_string += f'{tabs}subprocess.run([r"{os.path.abspath(self.python_exe_path)}", r"{os.path.abspath(self.file_path)}"], cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}")\n'
+
+        if self.use_specific_packages:
+            protocol_string += f'{tabs}helper_functions.create_venv_run_file_delete_venv({self.python_packages_versions}, r"{os.path.abspath(self.file_path)}")\n'
+
+        if self.use_camels_python:
+            import sys
+            protocol_string += f'{tabs}subprocess.run([r"{os.path.abspath(sys.executable)}", r"{os.path.abspath(self.file_path)}"], cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}")\n'
         return protocol_string
 
 
@@ -129,7 +157,7 @@ class Execute_Python_File_Config(Loop_Step_Config):
         self.radio_button_group.addButton(self.radio_existing_env)
         self.radio_button_group.addButton(self.radio_specific_packages)
         self.radio_button_group.addButton(self.radio_camels_python)
-        self.radio_button_group.buttonClicked.connect(self.handle_radio_button_clicked)
+        self.radio_button_group.buttonToggled.connect(self.handle_radio_button_clicked)
 
         # Set the selected radio button from the loop step
         if self.loop_step.radio_button_selected is not None:
@@ -156,9 +184,6 @@ class Execute_Python_File_Config(Loop_Step_Config):
         radio_widget.setLayout(radio_layout)
         layout.addWidget(radio_widget, 2, 0, 1, 2)
 
-        # Initially hide AddRemoveTable (specific packages)
-        self.add_remove_table_packages.setVisible(False)
-
         # Connect radio button signals
         self.radio_existing_env.toggled.connect(self.toggle_add_remove_table)
         self.radio_specific_packages.toggled.connect(self.toggle_python_exe_path)
@@ -182,12 +207,18 @@ class Execute_Python_File_Config(Loop_Step_Config):
             self.path_button_edit_python_exe.setVisible(True)
             self.label_python_exe_path.setVisible(True)
             self.python_packages_versions_label.setVisible(False)
+            self.loop_step.use_existing_env = True
+            self.loop_step.use_specific_packages = False
+            self.loop_step.use_camels_python = False
         elif button == self.radio_specific_packages:
             # Handle selection for specific packages
             self.add_remove_table_packages.setVisible(True)
             self.path_button_edit_python_exe.setVisible(False)
             self.label_python_exe_path.setVisible(False)
             self.python_packages_versions_label.setVisible(True)
+            self.loop_step.use_specific_packages = True
+            self.loop_step.use_existing_env = False
+            self.loop_step.use_camels_python = False
         elif button == self.radio_camels_python:
             # Handle selection for CAMELS python
             # Hide AddRemoveTable and Python exe path
@@ -195,6 +226,9 @@ class Execute_Python_File_Config(Loop_Step_Config):
             self.path_button_edit_python_exe.setVisible(False)
             self.label_python_exe_path.setVisible(False)
             self.python_packages_versions_label.setVisible(False)
+            self.loop_step.use_camels_python = True
+            self.loop_step.use_specific_packages = False
+            self.loop_step.use_existing_env = False
 
     def toggle_add_remove_table(self, checked):
         if checked:
