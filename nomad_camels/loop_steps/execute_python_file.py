@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QWidget, QLabel, QGridLayout
+from PySide6.QtWidgets import QWidget, QLabel, QGridLayout, QFrame
+from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 import os
@@ -66,10 +67,24 @@ class Execute_Python_File_Config(Loop_Step_Config):
         self.path_button_edit_python_file.path_changed.connect(self.update_file_path)
         self.path_button_edit_python_exe.path_changed.connect(self.update_exe_path)
 
+        # New AddRemoveTable widget for packages and versions
+        self.add_remove_table_packages = AddRemoveTable(
+            headerLabels=["Python Package", "Version"]
+        )
+
         self.layout().addWidget(label_python_file_path, 1, 0)
         self.layout().addWidget(self.path_button_edit_python_file, 1, 1)
         self.layout().addWidget(label_python_exe_path, 2, 0)
         self.layout().addWidget(self.path_button_edit_python_exe, 2, 1)
+        # Adding AddRemoveTable widget
+        self.layout().addWidget(QLabel("Python Packages and Versions"), 3, 0, 1, 2)
+        self.layout().addWidget(self.add_remove_table_packages, 4, 0, 1, 2)
+        
+        # Create horizontal line to separate sections (optional)
+        h_line = QFrame()
+        h_line.setFrameShape(QFrame.HLine)
+        h_line.setFrameShadow(QFrame.Sunken)
+        self.layout().addWidget(h_line, 5, 0, 1, 2)
 
     def update_exe_path(self, path):
         self.loop_step.python_exe_path = path
