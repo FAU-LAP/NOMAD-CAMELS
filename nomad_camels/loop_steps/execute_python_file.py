@@ -1,4 +1,12 @@
-from PySide6.QtWidgets import QWidget, QLabel, QGridLayout, QFrame
+from PySide6.QtWidgets import (
+    QRadioButton,
+    QButtonGroup,
+    QWidget,
+    QHBoxLayout,
+    QVBoxLayout,
+    QFrame,
+    QLabel,
+)
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
@@ -15,9 +23,22 @@ class Execute_Python_File(Loop_Step):
         self.step_type = "Execute Python File"
         if step_info is None:
             step_info = {}
+        # Get the python file path and the python exe path from the step info
         self.file_path = step_info["file_path"] if "file_path" in step_info else ""
         self.python_exe_path = (
             step_info["python_exe_path"] if "python_exe_path" in step_info else ""
+        )
+        # Get the python packages and versions from the step info
+        self.python_packages_versions = (
+            step_info["python_packages_versions"]
+            if "python_packages_versions" in step_info
+            else []
+        )
+        # Get the radio button selected from the step info
+        self.radio_button_selected = (
+            step_info["radio_button_selected"]
+            if "radio_button_selected" in step_info
+            else None
         )
 
     def get_protocol_string(self, n_tabs=1):
@@ -42,19 +63,21 @@ class Execute_Python_File_Config(Loop_Step_Config):
     ):
         super().__init__(parent, loop_step)
         self.loop_step = loop_step
-        label_python_file_path = QLabel("Python File Path")
-        label_python_exe_path = QLabel("Python Executable Path")
+
+        # Labels and path buttons setup
+        self.label_python_file_path = QLabel("Python File Path")
+        self.label_python_exe_path = QLabel("Python Executable Path")
         self.path_button_edit_python_file = Path_Button_Edit()
         self.path_button_edit_python_exe = Path_Button_Edit()
+        self.python_packages_versions_label = QLabel("Python Packages and Versions")
 
-        # Adding tooltips to the labels
-        label_python_file_path.setToolTip(
+        # Tooltips
+        self.label_python_file_path.setToolTip(
             "Specify the path to the Python file to be executed."
         )
-        label_python_exe_path.setToolTip(
+        self.label_python_exe_path.setToolTip(
             "Specify the path to the Python executable (python.exe)."
         )
-        # Adding tooltips to the patheditbuttons
         self.path_button_edit_python_file.setToolTip(
             "Specify the path to the Python file to be executed."
         )
@@ -62,32 +85,122 @@ class Execute_Python_File_Config(Loop_Step_Config):
             "Specify the path to the Python executable (python.exe)."
         )
 
+        # Initial paths setup
         self.path_button_edit_python_file.set_path(self.loop_step.file_path)
         self.path_button_edit_python_exe.set_path(self.loop_step.python_exe_path)
         self.path_button_edit_python_file.path_changed.connect(self.update_file_path)
         self.path_button_edit_python_exe.path_changed.connect(self.update_exe_path)
 
-        # New AddRemoveTable widget for packages and versions
+        # AddRemoveTable widget setup
         self.add_remove_table_packages = AddRemoveTable(
             headerLabels=["Python Package", "Version"]
         )
+        # Save changes of the table to the loop step
+        self.add_remove_table_packages.table_model.itemChanged.connect(
+            self.update_python_packages
+        )
+        self.add_remove_table_packages.change_table_data(
+            self.loop_step.python_packages_versions
+        )
 
-        self.layout().addWidget(label_python_file_path, 1, 0)
-        self.layout().addWidget(self.path_button_edit_python_file, 1, 1)
-        self.layout().addWidget(label_python_exe_path, 2, 0)
-        self.layout().addWidget(self.path_button_edit_python_exe, 2, 1)
-        # Adding AddRemoveTable widget
-        self.layout().addWidget(QLabel("Python Packages and Versions"), 3, 0, 1, 2)
-        self.layout().addWidget(self.add_remove_table_packages, 4, 0, 1, 2)
-        
-        # Create horizontal line to separate sections (optional)
+        # Layout setup
+        layout = self.layout()
+
+        layout.addWidget(self.label_python_file_path, 1, 0)
+        layout.addWidget(self.path_button_edit_python_file, 1, 1)
+        layout.addWidget(self.label_python_exe_path, 3, 0)
+        layout.addWidget(self.path_button_edit_python_exe, 3, 1)
+        layout.addWidget(self.python_packages_versions_label, 4, 0, 1, 2)
+        layout.addWidget(self.add_remove_table_packages, 5, 0, 1, 2)
+
+        # Horizontal line setup
         h_line = QFrame()
         h_line.setFrameShape(QFrame.HLine)
         h_line.setFrameShadow(QFrame.Sunken)
-        self.layout().addWidget(h_line, 5, 0, 1, 2)
+        layout.addWidget(h_line, 6, 0, 1, 2)
+
+        # Radio buttons setup
+        self.radio_existing_env = QRadioButton("Use existing python environment")
+        self.radio_specific_packages = QRadioButton("Use specific packages")
+        self.radio_camels_python = QRadioButton("Use CAMELS python")
+
+        # Button group to manage exclusive selection
+        self.radio_button_group = QButtonGroup()
+        self.radio_button_group.addButton(self.radio_existing_env)
+        self.radio_button_group.addButton(self.radio_specific_packages)
+        self.radio_button_group.addButton(self.radio_camels_python)
+        self.radio_button_group.buttonClicked.connect(self.handle_radio_button_clicked)
+
+        # Set the selected radio button from the loop step
+        if self.loop_step.radio_button_selected is not None:
+            if (
+                self.loop_step.radio_button_selected
+                == "Use existing python environment"
+            ):
+                self.radio_existing_env.setChecked(True)
+            elif self.loop_step.radio_button_selected == "Use specific packages":
+                self.radio_specific_packages.setChecked(True)
+            elif self.loop_step.radio_button_selected == "Use CAMELS python":
+                self.radio_camels_python.setChecked(True)
+        else:
+            self.radio_camels_python.setChecked(True)
+
+        # Layout for radio buttons
+        radio_layout = QHBoxLayout()
+        radio_layout.addWidget(self.radio_existing_env)
+        radio_layout.addWidget(self.radio_specific_packages)
+        radio_layout.addWidget(self.radio_camels_python)
+
+        # Create a widget to hold radio buttons and add it to the main layout
+        radio_widget = QWidget()
+        radio_widget.setLayout(radio_layout)
+        layout.addWidget(radio_widget, 2, 0, 1, 2)
+
+        # Initially hide AddRemoveTable (specific packages)
+        self.add_remove_table_packages.setVisible(False)
+
+        # Connect radio button signals
+        self.radio_existing_env.toggled.connect(self.toggle_add_remove_table)
+        self.radio_specific_packages.toggled.connect(self.toggle_python_exe_path)
 
     def update_exe_path(self, path):
         self.loop_step.python_exe_path = path
 
     def update_file_path(self, path):
         self.loop_step.file_path = path
+
+    def update_python_packages(self):
+        self.loop_step.python_packages_versions = (
+            self.add_remove_table_packages.update_table_data()
+        )
+
+    def handle_radio_button_clicked(self, button):
+        self.loop_step.radio_button_selected = button.text()
+        if button == self.radio_existing_env:
+            # Handle selection for existing environment
+            self.add_remove_table_packages.setVisible(False)
+            self.path_button_edit_python_exe.setVisible(True)
+            self.label_python_exe_path.setVisible(True)
+            self.python_packages_versions_label.setVisible(False)
+        elif button == self.radio_specific_packages:
+            # Handle selection for specific packages
+            self.add_remove_table_packages.setVisible(True)
+            self.path_button_edit_python_exe.setVisible(False)
+            self.label_python_exe_path.setVisible(False)
+            self.python_packages_versions_label.setVisible(True)
+        elif button == self.radio_camels_python:
+            # Handle selection for CAMELS python
+            # Hide AddRemoveTable and Python exe path
+            self.add_remove_table_packages.setVisible(False)
+            self.path_button_edit_python_exe.setVisible(False)
+            self.label_python_exe_path.setVisible(False)
+            self.python_packages_versions_label.setVisible(False)
+
+    def toggle_add_remove_table(self, checked):
+        if checked:
+            self.add_remove_table_packages.setVisible(False)
+
+    def toggle_python_exe_path(self, checked):
+        if checked:
+            self.path_button_edit_python_exe.setVisible(not checked)
+            self.label_python_exe_path.setVisible(not checked)
