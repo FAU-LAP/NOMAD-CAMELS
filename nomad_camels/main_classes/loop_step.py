@@ -327,10 +327,28 @@ class Loop_Step_Config(QWidget):
         layout.addWidget(self.name_widget, 0, 0, 1, 5)
         self.setLayout(layout)
 
+        self.textEdit_desc_label = QLabel("Description:")
+        layout.addWidget(self.textEdit_desc_label, 499, 0)
         self.textEdit_desc = QTextEdit(loop_step.description, self)
         self.textEdit_desc.setPlaceholderText("Enter step description here.")
+        self.textEdit_desc.textChanged.connect(self.adjust_text_edit_size)
 
         layout.addWidget(self.textEdit_desc, 500, 0, 1, 5)
+        self.adjust_text_edit_size()
+
+        # Connect focus in event to adjust the size
+        self.textEdit_desc.focusInEvent = self.on_focus_in
+    
+    
+    def on_focus_in(self, event):
+        self.adjust_text_edit_size()
+        super(QTextEdit, self.textEdit_desc).focusInEvent(event)
+
+    def adjust_text_edit_size(self):
+        """Adjusts the size of the textEdit_desc based on its content."""
+        document = self.textEdit_desc.document()
+        document_height = document.size().height()
+        self.textEdit_desc.setFixedHeight(document_height + 25)  # Add some padding
 
     def change_name(self, name):
         """Changes the name of the loop_step, then emits the
