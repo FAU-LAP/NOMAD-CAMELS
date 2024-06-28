@@ -499,16 +499,18 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.lineEdit_protocol_name.textChanged.connect(self.name_change)
         self.name_change()
 
-        self.textEdit_desc = QTextEdit(parent=self)
-        self.textEdit_desc.setPlaceholderText("Enter your description here.")
+        self.textEdit_desc_protocol = QTextEdit(parent=self)
+        self.textEdit_desc_protocol.textChanged.connect(self.adjust_text_edit_size_prot)
+        self.textEdit_desc_protocol.setPlaceholderText("Enter your description here.")
         if self.protocol.description:
-            self.textEdit_desc.setText(self.protocol.description)
+            self.textEdit_desc_protocol.setText(self.protocol.description)
         self.checkBox_csv_exp.setChecked(self.protocol.export_csv)
         self.checkBox_json_exp.setChecked(self.protocol.export_json)
         self.checkBox_no_config.setChecked(self.protocol.skip_config)
         self.checkBox_no_config.clicked.connect(self.enable_disable_config)
+        self.adjust_text_edit_size_prot()
 
-        self.layout().addWidget(self.textEdit_desc, 5, 0, 1, 6)
+        self.layout().addWidget(self.textEdit_desc_protocol, 5, 0, 1, 6)
         self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
         self.layout().addWidget(self.checkBox_NeXus, 7, 0, 1, 6)
         self.layout().addWidget(self.table_channel_NX_paths, 9, 0, 1, 6)
@@ -521,6 +523,17 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.selectionModel().selectionChanged.connect(
             self.update_variable_select
         )
+    def showEvent(self, event):
+        """Called when the widget is shown."""
+        super().showEvent(event)
+        self.adjust_text_edit_size_prot()
+
+    def adjust_text_edit_size_prot(self):
+        """Adjusts the size of the textEdit_desc_protocol based on its content."""
+        document = self.textEdit_desc_protocol.document()
+        document_height = document.size().height()
+        self.textEdit_desc_protocol.setFixedHeight(document_height + 5)  # Add some padding
+
 
     def enable_disable_config(self):
         disabling = self.checkBox_no_config.isChecked()
@@ -623,7 +636,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         """Updates all the protocol settings."""
         self.protocol.filename = self.lineEdit_filename.text()
         self.protocol.name = self.lineEdit_protocol_name.text()
-        self.protocol.description = self.textEdit_desc.toPlainText()
+        self.protocol.description = self.textEdit_desc_protocol.toPlainText()
         self.protocol.plots = self.plot_widge.plot_data
         self.protocol.metadata = self.table_metadata.update_table_data()
         self.protocol.channel_metadata = self.table_channel_NX_paths.update_table_data()
