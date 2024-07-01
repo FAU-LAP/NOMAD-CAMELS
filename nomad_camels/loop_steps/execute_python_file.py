@@ -11,6 +11,7 @@ from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 import os
+import json
 
 
 class Execute_Python_File(Loop_Step):
@@ -41,9 +42,14 @@ class Execute_Python_File(Loop_Step):
             else None
         )
 
-        self.python_packages_versions = (
-            step_info["python_packages_versions"]
-            if "python_packages_versions" in step_info
+        # Get the python package and version variables and their value from the step info
+        self.variables_passing = (
+            step_info["variables_passing"] if "variables_passing" in step_info else []
+        )
+        # Get the variables returned by the file from the step info
+        self.returned_values_variables = (
+            step_info["returned_values_variables"]
+            if "returned_values_variables" in step_info
             else []
         )
 
@@ -69,15 +75,86 @@ class Execute_Python_File(Loop_Step):
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         # use subprocess to run the python file
+        if self.variables_passing:
+            formatted_strings = []
+            variable_names = self.variables_passing["Variable Name"]
+            values = self.variables_passing["Value"]
+            for i in range(len(variable_names)):
+                # Format each "name = value" pair
+                formatted_string = f"{variable_names[i]} = {values[i]}"
+                # Append to the list
+                formatted_strings.append(formatted_string)
+            # Step 4: Join all formatted strings with a space
+            variables_string = " ".join(formatted_strings)
+        else:
+            variables_string = ""
         if self.use_existing_env:
-            protocol_string += f'{tabs}subprocess.run([r"{os.path.abspath(self.python_exe_path)}", r"{os.path.abspath(self.file_path)}"], cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}")\n'
+            protocol_string = (
+                f"{tabs}result_python_file = subprocess.run(['"
+                f'r"{os.path.abspath(self.python_exe_path)}", '
+                f'r"{os.path.abspath(self.file_path)}", '
+                f"'{variables_string}'], "
+                f'cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}", '
+                f"capture_output=True, text=True)\n"
+                f"{tabs}output = result_python_file.stdout\n"
+                f"{tabs}import json\n"
+                f"{tabs}output_list = json.loads(output)\n"
+                f"{tabs}variables_dict = {{ }}\n"
+                f"{tabs}if isinstance(output_list, list):  # Step 1: Check if the output is a dictionary\n" \
+                f"{tabs}\tfor item in output_list:  # Step 2: Loop through the list\n" \
+                f"{tabs}\t\tkey, value = item.split('=')  # Step 3: Split each string\n" \
+                f"{tabs}\t\tvariables_dict[key] = value\n" \
+                f"{tabs}\t\tfor key, value in variables_dict.items():\n" \
+                f"{tabs}\t\t\tnamespace[key] = value\n" \
+                f"{tabs}if isinstance(output_list, dict):\n" \
+                f"{tabs}\tfor key, value in output_list.items():\n" \
+                f"{tabs}\t\tnamespace[key] = value\n"
+            )
 
         if self.use_specific_packages:
-            protocol_string += f'{tabs}helper_functions.create_venv_run_file_delete_venv({self.python_packages_versions}, r"{os.path.abspath(self.file_path)}")\n'
+            protocol_string += (
+                f"{tabs}result_python_file = helper_functions.create_venv_run_file_delete_venv({self.python_packages_versions}, "
+                f'r"{os.path.abspath(self.file_path)}", '
+                f"'{variables_string}')\n"
+                f"{tabs}output = result_python_file.stdout\n"
+                f"{tabs}import json\n"
+                f"{tabs}output_list = json.loads(output)\n"
+                f"{tabs}variables_dict = {{ }}\n"
+                f"{tabs}if isinstance(output_list, list):  # Step 1: Check if the output is a dictionary\n" \
+                f"{tabs}\tfor item in output_list:  # Step 2: Loop through the list\n" \
+                f"{tabs}\t\tkey, value = item.split('=')  # Step 3: Split each string\n" \
+                f"{tabs}\t\tvariables_dict[key] = value\n" \
+                f"{tabs}\t\tfor key, value in variables_dict.items():\n" \
+                f"{tabs}\t\t\tnamespace[key] = value\n" \
+                f"{tabs}if isinstance(output_list, dict):\n" \
+                f"{tabs}\tfor key, value in output_list.items():\n" \
+                f"{tabs}\t\tnamespace[key] = value\n"
+            )
 
         if self.use_camels_python:
             import sys
-            protocol_string += f'{tabs}subprocess.run([r"{os.path.abspath(sys.executable)}", r"{os.path.abspath(self.file_path)}"], cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}")\n'
+
+            protocol_string += (
+                f"{tabs}result_python_file = subprocess.run(["
+                f'r"{os.path.abspath(sys.executable)}", '
+                f'r"{os.path.abspath(self.file_path)}", '
+                f"'{variables_string}'], "
+                f'cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}", '
+                f"capture_output=True, text=True)\n"
+                f"{tabs}output = result_python_file.stdout\n"
+                f"{tabs}import json\n"
+                f"{tabs}output_list = json.loads(output)\n"
+                f"{tabs}variables_dict = {{ }}\n"
+                f"{tabs}if isinstance(output_list, list):  # Step 1: Check if the output is a dictionary\n" \
+                f"{tabs}\tfor item in output_list:  # Step 2: Loop through the list\n" \
+                f"{tabs}\t\tkey, value = item.split('=')  # Step 3: Split each string\n" \
+                f"{tabs}\t\tvariables_dict[key] = value\n" \
+                f"{tabs}\t\tfor key, value in variables_dict.items():\n" \
+                f"{tabs}\t\t\tnamespace[key] = value\n" \
+                f"{tabs}if isinstance(output_list, dict):\n" \
+                f"{tabs}\tfor key, value in output_list.items():\n" \
+                f"{tabs}\t\tnamespace[key] = value\n"
+            )
         return protocol_string
 
 
@@ -92,12 +169,58 @@ class Execute_Python_File_Config(Loop_Step_Config):
         super().__init__(parent, loop_step)
         self.loop_step = loop_step
 
-        # Labels and path buttons setup
+        # Labels setup
         self.label_python_file_path = QLabel("Python File Path")
         self.label_python_exe_path = QLabel("Python Executable Path")
+        self.python_packages_versions_label = QLabel("Python Packages and Versions")
+        self.passing_variables_label = QLabel("Variables to pass to the Python file")
+        self.read_variables_label = QLabel("Values returned by the Python file.")
+
+        # Path_Button_Edit widgets setup
         self.path_button_edit_python_file = Path_Button_Edit()
         self.path_button_edit_python_exe = Path_Button_Edit()
-        self.python_packages_versions_label = QLabel("Python Packages and Versions")
+
+        # Radio buttons setup
+        self.radio_existing_env = QRadioButton("Use existing python environment")
+        self.radio_specific_packages = QRadioButton("Use specific packages")
+        self.radio_camels_python = QRadioButton("Use CAMELS python")
+        # Button group to manage exclusive selection
+        self.radio_button_group = QButtonGroup()
+        self.radio_button_group.addButton(self.radio_existing_env)
+        self.radio_button_group.addButton(self.radio_specific_packages)
+        self.radio_button_group.addButton(self.radio_camels_python)
+        self.radio_button_group.buttonToggled.connect(self.handle_radio_button_clicked)
+        # Layout for radio buttons
+        radio_layout = QHBoxLayout()
+        radio_layout.addWidget(self.radio_existing_env)
+        radio_layout.addWidget(self.radio_specific_packages)
+        radio_layout.addWidget(self.radio_camels_python)
+
+        # Connect radio button signals
+        self.radio_existing_env.toggled.connect(self.toggle_add_remove_table)
+        self.radio_specific_packages.toggled.connect(self.toggle_python_exe_path)
+
+        # Horizontal line setup
+        h_line = QFrame()
+        h_line.setFrameShape(QFrame.HLine)
+        h_line.setFrameShadow(QFrame.Sunken)
+
+        # AddRemoveTable widget setup for python packages and their version when selecting the python packages explicitly
+        self.add_remove_table_packages = AddRemoveTable(
+            headerLabels=["Python Package", "Version"]
+        )
+
+        # AddRemoveTable for passing variables to the Python file
+        # If no variable is given in the table, it will take the variable values from the running script
+        self.add_remove_table_variables_passing = AddRemoveTable(
+            headerLabels=["Variable Name", "Value"]
+        )
+
+        # AddRemoveTable for reading from the Python file
+        # Value is either the index for the returned value if the file returns multiple things or the dictionary key if the file returns a dictionary
+        self.add_remove_table_returned_values_variables = AddRemoveTable(
+            headerLabels=["Variable Name"]
+        )
 
         # Tooltips
         self.label_python_file_path.setToolTip(
@@ -112,6 +235,24 @@ class Execute_Python_File_Config(Loop_Step_Config):
         self.path_button_edit_python_exe.setToolTip(
             "Specify the path to the Python executable (python.exe)."
         )
+        self.radio_existing_env.setToolTip(
+            "Run the Python file using the existing Python environment."
+        )
+        self.radio_specific_packages.setToolTip(
+            "Create a virtual environment with specified packages to run the Python file."
+        )
+        self.radio_camels_python.setToolTip(
+            "Run the Python file using the Python environment CAMELS is using."
+        )
+        self.add_remove_table_packages.setToolTip(
+            "Add or remove Python packages and their versions for the virtual environment."
+        )
+        self.add_remove_table_variables_passing.setToolTip(
+            "Specify variables and their values to be passed to the Python file during execution."
+        )
+        self.add_remove_table_returned_values_variables.setToolTip(
+            "Specify variables and their values that are returned from the Python file after execution.\nMust be saved to existing variables. Value is either the index for the returned value if the file returns multiple\nthings or the dictionary key if the file returns a dictionary."
+        )
 
         # Initial paths setup
         self.path_button_edit_python_file.set_path(self.loop_step.file_path)
@@ -119,16 +260,26 @@ class Execute_Python_File_Config(Loop_Step_Config):
         self.path_button_edit_python_file.path_changed.connect(self.update_file_path)
         self.path_button_edit_python_exe.path_changed.connect(self.update_exe_path)
 
-        # AddRemoveTable widget setup
-        self.add_remove_table_packages = AddRemoveTable(
-            headerLabels=["Python Package", "Version"]
-        )
-        # Save changes of the table to the loop step
+        # Save changes of the python packages table to the loop step
         self.add_remove_table_packages.table_model.itemChanged.connect(
             self.update_python_packages
         )
         self.add_remove_table_packages.change_table_data(
             self.loop_step.python_packages_versions
+        )
+        # Save changes of the variables passing table to the loop step
+        self.add_remove_table_variables_passing.table_model.itemChanged.connect(
+            self.update_variables_passing
+        )
+        self.add_remove_table_variables_passing.change_table_data(
+            self.loop_step.variables_passing
+        )
+        # Save changes of the returned variables table to the loop step
+        self.add_remove_table_returned_values_variables.table_model.itemChanged.connect(
+            self.update_returned_value_variables
+        )
+        self.add_remove_table_returned_values_variables.change_table_data(
+            self.loop_step.returned_values_variables
         )
 
         # Layout setup
@@ -136,28 +287,21 @@ class Execute_Python_File_Config(Loop_Step_Config):
 
         layout.addWidget(self.label_python_file_path, 1, 0)
         layout.addWidget(self.path_button_edit_python_file, 1, 1)
+
+        # Create a widget to hold radio buttons and add it to the main layout
+        radio_widget = QWidget()
+        radio_widget.setLayout(radio_layout)
+        layout.addWidget(radio_widget, 2, 0, 1, 2)
+
         layout.addWidget(self.label_python_exe_path, 3, 0)
         layout.addWidget(self.path_button_edit_python_exe, 3, 1)
         layout.addWidget(self.python_packages_versions_label, 4, 0, 1, 2)
         layout.addWidget(self.add_remove_table_packages, 5, 0, 1, 2)
-
-        # Horizontal line setup
-        h_line = QFrame()
-        h_line.setFrameShape(QFrame.HLine)
-        h_line.setFrameShadow(QFrame.Sunken)
         layout.addWidget(h_line, 6, 0, 1, 2)
-
-        # Radio buttons setup
-        self.radio_existing_env = QRadioButton("Use existing python environment")
-        self.radio_specific_packages = QRadioButton("Use specific packages")
-        self.radio_camels_python = QRadioButton("Use CAMELS python")
-
-        # Button group to manage exclusive selection
-        self.radio_button_group = QButtonGroup()
-        self.radio_button_group.addButton(self.radio_existing_env)
-        self.radio_button_group.addButton(self.radio_specific_packages)
-        self.radio_button_group.addButton(self.radio_camels_python)
-        self.radio_button_group.buttonToggled.connect(self.handle_radio_button_clicked)
+        layout.addWidget(self.passing_variables_label, 7, 0, 1, 2)
+        layout.addWidget(self.add_remove_table_variables_passing, 8, 0, 1, 2)
+        layout.addWidget(self.read_variables_label, 9, 0, 1, 2)
+        layout.addWidget(self.add_remove_table_returned_values_variables, 10, 0, 1, 2)
 
         # Set the selected radio button from the loop step
         if self.loop_step.radio_button_selected is not None:
@@ -173,21 +317,6 @@ class Execute_Python_File_Config(Loop_Step_Config):
         else:
             self.radio_camels_python.setChecked(True)
 
-        # Layout for radio buttons
-        radio_layout = QHBoxLayout()
-        radio_layout.addWidget(self.radio_existing_env)
-        radio_layout.addWidget(self.radio_specific_packages)
-        radio_layout.addWidget(self.radio_camels_python)
-
-        # Create a widget to hold radio buttons and add it to the main layout
-        radio_widget = QWidget()
-        radio_widget.setLayout(radio_layout)
-        layout.addWidget(radio_widget, 2, 0, 1, 2)
-
-        # Connect radio button signals
-        self.radio_existing_env.toggled.connect(self.toggle_add_remove_table)
-        self.radio_specific_packages.toggled.connect(self.toggle_python_exe_path)
-
     def update_exe_path(self, path):
         self.loop_step.python_exe_path = path
 
@@ -197,6 +326,16 @@ class Execute_Python_File_Config(Loop_Step_Config):
     def update_python_packages(self):
         self.loop_step.python_packages_versions = (
             self.add_remove_table_packages.update_table_data()
+        )
+
+    def update_variables_passing(self):
+        self.loop_step.variables_passing = (
+            self.add_remove_table_variables_passing.update_table_data()
+        )
+
+    def update_returned_value_variables(self):
+        self.loop_step.returned_values_variables = (
+            self.add_remove_table_returned_values_variables.update_table_data()
         )
 
     def handle_radio_button_clicked(self, button):
