@@ -17,7 +17,9 @@ from nomad_camels import graphics
 
 # Create a new form for the loading screen
 class LoadingScreen(QDialog):
-    """ """
+    """
+    A loading screen that appears when the application is starting up.
+    """
 
     def __init__(self):
         super().__init__()
@@ -45,15 +47,7 @@ class LoadingScreen(QDialog):
     # A function to update the progress bar
     def set_progress(self, value):
         """
-
-        Parameters
-        ----------
-        value :
-
-
-        Returns
-        -------
-
+        Set the progress bar value
         """
         self.progress_bar.setValue(value)
 
@@ -100,7 +94,7 @@ def start_camels():
     # Create a thread to import the packages
 
     class ImportThread(QThread):
-        """ """
+        """This thread imports the necessary packages for the main application to run."""
 
         update_progress = Signal(int)
         update_text = Signal(str)

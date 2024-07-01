@@ -27,6 +27,7 @@ from nomad_camels.utility import (
     update_camels,
     logging_settings,
     qthreads,
+    plot_placement,
 )
 from nomad_camels.ui_widgets import options_run_button, warn_popup
 from nomad_camels.extensions import extension_contexts
@@ -399,6 +400,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         for plot in list(self.open_plots):
             plot.close()
+        plot_placement.reset_variables()
 
     # --------------------------------------------------
     # Overwriting parent-methods
@@ -998,16 +1000,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def remove_manual_control(self, control_name):
         """
-        
+        Remove a manual control from the manual controls. Also remove the button from the button area.
 
         Parameters
         ----------
-        control_name :
-
-
-        Returns
-        -------
-
+        control_name : str
+            The name of the manual control to remove.
         """
         self.manual_controls.pop(control_name)
         self.button_area_manual.remove_button(control_name)
@@ -1015,6 +1013,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.button_area_manual.setHidden(True)
 
     def move_manual_control(self, control_name):
+        """
+        Move a manual control to another tab.
+
+        Parameters
+        ----------
+        control_name : str
+            The name of the manual control to move.
+        """
         from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import (
             MoveDialog,
         )
@@ -1036,17 +1042,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def update_man_cont_data(self, control_data, old_name):
         """
+        Update the data of a manual control. The old name is used to remove the old control from the manual controls. The new name is used to add the updated control to the manual controls.
 
         Parameters
         ----------
-        control_data :
+        control_data : dict
+            The updated data of the manual control.
 
-        old_name :
-
-
-        Returns
-        -------
-
+        old_name : str
+            The old name of the manual control.
         """
         self.manual_controls.pop(old_name)
         self.manual_controls[control_data["name"]] = control_data
@@ -1055,15 +1059,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def open_manual_control_config(self, control_name):
         """
+        Open the configuration dialog of a manual control. If the dialog is accepted, the data of the control is updated using the `update_man_cont_data` method.
 
         Parameters
         ----------
-        control_name :
-
-
-        Returns
-        -------
-
+        control_name : str
+            The name of the manual control to configure.
         """
         # IMPORT get_control_by_type_name only if needed
         from nomad_camels.manual_controls.get_manual_controls import (
@@ -1078,15 +1079,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def add_button_to_manuals(self, name, tab=""):
         """
+        Add a button to the manual controls area.
 
         Parameters
         ----------
-        name :
-
-
-        Returns
-        -------
-
+        name : str
+            The name of the manual control to add.
+        tab : str
+            The tab to add the button to. If not given, the button is added to the active tab.
         """
         button = options_run_button.Options_Run_Button(
             name, small_text="Start", protocol_options=False
@@ -1098,17 +1098,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def add_functions_to_manual_button(self, button, name):
         """
+        Connect the functions of the manual control button. The functions are to open the configuration dialog, to start the manual control, and to remove the manual control.
 
         Parameters
         ----------
-        button :
+        button : options_run_button.Options_Run_Button
+            The button to connect the functions to.
 
-        name :
-
-
-        Returns
-        -------
-
+        name : str
+            The name of the manual control to connect the functions to.
         """
         button.config_function = (
             lambda state=None, x=name: self.open_manual_control_config(x)
@@ -1119,7 +1117,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         button.update_functions()
 
     def populate_manuals_buttons(self):
-        """ """
+        """
+        Clears the manual controls area and adds the buttons for all manual controls."""
         self.button_area_manual.clear_area()
         if not self.manual_controls:
             self.button_area_manual.setHidden(True)
@@ -1137,15 +1136,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def start_manual_control(self, name):
         """
+        Start a manual control by instantiating the control class and adding it to the list of open windows. The control is also connected to the `close_manual_control` method.
 
         Parameters
         ----------
-        name :
-
-
-        Returns
-        -------
-
+        name : str
+            The name of the manual control to start.
         """
         # IMPORT get_control_by_type_name only if needed
         from nomad_camels.manual_controls.get_manual_controls import (
@@ -1164,17 +1160,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def close_manual_control(self, control, name):
         """
+        Triggered when a manual control is closed. The control is removed from the list of open windows and the button is re-enabled.
 
         Parameters
         ----------
-        control :
+        control : main_classes.manual_control.Manual_Control
+            The control that was closed.
 
-        name :
-
-
-        Returns
-        -------
-
+        name : str
+            The name of the manual control that was closed.
         """
         self.open_windows.remove(control)
         self.button_area_manual.enable_single_run(name)
@@ -1184,7 +1178,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
 
     def add_measurement_protocol(self):
-        """ """
+        """
+        Open an empty protocol configuration dialog. When the dialog is accepted, the protocol is added to the protocols.
+        """
         # IMPORT Protocol_Config only if needed
         from nomad_camels.frontpanels.protocol_config import Protocol_Config
 
@@ -1194,6 +1190,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.add_to_open_windows(dialog)
 
     def import_measurement_protocol(self):
+        """
+        Open a dialog to select a protocol file to import. When the dialog is accepted, the protocol is loaded and a configuration dialog is opened. When the configuration dialog is accepted, the protocol is added to the protocols.
+        """
         # IMPORT Protocol_Config and Path_Button_Dialog only if needed
         from nomad_camels.frontpanels.protocol_config import Protocol_Config
         from nomad_camels.ui_widgets.path_button_edit import Path_Button_Dialog
@@ -1216,15 +1215,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def add_prot_to_data(self, protocol):
         """
+        Add a protocol to the protocols_dict. The protocol is added to the button area and the functions are connected to the buttons.
 
         Parameters
         ----------
-        protocol :
-
-
-        Returns
-        -------
-
+        protocol : main_classes.protocol_class.Measurement_Protocol
+            The protocol to add.
         """
         self.protocols_dict[protocol.name] = protocol
         self.add_button_to_meas(protocol.name)
@@ -1232,15 +1228,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def remove_protocol(self, prot_name):
         """
+        Remove a protocol from the protocols_dict. Also remove the button from the button area.
 
         Parameters
         ----------
-        prot_name :
-
-
-        Returns
-        -------
-
+        prot_name : str
+            The name of the protocol to remove.
         """
         self.protocols_dict.pop(prot_name)
         self.button_area_meas.remove_button(prot_name)
@@ -1248,6 +1241,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.button_area_meas.setHidden(True)
 
     def move_protocol(self, protocol_name):
+        """
+        Move a protocol to another tab.
+
+        Parameters
+        ----------
+        protocol_name : str
+            The name of the protocol to move.
+        """
         from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import (
             MoveDialog,
         )
@@ -1269,17 +1270,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def update_prot_data(self, protocol, old_name):
         """
+        Update the data of a protocol. The old name is used to remove the old protocol from the protocols_dict. The new name is used to add the updated protocol to the protocols_dict.
 
         Parameters
         ----------
-        protocol :
+        protocol : main_classes.protocol_class.Measurement_Protocol
+            The updated protocol.
 
-        old_name :
-
-
-        Returns
-        -------
-
+        old_name : str
+            The old name of the protocol.
         """
         self.protocols_dict.pop(old_name)
         self.protocols_dict[protocol.name] = protocol
@@ -1288,15 +1287,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def open_protocol_config(self, prot_name):
         """
+        Open the configuration dialog of a protocol. If the dialog is accepted, the data of the protocol is updated using the `update_prot_data` method.
 
         Parameters
         ----------
-        prot_name :
-
-
-        Returns
-        -------
-
+        prot_name : str
+            The name of the protocol to configure.
         """
         # IMPORT Protocol_Config only if needed
         if not self.check_password_protection():
@@ -1310,15 +1306,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def add_button_to_meas(self, name, tab=""):
         """
+        Add a button to the protocols area.
 
         Parameters
         ----------
-        name :
+        name : str
+            The name of the protocol to add.
 
-
-        Returns
-        -------
-
+        tab : str
+            The tab to add the button to. If not given, the button is added to the active tab.
         """
         button = options_run_button.Options_Run_Button(name)
         # get active tab
@@ -1328,17 +1324,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def add_functions_to_meas_button(self, button, name):
         """
+        Connect the functions of the protocol button. The functions are to open the configuration dialog, to run the protocol, to build the protocol, to open the protocol file, to open the data path, to remove the protocol, to move the protocol, and to queue the protocol.
 
         Parameters
         ----------
-        button :
+        button : options_run_button.Options_Run_Button
+            The button to connect the functions to.
 
-        name :
-
-
-        Returns
-        -------
-
+        name : str
+            The name of the protocol / button.
         """
         button.config_function = lambda state=None, x=name: self.open_protocol_config(x)
         button.run_function = lambda state=None, x=name: self.run_protocol(x)
@@ -1351,6 +1345,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         button.update_functions()
 
     def open_data_path(self, protocol_name):
+        """
+        Open the data path of a protocol in the file explorer.
+
+        Parameters
+        ----------
+        protocol_name : str
+            The name of the protocol to open the data path of.
+        """
         user = self.get_user_name_data()[0]
         sample = self.get_sample_name_data()[0]
         protocol = self.protocols_dict[protocol_name]
@@ -1371,7 +1373,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             subprocess.Popen(["xdg-open", os.path.dirname(savepath)])
 
     def populate_meas_buttons(self):
-        """ """
+        """
+        Clears the protocols area and adds the buttons for all protocols.
+        """
         self.button_area_meas.clear_area()
         if not self.protocols_dict:
             self.button_area_meas.setHidden(True)
@@ -1388,6 +1392,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 self.add_button_to_meas(prot, "protocols")
 
     def next_queued_protocol(self, protocol_name, variables):
+        """
+        Checks whether the run engine is idle and if so, runs the next protocol in the queue.
+        """
         if self.run_engine and self.run_engine.state != "idle":
             return
         self.run_protocol(protocol_name, variables)
@@ -1403,6 +1410,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         If everything runs correctly and a nomad upload should be done, after
         `protocol_finished` is called, this function will wait for it and then
         handle the upload.
+
+        Closing devices not used in the protocol is done in `close_old_queue_devices`.
         """
         self.setCursor(Qt.WaitCursor)
         # IMPORT importlib, bluesky, ophyd and time only if needed
@@ -1452,10 +1461,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.close_old_queue_devices()
 
     def propagate_exception(self, exception):
+        """
+        Called when an exception is raised during the instantiation of the devices.
+        First the protocol is finished and then the exception is raised.
+        """
         self.protocol_finished()
         raise exception
 
     def run_protocol_part2(self):
+        """
+        This function is called after the devices are instantiated.
+        The protocol is run using the `run_protocol_main` function of the protocol module.
+        After the protocol is finished, the `protocol_finished` function is called, the data is saved and uploaded to NOMAD if selected.
+        """
         try:
             devs = self.instantiate_devices_thread.devices
             dev_data = self.instantiate_devices_thread.device_config
@@ -1521,15 +1539,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def add_subs_and_plots_from_dict(self, dictionary):
         """
+        Add subscriptions and plots from a dictionary to the current subscriptions and plots.
 
         Parameters
         ----------
-        dictionary :
-
-
-        Returns
-        -------
-
+        dictionary : dict{"subs": list, "plots": list}
+            The dictionary containing the subscriptions and plots to add.
         """
         for k, v in dictionary.items():
             if k == "subs":
@@ -1541,20 +1556,26 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 self.add_subs_and_plots_from_dict(v)
 
     def pause_protocol(self):
-        """ """
+        """
+        Pause the protocol if the run engine is running. The run engine is requested to pause and the buttons are updated.
+        """
         if self.run_engine.state == "running":
             self.run_engine.request_pause()
             self.pushButton_resume.setEnabled(True)
             self.pushButton_pause.setEnabled(False)
 
     def stop_protocol(self):
-        """ """
+        """
+        Stop the protocol if the run engine is not idle. The run engine is aborted.
+        """
         if self.run_engine.state != "idle":
             self.run_engine.abort("Aborted by user")
         # self.protocol_finished()
 
     def resume_protocol(self):
-        """ """
+        """
+        Resume the protocol if the run engine is paused. The run engine is resumed and the buttons are updated.
+        """
         if self.run_engine.state == "paused":
             self.pushButton_resume.setEnabled(False)
             self.pushButton_pause.setEnabled(True)
@@ -1562,15 +1583,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def protocol_finished(self, *args):
         """
-
-        Parameters
-        ----------
-        *args :
-
-
-        Returns
-        -------
-
+        Called when the protocol is finished. The subscriptions are removed.
+        Checks if the next protocol in the queue should be run, if not, the protocol is finished and the devices are closed. If yes, the next protocol is run and the currently used devices are added to the list of devices from the queue.
         """
         # IMPORT databroker_export and device_handling only if needed
         from nomad_camels.utility import databroker_export, device_handling
@@ -1618,6 +1632,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.still_running = False
 
     def close_old_queue_devices(self):
+        """
+        Close devices that are not used in the currently running protocol but are still open from protocols run in the queue before.
+        """
         # IMPORT device_handling only if needed
         from nomad_camels.utility import device_handling
 
@@ -1639,14 +1656,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         Parameters
         ----------
-        protocol_name :
+        protocol_name : str
+            The name of the protocol to build.
 
-        ask_file :
-             (Default value = True)
-
-        Returns
-        -------
-
+        ask_file : bool
+             (Default value = True) If True, a file dialog is opened to select where the protocol should be exported to. If False, the protocol is written to the default path.
         """
         from copy import deepcopy
 
@@ -1682,9 +1696,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.progressBar_protocols.setValue(100 if ask_file else 1)
 
     def queue_protocol(self, protocol_name):
+        """
+        Add a protocol to the queue. The protocol is added to the queue widget and the next protocol is checked. See `ui_widgets.run_queue.RunQueue.add_item`.
+
+        Parameters
+        ----------
+        protocol_name : str
+            The name of the protocol to add to the queue.
+        """
         self.run_queue_widget.add_item(protocol_name)
 
     def get_user_name_data(self):
+        """
+        Get the user name and data. If a nomad user is selected, the user name and data are taken from the nomad user. If an extension user is selected, the user data is taken from the extension user. If a local user is selected, the user data is taken from the user data. If no user is selected, the user name is set to "default_user" and no further data is available.
+        """
         if self.nomad_user:
             userdata = self.nomad_user
             user = userdata["name"]
@@ -1700,6 +1725,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         return user, userdata
 
     def get_sample_name_data(self):
+        """
+        Get the sample name and data. If a nomad sample is selected and the nomad sample checkbox is checked, the sample name and data are taken from the nomad sample. If an extension sample is selected, the sample name and data are taken from the extension sample. If a local sample is selected, the sample name and data are taken from the sample data. If no sample is selected, the sample name is set to "default_sample" and no further data is available.
+        """
         if self.nomad_sample and self.checkBox_use_nomad_sample.isChecked():
             sampledata = self.nomad_sample
             if "name" in sampledata:
@@ -1722,15 +1750,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def open_protocol(self, protocol_name):
         """
+        Open the protocol file in the default editor. If the file does not exist, the protocol is built first.
 
         Parameters
         ----------
-        protocol_name :
-
-
-        Returns
-        -------
-
+        protocol_name : str
+            The name of the protocol to open.
         """
         path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
         if not os.path.isfile(path):
@@ -1741,7 +1766,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # tools
     # --------------------------------------------------
     def launch_device_builder(self):
-        """ """
+        """
+        Launch the device driver builder dialog. See `tools.device_driver_builder.Driver_Builder`.
+        """
         # IMPORT device_driver_builder only if needed
         from nomad_camels.tools import device_driver_builder
 
@@ -1749,6 +1776,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         device_builder.show()
 
     def launch_epics_builder(self):
+        """
+        Launch the EPICS driver builder dialog. See `tools.EPICS_driver_builder.EPICS_Driver_Builder`.
+        """
         # IMPORT EPICS_driver_builder only if needed
         from nomad_camels.tools import EPICS_driver_builder
 
@@ -1756,6 +1786,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         device_builder.show()
 
     def launch_data_exporter(self):
+        """
+        Launch the data exporter dialog. See `utility.databroker_export.ExportData_dialog`.
+        """
         # IMPORT databroker_exporter only if needed
         from nomad_camels.tools import databroker_exporter
 
@@ -1763,6 +1796,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         exporter.show()
 
     def launch_hdf5_exporter(self):
+        """
+        Launch the HDF5 exporter dialog. See `utility.databroker_export.ExportH5_dialog`.
+        """
         from nomad_camels.utility import databroker_export
 
         exporter = databroker_export.ExportH5_dialog(self)

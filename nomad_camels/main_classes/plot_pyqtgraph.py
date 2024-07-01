@@ -1,3 +1,5 @@
+"""This module contains the classes for the plot widgets, based on pyqtgraph."""
+
 import sys
 import os
 
@@ -26,6 +28,8 @@ import pyqtgraph as pg
 from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
 
 import lmfit
+from importlib import resources
+from nomad_camels import graphics
 
 from bluesky.callbacks.core import get_obj_fields, CallbackBase
 
@@ -33,10 +37,12 @@ from nomad_camels.gui.plot_options import Ui_Plot_Options
 from nomad_camels.utility.fit_variable_renaming import replace_name
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 from nomad_camels.main_classes.plot_widget import LiveFit_Eva
+from nomad_camels.utility.plot_placement import place_widget
 
 # recognized by pyqtgraph: r, g, b, c, m, y, k, w
 dark_mode_colors = ["w", "r", (0, 100, 255), "g", "c", "m", "y", "k"]
 
+# these are the colors used by matplotlib, they are used as default colors in light mode
 matplotlib_default_colors = [
     "#1f77b4",
     "#ff7f0e",
@@ -50,6 +56,7 @@ matplotlib_default_colors = [
     "#17becf",
 ]
 
+# these are the symbols recognized by pyqtgraph
 symbols = {
     "circle": "o",
     "square": "s",
@@ -71,6 +78,7 @@ symbols = {
     "none": None,
 }
 
+# these are the linestyles recognized by pyqtgraph
 linestyles = {
     "solid": Qt.PenStyle.SolidLine,
     "dashed": Qt.PenStyle.DashLine,
@@ -86,7 +94,7 @@ colors = matplotlib_default_colors
 
 
 def activate_dark_mode():
-    """Changes the plot-style to dark-mode."""
+    """Changes the plot-style to dark-mode, by changing the config options of pyqtgraph."""
     global dark_mode, colors
     dark_mode = True
     pg.setConfigOptions(background="k", foreground="w")
@@ -102,65 +110,46 @@ class PlotWidget(QWidget):
         The name of the x-axis variable
     y_names : Union[str, Tuple[str]]
         The name(s) of the y-axis variable(s)
-    legend_keys : List[str], optional
-        The keys for the legend, by default None
-    xlim : Tuple[float, float], optional
-        passed to Axes.set_xlim
-    ylim : Tuple[float, float], optional
-        passed to Axes.set_ylim
-    epoch : {'run', 'unix'}, optional
+    legend_keys : List[str]
+        deprecated
+    xlim : Tuple[float, float]
+        deprecated
+    ylim : Tuple[float, float]
+        deprecated
+    epoch : {'run', 'unix'}
         If 'run' t=0 is the time recorded in the RunStart document. If 'unix',
         t=0 is 1 Jan 1970 ("the UNIX epoch"). Default is 'run'.
     parent : QWidget, optional
         The parent widget, by default None
-    namespace : Optional[Mapping[str, Any]]
+    namespace : Mapping[str, Any], optional
         The namespace to use for the `Evaluator`, by default None
     ylabel : str, optional
-        The y-axis label, by default ''
+        The y-axis label, if empty the first y_name is used, by default ''
     xlabel : str, optional
-        The x-axis label, by default ''
+        The x-axis label, if empty the x_name is used, by default ''
     title : str, optional
         The title of the plot, by default ''
-    stream_name : str, optional
-        The name of the stream to be used for the plot. Default is 'primary'
+    stream_name : str
+        The name of the bluesky stream to be used for the plot. If multi_stream is True, streams including this name are used. Default is 'primary'
     fits : List[Dict[str, Union[str, bool, List[str], Tuple[float, float], Dict[str, Union[str, float]]]]], optional
         The fits for the plot, by default None
-    do_plot : bool, optional
-        Whether to show the plot, by default True
+    do_plot : bool
+        deprecated
+    multi_stream : bool, optional
+        Whether to use multiple streams, see stream name, by default False
+    y_axes : Dict[str, int], optional
+        The y-axis to use for each y_name, the ints should be 1 or 2, if 2, the respective y-value is plotted on the right axis, by default None
+    logX : bool
+        Whether to use a logarithmic x-axis, by default False
+    logY : bool
+        Whether to use a logarithmic y-axis, by default False
+    logY2 : bool
+        Whether to use a logarithmic y-axis for the right axis, by default False
+    maxlen : int
+        The maximum number of data points to show, by default np.inf
+    use_bluesky : bool
     **kwargs : Any, optional
         Additional keyword arguments to pass to `MultiLivePlot`
-
-    Returns
-    -------
-
-    Attributes
-    ----------
-    ax : Axes
-        The matplotlib axes of the plot
-    x_name : str
-        The name of the x-axis variable
-    y_names : List[str]
-        The name(s) of the y-axis variable(s)
-    stream_name : str
-        The name of the stream
-    fits : List[Dict[str, Union[str, bool, List[str], Tuple[float, float], Dict[str, Union[str, float]]]]]
-        The fits for the plot as they come from the fit/plot definer.
-    liveFits : List[LiveFit_Eva]
-        The live fit objects for the plot, handled by the liveFitPlots
-    liveFitPlots : List[Fit_Plot_No_Init_Guess]
-        The live fit plots for the plot, used to display the fits
-    livePlot : MultiLivePlot
-        The live plot, using the canvas etc.
-    toolbar : NavigationToolbar2QT
-        The toolbar for the plot
-    pushButton_show_options : QPushButton
-        The push button to show the plot options
-    pushButton_autoscale : QPushButton
-        The push button to autoscale the plot
-    plot_options : Plot_Options
-        The options widget for the plot
-    options_open : bool
-        Whether the options are currently open
     """
 
     closing = Signal()
@@ -204,10 +193,13 @@ class PlotWidget(QWidget):
         self.liveFits = []
         self.liveFitPlots = []
         self.ax2_viewbox = None
+        self.setWindowTitle(title or f"{x_name} vs. {y_names[0]}")
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+
         ax2 = None
+        plotItem = self.plot_widget.getPlotItem()
         if y_axes and 2 in y_axes.values():
             self.ax2_viewbox = pg.ViewBox()
-            plotItem = self.plot_widget.getPlotItem()
             plotItem.scene().addItem(self.ax2_viewbox)
             ax2 = plotItem.getAxis("right")
             self.ax2_viewbox.setXLink(plotItem)
@@ -216,12 +208,15 @@ class PlotWidget(QWidget):
             ax2.linkToView(self.ax2_viewbox)
             plotItem.layout.addItem(ax2, 2, 3)
 
+            # This makes the second y-axis move with the viewbox of the main plot
             def updateViews():
                 self.ax2_viewbox.setGeometry(plotItem.vb.sceneBoundingRect())
                 self.ax2_viewbox.linkedViewChanged(plotItem.vb, self.ax2_viewbox.XAxis)
 
             updateViews()
             plotItem.vb.sigResized.connect(updateViews)
+
+        # create the fits
         for fit in self.fits:
             if fit["use_custom_func"]:
                 model = lmfit.models.ExpressionModel(fit["custom_func"])
@@ -274,6 +269,7 @@ class PlotWidget(QWidget):
                 )
             )
 
+        # create the main plot, either with or without using bluesky callbacks
         if use_bluesky:
             self.livePlot = LivePlot(
                 x_name=x_name,
@@ -329,8 +325,10 @@ class PlotWidget(QWidget):
         self.layout().addWidget(self.plot_options, 0, 0, 3, 1)
         self.plot_options.hide()
         self.adjustSize()
+        place_widget(self)
 
     def make_toolbar(self):
+        """Creates the toolbar for the plot widget. This toolbar is based on the context menu of the plot. The View All is connected with `auto_range`."""
         self.toolbar = QMenuBar()
         viewbox = self.plot_widget.getPlotItem().getViewBox()
         menu = viewbox.menu
@@ -348,11 +346,15 @@ class PlotWidget(QWidget):
         self.plot_options.set_log()
 
     def auto_range(self):
+        """Also call the auto range for the second y-axis if it exists."""
         self.livePlot.plotItem.vb.autoRange()
         if self.ax2_viewbox:
             self.ax2_viewbox.autoRange()
 
     def change_maxlen(self):
+        """
+        Changes the maximum number of data points to show in the plot. Reads the value from the line edit and sets it as the new maximum length.
+        """
         text = self.lineEdit_n_data.text()
         if not text or text.lower() in ["none", "inf", "np.inf"]:
             maxlen = np.inf
@@ -364,6 +366,9 @@ class PlotWidget(QWidget):
         self.livePlot.change_maxlen(maxlen)
 
     def show_options(self):
+        """
+        Shows or hides the plot options. If the options are shown, the button text is changed to "Hide Options", otherwise it is changed to "Show Options".
+        """
         if self.options_open:
             self.pushButton_show_options.setText("Show Options")
             self.options_open = False
@@ -376,16 +381,33 @@ class PlotWidget(QWidget):
             self.plot_options.update_plot_items()
 
     def clear_plot(self):
+        """
+        Clears the plot and the fits.
+        """
         self.livePlot.clear_plot()
         for fit in self.liveFitPlots:
             fit.clear_plot()
 
     def closeEvent(self, event):
+        """
+        Emits the closing signal when the widget is closed.
+        """
         self.closing.emit()
         super().closeEvent(event)
 
 
 class Plot_Options(Ui_Plot_Options, QWidget):
+    """
+    Class for the plot options widget. This widget is used to change the appearance of the plot, such as the color, linestyle, marker, and log-scale of the axes.
+
+    Parameters
+    ----------
+    parent : QWidget, optional
+        The parent widget, by default None
+    livePlot : LivePlot
+        The LivePlot object connected to the plot widget, by default None
+    """
+
     def __init__(self, parent=None, livePlot=None):
         super().__init__(parent=parent)
         self.setupUi(self)
@@ -406,12 +428,17 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         self.checkBox_use_abs_y2.stateChanged.connect(self.set_log)
 
     def update_plot_items(self):
+        """
+        Updates the items in the table widget to match the items in the plot.
+        """
         self.all_items.clear()
         self.items_in_2.clear()
         items_viewbox_1 = self.livePlot.plotItem.vb.allChildItems()
+        # get all PlotDataItems in the first y-axis
         for item in items_viewbox_1:
             if isinstance(item, pg.PlotDataItem):
                 self.all_items[item.name()] = item
+        # get all PlotDataItems in the second y-axis
         if self.livePlot.ax2_viewbox:
             items_viewbox_2 = self.livePlot.ax2_viewbox.allChildItems()
             for item in items_viewbox_2:
@@ -467,29 +494,48 @@ class Plot_Options(Ui_Plot_Options, QWidget):
             self.tableWidget.setCellWidget(i, 3, colorwidge)
 
     def change_symbol(self, symbol, row):
+        """
+        Changes the symbol of a PlotDataItem connected to the specified `row`.
+
+        Parameters
+        ----------
+        symbol : str
+            The new symbol
+        row : int
+            The row of the item in the table widget
+        """
         name = self.tableWidget.item(row, 0).text()
         self.change_color(row, just_update=True)
         self.all_items[name].setSymbol(symbols[symbol])
 
     def change_color(self, row, just_update=False):
+        """
+        Changes the color of a PlotDataItem connected to the specified `row`.
+
+        Parameters
+        ----------
+        row : int
+            The row of the item in the table widget
+        just_update : bool, (default: False)
+            If True, only updates the color of the item to the one already set. If False, opens a color dialog to choose a new color.
+        """
+        item = self.tableWidget.cellWidget(row, 3)
         if just_update:
-            item = self.tableWidget.cellWidget(row, 3)
             color = item.text()
-            name = self.tableWidget.item(row, 0).text()
-            self.all_items[name].opts["pen"].setColor(color)
-            self.all_items[name].setSymbolPen(pg.mkPen(color=color))
-            self.all_items[name].setSymbolBrush(pg.mkBrush(color=color))
-            return
-        color = QColorDialog.getColor()
-        if color.isValid():
-            item = self.tableWidget.cellWidget(row, 3)
-            item.setText(color.name())
-            name = self.tableWidget.item(row, 0).text()
-            self.all_items[name].opts["pen"].setColor(color)
-            self.all_items[name].setSymbolPen(pg.mkPen(color=color))
-            self.all_items[name].setSymbolBrush(pg.mkBrush(color=color))
+        else:
+            color = QColorDialog.getColor()
+            if not color.isValid():
+                return
+        item.setText(color.name())
+        name = self.tableWidget.item(row, 0).text()
+        self.all_items[name].opts["pen"].setColor(color)
+        self.all_items[name].setSymbolPen(pg.mkPen(color=color))
+        self.all_items[name].setSymbolBrush(pg.mkBrush(color=color))
 
     def set_log(self):
+        """
+        Sets the log-scale of the axes according to the checkboxes.
+        """
         x = self.checkBox_log_x.isChecked()
         self.checkBox_use_abs_x.setEnabled(x)
         y = self.checkBox_log_y.isChecked()
@@ -514,6 +560,43 @@ class Plot_Options(Ui_Plot_Options, QWidget):
 
 
 class LivePlot(QObject, CallbackBase):
+    """
+    Bluesky callback class for live plotting. This class is used to update the plot with new data.
+
+    Parameters
+    ----------
+    x_name : str
+        The name of the x-axis variable
+    y_names : List[str]
+        The name(s) of the y-axis variable(s)
+    plot_item : pg.PlotItem
+        The plot item to plot the data on
+    maxlen : [int, np.inf], (default: np.inf)
+        The maximum number of data points to show
+    multi_stream : bool, (default: False)
+        Whether to use multiple streams. If True, all streams including the `stream_name` are used.
+    evaluator : Evaluator
+        The evaluator object used to evaluate expressions.
+    stream_name : str, (default: 'primary')
+        The name of the bluesky stream to use for the plot.
+    y_axes : Dict[str, int], (default: None)
+        The y-axis to use for each y_name, the ints should be 1 or 2, if 2, the respective y-value is plotted on the right axis
+    title : str, (default: '')
+        The title of the plot
+    xlabel : str, (default: '')
+        The x-axis label, if empty the x_name is used
+    ylabel : str, (default: '')
+        The y-axis label, if empty the first y_name is used
+    epoch : {'run', 'unix'}, (default: 'run')
+        If 'run' t=0 is the time recorded in the RunStart document. If 'unix', t=0 is 1 Jan 1970 ("the UNIX epoch").
+    ax2_viewbox : pg.ViewBox, (default: None)
+        The viewbox for the second y-axis
+    ax2_axis : pg.AxisItem, (default: None)
+        The axis for the second y-axis
+    fitPlots : List[LiveFitPlot], (default: [])
+        The fit plots connected to the plot.
+    """
+
     new_data_signal = Signal()
     setup_done_signal = Signal()
 
@@ -547,6 +630,7 @@ class LivePlot(QObject, CallbackBase):
         self.use_abs = {"x": False, "y": False, "y2": False}
 
         def setup():
+            # this is the setup function, it is called when the first event is received
             nonlocal y_names, x_name, title, xlabel, ylabel, epoch
             with self.__setup_lock:
                 if self.__setup_event.is_set():
@@ -591,40 +675,64 @@ class LivePlot(QObject, CallbackBase):
         self.n_plots = 0
 
     def __call__(self, name, doc, *, escape=False):
+        """
+        The call method of the callback. This method is called when a new event is received. If `__teleporter` is set, the event is sent to the `__teleporter`, otherwise the event is processed directly. The teleporter is necessary to send the event to a different thread, since Qt objects can only be accessed from the thread they were created in.
+
+        Parameters
+        ----------
+        name : str
+            The name of the event
+        doc : dict
+            The event document
+        escape : bool, (default: False)
+            If True, the event is always processed directly, otherwise it is sent to the teleporter
+        """
         if not escape and self.__teleporter is not None:
             self.__teleporter.name_doc_escape.emit(name, doc, self)
         else:
             return CallbackBase.__call__(self, name, doc)
 
+    def add_plot(self, y):
+        i = self.ys.index(y)
+        color = colors[self.n_plots % len(colors)]
+        if y in self.y_axes and self.y_axes[y] == 2:
+            self.current_plots[y] = plot = pg.PlotDataItem(
+                [],
+                [],
+                label=self.y_names[i],
+                name=self.y_names[i],
+                symbol="o",
+                symbolPen=pg.mkPen(color=color),
+                symbolBrush=pg.mkBrush(color=color),
+                pen=pg.mkPen(color=color, width=2, style=linestyles["none"]),
+            )
+            self.ax2_viewbox.addItem(plot)
+        else:
+            self.current_plots[y] = self.plotItem.plot(
+                [],
+                [],
+                label=self.y_names[i],
+                name=self.y_names[i],
+                symbol="o",
+                symbolPen=pg.mkPen(color=color),
+                symbolBrush=pg.mkBrush(color=color),
+                pen=pg.mkPen(color=color, width=2, style=linestyles["none"]),
+            )
+        self.n_plots += 1
+
     def start(self, doc):
+        """
+        This method is called when the RunStart document is received. It sets up the plot and the fits.
+
+        Parameters
+        ----------
+        doc : dict
+            The RunStart document
+        """
         self.__setup()
         for i, y in enumerate(self.ys):
             try:
-                color = colors[self.n_plots % len(colors)]
-                if y in self.y_axes and self.y_axes[y] == 2:
-                    self.current_plots[y] = plot = pg.PlotDataItem(
-                        [],
-                        [],
-                        label=self.y_names[i],
-                        name=self.y_names[i],
-                        symbol="o",
-                        symbolPen=pg.mkPen(color=color),
-                        symbolBrush=pg.mkBrush(color=color),
-                        pen=pg.mkPen(color=color, width=2, style=linestyles["none"]),
-                    )
-                    self.ax2_viewbox.addItem(plot)
-                else:
-                    self.current_plots[y] = self.plotItem.plot(
-                        [],
-                        [],
-                        label=self.y_names[i],
-                        name=self.y_names[i],
-                        symbol="o",
-                        symbolPen=pg.mkPen(color=color),
-                        symbolBrush=pg.mkBrush(color=color),
-                        pen=pg.mkPen(color=color, width=2, style=linestyles["none"]),
-                    )
-                self.n_plots += 1
+                self.add_plot(y)
             except Exception as e:
                 print(e)
         self.legend = pg.LegendItem(
@@ -638,6 +746,14 @@ class LivePlot(QObject, CallbackBase):
             fit.start(doc)
 
     def descriptor(self, doc):
+        """
+        This method is called when a new descriptor document is received. If the descriptor is relevant, (compared with `self.stream_name`), the uid of the descriptor is added to the list of relevant descriptors. If the descriptor is a fit descriptor, the fit stream is added to the list of fits.
+
+        Parameters
+        ----------
+        doc : dict
+            The descriptor document
+        """
         if doc["name"] == self.stream_name:
             self.desc.append(doc["uid"])
         elif doc["name"].startswith(f"{self.stream_name}_fits_readying_"):
@@ -651,6 +767,14 @@ class LivePlot(QObject, CallbackBase):
             self.desc.append(doc["uid"])
 
     def event(self, doc):
+        """
+        This method is called when a new event document is received. If the descriptor of the event is not in the list of relevant descriptors, the event is ignored. Otherwise, the data is extracted from the event and added to the plot.
+
+        Parameters
+        ----------
+        doc : dict
+            The event document
+        """
         if isinstance(doc, QEvent):
             try:
                 pg.PlotWidget.event(self, doc)
@@ -711,6 +835,8 @@ class LivePlot(QObject, CallbackBase):
                 plot_y = np.abs(self.y_data[y]) if y2_abs else self.y_data[y]
             else:
                 plot_y = np.abs(self.y_data[y]) if y_abs else self.y_data[y]
+            if not y in self.current_plots:
+                self.add_plot(y)
             self.current_plots[y].setData(plot_x, plot_y)
         self.new_data_signal.emit()
 
@@ -728,7 +854,7 @@ class LivePlot(QObject, CallbackBase):
             fit.stop(doc)
 
     def clear_plot(self):
-        for y in self.ys:
+        for y in self.current_plots:
             self.current_plots[y].setData([], [])
         self.x_data = []
         for y in self.y_data:
@@ -866,7 +992,10 @@ class LiveFitPlot(CallbackBase):
                 self.line_position = self.parent_plot.line_number
                 self.parent_plot.line_number += len(vals)
             for i, (name, value) in enumerate(vals.items()):
-                text = pg.TextItem(f"{name}: {value:.3e}", color=self.color)
+                error = np.sqrt(self.livefit.result.covar[i, i])
+                text = pg.TextItem(
+                    f"{name}: {value:.3e} ± {error:.3e}", color=self.color
+                )
                 text.setParentItem(self.plotItem.vb)
                 text.setPos(5, (i + self.line_position) * 20 + y0)
                 self.text_objects.append(text)
@@ -934,6 +1063,7 @@ class PlotWidget_2D(QWidget):
         self.layout().addWidget(self.graphics_layout, 0, 0)
         self.make_toolbar()
         self.adjustSize()
+        place_widget(self)
 
     def make_toolbar(self):
         self.toolbar = QMenuBar()

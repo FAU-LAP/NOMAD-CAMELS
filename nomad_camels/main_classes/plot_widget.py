@@ -38,6 +38,7 @@ from nomad_camels.utility.plot_placement import place_widget
 
 from importlib import resources
 from nomad_camels import graphics
+from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
 stdCols = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 
@@ -308,7 +309,13 @@ class PlotWidget(QWidget):
     def change_maxlen(self):
         """ """
         text = self.lineEdit_n_data.text()
-        if not text or text == "None" or text == "none" or text == "inf" or text == "np.inf":
+        if (
+            not text
+            or text == "None"
+            or text == "none"
+            or text == "inf"
+            or text == "np.inf"
+        ):
             maxlen = np.inf
         else:
             try:
@@ -500,10 +507,14 @@ class LiveFit_Eva(LiveFit):
         kwargs = {}
         kwargs.update(self.independent_vars_data)
         kwargs.update(self.init_guess)
-        if self.params:
-            self.result = self.model.fit(self.ydata, params=self.params, **kwargs)
-        else:
-            self.result = self.model.fit(self.ydata, **kwargs)
+        try:
+            if self.params:
+                self.result = self.model.fit(self.ydata, params=self.params, **kwargs)
+            else:
+                self.result = self.model.fit(self.ydata, **kwargs)
+        except Exception as e:
+            print(f"Error in fit {self.name}: {e}")
+            return None
         self.results[f"{self.timestamp}"] = self.result
         for d in self.additional_data:
             self.additional_data[d].append(self.eva.eval(d))
@@ -682,8 +693,10 @@ class Fit_Ophyd(Device):
                 self.order[i].update_data(result.best_values[comp], timestamp)
                 self.used_comps.append(self.order[i])
                 self.order[i].name = f"{self.name}_{comp}"
-        if result.covar is not None:
+        if result is not None and result.covar is not None:
             self.covar.update_data(result.covar, timestamp)
+        else:
+            self.covar.update_data(None, timestamp)
 
     def read(self):
         """Overwrites the `read` method from `Device`.
