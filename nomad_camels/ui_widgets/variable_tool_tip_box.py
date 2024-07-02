@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QLineEdit
+from PySide6.QtWidgets import QLineEdit, QVBoxLayout, QWidget, QWidgetAction
 from PySide6.QtCore import Qt
 
 # from PySide6.QtGui import QStandardItem
@@ -84,26 +84,56 @@ class Variable_Box(QLineEdit):
 
         """
         menu = self.createStandardContextMenu()
+        search_bar = QLineEdit(menu)
+        search_bar.setPlaceholderText("Search...")
+        # Setting up layout for the menu
+        layout = QVBoxLayout()
+        layout.addWidget(search_bar)
+        container = QWidget()
+        container.setLayout(layout)
+
+        # Adding the container widget to the menu
+        action = QWidgetAction(menu)
+        action.setDefaultWidget(container)
+        menu.addAction(action)
         # putting the returned actions somewhere is necessary, otherwise
         # there will be none inside the single menus
-        (channel_menu, variable_menu, function_menu), _ = variables_handling.get_menus(
-            self.insert_variable
+        (self.channel_menu, self.variable_menu, self.function_menu), _ = (
+            variables_handling.get_menus(self.insert_variable)
         )
         first_act = menu.actions()[0]
-        menu.insertMenu(first_act, channel_menu)
-        menu.insertMenu(first_act, variable_menu)
-        menu.insertMenu(first_act, function_menu)
+        menu.insertMenu(first_act, self.channel_menu)
+        menu.insertMenu(first_act, self.variable_menu)
+        menu.insertMenu(first_act, self.function_menu)
         # menu.insertMenu(first_act, operator_menu)
         menu.insertSeparator(first_act)
-        (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ = (
-            variables_handling.get_menus(self.append_variable, "Append")
-        )
-        menu.insertMenu(first_act, channel_menu2)
-        menu.insertMenu(first_act, variable_menu2)
-        menu.insertMenu(first_act, function_menu2)
-        menu.insertMenu(first_act, operator_menu2)
+        (
+            self.channel_menu2,
+            self.variable_menu2,
+            self.operator_menu2,
+            self.function_menu2,
+        ), __ = variables_handling.get_menus(self.append_variable, "Append")
+        menu.insertMenu(first_act, self.channel_menu2)
+        menu.insertMenu(first_act, self.variable_menu2)
+        menu.insertMenu(first_act, self.function_menu2)
+        menu.insertMenu(first_act, self.operator_menu2)
         menu.insertSeparator(first_act)
+
+        search_bar.textChanged.connect(self.filter_actions)
+
         menu.exec_(self.mapToGlobal(pos))
+
+    def filter_actions(self, query):
+        for menu in [
+            self.channel_menu,
+            self.variable_menu,
+            self.function_menu,
+            self.channel_menu2,
+            self.variable_menu2,
+            self.function_menu2,
+        ]:
+            for action in menu.actions():
+                action.setVisible(query.lower() in action.text().lower())
 
     def append_variable(self, variable):
         """Used for the single actions of the context menu.

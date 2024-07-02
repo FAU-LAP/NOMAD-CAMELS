@@ -6,6 +6,8 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QLineEdit,
     QMenu,
+    QVBoxLayout,
+    QWidgetAction,
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QFont
@@ -89,25 +91,57 @@ class Channels_Check_Table(QWidget):
             variables_handling.protocol_variables = prot.variables
             prot.update_variables()
             variables_handling.loop_step_variables = prot.loop_step_variables
-        menu = QMenu()
+        self.menu = QMenu()
+        search_bar = QLineEdit(self.menu)
+        search_bar.setPlaceholderText("Search...")
+        # Setting up layout for the menu
+        layout = QVBoxLayout()
+        layout.addWidget(search_bar)
+        container = QWidget()
+        container.setLayout(layout)
+
+        # Adding the container widget to the menu
+        action = QWidgetAction(self.menu)
+        action.setDefaultWidget(container)
+        self.menu.addAction(action)
+
         # putting the returned actions somewhere is necessary, otherwise
         # there will be none inside the single menus
-        (channel_menu, variable_menu, function_menu), _ = variables_handling.get_menus(
-            self.insert_variable
+        (self.channel_menu, self.variable_menu, self.function_menu), _ = (
+            variables_handling.get_menus(self.insert_variable)
         )
-        menu.addMenu(channel_menu)
-        menu.addMenu(variable_menu)
-        menu.addMenu(function_menu)
+        self.menu.addMenu(self.channel_menu)
+        self.menu.addMenu(self.variable_menu)
+        self.menu.addMenu(self.function_menu)
         # menu.addMenu(operator_menu)
-        menu.addSeparator()
-        (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ = (
-            variables_handling.get_menus(self.append_variable, "Append")
-        )
-        menu.addMenu(channel_menu2)
-        menu.addMenu(variable_menu2)
-        menu.addMenu(function_menu2)
-        menu.addMenu(operator_menu2)
-        menu.exec_(self.mapToGlobal(pos))
+        self.menu.addSeparator()
+        (
+            self.channel_menu2,
+            self.variable_menu2,
+            operator_menu2,
+            self.function_menu2,
+        ), __ = variables_handling.get_menus(self.append_variable, "Append")
+        self.menu.addMenu(self.channel_menu2)
+        self.menu.addMenu(self.variable_menu2)
+        self.menu.addMenu(self.function_menu2)
+        self.menu.addMenu(operator_menu2)
+
+        # Connect the search bar to the filtering function
+        search_bar.textChanged.connect(self.filter_actions)
+
+        self.menu.exec_(self.mapToGlobal(pos))
+
+    def filter_actions(self, query):
+        for self.menu in [
+            self.channel_menu,
+            self.variable_menu,
+            self.function_menu,
+            self.channel_menu2,
+            self.variable_menu2,
+            self.function_menu2,
+        ]:
+            for action in self.menu.actions():
+                action.setVisible(query.lower() in action.text().lower())
 
     def append_variable(self, val):
         """Used for the single actions of the context menu.

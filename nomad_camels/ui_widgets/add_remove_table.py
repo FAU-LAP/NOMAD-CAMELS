@@ -364,7 +364,14 @@ class AddRemoveTable(QWidget):
         menu.exec_(self.mapToGlobal(pos))
 
     def filter_actions(self, query):
-        for menu in [self.channel_menu, self.variable_menu, self.function_menu]:
+        for menu in [
+            self.channel_menu,
+            self.variable_menu,
+            self.function_menu,
+            self.channel_menu2,
+            self.variable_menu2,
+            self.function_menu2,
+        ]:
             for action in menu.actions():
                 action.setVisible(query.lower() in action.text().lower())
 
