@@ -9,6 +9,9 @@ from PySide6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
     QMessageBox,
+    QLineEdit,
+    QVBoxLayout,
+    QWidgetAction,
 )
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QFont, QBrush, QKeyEvent
 from PySide6.QtCore import Qt, Signal
@@ -321,24 +324,49 @@ class AddRemoveTable(QWidget):
 
         """
         menu = QMenu()
+        search_bar = QLineEdit(menu)
+        search_bar.setPlaceholderText("Search...")
+        # Setting up layout for the menu
+        layout = QVBoxLayout()
+        layout.addWidget(search_bar)
+        container = QWidget()
+        container.setLayout(layout)
+
+        # Adding the container widget to the menu
+        action = QWidgetAction(menu)
+        action.setDefaultWidget(container)
+        menu.addAction(action)
+
         # putting the returned actions somewhere is necessary, otherwise
         # there will be none inside the single menus
-        (channel_menu, variable_menu, function_menu), _ = variables_handling.get_menus(
-            self.insert_variable
+        (self.channel_menu, self.variable_menu, self.function_menu), _ = (
+            variables_handling.get_menus(self.insert_variable)
         )
-        menu.addMenu(channel_menu)
-        menu.addMenu(variable_menu)
-        menu.addMenu(function_menu)
+        menu.addMenu(self.channel_menu)
+        menu.addMenu(self.variable_menu)
+        menu.addMenu(self.function_menu)
         # menu.addMenu(operator_menu)
         menu.addSeparator()
-        (channel_menu2, variable_menu2, operator_menu2, function_menu2), __ = (
-            variables_handling.get_menus(self.append_variable, "Append")
-        )
-        menu.addMenu(channel_menu2)
-        menu.addMenu(variable_menu2)
-        menu.addMenu(function_menu2)
+        (
+            self.channel_menu2,
+            self.variable_menu2,
+            operator_menu2,
+            self.function_menu2,
+        ), __ = variables_handling.get_menus(self.append_variable, "Append")
+        menu.addMenu(self.channel_menu2)
+        menu.addMenu(self.variable_menu2)
+        menu.addMenu(self.function_menu2)
         menu.addMenu(operator_menu2)
+
+        # Connect the search bar to the filtering function
+        search_bar.textChanged.connect(self.filter_actions)
+
         menu.exec_(self.mapToGlobal(pos))
+
+    def filter_actions(self, query):
+        for menu in [self.channel_menu, self.variable_menu, self.function_menu]:
+            for action in menu.actions():
+                action.setVisible(query.lower() in action.text().lower())
 
     def append_variable(self, val):
         """Used for the single actions of the context menu.
