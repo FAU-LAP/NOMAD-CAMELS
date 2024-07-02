@@ -97,18 +97,19 @@ class Execute_Python_File(Loop_Step):
                 f'cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}", '
                 f"capture_output=True, text=True)\n"
                 f"{tabs}output = result_python_file.stdout\n"
-                f"{tabs}import json\n"
-                f"{tabs}output_list = json.loads(output)\n"
-                f"{tabs}variables_dict = {{ }}\n"
-                f"{tabs}if isinstance(output_list, list):  # Step 1: Check if the output is a dictionary\n" \
-                f"{tabs}\tfor item in output_list:  # Step 2: Loop through the list\n" \
-                f"{tabs}\t\tkey, value = item.split('=')  # Step 3: Split each string\n" \
-                f"{tabs}\t\tvariables_dict[key] = value\n" \
-                f"{tabs}\t\tfor key, value in variables_dict.items():\n" \
-                f"{tabs}\t\t\tnamespace[key] = value\n" \
-                f"{tabs}if isinstance(output_list, dict):\n" \
-                f"{tabs}\tfor key, value in output_list.items():\n" \
-                f"{tabs}\t\tnamespace[key] = value\n"
+                f"{tabs}if output:\n"
+                f"{tabs}\timport json\n"
+                f"{tabs}\toutput_list = json.loads(output)\n"
+                f"{tabs}\tvariables_dict = {{ }}\n"
+                f"{tabs}\tif isinstance(output_list, list):  # Step 1: Check if the output is a dictionary\n"
+                f"{tabs}\t\tfor item in output_list:  # Step 2: Loop through the list\n"
+                f"{tabs}\t\t\tkey, value = item.split('=')  # Step 3: Split each string\n"
+                f"{tabs}\t\t\tvariables_dict[key] = value\n"
+                f"{tabs}\t\t\tfor key, value in variables_dict.items():\n"
+                f"{tabs}\t\t\t\tnamespace[key] = value\n"
+                f"{tabs}\tif isinstance(output_list, dict):\n"
+                f"{tabs}\t\tfor key, value in output_list.items():\n"
+                f"{tabs}\t\t\tnamespace[key] = value\n"
             )
 
         if self.use_specific_packages:
@@ -117,18 +118,19 @@ class Execute_Python_File(Loop_Step):
                 f'r"{os.path.abspath(self.file_path)}", '
                 f"'{variables_string}')\n"
                 f"{tabs}output = result_python_file.stdout\n"
-                f"{tabs}import json\n"
-                f"{tabs}output_list = json.loads(output)\n"
-                f"{tabs}variables_dict = {{ }}\n"
-                f"{tabs}if isinstance(output_list, list):  # Step 1: Check if the output is a dictionary\n" \
-                f"{tabs}\tfor item in output_list:  # Step 2: Loop through the list\n" \
-                f"{tabs}\t\tkey, value = item.split('=')  # Step 3: Split each string\n" \
-                f"{tabs}\t\tvariables_dict[key] = value\n" \
-                f"{tabs}\t\tfor key, value in variables_dict.items():\n" \
-                f"{tabs}\t\t\tnamespace[key] = value\n" \
-                f"{tabs}if isinstance(output_list, dict):\n" \
-                f"{tabs}\tfor key, value in output_list.items():\n" \
-                f"{tabs}\t\tnamespace[key] = value\n"
+                f"{tabs}if output:\n"
+                f"{tabs}\timport json\n"
+                f"{tabs}\toutput_list = json.loads(output)\n"
+                f"{tabs}\tvariables_dict = {{ }}\n"
+                f"{tabs}\tif isinstance(output_list, list):  # Step 1: Check if the output is a dictionary\n"
+                f"{tabs}\t\tfor item in output_list:  # Step 2: Loop through the list\n"
+                f"{tabs}\t\t\tkey, value = item.split('=')  # Step 3: Split each string\n"
+                f"{tabs}\t\t\tvariables_dict[key] = value\n"
+                f"{tabs}\t\t\tfor key, value in variables_dict.items():\n"
+                f"{tabs}\t\t\t\tnamespace[key] = value\n"
+                f"{tabs}\tif isinstance(output_list, dict):\n"
+                f"{tabs}\t\tfor key, value in output_list.items():\n"
+                f"{tabs}\t\t\tnamespace[key] = value\n"
             )
 
         if self.use_camels_python:
@@ -142,18 +144,19 @@ class Execute_Python_File(Loop_Step):
                 f'cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}", '
                 f"capture_output=True, text=True)\n"
                 f"{tabs}output = result_python_file.stdout\n"
-                f"{tabs}import json\n"
-                f"{tabs}output_list = json.loads(output)\n"
-                f"{tabs}variables_dict = {{ }}\n"
-                f"{tabs}if isinstance(output_list, list):  # Step 1: Check if the output is a dictionary\n" \
-                f"{tabs}\tfor item in output_list:  # Step 2: Loop through the list\n" \
-                f"{tabs}\t\tkey, value = item.split('=')  # Step 3: Split each string\n" \
-                f"{tabs}\t\tvariables_dict[key] = value\n" \
-                f"{tabs}\t\tfor key, value in variables_dict.items():\n" \
-                f"{tabs}\t\t\tnamespace[key] = value\n" \
-                f"{tabs}if isinstance(output_list, dict):\n" \
-                f"{tabs}\tfor key, value in output_list.items():\n" \
-                f"{tabs}\t\tnamespace[key] = value\n"
+                f"{tabs}if output:\n"
+                f"{tabs}\timport json\n"
+                f"{tabs}\toutput_list = json.loads(output)\n"
+                f"{tabs}\tvariables_dict = {{ }}\n"
+                f"{tabs}\tif isinstance(output_list, list):  # Step 1: Check if the output is a dictionary\n"
+                f"{tabs}\t\tfor item in output_list:  # Step 2: Loop through the list\n"
+                f"{tabs}\t\t\tkey, value = item.split('=')  # Step 3: Split each string\n"
+                f"{tabs}\t\t\tvariables_dict[key] = value\n"
+                f"{tabs}\t\t\tfor key, value in variables_dict.items():\n"
+                f"{tabs}\t\t\t\tnamespace[key] = value\n"
+                f"{tabs}\tif isinstance(output_list, dict):\n"
+                f"{tabs}\t\tfor key, value in output_list.items():\n"
+                f"{tabs}\t\t\tnamespace[key] = value\n"
             )
         return protocol_string
 
@@ -192,9 +195,9 @@ class Execute_Python_File_Config(Loop_Step_Config):
         self.radio_button_group.buttonToggled.connect(self.handle_radio_button_clicked)
         # Layout for radio buttons
         radio_layout = QHBoxLayout()
+        radio_layout.addWidget(self.radio_camels_python)
         radio_layout.addWidget(self.radio_existing_env)
         radio_layout.addWidget(self.radio_specific_packages)
-        radio_layout.addWidget(self.radio_camels_python)
 
         # Connect radio button signals
         self.radio_existing_env.toggled.connect(self.toggle_add_remove_table)
