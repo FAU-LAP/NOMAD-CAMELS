@@ -740,24 +740,30 @@ class Plot_Button_Overview(QWidget):
         )
         self.plot_table.addButton.setHidden(True)
         self.plot_table.removeButton.setHidden(True)
-        self.plot_button = QPushButton("Define Plots / Fits")
+        self.plot_button = QPushButton("+ Add Plots / Fits")
         font = QFont()
         font.setBold(True)
         self.plot_button.setStyleSheet(
-            "QPushButton {\n"
-            "                                background-color: #808080; \n"
-            "                                color: white; \n"
-            "                                border: none; \n"
-            "                                padding: 2px 10px; \n"
-            "                                text-align: center; \n"
-            "                                text-decoration: none; \n"
-            "                                font-size: 13px; \n"
-            "                                margin: 2px 2px; \n"
-            "                                border-radius: 6px;\n"
-            "                            }\n"
-            "                            QPushButton:hover {\n"
-            "                                background-color: #a0a0a0;\n"
-            "                            }"
+            """
+            QPushButton {
+                background-color: #4CAF50; /* green */
+                border: none; /* Remove border for a cleaner look */
+                color: white; /* Text color */
+                padding: 3px; /* Adjust padding as needed */
+                padding-bottom: 3px;
+                border-radius: 6px; /* Rounded corners with a radius of 10px */
+                font-size: 13px;
+                font-weight: bold;
+                text-align: center;
+                margin: 2px 2px;
+            }
+            QPushButton:hover {
+                background-color: #45a049; /* Slightly lighter green on hover */
+            }
+            QPushButton:pressed {
+                background-color: #2f6331; /* Slightly darker green when pressed */
+            }
+            """
         )
         self.plot_button.setFont(font)
         self.plot_button.clicked.connect(self.define_plots)
