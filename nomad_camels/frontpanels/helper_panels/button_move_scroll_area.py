@@ -410,6 +410,10 @@ class RenameTabWidget(QTabWidget):
         self.tabBar().setContextMenuPolicy(Qt.CustomContextMenu)
         self.tabBar().customContextMenuRequested.connect(self.context_menu)
 
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.setCurrentIndex(0)
+
     def addPlusTab(self):
         self.addTab(QWidget(), "")
         self.tabBar().setTabButton(self.count() - 1, QTabBar.RightSide, self.plus_tab)
