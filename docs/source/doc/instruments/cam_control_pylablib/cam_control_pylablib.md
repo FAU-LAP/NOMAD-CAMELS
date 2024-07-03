@@ -40,12 +40,12 @@ Under `Manage Instruments` in the `Configure Instruments`-tab you can set:
 - `get_single_frame`: Get a single frame from the buffer and handle it within Python. This allows you to save the frame with all other data to an HDF5 file. A maximum acquisitian speed of 20-25 frames per second is possible in this way.
 - `get_background_frame`: Get the current background frame that is subtracted from new frames. You can only get the background frame if the background is valid.
 - `path_suffix`: The suffix you want to append to every name of frame that is recorded with the `save_snapshot` or `start_saving` custom function. So if the path in the GUI is `C:/Users/user/Documents/data/frame_name` the saved frame is normally in `C:/Users/user/Documents/data/` called `frame_name.tiff`. If you set a suffix this will be appended, as well as the current time (`time.time()`). So the frame would then be saved in `C:/Users/user/Documents/data/` called `frame_name_<suffix>_<time>.tiff`.
-- `frame_average`: Calculates the average pixel value of the latest recorded frame read using `get_single_frame` (uses `np.mean(frame)`). This means you must first read the `get_single_frame` channel and then you can read the `frame_average` channel in a new read loop step.
+- `frame_average`: Calculates the average pixel value of the latest recorded frame read using `get_single_frame` (uses `np.mean(frame)`). This means you must first read the `get_single_frame` channel and then you can read the `frame_average` channel in a new read protocol step.
 - `set_roi`: Allows you to set a new region of interest (ROI). Write `[x_min, x_max, y_min, y_max]` into the set channels value field. You must include the braces as you are passing a python list as a value.
 
 ### Custom functions
 
-These functions can be used with the loop step type `Call Function`.
+These functions can be used with the protocol step type `Call Function`.
 
 - `save_snapshot`: Saves a snapshot of the current frame displayed in the GUI. This includes the already subtracted background and binning. The file is saved locally under the path given in the GUI. It is not saved in the HDF5 file! It is identical to pressing the `Snap` button of the GUI.
 - `start_saving`: Starts the continuous saving of frames with the settings configured in the GUI. It is identical to pressing the `Saving` button of the GUI.
