@@ -774,6 +774,61 @@ def get_opyd_and_py_file_contents(classname, md, device_name):
     return md
 
 
+def create_venv_run_file_delete_venv(packages, script_to_run):
+    """
+    This function creates a virtual environment, installs the specified packages
+    in it, runs the specified Python script, and then deletes the virtual environment.
+    """
+    import venv
+    import subprocess
+    import tempfile
+    import shutil
+
+    # Step 1: Create the virtual environment in a temp folder using tempfile
+    try:
+        temp_folder = tempfile.mkdtemp()
+    except Exception as e:
+        raise Exception(f"Error creating temporary folder: {e}")
+    try:
+        venv.create(temp_folder, with_pip=True)
+    except Exception as e:
+        raise Exception(f"Error creating virtual environment: {e}")
+
+    # Path to the virtual environment's Python interpreter
+    python_executable = (
+        os.path.join(temp_folder, "bin", "python")
+        if os.name != "nt"
+        else os.path.join(temp_folder, "Scripts", "python.exe")
+    )
+
+    # Step 2: Install the specified packages
+    for package, version in zip(packages['Python Package'], packages['Version']):
+        if not version:
+            try:
+                subprocess.run([python_executable, "-m", "pip", "install", f"{package}"])
+            except Exception as e:
+                raise Exception(f"Error installing package {package}: {e}")
+        else:
+            try:
+                subprocess.run(
+                [python_executable, "-m", "pip", "install", f"{package}=={version}"]
+            )
+            except Exception as e:
+                raise Exception(f"Error installing package {package}=={version}: {e}")
+
+    # Step 3: Run the specified Python script
+    try:
+        subprocess.run([python_executable, script_to_run], cwd=os.path.dirname(script_to_run))
+    except Exception as e:
+        raise Exception(f"Error running script {script_to_run}: {e}")
+
+    # Step 4: Delete the virtual environment
+    try:
+        if os.path.exists(temp_folder):
+            shutil.rmtree(temp_folder)
+    except Exception as e:
+        raise Exception(f"Error deleting temporary folder: {e}")
+
 class Value_Setter(QWidget):
     set_signal = Signal(float)
     hide_signal = Signal()

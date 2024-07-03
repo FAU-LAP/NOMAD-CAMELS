@@ -24,8 +24,23 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 
 # Changelog
-## 1.1.2
+
+## 1.1.3
+
+Features:
+
+- Added a filter functionality to the right-click menu when setting channels or variables. This filters all available channels, variables or functions by the string that is entered. 
+- Added the `Execute Python File` loop step. This allows the user to specify a python file and a python environment to run the file with. The environment can either be the same as the one running CAMELS (default), a different already existing one, or is created dynamically by giving it the required packages and versions.
+- Added a tab that allows you to add new tabs simply by clicking
+
 Fixes:
+
+- Description fields now change their size dynamically
+
+## 1.1.2
+
+Fixes:
+
 - Removed empty fit parameters, which would cause an error before
 - Fixed requirement of pyepics, version 3.5.3 seems broken on windows, going back to version 3.5.2
 
