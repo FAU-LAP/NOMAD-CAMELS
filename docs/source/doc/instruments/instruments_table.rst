@@ -16,6 +16,16 @@ Instruments
         table.sortable th {
             background-color: #4CAF50;
             color: white;
+            cursor: pointer;
+        }
+        /* Add styles for the sorting arrows */
+        table.sortable th::after {
+            content: " ▼▲";
+            color: #ddd;
+        }
+        table.sortable th.sorttable_sorted::after,
+        table.sortable th.sorttable_sorted_reverse::after {
+            color: #000;
         }
     </style>
     <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
@@ -31,7 +41,7 @@ Instruments
         </thead>
         <tbody>
             <tr>
-                <td>Keysight</td>
+                <td>Keysight / Agilent</td>
                 <td><a href="agilent_34401a/agilent_34401a">34401A</a></td>
                 <td>Digital Multimeter</td>
                 <td>DMM</td>
@@ -43,10 +53,10 @@ Instruments
                 <td>DMM</td>
             </tr>
             <tr>
-                <td>Andor Newton</td>
-                <td>CCD Camera</td>
-                <td>Camera</td>
                 <td>Andor</td>
+                <td>Newton CCD</td>
+                <td>Andor</td>
+                <td>Camera</td>
             </tr>
             <tr>
                 <td>PC mouse</td>
@@ -57,24 +67,37 @@ Instruments
         </tbody>
     </table>
     <script>
+        window.onload = function() {
+            var th = document.querySelector('#instrumentTable th');
+            var evt = new window.MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            });
+            th.dispatchEvent(evt);
+        };
+    </script>
+    <script>
         function searchTable() {
             var input, filter, table, tr, td, i, j, txtValue;
             input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
+            filter = input.value.toUpperCase().split(' ');  // Split the filter into words
             table = document.getElementById("instrumentTable");
             tr = table.getElementsByTagName("tr");
             for (i = 0; i < tr.length; i++) {
                 td = tr[i].getElementsByTagName("td");
+                var rowText = '';
                 for (j = 0; j < td.length; j++) {
                     if (td[j]) {
-                        txtValue = td[j].textContent || td[j].innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            tr[i].style.display = "";
-                            break;
-                        } else {
-                            tr[i].style.display = "none";
-                        }
-                    }       
+                        rowText += ' ' + (td[j].textContent || td[j].innerText);
+                    }
+                }
+                rowText = rowText.toUpperCase();
+                // Check if all words in the filter are present in the row
+                if (filter.every(function(word) { return rowText.indexOf(word) > -1; })) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
                 }
             }
         }

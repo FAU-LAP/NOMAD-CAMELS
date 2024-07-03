@@ -58,7 +58,7 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    :maxdepth: 2
    :caption: Instruments
 
-   Available Instruments <doc/instruments/instruments.md>
+   Available Instruments <doc/instruments/instruments.rst>
    Create New Instrument Drivers <doc/programmers_guide/instrument_drivers.md>
 
 .. toctree::
