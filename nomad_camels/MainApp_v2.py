@@ -1321,6 +1321,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         tab = tab or self.button_area_meas.get_active_tab()
         self.button_area_meas.add_button(button, name, tab)
         self.add_functions_to_meas_button(button, name)
+        self.protocol_tabs_dict[tab].append(name)
 
     def add_functions_to_meas_button(self, button, name):
         """
