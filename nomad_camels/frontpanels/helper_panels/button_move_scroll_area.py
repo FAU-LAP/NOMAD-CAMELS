@@ -398,6 +398,7 @@ class RenameTabWidget(QTabWidget):
         self.plus_tab = QPushButton("+")
         self.plus_tab.setFlat(True)
         self.plus_tab.setFocusPolicy(Qt.NoFocus)
+        self.plus_tab.setFixedSize(25, 25)
         self.plus_tab.clicked.connect(self.create_new_tab)
 
         # Add the plus tab
@@ -417,20 +418,26 @@ class RenameTabWidget(QTabWidget):
     def addPlusTab(self):
         self.addTab(QWidget(), "")
         self.tabBar().setTabButton(self.count() - 1, QTabBar.RightSide, self.plus_tab)
+        self.tabBar().setTabEnabled(self.count() - 1, False)
         self.plus_tab.setStyleSheet(
             """
             QPushButton {
-                background-color: #999999; /* Dark grey */
+                background-color: #4CAF50; /* green */
                 border: none; /* Remove border for a cleaner look */
                 color: white; /* Text color */
-                padding: 8px 16px; /* Adjust padding as needed */
-                border-radius: 10px; /* Rounded corners with a radius of 10px */
+                padding: 0px; /* Adjust padding as needed */
+                padding-bottom: 5px;
+                border-radius: 6px; /* Rounded corners with a radius of 10px */
+                font-size: 22px;
+                font-weight: bold;
+                text-align: center;
+                margin: 2px 2px;
             }
             QPushButton:hover {
-                background-color: #777777; /* Slightly lighter grey on hover */
+                background-color: #45a049; /* Slightly lighter green on hover */
             }
             QPushButton:pressed {
-                background-color: #444444; /* Slightly darker grey when pressed */
+                background-color: #2f6331; /* Slightly darker green when pressed */
             }
             """
         )
