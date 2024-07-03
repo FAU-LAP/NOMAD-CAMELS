@@ -391,6 +391,7 @@ class RenameTabWidget(QTabWidget):
 
     def __init__(self, parent=None, tab_button_dict=None):
         super().__init__(parent)
+        self.mainWindow = parent
         self.setAcceptDrops(True)
         self.tabBar().setMovable(True)
 
@@ -464,6 +465,9 @@ class RenameTabWidget(QTabWidget):
         )
         if delete_question != QMessageBox.Yes:
             return
+        for protocol_ in self.mainWindow.protocol_tabs_dict[self.tabText(index)]:
+            del self.mainWindow.protocols_dict[protocol_]
+        del self.mainWindow.protocol_tabs_dict[self.tabText(index)]
         self.removeTab(index)
 
     def rename_tab(self, index):
