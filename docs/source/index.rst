@@ -51,7 +51,7 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    Home <self>
    Installing CAMELS <doc/installation/installation.md>
    Getting Started <doc/tutorials/quick_start.md>
-   Protocol Steps Explained <doc/protocol_steps/>
+   Protocol Steps Explained <doc/protocol_steps/protocol_steps_landing.md>
    Handling HDF5 Files <doc/handling_hdf5.md>
 
 .. toctree::
