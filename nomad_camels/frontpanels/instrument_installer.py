@@ -229,7 +229,7 @@ class Instrument_Installer(Ui_Form, QWidget):
     def __init__(self, active_instruments=None, parent=None):
         super().__init__(parent=parent)
         self.setupUi(self)
-
+        self.show_info_bool = False
         self.active_instruments = active_instruments or {}
 
         self.device_table.setColumnCount(3)
@@ -269,16 +269,19 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.info_widge = Info_Widget()
         self.info_widge.setHidden(True)
         self.layout().addWidget(self.info_widge, 0, 5, 8, 1)
+        self.info_widge.setHidden(True)
 
     def show_hide_info(self):
         if self.info_widge.isHidden():
             self.info_widge.setHidden(False)
             self.adjustSize()
             self.pushButton_info.setText("hide info")
+            self.show_info_bool = True
         else:
             self.info_widge.setHidden(True)
             self.adjustSize()
             self.pushButton_info.setText("show info")
+            self.show_info_bool = False
 
     def checkBox_change(self, row):
         """
@@ -445,6 +448,10 @@ class Instrument_Installer(Ui_Form, QWidget):
             instr = self.device_table.item(ind.row(), 0).data(3)
             self.info_widge.update_texts(instr)
             self.adjustSize()
+            if self.show_info_bool:
+                self.info_widge.setHidden(False)
+            else:
+                self.info_widge.setHidden(True)
         finally:
             self.setCursor(Qt.ArrowCursor)
 
