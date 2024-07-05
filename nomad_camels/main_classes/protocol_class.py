@@ -82,6 +82,9 @@ class Measurement_Protocol:
         self.export_json = kwargs["export_json"] if "export_json" in kwargs else False
         self.session_name = kwargs["session_name"] if "session_name" in kwargs else ""
         self.skip_config = kwargs["skip_config"] if "skip_config" in kwargs else False
+        self.h5_during_run = (
+            kwargs["h5_during_run"] if "h5_during_run" in kwargs else True
+        )
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -315,13 +318,14 @@ class Measurement_Protocol:
             plan_string += step.get_protocol_string(n_tabs=1)
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
         plan_string += "\teva = Evaluator(namespace=namespace)\n"
-        plan_string += "\trunEngine.subscribe(eva)\n"
+        plan_string += "\tsub_eva = runEngine.subscribe(eva)\n"
         plan_string += "\tyield from bps.open_run(md=md)\n"
         plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name)\n'
         plan_string += (
             "\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
         )
         plan_string += "\tyield from bps.close_run()\n"
+        plan_string += "\trunEngine.unsubscribe(sub_eva)\n"
         return plan_string
 
     def get_short_string(self):
@@ -508,6 +512,9 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.checkBox_no_config.setChecked(self.protocol.skip_config)
         self.checkBox_no_config.clicked.connect(self.enable_disable_config)
 
+        self.radioButton_h5_during.setChecked(self.protocol.h5_during_run)
+        self.radioButton_h5_after.setChecked(not self.protocol.h5_during_run)
+
         self.layout().addWidget(self.textEdit_desc, 5, 0, 1, 6)
         self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
         self.layout().addWidget(self.checkBox_NeXus, 7, 0, 1, 6)
@@ -633,6 +640,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.skip_config = self.checkBox_no_config.isChecked()
         self.variable_table.update_variables()
         self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
+        self.protocol.h5_during_run = self.radioButton_h5_during.isChecked()
 
     # def load_variables(self):
     #     """Called when starting, loads the variables from the protocol

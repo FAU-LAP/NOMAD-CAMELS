@@ -23,9 +23,47 @@ from PySide6.QtGui import QFont
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
+from suitcase.nomad_camels_hdf5 import Serializer, export
+
 import inspect
 import os
 import sys
+import glob
+
+
+def get_newest_file(directory):
+    # List all files in the directory
+    files = glob.glob(os.path.join(directory, "*"))
+    # Find the newest file
+    newest_file = max(files, key=os.path.getmtime)
+    return newest_file
+
+
+def export_function(
+    runs, save_path, do_export, new_file_each=True, export_csv=False, export_json=False
+):
+    if os.path.splitext(save_path)[1] == ".nxs":
+        fname = os.path.basename(save_path)
+        path = os.path.dirname(save_path)
+    if do_export:
+        if not isinstance(runs, list):
+            runs = [runs]
+        for run in runs:
+            docs = run.documents(fill="yes")
+            export(docs, path, fname, new_file_each)
+    if export_csv or export_json:
+        from nomad_camels.utility.databroker_export import export_h5_to_csv_json
+
+        file = get_newest_file(path)
+        export_h5_to_csv_json(file, export_data=export_csv, export_metadata=export_json)
+
+
+def saving_function(name, start_doc, path, new_file_each=True):
+    fname = start_doc["uid"]
+    if os.path.splitext(path)[1] == ".nxs":
+        fname = os.path.basename(path)
+        path = os.path.dirname(path)
+    return [Serializer(path, fname, new_file_each=new_file_each)], []
 
 
 def trigger_multi(devices, grp=None):

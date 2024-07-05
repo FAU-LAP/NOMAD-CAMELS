@@ -1593,16 +1593,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_module
             and hasattr(self.protocol_module, "uids")
             and self.protocol_module.uids
+            and (
+                not self.running_protocol.h5_during_run
+                or self.running_protocol.export_csv
+                or self.running_protocol.export_json
+            )
         ):
             runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
-            self.last_save_file = databroker_export.broker_to_NX(
+            from nomad_camels.bluesky_handling.helper_functions import export_function
+
+            export_function(
                 runs,
                 self.protocol_savepath,
-                self.protocol_module.plots,
-                session_name=self.running_protocol.session_name,
-                export_to_csv=self.running_protocol.export_csv,
-                export_to_json=self.running_protocol.export_json,
-                new_file_each_run=self.preferences["new_file_each_run"],
+                not self.running_protocol.h5_during_run,
+                self.preferences["new_file_each_run"],
+                self.running_protocol.export_csv,
+                self.running_protocol.export_json,
             )
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
