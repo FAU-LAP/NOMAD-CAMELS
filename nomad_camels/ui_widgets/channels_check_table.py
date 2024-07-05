@@ -54,6 +54,8 @@ class Channels_Check_Table(QWidget):
             self.tableWidget_channels.resizeColumnsToContents
         )
         self.lineEdit_search = QLineEdit()
+        # Add default text to the search bar
+        self.lineEdit_search.setPlaceholderText("Filter instruments ...")
         self.lineEdit_search.textChanged.connect(self.change_search)
 
         self.setLayout(layout)
@@ -240,9 +242,8 @@ class Channels_Check_Table(QWidget):
     def update_info(self):
         """ """
         channel_list = self.info_dict["channel"]
-        for k in self.info_dict:
-            if k != "channel":
-                self.info_dict[k].clear()
+        if "value"  in self.info_dict:
+            self.value_list = self.info_dict["value"].copy()
         for i in range(self.tableWidget_channels.rowCount()):
             name = self.tableWidget_channels.item(i, 1).text()
             if (
@@ -268,6 +269,8 @@ class Channels_Check_Table(QWidget):
                         raise Exception(
                             f"You need to enter a value for channel {name}!"
                         )
+                    if t == 'None':
+                        t = self.value_list[n]
                     self.info_dict[lab][n] = t
         rems = []
         for channel in channel_list:
@@ -316,7 +319,10 @@ class Channels_Check_Table(QWidget):
             if channel in self.info_dict["channel"]:
                 n_chan = self.info_dict["channel"].index(channel)
                 for lab in self.headerLabels[2:]:
-                    vals.append(str(self.info_dict[lab][n_chan]))
+                    if n_chan < len(self.info_dict[lab]):  # Check if index is within range
+                        vals.append(str(self.info_dict[lab][n_chan]))
+                    else:
+                        vals.append("")  # Append empty string if index is out of range
             for j in range(len(self.headerLabels[2:])):
                 item = QTableWidgetItem(vals[j] if vals else "")
                 self.tableWidget_channels.setItem(n, j + 2, item)
