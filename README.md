@@ -24,6 +24,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 
 # Changelog
+## 1.2.0
+Features:
+- Data can now be exported to hdf5 during the measurement. This should remove long waiting times after protocols with lots of data.
+
 ## 1.1.2
 Fixes:
 - Removed empty fit parameters, which would cause an error before
