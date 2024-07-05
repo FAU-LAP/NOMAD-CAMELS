@@ -65,7 +65,6 @@ standard_string += "import datetime\n"
 standard_string += (
     "from nomad_camels.main_classes import plot_pyqtgraph, list_plot, plot_2D\n"
 )
-standard_string += "from nomad_camels.utility.databroker_export import broker_to_hdf5, broker_to_dict, broker_to_NX\n"
 standard_string += "from nomad_camels.utility import theme_changing\n"
 standard_string += (
     "from nomad_camels.bluesky_handling.evaluation_helper import Evaluator\n"
