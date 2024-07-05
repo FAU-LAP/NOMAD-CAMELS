@@ -35,7 +35,9 @@ Features:
 
 Fixes:
 
-- Description fields now change their size dynamically
+- Description fields now change their size dynamically.
+- Filtering the channels by name does not break if no matches were found.
+- Filtering Set Channels now does not reset the value if the channel does not match the query.
 
 ## 1.1.2
 
