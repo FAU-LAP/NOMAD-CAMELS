@@ -802,23 +802,27 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
     )
 
     # Step 2: Install the specified packages
-    for package, version in zip(packages['Python Package'], packages['Version']):
+    for package, version in zip(packages["Python Package"], packages["Version"]):
         if not version:
             try:
-                subprocess.run([python_executable, "-m", "pip", "install", f"{package}"])
+                subprocess.run(
+                    [python_executable, "-m", "pip", "install", f"{package}"]
+                )
             except Exception as e:
                 raise Exception(f"Error installing package {package}: {e}")
         else:
             try:
                 subprocess.run(
-                [python_executable, "-m", "pip", "install", f"{package}=={version}"]
-            )
+                    [python_executable, "-m", "pip", "install", f"{package}=={version}"]
+                )
             except Exception as e:
                 raise Exception(f"Error installing package {package}=={version}: {e}")
 
     # Step 3: Run the specified Python script
     try:
-        subprocess.run([python_executable, script_to_run], cwd=os.path.dirname(script_to_run))
+        result_python_file = subprocess.run(
+            [python_executable, script_to_run], cwd=os.path.dirname(script_to_run)
+        )
     except Exception as e:
         raise Exception(f"Error running script {script_to_run}: {e}")
 
@@ -828,6 +832,38 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
             shutil.rmtree(temp_folder)
     except Exception as e:
         raise Exception(f"Error deleting temporary folder: {e}")
+    return result_python_file
+
+
+def evaluate_python_file_output(stdout, namespace):
+    import json
+    import re
+    """Evaluates the stdout of a Python file execution and writes the returned key value pairs to the namespace, so CAMELS can access their values"""
+    if stdout:
+        json_pattern = re.compile(r'\{.*\}') # Extract the dictionary from the stdout
+        # Search for JSON in the stdout
+        match = json_pattern.search(stdout)
+        
+        if match:
+            json_str = match.group()
+            
+            # Load the JSON string into a Python dictionary
+            data = json.loads(json_str)
+        else:
+            raise ValueError("No valid dictionary found in the output")
+        variables_dict = {}
+        if isinstance(data, list):  # Step 1: Check if the stdout is a dictionary
+            for item in data:  # Step 2: Loop through the list
+                key, value = map(str.strip, item.split('=', 1))  # Step 3: Split each string
+                variables_dict[key] = value
+
+            for key, value in variables_dict.items():
+                namespace[key] = value
+
+        if isinstance(data, dict):
+            for key, value in data.items():
+                namespace[key] = value
+
 
 class Value_Setter(QWidget):
     set_signal = Signal(float)
