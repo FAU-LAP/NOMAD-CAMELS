@@ -11,7 +11,7 @@ from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 import os
-import json
+from nomad_camels.utility import variables_handling
 
 
 class Execute_Python_File(Loop_Step):
@@ -81,11 +81,12 @@ class Execute_Python_File(Loop_Step):
             values = self.variables_passing["Value"]
             for i in range(len(variable_names)):
                 # Format each "name = value" pair
-                formatted_string = f"{variable_names[i]} = {values[i]}"
+                formatted_string = f"f'{variable_names[i]} = {{{values[i]}}}',"
                 # Append to the list
                 formatted_strings.append(formatted_string)
             # Step 4: Join all formatted strings with a space
             variables_string = " ".join(formatted_strings)
+            variables_string = variables_string[:-1]
         else:
             variables_string = ""
         if self.use_existing_env:
@@ -93,7 +94,7 @@ class Execute_Python_File(Loop_Step):
                 f"{tabs}result_python_file = subprocess.run(['"
                 f'r"{os.path.abspath(self.python_exe_path)}", '
                 f'r"{os.path.abspath(self.file_path)}", '
-                f"'{variables_string}'], "
+                f"{variables_string}], "
                 f'cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}", '
                 f"capture_output=True, text=True)\n"
                 f"{tabs}helper_functions.evaluate_python_file_output(result_python_file.stdout, namespace)\n"
@@ -103,7 +104,7 @@ class Execute_Python_File(Loop_Step):
             protocol_string += (
                 f"{tabs}result_python_file = helper_functions.create_venv_run_file_delete_venv({self.python_packages_versions}, "
                 f'r"{os.path.abspath(self.file_path)}", '
-                f"'{variables_string}')\n"
+                f"{variables_string})\n"
                 f"{tabs}helper_functions.evaluate_python_file_output(result_python_file.stdout, namespace)\n"
             )
 
@@ -114,7 +115,7 @@ class Execute_Python_File(Loop_Step):
                 f"{tabs}result_python_file = subprocess.run(["
                 f'r"{os.path.abspath(sys.executable)}", '
                 f'r"{os.path.abspath(self.file_path)}", '
-                f"'{variables_string}'], "
+                f"{variables_string}], "
                 f'cwd=r"{os.path.abspath(os.path.dirname(self.file_path))}", '
                 f"capture_output=True, text=True)\n"
                 f"{tabs}helper_functions.evaluate_python_file_output(result_python_file.stdout, namespace)\n"
@@ -182,8 +183,8 @@ class Execute_Python_File_Config(Loop_Step_Config):
 
         # AddRemoveTable for reading from the Python file
         # Value is either the index for the returned value if the file returns multiple things or the dictionary key if the file returns a dictionary
-        self.add_remove_table_returned_values_variables = AddRemoveTable(
-            headerLabels=["Variable Name"]
+        self.add_remove_table_returned_values_variables = (
+            AddRemoveTable_Returned_Variables(headerLabels=["Variable Name"])
         )
 
         # Tooltips
@@ -231,6 +232,9 @@ class Execute_Python_File_Config(Loop_Step_Config):
         self.add_remove_table_packages.change_table_data(
             self.loop_step.python_packages_versions
         )
+        self.add_remove_table_packages.table_model.rowsRemoved.connect(
+            self.on_rows_removed_packages
+        )
         # Save changes of the variables passing table to the loop step
         self.add_remove_table_variables_passing.table_model.itemChanged.connect(
             self.update_variables_passing
@@ -238,12 +242,18 @@ class Execute_Python_File_Config(Loop_Step_Config):
         self.add_remove_table_variables_passing.change_table_data(
             self.loop_step.variables_passing
         )
+        self.add_remove_table_variables_passing.table_model.rowsRemoved.connect(
+            self.on_rows_removed_passing
+        )
         # Save changes of the returned variables table to the loop step
         self.add_remove_table_returned_values_variables.table_model.itemChanged.connect(
             self.update_returned_value_variables
         )
         self.add_remove_table_returned_values_variables.change_table_data(
             self.loop_step.returned_values_variables
+        )
+        self.add_remove_table_returned_values_variables.table_model.rowsRemoved.connect(
+            self.on_rows_removed_returned
         )
 
         # Layout setup
@@ -298,9 +308,17 @@ class Execute_Python_File_Config(Loop_Step_Config):
         )
 
     def update_returned_value_variables(self):
+
         self.loop_step.returned_values_variables = (
             self.add_remove_table_returned_values_variables.update_table_data()
         )
+        for returned_values_variables in self.loop_step.returned_values_variables[
+            "Variable Name"
+        ]:
+            if returned_values_variables:
+                variables_handling.loop_step_variables.update(
+                    {returned_values_variables: 0}
+                )
 
     def handle_radio_button_clicked(self, button):
         self.loop_step.radio_button_selected = button.text()
@@ -341,3 +359,31 @@ class Execute_Python_File_Config(Loop_Step_Config):
         if checked:
             self.path_button_edit_python_exe.setVisible(not checked)
             self.label_python_exe_path.setVisible(not checked)
+
+    def on_rows_removed_returned(self, parent, first, last):
+        self.loop_step.returned_values_variables = (
+            self.add_remove_table_returned_values_variables.update_table_data()
+        )
+
+    def on_rows_removed_passing(self, parent, first, last):
+        self.loop_step.variables_passing = (
+            self.add_remove_table_variables_passing.update_table_data()
+        )
+
+    def on_rows_removed_packages(self, parent, first, last):
+        self.loop_step.python_packages_versions = (
+            self.add_remove_table_packages.update_table_data()
+        )
+
+class AddRemoveTable_Returned_Variables(AddRemoveTable):
+    """Subclasses AddRemoveTable and changes the remove method to also remove the variable from the loop step variable dict."""
+
+    def remove(self):
+        try:
+            index = self.table.selectedIndexes()[0]
+        except IndexError:
+            raise Exception("You need to select a row first!")
+        row = index.row()
+        variable_name_to_be_removed = self.tableData["Variable Name"][row]
+        variables_handling.loop_step_variables.pop(variable_name_to_be_removed)
+        super().remove()

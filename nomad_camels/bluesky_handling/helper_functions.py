@@ -371,8 +371,8 @@ def get_range(
     -------
         An array of the calculated range.
     """
-    start = evaluator.eval(start)
-    stop = evaluator.eval(stop)
+    start = float(evaluator.eval(start))
+    stop = float(evaluator.eval(stop))
     points = int(evaluator.eval(points))
     min_val = evaluator.eval(min_val)
     max_val = evaluator.eval(max_val)
