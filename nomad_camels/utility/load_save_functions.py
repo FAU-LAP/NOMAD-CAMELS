@@ -587,6 +587,8 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.export_json = prot_data["export_json"]
         if "export_csv" in prot_data:
             prot.export_csv = prot_data["export_csv"]
+        if "h5_during_run" in prot_data:
+            prot.h5_during_run = prot_data["h5_during_run"]
         prot_dict.update({key: prot})
 
 
