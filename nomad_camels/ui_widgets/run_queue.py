@@ -1,4 +1,5 @@
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Qt
+from PySide6.QtGui import QPainter
 from PySide6.QtWidgets import (
     QWidget,
     QFrame,
@@ -193,6 +194,21 @@ class RunQueue(QListWidget):
             self.variable_table.append_variable(var, str(variables[var]), unique=False)
         self.variable_table.setHidden(False)
         self.variable_table.resizeColumnsToContents()
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        if self.count() == 0:
+            painter = QPainter(self.viewport())
+            painter.setPen(Qt.gray)
+
+            # Set the font to be larger and bold
+            font = painter.font()
+            font.setPointSize(16)  # Adjust the size as needed
+            font.setBold(True)
+            painter.setFont(font)
+
+            painter.drawText(self.rect(), Qt.AlignCenter, "Measurement Queue")
+            painter.end()
 
 
 if __name__ == "__main__":

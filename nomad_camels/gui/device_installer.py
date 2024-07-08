@@ -54,7 +54,28 @@ from PySide6.QtWidgets import (
     QTextEdit,
     QWidget,
 )
+class CustomTextEdit(QTextEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        
+        # Only draw custom content if certain conditions are met, e.g., no text
+        if not self.toPlainText():
+            painter = QPainter(self.viewport())
+            painter.setPen(QColor(Qt.gray))  # Set the color of the pen
+
+            # Customize the font
+            font = painter.font()
+            font.setPointSize(16)  # Adjust the size as needed
+            font.setBold(True)
+            painter.setFont(font)
+
+            # Draw custom text in the center
+            painter.drawText(self.rect(), Qt.AlignCenter, "Installation Log")
+
+            painter.end()
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -63,7 +84,7 @@ class Ui_Form(object):
         Form.resize(679, 481)
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName("gridLayout")
-        self.textEdit_device_info = QTextEdit(Form)
+        self.textEdit_device_info = CustomTextEdit(Form)
         self.textEdit_device_info.setObjectName("textEdit_device_info")
         self.textEdit_device_info.setEnabled(True)
         self.textEdit_device_info.setTextInteractionFlags(

@@ -417,8 +417,8 @@ def get_range(
     -------
         An array of the calculated range.
     """
-    start = evaluator.eval(start)
-    stop = evaluator.eval(stop)
+    start = float(evaluator.eval(start))
+    stop = float(evaluator.eval(stop))
     points = int(evaluator.eval(points))
     min_val = evaluator.eval(min_val)
     max_val = evaluator.eval(max_val)
@@ -818,6 +818,97 @@ def get_opyd_and_py_file_contents(classname, md, device_name):
                 )[0].replace("_ophyd", "")
             ] = ".py file not found"
     return md
+
+
+def create_venv_run_file_delete_venv(packages, script_to_run):
+    """
+    This function creates a virtual environment, installs the specified packages
+    in it, runs the specified Python script, and then deletes the virtual environment.
+    """
+    import venv
+    import subprocess
+    import tempfile
+    import shutil
+
+    # Step 1: Create the virtual environment in a temp folder using tempfile
+    try:
+        temp_folder = tempfile.mkdtemp()
+    except Exception as e:
+        raise Exception(f"Error creating temporary folder: {e}")
+    try:
+        venv.create(temp_folder, with_pip=True)
+    except Exception as e:
+        raise Exception(f"Error creating virtual environment: {e}")
+
+    # Path to the virtual environment's Python interpreter
+    python_executable = (
+        os.path.join(temp_folder, "bin", "python")
+        if os.name != "nt"
+        else os.path.join(temp_folder, "Scripts", "python.exe")
+    )
+
+    # Step 2: Install the specified packages
+    for package, version in zip(packages["Python Package"], packages["Version"]):
+        if not version:
+            try:
+                subprocess.run(
+                    [python_executable, "-m", "pip", "install", f"{package}"]
+                )
+            except Exception as e:
+                raise Exception(f"Error installing package {package}: {e}")
+        else:
+            try:
+                subprocess.run(
+                    [python_executable, "-m", "pip", "install", f"{package}=={version}"]
+                )
+            except Exception as e:
+                raise Exception(f"Error installing package {package}=={version}: {e}")
+
+    # Step 3: Run the specified Python script
+    try:
+        result_python_file = subprocess.run(
+            [python_executable, script_to_run], cwd=os.path.dirname(script_to_run)
+        )
+    except Exception as e:
+        raise Exception(f"Error running script {script_to_run}: {e}")
+
+    # Step 4: Delete the virtual environment
+    try:
+        if os.path.exists(temp_folder):
+            shutil.rmtree(temp_folder)
+    except Exception as e:
+        raise Exception(f"Error deleting temporary folder: {e}")
+    return result_python_file
+
+
+def evaluate_python_file_output(stdout, namespace):
+    import json
+    import re
+    """Evaluates the stdout of a Python file execution and writes the returned key value pairs to the namespace, so CAMELS can access their values"""
+    if stdout:
+        json_pattern = re.compile(r'\{.*\}') # Extract the dictionary from the stdout
+        # Search for JSON in the stdout
+        match = json_pattern.search(stdout)
+        
+        if match:
+            json_str = match.group()
+            
+            # Load the JSON string into a Python dictionary
+            data = json.loads(json_str)
+        else:
+            raise ValueError("No valid dictionary found in the output")
+        variables_dict = {}
+        if isinstance(data, list):  # Step 1: Check if the stdout is a dictionary
+            for item in data:  # Step 2: Loop through the list
+                key, value = map(str.strip, item.split('=', 1))  # Step 3: Split each string
+                variables_dict[key] = value
+
+            for key, value in variables_dict.items():
+                namespace[key] = value
+
+        if isinstance(data, dict):
+            for key, value in data.items():
+                namespace[key] = value
 
 
 class Value_Setter(QWidget):
