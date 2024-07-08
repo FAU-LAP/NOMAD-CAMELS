@@ -143,16 +143,21 @@ def export_run(
     """TODO"""
     catalog = databroker.catalog[catalog_name]
     run = catalog[run_number]
-    broker_to_NX(
-        [run],
-        filename,
-        plot_data,
-        additional_data,
-        session_name,
-        export_to_csv,
-        export_to_json,
-        new_file_each_run,
+    from nomad_camels.bluesky_handling.helper_functions import export_function
+
+    export_function(
+        [run], filename, True, new_file_each_run, export_to_csv, export_to_json
     )
+    # broker_to_NX(
+    #     [run],
+    #     filename,
+    #     plot_data,
+    #     additional_data,
+    #     session_name,
+    #     export_to_csv,
+    #     export_to_json,
+    #     new_file_each_run,
+    # )
 
 
 def broker_to_NX(
