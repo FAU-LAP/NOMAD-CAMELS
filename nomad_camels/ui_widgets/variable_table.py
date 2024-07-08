@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QTableView
-from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QPainter, QColor
+from PySide6.QtCore import Qt
 from nomad_camels.utility import variables_handling
 
 
@@ -17,8 +18,25 @@ class VariableTable(QTableView):
         if protocol:
             self.set_protocol(protocol)
 
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        if self.model.rowCount() == 0:
+            painter = QPainter(self.viewport())
+            painter.setPen(QColor(128, 128, 128))  # Gray color
+            
+            # Set font to be larger and bold
+            font = self.font()
+            font.setPointSize(font.pointSize() + 2)  # Make font larger
+            font.setBold(True)
+            painter.setFont(font)
+            
+            rect = self.viewport().rect()
+            painter.drawText(rect, Qt.AlignCenter, "Define your variables here.")
+
+    
     def set_protocol(self, protocol):
         """ """
+
         self.protocol = protocol
         for var in sorted(self.protocol.variables):
             self.append_variable(var, str(self.protocol.variables[var]), unique=False)
