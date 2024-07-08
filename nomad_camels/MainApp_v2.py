@@ -1284,6 +1284,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocols_dict[protocol.name] = protocol
         button = self.button_area_meas.rename_button(old_name, protocol.name)
         self.add_functions_to_meas_button(button, protocol.name)
+        file_path = f"{self.preferences['py_files_path']}/{protocol.name}.cprot"
+        protocol_dict = load_save_functions.get_save_str(protocol)
+        load_save_functions.save_dictionary(file_path, protocol_dict)
 
     def open_protocol_config(self, prot_name):
         """
@@ -1433,6 +1436,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         try:
             self.build_protocol(protocol_name, ask_file=False, variables=variables)
             protocol = self.protocols_dict[protocol_name]
+            self.running_protocol = protocol
             path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
             name = os.path.basename(path)[:-3]
             spec = importlib.util.spec_from_file_location(name, path)
@@ -1684,7 +1688,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "Session name contains special characters.\nPlease use only letters, numbers and whitespace."
             )
 
-        self.running_protocol = protocol
         if ask_file:
             path = QFileDialog.getSaveFileName(
                 self, "Export Protocol", protocol_name, "*.py"
