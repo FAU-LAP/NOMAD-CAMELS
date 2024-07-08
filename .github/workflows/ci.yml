@@ -31,7 +31,7 @@ jobs:
       - name: Lint with ruff
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          ruff --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
+          ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
       - name: Prepare databroker
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
@@ -60,7 +60,7 @@ jobs:
       - name: Lint with ruff
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          ruff --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
+          ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
       - name: Prepare databroker
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
@@ -86,7 +86,7 @@ jobs:
       - name: Lint with ruff
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          ruff --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
+          ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
       - name: Prepare databroker
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest

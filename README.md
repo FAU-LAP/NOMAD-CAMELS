@@ -24,11 +24,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 
 # Changelog
-
-## 1.1.3
-
+## 1.2.0
 Features:
-
+- Data can now be exported to hdf5 during the measurement. This should remove long waiting times after protocols with lots of data.
 - Added a filter functionality to the right-click menu when setting channels or variables. This filters all available channels, variables or functions by the string that is entered. 
 - Added the `Execute Python File` loop step. This allows the user to specify a python file and a python environment to run the file with. The environment can either be the same as the one running CAMELS (default), a different already existing one, or is created dynamically by giving it the required packages and versions.
 - Added a tab that allows you to add new tabs simply by clicking

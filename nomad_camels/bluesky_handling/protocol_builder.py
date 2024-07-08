@@ -17,7 +17,7 @@ The overview of the protocol-file looks like this:\n
 - set up databroker and progress bar
 - `devices_string`
 - `standard_start_string2`
-- `standard_save_string`
+- `save_string`
 - `final_string`
 - `standard_start_string3`
 
@@ -66,7 +66,6 @@ standard_string += "import subprocess\n"
 standard_string += (
     "from nomad_camels.main_classes import plot_pyqtgraph, list_plot, plot_2D\n"
 )
-standard_string += "from nomad_camels.utility.databroker_export import broker_to_hdf5, broker_to_dict, broker_to_NX\n"
 standard_string += "from nomad_camels.utility import theme_changing\n"
 standard_string += (
     "from nomad_camels.bluesky_handling.evaluation_helper import Evaluator\n"
@@ -74,6 +73,7 @@ standard_string += (
 standard_string += (
     "from nomad_camels.bluesky_handling import helper_functions, variable_reading\n"
 )
+standard_string += "from event_model import RunRouter\n"
 standard_string += "darkmode = False\n"
 standard_string += 'theme = "default"\n'
 standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "total_protocol_steps": 0, "protocol_stepper_signal": None}\n'
@@ -108,6 +108,10 @@ standard_start_string3 += '\tprint("protocol finished!")\n'
 standard_start_string3 += "\tif app is not None:\n"
 standard_start_string3 += "\t\tsys.exit(app.exec())\n"
 # standard_start_string += '\treturn plot_dat, additional_step_data\n'
+standard_final_string = "\tfinally:\n"
+standard_final_string += '\t\twhile RE.state not in ["idle", "panicked"]:\n'
+standard_final_string += "\t\t\timport time\n"
+standard_final_string += "\t\t\ttime.sleep(0.5)\n"
 
 standard_nexus_dict = {
     "/ENTRY[entry]/operator/address": "metadata_start/user/Address (affiliation)",
@@ -176,6 +180,7 @@ def build_protocol(
     variable_string = "\nnamespace = {}\n"
     variable_string += "all_fits = {}\n"
     variable_string += "plots = []\n"
+    variable_string += "plot_data = []\n"
     variable_string += "boxes = {}\n"
     variable_string += "app = None\n"
     variable_string += f'save_path = "{save_path}"\n'
@@ -330,32 +335,38 @@ def build_protocol(
     protocol_string += '\t\tmd["python_script"] = f.read()\n'
     protocol_string += read_device_drivers_string
     protocol_string += '\tmd["variables"] = namespace\n'
+    protocol_string += '\tmd["plot_data"] = plot_data\n'
 
     # adding uid to RunEngine, calling the plan
-    protocol_string += '\tRE.subscribe(uid_collector, "start")\n'
-    protocol_string += f"\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
+    protocol_string += '\tsubscription_uid = RE.subscribe(uid_collector, "start")\n'
+    if protocol.h5_during_run:
+        protocol_string += "\trr = RunRouter([lambda x, y: helper_functions.saving_function(x, y, save_path, new_file_each_run, plots)])\n"
+        protocol_string += "\tsubscription_rr = RE.subscribe(rr)\n"
+    protocol_string += f"\ttry:\n"
+    protocol_string += f"\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
+    protocol_string += "\tfinally:\n"
+    protocol_string += "\t\tRE.unsubscribe(subscription_uid)\n"
+    if protocol.h5_during_run:
+        protocol_string += "\t\tRE.unsubscribe(subscription_rr)\n"
 
     # wait for RunEngine to finish, then save the data
-    standard_save_string = "\tfinally:\n"
-    standard_save_string += '\t\twhile RE.state not in ["idle", "panicked"]:\n'
-    standard_save_string += "\t\t\timport time\n"
-    standard_save_string += "\t\t\ttime.sleep(0.5)\n"
-    standard_save_string += "\t\tif uids:\n"
-    standard_save_string += "\t\t\truns = catalog[tuple(uids)]\n"
+    save_string = "\t\tif uids:\n"
+    save_string += "\t\t\truns = catalog[tuple(uids)]\n"
     if protocol.use_nexus:
         nexus_dict = protocol.get_nexus_paths()
         nexus_dict.update(standard_nexus_dict)
-        standard_save_string += "\t\t\tdata = broker_to_dict(runs)\n"
-        standard_save_string += f"\t\t\tnexus_mapper = {nexus_dict}\n\n"
+        save_string += "\t\t\tdata = broker_to_dict(runs)\n"
+        save_string += f"\t\t\tnexus_mapper = {nexus_dict}\n\n"
         # TODO finish this
     else:
-        standard_save_string += (
-            "\t\t\tbroker_to_NX(runs, save_path, plots,"
-            "session_name=session_name,"
-            "export_to_csv=export_to_csv,"
-            "export_to_json=export_to_json,"
-            "new_file_each_run=new_file_each_run)\n\n"
-        )
+        save_string += f"\t\t\thelper_functions.export_function(runs, save_path, {not protocol.h5_during_run}, new_file_each=new_file_each_run, plot_data=plots)\n"
+        # save_string += (
+        #     "\t\t\tbroker_to_NX(runs, save_path, plots,"
+        #     "session_name=session_name,"
+        #     "export_to_csv=export_to_csv,"
+        #     "export_to_json=export_to_json,"
+        #     "new_file_each_run=new_file_each_run)\n\n"
+        # )
 
     protocol_string += standard_start_string
 
@@ -381,9 +392,9 @@ def build_protocol(
     protocol_string += "\tdevs = {}\n\tdevice_config = {}\n\ttry:\n"
     protocol_string += devices_string
     protocol_string += standard_start_string2
-    # protocol_string += '\tfinally:\n'
-    protocol_string += standard_save_string
+    protocol_string += standard_final_string
     protocol_string += final_string
+    protocol_string += save_string
     protocol_string += standard_start_string3
 
     # the string is written to the file
