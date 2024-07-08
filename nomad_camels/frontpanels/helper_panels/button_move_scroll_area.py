@@ -391,37 +391,72 @@ class RenameTabWidget(QTabWidget):
 
     def __init__(self, parent=None, tab_button_dict=None):
         super().__init__(parent)
+        self.mainWindow = parent
         self.setAcceptDrops(True)
         self.tabBar().setMovable(True)
-        # self.addTabButton = QPushButton("+")
-        # self.addTabButton.setFixedSize(20, 20)
-        # self.addTabButton.clicked.connect(self.tab_adding)
-        # self.addTab(QWidget(), "")  # Add an empty tab for the "+" button
-        # self.tabBar().setTabButton(
-        #     self.count() - 1, QTabBar.RightSide, self.addTabButton
-        # )
 
-        # add a context menu to close tabs
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.context_menu)
+        # Add the "plus" tab
+        self.plus_tab = QPushButton("+")
+        self.plus_tab.setFlat(True)
+        self.plus_tab.setFocusPolicy(Qt.NoFocus)
+        self.plus_tab.setFixedSize(25, 25)
+        self.plus_tab.clicked.connect(self.create_new_tab)
+
+        # Add the plus tab
         self.tab_button_dict = tab_button_dict or {}
         self.all_buttons = []
         self.editing_old_name = ""
+        self.addPlusTab()
+
+        # Add a context menu to the tab bar
+        self.tabBar().setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tabBar().customContextMenuRequested.connect(self.context_menu)
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.setCurrentIndex(0)
+
+    def addPlusTab(self):
+        self.addTab(QWidget(), "")
+        self.tabBar().setTabButton(self.count() - 1, QTabBar.RightSide, self.plus_tab)
+        self.tabBar().setTabEnabled(self.count() - 1, False)
+        self.plus_tab.setStyleSheet(
+            """
+            QPushButton {
+                background-color: #4CAF50; /* green */
+                border: none; /* Remove border for a cleaner look */
+                color: white; /* Text color */
+                padding: 0px; /* Adjust padding as needed */
+                padding-bottom: 5px;
+                border-radius: 6px; /* Rounded corners with a radius of 10px */
+                font-size: 22px;
+                font-weight: bold;
+                text-align: center;
+                margin: 2px 2px;
+            }
+            QPushButton:hover {
+                background-color: #45a049; /* Slightly lighter green on hover */
+            }
+            QPushButton:pressed {
+                background-color: #2f6331; /* Slightly darker green when pressed */
+            }
+            """
+        )
 
     def context_menu(self, pos):
-        # show context menu only when mouse is at a tab in the tab bar
-        if self.tabBar().tabAt(pos) == -1:
+        tab_index = self.tabBar().tabAt(pos)
+        if tab_index == -1 or self.tabText(tab_index) == "":
             return
-        index = self.tabBar().tabAt(pos)
         menu = QMenu()
-        # possible actions are "remove tab" and "rename"
         menu.addAction("Add Tab", self.create_new_tab)
-        menu.addAction("Remove Tab", lambda: self.tab_removing(index))
+        menu.addAction("Remove Tab", lambda: self.tab_removing(tab_index))
         menu.addSeparator()
-        menu.addAction("Rename Tab", lambda: self.rename_tab(index))
+        menu.addAction("Rename Tab", lambda: self.rename_tab(tab_index))
         menu.exec(self.tabBar().mapToGlobal(pos))
 
     def tab_removing(self, index):
+        if self.tabText(index) == "":
+            return
         delete_question = QMessageBox.question(
             self,
             "Remove Tab",
@@ -430,9 +465,14 @@ class RenameTabWidget(QTabWidget):
         )
         if delete_question != QMessageBox.Yes:
             return
+        for protocol_ in self.mainWindow.protocol_tabs_dict[self.tabText(index)]:
+            del self.mainWindow.protocols_dict[protocol_]
+        del self.mainWindow.protocol_tabs_dict[self.tabText(index)]
         self.removeTab(index)
 
     def rename_tab(self, index):
+        if self.tabText(index) == "":
+            return
         old_name = self.tabText(index)
         line_edit = QLineEdit(old_name)
         line_edit.selectAll()
@@ -455,16 +495,16 @@ class RenameTabWidget(QTabWidget):
         self.tab_button_dict[new_name] = self.tab_button_dict.pop(old_name)
 
     def updateLayout(self):
-        for tab in range(self.count()):
+        for tab in range(self.count() - 1):  # Skip the last tab (plus tab)
             self.widget(tab).updateLayout()
 
     def get_tab_by_name(self, name, make_new=False):
-        for i in range(self.count()):
+        for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             if self.tabText(i) == name:
                 return self.widget(i)
         if make_new:
             tab = Drop_Scroll_Area()
-            self.addTab(tab, name)
+            self.insertTab(self.count() - 1, tab, name)  # Insert before the plus tab
             return tab
         return None
 
@@ -472,46 +512,45 @@ class RenameTabWidget(QTabWidget):
         self.all_buttons.append(button)
         widget = self.get_tab_by_name(tab_name, make_new=True)
         widget.add_button(button, name)
-        # button.move_asked.connect(self.move_button)
 
     def remove_button(self, name):
-        for i in range(self.count()):
+        for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             try:
                 self.widget(i).remove_button(name)
             except KeyError:
                 pass
 
     def clear_area(self):
-        for i in range(self.count()):
+        for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             self.widget(i).clear_area()
 
     def get_button_order(self, tab_name=""):
-        for i in range(self.count()):
+        for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             if self.tabText(i) == tab_name:
                 return self.widget(i).get_button_order()
         return []
 
     def rename_button(self, old_name, new_name):
-        for i in range(self.count()):
+        for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             try:
                 return self.widget(i).rename_button(old_name, new_name)
             except KeyError:
                 pass
 
     def disable_run_buttons(self):
-        for i in range(self.count()):
+        for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             self.widget(i).disable_run_buttons()
 
     def enable_run_buttons(self):
-        for i in range(self.count()):
+        for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             self.widget(i).enable_run_buttons()
 
     def disable_single_run(self, name):
-        for i in range(self.count()):
+        for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             self.widget(i).disable_single_run(name)
 
     def enable_single_run(self, name):
-        for i in range(self.count()):
+        for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             self.widget(i).enable_single_run(name)
 
     def create_new_tab(self):
@@ -520,19 +559,23 @@ class RenameTabWidget(QTabWidget):
         while name in self.tab_button_dict:
             name = f"New Tab {i}"
             i += 1
-        self.addTab(Drop_Scroll_Area(), name)
+        new_tab = Drop_Scroll_Area()
+        self.insertTab(self.count() - 1, new_tab, name)  # Insert before the plus tab
+        self.tab_button_dict[name] = []
+        new_tab.order_changed.connect(self.update_order)
 
     def addTab(self, widget, name):
         super().addTab(widget, name)
-        if name not in self.tab_button_dict:
+        if name not in self.tab_button_dict and name != "":
             self.tab_button_dict[name] = []
-        widget.order_changed.connect(self.update_order)
+        if name != "":
+            widget.order_changed.connect(self.update_order)
 
     def get_active_tab(self):
         return self.tabText(self.currentIndex())
 
     def update_order(self):
-        for i in range(self.count()):
+        for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             tab_name = self.tabText(i)
             self.tab_button_dict[tab_name] = self.widget(i).get_button_order()
 

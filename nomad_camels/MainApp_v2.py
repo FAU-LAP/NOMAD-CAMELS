@@ -1321,6 +1321,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         tab = tab or self.button_area_meas.get_active_tab()
         self.button_area_meas.add_button(button, name, tab)
         self.add_functions_to_meas_button(button, name)
+        self.protocol_tabs_dict[tab].append(name)
 
     def add_functions_to_meas_button(self, button, name):
         """
@@ -1378,13 +1379,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         self.button_area_meas.clear_area()
         if not self.protocols_dict:
-            self.button_area_meas.setHidden(True)
+            # The protocls button should always be visible even when no protocol is added
+            self.button_area_meas.setHidden(False)
         else:
             self.button_area_meas.setHidden(False)
         for prot in self.protocols_dict:
             added = False
-            for tab, protocols in self.protocol_tabs_dict.items():
-                if prot in protocols:
+            for tab, protocols in list(self.protocol_tabs_dict.items()):
+                if not protocols:
+                    del self.protocol_tabs_dict[tab]
+                elif prot in protocols:
                     self.add_button_to_meas(prot, tab)
                     added = True
                     break

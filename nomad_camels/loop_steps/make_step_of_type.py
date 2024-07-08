@@ -17,6 +17,7 @@ from nomad_camels.loop_steps import (
     set_value_popup,
     export_data,
     call_function,
+    execute_python_file,
 )
 
 from nomad_camels.utility import variables_handling
@@ -61,6 +62,10 @@ step_type_config = {
         for_while_loops.While_Loop_Step_Config,
     ],
     "Wait": [wait_loop_step.Wait_Loop_Step, wait_loop_step.Wait_Loop_Step_Config],
+    "Execute Python File": [
+        execute_python_file.Execute_Python_File,
+        execute_python_file.Execute_Python_File_Config,
+    ],
 }
 
 non_addables = {

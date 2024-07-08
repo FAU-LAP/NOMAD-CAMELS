@@ -403,9 +403,11 @@ class Device_Config(QWidget):
         self.line_2.setObjectName("line_2")
 
         self.textEdit_desc = QTextEdit(parent=self)
+        self.textEdit_desc.textChanged.connect(self.adjust_text_edit_size)
         self.textEdit_desc.setPlaceholderText("Enter your description here.")
         if additional_info and "description" in additional_info:
             self.textEdit_desc.setText(additional_info["description"])
+        self.adjust_text_edit_size()
 
         self.label_connection = QLabel("Connection-type:")
         self.comboBox_connection_type = QComboBox()
@@ -430,6 +432,17 @@ class Device_Config(QWidget):
             lambda x: self.name_change.emit(x)
         )
         self.load_settings()
+
+    def showEvent(self, event):
+        """Called when the widget is shown."""
+        super().showEvent(event)
+        self.adjust_text_edit_size()
+
+    def adjust_text_edit_size(self):
+        """Adjusts the size of the textEdit_desc based on its content."""
+        document = self.textEdit_desc.document()
+        document_height = document.size().height()
+        self.textEdit_desc.setFixedHeight(document_height + 5)  # Add some padding
 
     def connection_type_changed(self):
         """Called when the comboBox_connection_type is changed. Switches
