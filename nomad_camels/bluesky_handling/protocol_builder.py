@@ -130,6 +130,31 @@ standard_nexus_dict = {
 }
 
 
+def build_from_path(path, save_path="test.nxs", catalog="CAMELS_CATALOG", userdata=None, sampledata=None):
+    """Creating the runable python file from a given `protocol`.
+
+    Parameters
+    ----------
+    path : str, path
+        The path to the protocol that should be built.
+    save_path : str, path
+         (Default value = 'test.nxs')
+         The path, where the data should be saved to.
+    catalog : str
+         (Default value = 'CAMELS_CATALOG')
+         The name of the databroker catalog that should be used.
+    userdata : dict, None
+         (Default value = None)
+         Metadata that describes the user.
+    sampledata : dict, None
+         (Default value = None)
+         Metadata that describes the sample.
+    """
+    protocol = load_save_functions.load_protocol(path)
+    path = pathlib.Path(path)
+    build_protocol(protocol, path.with_suffix(".py"), save_path, catalog, userdata, sampledata)
+
+
 def build_protocol(
     protocol,
     file_path,
