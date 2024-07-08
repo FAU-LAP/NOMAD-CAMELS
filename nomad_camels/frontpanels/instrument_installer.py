@@ -11,10 +11,10 @@ from PySide6.QtWidgets import (
     QCheckBox,
     QMessageBox,
     QTextBrowser,
-    QGridLayout,
     QSplitter,
+    QTextEdit,
 )
-from PySide6.QtGui import QBrush, QColor, QFont
+from PySide6.QtGui import QBrush, QColor, QFont, QPainter
 from PySide6.QtCore import Qt, QThread, Signal
 
 import requests
@@ -229,6 +229,12 @@ class Instrument_Installer(Ui_Form, QWidget):
     def __init__(self, active_instruments=None, parent=None):
         super().__init__(parent=parent)
         self.setupUi(self)
+        # Overwrite the existing TextEdit with one that writes gray background text if there is nothing in the installation log
+        textEdit_device_info = CustomTextEdit_new_painter()
+        self.layout().replaceWidget(self.textEdit_device_info, textEdit_device_info)
+        self.textEdit_device_info.setParent(None)
+        self.textEdit_device_info.deleteLater()
+        self.textEdit_device_info = textEdit_device_info
         self.show_info_bool = False
         self.active_instruments = active_instruments or {}
 
@@ -454,6 +460,27 @@ class Instrument_Installer(Ui_Form, QWidget):
                 self.info_widge.setHidden(True)
         finally:
             self.setCursor(Qt.ArrowCursor)
+
+class CustomTextEdit_new_painter(QTextEdit):
+    """Custom QTextEdit that paints custom text when the text is empty."""
+    def paintEvent(self, event):
+        # Call the original paint event to handle the default drawing
+        super().paintEvent(event)
+
+        # Custom painting code
+        if not self.toPlainText():
+            painter = QPainter(self.viewport())
+            painter.setPen(QColor(Qt.gray))  # Set the color of the pen
+
+            # Customize the font
+            font = QFont()
+            font.setPointSize(16)  # Adjust the size as needed
+            font.setBold(True)
+            painter.setFont(font)
+
+            # Draw custom text in the center
+            painter.drawText(self.rect(), Qt.AlignCenter, "Installation Log")
+            painter.end()
 
 
 class Install_Thread(QThread):

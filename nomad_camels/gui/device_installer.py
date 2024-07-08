@@ -58,25 +58,6 @@ class CustomTextEdit(QTextEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-    def paintEvent(self, event):
-        super().paintEvent(event)
-        
-        # Only draw custom content if certain conditions are met, e.g., no text
-        if not self.toPlainText():
-            painter = QPainter(self.viewport())
-            painter.setPen(QColor(Qt.gray))  # Set the color of the pen
-
-            # Customize the font
-            font = painter.font()
-            font.setPointSize(16)  # Adjust the size as needed
-            font.setBold(True)
-            painter.setFont(font)
-
-            # Draw custom text in the center
-            painter.drawText(self.rect(), Qt.AlignCenter, "Installation Log")
-
-            painter.end()
-
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
