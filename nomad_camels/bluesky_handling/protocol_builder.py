@@ -341,10 +341,12 @@ def build_protocol(
     if protocol.h5_during_run:
         protocol_string += "\trr = RunRouter([lambda x, y: helper_functions.saving_function(x, y, save_path, new_file_each_run)])\n"
         protocol_string += "\tsubscription_rr = RE.subscribe(rr)\n"
-    protocol_string += f"\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
-    protocol_string += "\tRE.unsubscribe(subscription_uid)\n"
+    protocol_string += f"\ttry:\n"
+    protocol_string += f"\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
+    protocol_string += "\tfinally:\n"
+    protocol_string += "\t\tRE.unsubscribe(subscription_uid)\n"
     if protocol.h5_during_run:
-        protocol_string += "\tRE.unsubscribe(subscription_rr)\n"
+        protocol_string += "\t\tRE.unsubscribe(subscription_rr)\n"
 
     # wait for RunEngine to finish, then save the data
     save_string = "\t\tif uids:\n"
