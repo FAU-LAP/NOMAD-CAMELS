@@ -279,7 +279,7 @@ class Ui_Form(object):
             QCoreApplication.translate("Form", "tags", None)
         )
         self.pushButton_info.setText(
-            QCoreApplication.translate("Form", "hide info", None)
+            QCoreApplication.translate("Form", "show info", None)
         )
         self.pushButton_sel_all.setText(
             QCoreApplication.translate("Form", "Select All", None)

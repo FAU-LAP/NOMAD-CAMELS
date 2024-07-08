@@ -44,13 +44,13 @@ class Execute_Python_File(Loop_Step):
 
         # Get the python package and version variables and their value from the step info
         self.variables_passing = (
-            step_info["variables_passing"] if "variables_passing" in step_info else []
+            step_info["variables_passing"] if "variables_passing" in step_info else {}
         )
         # Get the variables returned by the file from the step info
         self.returned_values_variables = (
             step_info["returned_values_variables"]
             if "returned_values_variables" in step_info
-            else []
+            else {}
         )
 
         self.use_existing_env = (
@@ -121,6 +121,28 @@ class Execute_Python_File(Loop_Step):
                 f"{tabs}helper_functions.evaluate_python_file_output(result_python_file.stdout, namespace)\n"
             )
         return protocol_string
+
+    def update_variables(self):
+        """ """
+        # Update the global variables to have access to the varaibles defined to pass to the python file
+        variable_names = self.variables_passing.get("Variable Name", [])
+        values = self.variables_passing.get("Value", [])
+        # Create a dictionary from the lists
+        new_variables = dict(zip(variable_names, values))
+        variables_handling.loop_step_variables.update(new_variables)
+        # Update the global variables to have access to the varaibles returned by the python file
+        if "Variable Name" in self.returned_values_variables:
+            for returned_values_variables in self.returned_values_variables[
+                "Variable Name"
+            ]:
+                if returned_values_variables:
+                    if (
+                        returned_values_variables
+                        not in variables_handling.loop_step_variables
+                    ):
+                        variables_handling.loop_step_variables.update(
+                            {returned_values_variables: 0}
+                        )
 
 
 class Execute_Python_File_Config(Loop_Step_Config):
@@ -216,7 +238,7 @@ class Execute_Python_File_Config(Loop_Step_Config):
             "Specify variables and their values to be passed to the Python file during execution."
         )
         self.add_remove_table_returned_values_variables.setToolTip(
-            "Specify variables and their values that are returned from the Python file after execution.\nMust be saved to existing variables. Value is either the index for the returned value if the file returns multiple\nthings or the dictionary key if the file returns a dictionary."
+            "The Python file must return a dictionary.\nSpecify the keys of the dictionary that are returned from the Python file after execution."
         )
 
         # Initial paths setup
@@ -312,13 +334,6 @@ class Execute_Python_File_Config(Loop_Step_Config):
         self.loop_step.returned_values_variables = (
             self.add_remove_table_returned_values_variables.update_table_data()
         )
-        for returned_values_variables in self.loop_step.returned_values_variables[
-            "Variable Name"
-        ]:
-            if returned_values_variables:
-                variables_handling.loop_step_variables.update(
-                    {returned_values_variables: 0}
-                )
 
     def handle_radio_button_clicked(self, button):
         self.loop_step.radio_button_selected = button.text()
@@ -374,6 +389,7 @@ class Execute_Python_File_Config(Loop_Step_Config):
         self.loop_step.python_packages_versions = (
             self.add_remove_table_packages.update_table_data()
         )
+
 
 class AddRemoveTable_Returned_Variables(AddRemoveTable):
     """Subclasses AddRemoveTable and changes the remove method to also remove the variable from the loop step variable dict."""
