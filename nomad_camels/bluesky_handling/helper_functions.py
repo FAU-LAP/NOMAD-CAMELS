@@ -40,7 +40,13 @@ def get_newest_file(directory):
 
 
 def export_function(
-    runs, save_path, do_export, new_file_each=True, export_csv=False, export_json=False
+    runs,
+    save_path,
+    do_export,
+    new_file_each=True,
+    export_csv=False,
+    export_json=False,
+    plot_data=None,
 ):
     if os.path.splitext(save_path)[1] == ".nxs":
         fname = os.path.basename(save_path)
@@ -50,7 +56,7 @@ def export_function(
             runs = [runs]
         for run in runs:
             docs = run.documents(fill="yes")
-            export(docs, path, fname, new_file_each)
+            export(docs, path, fname, new_file_each, plot_data=plot_data)
     if export_csv or export_json:
         from nomad_camels.utility.databroker_export import export_h5_to_csv_json
 
@@ -58,12 +64,14 @@ def export_function(
         export_h5_to_csv_json(file, export_data=export_csv, export_metadata=export_json)
 
 
-def saving_function(name, start_doc, path, new_file_each=True):
+def saving_function(name, start_doc, path, new_file_each=True, plot_data=None):
     fname = start_doc["uid"]
     if os.path.splitext(path)[1] == ".nxs":
         fname = os.path.basename(path)
         path = os.path.dirname(path)
-    return [Serializer(path, fname, new_file_each=new_file_each)], []
+    return [
+        Serializer(path, fname, new_file_each=new_file_each, plot_data=plot_data)
+    ], []
 
 
 def trigger_multi(devices, grp=None):

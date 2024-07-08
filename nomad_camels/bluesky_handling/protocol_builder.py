@@ -339,7 +339,7 @@ def build_protocol(
     # adding uid to RunEngine, calling the plan
     protocol_string += '\tsubscription_uid = RE.subscribe(uid_collector, "start")\n'
     if protocol.h5_during_run:
-        protocol_string += "\trr = RunRouter([lambda x, y: helper_functions.saving_function(x, y, save_path, new_file_each_run)])\n"
+        protocol_string += "\trr = RunRouter([lambda x, y: helper_functions.saving_function(x, y, save_path, new_file_each_run, plots)])\n"
         protocol_string += "\tsubscription_rr = RE.subscribe(rr)\n"
     protocol_string += f"\ttry:\n"
     protocol_string += f"\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
@@ -358,7 +358,7 @@ def build_protocol(
         save_string += f"\t\t\tnexus_mapper = {nexus_dict}\n\n"
         # TODO finish this
     else:
-        save_string += f"\t\t\thelper_functions.export_function(runs, save_path, {not protocol.h5_during_run}, new_file_each=new_file_each_run)\n"
+        save_string += f"\t\t\thelper_functions.export_function(runs, save_path, {not protocol.h5_during_run}, new_file_each=new_file_each_run, plot_data=plots)\n"
         # save_string += (
         #     "\t\t\tbroker_to_NX(runs, save_path, plots,"
         #     "session_name=session_name,"

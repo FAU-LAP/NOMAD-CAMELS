@@ -1609,6 +1609,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 self.preferences["new_file_each_run"],
                 self.running_protocol.export_csv,
                 self.running_protocol.export_json,
+                self.protocol_module.plots,
             )
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)

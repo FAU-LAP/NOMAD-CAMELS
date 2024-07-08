@@ -146,7 +146,13 @@ def export_run(
     from nomad_camels.bluesky_handling.helper_functions import export_function
 
     export_function(
-        [run], filename, True, new_file_each_run, export_to_csv, export_to_json
+        [run],
+        filename,
+        True,
+        new_file_each_run,
+        export_to_csv,
+        export_to_json,
+        plot_data,
     )
     # broker_to_NX(
     #     [run],
