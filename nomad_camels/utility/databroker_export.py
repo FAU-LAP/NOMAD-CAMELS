@@ -143,16 +143,27 @@ def export_run(
     """TODO"""
     catalog = databroker.catalog[catalog_name]
     run = catalog[run_number]
-    broker_to_NX(
+    from nomad_camels.bluesky_handling.helper_functions import export_function
+
+    export_function(
         [run],
         filename,
-        plot_data,
-        additional_data,
-        session_name,
+        True,
+        new_file_each_run,
         export_to_csv,
         export_to_json,
-        new_file_each_run,
+        plot_data,
     )
+    # broker_to_NX(
+    #     [run],
+    #     filename,
+    #     plot_data,
+    #     additional_data,
+    #     session_name,
+    #     export_to_csv,
+    #     export_to_json,
+    #     new_file_each_run,
+    # )
 
 
 def broker_to_NX(
@@ -242,7 +253,6 @@ def broker_to_NX(
             vers_group = proc.create_group("versions")
             py_environment = proc.create_group("python_environment")
             py_environment.attrs["python_version"] = sys.version
-            d = importlib.metadata.distributions()
             for x in importlib.metadata.distributions():
                 name = x.metadata["Name"]
                 if name not in py_environment.keys():

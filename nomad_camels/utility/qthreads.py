@@ -342,6 +342,7 @@ class Additional_Imports_Thread(QThread):
         from nomad_camels.tools import device_driver_builder
         from nomad_camels.tools import EPICS_driver_builder
         from nomad_camels.tools import databroker_exporter
+        from nomad_camels.bluesky_handling import helper_functions
 
         self.imports.append(RunEngine)
         self.imports.append(BestEffortCallback)
@@ -369,3 +370,4 @@ class Additional_Imports_Thread(QThread):
         self.imports.append(device_driver_builder)
         self.imports.append(EPICS_driver_builder)
         self.imports.append(databroker_exporter)
+        self.imports.append(helper_functions)
