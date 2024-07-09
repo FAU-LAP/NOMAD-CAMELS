@@ -425,26 +425,25 @@ def get_range(
     if loop_type == "start - stop":
         return get_inner_range(start, stop, points, sweep_mode, endpoint)
     elif loop_type == "start - min - max - stop":
-        part_points1 = round(
-            points * np.abs(start - min_val) / np.abs(max_val - min_val)
-        )
-        part_points2 = round(
-            points * np.abs(stop - max_val) / np.abs(max_val - min_val)
-        )
-        vals1 = get_inner_range(start, min_val, part_points1, sweep_mode, endpoint)
-        vals2 = get_inner_range(min_val, max_val, points, sweep_mode, endpoint)
-        vals3 = get_inner_range(max_val, stop, part_points2, sweep_mode, endpoint)
+        points_1 = points // 3
+        points_2 = points // 3
+        points_3 = points - points_1 - points_2
+        
+        vals1 = get_inner_range(start, min_val, points_1, sweep_mode, endpoint=False)
+        vals2 = get_inner_range(min_val, max_val, points_2, sweep_mode, endpoint=False)
+        vals3 = get_inner_range(max_val, stop, points_3, sweep_mode, endpoint=endpoint)
+        
+        return np.concatenate([vals1, vals2, vals3])
     else:
-        part_points1 = round(
-            points * np.abs(start - max_val) / np.abs(max_val - min_val)
-        )
-        part_points2 = round(
-            points * np.abs(stop - min_val) / np.abs(max_val - min_val)
-        )
-        vals1 = get_inner_range(start, max_val, part_points1, sweep_mode, endpoint)
-        vals2 = get_inner_range(max_val, min_val, points, sweep_mode, endpoint)
-        vals3 = get_inner_range(min_val, stop, part_points2, sweep_mode, endpoint)
-    return np.concatenate([vals1, vals2, vals3])
+        points_1 = points // 3
+        points_2 = points // 3
+        points_3 = points - points_1 - points_2
+        
+        vals1 = get_inner_range(start, max_val, points_1, sweep_mode, endpoint=False)
+        vals2 = get_inner_range(max_val, min_val, points_2, sweep_mode, endpoint=False)
+        vals3 = get_inner_range(min_val, stop, points_3, sweep_mode, endpoint=endpoint)
+        
+        return np.concatenate([vals1, vals2, vals3])
 
 
 def get_inner_range(start, stop, points, sweep_mode, endpoint):
