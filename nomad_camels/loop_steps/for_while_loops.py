@@ -480,7 +480,10 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
                     stop_val = variables_handling.get_eval(stop)
                     min_val_val = variables_handling.get_eval(min_val)
                     max_val_val = variables_handling.get_eval(max_val)
-                    points_val = int(variables_handling.get_eval(points))
+                    try:
+                        points_val = int(variables_handling.get_eval(points))
+                    except ValueError:
+                        return [np.nan]
                     if (
                         self.comboBox_loop_type.currentText()
                         == "start - min - max - stop"
