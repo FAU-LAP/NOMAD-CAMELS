@@ -40,7 +40,7 @@ Fixes:
 - Filtering the channels by name does not break if no matches were found.
 - Filtering Set Channels now does not reset the value if the channel does not match the query.
 - Fixed the hide/show information when installing instruments
-- 
+- Fixed the values created in a For Loop when using the `start - min/max - max/min - stop` type. Now there are always only an amount of values created equal to the value of `points`. Ideally `# points`should be a multiple of three when including the endpoint. 
 
 ## 1.1.2
 
