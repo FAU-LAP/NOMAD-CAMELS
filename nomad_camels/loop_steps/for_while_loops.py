@@ -480,26 +480,38 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
                     stop_val = variables_handling.get_eval(stop)
                     min_val_val = variables_handling.get_eval(min_val)
                     max_val_val = variables_handling.get_eval(max_val)
-                    points_val = int(variables_handling.get_eval(points))
+                    points_val = variables_handling.get_eval(points)
                     if (
                         self.comboBox_loop_type.currentText()
                         == "start - min - max - stop"
                     ):
-                        points_1 = points_val // 3
-                        points_2 = points_val // 3
-                        points_3 = points_val - points_1 - points_2
-                        
-                        vals1 = get_inner_range(start_val, min_val_val, points_1, self.loop_step.sweep_mode, endpoint=False)
-                        vals2 = get_inner_range(min_val_val, max_val_val, points_2, self.loop_step.sweep_mode, endpoint=False)
-                        vals3 = get_inner_range(max_val_val, stop_val, points_3, self.loop_step.sweep_mode, endpoint=self.loop_step.include_end_points)
+                        part_points1 = round(
+                            points_val
+                            * np.abs(start_val - min_val_val)
+                            / np.abs(max_val_val - min_val_val)
+                        )
+                        part_points2 = round(
+                            points_val
+                            * np.abs(stop_val - max_val_val)
+                            / np.abs(max_val_val - min_val_val)
+                        )
+                        vals1 = self.get_space(start, min_val, str(part_points1))
+                        vals2 = self.get_space(min_val, max_val, points)
+                        vals3 = self.get_space(max_val, stop, str(part_points2))
                     else:
-                        points_1 = points_val // 3
-                        points_2 = points_val // 3
-                        points_3 = points_val - points_1 - points_2
-                        
-                        vals1 = get_inner_range(start_val, max_val_val, points_1, self.loop_step.sweep_mode, endpoint=False)
-                        vals2 = get_inner_range(max_val_val, min_val_val, points_2, self.loop_step.sweep_mode, endpoint=False)
-                        vals3 = get_inner_range(min_val_val, stop_val, points_3, self.loop_step.sweep_mode, endpoint=self.loop_step.include_end_points)
+                        part_points1 = round(
+                            points_val
+                            * np.abs(start_val - max_val_val)
+                            / np.abs(max_val_val - min_val_val)
+                        )
+                        part_points2 = round(
+                            points_val
+                            * np.abs(stop_val - min_val_val)
+                            / np.abs(max_val_val - min_val_val)
+                        )
+                        vals1 = self.get_space(start, max_val, str(part_points1))
+                        vals2 = self.get_space(max_val, min_val, points)
+                        vals3 = self.get_space(min_val, stop, str(part_points2))
                     vals = np.concatenate([vals1, vals2, vals3])
                 except ValueError:
                     return [np.nan]
@@ -743,43 +755,3 @@ def get_inner_space_string(start, stop, points, sweep_mode, endpoint):
     except ValueError:
         valstring = "[np.nan]"
     return valstring
-
-def get_inner_range(start, stop, points, sweep_mode, endpoint):
-    """
-    Used for `get_range`, to make the split up ranges if doing a sweep.
-
-    Parameters
-    ----------
-    start : float, str
-        The starting position for the sweep / loop.
-    stop : float, str
-        The end position for the sweep / loop.
-    points : float, str
-        The number of points in the range. If using `min_val` / `max_val`,
-        `points` is the distance between those two.
-    sweep_mode : str
-         (Default value = 'linear')
-         The type how the distance between the points is calculated.
-         If 'linear', they are equidistant, if 'logarithmic', the points between
-         log(start) and log(stop) are equidistant, if 'exponential', between
-         exp(start) and exp(stop), otherwise they are equidistant between
-         1/start and 1/stop.
-    endpoint : bool
-         (Default value = True)
-         Whether to include the endpoint into the range.
-
-    Returns
-    -------
-        An array of the calculated range.
-    """
-    if sweep_mode == "linear":
-        return np.linspace(start, stop, points, endpoint=endpoint)
-    elif sweep_mode == "logarithmic":
-        start = np.log(start)
-        stop = np.log(stop)
-        return np.exp(np.linspace(start, stop, points, endpoint=endpoint))
-    elif sweep_mode == "exponential":
-        start = np.exp(start)
-        stop = np.exp(stop)
-        return np.log(np.linspace(start, stop, points, endpoint=endpoint))
-    return 1 / np.linspace(1 / start, 1 / stop, points, endpoint=endpoint)
