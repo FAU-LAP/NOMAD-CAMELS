@@ -26,7 +26,7 @@ class Variable_Box(QLineEdit):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setToolTip("test")
+        # self.setToolTip("test")
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         self.textChanged.connect(self.check_string)

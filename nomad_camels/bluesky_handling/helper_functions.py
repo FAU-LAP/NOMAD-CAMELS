@@ -371,9 +371,11 @@ def get_range(
     points: int,
     min_val=np.nan,
     max_val=np.nan,
+    distance=np.nan,
     loop_type="start - stop",
     sweep_mode="linear",
     endpoint=True,
+    use_distance=False,
 ):
     """
     This is a helper function for steps like sweeps and the for loop.
@@ -417,37 +419,63 @@ def get_range(
     -------
         An array of the calculated range.
     """
-    start = float(evaluator.eval(start))
-    stop = float(evaluator.eval(stop))
-    points = int(evaluator.eval(points))
-    min_val = evaluator.eval(min_val)
-    max_val = evaluator.eval(max_val)
+    start = float(evaluator.eval(str(start)))
+    stop = float(evaluator.eval(str(stop)))
+    points = int(evaluator.eval(str(points)))
+    min_val = evaluator.eval(str(min_val))
+    max_val = evaluator.eval(str(max_val))
+    distance = evaluator.eval(str(distance))
     if loop_type == "start - stop":
-        return get_inner_range(start, stop, points, sweep_mode, endpoint)
-    elif loop_type == "start - min - max - stop":
-        part_points1 = round(
-            points * np.abs(start - min_val) / np.abs(max_val - min_val)
+        return get_inner_range(
+            start,
+            stop,
+            points,
+            sweep_mode,
+            endpoint,
+            use_distance=use_distance,
+            distance=distance,
         )
-        part_points2 = round(
-            points * np.abs(stop - max_val) / np.abs(max_val - min_val)
+    if (
+        min_val > max_val
+        or not (min_val <= start <= max_val)
+        or not (min_val <= stop <= max_val)
+    ):
+        raise ValueError("Start and Stop must be between min and max!")
+    full_dist = np.abs(max_val - min_val)
+    if loop_type == "start - min - max - stop":
+        full_dist += np.abs(start - min_val) + np.abs(stop - max_val)
+        p1 = round(points * np.abs(start - min_val) / full_dist)
+        p3 = round(points * np.abs(stop - max_val) / full_dist)
+        p2 = points - p1 - p3
+        vals1 = get_inner_range(
+            start, min_val, p1, sweep_mode, endpoint, use_distance, distance
         )
-        vals1 = get_inner_range(start, min_val, part_points1, sweep_mode, endpoint)
-        vals2 = get_inner_range(min_val, max_val, points, sweep_mode, endpoint)
-        vals3 = get_inner_range(max_val, stop, part_points2, sweep_mode, endpoint)
+        vals2 = get_inner_range(
+            min_val, max_val, p2, sweep_mode, endpoint, use_distance, distance
+        )
+        vals3 = get_inner_range(
+            max_val, stop, p3, sweep_mode, endpoint, use_distance, distance
+        )
     else:
-        part_points1 = round(
-            points * np.abs(start - max_val) / np.abs(max_val - min_val)
+        full_dist += np.abs(start - max_val) + np.abs(stop - min_val)
+        p1 = round(points * np.abs(start - max_val) / full_dist)
+        p3 = round(points * np.abs(stop - min_val) / full_dist)
+        p2 = points - p1 - p3
+        vals1 = get_inner_range(
+            start, max_val, p1, sweep_mode, endpoint, use_distance, distance
         )
-        part_points2 = round(
-            points * np.abs(stop - min_val) / np.abs(max_val - min_val)
+        vals2 = get_inner_range(
+            max_val, min_val, p2, sweep_mode, endpoint, use_distance, distance
         )
-        vals1 = get_inner_range(start, max_val, part_points1, sweep_mode, endpoint)
-        vals2 = get_inner_range(max_val, min_val, points, sweep_mode, endpoint)
-        vals3 = get_inner_range(min_val, stop, part_points2, sweep_mode, endpoint)
+        vals3 = get_inner_range(
+            min_val, stop, p3, sweep_mode, endpoint, use_distance, distance
+        )
     return np.concatenate([vals1, vals2, vals3])
 
 
-def get_inner_range(start, stop, points, sweep_mode, endpoint):
+def get_inner_range(
+    start, stop, points, sweep_mode, endpoint, use_distance=False, distance=np.nan
+):
     """
     Used for `get_range`, to make the split up ranges if doing a hysteresis
     sweep.
@@ -477,6 +505,14 @@ def get_inner_range(start, stop, points, sweep_mode, endpoint):
         An array of the calculated range.
     """
     if sweep_mode == "linear":
+        if use_distance:
+            if start < stop:
+                vals = np.arange(start, stop, distance)
+            else:
+                vals = np.arange(start, stop, -distance)
+            if endpoint:
+                vals = np.append(vals, stop)
+            return vals
         return np.linspace(start, stop, points, endpoint=endpoint)
     elif sweep_mode == "logarithmic":
         start = np.log(start)
@@ -884,15 +920,16 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
 def evaluate_python_file_output(stdout, namespace):
     import json
     import re
+
     """Evaluates the stdout of a Python file execution and writes the returned key value pairs to the namespace, so CAMELS can access their values"""
     if stdout:
-        json_pattern = re.compile(r'\{.*\}') # Extract the dictionary from the stdout
+        json_pattern = re.compile(r"\{.*\}")  # Extract the dictionary from the stdout
         # Search for JSON in the stdout
         match = json_pattern.search(stdout)
-        
+
         if match:
             json_str = match.group()
-            
+
             # Load the JSON string into a Python dictionary
             data = json.loads(json_str)
         else:
@@ -900,7 +937,9 @@ def evaluate_python_file_output(stdout, namespace):
         variables_dict = {}
         if isinstance(data, list):  # Step 1: Check if the stdout is a dictionary
             for item in data:  # Step 2: Loop through the list
-                key, value = map(str.strip, item.split('=', 1))  # Step 3: Split each string
+                key, value = map(
+                    str.strip, item.split("=", 1)
+                )  # Step 3: Split each string
                 variables_dict[key] = value
 
             for key, value in variables_dict.items():

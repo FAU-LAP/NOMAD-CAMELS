@@ -199,6 +199,12 @@ class For_Loop_Step(Loop_Step_Container):
             if "include_end_points" in step_info
             else True
         )
+        self.use_distance = (
+            step_info["use_distance"] if "use_distance" in step_info else True
+        )
+        self.point_distance = (
+            step_info["point_distance"] if "point_distance" in step_info else ""
+        )
         # self.update_variables()
 
     def update_variables(self):
@@ -288,21 +294,24 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
         self.build_preview_array()
 
         self.comboBox_loop_type.currentTextChanged.connect(self.loop_type_change)
-        self.lineEdit_start.textChanged.connect(self.change_n_points)
-        self.lineEdit_stop.textChanged.connect(self.change_n_points)
-        self.lineEdit_min.textChanged.connect(self.change_n_points)
-        self.lineEdit_max.textChanged.connect(self.change_n_points)
+        self.lineEdit_start.textChanged.connect(self.change_dist_n_mode)
+        self.lineEdit_stop.textChanged.connect(self.change_dist_n_mode)
+        self.lineEdit_min.textChanged.connect(self.change_dist_n_mode)
+        self.lineEdit_max.textChanged.connect(self.change_dist_n_mode)
         self.lineEdit_point_distance.textChanged.connect(self.change_point_dist)
         self.lineEdit_n_points.textChanged.connect(self.change_n_points)
-        self.checkBox_include_endpoints.clicked.connect(self.change_n_points)
+        self.checkBox_include_endpoints.clicked.connect(self.change_dist_n_mode)
         self.comboBox_sweep_mode.currentTextChanged.connect(self.change_sweep_mode)
         self.pushButton_del_point.clicked.connect(self.del_point)
         self.pushButton_add_point.clicked.connect(self.add_point)
+        self.radioButton_n_points.clicked.connect(self.change_dist_n_mode)
+        self.radioButton_point_distance.clicked.connect(self.change_dist_n_mode)
 
         self.tableWidget_points.cellChanged.connect(self.value_list_changed)
         self.path_line_button.path_changed.connect(self.build_preview_array)
 
         self.building = False
+        self.change_dist_n_mode()
 
     def load_data(self):
         """Loads the data from the loop_step into the UI-widgets."""
@@ -312,6 +321,9 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
         self.lineEdit_min.setText(self.loop_step.min_val)
         self.lineEdit_max.setText(self.loop_step.max_val)
         self.lineEdit_n_points.setText(self.loop_step.n_points)
+        self.lineEdit_point_distance.setText(self.loop_step.point_distance)
+        self.radioButton_n_points.setChecked(not self.loop_step.use_distance)
+        self.radioButton_point_distance.setChecked(self.loop_step.use_distance)
         self.comboBox_sweep_mode.setCurrentText(self.loop_step.sweep_mode)
         self.checkBox_include_endpoints.setChecked(self.loop_step.include_end_points)
         self.path_line_button.set_path(self.loop_step.file_path)
@@ -370,18 +382,15 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
         -------
 
         """
+        if self.radioButton_n_points.isChecked():
+            return
         if self.building:
             return
-        start = variables_handling.get_eval(self.lineEdit_start.text())
-        stop = variables_handling.get_eval(self.lineEdit_stop.text())
-        distance = variables_handling.get_eval(self.lineEdit_point_distance.text())
-        points = int(abs(stop - start) / distance)
-        if self.checkBox_include_endpoints.isChecked():
-            points += 1
+        self.build_preview_array()
+        points = self.loop_step.n_iterations
         self.building = True
         self.lineEdit_n_points.setText(str(points))
         self.building = False
-        self.build_preview_array()
 
     def change_n_points(self):
         """Updates the displayed distance between the points when their
@@ -394,22 +403,25 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
         -------
 
         """
+        if self.radioButton_point_distance.isChecked():
+            return
         if self.building:
             return
-        start = self.lineEdit_start.text()
-        stop = self.lineEdit_stop.text()
-        points = self.lineEdit_n_points.text()
-        self.loop_step.n_points = points
-        if self.comboBox_sweep_mode.currentText() == "linear":
-            vals = self.get_space(start, stop, points)
-            distance = vals[1] - vals[0] if len(vals) > 1 else np.nan
-        else:
-            distance = np.nan
-        self.building = True
-        self.lineEdit_point_distance.setText(format_number(distance))
-        self.building = False
         self.build_preview_array()
         self.loop_step.include_end_points = self.checkBox_include_endpoints.isChecked()
+        self.building = True
+        self.lineEdit_point_distance.setText(format_number(self.distance))
+        self.building = False
+
+    def change_dist_n_mode(self):
+        use_dist = self.radioButton_point_distance.isChecked()
+        self.loop_step.use_distance = use_dist
+        if use_dist:
+            self.change_point_dist()
+        else:
+            self.change_n_points()
+        self.lineEdit_n_points.setEnabled(not use_dist)
+        self.lineEdit_point_distance.setEnabled(use_dist)
 
     def change_sweep_mode(self):
         """Enables / disables the point-distance widget corresponding to
@@ -423,10 +435,13 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
 
         """
         if self.comboBox_sweep_mode.currentText() == "linear":
-            self.lineEdit_point_distance.setEnabled(True)
+            self.radioButton_point_distance.setEnabled(True)
         else:
-            self.lineEdit_point_distance.setEnabled(False)
-        self.build_preview_array()
+            self.radioButton_point_distance.setEnabled(False)
+            self.loop_step.use_distance = self.radioButton_point_distance.isChecked()
+            self.radioButton_point_distance.setChecked(False)
+            self.radioButton_n_points.setChecked(True)
+        self.change_dist_n_mode()
         self.loop_step.sweep_mode = self.comboBox_sweep_mode.currentText()
 
     def build_preview_array(self):
@@ -462,58 +477,57 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
                 self.loop_step.n_points = points
             except ValueError:
                 points = 0
-            if self.comboBox_loop_type.currentText() == "start - stop":
-                vals = self.get_space(start, stop, points)
-            else:
-                try:
-                    min_val = self.lineEdit_min.text()
-                    self.loop_step.min_val = min_val
-                except ValueError:
-                    min_val = np.nan
-                try:
-                    max_val = self.lineEdit_max.text()
-                    self.loop_step.max_val = max_val
-                except ValueError:
-                    max_val = np.nan
-                try:
-                    start_val = variables_handling.get_eval(start)
-                    stop_val = variables_handling.get_eval(stop)
-                    min_val_val = variables_handling.get_eval(min_val)
-                    max_val_val = variables_handling.get_eval(max_val)
-                    points_val = variables_handling.get_eval(points)
-                    if (
-                        self.comboBox_loop_type.currentText()
-                        == "start - min - max - stop"
-                    ):
-                        part_points1 = round(
-                            points_val
-                            * np.abs(start_val - min_val_val)
-                            / np.abs(max_val_val - min_val_val)
-                        )
-                        part_points2 = round(
-                            points_val
-                            * np.abs(stop_val - max_val_val)
-                            / np.abs(max_val_val - min_val_val)
-                        )
-                        vals1 = self.get_space(start, min_val, str(part_points1))
-                        vals2 = self.get_space(min_val, max_val, points)
-                        vals3 = self.get_space(max_val, stop, str(part_points2))
-                    else:
-                        part_points1 = round(
-                            points_val
-                            * np.abs(start_val - max_val_val)
-                            / np.abs(max_val_val - min_val_val)
-                        )
-                        part_points2 = round(
-                            points_val
-                            * np.abs(stop_val - min_val_val)
-                            / np.abs(max_val_val - min_val_val)
-                        )
-                        vals1 = self.get_space(start, max_val, str(part_points1))
-                        vals2 = self.get_space(max_val, min_val, points)
-                        vals3 = self.get_space(min_val, stop, str(part_points2))
-                    vals = np.concatenate([vals1, vals2, vals3])
-                except ValueError:
+            try:
+                distance = self.lineEdit_point_distance.text()
+                self.loop_step.point_distance = distance
+            except ValueError:
+                distance = np.nan
+            use_distance = self.radioButton_point_distance.isChecked()
+            self.loop_step.use_distance = use_distance
+            try:
+                min_val = self.lineEdit_min.text()
+                self.loop_step.min_val = min_val
+            except ValueError:
+                min_val = np.nan
+            try:
+                max_val = self.lineEdit_max.text()
+                self.loop_step.max_val = max_val
+            except ValueError:
+                max_val = np.nan
+            from nomad_camels.bluesky_handling import (
+                helper_functions,
+                evaluation_helper,
+            )
+
+            min_val = min_val if min_val != "" else np.nan
+            max_val = max_val if max_val != "" else np.nan
+            start = start if start != "" else np.nan
+            stop = stop if stop != "" else np.nan
+            points = points if points != "" else 0
+            distance = distance if distance != "" else np.nan
+            namespace = {}
+            namespace.update(variables_handling.protocol_variables)
+            namespace.update(variables_handling.loop_step_variables)
+            for channel in variables_handling.channels:
+                namespace.update({channel: 1})
+            try:
+                vals = helper_functions.get_range(
+                    evaluator=evaluation_helper.Evaluator(namespace=namespace),
+                    start=start,
+                    stop=stop,
+                    points=points,
+                    min_val=min_val,
+                    max_val=max_val,
+                    distance=distance,
+                    loop_type=self.comboBox_loop_type.currentText(),
+                    sweep_mode=self.comboBox_sweep_mode.currentText(),
+                    endpoint=self.checkBox_include_endpoints.isChecked(),
+                    use_distance=use_distance,
+                )
+            except (ValueError, ZeroDivisionError) as e:
+                if e.args[0] == "Start and Stop must be between min and max!":
+                    vals = "Start and Stop must be between Min and Max!".split()
+                else:
                     return [np.nan]
         elif self.comboBox_loop_type.currentText() == "Value-List":
             vals = self.loop_step.val_list
@@ -524,14 +538,22 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
                 self.loop_step.file_path = file
             except OSError:
                 return
-        self.tableWidget_points.setRowCount(len(vals))
+        self.tableWidget_points.setRowCount(len(vals) if len(vals) < 1001 else 1001)
         self.tableWidget_points.horizontalHeader().hide()
         self.tableWidget_points.setColumnCount(1)
         self.loop_step.n_iterations = len(vals)
+        try:
+            self.distance = vals[1] - vals[0] if len(vals) > 1 else np.nan
+        except:
+            self.distance = np.nan
         for i, val in enumerate(vals):
-            item = QTableWidgetItem(format_number(val))
+            item = QTableWidgetItem(val if isinstance(val, str) else format_number(val))
+            if i == 1000:
+                item = QTableWidgetItem("...")
             item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.tableWidget_points.setItem(i, 0, item)
+            if i == 1000:
+                break
         if self.comboBox_loop_type.currentText() == "Value-List":
             for i in range(self.tableWidget_points.rowCount()):
                 item = self.tableWidget_points.item(i, 0)
@@ -572,186 +594,3 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
                 )
             except ValueError:
                 return
-
-    def get_space(self, start, stop, points):
-        """Returns the respective (e.g.) linspace regarding the selected
-        configuration.
-
-        Parameters
-        ----------
-        start :
-
-        stop :
-
-        points :
-
-
-        Returns
-        -------
-
-        """
-        start = variables_handling.get_eval(start)
-        stop = variables_handling.get_eval(stop)
-        points = variables_handling.get_eval(points)
-        if np.nan in [start, stop, points]:
-            return [np.nan]
-        points = int(points)
-        try:
-            if self.comboBox_sweep_mode.currentText() == "linear":
-                vals = np.linspace(
-                    start,
-                    stop,
-                    points,
-                    endpoint=self.checkBox_include_endpoints.isChecked(),
-                )
-            elif self.comboBox_sweep_mode.currentText() == "logarithmic":
-                # logspace is achieved by exponential of linspace
-                # between the logarithmic values
-                start = np.log(start)
-                stop = np.log(stop)
-                vals = np.linspace(
-                    start,
-                    stop,
-                    points,
-                    endpoint=self.checkBox_include_endpoints.isChecked(),
-                )
-                vals = np.exp(vals)
-            elif self.comboBox_sweep_mode.currentText() == "exponential":
-                # logspace is achieved by logarithm of linspace
-                # between the exponential values
-                start = np.exp(start)
-                stop = np.exp(stop)
-                vals = np.linspace(
-                    start,
-                    stop,
-                    points,
-                    endpoint=self.checkBox_include_endpoints.isChecked(),
-                )
-                vals = np.log(vals)
-            else:
-                start = 1 / start
-                stop = 1 / stop
-                vals = np.linspace(
-                    start,
-                    stop,
-                    points,
-                    endpoint=self.checkBox_include_endpoints.isChecked(),
-                )
-                vals = 1 / vals
-        except ValueError:
-            vals = [np.nan]
-        return vals
-
-
-def get_space_string(
-    start,
-    stop,
-    points,
-    min_val=np.nan,
-    max_val=np.nan,
-    loop_type="start - stop",
-    sweep_mode="linear",
-    endpoint=True,
-):
-    """Creates the string for the protocol depending on the selections
-    made, similar to `For_Loop_Step_Config_Sub.get_space()`.
-
-    Parameters
-    ----------
-    start :
-
-    stop :
-
-    points :
-
-    min_val :
-         (Default value = np.nan)
-    max_val :
-         (Default value = np.nan)
-    loop_type :
-         (Default value = 'start - stop')
-    sweep_mode :
-         (Default value = 'linear')
-    endpoint :
-         (Default value = True)
-
-    Returns
-    -------
-
-    """
-    if loop_type == "start - stop":
-        return get_inner_space_string(start, stop, points, sweep_mode, endpoint)
-    elif loop_type == "start - min - max - stop":
-        part_points1 = round(
-            points * np.abs(start - min_val) / np.abs(max_val - min_val)
-        )
-        part_points2 = round(
-            points * np.abs(stop - max_val) / np.abs(max_val - min_val)
-        )
-        vals1 = get_inner_space_string(
-            start, min_val, part_points1, sweep_mode, endpoint
-        )
-        vals2 = get_inner_space_string(min_val, max_val, points, sweep_mode, endpoint)
-        vals3 = get_inner_space_string(
-            max_val, stop, part_points2, sweep_mode, endpoint
-        )
-    else:
-        part_points1 = round(
-            points * np.abs(start - max_val) / np.abs(max_val - min_val)
-        )
-        part_points2 = round(
-            points * np.abs(stop - min_val) / np.abs(max_val - min_val)
-        )
-        vals1 = get_inner_space_string(
-            start, max_val, part_points1, sweep_mode, endpoint
-        )
-        vals2 = get_inner_space_string(max_val, min_val, points, sweep_mode, endpoint)
-        vals3 = get_inner_space_string(
-            min_val, stop, part_points2, sweep_mode, endpoint
-        )
-    return f"np.concatenate([{vals1}, {vals2}, {vals3}])"
-
-
-def get_inner_space_string(start, stop, points, sweep_mode, endpoint):
-    """Called from get_space_string to make the single parts for more
-    complicated sweep_modes (like start-min-max-stop).
-
-    Parameters
-    ----------
-    start :
-
-    stop :
-
-    points :
-
-    sweep_mode :
-
-    endpoint :
-
-
-    Returns
-    -------
-
-    """
-    try:
-        if sweep_mode == "linear":
-            valstring = f"np.linspace({start}, {stop}, {points}, endpoint={endpoint})"
-        elif sweep_mode == "logarithmic":
-            start = f"np.log({start})"
-            stop = f"np.log({stop})"
-            valstring = (
-                f"np.exp(np.linspace({start}, {stop}, {points}, endpoint={endpoint}))"
-            )
-        elif sweep_mode == "exponential":
-            start = f"np.exp({start})"
-            stop = f"np.exp({stop})"
-            valstring = (
-                f"np.log(np.linspace({start}, {stop}, {points}, endpoint={endpoint}))"
-            )
-        else:
-            valstring = (
-                f"1/np.linspace(1/{start}, 1/{stop}, {points}, endpoint={endpoint})"
-            )
-    except ValueError:
-        valstring = "[np.nan]"
-    return valstring
