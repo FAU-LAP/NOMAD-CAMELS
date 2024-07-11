@@ -23,9 +23,55 @@ from PySide6.QtGui import QFont
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
+from suitcase.nomad_camels_hdf5 import Serializer, export
+
 import inspect
 import os
 import sys
+import glob
+
+
+def get_newest_file(directory):
+    # List all files in the directory
+    files = glob.glob(os.path.join(directory, "*"))
+    # Find the newest file
+    newest_file = max(files, key=os.path.getmtime)
+    return newest_file
+
+
+def export_function(
+    runs,
+    save_path,
+    do_export,
+    new_file_each=True,
+    export_csv=False,
+    export_json=False,
+    plot_data=None,
+):
+    if os.path.splitext(save_path)[1] == ".nxs":
+        fname = os.path.basename(save_path)
+        path = os.path.dirname(save_path)
+    if do_export:
+        if not isinstance(runs, list):
+            runs = [runs]
+        for run in runs:
+            docs = run.documents(fill="yes")
+            export(docs, path, fname, new_file_each, plot_data=plot_data)
+    if export_csv or export_json:
+        from nomad_camels.utility.databroker_export import export_h5_to_csv_json
+
+        file = get_newest_file(path)
+        export_h5_to_csv_json(file, export_data=export_csv, export_metadata=export_json)
+
+
+def saving_function(name, start_doc, path, new_file_each=True, plot_data=None):
+    fname = start_doc["uid"]
+    if os.path.splitext(path)[1] == ".nxs":
+        fname = os.path.basename(path)
+        path = os.path.dirname(path)
+    return [
+        Serializer(path, fname, new_file_each=new_file_each, plot_data=plot_data)
+    ], []
 
 
 def trigger_multi(devices, grp=None):
@@ -328,6 +374,8 @@ def get_range(
     loop_type="start - stop",
     sweep_mode="linear",
     endpoint=True,
+    distance=np.nan,
+    use_distance=False,
 ):
     """
     This is a helper function for steps like sweeps and the for loop.
@@ -371,37 +419,63 @@ def get_range(
     -------
         An array of the calculated range.
     """
-    start = evaluator.eval(start)
-    stop = evaluator.eval(stop)
-    points = int(evaluator.eval(points))
-    min_val = evaluator.eval(min_val)
-    max_val = evaluator.eval(max_val)
+    start = float(evaluator.eval(str(start)))
+    stop = float(evaluator.eval(str(stop)))
+    points = int(evaluator.eval(str(points)))
+    min_val = evaluator.eval(str(min_val))
+    max_val = evaluator.eval(str(max_val))
+    distance = evaluator.eval(str(distance))
     if loop_type == "start - stop":
-        return get_inner_range(start, stop, points, sweep_mode, endpoint)
-    elif loop_type == "start - min - max - stop":
-        part_points1 = round(
-            points * np.abs(start - min_val) / np.abs(max_val - min_val)
+        return get_inner_range(
+            start,
+            stop,
+            points,
+            sweep_mode,
+            endpoint,
+            use_distance=use_distance,
+            distance=distance,
         )
-        part_points2 = round(
-            points * np.abs(stop - max_val) / np.abs(max_val - min_val)
+    if (
+        min_val > max_val
+        or not (min_val <= start <= max_val)
+        or not (min_val <= stop <= max_val)
+    ):
+        raise ValueError("Start and Stop must be between min and max!")
+    full_dist = np.abs(max_val - min_val)
+    if loop_type == "start - min - max - stop":
+        full_dist += np.abs(start - min_val) + np.abs(stop - max_val)
+        p1 = round(points * np.abs(start - min_val) / full_dist)
+        p3 = round(points * np.abs(stop - max_val) / full_dist)
+        p2 = points - p1 - p3
+        vals1 = get_inner_range(
+            start, min_val, p1, sweep_mode, endpoint, use_distance, distance
         )
-        vals1 = get_inner_range(start, min_val, part_points1, sweep_mode, endpoint)
-        vals2 = get_inner_range(min_val, max_val, points, sweep_mode, endpoint)
-        vals3 = get_inner_range(max_val, stop, part_points2, sweep_mode, endpoint)
+        vals2 = get_inner_range(
+            min_val, max_val, p2, sweep_mode, endpoint, use_distance, distance
+        )
+        vals3 = get_inner_range(
+            max_val, stop, p3, sweep_mode, endpoint, use_distance, distance
+        )
     else:
-        part_points1 = round(
-            points * np.abs(start - max_val) / np.abs(max_val - min_val)
+        full_dist += np.abs(start - max_val) + np.abs(stop - min_val)
+        p1 = round(points * np.abs(start - max_val) / full_dist)
+        p3 = round(points * np.abs(stop - min_val) / full_dist)
+        p2 = points - p1 - p3
+        vals1 = get_inner_range(
+            start, max_val, p1, sweep_mode, endpoint, use_distance, distance
         )
-        part_points2 = round(
-            points * np.abs(stop - min_val) / np.abs(max_val - min_val)
+        vals2 = get_inner_range(
+            max_val, min_val, p2, sweep_mode, endpoint, use_distance, distance
         )
-        vals1 = get_inner_range(start, max_val, part_points1, sweep_mode, endpoint)
-        vals2 = get_inner_range(max_val, min_val, points, sweep_mode, endpoint)
-        vals3 = get_inner_range(min_val, stop, part_points2, sweep_mode, endpoint)
+        vals3 = get_inner_range(
+            min_val, stop, p3, sweep_mode, endpoint, use_distance, distance
+        )
     return np.concatenate([vals1, vals2, vals3])
 
 
-def get_inner_range(start, stop, points, sweep_mode, endpoint):
+def get_inner_range(
+    start, stop, points, sweep_mode, endpoint, use_distance=False, distance=np.nan
+):
     """
     Used for `get_range`, to make the split up ranges if doing a hysteresis
     sweep.
@@ -431,6 +505,14 @@ def get_inner_range(start, stop, points, sweep_mode, endpoint):
         An array of the calculated range.
     """
     if sweep_mode == "linear":
+        if use_distance:
+            if start < stop:
+                vals = np.arange(start, stop, distance)
+            else:
+                vals = np.arange(start, stop, -distance)
+            if endpoint:
+                vals = np.append(vals, stop)
+            return vals
         return np.linspace(start, stop, points, endpoint=endpoint)
     elif sweep_mode == "logarithmic":
         start = np.log(start)
@@ -772,6 +854,100 @@ def get_opyd_and_py_file_contents(classname, md, device_name):
                 )[0].replace("_ophyd", "")
             ] = ".py file not found"
     return md
+
+
+def create_venv_run_file_delete_venv(packages, script_to_run):
+    """
+    This function creates a virtual environment, installs the specified packages
+    in it, runs the specified Python script, and then deletes the virtual environment.
+    """
+    import venv
+    import subprocess
+    import tempfile
+    import shutil
+
+    # Step 1: Create the virtual environment in a temp folder using tempfile
+    try:
+        temp_folder = tempfile.mkdtemp()
+    except Exception as e:
+        raise Exception(f"Error creating temporary folder: {e}")
+    try:
+        venv.create(temp_folder, with_pip=True)
+    except Exception as e:
+        raise Exception(f"Error creating virtual environment: {e}")
+
+    # Path to the virtual environment's Python interpreter
+    python_executable = (
+        os.path.join(temp_folder, "bin", "python")
+        if os.name != "nt"
+        else os.path.join(temp_folder, "Scripts", "python.exe")
+    )
+
+    # Step 2: Install the specified packages
+    for package, version in zip(packages["Python Package"], packages["Version"]):
+        if not version:
+            try:
+                subprocess.run(
+                    [python_executable, "-m", "pip", "install", f"{package}"]
+                )
+            except Exception as e:
+                raise Exception(f"Error installing package {package}: {e}")
+        else:
+            try:
+                subprocess.run(
+                    [python_executable, "-m", "pip", "install", f"{package}=={version}"]
+                )
+            except Exception as e:
+                raise Exception(f"Error installing package {package}=={version}: {e}")
+
+    # Step 3: Run the specified Python script
+    try:
+        result_python_file = subprocess.run(
+            [python_executable, script_to_run], cwd=os.path.dirname(script_to_run)
+        )
+    except Exception as e:
+        raise Exception(f"Error running script {script_to_run}: {e}")
+
+    # Step 4: Delete the virtual environment
+    try:
+        if os.path.exists(temp_folder):
+            shutil.rmtree(temp_folder)
+    except Exception as e:
+        raise Exception(f"Error deleting temporary folder: {e}")
+    return result_python_file
+
+
+def evaluate_python_file_output(stdout, namespace):
+    import json
+    import re
+
+    """Evaluates the stdout of a Python file execution and writes the returned key value pairs to the namespace, so CAMELS can access their values"""
+    if stdout:
+        json_pattern = re.compile(r"\{.*\}")  # Extract the dictionary from the stdout
+        # Search for JSON in the stdout
+        match = json_pattern.search(stdout)
+
+        if match:
+            json_str = match.group()
+
+            # Load the JSON string into a Python dictionary
+            data = json.loads(json_str)
+        else:
+            raise ValueError("No valid dictionary found in the output")
+        variables_dict = {}
+        if isinstance(data, list):  # Step 1: Check if the stdout is a dictionary
+            for item in data:  # Step 2: Loop through the list
+                key, value = map(
+                    str.strip, item.split("=", 1)
+                )  # Step 3: Split each string
+                variables_dict[key] = value
+
+            for key, value in variables_dict.items():
+                namespace[key] = value
+
+        if isinstance(data, dict):
+            for key, value in data.items():
+                namespace[key] = value
 
 
 class Value_Setter(QWidget):

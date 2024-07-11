@@ -7,6 +7,7 @@ from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.utility import variables_handling, load_save_functions
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.bluesky_handling import protocol_builder, builder_helper_functions
+from nomad_camels.bluesky_handling import protocol_builder
 
 
 class Run_Subprotocol(Loop_Step):
@@ -52,6 +53,7 @@ class Run_Subprotocol(Loop_Step):
         _plan_inner function. Afterwards the output variables are written to the
         main namespace."""
         tabs = "\t" * n_tabs
+        protocol_builder.build_from_path(self.prot_path)
         prot_name = os.path.basename(self.prot_path)[:-6]
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f"{tabs}{prot_name}_mod.protocol_step_information = protocol_step_information\n"

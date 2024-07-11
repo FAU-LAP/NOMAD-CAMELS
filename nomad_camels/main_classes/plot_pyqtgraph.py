@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (
     QApplication,
 )
 from PySide6.QtCore import Signal, QObject, QEvent, Qt, QCoreApplication
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QColor
 import PySide6
 import pyqtgraph as pg
 from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
@@ -521,7 +521,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         """
         item = self.tableWidget.cellWidget(row, 3)
         if just_update:
-            color = item.text()
+            color = QColor(item.text()) 
         else:
             color = QColorDialog.getColor()
             if not color.isValid():

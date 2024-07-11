@@ -82,6 +82,9 @@ class Measurement_Protocol:
         self.export_json = kwargs["export_json"] if "export_json" in kwargs else False
         self.session_name = kwargs["session_name"] if "session_name" in kwargs else ""
         self.skip_config = kwargs["skip_config"] if "skip_config" in kwargs else False
+        self.h5_during_run = (
+            kwargs["h5_during_run"] if "h5_during_run" in kwargs else True
+        )
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -315,13 +318,14 @@ class Measurement_Protocol:
             plan_string += step.get_protocol_string(n_tabs=1)
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
         plan_string += "\teva = Evaluator(namespace=namespace)\n"
-        plan_string += "\trunEngine.subscribe(eva)\n"
+        plan_string += "\tsub_eva = runEngine.subscribe(eva)\n"
         plan_string += "\tyield from bps.open_run(md=md)\n"
         plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name)\n'
         plan_string += (
             "\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
         )
         plan_string += "\tyield from bps.close_run()\n"
+        plan_string += "\trunEngine.unsubscribe(sub_eva)\n"
         return plan_string
 
     def get_short_string(self):
@@ -499,16 +503,22 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.lineEdit_protocol_name.textChanged.connect(self.name_change)
         self.name_change()
 
-        self.textEdit_desc = QTextEdit(parent=self)
-        self.textEdit_desc.setPlaceholderText("Enter your description here.")
+        self.textEdit_desc_protocol = QTextEdit(parent=self)
+        self.textEdit_desc_protocol.textChanged.connect(self.adjust_text_edit_size_prot)
+        self.textEdit_desc_protocol.setPlaceholderText("Enter your description here.")
         if self.protocol.description:
-            self.textEdit_desc.setText(self.protocol.description)
+            self.textEdit_desc_protocol.setText(self.protocol.description)
         self.checkBox_csv_exp.setChecked(self.protocol.export_csv)
         self.checkBox_json_exp.setChecked(self.protocol.export_json)
         self.checkBox_no_config.setChecked(self.protocol.skip_config)
         self.checkBox_no_config.clicked.connect(self.enable_disable_config)
+        self.adjust_text_edit_size_prot()
 
-        self.layout().addWidget(self.textEdit_desc, 5, 0, 1, 6)
+        self.radioButton_h5_during.setChecked(self.protocol.h5_during_run)
+        self.radioButton_h5_after.setChecked(not self.protocol.h5_during_run)
+
+        self.layout().addWidget(self.textEdit_desc_protocol, 5, 0, 1, 6)
+        
         self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
         self.layout().addWidget(self.checkBox_NeXus, 7, 0, 1, 6)
         self.layout().addWidget(self.table_channel_NX_paths, 9, 0, 1, 6)
@@ -521,6 +531,17 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.selectionModel().selectionChanged.connect(
             self.update_variable_select
         )
+    def showEvent(self, event):
+        """Called when the widget is shown."""
+        super().showEvent(event)
+        self.adjust_text_edit_size_prot()
+
+    def adjust_text_edit_size_prot(self):
+        """Adjusts the size of the textEdit_desc_protocol based on its content."""
+        document = self.textEdit_desc_protocol.document()
+        document_height = document.size().height()
+        self.textEdit_desc_protocol.setFixedHeight(document_height + 5)  # Add some padding
+
 
     def enable_disable_config(self):
         disabling = self.checkBox_no_config.isChecked()
@@ -623,7 +644,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         """Updates all the protocol settings."""
         self.protocol.filename = self.lineEdit_filename.text()
         self.protocol.name = self.lineEdit_protocol_name.text()
-        self.protocol.description = self.textEdit_desc.toPlainText()
+        self.protocol.description = self.textEdit_desc_protocol.toPlainText()
         self.protocol.plots = self.plot_widge.plot_data
         self.protocol.metadata = self.table_metadata.update_table_data()
         self.protocol.channel_metadata = self.table_channel_NX_paths.update_table_data()
@@ -633,6 +654,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.skip_config = self.checkBox_no_config.isChecked()
         self.variable_table.update_variables()
         self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
+        self.protocol.h5_during_run = self.radioButton_h5_during.isChecked()
 
     # def load_variables(self):
     #     """Called when starting, loads the variables from the protocol

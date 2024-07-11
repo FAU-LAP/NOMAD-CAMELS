@@ -54,7 +54,9 @@ from PySide6.QtWidgets import (
     QTextEdit,
     QWidget,
 )
-
+class CustomTextEdit(QTextEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -63,7 +65,7 @@ class Ui_Form(object):
         Form.resize(679, 481)
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName("gridLayout")
-        self.textEdit_device_info = QTextEdit(Form)
+        self.textEdit_device_info = CustomTextEdit(Form)
         self.textEdit_device_info.setObjectName("textEdit_device_info")
         self.textEdit_device_info.setEnabled(True)
         self.textEdit_device_info.setTextInteractionFlags(
@@ -258,7 +260,7 @@ class Ui_Form(object):
             QCoreApplication.translate("Form", "tags", None)
         )
         self.pushButton_info.setText(
-            QCoreApplication.translate("Form", "hide info", None)
+            QCoreApplication.translate("Form", "show info", None)
         )
         self.pushButton_sel_all.setText(
             QCoreApplication.translate("Form", "Select All", None)

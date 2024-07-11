@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QTreeView, QAbstractItemView
 from PySide6.QtCore import Signal, Qt
-from PySide6.QtGui import QDropEvent, QKeyEvent
+from PySide6.QtGui import QDropEvent, QKeyEvent, QPainter, QColor
 
 
 class Drag_Drop_TreeView(QTreeView):
@@ -53,3 +53,17 @@ class Drag_Drop_TreeView(QTreeView):
         """
         if event.key() == Qt.Key_Delete:
             self.del_clicked.emit()
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        if self.model() is not None and self.model().rowCount() == 0:
+            painter = QPainter(self.viewport())
+            painter.setPen(QColor(128, 128, 128))  # Gray color
+            # Set font to be larger and bold
+            font = self.font()
+            font.setPointSize(font.pointSize() + 2)  # Make font larger
+            font.setBold(True)
+            painter.setFont(font)
+            rect = self.viewport().rect()
+            painter.drawText(rect, Qt.AlignCenter, "Right-click to add\nyour first step here")
+ 

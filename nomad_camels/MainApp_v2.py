@@ -1284,6 +1284,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocols_dict[protocol.name] = protocol
         button = self.button_area_meas.rename_button(old_name, protocol.name)
         self.add_functions_to_meas_button(button, protocol.name)
+        file_path = f"{self.preferences['py_files_path']}/{protocol.name}.cprot"
+        protocol_dict = load_save_functions.get_save_str(protocol)
+        load_save_functions.save_dictionary(file_path, protocol_dict)
 
     def open_protocol_config(self, prot_name):
         """
@@ -1321,6 +1324,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         tab = tab or self.button_area_meas.get_active_tab()
         self.button_area_meas.add_button(button, name, tab)
         self.add_functions_to_meas_button(button, name)
+        self.protocol_tabs_dict[tab].append(name)
 
     def add_functions_to_meas_button(self, button, name):
         """
@@ -1378,13 +1382,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         self.button_area_meas.clear_area()
         if not self.protocols_dict:
-            self.button_area_meas.setHidden(True)
+            # The protocls button should always be visible even when no protocol is added
+            self.button_area_meas.setHidden(False)
         else:
             self.button_area_meas.setHidden(False)
         for prot in self.protocols_dict:
             added = False
-            for tab, protocols in self.protocol_tabs_dict.items():
-                if prot in protocols:
+            for tab, protocols in list(self.protocol_tabs_dict.items()):
+                if not protocols:
+                    del self.protocol_tabs_dict[tab]
+                elif prot in protocols:
                     self.add_button_to_meas(prot, tab)
                     added = True
                     break
@@ -1429,6 +1436,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         try:
             self.build_protocol(protocol_name, ask_file=False, variables=variables)
             protocol = self.protocols_dict[protocol_name]
+            self.running_protocol = protocol
             path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
             name = os.path.basename(path)[:-3]
             spec = importlib.util.spec_from_file_location(name, path)
@@ -1593,16 +1601,23 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_module
             and hasattr(self.protocol_module, "uids")
             and self.protocol_module.uids
+            and (
+                not self.running_protocol.h5_during_run
+                or self.running_protocol.export_csv
+                or self.running_protocol.export_json
+            )
         ):
             runs = self.databroker_catalog[tuple(self.protocol_module.uids)]
-            self.last_save_file = databroker_export.broker_to_NX(
+            from nomad_camels.bluesky_handling.helper_functions import export_function
+
+            export_function(
                 runs,
                 self.protocol_savepath,
+                not self.running_protocol.h5_during_run,
+                self.preferences["new_file_each_run"],
+                self.running_protocol.export_csv,
+                self.running_protocol.export_json,
                 self.protocol_module.plots,
-                session_name=self.running_protocol.session_name,
-                export_to_csv=self.running_protocol.export_csv,
-                export_to_json=self.running_protocol.export_json,
-                new_file_each_run=self.preferences["new_file_each_run"],
             )
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
@@ -1673,7 +1688,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "Session name contains special characters.\nPlease use only letters, numbers and whitespace."
             )
 
-        self.running_protocol = protocol
         if ask_file:
             path = QFileDialog.getSaveFileName(
                 self, "Export Protocol", protocol_name, "*.py"
