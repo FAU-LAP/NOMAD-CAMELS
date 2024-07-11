@@ -200,7 +200,7 @@ class For_Loop_Step(Loop_Step_Container):
             else True
         )
         self.use_distance = (
-            step_info["use_distance"] if "use_distance" in step_info else True
+            step_info["use_distance"] if "use_distance" in step_info else False
         )
         self.point_distance = (
             step_info["point_distance"] if "point_distance" in step_info else ""
@@ -228,7 +228,7 @@ class For_Loop_Step(Loop_Step_Container):
             "start - min - max - stop",
             "start - max - min - stop",
         ]:
-            enumerator = f'helper_functions.get_range(eva, "{self.start_val}", "{self.stop_val}", "{self.n_points}", "{self.min_val or np.nan}", "{self.max_val or np.nan}", "{self.loop_type}", "{self.sweep_mode}", "{self.include_end_points}")'
+            enumerator = f'helper_functions.get_range(eva, "{self.start_val}", "{self.stop_val}", "{self.n_points}", "{self.min_val or np.nan}", "{self.max_val or np.nan}", "{self.loop_type}", "{self.sweep_mode}", "{self.include_end_points}", "{self.point_distance}", {self.use_distance})'
             # enumerator = get_space_string(self.start_val, self.stop_val,
             #                               self.n_points, self.min_val,
             #                               self.max_val, self.loop_type,

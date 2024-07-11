@@ -371,10 +371,10 @@ def get_range(
     points: int,
     min_val=np.nan,
     max_val=np.nan,
-    distance=np.nan,
     loop_type="start - stop",
     sweep_mode="linear",
     endpoint=True,
+    distance=np.nan,
     use_distance=False,
 ):
     """
