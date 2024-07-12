@@ -31,6 +31,7 @@ Features:
 Fixes:
 - For loop for which no distance was ever defined was broken, now fixed
 - Fixed bug that prevented the app from starting when no tabs were used before
+- Fixed issue with dots in paths
 
 
 ## 1.2.0
