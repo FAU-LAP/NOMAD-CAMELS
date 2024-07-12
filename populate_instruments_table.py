@@ -56,7 +56,7 @@ for i in range(10):
         time.sleep(1)
 
 sweep_me_devices = {}
-
+print(response)
 for item in response:
     if item["type"] == "dir":  # A type of 'dir' indicates a directory (folder)
         device_type, full_name = item["name"].split("-", 1)
