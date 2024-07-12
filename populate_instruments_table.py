@@ -73,7 +73,7 @@ for item in response:
         }
 
 
-with open("./docs/source/doc/instruments/instruments.rst", "w") as f:
+with open("./docs/source/doc/instruments/instruments.rst", "w", encoding="utf-8") as f:
     f.write(
         """
 ===========
