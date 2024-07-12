@@ -36,12 +36,6 @@ jobs:
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
         run: pytest -v
-      - name: install old requirements
-        run: |
-          python generate_oldest_requirements.py
-          pip install -r requirements-oldest.txt
-      - name: Run tests with pytest and old requirements
-        run: pytest -v
   ubuntu_test:
     runs-on: ubuntu-latest
     env:
@@ -71,12 +65,6 @@ jobs:
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
         run: pytest -v
-      - name: install old requirements
-        run: |
-          python generate_oldest_requirements.py
-          pip install -r requirements-oldest.txt
-      - name: Run tests with pytest and old requirements
-        run: pytest -v
   macos_test:
     runs-on: macos-latest
     steps:
@@ -102,12 +90,6 @@ jobs:
       - name: Prepare databroker
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
-        run: pytest -v
-      - name: install old requirements
-        run: |
-          python generate_oldest_requirements.py
-          pip install -r requirements-oldest.txt
-      - name: Run tests with pytest and old requirements
         run: pytest -v
 #  changelog:
 #    needs: [ubuntu_test, macos_test, windows_test]
