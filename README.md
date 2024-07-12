@@ -24,6 +24,15 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+## 1.2.1
+Features:
+- added NOMAD metadata to NOMAD samples
+
+Fixes:
+- For loop for which no distance was ever defined was broken, now fixed
+- Fixed bug that prevented the app from starting when no tabs were used before
+
+
 ## 1.2.0
 
 Features:
@@ -42,7 +51,7 @@ Fixes:
 - Filtering the channels by name does not break if no matches were found.
 - Filtering Set Channels now does not reset the value if the channel does not match the query.
 - Fixed the hide/show information when installing instruments
-- 
+
 
 ## 1.1.2
 

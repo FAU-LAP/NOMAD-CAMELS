@@ -424,7 +424,10 @@ def get_range(
     points = int(evaluator.eval(str(points)))
     min_val = evaluator.eval(str(min_val))
     max_val = evaluator.eval(str(max_val))
-    distance = evaluator.eval(str(distance))
+    try:
+        distance = evaluator.eval(str(distance))
+    except ValueError:
+        distance = np.nan
     if loop_type == "start - stop":
         return get_inner_range(
             start,
