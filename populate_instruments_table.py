@@ -47,13 +47,16 @@ if "SweepMe_device" in devices:
     sweep_me_version = devices.pop("SweepMe_device")["version"]
 
 url = "https://api.github.com/repos/SweepMe/instrument-drivers/contents/src"
-for i in range(10):
+i = 0
+while True:
     try:
         response = requests.get(url).json()
         test_var = response[0]["type"]
         break
     except:
-        time.sleep(1)
+        time.sleep(i)
+        i += 1
+        print(i)
 
 sweep_me_devices = {}
 print(response)
