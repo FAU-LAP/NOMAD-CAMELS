@@ -23,6 +23,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.06371/status.svg)](https://doi.org/10.21105/joss.06371)
 
 # Changelog
+## 1.2.2
+Fixes:
+- Cannot move protocols or manual controls to empty tab containing the "+" button anymore
 
 ## 1.2.1
 Features:

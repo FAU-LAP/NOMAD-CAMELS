@@ -598,7 +598,7 @@ class MoveDialog(QDialog):
         layout.addWidget(self.cancel_button, 2, 1)
 
     def add_tabs_from_widget(self, widget):
-        for i in range(widget.count()):
+        for i in range(widget.count() - 1):
             self.combo.addItem(widget.tabText(i))
 
     def get_tab(self):
