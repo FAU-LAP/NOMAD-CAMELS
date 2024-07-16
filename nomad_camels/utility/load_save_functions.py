@@ -589,6 +589,10 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.export_csv = prot_data["export_csv"]
         if "h5_during_run" in prot_data:
             prot.h5_during_run = prot_data["h5_during_run"]
+        if "channel_aliases" in prot_data:
+            prot.channel_aliases = prot_data["channel_aliases"]
+        if "instrument_aliases" in prot_data:
+            prot.instrument_aliases = prot_data["instrument_aliases"]
         prot_dict.update({key: prot})
 
 

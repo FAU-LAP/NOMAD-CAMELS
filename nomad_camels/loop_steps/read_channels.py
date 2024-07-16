@@ -47,9 +47,10 @@ class Read_Channels(Loop_Step):
     def update_used_devices(self):
         """All devices that should be read are added to the used_devices."""
         self.used_devices = []
-        for channel in variables_handling.channels:
+        channels = variables_handling.get_channels()
+        for channel in channels:
             if self.read_all or channel in self.channel_list:
-                device = variables_handling.channels[channel].device
+                device = channels[channel].device
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
@@ -58,7 +59,7 @@ class Read_Channels(Loop_Step):
         Includes all available channels if `self.read_all`."""
         chan_list = []
         if self.read_all:
-            for channel in variables_handling.channels:
+            for channel in variables_handling.get_channels():
                 chan_list.append(channel)
         else:
             chan_list = self.channel_list
@@ -78,7 +79,7 @@ class Read_Channels(Loop_Step):
         if not self.read_all and not self.channel_list:
             raise Exception(f"Trying to read no channel in {self.full_name}!")
         if self.read_all:
-            for channel in variables_handling.channels:
+            for channel in variables_handling.get_channels():
                 channel_string += get_channel_string(channel)
         else:
             for channel in self.channel_list:
@@ -139,7 +140,7 @@ def get_channel_string(channel):
     channel : str
         The channel that should be converted.
     """
-    name = variables_handling.channels[channel].name
+    name = variables_handling.get_channels()[channel].name
     if "." in name:
         dev, chan = name.split(".")
         return f'devs["{dev}"].{chan}, '
@@ -282,22 +283,17 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
             elif name in self.loop_step.channel_list:
                 self.loop_step.channel_list.remove(name)
             self.loop_step.update_used_devices()
-        #     self.loop_step.channel_dict[name]['read'] =
-        #     self.loop_step.update_used_devices()
-        # if c == 2 and variables_handling.channels[name].output:
-        #     self.loop_step.channel_dict[name]['use set'] = self.tableWidget_channels.item(r, c).checkState() > 0
 
     def build_channels_table(self):
         """This creates the table for all channels."""
         self.tableWidget_channels.clear()
         self.tableWidget_channels.setColumnCount(2)
-        # self.tableWidget_channels.setRowCount(len(variables_handling.channels))
         self.tableWidget_channels.setRowCount(0)
         self.tableWidget_channels.setHorizontalHeaderLabels(["read", "channel name"])
         searchtext = self.lineEdit_search.text()
         n = 0
         for i, channel in enumerate(
-            sorted(variables_handling.channels, key=lambda x: x.lower())
+            sorted(variables_handling.get_channels(), key=lambda x: x.lower())
         ):
             if searchtext not in channel:
                 continue
@@ -313,21 +309,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
             item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.tableWidget_channels.setItem(n, 1, item)
             n += 1
-            # if variables_handling.channels[channel].output:
-            #     item = QTableWidgetItem()
-            #     item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-            #     if channel in self.loop_step.channel_dict:
-            #         item.setCheckState(2 if self.loop_step.channel_dict[channel]['use set'] else False)
-            #     else:
-            #         item.setCheckState(False)
-            # else:
-            #     item = QTableWidgetItem()
-            #     item.setFlags(item.flags() ^ Qt.ItemIsEditable)
-            # self.tableWidget_channels.setItem(i, 2, item)
         self.tableWidget_channels.resizeColumnsToContents()
-        # for channel in self.loop_step.channel_dict:
-        #     if channel not in variables_handling.channels:
-        #         self.loop_step.channel_dict.pop(channel)
 
 
 class Trigger_Channels_Step(Loop_Step):

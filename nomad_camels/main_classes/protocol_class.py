@@ -86,10 +86,14 @@ class Measurement_Protocol:
             kwargs["h5_during_run"] if "h5_during_run" in kwargs else True
         )
         self.instrument_aliases = (
-            kwargs["instrument_aliases"] if "instrument_aliases" in kwargs else {}
+            kwargs["instrument_aliases"]
+            if "instrument_aliases" in kwargs
+            else {"Instrument": [], "Alias": []}
         )
         self.channel_aliases = (
-            kwargs["channel_aliases"] if "channel_aliases" in kwargs else {}
+            kwargs["channel_aliases"]
+            if "channel_aliases" in kwargs
+            else {"channel": [], "Alias": []}
         )
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
@@ -473,7 +477,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.plot_widge = Plot_Button_Overview(self, self.protocol.plots)
 
         cols = ["Channel", "NeXus-path"]
-        comboBoxes = {"Channel": list(variables_handling.channels.keys())}
+        comboBoxes = {"Channel": list(variables_handling.get_channels().keys())}
         self.table_channel_NX_paths = AddRemoveTable(
             headerLabels=cols,
             title="Channel-NeXus-Path",
@@ -540,6 +544,8 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.pushButton_instrument_aliases.clicked.connect(
             self.change_instrument_aliases
         )
+        variables_handling.instrument_aliases = self.protocol.instrument_aliases
+        variables_handling.channel_aliases = self.protocol.channel_aliases
 
     def showEvent(self, event):
         """Called when the widget is shown."""
@@ -747,3 +753,5 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             self.protocol.channel_aliases = dialog.channel_aliases
             dialog.close()
             dialog.deleteLater()
+            variables_handling.instrument_aliases = self.protocol.instrument_aliases
+            variables_handling.channel_aliases = self.protocol.channel_aliases

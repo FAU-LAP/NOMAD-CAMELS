@@ -54,11 +54,12 @@ class Simple_Sweep(For_Loop_Step):
     def update_used_devices(self):
         """Includes the devices from the read_channels and the sweep_channel."""
         self.used_devices = []
-        set_device = variables_handling.channels[self.sweep_channel].device
+        channels = variables_handling.get_channels()
+        set_device = channels[self.sweep_channel].device
         self.used_devices.append(set_device)
         for channel in self.read_channels:
-            if channel in variables_handling.channels:
-                device = variables_handling.channels[channel].device
+            if channel in channels:
+                device = channels[channel].device
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
@@ -100,15 +101,16 @@ class Simple_Sweep(For_Loop_Step):
         if self.data_output == "main stream":
             stream = "stream_name"
 
+        channels = variables_handling.get_channels()
         protocol_string = f"{tabs}channels = ["
         for i, channel in enumerate(self.read_channels):
-            if channel not in variables_handling.channels:
+            if channel not in channels:
                 raise Exception(
                     f"Trying to read channel {channel} in {self.full_name}, but it does not exist!"
                 )
             if i > 0:
                 protocol_string += ", "
-            name = variables_handling.channels[channel].name
+            name = channels[channel].name
             if "." in name:
                 dev, chan = name.split(".")
                 protocol_string += f'devs["{dev}"].{chan}'
@@ -117,7 +119,7 @@ class Simple_Sweep(For_Loop_Step):
         protocol_string += "]\n"
         protocol_string += f"{tabs}helper_functions.clear_plots(plots, {stream})"
         protocol_string += super().get_protocol_string(n_tabs)
-        name = variables_handling.channels[self.sweep_channel].name
+        name = channels[self.sweep_channel].name
         if "." in name:
             dev, chan = name.split(".")
             setter = f'devs["{dev}"].{chan}'
@@ -150,9 +152,10 @@ class Simple_Sweep_Config(Loop_Step_Config):
         label_sweep_channel = QLabel("Sweep Channel:")
         out_box = []
         in_box = []
-        for channel in variables_handling.channels:
+        channels = variables_handling.get_channels()
+        for channel in channels:
             in_box.append(channel)
-            if variables_handling.channels[channel].output:
+            if channels[channel].output:
                 out_box.append(channel)
         self.comboBox_sweep_channel = QComboBox()
         self.comboBox_sweep_channel.addItems(out_box)
