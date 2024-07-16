@@ -1,0 +1,45 @@
+openapi: 3.1.0
+info:
+  title: NOMAD CAMELS API
+  version: 1.0.0
+paths:
+  /protocols:
+    get:
+      summary: Get all protocols
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create a new protocol from a JSON definition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Protocols'
+      responses:
+        '201':
+          description: Created
+  /protocols/{name}:
+    get:
+      summary: Get a protocols JSON definition by name
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: User not found
+components:
+  schemas:
+    Protocols:
+      type: object
+      properties:
+        name:
+          type: string
+        JSON_definition:
+          type: string
