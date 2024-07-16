@@ -35,6 +35,8 @@ from nomad_camels.extensions import extension_contexts
 from collections import OrderedDict
 import importlib
 
+from nomad_camels.api.api import FastapiThread
+
 
 camels_github = "https://github.com/FAU-LAP/NOMAD-CAMELS"
 camels_github_pages = "https://fau-lap.github.io/NOMAD-CAMELS/"
@@ -82,6 +84,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         icon = self.style().standardIcon(QStyle.SP_MediaStop)
         self.pushButton_stop.setIcon(icon)
 
+        self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.protocol_stepper_signal.connect(self.progressBar_protocols.setValue)
 
@@ -219,6 +222,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
+        
+        self.fastapi_thread = FastapiThread(self)
+        self.fastapi_thread.start()
+        self.fastapi_thread.protocol_started.connect(self.run_protocol)
+
 
     def show_hide_log(self):
         """ """
