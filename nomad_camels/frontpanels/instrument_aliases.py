@@ -87,6 +87,26 @@ class Instrument_Alias_Config(QDialog):
                 "Empty instrument alias!",
             )
             return
+        # check if an instrument gets an alias that is also an instrument
+        if set(self.instrument_aliases["Instrument"]) & set(
+            self.instrument_aliases["Alias"]
+        ):
+            WarnPopup(
+                self,
+                "An instrument alias is the same as an instrument name!",
+                "Alias is an instrument!",
+            )
+            return
+        # check if any channel has an alias that belongs to an instrument which also has an alias
+        for channel in self.channel_aliases["channel"]:
+            instr = variables_handling.channels[channel].device
+            if instr in self.instrument_aliases["Instrument"]:
+                WarnPopup(
+                    self,
+                    f'The instrument "{instr}" has an alias and the channel "{channel}" has an alias, a channel can only have an alias if its instrument does not!',
+                    "Alias conflict!",
+                )
+                return
         super().accept()
 
 

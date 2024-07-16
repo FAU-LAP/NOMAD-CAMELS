@@ -121,6 +121,10 @@ def get_channels(use_aliases=True):
             if channel in channel_aliases["channel"]:
                 i = channel_aliases["channel"].index(channel)
                 channels_dict.update({channel_aliases["Alias"][i]: channels[channel]})
+            elif instr := channels[channel].device in instrument_aliases["Instrument"]:
+                i = instrument_aliases["Instrument"].index(instr)
+                alias = instrument_aliases["Alias"][i]
+                channels_dict.update({})
             else:
                 channels_dict.update({channel: channels[channel]})
         return channels_dict
