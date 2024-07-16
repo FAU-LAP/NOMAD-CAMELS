@@ -88,6 +88,9 @@ class Measurement_Protocol:
         self.instrument_aliases = (
             kwargs["instrument_aliases"] if "instrument_aliases" in kwargs else {}
         )
+        self.channel_aliases = (
+            kwargs["channel_aliases"] if "channel_aliases" in kwargs else {}
+        )
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -734,8 +737,13 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
     def change_instrument_aliases(self):
         from nomad_camels.frontpanels.instrument_aliases import Instrument_Alias_Config
 
-        dialog = Instrument_Alias_Config(self)
+        dialog = Instrument_Alias_Config(
+            self,
+            instrument_aliases=self.protocol.instrument_aliases,
+            channel_aliases=self.protocol.channel_aliases,
+        )
         if dialog.exec_():
-            self.protocol.instrument_aliases = dialog.get_aliases()
+            self.protocol.instrument_aliases = dialog.instrument_aliases
+            self.protocol.channel_aliases = dialog.channel_aliases
             dialog.close()
             dialog.deleteLater()

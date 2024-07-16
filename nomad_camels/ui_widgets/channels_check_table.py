@@ -28,12 +28,14 @@ class Channels_Check_Table(QWidget):
         title="",
         channels=None,
         use_configs=False,
+        use_aliases=True,
     ):
         super().__init__(parent)
         if use_configs:
             self.channels = channels or variables_handling.config_channels
         else:
             self.channels = channels or variables_handling.channels
+        self.use_aliases = use_aliases
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         self.only_output = only_output
@@ -242,7 +244,7 @@ class Channels_Check_Table(QWidget):
     def update_info(self):
         """ """
         channel_list = self.info_dict["channel"]
-        if "value"  in self.info_dict:
+        if "value" in self.info_dict:
             self.value_list = self.info_dict["value"].copy()
         for i in range(self.tableWidget_channels.rowCount()):
             name = self.tableWidget_channels.item(i, 1).text()
@@ -269,7 +271,7 @@ class Channels_Check_Table(QWidget):
                         raise Exception(
                             f"You need to enter a value for channel {name}!"
                         )
-                    if t == 'None':
+                    if t == "None":
                         t = self.value_list[n]
                     self.info_dict[lab][n] = t
         rems = []
@@ -319,7 +321,9 @@ class Channels_Check_Table(QWidget):
             if channel in self.info_dict["channel"]:
                 n_chan = self.info_dict["channel"].index(channel)
                 for lab in self.headerLabels[2:]:
-                    if n_chan < len(self.info_dict[lab]):  # Check if index is within range
+                    if n_chan < len(
+                        self.info_dict[lab]
+                    ):  # Check if index is within range
                         vals.append(str(self.info_dict[lab][n_chan]))
                     else:
                         vals.append("")  # Append empty string if index is out of range
