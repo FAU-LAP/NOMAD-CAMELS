@@ -85,6 +85,9 @@ class Measurement_Protocol:
         self.h5_during_run = (
             kwargs["h5_during_run"] if "h5_during_run" in kwargs else True
         )
+        self.instrument_aliases = (
+            kwargs["instrument_aliases"] if "instrument_aliases" in kwargs else {}
+        )
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -518,7 +521,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.radioButton_h5_after.setChecked(not self.protocol.h5_during_run)
 
         self.layout().addWidget(self.textEdit_desc_protocol, 5, 0, 1, 6)
-        
+
         self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
         self.layout().addWidget(self.checkBox_NeXus, 7, 0, 1, 6)
         self.layout().addWidget(self.table_channel_NX_paths, 9, 0, 1, 6)
@@ -531,6 +534,10 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.selectionModel().selectionChanged.connect(
             self.update_variable_select
         )
+        self.pushButton_instrument_aliases.clicked.connect(
+            self.change_instrument_aliases
+        )
+
     def showEvent(self, event):
         """Called when the widget is shown."""
         super().showEvent(event)
@@ -540,8 +547,9 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         """Adjusts the size of the textEdit_desc_protocol based on its content."""
         document = self.textEdit_desc_protocol.document()
         document_height = document.size().height()
-        self.textEdit_desc_protocol.setFixedHeight(document_height + 5)  # Add some padding
-
+        self.textEdit_desc_protocol.setFixedHeight(
+            document_height + 5  # Add some padding
+        )
 
     def enable_disable_config(self):
         disabling = self.checkBox_no_config.isChecked()
@@ -722,3 +730,12 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.label_title.setText(f"{name} - General Configuration")
         self.protocol.name = name
         self.name_changed.emit()
+
+    def change_instrument_aliases(self):
+        from nomad_camels.frontpanels.instrument_aliases import Instrument_Alias_Config
+
+        dialog = Instrument_Alias_Config(self)
+        if dialog.exec_():
+            self.protocol.instrument_aliases = dialog.get_aliases()
+            dialog.close()
+            dialog.deleteLater()

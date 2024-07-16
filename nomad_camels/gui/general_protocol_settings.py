@@ -49,11 +49,6 @@ class Ui_Protocol_Settings(object):
 
         self.gridLayout_2.addWidget(self.checkBox_csv_exp, 1, 0, 1, 1)
 
-        self.checkBox_no_config = QCheckBox(self.widget_2)
-        self.checkBox_no_config.setObjectName(u"checkBox_no_config")
-
-        self.gridLayout_2.addWidget(self.checkBox_no_config, 2, 0, 1, 2)
-
         self.checkBox_json_exp = QCheckBox(self.widget_2)
         self.checkBox_json_exp.setObjectName(u"checkBox_json_exp")
 
@@ -69,6 +64,32 @@ class Ui_Protocol_Settings(object):
         self.radioButton_h5_during.setChecked(True)
 
         self.gridLayout_2.addWidget(self.radioButton_h5_during, 0, 0, 1, 1)
+
+        self.checkBox_no_config = QCheckBox(self.widget_2)
+        self.checkBox_no_config.setObjectName(u"checkBox_no_config")
+
+        self.gridLayout_2.addWidget(self.checkBox_no_config, 2, 0, 1, 1)
+
+        self.pushButton_instrument_aliases = QPushButton(self.widget_2)
+        self.pushButton_instrument_aliases.setObjectName(u"pushButton_instrument_aliases")
+        self.pushButton_instrument_aliases.setStyleSheet(u"QPushButton {\n"
+"        background-color: #2a4cdf;\n"
+"        color: white;\n"
+"        border: none;\n"
+"        padding: 2px 10px;\n"
+"        text-align: center;\n"
+"        text-decoration: none;\n"
+"        font-size: 12px;\n"
+"        margin: 2px 2px;\n"
+"        border-radius: 6px;\n"
+"        font-weight: bold;\n"
+"    }\n"
+"\n"
+"    QPushButton:hover {\n"
+"        background-color: #1a3cbf;\n"
+"    }")
+
+        self.gridLayout_2.addWidget(self.pushButton_instrument_aliases, 2, 1, 1, 1)
 
 
         self.gridLayout.addWidget(self.widget_2, 4, 0, 1, 6)
@@ -181,10 +202,11 @@ class Ui_Protocol_Settings(object):
     def retranslateUi(self, Protocol_Settings):
         Protocol_Settings.setWindowTitle(QCoreApplication.translate("Protocol_Settings", u"Form", None))
         self.checkBox_csv_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export data to csv", None))
-        self.checkBox_no_config.setText(QCoreApplication.translate("Protocol_Settings", u"do not reconfigure instruments at start", None))
         self.checkBox_json_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export metadata to json", None))
         self.radioButton_h5_after.setText(QCoreApplication.translate("Protocol_Settings", u"write hdf5 after run", None))
         self.radioButton_h5_during.setText(QCoreApplication.translate("Protocol_Settings", u"write hdf5 during run", None))
+        self.checkBox_no_config.setText(QCoreApplication.translate("Protocol_Settings", u"do not reconfigure instruments at start", None))
+        self.pushButton_instrument_aliases.setText(QCoreApplication.translate("Protocol_Settings", u"Instrument Aliases", None))
         self.pushButton_add_variable.setText(QCoreApplication.translate("Protocol_Settings", u"+", None))
         self.label_2.setText(QCoreApplication.translate("Protocol_Settings", u"Variables", None))
         self.label.setText(QCoreApplication.translate("Protocol_Settings", u"Filename:", None))
