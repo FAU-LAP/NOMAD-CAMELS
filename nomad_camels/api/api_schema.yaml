@@ -5,7 +5,7 @@ info:
 paths:
   /protocols:
     get:
-      summary: Get all protocols
+      summary: Get all protocol names
       responses:
         "200":
           description: OK
@@ -34,6 +34,34 @@ paths:
           description: OK
         "404":
           description: User not found
+  /actions/{name}:
+    post:
+      summary: Execute the protocol with the given name. Returns the measurement file path.
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file_path:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Protocol not found
+        '500':
+          description: Internal server error
+
+
 components:
   schemas:
     Protocols:
