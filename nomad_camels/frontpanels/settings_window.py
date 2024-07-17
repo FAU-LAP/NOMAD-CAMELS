@@ -1,12 +1,18 @@
-from PySide6.QtWidgets import QDialog, QStyleFactory, QMessageBox
+from PySide6.QtWidgets import QDialog, QStyleFactory, QMessageBox, QApplication
 from PySide6.QtCore import Qt, QCoreApplication
-from PySide6.QtGui import QKeyEvent
+from PySide6.QtGui import QKeyEvent, QClipboard
 import qt_material
 
 from nomad_camels.gui.settings_window import Ui_settings_window
 from nomad_camels.utility import load_save_functions
 from nomad_camels.utility.theme_changing import change_theme
 from nomad_camels.utility.logging_settings import log_levels
+
+import random
+import string
+import secrets
+import hashlib
+import sqlite3
 
 
 class Settings_Window(Ui_settings_window, QDialog):
@@ -44,6 +50,9 @@ class Settings_Window(Ui_settings_window, QDialog):
         self.comboBox_material_theme.currentTextChanged.connect(self.change_theme)
         self.checkBox_dark.clicked.connect(self.change_theme)
         self.change_theme()
+
+        self.pushButton_generate_Api_key.clicked.connect(self.generate_api_key)
+        self.pushButton_copy_Api_key_clipboard.clicked.connect(self.copy_to_clipboard)
 
         standard_pref = load_save_functions.standard_pref
 
@@ -277,3 +286,20 @@ class Settings_Window(Ui_settings_window, QDialog):
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)
+
+    def generate_api_key(self):
+        # Generate a random API key (example: 40 characters long)
+        api_key = secrets.token_urlsafe(40)
+        self.Api_key_lineEdit.setText(api_key)
+        self.pushButton_generate_Api_key.setEnabled(False)
+        self.pushButton_copy_Api_key_clipboard.setEnabled(True)
+
+
+    def copy_to_clipboard(self):
+        api_key = self.Api_key_lineEdit.text()
+        if api_key:
+            clipboard = QApplication.clipboard()
+            clipboard.setText(api_key)
+            QMessageBox.information(self, "Copied", "API Key copied to clipboard!")
+        else:
+            QMessageBox.warning(self, "Warning", "No API Key to copy!")
