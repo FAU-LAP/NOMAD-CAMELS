@@ -26,6 +26,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ## 1.2.2
 Features:
 - Included the protocol's json used by the configuration in CAMELS into the data file
+- Added functionality to replace loopsteps (instead of delete + add a new one)
 
 Fixes:
 - Cannot move protocols or manual controls to empty tab containing the "+" button anymore
