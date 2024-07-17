@@ -1457,7 +1457,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(
                 device_list, skip_config=protocol.skip_config
             )
-            self.instantiate_devices_thread.finished.connect(self.run_protocol_part2)
+            self.instantiate_devices_thread.successful.connect(self.run_protocol_part2)
             self.instantiate_devices_thread.exception_raised.connect(
                 self.propagate_exception
             )
