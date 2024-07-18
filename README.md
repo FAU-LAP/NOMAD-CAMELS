@@ -31,6 +31,7 @@ Features:
 Fixes:
 - Cannot move protocols or manual controls to empty tab containing the "+" button anymore
 - If instrument instantiation fails, only the actual error should now be raised
+- Improved thread stability of stage control
 
 ## 1.2.1
 Features:

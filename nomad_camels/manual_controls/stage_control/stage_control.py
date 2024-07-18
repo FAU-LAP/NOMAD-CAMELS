@@ -311,8 +311,10 @@ class Stage_Control(Manual_Control, Ui_Form):
         ----------
         a0 : QCloseEvent
         """
-        self.read_thread.still_running = False
-        self.move_thread.still_running = False
+        if self.read_thread:
+            self.read_thread.still_running = False
+        if self.move_thread:
+            self.move_thread.still_running = False
         return super().closeEvent(a0)
 
     def step_axis(self, axis, up=True):
@@ -331,13 +333,17 @@ class Stage_Control(Manual_Control, Ui_Form):
         """
         ax_names = ["X", "Y", "Z"]
         step_size = self.control_data[f"stepSize_{ax_names[axis]}"]
+        if self.read_thread:
+            self.read_thread.paused = True
         if not up:
             step_size *= -1
         if self.read_channels[axis] is not None:
             before = self.read_channels[axis].get()
         else:
             before = self.set_channels[axis].get()
-        self.set_channels[axis].put(before + step_size)
+        if self.read_thread:
+            self.read_thread.paused = False
+        self.move_thread.set_absolute[axis] = before + step_size
 
     def reference_drive(self):
         """ """
@@ -365,9 +371,11 @@ class Stage_Control(Manual_Control, Ui_Form):
     def move_to_position(self):
         """ """
         axes = ["X", "Y", "Z"]
+        positions = [np.nan, np.nan, np.nan]
         for i in range(3):
             if self.set_channels[i]:
-                self.set_channels[i].put(self.control_data[f"go_to_{axes[i]}"])
+                positions[i] = self.control_data[f"go_to_{axes[i]}"]
+        self.move_thread.set_absolute = positions
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
         """
@@ -468,6 +476,8 @@ class Move_Thread(QThread):
         self.up_dir = [True, True, True]
         self.last_set = starting_positions or [np.nan, np.nan, np.nan]
         self.moving_started = [False, False, False]
+        self.set_absolute = [np.nan, np.nan, np.nan]
+        self.last_absolute = [np.nan, np.nan, np.nan]
 
     def run(self) -> None:
         """ """
@@ -486,6 +496,12 @@ class Move_Thread(QThread):
                         if self.stop_functions and self.stop_functions[i]:
                             self.stop_functions[i]()
                         self.moving_started[i] = False
+            if self.set_absolute != self.last_absolute:
+                for i, val in enumerate(self.set_absolute):
+                    if not np.isnan(val):
+                        self.channels[i].put(val)
+                        self.last_absolute[i] = val
+                continue
             if not move:
                 time.sleep(0.1)
 
@@ -529,11 +545,15 @@ class Readback_Thread(QThread):
         self.channels = channels or []
         self.read_time = read_time
         self.still_running = True
+        self.paused = False
 
     def run(self):
         """ """
         accum = 0
         while self.still_running:
+            if self.paused:
+                time.sleep(self.read_time)
+                continue
             self.do_reading()
             if self.read_time > 5:
                 if self.read_time - accum > 5:
