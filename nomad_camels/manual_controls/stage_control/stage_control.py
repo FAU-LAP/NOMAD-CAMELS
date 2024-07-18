@@ -212,6 +212,28 @@ class Stage_Control(Manual_Control, Ui_Form):
             if channel is not None:
                 read_not_none = True
                 break
+        if read_not_none:
+            self.start_read_thread()
+        else:
+            self.lineEdit_read_frequ.setEnabled(False)
+        self.start_move_thread()
+        for child in self.children():
+            if isinstance(child, QWidget):
+                child.setFocusPolicy(Qt.ClickFocus)
+        self.setFocusPolicy(Qt.ClickFocus)
+        self.show()
+        for i, auto in enumerate(self.control_data["auto_reference"]):
+            self.checks[i].setChecked(auto)
+        self.reference_drive()
+        for i, auto in enumerate(self.control_data["auto_reference"]):
+            self.checks[i].setChecked(True)
+
+    def start_move_thread(self):
+        read_not_none = False
+        for channel in self.read_channels:
+            if channel is not None:
+                read_not_none = True
+                break
         positions = [np.nan, np.nan, np.nan]
         if read_not_none:
             for i in range(3):
@@ -219,14 +241,6 @@ class Stage_Control(Manual_Control, Ui_Form):
                     positions[i] = self.read_channels[i].get()
                 except:
                     pass
-            self.read_thread = Readback_Thread(
-                self, self.read_channels, self.control_data["read_frequ"]
-            )
-            self.read_thread.data_sig.connect(self.update_readback)
-            self.read_thread.start()
-        else:
-            self.lineEdit_read_frequ.setEnabled(False)
-
         manual_X = self.control_data["manual_X"]
         manual_Y = self.control_data["manual_Y"]
         manual_Z = self.control_data["manual_Z"]
@@ -239,17 +253,49 @@ class Stage_Control(Manual_Control, Ui_Form):
             stop_functions=self.stop_funcs,
             starting_positions=positions,
         )
+        self.move_thread.exception_signal.connect(
+            lambda ex, name="move": self.exception_caught(ex, name)
+        )
         self.move_thread.start()
-        for child in self.children():
-            if isinstance(child, QWidget):
-                child.setFocusPolicy(Qt.ClickFocus)
-        self.setFocusPolicy(Qt.ClickFocus)
-        self.show()
-        for i, auto in enumerate(self.control_data["auto_reference"]):
-            self.checks[i].setChecked(auto)
-        self.reference_drive()
-        for i, auto in enumerate(self.control_data["auto_reference"]):
-            self.checks[i].setChecked(True)
+
+    def start_read_thread(self):
+        self.read_thread = Readback_Thread(
+            self, self.read_channels, self.control_data["read_frequ"]
+        )
+        self.read_thread.data_sig.connect(self.update_readback)
+        self.read_thread.exception_signal.connect(
+            lambda ex, name="read": self.exception_caught(ex, name)
+        )
+        self.read_thread.start()
+
+    def exception_caught(self, ex, name):
+        """
+        Handles exceptions caught by the readback or move threads.
+
+        Parameters
+        ----------
+        ex : Exception
+            The exception that was caught.
+
+        name : str
+            The name of the thread that caught the exception.
+        """
+        from PySide6.QtWidgets import QMessageBox
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setText("Error in read thread")
+        msg.setInformativeText(
+            f"An error occured in the {name} thread of {self.name}:\n{ex}\nDo you want to restart the read thread?"
+        )
+        msg.setWindowTitle("Error in read thread")
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg.setDefaultButton(QMessageBox.Yes)
+        if msg.exec() == QMessageBox.Yes:
+            if name == "read":
+                self.start_read_thread()
+            elif name == "move":
+                self.start_move_thread()
 
     def line_change(self):
         """
@@ -456,6 +502,8 @@ class Stage_Control(Manual_Control, Ui_Form):
 class Move_Thread(QThread):
     """ """
 
+    exception_signal = Signal(Exception)
+
     def __init__(
         self,
         parent=None,
@@ -481,29 +529,32 @@ class Move_Thread(QThread):
 
     def run(self) -> None:
         """ """
-        while self.still_running:
-            move = False
-            for i, mover in enumerate(self.movers):
-                if mover:
-                    move = True
-                    if np.isnan(self.move_starts[i]):
-                        self.move_starts[i] = time.time()
-                        self.last_set[i] = self.channels[i].get()
-                    self.move(i)
-                else:
-                    if not np.isnan(self.move_starts[i]):
-                        self.move_starts[i] = np.nan
-                        if self.stop_functions and self.stop_functions[i]:
-                            self.stop_functions[i]()
-                        self.moving_started[i] = False
-            if self.set_absolute != self.last_absolute:
-                for i, val in enumerate(self.set_absolute):
-                    if not np.isnan(val):
-                        self.channels[i].put(val)
-                        self.last_absolute[i] = val
-                continue
-            if not move:
-                time.sleep(0.1)
+        try:
+            while self.still_running:
+                move = False
+                for i, mover in enumerate(self.movers):
+                    if mover:
+                        move = True
+                        if np.isnan(self.move_starts[i]):
+                            self.move_starts[i] = time.time()
+                            self.last_set[i] = self.channels[i].get()
+                        self.move(i)
+                    else:
+                        if not np.isnan(self.move_starts[i]):
+                            self.move_starts[i] = np.nan
+                            if self.stop_functions and self.stop_functions[i]:
+                                self.stop_functions[i]()
+                            self.moving_started[i] = False
+                if self.set_absolute != self.last_absolute:
+                    for i, val in enumerate(self.set_absolute):
+                        if not np.isnan(val):
+                            self.channels[i].put(val)
+                            self.last_absolute[i] = val
+                    continue
+                if not move:
+                    time.sleep(0.1)
+        except Exception as e:
+            self.exception_signal.emit(e)
 
     def move(self, ax):
         """
@@ -539,6 +590,7 @@ class Readback_Thread(QThread):
     """ """
 
     data_sig = Signal(float, float, float)
+    exception_signal = Signal(Exception)
 
     def __init__(self, parent=None, channels=None, read_time=np.inf):
         super().__init__(parent=parent)
@@ -549,22 +601,25 @@ class Readback_Thread(QThread):
 
     def run(self):
         """ """
-        accum = 0
-        while self.still_running:
-            if self.paused:
-                time.sleep(self.read_time)
-                continue
-            self.do_reading()
-            if self.read_time > 5:
-                if self.read_time - accum > 5:
-                    time.sleep(5)
-                    accum += 5
+        try:
+            accum = 0
+            while self.still_running:
+                if self.paused:
+                    time.sleep(self.read_time)
                     continue
+                self.do_reading()
+                if self.read_time > 5:
+                    if self.read_time - accum > 5:
+                        time.sleep(5)
+                        accum += 5
+                        continue
+                    else:
+                        time.sleep(self.read_time - accum)
+                        accum = 0
                 else:
-                    time.sleep(self.read_time - accum)
-                    accum = 0
-            else:
-                time.sleep(self.read_time)
+                    time.sleep(self.read_time)
+        except Exception as e:
+            self.exception_signal.emit(e)
 
     def do_reading(self):
         """ """

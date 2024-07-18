@@ -27,8 +27,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Features:
 - Included the protocol's json used by the configuration in CAMELS into the data file
 - Added functionality to replace loopsteps (instead of delete + add a new one)
-
-Minor Features:
+- Included exception handling for manual control threads and allow for restarting them on error
 - More info on python file step in protocol overview
 
 Fixes:
