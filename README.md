@@ -28,6 +28,9 @@ Features:
 - Included the protocol's json used by the configuration in CAMELS into the data file
 - Added functionality to replace loopsteps (instead of delete + add a new one)
 
+Minor Features:
+- More info on python file step in protocol overview
+
 Fixes:
 - Cannot move protocols or manual controls to empty tab containing the "+" button anymore
 - If instrument instantiation fails, only the actual error should now be raised
