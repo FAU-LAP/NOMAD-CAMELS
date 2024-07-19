@@ -31,15 +31,43 @@ class Wait_Loop_Step(Loop_Step):
         self.read_channels = (
             step_info["read_channels"] if "read_channels" in step_info else []
         )
-        self.update_time = (
-            step_info["update_time"] if "update_time" in step_info else 0.1
-        )
 
     def get_add_main_string(self):
         add_main_string = super().get_add_main_string()
         if self.wait_type == "wait with progress bar":
             add_main_string += f'\tboxes["bar_{self.name}"] = helper_functions.Waiting_Bar(title="{self.name} waiting...", skipable={self.skipable}, with_timer=True)\n'
+        elif self.wait_type == "wait for condition":
+            from nomad_camels.bluesky_handling import builder_helper_functions
+
+            add_main_string += builder_helper_functions.get_plot_add_string(
+                self.name, f'"{self.full_name}"'
+            )
         return add_main_string
+
+    def get_outer_string(self):
+        outer_string = super().get_outer_string()
+        if self.wait_type == "wait for condition":
+            from nomad_camels.bluesky_handling import builder_helper_functions
+            from nomad_camels.frontpanels.plot_definer import Plot_Info
+
+            y_axes = [self.condition]
+            for comparison in ["<=", ">=", "<", ">", "=="]:
+                if comparison in self.condition:
+                    y_axes += self.condition.split(comparison)
+                    break
+            plot_data = [
+                Plot_Info(
+                    "Value-List", title=self.full_name, y_axes={"formula": y_axes}
+                )
+            ]
+            outer_string += builder_helper_functions.plot_creator(
+                plot_data,
+                f"create_plots_{self.name}",
+                plot_is_box=True,
+                box_names=f"bar_{self.name}",
+                skip_box=self.skipable,
+            )[0]
+        return outer_string
 
     def update_used_devices(self):
         """All devices that should be read are added to the used_devices."""
@@ -85,11 +113,17 @@ class Wait_Loop_Step(Loop_Step):
         elif self.wait_type == "wait for condition":
             protocol_string += self.get_channels_string(tabs)
             protocol_string += f"{tabs}yield from bps.trigger_and_read(channels_{self.variable_name()}, name='{self.full_name}')\n"
-            protocol_string += f'{tabs}while not eva.eval("{self.condition}"):\n'
             protocol_string += (
-                f'{tabs}\tyield from bps.sleep(eva.eval("{self.update_time}"))\n'
+                f'{tabs}boxes["bar_{self.name}_0"].helper.executor.emit()\n'
+            )
+            protocol_string += f'{tabs}while not eva.eval("{self.condition}") and not boxes["bar_{self.name}_0"].skip:\n'
+            protocol_string += (
+                f'{tabs}\tyield from bps.sleep(eva.eval("{self.wait_time}"))\n'
             )
             protocol_string += f"{tabs}\tyield from bps.trigger_and_read(channels_{self.variable_name()}, name='{self.full_name}')\n"
+            protocol_string += (
+                f'{tabs}boxes["bar_{self.name}_0"].setter.hide_signal.emit()\n'
+            )
         return protocol_string
 
     def variable_name(self):
@@ -214,13 +248,9 @@ class Wait_Loop_Step_Config_Sub(QWidget):
             self.read_channels_table.setHidden(False)
             self.condition_line.setHidden(False)
             self.label_condition.setHidden(False)
-            self.label1.setHidden(True)
-            self.label2.setHidden(True)
-            self.lineEdit_duration.setHidden(True)
+            self.label1.setText("read every")
         else:
             self.read_channels_table.setHidden(True)
             self.condition_line.setHidden(True)
             self.label_condition.setHidden(True)
-            self.label1.setHidden(False)
-            self.label2.setHidden(False)
-            self.lineEdit_duration.setHidden(False)
+            self.label1.setText("Wait for")

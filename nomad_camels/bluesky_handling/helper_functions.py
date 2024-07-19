@@ -977,12 +977,21 @@ class Value_Setter(QWidget):
 
 
 class Waiting_Bar(QWidget):
-    def __init__(self, parent=None, title="", skipable=False, with_timer=False):
+    def __init__(
+        self,
+        parent=None,
+        title="",
+        skipable=True,
+        with_timer=False,
+        display_bar=True,
+        plot=None,
+    ):
         super().__init__(parent=parent)
         layout = QGridLayout()
         self.progressBar = QProgressBar()
         self.progressBar.setValue(0)
         layout.addWidget(self.progressBar, 0, 0)
+        self.progressBar.setHidden(not display_bar)
 
         self.skip = False
         if skipable:
@@ -998,6 +1007,10 @@ class Waiting_Bar(QWidget):
         self.setter.set_signal.connect(self.setValue)
         self.setter.hide_signal.connect(self.hide)
         self.with_timer = with_timer
+        if plot is not None:
+            self.plot = plot
+            layout.addWidget(self.plot, 1, 0, 1, 2)
+        self.adjustSize()
 
     def setValue(self, value):
         self.progressBar.setValue(value)

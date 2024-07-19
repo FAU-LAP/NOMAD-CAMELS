@@ -29,6 +29,7 @@ Features:
 - Added functionality to replace loopsteps (instead of delete + add a new one)
 - Included exception handling for manual control threads and allow for restarting them on error
 - Added a progress bar functionality for the wait-step
+- Added conditional waiting to the wait-step
 - More info on python file step in protocol overview
 
 Fixes:
