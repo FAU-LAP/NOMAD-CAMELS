@@ -88,6 +88,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.protocol_stepper_signal.connect(self.progressBar_protocols.setValue)
 
+        # Set the fastapi_thread to None so it can be used later
+        self.fastapi_thread = None
+
         # saving / loading
         self.__save_dict__ = {}
         if os.name == "nt":
@@ -222,19 +225,23 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
-        self.fastapi_thread = None
+        
         
         
 
     def start_API_server(self):
-        from nomad_camels.api.api import FastapiThread
-        self.fastapi_thread = FastapiThread(self)
-        self.fastapi_thread.start()
-        self.fastapi_thread.start_protocol.connect(self.run_protocol)
+        if hasattr(self, 'fastapi_thread') and self.fastapi_thread is not None:
+            pass
+        else:
+            from nomad_camels.api.api import FastapiThread
+            self.fastapi_thread = FastapiThread(self)
+            self.fastapi_thread.start()
+            self.fastapi_thread.start_protocol.connect(self.run_protocol)
 
     def stop_API_server(self):
         if hasattr(self, 'fastapi_thread') and self.fastapi_thread is not None:
             self.fastapi_thread.stop_server()
+            self.fastapi_thread = None
     
     def show_hide_log(self):
         """ """
