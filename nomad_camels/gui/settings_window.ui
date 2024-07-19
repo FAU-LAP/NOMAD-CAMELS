@@ -657,7 +657,13 @@
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: #fa0202;</string>
+         <string notr="true">QPushButton {
+    background-color: #fa0000;
+}
+
+QPushButton:disabled {
+    background-color: #A52A2A; /* A grayish-red color */
+}</string>
         </property>
         <property name="text">
          <string>Delete all API keys</string>
@@ -912,7 +918,13 @@
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color:#0d800f;</string>
+         <string notr="true">QPushButton {
+    background-color: #0db002;
+}
+
+QPushButton:disabled {
+    background-color:#4fa14a; /* A grayish-green color */
+}</string>
         </property>
         <property name="text">
          <string>Generate API Key</string>

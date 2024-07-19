@@ -410,7 +410,13 @@ class Ui_settings_window(object):
         self.pushButton_delete_Api_keys = QPushButton(self.right)
         self.pushButton_delete_Api_keys.setObjectName(u"pushButton_delete_Api_keys")
         self.pushButton_delete_Api_keys.setFont(font)
-        self.pushButton_delete_Api_keys.setStyleSheet(u"background-color: #fa0202;")
+        self.pushButton_delete_Api_keys.setStyleSheet(u"QPushButton {\n"
+"    background-color: #fa0000;\n"
+"}\n"
+"\n"
+"QPushButton:disabled {\n"
+"    background-color: #A52A2A; /* A grayish-red color */\n"
+"}")
 
         self.gridLayout_9.addWidget(self.pushButton_delete_Api_keys, 11, 0, 1, 1)
 
@@ -553,7 +559,13 @@ class Ui_settings_window(object):
         self.pushButton_generate_Api_key = QPushButton(self.right)
         self.pushButton_generate_Api_key.setObjectName(u"pushButton_generate_Api_key")
         self.pushButton_generate_Api_key.setFont(font)
-        self.pushButton_generate_Api_key.setStyleSheet(u"background-color:#0d800f;")
+        self.pushButton_generate_Api_key.setStyleSheet(u"QPushButton {\n"
+"    background-color: #0db002;\n"
+"}\n"
+"\n"
+"QPushButton:disabled {\n"
+"    background-color:#4fa14a; /* A grayish-green color */\n"
+"}")
 
         self.gridLayout_9.addWidget(self.pushButton_generate_Api_key, 7, 0, 1, 1)
 
