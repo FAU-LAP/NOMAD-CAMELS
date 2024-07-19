@@ -392,6 +392,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         self.open_plots.append(plot)
         plot.closing.connect(lambda x=plot: self.open_plots.remove(x))
+        plot.reopened.connect(lambda x=plot: self.open_plots.append(x))
+        plot.reopened.connect(lambda x=plot: self.open_windows.append(x))
         self.add_to_open_windows(plot)
 
     def close_plots(self):
