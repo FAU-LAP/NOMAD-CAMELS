@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from PySide6.QtCore import QThread, Signal
 from nomad_camels.frontpanels.settings_window import hash_api_key
@@ -84,7 +84,7 @@ class FastapiThread(QThread):
 
         @app.get("/")
         async def root():
-            return {"message": "Hello World"}
+            return RedirectResponse(url="/docs")
 
         @app.get("/favicon.ico")
         async def favicon():
