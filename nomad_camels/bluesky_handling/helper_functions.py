@@ -1011,6 +1011,7 @@ class Waiting_Bar(QWidget):
             self.plot = plot
             layout.addWidget(self.plot, 1, 0, 1, 2)
         self.adjustSize()
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
 
     def setValue(self, value):
         self.progressBar.setValue(value)
