@@ -35,7 +35,7 @@ from nomad_camels.extensions import extension_contexts
 from collections import OrderedDict
 import importlib
 
-from nomad_camels.api.api import FastapiThread
+
 
 
 camels_github = "https://github.com/FAU-LAP/NOMAD-CAMELS"
@@ -222,12 +222,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
+        self.fastapi_thread = None
         
+        
+
+    def start_API_server(self):
+        from nomad_camels.api.api import FastapiThread
         self.fastapi_thread = FastapiThread(self)
         self.fastapi_thread.start()
-        self.fastapi_thread.protocol_started.connect(self.run_protocol)
+        self.fastapi_thread.start_protocol.connect(self.run_protocol)
 
-
+    def stop_API_server(self):
+        if hasattr(self, 'fastapi_thread') and self.fastapi_thread is not None:
+            self.fastapi_thread.stop_server()
+    
     def show_hide_log(self):
         """ """
         is_hidden = self.textEdit_console_output.isHidden()
@@ -743,6 +751,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.change_theme()
         self.change_catalog_name()
         logging_settings.update_log_settings()
+        if self.preferences["enable_API"]:
+            self.start_API_server()
+        else:
+            self.stop_API_server()
+
 
     def change_theme(self):
         """Changes the graphic theme of the program according to the preferences."""
