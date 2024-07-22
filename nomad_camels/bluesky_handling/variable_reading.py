@@ -1,5 +1,6 @@
 from ophyd import SignalRO
 import numpy as np
+from collections import namedtuple
 
 
 class Variable_Signal(SignalRO):
@@ -42,10 +43,17 @@ class Variable_Signal(SignalRO):
         return info
 
     def get(self):
-        data = []
+        # data = []
+        # for key in sorted(self.variables_dict.keys()):
+        #     if key not in self.vars:
+        #         continue
+        #     data.append(self.variables_dict[key])
+        # self._readback = np.asarray(data)
+        data = {}
         for key in sorted(self.variables_dict.keys()):
             if key not in self.vars:
                 continue
-            data.append(self.variables_dict[key])
-        self._readback = np.asarray(data)
+            data[key] = self.variables_dict[key]
+        dev_tuple = namedtuple(self.name, data.keys())
+        self._readback = dev_tuple(**data)
         return super().get()

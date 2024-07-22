@@ -23,6 +23,13 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.06371/status.svg)](https://doi.org/10.21105/joss.06371)
 
 # Changelog
+## 1.2.3
+Changes:
+- Variable signal is now saved as group instead of dataset
+
+Fixes:
+- Can now save variables with non-scalar size
+
 ## 1.2.2
 Features:
 - Included the protocol's json used by the configuration in CAMELS into the data file
