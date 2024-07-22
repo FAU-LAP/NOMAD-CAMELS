@@ -83,7 +83,7 @@ class Execute_Python_File(Loop_Step):
                 # Format each "name = value" pair
                 if values[i] == "":
                     formatted_string = (
-                        f'f\'{variable_names[i]}={{eva.eval("{variable_names[i]}")}}\','
+                        f"f'{variable_names[i]}={{eva.eval(\"{variable_names[i]}\")}}',"
                     )
                 else:
                     formatted_string = f"f'{variable_names[i]}={{{values[i]}}}',"
@@ -135,11 +135,13 @@ class Execute_Python_File(Loop_Step):
         # Create a dictionary from the lists
         new_variables = dict(zip(variable_names, values))
         # remove keys and value if the key is already in variables_handling.channels.keys()
+        # remove keys and value if the value is empty so that the value is taken from the running script
         for key in list(new_variables.keys()):
-            if key in variables_handling.channels.keys():
+            if (key in variables_handling.channels.keys()) or (
+                new_variables[key] == ""
+            ):
                 new_variables.pop(key)
-        variables_handling.loop_step_variables.update(new_variables)
-        # Update the global variables to have access to the varaibles returned by the python file
+        # Update the global variables to have access to the variables returned by the python file
         if "Variable Name" in self.returned_values_variables:
             for returned_values_variables in self.returned_values_variables[
                 "Variable Name"
@@ -148,6 +150,9 @@ class Execute_Python_File(Loop_Step):
                     if (
                         returned_values_variables
                         not in variables_handling.loop_step_variables
+                    ) and (
+                        returned_values_variables
+                        not in variables_handling.channels.keys()
                     ):
                         variables_handling.loop_step_variables.update(
                             {returned_values_variables: 0}
