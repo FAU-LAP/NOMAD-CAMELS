@@ -957,18 +957,45 @@ class Value_Setter(QWidget):
     set_signal = Signal(float)
     hide_signal = Signal()
 
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.start_time = 0
+        self.end_time = 0
+        self.timer = 0
+        self.wait_time = 0
+
+    def set_wait_time(self, wait_time):
+        import datetime as dt
+
+        self.wait_time = dt.timedelta(seconds=wait_time).total_seconds()
+
+    def update_timer(self):
+        import datetime as dt
+
+        self.timer = (dt.datetime.now() - self.start_time).total_seconds()
+        self.set_signal.emit(self.timer / self.wait_time * 100)
+
 
 class Waiting_Bar(QWidget):
-    def __init__(self, parent=None, title="", skipable=False):
+    def __init__(
+        self,
+        parent=None,
+        title="",
+        skipable=True,
+        with_timer=False,
+        display_bar=True,
+        plot=None,
+    ):
         super().__init__(parent=parent)
         layout = QGridLayout()
         self.progressBar = QProgressBar()
         self.progressBar.setValue(0)
         layout.addWidget(self.progressBar, 0, 0)
+        self.progressBar.setHidden(not display_bar)
 
-        self.skipButton = QPushButton("SKIP")
         self.skip = False
         if skipable:
+            self.skipButton = QPushButton("SKIP")
             layout.addWidget(self.skipButton, 0, 1)
             self.skipButton.clicked.connect(self.skipping)
         self.setLayout(layout)
@@ -979,6 +1006,12 @@ class Waiting_Bar(QWidget):
         self.setter = Value_Setter()
         self.setter.set_signal.connect(self.setValue)
         self.setter.hide_signal.connect(self.hide)
+        self.with_timer = with_timer
+        if plot is not None:
+            self.plot = plot
+            layout.addWidget(self.plot, 1, 0, 1, 2)
+        self.adjustSize()
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
 
     def setValue(self, value):
         self.progressBar.setValue(value)
@@ -991,4 +1024,9 @@ class Waiting_Bar(QWidget):
         """Sets `self.done_flag` to False and starts `self.exec()`."""
         self.skip = False
         self.setHidden(False)
+        if self.with_timer:
+            import datetime as dt
+
+            self.setter.start_time = dt.datetime.now()
+
         self.show()

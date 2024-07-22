@@ -23,6 +23,23 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.06371/status.svg)](https://doi.org/10.21105/joss.06371)
 
 # Changelog
+## 1.2.2
+Features:
+- Included the protocol's json used by the configuration in CAMELS into the data file
+- Added functionality to replace loopsteps (instead of delete + add a new one)
+- Included exception handling for manual control threads and allow for restarting them on error
+- Added a progress bar functionality for the wait-step
+- Added conditional waiting to the wait-step
+- More info on python file step in protocol overview
+
+Fixes:
+- Cannot move protocols or manual controls to empty tab containing the "+" button anymore
+- If instrument instantiation fails, only the actual error should now be raised
+- Improved thread stability of stage control
+- plots that were once closed now behave correctly, not throwing an error on closing again and can be closed by the close plots button
+- Read Channels with the same channels but different state of reading variables now work
+- Search bar of menu of editable boxes now appears at the top instead of bottom
+- cannot display empty menus for insert-variables anymore --> search does not break menu anymore
 
 ## 1.2.1
 Features:
@@ -31,6 +48,7 @@ Features:
 Fixes:
 - For loop for which no distance was ever defined was broken, now fixed
 - Fixed bug that prevented the app from starting when no tabs were used before
+- Fixed issue with dots in paths
 
 
 ## 1.2.0
