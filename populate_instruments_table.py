@@ -47,16 +47,19 @@ if "SweepMe_device" in devices:
     sweep_me_version = devices.pop("SweepMe_device")["version"]
 
 url = "https://api.github.com/repos/SweepMe/instrument-drivers/contents/src"
-for i in range(10):
+i = 0
+while True:
     try:
         response = requests.get(url).json()
         test_var = response[0]["type"]
         break
     except:
-        time.sleep(1)
+        time.sleep(i)
+        i += 1
+        print(i)
 
 sweep_me_devices = {}
-
+print(response)
 for item in response:
     if item["type"] == "dir":  # A type of 'dir' indicates a directory (folder)
         device_type, full_name = item["name"].split("-", 1)
@@ -73,7 +76,7 @@ for item in response:
         }
 
 
-with open("./docs/source/doc/instruments/instruments.rst", "w") as f:
+with open("./docs/source/doc/instruments/instruments.rst", "w", encoding="utf-8") as f:
     f.write(
         """
 ===========
