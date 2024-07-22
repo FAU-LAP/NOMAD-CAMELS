@@ -38,6 +38,7 @@ Fixes:
 - Improved thread stability of stage control
 - plots that were once closed now behave correctly, not throwing an error on closing again and can be closed by the close plots button
 - Read Channels with the same channels but different state of reading variables now work
+- Search bar of menu of editable boxes now appears at the top instead of bottom
 
 ## 1.2.1
 Features:
