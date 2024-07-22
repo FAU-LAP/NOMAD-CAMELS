@@ -37,6 +37,7 @@ Fixes:
 - If instrument instantiation fails, only the actual error should now be raised
 - Improved thread stability of stage control
 - plots that were once closed now behave correctly, not throwing an error on closing again and can be closed by the close plots button
+- Read Channels with the same channels but different state of reading variables now work
 
 ## 1.2.1
 Features:
