@@ -132,6 +132,13 @@ class Variable_Box(QLineEdit):
             self.variable_menu2,
             self.function_menu2,
         ]:
+            if not any(
+                query.lower() in action.text().lower() for action in menu.actions()
+            ):
+                menu.setEnabled(False)
+                continue
+            elif not menu.isEnabled():
+                menu.setEnabled(True)
             for action in menu.actions():
                 action.setVisible(query.lower() in action.text().lower())
 
