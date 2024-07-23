@@ -215,7 +215,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             if not pw.exec():
                 return
             self.password_hash = password_widgets.hash_password(pw.password)
-        
+
         super().accept()
 
     def change_theme(self):
@@ -328,7 +328,9 @@ class Settings_Window(Ui_settings_window, QDialog):
         self.pushButton_generate_Api_key.setEnabled(False)
         self.pushButton_copy_Api_key_clipboard.setEnabled(True)
         # Turn the background of the copy_api_key_clipboard button to green
-        self.pushButton_copy_Api_key_clipboard.setStyleSheet("background-color: #0db002")
+        self.pushButton_copy_Api_key_clipboard.setStyleSheet(
+            "background-color: #0db002"
+        )
 
     def confirm_delete_api_keys(self):
         reply = QMessageBox.question(
@@ -369,6 +371,9 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.pushButton_generate_Api_key.setEnabled(False)
             self.pushButton_copy_Api_key_clipboard.setEnabled(False)
             self.pushButton_delete_Api_keys.setEnabled(False)
+            self.pushButton_copy_Api_key_clipboard.setStyleSheet(
+                ""
+            )
 
 
 def hash_api_key(api_key):
