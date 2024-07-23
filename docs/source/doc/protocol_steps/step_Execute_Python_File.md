@@ -1,6 +1,6 @@
 # Execute Python File
 
-This step allows you to execute (run) any Python file on your system. For this simply give the step the path to the file.
+This step allows you to execute (run) any Python file on your system. To do this, enter the path to the file in the protocol step.
 
 You can pass values to the Python script as well as save its results in variables so that you can continue to work with the returned data.
 
@@ -57,7 +57,9 @@ It is recommended to do something like
 
 ```python
 data = {
-    "results": result
+    "results": result,
+    "results2": result2,
+    ...
 }
 # Serialize the dictionary to a JSON formatted string
 json_data = json.dumps(data)
@@ -66,12 +68,14 @@ print(json_data)
 sys.stdout.flush()
 ```
 
+where the keys of the returned dictionary match the variable names defined in the "Values returned by the Python file" table.
+
 CAMELS will then match the returned dictionary with the names of the values you defined that will be returned by the file. CAMELS looks for the beginning of a curly brace `{` and matches after it until the end of the closing brace; it can handle one level of nested dictionaries.
 
 To be able to use the returned variable and its contents in the rest of the protocol it might make sense to define the variable in the left of the window, so you can easily add it to the following steps if you use the value to perform further steps.
 
 An example of a `Execute Python Script` step can be seen here.
 ![Example Image showing hwo to use the Execute Python Script step.](images/image-4.png)
-This passes `exponent=2` and what ever value the `Keithley_2000_read_voltage` channel had above to the script.
-It expects a single returned result that will be accessible using the varaible name `results`.
+This passes `exponent=2` and what ever value the `Keithley_2000_read_voltage` channel read above to the script.
+It expects a single returned result that will be accessible using the variable name `results`.
 
