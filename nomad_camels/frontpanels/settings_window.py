@@ -327,6 +327,8 @@ class Settings_Window(Ui_settings_window, QDialog):
         # Disable the "Generate API Key" button and enable the "Copy to Clipboard" button
         self.pushButton_generate_Api_key.setEnabled(False)
         self.pushButton_copy_Api_key_clipboard.setEnabled(True)
+        # Turn the background of the copy_api_key_clipboard button to green
+        self.pushButton_copy_Api_key_clipboard.setStyleSheet("background-color: #0db002")
 
     def confirm_delete_api_keys(self):
         reply = QMessageBox.question(
