@@ -183,6 +183,8 @@ class Settings_Window(Ui_settings_window, QDialog):
                 self.pushButton_generate_Api_key.setEnabled(False)
                 self.pushButton_copy_Api_key_clipboard.setEnabled(False)
                 self.pushButton_delete_Api_keys.setEnabled(False)
+        if "API_port" in settings:
+            self.lineEdit_api_port.setText(settings["API_port"])
 
     def autosave_run_change(self):
         on = self.checkBox_autosave_run.isChecked()
@@ -278,6 +280,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             "extensions": self.extensions,
             "extension_path": self.pathButton_extension_path.get_path(),
             "enable_API": self.checkBox_enable_Api.isChecked(),
+            "API_port": self.lineEdit_api_port.text(),
         }
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

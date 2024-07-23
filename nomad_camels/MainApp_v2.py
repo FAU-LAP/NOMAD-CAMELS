@@ -36,8 +36,6 @@ from collections import OrderedDict
 import importlib
 
 
-
-
 camels_github = "https://github.com/FAU-LAP/NOMAD-CAMELS"
 camels_github_pages = "https://fau-lap.github.io/NOMAD-CAMELS/"
 
@@ -90,6 +88,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         # Set the fastapi_thread to None so it can be used later
         self.fastapi_thread = None
+        # Set the current api port to None
+        self.current_api_port = None
 
         # saving / loading
         self.__save_dict__ = {}
@@ -225,24 +225,25 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
-        
-        
-        
 
-    def start_API_server(self):
-        if hasattr(self, 'fastapi_thread') and self.fastapi_thread is not None:
+    def start_API_server(self, api_port):
+        if hasattr(self, "fastapi_thread") and self.fastapi_thread is not None:
             pass
         else:
             from nomad_camels.api.api import FastapiThread
-            self.fastapi_thread = FastapiThread(self)
-            self.fastapi_thread.start()
+
+            self.current_api_port = api_port
+            self.fastapi_thread = FastapiThread(self, api_port)
+            self.fastapi_thread.port_error_signal.connect(self.clear_fastapi_thread)
             self.fastapi_thread.start_protocol.connect(self.run_protocol)
+            self.fastapi_thread.start()
 
     def stop_API_server(self):
-        if hasattr(self, 'fastapi_thread') and self.fastapi_thread is not None:
+        if hasattr(self, "fastapi_thread") and self.fastapi_thread is not None:
             self.fastapi_thread.stop_server()
             self.fastapi_thread = None
-    
+            self.current_api_port = None
+
     def show_hide_log(self):
         """ """
         is_hidden = self.textEdit_console_output.isHidden()
@@ -759,10 +760,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.change_catalog_name()
         logging_settings.update_log_settings()
         if self.preferences["enable_API"]:
-            self.start_API_server()
+            if not self.current_api_port:
+                self.start_API_server(self.preferences["API_port"])
+            else:
+                if self.current_api_port != self.preferences["API_port"]:
+                    self.stop_API_server()
+                    self.start_API_server(self.preferences["API_port"])
         else:
             self.stop_API_server()
-
 
     def change_theme(self):
         """Changes the graphic theme of the program according to the preferences."""
@@ -1845,3 +1850,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         exporter = databroker_export.ExportH5_dialog(self)
         exporter.exec()
+
+    def clear_fastapi_thread(self, *args):
+        """
+        Clear the fastapi thread.
+        """
+        if self.fastapi_thread:
+            self.fastapi_thread = None
+            # Show pop up box with warning that the server failed to start
+            warn_popup.WarnPopup(
+                self,
+                "The FastAPI server failed to start.\nMake sure the Port you entered is correct.",
+                "FastAPI Server Error",
+            )

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>652</width>
-    <height>602</height>
+    <height>606</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -507,65 +507,6 @@
       <property name="spacing">
        <number>9</number>
       </property>
-      <item row="3" column="0">
-       <widget class="QWidget" name="extensions" native="true">
-        <layout class="QGridLayout" name="gridLayout_12">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_21">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>17</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Local extensions path</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="label_22">
-           <property name="font">
-            <font>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Extensions</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="Path_Button_Edit" name="pathButton_extension_path" native="true"/>
-         </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="Line" name="line_9">
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <property name="lineWidth">
-            <number>5</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item row="2" column="0">
        <widget class="QWidget" name="eln" native="true">
         <layout class="QGridLayout" name="gridLayout_11">
@@ -619,14 +560,60 @@
         </layout>
        </widget>
       </item>
-      <item row="8" column="0">
-       <widget class="QLineEdit" name="Api_key_lineEdit">
-        <property name="readOnly">
-         <bool>true</bool>
+      <item row="11" column="0" rowspan="4">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="bottomMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <item>
+         <widget class="QPushButton" name="pushButton_generate_Api_key">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #0db002;
+}
+
+QPushButton:disabled {
+    background-color:#4fa14a; /* A grayish-green color */
+}</string>
+          </property>
+          <property name="text">
+           <string>Generate
+API Key</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_delete_Api_keys">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    background-color: #fa0000;
+}
+
+QPushButton:disabled {
+    background-color: #A52A2A; /* A grayish-red color */
+}</string>
+          </property>
+          <property name="text">
+           <string>Delete ALL
+API keys</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item row="9" column="0">
+      <item row="20" column="0">
        <widget class="QPushButton" name="pushButton_copy_Api_key_clipboard">
         <property name="enabled">
          <bool>false</bool>
@@ -649,25 +636,187 @@
         </property>
        </widget>
       </item>
-      <item row="11" column="0">
-       <widget class="QPushButton" name="pushButton_delete_Api_keys">
-        <property name="font">
-         <font>
-          <bold>true</bold>
-         </font>
+      <item row="6" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="bottomMargin">
+         <number>9</number>
         </property>
-        <property name="styleSheet">
-         <string notr="true">QPushButton {
-    background-color: #fa0000;
-}
-
-QPushButton:disabled {
-    background-color: #A52A2A; /* A grayish-red color */
-}</string>
+        <item>
+         <widget class="QCheckBox" name="checkBox_enable_Api">
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Enable API</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_14">
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>API Port:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_api_port">
+          <property name="placeholderText">
+           <string>API Port</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="4" column="0">
+       <widget class="QWidget" name="updates" native="true">
+        <layout class="QGridLayout" name="gridLayout_13">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="2" column="0">
+          <widget class="Line" name="line_10">
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <property name="lineWidth">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_23">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string>Updates</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="checkBox_auto_check_updates">
+           <property name="text">
+            <string>automatically search for updates</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="19" column="0">
+       <widget class="QLineEdit" name="Api_key_lineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
-        <property name="text">
-         <string>Delete all API keys</string>
+       </widget>
+      </item>
+      <item row="24" column="0">
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="0">
+       <widget class="QWidget" name="drivers" native="true">
+        <layout class="QGridLayout" name="gridLayout_10">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_13">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Drivers</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>17</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Local drivers path</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="3">
+          <widget class="Line" name="line_5">
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <property name="lineWidth">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <widget class="Path_Button_Edit" name="pathButton_device_path" native="true"/>
+         </item>
+        </layout>
        </widget>
       </item>
       <item row="0" column="0">
@@ -775,59 +924,6 @@ QPushButton:disabled {
         </layout>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QWidget" name="updates" native="true">
-        <layout class="QGridLayout" name="gridLayout_13">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item row="2" column="0">
-          <widget class="Line" name="line_10">
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <property name="lineWidth">
-            <number>5</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_23">
-           <property name="font">
-            <font>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true"/>
-           </property>
-           <property name="text">
-            <string>Updates</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QCheckBox" name="checkBox_auto_check_updates">
-           <property name="text">
-            <string>automatically search for updates</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item row="5" column="0">
        <widget class="QLabel" name="label_ApiKey">
         <property name="styleSheet">
@@ -838,22 +934,9 @@ QPushButton:disabled {
         </property>
        </widget>
       </item>
-      <item row="13" column="0">
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="0">
-       <widget class="QWidget" name="drivers" native="true">
-        <layout class="QGridLayout" name="gridLayout_10">
+      <item row="3" column="0">
+       <widget class="QWidget" name="extensions" native="true">
+        <layout class="QGridLayout" name="gridLayout_12">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -866,20 +949,8 @@ QPushButton:disabled {
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_13">
-           <property name="font">
-            <font>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Drivers</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="label_8">
+          <widget class="QLabel" name="label_21">
            <property name="maximumSize">
             <size>
              <width>16777215</width>
@@ -887,12 +958,27 @@ QPushButton:disabled {
             </size>
            </property>
            <property name="text">
-            <string>Local drivers path</string>
+            <string>Local extensions path</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0" colspan="3">
-          <widget class="Line" name="line_5">
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="label_22">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Extensions</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="Path_Button_Edit" name="pathButton_extension_path" native="true"/>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="Line" name="line_9">
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
@@ -904,43 +990,7 @@ QPushButton:disabled {
            </property>
           </widget>
          </item>
-         <item row="1" column="1" colspan="2">
-          <widget class="Path_Button_Edit" name="pathButton_device_path" native="true"/>
-         </item>
         </layout>
-       </widget>
-      </item>
-      <item row="7" column="0">
-       <widget class="QPushButton" name="pushButton_generate_Api_key">
-        <property name="font">
-         <font>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QPushButton {
-    background-color: #0db002;
-}
-
-QPushButton:disabled {
-    background-color:#4fa14a; /* A grayish-green color */
-}</string>
-        </property>
-        <property name="text">
-         <string>Generate API Key</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
-       <widget class="QCheckBox" name="checkBox_enable_Api">
-        <property name="font">
-         <font>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Enable API</string>
-        </property>
        </widget>
       </item>
      </layout>

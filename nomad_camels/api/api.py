@@ -53,10 +53,12 @@ async def validate_credentials(credentials: HTTPBasicCredentials = Depends(secur
 class FastapiThread(QThread):
     # Define signals for communicating with the main window
     start_protocol = Signal(str)
+    port_error_signal = Signal(str) # Signal to send error message to main window
 
-    def __init__(self, main_window):
+    def __init__(self, main_window, api_port):
         super().__init__()
         self.main_window = main_window
+        self.api_port = api_port
         self._stop_event = threading.Event()
 
     def run(self):
@@ -68,7 +70,7 @@ class FastapiThread(QThread):
                 content={"Protocols": list(self.main_window.protocols_dict.keys())}
             )
 
-        @app.get("/protocol/{protocol_name}")
+        @app.get("/protocols/{protocol_name}")
         async def run_protocol(
             protocol_name: str, api_key: str = Depends(validate_credentials)
         ):
@@ -93,13 +95,22 @@ class FastapiThread(QThread):
                 "../graphics/camels_icon_high_res.ico",
             )
             return FileResponse(icon_path)
-        
+
         # Start the uvicorn server
-        self.server_config = uvicorn.Config(app, host="127.0.0.1", port=5000, log_level="info")
-        self.server = uvicorn.Server(self.server_config)
+        try:
+            self.server_config = uvicorn.Config(
+            app, host="127.0.0.1", port=int(self.api_port), log_level="info"
+        )
+            self.server = uvicorn.Server(self.server_config)
 
         # Run the server
-        self.server.run()
+            self.server.run()
+        except ValueError:  # Catching ValueError for invalid port conversion
+            print(f"Invalid port number: {self.api_port}")
+            self.port_error_signal.emit("Invalid port number")
+        except Exception as e:
+            print(f"Error starting server: {e}")
+            self.port_error_signal.emit("Failed to start server")
 
     def stop_server(self):  #  Method to trigger shutdown
         if self.server is not None:
