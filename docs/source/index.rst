@@ -63,6 +63,13 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
 
 .. toctree::
    :maxdepth: 2
+   :caption: CAMELS API
+
+   Using the API <doc/api/api_landing.md>
+   
+
+.. toctree::
+   :maxdepth: 2
    :caption: Combine with EPICS
 
    Create New EPICS IOC <doc/epics/new_ioc.md>
