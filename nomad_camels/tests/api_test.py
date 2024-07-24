@@ -90,4 +90,4 @@ def test_favicon(client_and_thread):
     client, thread = client_and_thread
     response = client.get("/favicon.ico")
     assert response.status_code == status.HTTP_200_OK
-    assert response.headers["content-type"] == "image/x-icon"
+    assert response.headers["content-type"] in ["image/x-icon", "image/vnd.microsoft.icon"]
