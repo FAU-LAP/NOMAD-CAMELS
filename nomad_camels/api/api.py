@@ -42,7 +42,7 @@ async def validate_credentials(credentials: HTTPBasicCredentials = Depends(secur
     api_key = credentials.password
     # The api_key is directly taken from credentials.password
     if api_key and validate_api_key(api_key):
-        return api_key
+        return True
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid API Key",
@@ -53,7 +53,8 @@ async def validate_credentials(credentials: HTTPBasicCredentials = Depends(secur
 class FastapiThread(QThread):
     # Define signals for communicating with the main window
     start_protocol = Signal(str)
-    port_error_signal = Signal(str)  # Signal to send error message to main window
+    # Signal to send error message to main window, clears the fastapi_thread variable
+    port_error_signal = Signal(str)
 
     def __init__(self, main_window, api_port):
         super().__init__()
@@ -87,7 +88,7 @@ class FastapiThread(QThread):
 
         @app.get("/")
         async def root():
-            return RedirectResponse(url="/docs")
+            return RedirectResponse(url="/docs", status_code=302)
 
         @app.get("/favicon.ico")
         async def favicon():
@@ -96,6 +97,11 @@ class FastapiThread(QThread):
                 "../graphics/camels_icon_high_res.ico",
             )
             return FileResponse(icon_path)
+
+        # Define a logout page with a wrong api_key predefined to trigger the 401 error
+        @app.get("/logout")
+        async def logout():
+            return RedirectResponse(url="/", status_code=401)
 
         # Start the uvicorn server
         try:
