@@ -23,12 +23,21 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.06371/status.svg)](https://doi.org/10.21105/joss.06371)
 
 # Changelog
-## 1.2.3
+
+
+## 1.3.0
+
+Features:
+
+- Added an API web server. Connect to your localhost with port 5000 (127.0.0.1:5000). The homepage gives you an overview of the available API calls and how to use them. You need to create an API key in the settings to be able to use most of the API calls. At the moment only very basic functionality is supported. You can get a list of the available protocols you can execute with `GET /protocols` and run a specific protocol by using `POST /protocols/{protocol_name}` For more information check the documentation.
+- The `Execute Python Files` step passes the current value of variables passed to the script if no value is entered in the `value` field.
+
 Changes:
 - Variable signal is now saved as group instead of dataset
 
 Fixes:
 - Can now save variables with non-scalar size
+- x-y plot now working with array-data again
 
 ## 1.2.2
 Features:
@@ -56,14 +65,6 @@ Fixes:
 - For loop for which no distance was ever defined was broken, now fixed
 - Fixed bug that prevented the app from starting when no tabs were used before
 - Fixed issue with dots in paths
-
-
-## 1.3.0
-
-Features:
-
-- Added an API web server. Connect to your localhost with port 5000 (127.0.0.1:5000). The homepage gives you an overview of the available API calls and how to use them. You need to create an API key in the settings to be able to use most of the API calls. At the moment only very basic functionality is supported. You can get a list of the available protocols you can execute with `GET /protocols` and run a specific protocol by using `POST /protocols/{protocol_name}` For more information check the documentation.
-- The `Execute Python Files` step passes the current value of variables passed to the script if no value is entered in the `value` field.
 
 ## 1.2.0
 
