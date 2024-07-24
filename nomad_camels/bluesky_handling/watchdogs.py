@@ -168,7 +168,7 @@ class Watchdog_View(QWidget):
         )
         self.execution_button = QPushButton("Execute at condition")
 
-        self.read_check = QCheckBox("Read periodic")
+        self.read_check = QCheckBox("force periodic read")
         self.read_timer = QSpinBox()
         self.label_name = QLabel("Name")
         self.name_box = QLineEdit()
