@@ -292,6 +292,7 @@ class InstantiateDevicesThread(QThread):
     """
 
     exception_raised = Signal(Exception)
+    successful = Signal()
 
     def __init__(self, device_list, channels=False, skip_config=False):
         super().__init__()
@@ -347,6 +348,7 @@ class InstantiateDevicesThread(QThread):
                 )
             self.devices.update(devices)
             self.device_config.update(device_config)
+            self.successful.emit()
         except Exception as e:
             self.exception_raised.emit(e)
 

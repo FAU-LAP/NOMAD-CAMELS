@@ -67,6 +67,11 @@ class Execute_Python_File(Loop_Step):
             else False
         )
 
+    def get_protocol_short_string(self, n_tabs=0):
+        short_string = super().get_protocol_short_string(n_tabs)
+        short_string = f"{short_string[:-1]}: {os.path.basename(self.file_path)}"
+        return short_string
+
     def get_protocol_string(self, n_tabs=1):
         """
         This function runs the python file with the python exe using the subprocess module.

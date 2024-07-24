@@ -130,7 +130,9 @@ standard_nexus_dict = {
 }
 
 
-def build_from_path(path, save_path="test.nxs", catalog="CAMELS_CATALOG", userdata=None, sampledata=None):
+def build_from_path(
+    path, save_path="test.nxs", catalog="CAMELS_CATALOG", userdata=None, sampledata=None
+):
     """Creating the runable python file from a given `protocol`.
 
     Parameters
@@ -152,7 +154,9 @@ def build_from_path(path, save_path="test.nxs", catalog="CAMELS_CATALOG", userda
     """
     protocol = load_save_functions.load_protocol(path)
     path = pathlib.Path(path)
-    build_protocol(protocol, path.with_suffix(".py"), save_path, catalog, userdata, sampledata)
+    build_protocol(
+        protocol, path.with_suffix(".py"), save_path, catalog, userdata, sampledata
+    )
 
 
 def build_protocol(
@@ -184,6 +188,13 @@ def build_protocol(
          (Default value = None)
          Metadata that describes the sample.
     """
+    # the protocol is converted to a dictionary and saved as a json
+    protocol_dict = load_save_functions.get_save_str(protocol)
+    if not isinstance(file_path, pathlib.Path):
+        file_path = pathlib.Path(file_path)
+    cprot_path = file_path.with_suffix(".cprot").as_posix()
+    load_save_functions.save_dictionary(cprot_path, protocol_dict)
+
     # first the path is prepared
     if not protocol.loop_steps:
         raise Exception(
@@ -355,6 +366,12 @@ def build_protocol(
     protocol_string += user_sample_string(userdata, sampledata)
     protocol_string += f'\tmd["protocol_overview"] = "{protocol.get_short_string().encode("unicode_escape").decode()}"\n'
 
+    protocol_string += f"\ttry:\n"
+    protocol_string += f'\t\twith open("{cprot_path}", "r", encoding="utf-8") as f:\n'
+    protocol_string += '\t\t\tmd["protocol_json"] = f.read()\n'
+    protocol_string += "\texcept FileNotFoundError:\n"
+    protocol_string += "\t\tprint('Could not find protocol configuration file, information will be missing in data.')\n"
+
     # reading the file itself and adding it to the metadata
     protocol_string += '\twith open(__file__, "r", encoding="utf-8") as f:\n'
     protocol_string += '\t\tmd["python_script"] = f.read()\n'
@@ -427,12 +444,6 @@ def build_protocol(
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(protocol_string)
-
-    # the protocol is converted to a dictionary and saved as a json
-    protocol_dict = load_save_functions.get_save_str(protocol)
-    if not isinstance(file_path, pathlib.Path):
-        file_path = pathlib.Path(file_path)
-    load_save_functions.save_dictionary(file_path.with_suffix(".cprot"), protocol_dict)
 
 
 def user_sample_string(userdata, sampledata):

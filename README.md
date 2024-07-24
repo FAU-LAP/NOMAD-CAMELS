@@ -23,6 +23,40 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.06371/status.svg)](https://doi.org/10.21105/joss.06371)
 
 # Changelog
+## 1.2.3
+Changes:
+- Variable signal is now saved as group instead of dataset
+
+Fixes:
+- Can now save variables with non-scalar size
+
+## 1.2.2
+Features:
+- Included the protocol's json used by the configuration in CAMELS into the data file
+- Added functionality to replace loopsteps (instead of delete + add a new one)
+- Included exception handling for manual control threads and allow for restarting them on error
+- Added a progress bar functionality for the wait-step
+- Added conditional waiting to the wait-step
+- More info on python file step in protocol overview
+
+Fixes:
+- Cannot move protocols or manual controls to empty tab containing the "+" button anymore
+- If instrument instantiation fails, only the actual error should now be raised
+- Improved thread stability of stage control
+- plots that were once closed now behave correctly, not throwing an error on closing again and can be closed by the close plots button
+- Read Channels with the same channels but different state of reading variables now work
+- Search bar of menu of editable boxes now appears at the top instead of bottom
+- cannot display empty menus for insert-variables anymore --> search does not break menu anymore
+
+## 1.2.1
+Features:
+- added NOMAD metadata to NOMAD samples
+
+Fixes:
+- For loop for which no distance was ever defined was broken, now fixed
+- Fixed bug that prevented the app from starting when no tabs were used before
+- Fixed issue with dots in paths
+
 
 ## 1.3.0
 
@@ -38,16 +72,18 @@ Features:
 - Added a filter functionality to the right-click menu when setting channels or variables. This filters all available channels, variables or functions by the string that is entered.
 - Added the `Execute Python File` loop step. This allows the user to specify a Python file and a Python environment to run the file with. The environment can either be the same as the one running CAMELS (default), a different already existing one, or is created dynamically by giving it the required packages and versions. The Python file can return (realized by printing) a dictionary with key value pairs. To read these, give the name of the key in the `Values returned by the Python file` list.
 - Added a tab that allows you to add new tabs simply by clicking it.
+- Point Distance can now be used for For-loops.
 
 Changes:
 - Running a protocol with a subprotocol also builds the subprotocol now. This makes it easier to change sub-protocols for more complex measurement routines.
+- start-min-max-stop sweeps in a for loop now behave differently, the number of points is now the total number of points, not the number between min and max
 
 Fixes:
 - Description fields now change their size dynamically.
 - Filtering the channels by name does not break if no matches were found.
 - Filtering Set Channels now does not reset the value if the channel does not match the query.
 - Fixed the hide/show information when installing instruments
-- 
+
 
 ## 1.1.2
 

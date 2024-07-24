@@ -26,7 +26,7 @@ class Variable_Box(QLineEdit):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setToolTip("test")
+        # self.setToolTip("test")
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         self.textChanged.connect(self.check_string)
@@ -95,13 +95,13 @@ class Variable_Box(QLineEdit):
         # Adding the container widget to the menu
         action = QWidgetAction(menu)
         action.setDefaultWidget(container)
-        menu.addAction(action)
+        menu.insertAction(menu.actions()[0], action)
         # putting the returned actions somewhere is necessary, otherwise
         # there will be none inside the single menus
         (self.channel_menu, self.variable_menu, self.function_menu), _ = (
             variables_handling.get_menus(self.insert_variable)
         )
-        first_act = menu.actions()[0]
+        first_act = menu.actions()[1]
         menu.insertMenu(first_act, self.channel_menu)
         menu.insertMenu(first_act, self.variable_menu)
         menu.insertMenu(first_act, self.function_menu)
@@ -132,6 +132,13 @@ class Variable_Box(QLineEdit):
             self.variable_menu2,
             self.function_menu2,
         ]:
+            if not any(
+                query.lower() in action.text().lower() for action in menu.actions()
+            ):
+                menu.setEnabled(False)
+                continue
+            elif not menu.isEnabled():
+                menu.setEnabled(True)
             for action in menu.actions():
                 action.setVisible(query.lower() in action.text().lower())
 

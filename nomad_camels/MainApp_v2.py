@@ -416,6 +416,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         self.open_plots.append(plot)
         plot.closing.connect(lambda x=plot: self.open_plots.remove(x))
+        plot.reopened.connect(lambda x=plot: self.open_plots.append(x))
+        plot.reopened.connect(lambda x=plot: self.open_windows.append(x))
         self.add_to_open_windows(plot)
 
     def close_plots(self):
@@ -1357,6 +1359,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         tab = tab or self.button_area_meas.get_active_tab()
         self.button_area_meas.add_button(button, name, tab)
         self.add_functions_to_meas_button(button, name)
+        if not self.protocol_tabs_dict.get(tab):
+            self.protocol_tabs_dict[tab] = []
         self.protocol_tabs_dict[tab].append(name)
 
     def add_functions_to_meas_button(self, button, name):
@@ -1488,7 +1492,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(
                 device_list, skip_config=protocol.skip_config
             )
-            self.instantiate_devices_thread.finished.connect(self.run_protocol_part2)
+            self.instantiate_devices_thread.successful.connect(self.run_protocol_part2)
             self.instantiate_devices_thread.exception_raised.connect(
                 self.propagate_exception
             )

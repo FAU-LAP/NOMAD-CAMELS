@@ -101,15 +101,19 @@ class Sample_Selector(QDialog):
     def entry_change(self):
         self.entry_info.setText(yaml.dump(self.get_current_entry_data()))
 
-    def get_current_entry_data(self):
+    def get_current_entry_data(self, include_metadata=False):
         entry = self.entry_box.currentText()
         for i, ent in enumerate(self.entry_names):
             if ent == entry:
-                return self.entry_data[i]
+                if include_metadata:
+                    data = dict(self.entry_data[i])
+                    data["NOMAD_entry_metadata"] = dict(self.entry_metadata[i])
+                    return data
+                return dict(self.entry_data[i])
         return {}
 
     def accept(self):
-        self.sample_data = self.get_current_entry_data()
+        self.sample_data = self.get_current_entry_data(True)
         if "name" not in self.sample_data and "Name" not in self.sample_data:
             self.sample_data["name"] = self.entry_box.currentText().split(".")[0]
         super().accept()
