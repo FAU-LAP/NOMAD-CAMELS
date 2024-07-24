@@ -38,6 +38,7 @@ Changes:
 Fixes:
 - Can now save variables with non-scalar size
 - x-y plot now working with array-data again
+- Multiple occurances of same protocol in tab-dictionary in save-json removed
 
 ## 1.2.2
 Features:

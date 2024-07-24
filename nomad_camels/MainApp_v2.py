@@ -1043,6 +1043,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             The name of the manual control to remove.
         """
         self.manual_controls.pop(control_name)
+        for controls in self.manual_tabs_dict.values():
+            if control_name in controls:
+                controls.remove(control_name)
+                break
         self.button_area_manual.remove_button(control_name)
         if not self.manual_controls:
             self.button_area_manual.setHidden(True)
@@ -1271,6 +1275,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             The name of the protocol to remove.
         """
         self.protocols_dict.pop(prot_name)
+        for prots in self.protocol_tabs_dict.values():
+            if prot_name in prots:
+                prots.remove(prot_name)
+                break
         self.button_area_meas.remove_button(prot_name)
         if not self.protocols_dict:
             self.button_area_meas.setHidden(True)
@@ -1361,7 +1369,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.add_functions_to_meas_button(button, name)
         if not self.protocol_tabs_dict.get(tab):
             self.protocol_tabs_dict[tab] = []
-        self.protocol_tabs_dict[tab].append(name)
+        if not name in self.protocol_tabs_dict[tab]:
+            self.protocol_tabs_dict[tab].append(name)
 
     def add_functions_to_meas_button(self, button, name):
         """
