@@ -39,7 +39,6 @@ security = HTTPBasic()
 
 # Define the dependency for API key validation
 async def validate_credentials(credentials: HTTPBasicCredentials = Depends(security)):
-    print("Still using this function validate credentials")
     api_key = credentials.password
     # The api_key is directly taken from credentials.password
     if api_key and validate_api_key(api_key):
