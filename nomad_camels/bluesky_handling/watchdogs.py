@@ -27,6 +27,7 @@ class Watchdog:
         read_timer=10,
         active=True,
         name="watchdog",
+        **kwargs,
     ):
         self.name = name
         self.channels = channels or []
@@ -48,7 +49,7 @@ class Watchdog:
         for channel in self.channels:
             chan = variables_handling.channels[channel]
             if chan.device not in devices:
-                devices.append(channel.device)
+                devices.append(chan.device)
         return devices
 
     def add_device(self, device_name, ophyd_device):
@@ -56,9 +57,9 @@ class Watchdog:
         for channel in self.channels:
             chan = variables_handling.channels[channel]
             if chan.device == device_name:
-                getattr(ophyd_device, chan.name).subscribe(self.callback)
+                getattr(ophyd_device, chan.name.split(".")[-1]).subscribe(self.callback)
 
-    def callback(self):
+    def callback(self, value, **kwargs):
         if self.eva.eval(self.condition):
             self.execute_at_condition()
 
