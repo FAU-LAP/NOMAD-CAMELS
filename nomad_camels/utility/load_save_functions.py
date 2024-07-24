@@ -45,6 +45,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
 )
 from PySide6.QtGui import QAction
+from PySide6.QtCore import QTimer
 
 from datetime import datetime, timedelta
 import json
@@ -55,6 +56,8 @@ from nomad_camels.utility.load_save_helper_functions import load_plots
 from nomad_camels.utility.device_handling import load_local_packages
 from nomad_camels.utility import variables_handling
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
+from nomad_camels.bluesky_handling.watchdogs import Watchdog
+from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 
 
 os_name = platform.system()
@@ -101,6 +104,8 @@ save_dict_skip = [
     QAction,
     QStatusBar,
     QGridLayout,
+    QTimer,
+    Evaluator,
 ]
 
 # Get the current operating system
@@ -395,6 +400,9 @@ def load_save_dict(
                 obj.setCurrentText(val)
             elif issubclass(type(obj), QLineEdit):
                 obj.setText(val)
+            elif key == "watchdogs":
+                for w in val:
+                    obj[w] = Watchdog(**val[w])
             elif key == "protocols_dict":
                 load_protocols_dict(val, obj)
             elif key in ["active_devices_dict", "active_instruments"]:

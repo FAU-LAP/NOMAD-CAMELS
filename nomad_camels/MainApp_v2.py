@@ -104,6 +104,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             "manual_controls": self.manual_controls,
             "protocol_tabs_dict": self.protocol_tabs_dict,
             "manual_tabs_dict": self.manual_tabs_dict,
+            "watchdogs": variables_handling.watchdogs,
         }
         self.preferences = {}
         self.load_preferences()
@@ -219,6 +220,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
+
+        self.actionWatchdogs.triggered.connect(self.open_watchdog_definition)
+
+    def open_watchdog_definition(self):
+        """Opens the Watchdog_Definer dialog."""
+        # IMPORT Watchdog_Definer only if it is needed
+        from nomad_camels.bluesky_handling.watchdogs import Watchdog_Definer
+
+        dialog = Watchdog_Definer(self)
+        dialog.exec()
 
     def show_hide_log(self):
         """ """
@@ -922,7 +933,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 encoding="utf-8",
             ) as f:
                 preset_dict = json.load(f)
-        except:
+        except FileNotFoundError:
             with open(preset, "r", encoding="utf-8") as f:
                 preset_dict = json.load(f)
         try:
@@ -950,6 +961,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             "manual_controls": self.manual_controls,
             "protocol_tabs_dict": self.protocol_tabs_dict,
             "manual_tabs_dict": self.manual_tabs_dict,
+            "watchdogs": variables_handling.watchdogs,
         }
         for key in self.preset_save_dict:
             add_string = load_save_functions.get_save_str(self.preset_save_dict[key])

@@ -279,6 +279,9 @@ def instantiate_devices(device_list, skip_config=False):
             device_config[dev].update(helper_functions.simplify_configs_dict(configs))
             device_config[dev].update(settings)
             device_config[dev].update(additional_info)
+            for watchdog in variables_handling.watchdogs.values():
+                if dev in watchdog.get_device_list():
+                    watchdog.add_device(dev, ophyd_device)
             started_devs.append(dev)
     except Exception as e:
         close_devices(started_devs)
@@ -335,6 +338,7 @@ class InstantiateDevicesThread(QThread):
             self.devices, self.device_config = instantiate_devices(
                 main_thread_devs, skip_config=skip_config
             )
+        self.run()
 
     def run(self):
         try:
