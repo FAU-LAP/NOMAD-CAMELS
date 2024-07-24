@@ -39,6 +39,7 @@ security = HTTPBasic()
 
 # Define the dependency for API key validation
 async def validate_credentials(credentials: HTTPBasicCredentials = Depends(security)):
+    print("Still using this function validate credentials")
     api_key = credentials.password
     # The api_key is directly taken from credentials.password
     if api_key and validate_api_key(api_key):
@@ -53,16 +54,17 @@ async def validate_credentials(credentials: HTTPBasicCredentials = Depends(secur
 class FastapiThread(QThread):
     # Define signals for communicating with the main window
     start_protocol = Signal(str)
-    port_error_signal = Signal(str) # Signal to send error message to main window
+    port_error_signal = Signal(str)  # Signal to send error message to main window
 
     def __init__(self, main_window, api_port):
         super().__init__()
         self.main_window = main_window
         self.api_port = api_port
         self._stop_event = threading.Event()
+        self.app = FastAPI()  # Initialize the FastAPI app
 
     def run(self):
-        app = FastAPI()
+        app = self.app
 
         @app.get("/protocols")
         async def get_protocols(api_key: str = Depends(validate_credentials)):
@@ -99,11 +101,11 @@ class FastapiThread(QThread):
         # Start the uvicorn server
         try:
             self.server_config = uvicorn.Config(
-            app, host="127.0.0.1", port=int(self.api_port), log_level="info"
-        )
+                app, host="127.0.0.1", port=int(self.api_port), log_level="info"
+            )
             self.server = uvicorn.Server(self.server_config)
 
-        # Run the server
+            # Run the server
             self.server.run()
         except ValueError:  # Catching ValueError for invalid port conversion
             print(f"Invalid port number: {self.api_port}")
