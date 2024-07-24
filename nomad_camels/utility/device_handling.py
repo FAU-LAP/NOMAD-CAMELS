@@ -338,7 +338,8 @@ class InstantiateDevicesThread(QThread):
             self.devices, self.device_config = instantiate_devices(
                 main_thread_devs, skip_config=skip_config
             )
-        self.run()
+        # uncomment next line for testing purposes
+        # self.run()
 
     def run(self):
         try:
@@ -379,3 +380,6 @@ def close_devices(device_list):
                 ophyd_dev.finalize_steps
             ):
                 ophyd_dev.finalize_steps()
+            for watchdog in variables_handling.watchdogs.values():
+                if dev in watchdog.get_device_list():
+                    watchdog.remove_device(dev, ophyd_dev)

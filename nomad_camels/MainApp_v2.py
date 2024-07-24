@@ -31,6 +31,7 @@ from nomad_camels.utility import (
 )
 from nomad_camels.ui_widgets import options_run_button, warn_popup
 from nomad_camels.extensions import extension_contexts
+from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 
 from collections import OrderedDict
 import importlib
@@ -222,6 +223,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.importer_thread.start(priority=QThread.LowPriority)
 
         self.actionWatchdogs.triggered.connect(self.open_watchdog_definition)
+        self.eva = Evaluator()
+        for watchdog in variables_handling.watchdogs.values():
+            watchdog.eva = self.eva
 
     def open_watchdog_definition(self):
         """Opens the Watchdog_Definer dialog."""
@@ -327,6 +331,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         import databroker
 
         self.run_engine = RunEngine()
+        for watchdog in variables_handling.watchdogs.values():
+            watchdog.condition_met.connect(self.pause_protocol)
+        self.run_engine.subscribe(self.eva)
         bec = BestEffortCallback()
         self.run_engine.subscribe(bec)
         self.change_catalog_name()

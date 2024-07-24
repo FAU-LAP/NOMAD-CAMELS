@@ -1,4 +1,4 @@
-from PySide6.QtCore import QTimer, Signal
+from PySide6.QtCore import QTimer, Signal, QObject
 from PySide6.QtWidgets import (
     QWidget,
     QGridLayout,
@@ -17,7 +17,9 @@ from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 from nomad_camels.utility import variables_handling
 
 
-class Watchdog:
+class Watchdog(QObject):
+    condition_met = Signal()
+
     def __init__(
         self,
         channels=None,
@@ -29,6 +31,7 @@ class Watchdog:
         name="watchdog",
         **kwargs,
     ):
+        super().__init__()
         self.name = name
         self.channels = channels or []
         self.condition = condition
@@ -37,8 +40,9 @@ class Watchdog:
         self.read_timer = read_timer
         self.active = active
         self.timer = QTimer()
-        self.eva = Evaluator()
+        self.eva = None
         self.timer.timeout.connect(self.read)
+        self.subscriptions = {}
 
     def read(self):
         pass
@@ -52,16 +56,37 @@ class Watchdog:
                 devices.append(chan.device)
         return devices
 
+    def remove_device(self, device_name, ophyd_device):
+        """Unsubscribes the respective channels corresponding to the device"""
+        for channel in self.channels:
+            chan = variables_handling.channels[channel]
+            if chan.device == device_name:
+                getattr(ophyd_device, chan.name.split(".")[-1]).unsubscribe(
+                    self.subscriptions[channel]
+                )
+                self.subscriptions.pop(channel)
+
     def add_device(self, device_name, ophyd_device):
         """Subscribes the respective channels corresponding to the device"""
         for channel in self.channels:
             chan = variables_handling.channels[channel]
             if chan.device == device_name:
-                getattr(ophyd_device, chan.name.split(".")[-1]).subscribe(self.callback)
+                sub = getattr(ophyd_device, chan.name.split(".")[-1]).subscribe(
+                    self.callback
+                )
+                self.subscriptions[channel] = sub
 
     def callback(self, value, **kwargs):
-        if self.eva.eval(self.condition):
-            self.execute_at_condition()
+        if "obj" in kwargs and hasattr(kwargs["obj"], "name"):
+            self.eva.namespace[kwargs["obj"].name] = value
+        try:
+            condition = self.eva.eval(self.condition)
+        except:
+            print(f'Evaluating condition failed for watchdog "{self.name}"!')
+            return
+        if condition:
+            self.condition_met.emit()
+            print("condition")
 
 
 class Watchdog_Definer(QDialog):
