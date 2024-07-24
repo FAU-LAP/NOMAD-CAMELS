@@ -31,6 +31,7 @@ from nomad_camels.utility import (
 )
 from nomad_camels.ui_widgets import options_run_button, warn_popup
 from nomad_camels.extensions import extension_contexts
+from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 
 from collections import OrderedDict
 import importlib
@@ -110,6 +111,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             "manual_controls": self.manual_controls,
             "protocol_tabs_dict": self.protocol_tabs_dict,
             "manual_tabs_dict": self.manual_tabs_dict,
+            "watchdogs": variables_handling.watchdogs,
         }
         self.preferences = {}
         self.load_preferences()
@@ -222,6 +224,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.extensions = []
         self.load_extensions()
         self.actionManage_Extensions.triggered.connect(self.manage_extensions)
+        
+        self.actionWatchdogs.triggered.connect(self.open_watchdog_definition)
+        self.eva = Evaluator()
+        for watchdog in variables_handling.watchdogs.values():
+            watchdog.eva = self.eva
 
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
@@ -243,6 +250,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.fastapi_thread.stop_server()
             self.fastapi_thread = None
             self.current_api_port = None
+
+    def open_watchdog_definition(self):
+        """Opens the Watchdog_Definer dialog."""
+        # IMPORT Watchdog_Definer only if it is needed
+        from nomad_camels.bluesky_handling.watchdogs import Watchdog_Definer
+
+        dialog = Watchdog_Definer(self)
+        dialog.exec()
 
     def show_hide_log(self):
         """ """
@@ -340,6 +355,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         import databroker
 
         self.run_engine = RunEngine()
+        for watchdog in variables_handling.watchdogs.values():
+            watchdog.condition_met.connect(self.pause_protocol)
+        self.run_engine.subscribe(self.eva)
         bec = BestEffortCallback()
         self.run_engine.subscribe(bec)
         self.change_catalog_name()
@@ -955,7 +973,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 encoding="utf-8",
             ) as f:
                 preset_dict = json.load(f)
-        except:
+        except FileNotFoundError:
             with open(preset, "r", encoding="utf-8") as f:
                 preset_dict = json.load(f)
         try:
@@ -983,6 +1001,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             "manual_controls": self.manual_controls,
             "protocol_tabs_dict": self.protocol_tabs_dict,
             "manual_tabs_dict": self.manual_tabs_dict,
+            "watchdogs": variables_handling.watchdogs,
         }
         for key in self.preset_save_dict:
             add_string = load_save_functions.get_save_str(self.preset_save_dict[key])

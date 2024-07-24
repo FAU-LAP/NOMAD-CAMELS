@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
+    <width>1207</width>
     <height>681</height>
    </rect>
   </property>
@@ -1009,7 +1009,7 @@ QPushButton:disabled {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1200</width>
+     <width>1207</width>
      <height>21</height>
     </rect>
    </property>
@@ -1037,6 +1037,8 @@ QPushButton:disabled {
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="actionWatchdogs"/>
+    <addaction name="separator"/>
     <addaction name="actionUpdate_CAMELS"/>
     <addaction name="separator"/>
     <addaction name="actionExport_from_databroker"/>
@@ -1196,6 +1198,11 @@ QPushButton:disabled {
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionWatchdogs">
+   <property name="text">
+    <string>Watchdogs</string>
    </property>
   </action>
  </widget>
