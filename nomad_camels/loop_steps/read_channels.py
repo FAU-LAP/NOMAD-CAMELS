@@ -103,11 +103,12 @@ class Read_Channels(Loop_Step):
         only allows reading the same channels inside one stream."""
         # checking compatibility with other readings
         chan_list = self.get_channels_set()
-        if set(chan_list) in variables_handling.read_channel_sets:
-            n = variables_handling.read_channel_sets.index(set(chan_list))
+        channels_w_variables = set(list(chan_list) + [self.read_variables])
+        if channels_w_variables in variables_handling.read_channel_sets:
+            n = variables_handling.read_channel_sets.index(channels_w_variables)
         else:
             n = len(variables_handling.read_channel_names)
-            variables_handling.read_channel_sets.append(chan_list)
+            variables_handling.read_channel_sets.append(channels_w_variables)
             if n > 0:
                 variables_handling.read_channel_names.append(f'f"{{stream_name}}_{n}"')
             else:

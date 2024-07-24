@@ -19,6 +19,7 @@ class Values_List_Plot(QWidget):
     """ """
 
     closing = pySignal()
+    reopened = pySignal()
 
     def __init__(
         self,
@@ -44,7 +45,7 @@ class Values_List_Plot(QWidget):
             plot_all_available=plot_all_available,
             **kwargs,
         )
-        self.livePlot.new_data.connect(self.show)
+        self.livePlot.new_data.connect(self.show_again)
 
         layout = QGridLayout()
         layout.addWidget(self.table)
@@ -58,6 +59,11 @@ class Values_List_Plot(QWidget):
         self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
         self.stream_name = stream_name
         place_widget(self)
+
+    def show_again(self):
+        if not self.isVisible():
+            self.show()
+            self.reopened.emit()
 
     def clear_plot(self):
         pass
@@ -197,7 +203,10 @@ class Live_List(QtAwareCallback, QObject):
                     if not self.eva.is_to_date(doc["time"]):
                         self.eva.event(doc)
                     new_val = self.eva.eval(val)
-            self.val_items[i].setText(f"{new_val:7e}")
+            if isinstance(new_val, bool) or np.issubdtype(type(new_val), np.bool_):
+                self.val_items[i].setText(str(new_val))
+            else:
+                self.val_items[i].setText(f"{new_val:7e}")
         if self.plot_all_available:
             for name, value in doc["data"].items():
                 if name in self.value_list:

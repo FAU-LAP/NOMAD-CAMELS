@@ -68,6 +68,11 @@ step_type_config = {
     ],
 }
 
+steps_with_children = []
+for step in step_type_config:
+    if step_type_config[step][0]().has_children:
+        steps_with_children.append(step)
+
 non_addables = {
     "If_Sub": [if_step.If_Sub_Step, if_step.Sub_Step_Config],
     "Elif_Sub": [if_step.Elif_Sub_Step, if_step.Sub_Step_Config],

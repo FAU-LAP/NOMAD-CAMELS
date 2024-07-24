@@ -153,6 +153,7 @@ class PlotWidget(QWidget):
     """
 
     closing = Signal()
+    reopened = Signal()
 
     def __init__(
         self,
@@ -301,7 +302,7 @@ class PlotWidget(QWidget):
                 first_hidden=first_hidden,
             )
         self.livePlot.plotItem.showGrid(True, True)
-        self.livePlot.new_data_signal.connect(self.show)
+        self.livePlot.new_data_signal.connect(self.show_again)
         self.livePlot.setup_done_signal.connect(self.make_toolbar)
         self.toolbar = None
         self.pushButton_show_options = QPushButton("Show Options")
@@ -326,6 +327,11 @@ class PlotWidget(QWidget):
         self.plot_options.hide()
         self.adjustSize()
         place_widget(self)
+
+    def show_again(self):
+        if not self.isVisible():
+            self.show()
+            self.reopened.emit()
 
     def make_toolbar(self):
         """Creates the toolbar for the plot widget. This toolbar is based on the context menu of the plot. The View All is connected with `auto_range`."""
@@ -521,7 +527,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         """
         item = self.tableWidget.cellWidget(row, 3)
         if just_update:
-            color = QColor(item.text()) 
+            color = QColor(item.text())
         else:
             color = QColorDialog.getColor()
             if not color.isValid():
@@ -1020,6 +1026,7 @@ class PlotWidget_2D(QWidget):
     """ """
 
     closing = Signal()
+    reopened = Signal()
 
     def __init__(
         self,
@@ -1058,12 +1065,18 @@ class PlotWidget_2D(QWidget):
             stream_name=stream_name,
             **kwargs,
         )
+        self.livePlot.new_data.connect(self.show_again)
 
         self.setLayout(QGridLayout())
         self.layout().addWidget(self.graphics_layout, 0, 0)
         self.make_toolbar()
         self.adjustSize()
         place_widget(self)
+
+    def show_again(self):
+        if not self.isVisible():
+            self.show()
+            self.reopened.emit()
 
     def make_toolbar(self):
         self.toolbar = QMenuBar()

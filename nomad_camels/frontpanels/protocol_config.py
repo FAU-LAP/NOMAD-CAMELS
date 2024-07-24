@@ -273,6 +273,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             below_actions = []
             above_actions = []
             into_actions = []
+            replace_actions = []
             row = inds[0].row()
             parent = item.parent()
             if parent is not None:
@@ -301,6 +302,18 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 below_actions.append(action)
                 above_actions.append(action_a)
                 into_actions.append(action_in)
+                if (
+                    not self.protocol.loop_step_dict[item.data()].has_children
+                    or not self.protocol.loop_step_dict[item.data()].children
+                    or stp in make_step_of_type.steps_with_children
+                ):
+                    action_replace = QAction(stp)
+                    action_replace.triggered.connect(
+                        lambda state=None, x=stp, y=row, z=parent: self.replace_loop_step(
+                            x, y, z
+                        )
+                    )
+                    replace_actions.append(action_replace)
             device_actions = []
             device_actions_a = []
             device_actions_in = []
@@ -342,8 +355,11 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 if device_actions:
                     add_in_menu.addSeparator()
                     add_in_menu.addActions(device_actions_in)
+            replace_menu = QMenu("Replace with")
+            replace_menu.addActions(replace_actions)
             menu.addMenu(insert_above_menu)
             menu.addMenu(insert_below_menu)
+            menu.addMenu(replace_menu)
             menu.addSeparator()
             cut_action = QAction("Cut\tCtrl + X")
             cut_action.triggered.connect(
@@ -591,7 +607,8 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
         Returns
         -------
-
+        step : Loop_Step
+            the newly added loop_step
 
         """
 
@@ -616,6 +633,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             new_ind, QItemSelectionModel.Select
         )
         self.tree_click_sequence()
+        return step
 
     def remove_loop_step(self, ask=True):
         """After updating the loop_step order in the protocol, the
@@ -651,6 +669,20 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 self.protocol.remove_loop_step(name)
                 self.build_protocol_sequence()
                 self.check_movability()
+
+    def replace_loop_step(self, step_type="", position=-1, parent=None):
+        """ """
+        ind = self.treeView_protocol_sequence.selectedIndexes()[0]
+        children_names = treeView_functions.get_substeps(
+            self.item_model_sequence.itemFromIndex(ind)
+        )
+        children_steps = []
+        for child in children_names:
+            children_steps.append(self.protocol.loop_step_dict[child[0]])
+        self.remove_loop_step(ask=False)
+        step = self.add_loop_step(step_type, position, parent)
+        step.children = children_steps
+        self.build_protocol_sequence()
 
     def update_loop_step_order(self):
         """Goes through all the loop_steps in the sequence, then

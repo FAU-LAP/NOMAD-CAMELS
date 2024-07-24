@@ -57,7 +57,14 @@ def get_plot_add_string(name, stream, subprotocol=False):
     return add_main_string
 
 
-def plot_creator(plot_data, func_name="create_plots", multi_stream=False):
+def plot_creator(
+    plot_data,
+    func_name="create_plots",
+    multi_stream=False,
+    plot_is_box=False,
+    box_names="",
+    skip_box=True,
+):
     """
     Creates the `create_plots` function for the protocol.
 
@@ -140,5 +147,7 @@ def plot_creator(plot_data, func_name="create_plots", multi_stream=False):
             plot_string += f"\tplots.append(plot_{i})\n"
             plot_string += f"\tplot_{i}.show()\n"
             plot_string += f"\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n"
+        if plot_is_box:
+            plot_string += f"\tboxes['{box_names}_{i}'] = helper_functions.Waiting_Bar(title='{plot.title}', skipable={skip_box}, display_bar=False, plot=plot_{i})\n"
     plot_string += "\treturn plots, subs, app\n\n"
     return plot_string, plotting

@@ -18,6 +18,11 @@ def format_number(value):
     """
     if isinstance(value, int):
         return str(value)
+    if isinstance(value, str):
+        try:
+            value = float(value)
+        except ValueError:
+            return value
     if "number_format" not in preferences or "n_decimals" not in preferences:
         return str(f"{value:.2f}")
     if preferences["number_format"] == "plain":

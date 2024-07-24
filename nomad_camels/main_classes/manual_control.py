@@ -95,7 +95,7 @@ class Manual_Control(QWidget):
             self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(
                 self.device_list
             )
-            self.instantiate_devices_thread.finished.connect(self.device_ready)
+            self.instantiate_devices_thread.successful.connect(self.device_ready)
             self.setCursor(Qt.WaitCursor)
             self.setEnabled(False)
             self.instantiate_devices_thread.exception_raised.connect(
@@ -116,7 +116,7 @@ class Manual_Control(QWidget):
         self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(
             device_names, channels
         )
-        self.instantiate_devices_thread.finished.connect(self.device_ready)
+        self.instantiate_devices_thread.successful.connect(self.device_ready)
         self.setEnabled(False)
         self.instantiate_devices_thread.exception_raised.connect(
             self.propagate_exception
