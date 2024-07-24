@@ -10,6 +10,8 @@ os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
 from importlib import resources
 from nomad_camels import graphics
+# Add nomad_camels/gui folder to the python path
+sys.path.append(os.path.join(os.path.dirname(__file__),r"gui"))
 
 # Import your main application form
 # from main_window import MainWindow

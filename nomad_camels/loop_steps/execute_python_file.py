@@ -86,7 +86,12 @@ class Execute_Python_File(Loop_Step):
             values = self.variables_passing["Value"]
             for i in range(len(variable_names)):
                 # Format each "name = value" pair
-                formatted_string = f"f'{variable_names[i]} = {{{values[i]}}}',"
+                if values[i] == "":
+                    formatted_string = (
+                        f"f'{variable_names[i]}={{eva.eval(\"{variable_names[i]}\")}}',"
+                    )
+                else:
+                    formatted_string = f"f'{variable_names[i]}={{{values[i]}}}',"
                 # Append to the list
                 formatted_strings.append(formatted_string)
             # Step 4: Join all formatted strings with a space
@@ -129,13 +134,19 @@ class Execute_Python_File(Loop_Step):
 
     def update_variables(self):
         """ """
-        # Update the global variables to have access to the varaibles defined to pass to the python file
+        # Update the global variables to have access to the variables defined to pass to the python file
         variable_names = self.variables_passing.get("Variable Name", [])
         values = self.variables_passing.get("Value", [])
         # Create a dictionary from the lists
         new_variables = dict(zip(variable_names, values))
-        variables_handling.loop_step_variables.update(new_variables)
-        # Update the global variables to have access to the varaibles returned by the python file
+        # remove keys and value if the key is already in variables_handling.channels.keys()
+        # remove keys and value if the value is empty so that the value is taken from the running script
+        for key in list(new_variables.keys()):
+            if (key in variables_handling.channels.keys()) or (
+                new_variables[key] == ""
+            ):
+                new_variables.pop(key)
+        # Update the global variables to have access to the variables returned by the python file
         if "Variable Name" in self.returned_values_variables:
             for returned_values_variables in self.returned_values_variables[
                 "Variable Name"
@@ -144,6 +155,9 @@ class Execute_Python_File(Loop_Step):
                     if (
                         returned_values_variables
                         not in variables_handling.loop_step_variables
+                    ) and (
+                        returned_values_variables
+                        not in variables_handling.channels.keys()
                     ):
                         variables_handling.loop_step_variables.update(
                             {returned_values_variables: 0}

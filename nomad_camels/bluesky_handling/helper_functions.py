@@ -926,7 +926,8 @@ def evaluate_python_file_output(stdout, namespace):
 
     """Evaluates the stdout of a Python file execution and writes the returned key value pairs to the namespace, so CAMELS can access their values"""
     if stdout:
-        json_pattern = re.compile(r"\{.*\}")  # Extract the dictionary from the stdout
+        json_pattern = re.compile(r'\{(?:[^{}]*|\{.*?\})*\}') # Extract the dictionary from the stdout, can handle one level of nested dictionaries
+
         # Search for JSON in the stdout
         match = json_pattern.search(stdout)
 

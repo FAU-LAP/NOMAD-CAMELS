@@ -1,12 +1,17 @@
-from PySide6.QtWidgets import QDialog, QStyleFactory, QMessageBox
+from PySide6.QtWidgets import QDialog, QStyleFactory, QMessageBox, QApplication
 from PySide6.QtCore import Qt, QCoreApplication
-from PySide6.QtGui import QKeyEvent
+from PySide6.QtGui import QKeyEvent, QClipboard
 import qt_material
 
 from nomad_camels.gui.settings_window import Ui_settings_window
 from nomad_camels.utility import load_save_functions
 from nomad_camels.utility.theme_changing import change_theme
 from nomad_camels.utility.logging_settings import log_levels
+
+import secrets
+import hashlib
+import sqlite3
+import os
 
 
 class Settings_Window(Ui_settings_window, QDialog):
@@ -44,6 +49,11 @@ class Settings_Window(Ui_settings_window, QDialog):
         self.comboBox_material_theme.currentTextChanged.connect(self.change_theme)
         self.checkBox_dark.clicked.connect(self.change_theme)
         self.change_theme()
+
+        self.pushButton_generate_Api_key.clicked.connect(self.generate_api_key)
+        self.pushButton_copy_Api_key_clipboard.clicked.connect(self.copy_to_clipboard)
+        self.pushButton_delete_Api_keys.clicked.connect(self.confirm_delete_api_keys)
+        self.checkBox_enable_Api.clicked.connect(self.change_enable_API)
 
         standard_pref = load_save_functions.standard_pref
 
@@ -166,6 +176,15 @@ class Settings_Window(Ui_settings_window, QDialog):
         self.password_hash = ""
         if "password_hash" in settings:
             self.password_hash = settings["password_hash"]
+        if "enable_API" in settings:
+            self.checkBox_enable_Api.setChecked(settings["enable_API"])
+            # Disable the generate and delete API keys push buttons if the API is disenabled
+            if not self.checkBox_enable_Api.isChecked():
+                self.pushButton_generate_Api_key.setEnabled(False)
+                self.pushButton_copy_Api_key_clipboard.setEnabled(False)
+                self.pushButton_delete_Api_keys.setEnabled(False)
+        if "API_port" in settings:
+            self.lineEdit_api_port.setText(settings["API_port"])
 
     def autosave_run_change(self):
         on = self.checkBox_autosave_run.isChecked()
@@ -196,6 +215,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             if not pw.exec():
                 return
             self.password_hash = password_widgets.hash_password(pw.password)
+
         super().accept()
 
     def change_theme(self):
@@ -259,6 +279,8 @@ class Settings_Window(Ui_settings_window, QDialog):
             "new_file_each_run": self.checkBox_new_file_each_run.isChecked(),
             "extensions": self.extensions,
             "extension_path": self.pathButton_extension_path.get_path(),
+            "enable_API": self.checkBox_enable_Api.isChecked(),
+            "API_port": self.lineEdit_api_port.text(),
         }
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
@@ -277,3 +299,90 @@ class Settings_Window(Ui_settings_window, QDialog):
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)
+
+    def generate_api_key(self):
+        # Generate a random API key (example: 40 characters long)
+        api_key = secrets.token_urlsafe(40)
+        self.Api_key_lineEdit.setText(api_key)
+        # Save hash of the API key to the SQlite database file
+        # Database setup
+        data_base_path = os.path.join(
+            load_save_functions.appdata_path, "CAMELS_API_keys.db"
+        )
+        conn = sqlite3.connect(data_base_path, check_same_thread=False)
+        c = conn.cursor()
+        c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS api_keys (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                key TEXT NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        """
+        )
+        conn.commit()
+        # Store hashed API Key
+        store_api_key(api_key, conn)
+        conn.close()
+        # Disable the "Generate API Key" button and enable the "Copy to Clipboard" button
+        self.pushButton_generate_Api_key.setEnabled(False)
+        self.pushButton_copy_Api_key_clipboard.setEnabled(True)
+        # Turn the background of the copy_api_key_clipboard button to green
+        self.pushButton_copy_Api_key_clipboard.setStyleSheet(
+            "background-color: #0db002"
+        )
+
+    def confirm_delete_api_keys(self):
+        reply = QMessageBox.question(
+            self,
+            "Confirm Action",
+            "Are you sure you want to delete ALL API keys?\nYou can not reverse this action!\nIt will break all applications using API keys to communicate with CAMELS!",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
+
+        if reply == QMessageBox.Yes:
+            data_base_path = os.path.join(
+                load_save_functions.appdata_path, "CAMELS_API_keys.db"
+            )
+            conn = sqlite3.connect(data_base_path, check_same_thread=False)
+            c = conn.cursor()
+            # SQL statement to drop the api_keys table
+            c.execute("DROP TABLE IF EXISTS api_keys")
+            conn.commit()
+            conn.close()
+        else:
+            pass
+
+    def copy_to_clipboard(self):
+        api_key = self.Api_key_lineEdit.text()
+        if api_key:
+            clipboard = QApplication.clipboard()
+            clipboard.setText(api_key)
+            QMessageBox.information(self, "Copied", "API Key copied to clipboard!")
+        else:
+            QMessageBox.warning(self, "Warning", "No API Key to copy!")
+
+    def change_enable_API(self):
+        if self.checkBox_enable_Api.isChecked():
+            self.pushButton_generate_Api_key.setEnabled(True)
+            self.pushButton_delete_Api_keys.setEnabled(True)
+        else:
+            self.pushButton_generate_Api_key.setEnabled(False)
+            self.pushButton_copy_Api_key_clipboard.setEnabled(False)
+            self.pushButton_delete_Api_keys.setEnabled(False)
+            self.pushButton_copy_Api_key_clipboard.setStyleSheet(
+                ""
+            )
+
+
+def hash_api_key(api_key):
+    return hashlib.sha256(api_key.encode()).hexdigest()
+
+
+# Store API Key
+def store_api_key(api_key, conn):
+    hashed_key = hash_api_key(api_key)
+    c = conn.cursor()
+    c.execute("INSERT INTO api_keys (key) VALUES (?)", (hashed_key,))
+    conn.commit()

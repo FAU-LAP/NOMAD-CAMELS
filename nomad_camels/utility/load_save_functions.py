@@ -143,6 +143,8 @@ standard_pref = {
     "password_protection": False,
     "password_hash": "",
     "new_file_each_run": True,
+    "enable_API": False,
+    "API_port": "5000",
 }
 
 
