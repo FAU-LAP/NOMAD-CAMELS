@@ -44,14 +44,14 @@ You can also use Python to perform the http request. This could look something l
 
 ```python
 import requests
-api_key = 123 # Enter the actual API you got from CAMELS here
+api_key = 123 # Enter the actual API key you got from CAMELS here
 result = requests.get("http://localhost:5000/protocols", auth=("", f"{api_key}"))
 ```
 
 The API will return a JSON string of the form:
 
 ```JSON
-{"Protocols":["ProtocolXYZ","DefaultProtocol", ...]}
+{"Protocols":["ProtocolXYZ","DefaultProtocol","..."]}
 ```
 
 ### Running Protocols
