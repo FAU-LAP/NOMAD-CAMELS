@@ -12,3 +12,4 @@ dist/
 CAMELS.code-workspace
 **/config_path
 startup_packages.txt
+/.42c

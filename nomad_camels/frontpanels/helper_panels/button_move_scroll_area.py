@@ -423,7 +423,6 @@ class RenameTabWidget(QTabWidget):
         self.plus_tab.setStyleSheet(
             """
             QPushButton {
-                background-color: #4CAF50; /* green */
                 border: none; /* Remove border for a cleaner look */
                 color: white; /* Text color */
                 padding: 0px; /* Adjust padding as needed */
@@ -432,13 +431,13 @@ class RenameTabWidget(QTabWidget):
                 font-size: 22px;
                 font-weight: bold;
                 text-align: center;
-                margin: 2px 2px;
+                margin: 0px; /* Remove margin to avoid green box */
             }
             QPushButton:hover {
-                background-color: #45a049; /* Slightly lighter green on hover */
+                color: #abaaa7; /* Slightly darker gray on hover */
             }
             QPushButton:pressed {
-                background-color: #2f6331; /* Slightly darker green when pressed */
+                color: #5e5e5c; /* Slightly darker gray when pressed */
             }
             """
         )
