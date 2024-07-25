@@ -2,7 +2,6 @@ from PySide6.QtCore import QTimer, Signal, QObject
 from PySide6.QtWidgets import (
     QWidget,
     QGridLayout,
-    QPushButton,
     QDialog,
     QCheckBox,
     QDialogButtonBox,
@@ -46,6 +45,9 @@ class Watchdog(QObject):
         self.was_triggered = False
 
     def read(self):
+        # TODO periodic read
+        # TODO save data for several triggers
+        # TODO enable plotting
         pass
 
     def get_device_list(self):
