@@ -76,7 +76,7 @@ standard_string += (
 standard_string += "from event_model import RunRouter\n"
 standard_string += "darkmode = False\n"
 standard_string += 'theme = "default"\n'
-standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "total_protocol_steps": 0, "protocol_stepper_signal": None}\n'
+standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "total_protocol_steps": 1, "protocol_stepper_signal": None}\n'
 
 
 # this string is used for collection of uids to later access the data

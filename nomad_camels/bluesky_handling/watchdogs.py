@@ -13,12 +13,12 @@ from PySide6.QtWidgets import (
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.variable_tool_tip_box import Variable_Box
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
-from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
+from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.utility import variables_handling
 
 
 class Watchdog(QObject):
-    condition_met = Signal()
+    condition_met = Signal(QObject)
 
     def __init__(
         self,
@@ -43,6 +43,7 @@ class Watchdog(QObject):
         self.eva = None
         self.timer.timeout.connect(self.read)
         self.subscriptions = {}
+        self.was_triggered = False
 
     def read(self):
         pass
@@ -85,7 +86,9 @@ class Watchdog(QObject):
             print(f'Evaluating condition failed for watchdog "{self.name}"!')
             return
         if condition:
-            self.condition_met.emit()
+            if not self.was_triggered:
+                self.condition_met.emit(self)
+            self.was_triggered = True
             print("condition")
 
 
@@ -166,7 +169,13 @@ class Watchdog_View(QWidget):
         self.channels_table = Channels_Check_Table(
             self, ["use", "channel"], title="connected channels"
         )
-        self.execution_button = QPushButton("Execute at condition")
+
+        self.label_protocol = QLabel("Execute at condition")
+        self.protocol_selection = Path_Button_Edit(
+            self,
+            default_dir=variables_handling.preferences["py_files_path"],
+            file_extension="*.cprot",
+        )
 
         self.read_check = QCheckBox("force periodic read")
         self.read_timer = QSpinBox()
@@ -184,7 +193,7 @@ class Watchdog_View(QWidget):
         self.widgets = [
             self.condition_box,
             self.channels_table,
-            self.execution_button,
+            self.protocol_selection,
             self.read_check,
             self.read_timer,
             self.label_name,
@@ -199,7 +208,7 @@ class Watchdog_View(QWidget):
         self.layout().addWidget(self.read_check, 3, 0)
         self.layout().addWidget(self.read_timer, 3, 1)
         self.layout().addWidget(self.channels_table, 4, 0, 1, 2)
-        self.layout().addWidget(self.execution_button, 5, 0, 1, 2)
+        self.layout().addWidget(self.protocol_selection, 5, 0, 1, 2)
 
         self.update_watchdog(None)
 
@@ -232,4 +241,5 @@ class Watchdog_View(QWidget):
         self.watchdog.read_timer = self.read_timer.value()
         self.watchdog.active = self.checkbox_active.isChecked()
         self.watchdog.name = self.name_box.text()
+        self.watchdog.execute_at_condition = self.protocol_selection.get_path()
         return self.watchdog

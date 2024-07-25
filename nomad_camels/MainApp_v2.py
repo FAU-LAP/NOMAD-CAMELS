@@ -46,6 +46,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     protocol_stepper_signal = Signal(int)
     run_done_file_signal = Signal(str)
+    fake_signal = Signal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -224,11 +225,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.extensions = []
         self.load_extensions()
         self.actionManage_Extensions.triggered.connect(self.manage_extensions)
-        
+
         self.actionWatchdogs.triggered.connect(self.open_watchdog_definition)
         self.eva = Evaluator()
         for watchdog in variables_handling.watchdogs.values():
             watchdog.eva = self.eva
+            watchdog.condition_met.connect(self.watchdog_triggered)
 
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
@@ -258,6 +260,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         dialog = Watchdog_Definer(self)
         dialog.exec()
+        for watchdog in variables_handling.watchdogs.values():
+            watchdog.eva = self.eva
+            watchdog.condition_met.connect(self.watchdog_triggered)
 
     def show_hide_log(self):
         """ """
@@ -355,8 +360,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         import databroker
 
         self.run_engine = RunEngine()
-        for watchdog in variables_handling.watchdogs.values():
-            watchdog.condition_met.connect(self.pause_protocol)
         self.run_engine.subscribe(self.eva)
         bec = BestEffortCallback()
         self.run_engine.subscribe(bec)
@@ -1632,10 +1635,123 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         Pause the protocol if the run engine is running. The run engine is requested to pause and the buttons are updated.
         """
-        if self.run_engine.state == "running":
+        if self.run_engine and self.run_engine.state == "running":
             self.run_engine.request_pause()
             self.pushButton_resume.setEnabled(True)
             self.pushButton_pause.setEnabled(False)
+
+    def watchdog_triggered(self, watchdog):
+        """
+        Called when a watchdog is triggered. The protocol is paused and the watchdog is reset.
+
+        Parameters
+        ----------
+        watchdog : str
+            The name of the watchdog that was triggered.
+        """
+        from nomad_camels.utility import device_handling
+        import bluesky, ophyd
+        import bluesky.plan_stubs as bps
+
+        print("trigger")
+        watchdog.was_triggered = True
+        warning = warn_popup.WarnPopup(
+            self,
+            f"Watchdog {watchdog.name} triggered with condition {watchdog.condition}",
+            "Watchdog Triggered",
+            do_not_pause=True,
+        )
+        self.pause_protocol()
+        self.setEnabled(False)
+        try:
+            if not self.run_engine:
+                self.bluesky_setup()
+            from nomad_camels.bluesky_handling.protocol_builder import build_from_path
+
+            protocol = load_save_functions.load_protocol(watchdog.execute_at_condition)
+            protocol_name = protocol.name
+
+            user, userdata = self.get_user_name_data()
+            sample, sampledata = self.get_sample_name_data()
+            savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/watchdog_execution.nxs'
+            build_from_path(
+                watchdog.execute_at_condition,
+                save_path=savepath,
+                userdata=userdata,
+                sampledata=sampledata,
+                catalog=self.databroker_catalog,
+            )
+            path = pathlib.Path(watchdog.execute_at_condition)
+            spec = importlib.util.spec_from_file_location(
+                path.stem, path.with_suffix(".py")
+            )
+            module = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = module
+            spec.loader.exec_module(module)
+            plots, subs, _ = module.create_plots(
+                self.run_engine, stream="watchdog_triggered"
+            )
+            for plot in plots:
+                self.add_to_plots(plot)
+            device_list = protocol.get_used_devices()
+            self.re_subs += subs
+            devs, dev_data = device_handling.instantiate_devices(
+                device_list, skip_config=protocol.skip_config
+            )
+            additionals = module.steps_add_main(self.run_engine, devs)
+            self.add_subs_and_plots_from_dict(additionals)
+            module.protocol_stepper_signal = self.fake_signal
+            module.protocol_step_information["protocol_stepper_signal"] = (
+                self.fake_signal
+            )
+            if self.run_engine.state == "paused":
+                from bluesky import Msg
+
+                def pause_plan():
+                    yield from bps.checkpoint()
+                    yield Msg("pause")
+                    yield from bps.checkpoint()
+
+                self.run_engine._plan_stack.append(pause_plan())
+                self.run_engine._plan_stack.append(
+                    getattr(module, f"{protocol_name}_plan_inner")(
+                        devs, self.eva, stream_name="watchdog_triggered"
+                    ),
+                )
+                self.run_engine._response_stack.append(None)
+                self.run_engine._response_stack.append(None)
+                self.run_engine.resume()
+                # wait for run engine to pause again
+                while self.run_engine.state == "running":
+                    import time
+
+                    time.sleep(0.1)
+            else:
+                module.run_protocol_main(
+                    self.run_engine,
+                    catalog=self.databroker_catalog,
+                    devices=devs,
+                    md={
+                        "devices": dev_data,
+                        "description": protocol.description,
+                        "versions": {
+                            "NOMAD CAMELS": "0.1",
+                            "EPICS": "7.0.6.2",
+                            "bluesky": bluesky.__version__,
+                            "ophyd": ophyd.__version__,
+                        },
+                    },
+                )
+        except Exception as e:
+            if not isinstance(e, bluesky.utils.RunEngineInterrupted):
+                self.stop_protocol()
+                self.setEnabled(True)
+                raise e
+        finally:
+            self.setEnabled(True)
+            if not warning.clicked_by_user:
+                warning.exec()
+            watchdog.was_triggered = False
 
     def stop_protocol(self):
         """
