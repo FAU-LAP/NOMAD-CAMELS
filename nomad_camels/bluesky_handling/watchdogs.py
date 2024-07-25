@@ -66,10 +66,14 @@ class Watchdog(QObject):
                     self.subscriptions[channel]
                 )
                 self.subscriptions.pop(channel)
+            if channel in self.eva.namespace:
+                self.eva.namespace.pop(channel)
 
     def add_device(self, device_name, ophyd_device):
         """Subscribes the respective channels corresponding to the device"""
         for channel in self.channels:
+            if channel in self.subscriptions:
+                continue
             chan = variables_handling.channels[channel]
             if chan.device == device_name:
                 sub = getattr(ophyd_device, chan.name.split(".")[-1]).subscribe(
