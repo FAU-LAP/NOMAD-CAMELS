@@ -381,15 +381,10 @@ def build_protocol(
 
     # adding uid to RunEngine, calling the plan
     protocol_string += '\tsubscription_uid = RE.subscribe(uid_collector, "start")\n'
-    if protocol.h5_during_run:
-        protocol_string += "\trr = RunRouter([lambda x, y: helper_functions.saving_function(x, y, save_path, new_file_each_run, plots)])\n"
-        protocol_string += "\tsubscription_rr = RE.subscribe(rr)\n"
     protocol_string += f"\ttry:\n"
     protocol_string += f"\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
     protocol_string += "\tfinally:\n"
     protocol_string += "\t\tRE.unsubscribe(subscription_uid)\n"
-    if protocol.h5_during_run:
-        protocol_string += "\t\tRE.unsubscribe(subscription_rr)\n"
 
     # wait for RunEngine to finish, then save the data
     save_string = "\t\tif uids:\n"
@@ -409,6 +404,8 @@ def build_protocol(
         #     "export_to_json=export_to_json,"
         #     "new_file_each_run=new_file_each_run)\n\n"
         # )
+    if protocol.h5_during_run:
+        save_string += "\t\tRE.unsubscribe(subscription_rr)\n"
 
     protocol_string += standard_start_string
 
@@ -433,6 +430,9 @@ def build_protocol(
     # all the devices and the actual run are in a try-block
     protocol_string += "\tdevs = {}\n\tdevice_config = {}\n\ttry:\n"
     protocol_string += devices_string
+    if protocol.h5_during_run:
+        protocol_string += "\t\trr = RunRouter([lambda x, y: helper_functions.saving_function(x, y, save_path, new_file_each_run, plots)])\n"
+        protocol_string += "\t\tsubscription_rr = RE.subscribe(rr)\n"
     protocol_string += standard_start_string2
     protocol_string += standard_final_string
     protocol_string += final_string

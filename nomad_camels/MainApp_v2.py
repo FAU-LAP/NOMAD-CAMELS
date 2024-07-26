@@ -32,6 +32,7 @@ from nomad_camels.utility import (
 from nomad_camels.ui_widgets import options_run_button, warn_popup
 from nomad_camels.extensions import extension_contexts
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
+from nomad_camels.bluesky_handling import helper_functions
 
 from collections import OrderedDict
 import importlib
@@ -1517,6 +1518,24 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             plots, subs, _ = self.protocol_module.create_plots(self.run_engine)
             for plot in plots:
                 self.add_to_plots(plot)
+            if self.protocols_dict[protocol_name].h5_during_run:
+                from nomad_camels.bluesky_handling.helper_functions import (
+                    saving_function,
+                )
+                from event_model import RunRouter
+
+                self.run_router = RunRouter(
+                    [
+                        lambda x, y: saving_function(
+                            x,
+                            y,
+                            self.protocol_module.save_path,
+                            self.protocol_module.new_file_each_run,
+                            self.protocol_module.plots,
+                        )
+                    ]
+                )
+                self.re_subs.append(self.run_engine.subscribe(self.run_router))
             device_list = protocol.get_used_devices()
             self.current_protocol_device_list = list(device_list)
             self.re_subs += subs
@@ -1663,6 +1682,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         )
         self.pause_protocol()
         self.setEnabled(False)
+        subs = []
         try:
             if not self.run_engine:
                 self.bluesky_setup()
@@ -1694,7 +1714,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             for plot in plots:
                 self.add_to_plots(plot)
             device_list = protocol.get_used_devices()
-            self.re_subs += subs
             devs, dev_data = device_handling.instantiate_devices(
                 device_list, skip_config=protocol.skip_config
             )
@@ -1705,20 +1724,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 self.fake_signal
             )
             if self.run_engine.state == "paused":
-                from bluesky import Msg
 
                 def pause_plan():
+                    yield from getattr(module, f"{protocol_name}_plan_inner")(
+                        devs, self.eva, stream_name="watchdog_triggered"
+                    )
                     yield from bps.checkpoint()
-                    yield Msg("pause")
+                    yield from bps.pause()
                     yield from bps.checkpoint()
 
                 self.run_engine._plan_stack.append(pause_plan())
-                self.run_engine._plan_stack.append(
-                    getattr(module, f"{protocol_name}_plan_inner")(
-                        devs, self.eva, stream_name="watchdog_triggered"
-                    ),
-                )
-                self.run_engine._response_stack.append(None)
                 self.run_engine._response_stack.append(None)
                 self.run_engine.resume()
                 # wait for run engine to pause again
@@ -1748,6 +1763,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 self.setEnabled(True)
                 raise e
         finally:
+            for sub in subs:
+                self.run_engine.unsubscribe(sub)
             self.setEnabled(True)
             if not warning.clicked_by_user:
                 warning.exec()
@@ -1802,6 +1819,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
+        self.re_subs.clear()
         self.devices_from_queue.append(self.current_protocol_device_list)
         if self.run_queue_widget.check_next_protocol():
             return
