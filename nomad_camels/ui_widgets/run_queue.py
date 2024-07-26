@@ -98,6 +98,22 @@ class RunQueue(QListWidget):
             self.protocols_dict[text].variables,
         ]
 
+    def check_checkbox(self, name):
+        """
+        Check the checkbox of the specified item.
+
+        Parameters
+        ----------
+        name : str
+        string of the QListWidgetItem. The item to check.
+        """
+        for item in self.order_list:
+            if name == str(item):
+                widget = self.itemWidget(item)
+                checkbox = widget.layout().itemAt(0).widget().checkbox
+                checkbox.setChecked(True)
+                checkbox.clicked.emit()
+
     def check_next_protocol(self):
         """
         Check if the first protocol in the queue is ready to run. If it is, emit the protocol_signal with the name of the protocol and its variables. If the protocol is not ready to run, do nothing.

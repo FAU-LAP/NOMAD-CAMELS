@@ -71,6 +71,8 @@ class FastapiThread(QThread):
     queue_protocol_signal = Signal(str)
     # Signal to remove a protocol from the queue
     remove_queue_protocol_signal = Signal(str)
+    # Signal to check the checkbox of the next protocol in the queue
+    set_checkbox_signal = Signal(str)
 
     def __init__(self, main_window, api_port):
         super().__init__()
@@ -164,19 +166,41 @@ class FastapiThread(QThread):
             qt_items = list(
                 self.main_window.run_queue_widget.protocol_name_variables.keys()
             )
-            item_found = False
             for item in queue_list:
                 if item[1] == protocol_name and item[0] == index:
                     self.remove_queue_protocol_signal.emit(str(qt_items[index]))
-                    item_found = True
                     return JSONResponse(
                         content={"status": "success removing protocol from queue"}
                     )
-            if not item_found:
-                raise HTTPException(
-                    status_code=500,
-                    detail=f"Failed to remove protocol {protocol_name} with index {index} from queue as the protocol was not found at that position.",
-                )
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to remove protocol {protocol_name} with index {index} from queue as the protocol was not found at that position.",
+            )
+
+        # Check the ready checkbox of protocols in the queue
+        @app.get("/api/v1/actions/queue_check_next/protocols/{protocol_name}_{index}")
+        async def check_next_protocol(
+            protocol_name: str, index: int, api_key: str = Depends(validate_credentials)
+        ):
+            """Check the ready checkbox of protocols in the queue"""
+            # Get the current queue
+            queue_response = await get_queue(api_key)
+            # Extract the queue content from the JSON response
+            queue_content = queue_response.body.decode("utf-8")
+            queue_list = json.loads(queue_content)
+            qt_items = list(
+                self.main_window.run_queue_widget.protocol_name_variables.keys()
+            )
+            for item in queue_list:
+                if item[1] == protocol_name and item[0] == index:
+                    self.set_checkbox_signal.emit(str(qt_items[index]))
+                    return JSONResponse(
+                        content={"status": "success checking next protocol"}
+                    )
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to check next protocol {protocol_name} with index {index} from queue as the protocol was not found at that position.",
+            )
 
         @app.get("/api/v1/samples")
         async def get_samples(api_key: str = Depends(validate_credentials)):

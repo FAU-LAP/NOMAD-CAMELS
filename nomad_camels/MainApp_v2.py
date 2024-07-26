@@ -259,6 +259,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.fastapi_thread.queue_protocol_signal.connect(self.queue_protocol)
             # Connect the remove_queue_protocol_signal of the fastAPI to the remove_queue_protocol method
             self.fastapi_thread.remove_queue_protocol_signal.connect(self.remove_queue_protocol)
+            # Connect the set checkbox signal of the fastAPI to the set_checkbox method
+            self.fastapi_thread.set_checkbox_signal.connect(self.set_checkbox)
 
             # Start the FastAPI server
             self.fastapi_thread.start()
@@ -302,6 +304,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Remove a protocol from the run queue. Called by the API.
         """
         self.run_queue_widget.remove_item_by_name(protocol_name)
+
+    def set_checkbox(self, protocol_name):
+        """
+        Set the checkbox of a protocol in the run queue. Called by the API.
+        """
+        self.run_queue_widget.check_checkbox(protocol_name)
     
     def open_watchdog_definition(self):
         """Opens the Watchdog_Definer dialog."""
