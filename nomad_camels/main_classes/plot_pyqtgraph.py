@@ -826,6 +826,9 @@ class LivePlot(QObject, CallbackBase):
             plot_x = np.abs(self.x_data)
         else:
             plot_x = self.x_data
+        plot_x = np.asarray(plot_x)
+        if plot_x.ndim > 1:
+            plot_x = plot_x[-1]
         for y in self.ys:
             y_abs = False
             y2_abs = False
@@ -841,6 +844,9 @@ class LivePlot(QObject, CallbackBase):
                 plot_y = np.abs(self.y_data[y]) if y2_abs else self.y_data[y]
             else:
                 plot_y = np.abs(self.y_data[y]) if y_abs else self.y_data[y]
+            plot_y = np.asarray(plot_y)
+            if plot_y.ndim > 1:
+                plot_y = plot_y[-1]
             if not y in self.current_plots:
                 self.add_plot(y)
             self.current_plots[y].setData(plot_x, plot_y)
