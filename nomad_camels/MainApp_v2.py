@@ -224,7 +224,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.extensions = []
         self.load_extensions()
         self.actionManage_Extensions.triggered.connect(self.manage_extensions)
-        
+
         self.actionWatchdogs.triggered.connect(self.open_watchdog_definition)
         self.eva = Evaluator()
         for watchdog in variables_handling.watchdogs.values():
@@ -240,10 +240,56 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             from nomad_camels.api.api import FastapiThread
 
             self.current_api_port = api_port
+            # Initialize the FastAPI server
             self.fastapi_thread = FastapiThread(self, api_port)
+            # Connect the signals of the FastAPI thread
+            # This allows the API to perform button clicks on the main window
+
+            # If the server fails to start up, clear the fastapi_thread variable
             self.fastapi_thread.port_error_signal.connect(self.clear_fastapi_thread)
-            self.fastapi_thread.start_protocol.connect(self.run_protocol)
+            # Connect the start_protocol signal of the fastAPI to the run_protocol method
+            self.fastapi_thread.start_protocol_signal.connect(self.run_protocol)
+            # Connect the set_user signal of the fastAPI to the set_user method
+            self.fastapi_thread.set_user_signal.connect(self.set_user)
+            # Connect the set_sample signal of the fastAPI to the set_sample method
+            self.fastapi_thread.set_sample_signal.connect(self.set_sample)
+            # Connect the set_session signal of the fastAPI to the set_session method
+            self.fastapi_thread.set_session_signal.connect(self.set_session)
+            # Connect the queue_protocol signal of the fastAPI to the queue_protocol method
+            self.fastapi_thread.queue_protocol_signal.connect(self.queue_protocol)
+            # Connect the remove_queue_protocol_signal of the fastAPI to the remove_queue_protocol method
+            self.fastapi_thread.remove_queue_protocol_signal.connect(self.remove_queue_protocol)
+
+            # Start the FastAPI server
             self.fastapi_thread.start()
+
+    def set_user(self, user_name):
+        """ "
+        Set the active user to the given user name. Called by the API.
+        """
+        if user_name not in self.userdata:
+            raise ValueError(
+                f"User {user_name} can not be set as it does not exist. Please create this user first."
+            )
+        self.active_user = user_name
+        self.comboBox_user.setCurrentText(user_name)
+
+    def set_sample(self, sample_name):
+        """
+        Set the active sample to the given sample name. Called by the API.
+        """
+        if sample_name not in self.sampledata:
+            raise ValueError(
+                f"Sample {sample_name} can not be set as it does not exist. Please create this sample first."
+            )
+        self.active_sample = sample_name
+        self.comboBox_sample.setCurrentText(sample_name)
+
+    def set_session(self, session_name):
+        """
+        Set the active session to the given session name. Called by the API.
+        """
+        self.lineEdit_session.setText(session_name)
 
     def stop_API_server(self):
         if hasattr(self, "fastapi_thread") and self.fastapi_thread is not None:
@@ -251,6 +297,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.fastapi_thread = None
             self.current_api_port = None
 
+    def remove_queue_protocol(self, protocol_name):
+        """
+        Remove a protocol from the run queue. Called by the API.
+        """
+        self.run_queue_widget.remove_item_by_name(protocol_name)
+    
     def open_watchdog_definition(self):
         """Opens the Watchdog_Definer dialog."""
         # IMPORT Watchdog_Definer only if it is needed
@@ -1783,7 +1835,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol_name : str
             The name of the protocol to add to the queue.
         """
-        self.run_queue_widget.add_item(protocol_name)
+        if protocol_name in self.protocols_dict:
+            self.run_queue_widget.add_item(protocol_name)
 
     def get_user_name_data(self):
         """

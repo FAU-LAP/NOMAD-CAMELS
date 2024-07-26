@@ -161,6 +161,19 @@ class RunQueue(QListWidget):
         # Remove the item from the QListWidget
         self.takeItem(self.row(item))
 
+    def remove_item_by_name(self, name):
+        """
+        Remove an item from the run queue by name.
+
+        Parameters
+        ----------
+        name : str
+            The name of the item to remove.
+        """
+        for item in self.order_list:
+            if name == str(item):
+                self.remove_item(item, ask=False)
+
     def update_order_list(self):
         """
         Update the order list to match the current order of items in the QListWidget
