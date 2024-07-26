@@ -634,6 +634,7 @@ class LivePlot(QObject, CallbackBase):
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
         self.use_abs = {"x": False, "y": False, "y2": False}
+        self.setup_is_done = False
 
         def setup():
             # this is the setup function, it is called when the first event is received
@@ -655,6 +656,7 @@ class LivePlot(QObject, CallbackBase):
                 self.plotItem.setTitle(title)
             self._epoch_offset = None
             self._epoch = epoch
+            self.setup_is_done = True
 
         self.x_data = []
         self.y_data = {}
@@ -760,6 +762,8 @@ class LivePlot(QObject, CallbackBase):
         doc : dict
             The descriptor document
         """
+        if not self.setup_is_done:
+            self.start(doc)
         if doc["name"] == self.stream_name:
             self.desc.append(doc["uid"])
         elif doc["name"].startswith(f"{self.stream_name}_fits_readying_"):
