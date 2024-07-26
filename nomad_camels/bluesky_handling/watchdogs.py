@@ -46,7 +46,7 @@ class Watchdog(QObject):
 
     def read(self):
         # TODO periodic read
-        # TODO save data for several triggers
+        # TODO plot again when again triggered
         pass
 
     def get_device_list(self):
