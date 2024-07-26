@@ -37,7 +37,7 @@ def client_and_thread():
     app.dependency_overrides[validate_credentials] = mock_validate_credentials
 
     # Mock the start_protocol signal
-    thread.start_protocol = MagicMock()
+    thread.start_protocol_signal = MagicMock()
 
     # Provide the client and thread to the test
     yield client, thread
@@ -57,7 +57,7 @@ def test_root_redirect(client_and_thread):
 # Test to check if the /protocols endpoint returns the correct protocols
 def test_get_protocols(client_and_thread):
     client, thread = client_and_thread
-    response = client.get("/protocols", auth=("user", "valid_api_key"))
+    response = client.get("/api/v1/protocols", auth=("user", "valid_api_key"))
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {"Protocols": ["protocol1", "protocol2"]}
 
@@ -68,9 +68,9 @@ def test_run_protocol(client_and_thread):
     protocol_name = "protocol1"
 
     # Patch the emit method of the start_protocol signal
-    with patch.object(thread.start_protocol, "emit") as mock_emit:
+    with patch.object(thread.start_protocol_signal, "emit") as mock_emit:
         response = client.get(
-            f"/protocols/{protocol_name}", auth=("user", "valid_api_key")
+            f"/api/v1/actions/run/protocols/{protocol_name}", auth=("user", "valid_api_key")
         )
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == {"status": "success"}
@@ -80,7 +80,7 @@ def test_run_protocol(client_and_thread):
 # Test to check if accessing /protocols with an invalid API key returns 401
 def test_invalid_api_key(client_and_thread):
     client, thread = client_and_thread
-    response = client.get("/protocols", auth=("user", "invalid_api_key"))
+    response = client.get("/api/v1/protocols", auth=("user", "invalid_api_key"))
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert response.json() == {"detail": "Invalid API Key"}
 
