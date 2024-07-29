@@ -34,6 +34,7 @@ Features:
 
 Changes:
 - Variable signal is now saved as group instead of dataset
+- Can now read variables also without channels
 
 Fixes:
 - Can now save variables with non-scalar size

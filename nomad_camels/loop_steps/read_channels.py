@@ -75,7 +75,7 @@ class Read_Channels(Loop_Step):
             A string including the tabs for intendation.
         """
         channel_string = f"{tabs}channels_{self.variable_name()} = ["
-        if not self.read_all and not self.channel_list:
+        if not self.read_all and not self.channel_list and not self.read_variables:
             raise Exception(f"Trying to read no channel in {self.full_name}!")
         if self.read_all:
             for channel in variables_handling.channels:
