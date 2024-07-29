@@ -196,8 +196,8 @@ class Watchdog_Definer(QDialog):
         variables_handling.watchdogs = self.watchdogs
         WarnPopup(
             self,
-            "Watchdogs updated. Some functions might not work correclty right away. Restart CAMELS to make sure everything is working correctly.\nWatchdogs only read values of instruments that are being used by protocols or manual controls.",
-            "restart recommended",
+            "Watchdogs updated. Some functions might not work correclty right away. Restart CAMELS to make sure everything is working correctly.\n\nWatchdogs only read values of instruments that are being used by protocols or manual controls.\n(Further, channels that can only be read only work well if the instrument driver uses the Signals from CAMELS.)",
+            "restart recommended, information",
             True,
         )
         super().accept()
