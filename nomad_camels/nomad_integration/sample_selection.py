@@ -20,15 +20,81 @@ from nomad_camels.nomad_integration import nomad_communication
 class Sample_Selector(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-
-        entries = nomad_communication.get_entries(parent)["data"]
-        if not entries:
-            raise Exception("No Entries found!")
+        self.reloading = False
+        self.setWindowTitle("Select Sample")
         self.entry_metadata = []
         self.entry_names = []
         self.entry_uploads = []
         self.entry_types = []
         self.entry_data = []
+
+        label_entry_scope = QLabel("Entry Scope:")
+        self.comboBox_entry_scope = QComboBox()
+        self.comboBox_entry_scope.addItems(["shared", "user"])
+        self.comboBox_entry_scope.setCurrentText("user")
+        self.comboBox_entry_scope.setToolTip(
+            "shared: Entries that belong to you or are shared with you.\nuser: Entries that belong to you."
+        )
+
+        self.button_box = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+        )
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+
+        label_upload = QLabel("Upload:")
+        self.upload_box = QComboBox()
+
+        label_entry_type = QLabel("Entry Type:")
+        self.entry_type_box = QComboBox()
+
+        label_entry = QLabel("Entry:")
+        self.entry_box = QComboBox()
+
+        self.entry_info = QTextEdit()
+        self.entry_info.setTextInteractionFlags(
+            Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse
+        )
+
+        layout = QGridLayout()
+        layout.addWidget(label_entry_scope, 0, 0)
+        layout.addWidget(self.comboBox_entry_scope, 0, 1)
+        layout.addWidget(label_upload, 1, 0)
+        layout.addWidget(self.upload_box, 1, 1)
+        layout.addWidget(label_entry_type, 2, 0)
+        layout.addWidget(self.entry_type_box, 2, 1)
+        layout.addWidget(label_entry, 10, 0)
+        layout.addWidget(self.entry_box, 10, 1)
+        layout.addWidget(self.entry_info, 0, 2, 12, 1)
+        layout.addWidget(self.button_box, 20, 0, 1, 3)
+        self.setLayout(layout)
+
+        self.update_entries()
+        self.entry_filtering()
+        self.entry_change()
+        self.upload_box.currentTextChanged.connect(self.entry_filtering)
+        self.entry_type_box.currentTextChanged.connect(self.entry_filtering)
+        self.entry_box.currentTextChanged.connect(self.entry_change)
+        self.comboBox_entry_scope.currentTextChanged.connect(self.update_entries)
+
+        self.sample_data = {}
+
+        self.adjustSize()
+
+    def update_entries(self):
+        self.setCursor(Qt.WaitCursor)
+        self.setEnabled(False)
+        entries = nomad_communication.get_entries(
+            self.parent, owner=self.comboBox_entry_scope.currentText()
+        )["data"]
+        if not entries:
+            raise Exception("No Entries found!")
+        self.reloading = True
+        self.entry_metadata.clear()
+        self.entry_names.clear()
+        self.entry_uploads.clear()
+        self.entry_types.clear()
+        self.entry_data.clear()
         for entry in entries:
             if "archive" not in entry:
                 continue
@@ -44,51 +110,23 @@ class Sample_Selector(QDialog):
             else:
                 self.entry_uploads.append(arch["metadata"]["upload_id"])
 
-        label_upload = QLabel("Upload:")
-        self.upload_box = QComboBox()
+        self.upload_box.clear()
         self.upload_box.addItems(sorted(list(set(self.entry_uploads))))
 
-        label_entry_type = QLabel("Entry Type:")
-        self.entry_type_box = QComboBox()
+        self.entry_type_box.clear()
         self.entry_type_box.addItems(sorted(list(set(self.entry_types))))
 
-        label_entry = QLabel("Entry:")
-        self.entry_box = QComboBox()
+        self.entry_box.clear()
         self.entry_box.addItems(sorted(self.entry_names))
-
-        self.entry_info = QTextEdit()
-        self.entry_info.setTextInteractionFlags(
-            Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse
-        )
-
-        self.button_box = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
-        )
-        self.button_box.accepted.connect(self.accept)
-        self.button_box.rejected.connect(self.reject)
-
-        layout = QGridLayout()
-        layout.addWidget(label_upload, 0, 0)
-        layout.addWidget(self.upload_box, 0, 1)
-        layout.addWidget(label_entry_type, 1, 0)
-        layout.addWidget(self.entry_type_box, 1, 1)
-        layout.addWidget(label_entry, 10, 0)
-        layout.addWidget(self.entry_box, 10, 1)
-        layout.addWidget(self.entry_info, 0, 2, 12, 1)
-        layout.addWidget(self.button_box, 20, 0, 1, 3)
-        self.setLayout(layout)
-
         self.entry_filtering()
         self.entry_change()
-        self.upload_box.currentTextChanged.connect(self.entry_filtering)
-        self.entry_type_box.currentTextChanged.connect(self.entry_filtering)
-        self.entry_box.currentTextChanged.connect(self.entry_change)
-
-        self.sample_data = {}
-
-        self.adjustSize()
+        self.reloading = False
+        self.setEnabled(True)
+        self.setCursor(Qt.ArrowCursor)
 
     def entry_filtering(self):
+        if self.reloading:
+            return
         upload = self.upload_box.currentText()
         entry_type = self.entry_type_box.currentText()
         entries = []
@@ -99,6 +137,8 @@ class Sample_Selector(QDialog):
         self.entry_box.addItems(entries)
 
     def entry_change(self):
+        if self.reloading:
+            return
         self.entry_info.setText(yaml.dump(self.get_current_entry_data()))
 
     def get_current_entry_data(self, include_metadata=False):
