@@ -229,9 +229,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.actionWatchdogs.triggered.connect(self.open_watchdog_definition)
         self.eva = Evaluator()
-        for watchdog in variables_handling.watchdogs.values():
-            watchdog.eva = self.eva
-            watchdog.condition_met.connect(self.watchdog_triggered)
+        self.update_watchdogs()
 
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
@@ -260,8 +258,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         from nomad_camels.bluesky_handling.watchdogs import Watchdog_Definer
 
         dialog = Watchdog_Definer(self)
-        dialog.exec()
         for watchdog in variables_handling.watchdogs.values():
+            if not watchdog.active:
+                continue
+            watchdog.condition_met.disconnect(self.watchdog_triggered)
+        dialog.exec()
+        self.update_watchdogs()
+
+    def update_watchdogs(self):
+        for watchdog in variables_handling.watchdogs.values():
+            if not watchdog.active:
+                continue
             watchdog.eva = self.eva
             watchdog.condition_met.connect(self.watchdog_triggered)
 
@@ -1005,7 +1012,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             "manual_controls": self.manual_controls,
             "protocol_tabs_dict": self.protocol_tabs_dict,
             "manual_tabs_dict": self.manual_tabs_dict,
-            "watchdogs": variables_handling.watchdogs,
+            "watchdogs": {
+                name: wd.get_definition()
+                for name, wd in variables_handling.watchdogs.items()
+            },
         }
         for key in self.preset_save_dict:
             add_string = load_save_functions.get_save_str(self.preset_save_dict[key])
@@ -1688,6 +1698,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 self.bluesky_setup()
             from nomad_camels.bluesky_handling.protocol_builder import build_from_path
 
+            if not watchdog.execute_at_condition:
+                raise Exception(f'Watchdog "{watchdog.name}" has nothing to execute when condition is met')
             protocol = load_save_functions.load_protocol(watchdog.execute_at_condition)
             protocol_name = protocol.name
 

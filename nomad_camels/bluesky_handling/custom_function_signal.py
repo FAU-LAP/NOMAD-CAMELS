@@ -108,6 +108,7 @@ class Custom_Function_Signal(Signal):
         Overwrites Signal's `get` to add the defined `read_function`.
         For further information see ophyd's documentation.
         """
+        old_value = self._readback
         if self.read_function:
             # If the read_function requires the instance of the class, pass it as the first argument
             # The instance is the signal, while the parent is the Device class
@@ -142,6 +143,12 @@ class Custom_Function_Signal(Signal):
                     # or if self.parent does not have a force_sequential attribute
                     parent=parent,
                 )
+        self._run_subs(
+            sub_type=self.SUB_VALUE,
+            old_value=old_value,
+            value=self._readback,
+            timestamp=time.time(),
+        )
         return super().get()
 
     def trigger(self):
@@ -269,6 +276,7 @@ class Custom_Function_SignalRO(SignalRO):
         Overwrites SignalRO's `get` to add the defined `read_function`.
         For further information see ophyd's documentation.
         """
+        old_value = self._readback
         if self.read_function:
             # If the read_function requires the instance of the class, pass it as the first argument
             # The instance is the signal, while the parent is the Device class
@@ -303,6 +311,12 @@ class Custom_Function_SignalRO(SignalRO):
                     # or if self.parent does not have a force_sequential attribute
                     parent=parent,
                 )
+        self._run_subs(
+            sub_type=self.SUB_VALUE,
+            old_value=old_value,
+            value=self._readback,
+            timestamp=time.time(),
+        )
         return super().get()
 
     def trigger(self):
