@@ -40,6 +40,7 @@ Fixes:
 - x-y plot now working with array-data again
 - Multiple occurances of same protocol in tab-dictionary in save-json removed
 - Pause would trigger unsubscribe of run-router for live data saving, now moved so it does not happen
+- List-plot now shows again on new data
 
 ## 1.2.2
 Features:
