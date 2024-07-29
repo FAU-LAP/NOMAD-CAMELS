@@ -43,6 +43,7 @@ class Watchdog(QObject):
         self.timer.timeout.connect(self.read)
         self.subscriptions = {}
         self.was_triggered = False
+        self.plots = []
 
     def read(self):
         # TODO periodic read

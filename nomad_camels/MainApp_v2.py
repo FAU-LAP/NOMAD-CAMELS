@@ -1708,10 +1708,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             module = importlib.util.module_from_spec(spec)
             sys.modules[spec.name] = module
             spec.loader.exec_module(module)
-            plots, subs, _ = module.create_plots(
-                self.run_engine, stream="watchdog_triggered"
-            )
-            for plot in plots:
+            if not watchdog.plots:
+                plots, subs, _ = module.create_plots(
+                    self.run_engine, stream="watchdog_triggered"
+                )
+                watchdog.plots = plots
+            else:
+                for plot in watchdog.plots:
+                    self.run_engine.subscribe(plot.livePlot)
+            for plot in watchdog.plots:
                 self.add_to_plots(plot)
             device_list = protocol.get_used_devices()
             devs, dev_data = device_handling.instantiate_devices(
