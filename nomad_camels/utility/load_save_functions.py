@@ -45,7 +45,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
 )
 from PySide6.QtGui import QAction
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QTimer, Signal, SignalInstance
 
 from datetime import datetime, timedelta
 import json
@@ -106,6 +106,8 @@ save_dict_skip = [
     QGridLayout,
     QTimer,
     Evaluator,
+    Signal,
+    SignalInstance,
 ]
 
 # Get the current operating system
