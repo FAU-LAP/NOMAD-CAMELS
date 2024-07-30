@@ -1,6 +1,5 @@
 import sys
 
-sys.path.append("D:\Fuchs\Promotion\FAIRmat\CAMELS\CAMELS")
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
