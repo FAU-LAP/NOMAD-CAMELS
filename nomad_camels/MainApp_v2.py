@@ -540,6 +540,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if self.open_windows:
             a0.ignore()
             return
+        self.stop_API_server()
         super().closeEvent(a0)
         if self.preferences["autosave"]:
             self.save_state()
