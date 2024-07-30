@@ -44,7 +44,6 @@ def client_and_thread():
 
     # Stop the server after tests are done
     thread.stop_server()
-    thread.join()
 
 
 # Test to check if the root URL redirects to the documentation page
