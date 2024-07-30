@@ -68,7 +68,11 @@ def test_start_camels(qtbot, capfd):
             start_camels()
 
             # Check if the main window is displayed
-            app.processEvents()
+            for i in range(3):
+                import time
+
+                time.sleep(0.1)
+                app.processEvents()
             main_window = app.activeWindow()
             assert main_window is not None
             assert (
