@@ -47,6 +47,7 @@ def client_and_thread():
 
 
 # Test to check if the root URL redirects to the documentation page
+@pytest.mark.run(order=-1)
 def test_root_redirect(client_and_thread):
     client, thread = client_and_thread
     response = client.get("/")
@@ -55,6 +56,7 @@ def test_root_redirect(client_and_thread):
 
 
 # Test to check if the /protocols endpoint returns the correct protocols
+@pytest.mark.run(order=-1)
 def test_get_protocols(client_and_thread):
     client, thread = client_and_thread
     response = client.get("/api/v1/protocols", auth=("user", "valid_api_key"))
@@ -63,6 +65,7 @@ def test_get_protocols(client_and_thread):
 
 
 # Test to check if a protocol can be run with a valid API key
+@pytest.mark.run(order=-1)
 def test_run_protocol(client_and_thread):
     client, thread = client_and_thread
     protocol_name = "protocol1"
@@ -79,6 +82,7 @@ def test_run_protocol(client_and_thread):
 
 
 # Test to check if accessing /protocols with an invalid API key returns 401
+@pytest.mark.run(order=-1)
 def test_invalid_api_key(client_and_thread):
     client, thread = client_and_thread
     response = client.get("/api/v1/protocols", auth=("user", "invalid_api_key"))
@@ -87,6 +91,7 @@ def test_invalid_api_key(client_and_thread):
 
 
 # Test to check if the /favicon.ico endpoint returns the favicon correctly
+@pytest.mark.run(order=-1)
 def test_favicon(client_and_thread):
     client, thread = client_and_thread
     response = client.get("/favicon.ico")
