@@ -64,7 +64,6 @@ jobs:
       - name: Prepare databroker
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
-      - name: Run tests with pytest
         run: |
           cd nomad_camels
           pytest -v --cov-report term-missing:skip-covered --cov=nomad_camels tests/
