@@ -10,8 +10,9 @@ os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
 from importlib import resources
 from nomad_camels import graphics
+
 # Add nomad_camels/gui folder to the python path
-sys.path.append(os.path.join(os.path.dirname(__file__),r"gui"))
+sys.path.append(os.path.join(os.path.dirname(__file__), r"gui"))
 
 # Import your main application form
 # from main_window import MainWindow
@@ -125,7 +126,8 @@ def start_camels():
     while thread.isRunning():
         app.processEvents()
     with open(package_file, "w", encoding="utf-8") as f:
-        for i, (mod_name, mod) in enumerate(sys.modules.items()):
+        packages = {key: val for key, val in sys.modules.items()}
+        for i, (mod_name, mod) in enumerate(packages.items()):
             if mod_name.startswith("_") or mod is None:
                 continue
             f.write(f"{mod_name}\n")
