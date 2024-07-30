@@ -115,6 +115,7 @@ def test_start_camels_again(qtbot, capfd):
 
             # Ensure the main window is closed properly
             main_window.close()
+            app.processEvents()
             qtbot.waitUntil(lambda: not main_window.isVisible())
 
 
