@@ -214,7 +214,8 @@ def retry_function(
             excs.append(e)
             if error_retry_function:
                 error_retry_function(e)
-    parent.currently_reading = False
+    if parent:
+        parent.currently_reading = False
     raise Exception(
         f"Failed to execute function {func} after {retries} retries. Last exception: {excs[-1]}"
     )

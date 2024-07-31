@@ -45,6 +45,7 @@ Fixes:
 - Pause would trigger unsubscribe of run-router for live data saving, now moved so it does not happen
 - List-plot now shows again on new data
 - Fixed a bug that would not allow extension-users to show up in data
+- Fixed bug where a custom function signal that does not use force-sequential would not work
 
 ## 1.2.2
 Features:
