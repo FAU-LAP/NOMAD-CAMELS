@@ -2007,6 +2007,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             user = userdata["name"]
         elif self.extension_user:
             userdata = self.extension_user
+            user = userdata["name"]
         else:
             user = self.active_user or "default_user"
             userdata = (
