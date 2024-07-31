@@ -1004,14 +1004,20 @@ class LiveFitPlot(CallbackBase):
                 legendPos = legend.scenePos()
                 y0 = legendPos.y() + legendRect.height()
             vals = self.livefit.result.values
+            variables = self.livefit.result.var_names
             if self.line_position is None:
                 self.line_position = self.parent_plot.line_number
-                self.parent_plot.line_number += len(vals)
+                self.parent_plot.line_number += len(variables)
             for i, (name, value) in enumerate(vals.items()):
-                error = np.sqrt(self.livefit.result.covar[i, i])
-                text = pg.TextItem(
-                    f"{name}: {value:.3e} ± {error:.3e}", color=self.color
-                )
+                if name not in variables:
+                    continue
+                if self.livefit.result.covar is not None:
+                    error = np.sqrt(self.livefit.result.covar[i, i])
+                    text = pg.TextItem(
+                        f"{name}: {value:.3e} ± {error:.3e}", color=self.color
+                    )
+                else:
+                    text = pg.TextItem(f"{name}: {value:.3e}", color=self.color)
                 text.setParentItem(self.plotItem.vb)
                 text.setPos(5, (i + self.line_position) * 20 + y0)
                 self.text_objects.append(text)
