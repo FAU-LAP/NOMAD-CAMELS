@@ -279,6 +279,9 @@ def instantiate_devices(device_list, skip_config=False):
             device_config[dev].update(helper_functions.simplify_configs_dict(configs))
             device_config[dev].update(settings)
             device_config[dev].update(additional_info)
+            device_config[dev]["instrument_camels_channels"] = {
+                name: data.__dict__ for name, data in device.channels.items()
+            }
             for watchdog in variables_handling.watchdogs.values():
                 if dev in watchdog.get_device_list():
                     watchdog.add_device(dev, ophyd_device)
