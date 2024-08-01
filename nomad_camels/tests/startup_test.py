@@ -25,7 +25,6 @@ def test_start_camels(qtbot, capfd):
 
     def close_save_message():
         """ """
-        main_window.change_catalog_name()
         main_window.close()
         out, err = capfd.readouterr()
         app = QApplication.instance()
@@ -71,7 +70,6 @@ def test_start_camels_again(qtbot, capfd):
 
     def close_save_message():
         """ """
-        main_window.change_catalog_name()
         main_window.close()
         out, err = capfd.readouterr()
         app = QApplication.instance()
@@ -84,6 +82,10 @@ def test_start_camels_again(qtbot, capfd):
         with patch("nomad_camels.CAMELS_start.QApplication.exec", return_value=None):
 
             # Start the CAMELS application
+            app = QCoreApplication.instance()
+            if app is not None:
+                app.quit()
+                del app
             start_camels()
             app = QApplication.instance()
 
