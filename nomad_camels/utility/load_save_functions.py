@@ -620,7 +620,6 @@ def load_devices_dict(string_dict, devices_dict):
     local_packages = load_local_packages()
 
     path = f"{os.path.dirname(os.path.dirname(__file__))}/manual_controls/set_panel"
-    print(path)
     sys.path.append(path)
     for key in string_dict:
         dev_data = string_dict[key]

@@ -456,7 +456,6 @@ class Button_Group_Tab(QWidget):
         self.buttons["lines"].append(line)
 
     def remove_button(self, n):
-        print(n)
         for i, label in enumerate(self.buttons["labels"]):
             if i < n:
                 continue

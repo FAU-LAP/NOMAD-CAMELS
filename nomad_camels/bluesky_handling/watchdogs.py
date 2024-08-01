@@ -60,7 +60,6 @@ class Watchdog(QObject):
         }
 
     def read(self):
-        print("read")
         for channel in self.ophyd_channels:
             channel.read()
 
@@ -117,7 +116,6 @@ class Watchdog(QObject):
             if not self.was_triggered:
                 self.condition_met.emit(self)
             self.was_triggered = True
-            print("condition")
 
     def update_settings(self):
         if self.timer.isActive():
