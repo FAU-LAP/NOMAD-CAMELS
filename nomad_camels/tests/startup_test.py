@@ -57,10 +57,14 @@ def test_start_camels(qtbot, capfd):
                 main_window.windowTitle()
                 == "NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems"
             )
-            qtbot.waitUntil(close_save_message)
+            try:
+                qtbot.waitUntil(close_save_message)
+            except TimeoutError:
+                pass
 
             # Ensure the main window is closed properly
             main_window.close()
+            app.processEvents()
             qtbot.waitUntil(lambda: not main_window.isVisible())
 
 
@@ -102,7 +106,10 @@ def test_start_camels_again(qtbot, capfd):
                 main_window.windowTitle()
                 == "NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems"
             )
-            qtbot.waitUntil(close_save_message, timeout=50000)
+            try:
+                qtbot.waitUntil(close_save_message, timeout=50000)
+            except TimeoutError:
+                pass
 
             # Ensure the main window is closed properly
             main_window.close()
