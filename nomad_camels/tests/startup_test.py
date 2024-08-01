@@ -81,6 +81,8 @@ def test_start_camels_again(qtbot, capfd):
         out, err = capfd.readouterr()
         app = QApplication.instance()
         app.processEvents()
+        if err:
+            print(err)
         assert "current state saved!" in out
 
     with patch(
