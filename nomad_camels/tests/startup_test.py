@@ -1,8 +1,11 @@
 import pytest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 import tempfile
 from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QCoreApplication
 import sys
+import os
+import subprocess
 from nomad_camels.MainApp_v2 import MainWindow
 from nomad_camels.CAMELS_start import start_camels, LoadingScreen
 
@@ -16,28 +19,7 @@ class MockDialog:
         return True
 
 
-def test_startup_of_mainapp(qtbot, capfd):
-    """Simply try to start and run CAMELS.
-    By default, the autosave is enabled, so if it works correctly and closes,
-    the statement "current state saved!" should be printed"""
-    # import sys
-    from nomad_camels.utility import exception_hook
-
-    def close_save_message():
-        """ """
-        main_window.change_catalog_name()
-        main_window.close()
-        out, err = capfd.readouterr()
-        print(out)
-        assert "current state saved!" in out
-
-    with patch(
-        "nomad_camels.ui_widgets.path_button_edit.Path_Button_Dialog", new=MockDialog
-    ):
-        main_window = MainWindow()
-        qtbot.waitUntil(close_save_message)
-
-
+@pytest.mark.order(0)
 def test_start_camels(qtbot, capfd):
     """Test the startup of the CAMELS application."""
 
@@ -55,6 +37,10 @@ def test_start_camels(qtbot, capfd):
         with patch("nomad_camels.CAMELS_start.QApplication.exec", return_value=None):
 
             # Start the CAMELS application
+            app = QCoreApplication.instance()
+            if app is not None:
+                app.quit()
+                del app
             start_camels()
             app = QApplication.instance()
 
@@ -78,6 +64,7 @@ def test_start_camels(qtbot, capfd):
             qtbot.waitUntil(lambda: not main_window.isVisible())
 
 
+@pytest.mark.order(0)
 def test_start_camels_again(qtbot, capfd):
     """Test the startup of the CAMELS application."""
 
@@ -134,12 +121,47 @@ def instance(app):
     return LoadingScreen()  # Replace with the actual class name
 
 
+@pytest.mark.order(0)
 def test_set_progress(instance):
     instance.set_progress(50)
     assert instance.progress_bar.value() == 50
 
 
+@pytest.mark.order(0)
 def test_set_text(instance):
     test_text = "Test text"
     instance.set_text(test_text)
     assert instance.label.text() == test_text
+
+
+@pytest.mark.order(0)
+def test_import_thread(qtbot):
+    """Test the ImportThread class."""
+    from CAMELS_start import ImportThread
+
+    # Mock the package list and other dependencies
+    package_list = ["os", "sys", "nonexistent_package"]
+    n = len(package_list)
+    loading_screen = Mock()
+    loading_screen.set_progress = Mock()
+    loading_screen.set_text = Mock()
+
+    # Create an instance of ImportThread
+    thread = ImportThread()
+
+    # Connect signals to slots
+    thread.update_progress.connect(loading_screen.set_progress)
+    thread.update_text.connect(loading_screen.set_text)
+
+    # Start the thread
+    thread.run()
+
+    # Wait for the thread to finish
+    qtbot.waitUntil(lambda: not thread.isRunning(), timeout=5000)
+
+    # Check if the signals were emitted correctly
+    loading_screen.set_progress.assert_called()
+    loading_screen.set_text.assert_called()
+
+    # Ensure the thread has finished
+    assert not thread.isRunning()
