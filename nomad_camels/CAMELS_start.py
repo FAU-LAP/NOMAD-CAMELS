@@ -8,7 +8,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
-from importlib import resources
+from importlib import resources, import_module
 from nomad_camels import graphics
 
 # Add nomad_camels/gui folder to the python path
@@ -90,7 +90,7 @@ class ImportThread(QThread):
             self.update_progress.emit(int(i / n * 96))
             self.update_text.emit(f"loading {package}...")
             try:
-                __import__(package)
+                import_module(package)
             except ModuleNotFoundError:
                 pass
             except AttributeError:

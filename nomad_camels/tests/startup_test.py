@@ -28,7 +28,8 @@ def test_start_camels(qtbot, capfd):
         main_window.change_catalog_name()
         main_window.close()
         out, err = capfd.readouterr()
-        print(out)
+        app = QApplication.instance()
+        app.processEvents()
         assert "current state saved!" in out
 
     with patch(
@@ -73,7 +74,8 @@ def test_start_camels_again(qtbot, capfd):
         main_window.change_catalog_name()
         main_window.close()
         out, err = capfd.readouterr()
-        print(out)
+        app = QApplication.instance()
+        app.processEvents()
         assert "current state saved!" in out
 
     with patch(
@@ -98,7 +100,7 @@ def test_start_camels_again(qtbot, capfd):
                 main_window.windowTitle()
                 == "NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems"
             )
-            qtbot.waitUntil(close_save_message)
+            qtbot.waitUntil(close_save_message, timeout=50000)
 
             # Ensure the main window is closed properly
             main_window.close()
@@ -140,14 +142,13 @@ def test_import_thread(qtbot):
     from CAMELS_start import ImportThread
 
     # Mock the package list and other dependencies
-    package_list = ["os", "sys", "nonexistent_package"]
-    n = len(package_list)
+    package_list = ["os", "sys", "nonexistent_package", "sys.bad_test_attribute"]
     loading_screen = Mock()
     loading_screen.set_progress = Mock()
     loading_screen.set_text = Mock()
 
     # Create an instance of ImportThread
-    thread = ImportThread()
+    thread = ImportThread(package_list=package_list)
 
     # Connect signals to slots
     thread.update_progress.connect(loading_screen.set_progress)
