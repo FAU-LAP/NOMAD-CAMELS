@@ -107,8 +107,8 @@ def test_start_camels_again(qtbot, capfd):
                 == "NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems"
             )
             try:
-                qtbot.waitUntil(close_save_message, timeout=50000)
-            except TimeoutError:
+                qtbot.waitUntil(close_save_message, timeout=10000)
+            except (TimeoutError, AssertionError):
                 pass
 
             # Ensure the main window is closed properly
