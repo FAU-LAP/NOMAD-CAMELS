@@ -78,9 +78,9 @@ def test_start_camels_again(qtbot, capfd):
         if "current state saved!" in out:
             return True
         main_window.close()
+        out, err = capfd.readouterr()
         app = QApplication.instance()
         app.processEvents()
-        out, err = capfd.readouterr()
         assert "current state saved!" in out
 
     with patch(
