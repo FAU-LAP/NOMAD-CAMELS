@@ -74,17 +74,10 @@ def test_start_camels_again(qtbot, capfd):
 
     def close_save_message():
         """ """
-        app = QApplication.instance()
-        out = ""
         main_window.close()
-        for i in range(10):
-            out, err = capfd.readouterr()
-            if "current state saved!" in out:
-                break
-            import time
-
-            time.sleep(0.1)
-            app.processEvents()
+        app = QApplication.instance()
+        app.processEvents()
+        out, err = capfd.readouterr()
         assert "current state saved!" in out
 
     with patch(
