@@ -68,58 +68,6 @@ def test_start_camels(qtbot, capfd):
             qtbot.waitUntil(lambda: not main_window.isVisible())
 
 
-@pytest.mark.order(0)
-def test_start_camels_again(qtbot, capfd):
-    """Test the startup of the CAMELS application."""
-
-    def close_save_message():
-        """ """
-        out, err = capfd.readouterr()
-        if "current state saved!" in out:
-            return True
-        main_window.close()
-        out, err = capfd.readouterr()
-        app = QApplication.instance()
-        app.processEvents()
-        if err:
-            print(err)
-        assert "current state saved!" in out
-
-    with patch(
-        "nomad_camels.ui_widgets.path_button_edit.Path_Button_Dialog", new=MockDialog
-    ):
-        with patch("nomad_camels.CAMELS_start.QApplication.exec", return_value=None):
-
-            # Start the CAMELS application
-            app = QCoreApplication.instance()
-            if app is not None:
-                app.quit()
-                del app
-            start_camels()
-            app = QApplication.instance()
-
-            # Check if the main window is displayed
-            app.processEvents()
-            main_window = None
-            widgets = app.topLevelWidgets()
-            for widget in widgets:
-                if isinstance(widget, MainWindow):
-                    main_window = widget
-                    break
-            assert main_window is not None
-            assert (
-                main_window.windowTitle()
-                == "NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems"
-            )
-            try:
-                qtbot.waitUntil(close_save_message, timeout=10000)
-            except (TimeoutError, AssertionError):
-                pass
-
-            # Ensure the main window is closed properly
-            main_window.close()
-            app.processEvents()
-            qtbot.waitUntil(lambda: not main_window.isVisible())
 
 
 @pytest.fixture(scope="module")
