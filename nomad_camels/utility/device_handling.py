@@ -330,7 +330,8 @@ class InstantiateDevicesThread(QThread):
                 if dev.main_thread_only:
                     main_thread_devs.append(device)
                     for d in dev.get_necessary_devices():
-                        main_thread_devs.insert(0, d)
+                        if d not in main_thread_devs:
+                            main_thread_devs.insert(0, d)
         for dev in main_thread_devs:
             self.device_list.remove(dev)
         if self.channels:
