@@ -71,6 +71,7 @@ def place_widget(widget: QWidget):
         screen_geometry = screens[current_screen].availableGeometry()
     except:
         reset_variables()
+        screen_geometry = screens[current_screen].availableGeometry()
     if current_pos[0] + s.width() > screen_geometry.width():
         current_pos[1] += max_height_in_row + horizontal_margin
         current_pos[0] = 0

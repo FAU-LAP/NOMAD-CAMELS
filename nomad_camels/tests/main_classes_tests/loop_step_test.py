@@ -11,9 +11,15 @@ from nomad_camels.main_classes.loop_step import (
 
 
 # Initialize the Qt Application for testing
+
+
 @pytest.fixture(scope="module")
 def app():
-    return QApplication([])
+    """Fixture for creating a QApplication instance"""
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication([])
+    return app
 
 
 def test_loop_step_init():

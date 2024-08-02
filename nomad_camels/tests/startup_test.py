@@ -68,8 +68,6 @@ def test_start_camels(qtbot, capfd):
             qtbot.waitUntil(lambda: not main_window.isVisible())
 
 
-
-
 @pytest.fixture(scope="module")
 def app():
     app = QApplication.instance()

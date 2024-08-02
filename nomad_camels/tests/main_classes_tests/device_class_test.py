@@ -97,7 +97,7 @@ def test_get_channels(mocker):
     assert "channel1" in channels
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def app():
     """Fixture for creating a QApplication instance"""
     app = QApplication.instance()

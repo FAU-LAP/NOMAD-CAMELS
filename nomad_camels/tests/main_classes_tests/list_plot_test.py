@@ -10,7 +10,7 @@ from nomad_camels.main_classes.list_plot import (
 )
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def app():
     """Fixture for creating a Qt application."""
     app = QApplication.instance()

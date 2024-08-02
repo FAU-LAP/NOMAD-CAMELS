@@ -13,7 +13,11 @@ from nomad_camels.main_classes.manual_control import (
 
 @pytest.fixture(scope="module")
 def app():
-    return QApplication([])
+    """Fixture for creating a QApplication instance"""
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication([])
+    return app
 
 
 @pytest.fixture
