@@ -81,7 +81,6 @@ def place_widget(widget: QWidget):
             if current_screen >= len(screens):
                 current_screen = 0
                 iteration += 1
-            screen_geometry = screens[current_screen].availableGeometry()
             current_pos[1] += 5 * iteration * vertical_margin
     widget.move(
         current_pos[0] + screen_geometry.x(), current_pos[1] + screen_geometry.y()
