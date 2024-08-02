@@ -24,7 +24,7 @@ fsspec>=2022.5.0
 future>=0.18.2
 h5py>=3.7.0
 HeapDict>=1.0.1
-httpx>=0.27.0
+httpx
 humanize>=4.1.0
 idna>=3.3
 imageio>=2.19.3
