@@ -1305,7 +1305,8 @@ class LivePlot_NoBluesky(QObject):
         self.plotItem.setLabel("left", ylabel)
         self.ax2_viewbox = ax2_viewbox
         self.ax2_axis = ax2_axis
-        self.ax2_axis.setLabel("right", ylabel2)
+        if self.ax2_axis:
+            self.ax2_axis.setLabel("right", ylabel2)
         self.labels = labels
         self.maxlen = np.inf
         self.x_data = []
