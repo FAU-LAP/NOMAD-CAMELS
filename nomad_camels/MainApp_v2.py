@@ -259,7 +259,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # Connect the queue_protocol signal of the fastAPI to the queue_protocol method
             self.fastapi_thread.queue_protocol_signal.connect(self.queue_protocol)
             # Connect the remove_queue_protocol_signal of the fastAPI to the remove_queue_protocol method
-            self.fastapi_thread.remove_queue_protocol_signal.connect(self.remove_queue_protocol)
+            self.fastapi_thread.remove_queue_protocol_signal.connect(
+                self.remove_queue_protocol
+            )
             # Connect the set checkbox signal of the fastAPI to the set_checkbox method
             self.fastapi_thread.set_checkbox_signal.connect(self.set_checkbox)
 
@@ -311,7 +313,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Set the checkbox of a protocol in the run queue. Called by the API.
         """
         self.run_queue_widget.check_checkbox(protocol_name)
-    
+
     def open_watchdog_definition(self):
         """Opens the Watchdog_Definer dialog."""
         # IMPORT Watchdog_Definer only if it is needed
@@ -1760,7 +1762,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             from nomad_camels.bluesky_handling.protocol_builder import build_from_path
 
             if not watchdog.execute_at_condition:
-                raise Exception(f'Watchdog "{watchdog.name}" has nothing to execute when condition is met')
+                raise Exception(
+                    f'Watchdog "{watchdog.name}" has nothing to execute when condition is met'
+                )
             protocol = load_save_functions.load_protocol(watchdog.execute_at_condition)
             protocol_name = protocol.name
 
