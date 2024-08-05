@@ -6,6 +6,7 @@ from nomad_camels.api.api import FastapiThread, validate_credentials
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
 import socket
 import time
+import re
 
 
 # Mocked dependency to replace validate_credentials during tests
@@ -118,8 +119,18 @@ def test_run_protocol(client_and_thread):
             auth=("user", "valid_api_key"),
         )
         assert response.status_code == status.HTTP_200_OK
-        assert response.json() == {"status": "success"}
-        mock_emit.assert_called_once_with(protocol_name)
+        # Check if the response contains the expected URL with a UUID4 string
+        response_json = response.json()
+        assert "check protocol status here" in response_json
+        url = response_json["check protocol status here"]
+        uuid_pattern = re.compile(
+            r"^/api/v1/protocols/results/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        )
+        assert uuid_pattern.match(url), f"URL does not match expected pattern: {url}"
+        # Extract the UUID from the URL
+        uuid = url.split("/")[-1]
+        # Update the mock_emit assertion to include the additional parameters
+        mock_emit.assert_called_once_with(protocol_name, uuid, None)
 
 
 # Test to check if accessing /protocols with an invalid API key returns 401
