@@ -52,6 +52,7 @@ Fixes:
 - Fixed bug where a custom function signal that does not use force-sequential would not work
 - Fixed bug that prevented fits from being displayed if the fit had many variables
 - Number of databroker files setting never did anything, now it does
+- Would upload wrong file to NOMAD if always new file
 
 ## 1.2.2
 Features:

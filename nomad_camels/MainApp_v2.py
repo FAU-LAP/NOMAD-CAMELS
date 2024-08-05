@@ -1670,7 +1670,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
         nomad = self.nomad_user is not None
-        file = self.last_save_file or self.protocol_savepath
+        if self.last_save_file:
+            file = helper_functions.get_newest_file(self.last_save_file)
+        else:
+            file = helper_functions.get_newest_file(self.protocol_savepath)
         self.run_done_file_signal.emit(file)
         if not nomad:
             return
