@@ -6,6 +6,8 @@ from PySide6.QtCore import QThread
 
 import importlib
 
+from nomad_camels.utility import variables_handling
+
 
 # class Run_Protocol(QThread):
 #     """
@@ -313,9 +315,13 @@ class Additional_Imports_Thread(QThread):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.imports = []
+        self.catalog = None
 
     def run(self) -> None:
         """ """
+        import time
+
+        start = time.time()
         from bluesky import RunEngine
         from bluesky.callbacks.best_effort import BestEffortCallback
         import databroker
@@ -371,3 +377,17 @@ class Additional_Imports_Thread(QThread):
         self.imports.append(EPICS_driver_builder)
         self.imports.append(databroker_exporter)
         self.imports.append(helper_functions)
+
+        import_time = time.time()
+        print(import_time - start)
+
+        try:
+            self.databroker_catalog = databroker.catalog[
+                variables_handling.preferences["databroker_catalog_name"]
+            ]
+        except KeyError:
+            print("Could not find databroker catalog, using temporary")
+            self.catalog = databroker.temp().v2
+
+        print(time.time() - import_time)
+        print(time.time() - start)

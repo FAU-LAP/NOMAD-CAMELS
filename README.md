@@ -40,6 +40,7 @@ Features:
 Changes:
 - Variable signal is now saved as group instead of dataset
 - Can now read variables also without channels
+- moved databroker catalog loading to import thread, should speed up starting
 
 Fixes:
 - Can now save variables with non-scalar size
