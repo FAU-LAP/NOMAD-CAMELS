@@ -26,7 +26,7 @@ def client_and_thread():
     main_window_mock.protocols_dict = {"protocol1": "details1", "protocol2": "details2"}
 
     # Create and start a FastapiThread instance with the mocked main_window
-    thread = FastapiThread(main_window_mock, api_port=12345)
+    thread = FastapiThread(main_window_mock, api_port=1235)
     thread.start()
 
     # Get the FastAPI app and set up the TestClient
@@ -47,12 +47,12 @@ def client_and_thread():
 
 
 # Test to check if the root URL redirects to the documentation page
-# @pytest.mark.order(-1)
-# def test_root_redirect(client_and_thread):
-#     client, thread = client_and_thread
-#     response = client.get("/")
-#     assert response.status_code == status.HTTP_200_OK
-#     assert str(response.url).endswith("/docs")
+@pytest.mark.order(-1)
+def test_root_redirect(client_and_thread):
+    client, thread = client_and_thread
+    response = client.get("/")
+    assert response.status_code == status.HTTP_200_OK
+    assert str(response.url).endswith("/docs")
 
 
 
