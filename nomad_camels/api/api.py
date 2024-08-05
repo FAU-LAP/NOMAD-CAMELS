@@ -12,7 +12,7 @@ import os
 import threading
 import time
 import json
-
+import uuid
 
 # Define the validate_api_key function
 def validate_api_key(api_key: str) -> bool:
@@ -80,6 +80,7 @@ class FastapiThread(QThread):
         self.api_port = api_port
         self._stop_event = threading.Event()
         self.app = FastAPI()  # Initialize the FastAPI app
+        self.protocol_runs = {}  # Dictionary to store the protocol runs
 
     def run(self):
         app = self.app
@@ -177,8 +178,8 @@ class FastapiThread(QThread):
             )
 
         # Check the ready checkbox of protocols in the queue
-        @app.get("/api/v1/actions/queue_check_next/protocols/{protocol_name}_{index}")
-        async def check_next_protocol(
+        @app.get("/api/v1/actions/queue_check/protocols/{protocol_name}_{index}")
+        async def check_protocol(
             protocol_name: str, index: int, api_key: str = Depends(validate_credentials)
         ):
             """Check the ready checkbox of protocols in the queue"""
