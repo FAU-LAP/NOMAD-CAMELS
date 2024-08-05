@@ -50,7 +50,9 @@ def client_and_thread():
 @pytest.mark.order(-1)
 def test_root_redirect(client_and_thread):
     client, thread = client_and_thread
+    print(client)
     response = client.get("/")
+    print(response)
     assert response.status_code == status.HTTP_200_OK
     assert str(response.url).endswith("/docs")
 
