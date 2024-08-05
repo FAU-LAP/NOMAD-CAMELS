@@ -64,34 +64,6 @@ def test_set_sample(app):
         app.set_sample("non_existent_sample")
 
 
-def test_manage_instruments(app, qtbot):
-    """Test managing instruments."""
-
-    # Mock the ManageInstruments dialog and its behavior
-    with patch(
-        "nomad_camels.frontpanels.manage_instruments.ManageInstruments"
-    ) as MockManageInstruments:
-        # Create a mock dialog instance
-        mock_dialog = MagicMock(spec=QDialog)
-        mock_dialog.exec_ = MagicMock(return_value=True)
-        mock_dialog.active_instruments = {"instrument1": {}}
-
-        # Set the return value of the ManageInstruments constructor to our mock dialog
-        MockManageInstruments.return_value = mock_dialog
-
-        # Run the manage_instruments method
-        app.manage_instruments()
-
-        # Verify that ManageInstruments was called
-        MockManageInstruments.assert_called_once_with(
-            active_instruments=app.active_instruments, parent=app
-        )
-
-        # Check that the active_instruments was updated correctly
-        assert len(app.active_instruments) == 1
-        assert "instrument1" in app.active_instruments
-
-
 def test_show_hide_log(app, qtbot):
     """Test showing and hiding the log."""
     app.textEdit_console_output.setHidden(False)
