@@ -29,7 +29,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 Major Features:
 
-- Added an API web server. Connect to your localhost with port 5000 (127.0.0.1:5000). The homepage gives you an overview of the available API calls and how to use them. You need to create an API key in the settings to be able to use most of the API calls. At the moment only very basic functionality is supported. You can get a list of the available protocols you can execute with `GET /protocols` and run a specific protocol by using `POST /protocols/{protocol_name}` For more information check the documentation.
+- Added an API web server. The homepage `http:\\localhost:<PORT>` gives you an overview of the available API calls and how to use them. You need to create an API key in the settings to be able to use most of the API calls. You can get a list of the available protocols you can execute with `GET /protocols` and run a specific protocol by using `POST /protocols/{protocol_name}` For more information check the documentation.
 - Added a Watchdog feature to monitor certain values and execute operations when their condition is met.
 
 Features:
