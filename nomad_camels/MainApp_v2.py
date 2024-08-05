@@ -1678,8 +1678,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
         nomad = self.nomad_user is not None
-        file = self.last_save_file or self.protocol_savepath
-        file = os.path.abspath(os.path.normpath(file))
+        if self.last_save_file:
+            file = helper_functions.get_newest_file(self.last_save_file)
+        else:
+            file = helper_functions.get_newest_file(self.protocol_savepath)
         self.run_done_file_signal.emit(file)
         # Check if the protocol was executed using the api and save rsults to db if true
         if api_uuid is not None:
