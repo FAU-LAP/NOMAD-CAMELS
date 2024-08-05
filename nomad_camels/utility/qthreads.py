@@ -319,9 +319,6 @@ class Additional_Imports_Thread(QThread):
 
     def run(self) -> None:
         """ """
-        import time
-
-        start = time.time()
         from bluesky import RunEngine
         from bluesky.callbacks.best_effort import BestEffortCallback
         import databroker
@@ -378,9 +375,6 @@ class Additional_Imports_Thread(QThread):
         self.imports.append(databroker_exporter)
         self.imports.append(helper_functions)
 
-        import_time = time.time()
-        print(import_time - start)
-
         try:
             self.databroker_catalog = databroker.catalog[
                 variables_handling.preferences["databroker_catalog_name"]
@@ -388,6 +382,3 @@ class Additional_Imports_Thread(QThread):
         except KeyError:
             print("Could not find databroker catalog, using temporary")
             self.catalog = databroker.temp().v2
-
-        print(time.time() - import_time)
-        print(time.time() - start)

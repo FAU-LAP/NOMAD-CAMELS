@@ -55,6 +55,7 @@ def client_and_thread():
 #     assert str(response.url).endswith("/docs")
 
 
+
 # Test to check if the /protocols endpoint returns the correct protocols
 @pytest.mark.order(-1)
 def test_get_protocols(client_and_thread):

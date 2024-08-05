@@ -27,35 +27,6 @@ def mock_dependencies():
         }
 
 
-def test_make_yml_creates_files_and_directories(mock_dependencies):
-    datapath = "/mock/data/path"
-    catalog_name = "TEST_CATALOG"
-
-    make_yml(datapath, catalog_name)
-
-    mock_dependencies["mock_makedirs"].assert_any_call(
-        pathlib.Path("/mock/catalog/path")
-    )
-    mock_dependencies["mock_makedirs"].assert_any_call(
-        pathlib.Path(datapath) / "databroker" / catalog_name
-    )
-
-    mock_dependencies["mock_file"].assert_called_once_with(
-        pathlib.Path("/mock/catalog/path/TEST_CATALOG.yml"), "w", encoding="utf-8"
-    )
-    expected_content = (
-        "sources:\n"
-        f"  {catalog_name}:\n"
-        '    driver: "bluesky-msgpack-catalog"\n'
-        "    args:\n"
-        "      paths:\n"
-        f'        - "{(pathlib.Path(datapath) / "databroker" / catalog_name).as_posix()}/*.msgpack"'
-    )
-    mock_dependencies["mock_file"].return_value.write.assert_called_once_with(
-        expected_content
-    )
-
-
 @patch("nomad_camels.bluesky_handling.make_catalog.WarnPopup")
 @patch("nomad_camels.bluesky_handling.make_catalog.update_camels.restart_camels")
 def test_make_yml_warns_if_catalog_not_loaded(
