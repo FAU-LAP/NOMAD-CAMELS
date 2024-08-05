@@ -1532,7 +1532,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.run_protocol(protocol_name, variables)
         self.run_queue_widget.remove_first()
 
-    def run_protocol(self, protocol_name, variables=None):
+    def run_protocol(self, protocol_name, variables=None, api_uuid=None):
         """
         This function runs the given protocol `protocol_name`.
         First the protocol is built, then imported. The used instruments are
@@ -1629,7 +1629,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "devices": dev_data,
                 "description": protocol.description,
                 "versions": {
-                    "NOMAD CAMELS": "0.1",
+                    "NOMAD CAMELS": "1.3.1",
                     "EPICS": "7.0.6.2",
                     "bluesky": bluesky.__version__,
                     "ophyd": ophyd.__version__,
