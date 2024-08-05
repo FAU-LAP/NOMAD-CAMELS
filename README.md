@@ -50,6 +50,7 @@ Fixes:
 - Fixed a bug that would not allow extension-users to show up in data
 - Fixed bug where a custom function signal that does not use force-sequential would not work
 - Fixed bug that prevented fits from being displayed if the fit had many variables
+- Number of databroker files setting never did anything, now it does
 
 ## 1.2.2
 Features:
