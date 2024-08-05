@@ -4,6 +4,7 @@ from fastapi import status, Depends, HTTPException
 from unittest.mock import patch, MagicMock
 from nomad_camels.api.api import FastapiThread, validate_credentials
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
+import socket
 
 
 # Mocked dependency to replace validate_credentials during tests
@@ -18,6 +19,11 @@ def mock_validate_credentials(credentials: HTTPBasicCredentials = Depends(HTTPBa
         )
 
 
+def is_port_available(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(("127.0.0.1", port)) != 0
+
+
 # Fixture to set up the TestClient and FastapiThread for testing
 @pytest.fixture()
 def client_and_thread():
@@ -25,8 +31,13 @@ def client_and_thread():
     main_window_mock = MagicMock()
     main_window_mock.protocols_dict = {"protocol1": "details1", "protocol2": "details2"}
 
+    port = 1235
+    while not is_port_available(port):
+        port += 1
+        if port > 9999:
+            raise Exception("No available port found")
     # Create and start a FastapiThread instance with the mocked main_window
-    thread = FastapiThread(main_window_mock, api_port=1235)
+    thread = FastapiThread(main_window_mock, api_port=port)
     thread.start()
 
     # Get the FastAPI app and set up the TestClient
@@ -53,7 +64,6 @@ def test_root_redirect(client_and_thread):
     response = client.get("/")
     assert response.status_code == status.HTTP_200_OK
     assert str(response.url).endswith("/docs")
-
 
 
 # Test to check if the /protocols endpoint returns the correct protocols
