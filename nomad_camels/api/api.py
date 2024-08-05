@@ -14,6 +14,7 @@ import time
 import json
 import uuid
 
+
 # Define the validate_api_key function
 def validate_api_key(api_key: str) -> bool:
     # Establish the SQLite connection and cursor
@@ -37,6 +38,28 @@ def validate_api_key(api_key: str) -> bool:
     return result is not None
 
 
+def write_protocol_result_path_to_db(api_uuid, file_path):
+    # Database setup
+    data_base_path = os.path.join(
+        load_save_functions.appdata_path, "CAMELS_API_keys.db"
+    )
+    conn = sqlite3.connect(data_base_path, check_same_thread=False)
+    c = conn.cursor()
+    
+    # Update the entry with the given api_uuid to set the status to the provided file_path
+    c.execute(
+        """
+        UPDATE protocol_run_status
+        SET status = ?
+        WHERE uuid = ?
+        """, (file_path, api_uuid)
+    )
+    conn.commit()
+    
+    # Close the database connection
+    conn.close()
+
+
 # Initialize HTTP Basic Authentication
 security = HTTPBasic()
 
@@ -57,7 +80,7 @@ async def validate_credentials(credentials: HTTPBasicCredentials = Depends(secur
 class FastapiThread(QThread):
     # Define signals for communicating with the main window
     # Signal to start a protocol
-    start_protocol_signal = Signal(str)
+    start_protocol_signal = Signal(str, str)
     # Signal to send error message to main window, clears the fastapi_thread variable
     port_error_signal = Signal(str)
     # Signal to set the available user names
@@ -100,8 +123,76 @@ class FastapiThread(QThread):
             protocol_name: str, api_key: str = Depends(validate_credentials)
         ):
             """Run a protocol by name"""
-            self.start_protocol_signal.emit(str(protocol_name))
-            return JSONResponse(content={"status": "success"})
+            protocol_uuid = str(uuid.uuid4())
+
+            # Database setup
+            data_base_path = os.path.join(
+                load_save_functions.appdata_path, "CAMELS_API_keys.db"
+            )
+            conn = sqlite3.connect(data_base_path, check_same_thread=False)
+            c = conn.cursor()
+
+            # Create table if it doesn't exist
+            c.execute(
+                """
+                CREATE TABLE IF NOT EXISTS protocol_run_status (
+                    uuid TEXT PRIMARY KEY,
+                    status TEXT NOT NULL,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+            )
+            conn.commit()
+
+            # Insert new entry with UUID and status "currently running"
+            c.execute(
+                """
+                INSERT INTO protocol_run_status (uuid, status)
+                VALUES (?, ?)
+                """,
+                (protocol_uuid, "currently running"),
+            )
+            conn.commit()
+            # Close the database connection
+            conn.close()
+            self.start_protocol_signal.emit(str(protocol_name), protocol_uuid)
+            return JSONResponse(
+                content={
+                    "check protocol status here": f"/api/v1/protocols/results/{protocol_uuid}"
+                }
+            )
+
+        # Get the status of a protocol run by UUID
+        @app.get("/api/v1/protocols/results/{protocol_uuid}")
+        async def get_protocol_status(
+            protocol_uuid: str, api_key: str = Depends(validate_credentials)
+        ):
+            """Get the status of a protocol run by UUID"""
+            # Database setup
+            data_base_path = os.path.join(
+                load_save_functions.appdata_path, "CAMELS_API_keys.db"
+            )
+            conn = sqlite3.connect(data_base_path, check_same_thread=False)
+            c = conn.cursor()
+
+            # Query the status of the protocol run by UUID
+            c.execute(
+                """
+                SELECT status FROM protocol_run_status WHERE uuid = ?
+                """,
+                (protocol_uuid,),
+            )
+            result = c.fetchone()
+            # Close the database connection
+            conn.close()
+            if result:
+                return JSONResponse(
+                    content={"uuid": protocol_uuid, "status": result[0]}
+                )
+            else:
+                return JSONResponse(
+                    content={"error": "UUID not found"}, status_code=404
+                )
 
         # Get the current protocol queue
         @app.get("/api/v1/queue")

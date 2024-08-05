@@ -1540,10 +1540,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         if self.run_engine and self.run_engine.state != "idle":
             return
-        self.run_protocol(protocol_name, variables)
+        self.run_protocol(protocol_name, variables=variables)
         self.run_queue_widget.remove_first()
 
-    def run_protocol(self, protocol_name, variables=None, api_uuid=None):
+    def run_protocol(self, protocol_name, api_uuid=None, variables=None):
         """
         This function runs the given protocol `protocol_name`.
         First the protocol is built, then imported. The used instruments are
@@ -1609,7 +1609,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.instantiate_devices_thread = device_handling.InstantiateDevicesThread(
                 device_list, skip_config=protocol.skip_config
             )
-            self.instantiate_devices_thread.successful.connect(self.run_protocol_part2)
+            if api_uuid is not None:
+                self.instantiate_devices_thread.successful.connect(
+                    lambda: self.run_protocol_part2(api_uuid)
+                )
+            else:
+                self.instantiate_devices_thread.successful.connect(
+                    self.run_protocol_part2
+                )
             self.instantiate_devices_thread.exception_raised.connect(
                 self.propagate_exception
             )
@@ -1630,7 +1637,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_finished()
         raise exception
 
-    def run_protocol_part2(self):
+    def run_protocol_part2(self, api_uuid=None):
         """
         This function is called after the devices are instantiated.
         The protocol is run using the `run_protocol_main` function of the protocol module.
@@ -1663,6 +1670,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     "bluesky": bluesky.__version__,
                     "ophyd": ophyd.__version__,
                 },
+                "api_uuid": api_uuid,  # Include the uuid in the metadata
             },
         )
         self.pushButton_resume.setEnabled(False)
@@ -1671,7 +1679,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_stepper_signal.emit(100)
         nomad = self.nomad_user is not None
         file = self.last_save_file or self.protocol_savepath
+        file = os.path.abspath(os.path.normpath(file))
         self.run_done_file_signal.emit(file)
+        # Check if the protocol was executed using the api and save rsults to db if true
+        if api_uuid is not None:
+            from nomad_camels.api.api import write_protocol_result_path_to_db
+
+            write_protocol_result_path_to_db(api_uuid, file)
         if not nomad:
             return
         while self.still_running:
