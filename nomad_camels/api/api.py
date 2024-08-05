@@ -19,8 +19,10 @@ from pydantic import BaseModel, Field
 class Variables(BaseModel):
     variables: dict = Field(
         ...,
-        description="A dictionary of variables to pass to the protocol",
-        example={"key1": "value1", "key2": "value2"},
+        json_schema_extra={
+            "description": "A dictionary of variables to pass to the protocol",
+            "example": {"key1": "value1", "key2": "value2"},
+        },
     )
 
 
