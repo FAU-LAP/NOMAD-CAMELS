@@ -34,6 +34,7 @@ def client_and_thread():
     port = 1235
     while not is_port_available(port):
         port += 1
+        print(port)
         if port > 9999:
             raise Exception("No available port found")
     # Create and start a FastapiThread instance with the mocked main_window
