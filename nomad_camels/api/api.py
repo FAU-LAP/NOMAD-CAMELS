@@ -13,14 +13,21 @@ import threading
 import time
 import json
 import uuid
+from pydantic import BaseModel, Field
+
+
+class Variables(BaseModel):
+    variables: dict = Field(
+        ...,
+        description="A dictionary of variables to pass to the protocol",
+        example={"key1": "value1", "key2": "value2"},
+    )
 
 
 # Define the validate_api_key function
 def validate_api_key(api_key: str) -> bool:
     # Establish the SQLite connection and cursor
-    data_base_path = os.path.join(
-        load_save_functions.appdata_path, "CAMELS_API_keys.db"
-    )
+    data_base_path = os.path.join(load_save_functions.appdata_path, "CAMELS_API.db")
     conn = sqlite3.connect(data_base_path)
     c = conn.cursor()
     hashed_key = hash_api_key(api_key)
@@ -40,22 +47,21 @@ def validate_api_key(api_key: str) -> bool:
 
 def write_protocol_result_path_to_db(api_uuid, file_path):
     # Database setup
-    data_base_path = os.path.join(
-        load_save_functions.appdata_path, "CAMELS_API_keys.db"
-    )
+    data_base_path = os.path.join(load_save_functions.appdata_path, "CAMELS_API.db")
     conn = sqlite3.connect(data_base_path, check_same_thread=False)
     c = conn.cursor()
-    
+
     # Update the entry with the given api_uuid to set the status to the provided file_path
     c.execute(
         """
         UPDATE protocol_run_status
         SET status = ?
         WHERE uuid = ?
-        """, (file_path, api_uuid)
+        """,
+        (file_path, api_uuid),
     )
     conn.commit()
-    
+
     # Close the database connection
     conn.close()
 
@@ -80,7 +86,7 @@ async def validate_credentials(credentials: HTTPBasicCredentials = Depends(secur
 class FastapiThread(QThread):
     # Define signals for communicating with the main window
     # Signal to start a protocol
-    start_protocol_signal = Signal(str, str)
+    start_protocol_signal = Signal(str, str, object)
     # Signal to send error message to main window, clears the fastapi_thread variable
     port_error_signal = Signal(str)
     # Signal to set the available user names
@@ -117,6 +123,20 @@ class FastapiThread(QThread):
                 content={"Protocols": list(self.main_window.protocols_dict.keys())}
             )
 
+        # Get the available variables of a protocol
+        @app.get("/api/v1/protocols/variables/{protocol_name}")
+        async def get_protocol_variables(
+            protocol_name: str, api_key: str = Depends(validate_credentials)
+        ):
+            """Get the available variables of a protocol"""
+            return JSONResponse(
+                content={
+                    "Variables": list(
+                        self.main_window.protocols_dict[protocol_name].variables
+                    )
+                }
+            )
+
         # Run a protocol by name
         @app.get("/api/v1/actions/run/protocols/{protocol_name}")
         async def run_protocol(
@@ -127,7 +147,7 @@ class FastapiThread(QThread):
 
             # Database setup
             data_base_path = os.path.join(
-                load_save_functions.appdata_path, "CAMELS_API_keys.db"
+                load_save_functions.appdata_path, "CAMELS_API.db"
             )
             conn = sqlite3.connect(data_base_path, check_same_thread=False)
             c = conn.cursor()
@@ -155,7 +175,59 @@ class FastapiThread(QThread):
             conn.commit()
             # Close the database connection
             conn.close()
-            self.start_protocol_signal.emit(str(protocol_name), protocol_uuid)
+            self.start_protocol_signal.emit(str(protocol_name), protocol_uuid, None)
+            return JSONResponse(
+                content={
+                    "check protocol status here": f"/api/v1/protocols/results/{protocol_uuid}"
+                }
+            )
+
+        # Run a protocol by name and pass variables to it (only already defined variables can be passed)
+        @app.post("/api/v1/actions/run/protocols/{protocol_name}")
+        async def run_protocol_with_variables(
+            protocol_name: str,
+            variables: Variables,
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Run a protocol by name and pass variables to it (only already defined variables can be passed)"""
+            # Get dictionary from the variables model
+            variables = variables.model_dump()
+
+            protocol_uuid = str(uuid.uuid4())
+
+            # Database setup
+            data_base_path = os.path.join(
+                load_save_functions.appdata_path, "CAMELS_API.db"
+            )
+            conn = sqlite3.connect(data_base_path, check_same_thread=False)
+            c = conn.cursor()
+
+            # Create table if it doesn't exist
+            c.execute(
+                """
+                CREATE TABLE IF NOT EXISTS protocol_run_status (
+                    uuid TEXT PRIMARY KEY,
+                    status TEXT NOT NULL,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+            )
+            conn.commit()
+
+            # Insert new entry with UUID and status "currently running"
+            c.execute(
+                """
+                INSERT INTO protocol_run_status (uuid, status)
+                VALUES (?, ?)
+                """,
+                (protocol_uuid, "currently running"),
+            )
+            conn.commit()
+            # Close the database connection
+            conn.close()
+            self.start_protocol_signal.emit(
+                str(protocol_name), protocol_uuid, variables["variables"]
+            )
             return JSONResponse(
                 content={
                     "check protocol status here": f"/api/v1/protocols/results/{protocol_uuid}"
@@ -170,7 +242,7 @@ class FastapiThread(QThread):
             """Get the status of a protocol run by UUID"""
             # Database setup
             data_base_path = os.path.join(
-                load_save_functions.appdata_path, "CAMELS_API_keys.db"
+                load_save_functions.appdata_path, "CAMELS_API.db"
             )
             conn = sqlite3.connect(data_base_path, check_same_thread=False)
             c = conn.cursor()

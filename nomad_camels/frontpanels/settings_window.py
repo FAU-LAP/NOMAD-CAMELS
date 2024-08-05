@@ -317,7 +317,7 @@ class Settings_Window(Ui_settings_window, QDialog):
         # Save hash of the API key to the SQlite database file
         # Database setup
         data_base_path = os.path.join(
-            load_save_functions.appdata_path, "CAMELS_API_keys.db"
+            load_save_functions.appdata_path, "CAMELS_API.db"
         )
         conn = sqlite3.connect(data_base_path, check_same_thread=False)
         c = conn.cursor()
@@ -353,7 +353,7 @@ class Settings_Window(Ui_settings_window, QDialog):
 
         if reply == QMessageBox.Yes:
             data_base_path = os.path.join(
-                load_save_functions.appdata_path, "CAMELS_API_keys.db"
+                load_save_functions.appdata_path, "CAMELS_API.db"
             )
             conn = sqlite3.connect(data_base_path, check_same_thread=False)
             c = conn.cursor()

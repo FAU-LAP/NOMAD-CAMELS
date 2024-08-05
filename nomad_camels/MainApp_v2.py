@@ -1682,11 +1682,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             file = helper_functions.get_newest_file(self.last_save_file)
         else:
             file = helper_functions.get_newest_file(self.protocol_savepath)
+        file = os.path.normpath(file)
         self.run_done_file_signal.emit(file)
         # Check if the protocol was executed using the api and save rsults to db if true
         if api_uuid is not None:
             from nomad_camels.api.api import write_protocol_result_path_to_db
-
             write_protocol_result_path_to_db(api_uuid, file)
         if not nomad:
             return
