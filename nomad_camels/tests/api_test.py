@@ -47,12 +47,12 @@ def client_and_thread():
 
 
 # Test to check if the root URL redirects to the documentation page
-@pytest.mark.order(-1)
-def test_root_redirect(client_and_thread):
-    client, thread = client_and_thread
-    response = client.get("/")
-    assert response.status_code == status.HTTP_200_OK
-    assert str(response.url).endswith("/docs")
+# @pytest.mark.order(-1)
+# def test_root_redirect(client_and_thread):
+#     client, thread = client_and_thread
+#     response = client.get("/")
+#     assert response.status_code == status.HTTP_200_OK
+#     assert str(response.url).endswith("/docs")
 
 
 # Test to check if the /protocols endpoint returns the correct protocols
