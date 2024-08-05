@@ -31,7 +31,7 @@ def client_and_thread():
     main_window_mock = MagicMock()
     main_window_mock.protocols_dict = {"protocol1": "details1", "protocol2": "details2"}
 
-    port = 1235
+    port = 1234
     while not is_port_available(port):
         port += 1
         print(port)
