@@ -1651,7 +1651,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         except Exception as e:
             self.protocol_finished()
             raise e
-        import bluesky, ophyd, time
+        import time
+        from bluesky import __version__ as bluesky_version
+        from ophyd import __version__ as ophyd_version
+        from nomad_camels import __version__ as nomad_camels_version
 
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
@@ -1665,10 +1668,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "devices": dev_data,
                 "description": protocol.description,
                 "versions": {
-                    "NOMAD CAMELS": "1.3.1",
+                    "NOMAD CAMELS": nomad_camels_version,
                     "EPICS": "7.0.6.2",
-                    "bluesky": bluesky.__version__,
-                    "ophyd": ophyd.__version__,
+                    "bluesky": bluesky_version,
+                    "ophyd": ophyd_version,
                 },
                 "api_uuid": api_uuid,  # Include the uuid in the metadata
             },
