@@ -102,7 +102,6 @@ class Set_Panel_Device(Device):
                         value = bool(value)
                     except ValueError:
                         pass
-            print(channel, self.channels)
             chan = self.channels[channel]
             if isinstance(chan, str):
                 chan = device_handling.get_channel_from_string(chan)

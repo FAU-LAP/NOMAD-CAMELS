@@ -114,6 +114,15 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.lineEdit_catalog_name.setText(settings["databroker_catalog_name"])
         else:
             self.lineEdit_catalog_name.setText(standard_pref["databroker_catalog_name"])
+        if "number_databroker_files" in settings:
+            self.spinBox_n_databroker_files.setValue(
+                settings["number_databroker_files"]
+            )
+        else:
+            self.spinBox_n_databroker_files.setValue(
+                standard_pref["number_databroker_files"]
+            )
+        self.spinBox_n_databroker_files.setToolTip("0 files means keep all")
         if "play_camel_on_error" in settings:
             self.checkBox_play_camel_on_error.setChecked(
                 settings["play_camel_on_error"]
@@ -268,6 +277,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             "meas_files_path": self.pathButton_meas_files.get_path(),
             "device_driver_path": self.pathButton_device_path.get_path(),
             "databroker_catalog_name": self.lineEdit_catalog_name.text(),
+            "number_databroker_files": self.spinBox_n_databroker_files.value(),
             "play_camel_on_error": self.checkBox_play_camel_on_error.isChecked(),
             "log_level": self.comboBox_log_level.currentText(),
             "logfile_size": self.spinBox_logfile_size.value(),
@@ -371,9 +381,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.pushButton_generate_Api_key.setEnabled(False)
             self.pushButton_copy_Api_key_clipboard.setEnabled(False)
             self.pushButton_delete_Api_keys.setEnabled(False)
-            self.pushButton_copy_Api_key_clipboard.setStyleSheet(
-                ""
-            )
+            self.pushButton_copy_Api_key_clipboard.setStyleSheet("")
 
 
 def hash_api_key(api_key):

@@ -32,6 +32,7 @@ from nomad_camels.utility import (
 from nomad_camels.ui_widgets import options_run_button, warn_popup
 from nomad_camels.extensions import extension_contexts
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
+from nomad_camels.bluesky_handling import helper_functions
 
 from collections import OrderedDict
 import importlib
@@ -46,6 +47,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     protocol_stepper_signal = Signal(int)
     run_done_file_signal = Signal(str)
+    fake_signal = Signal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -227,8 +229,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.actionWatchdogs.triggered.connect(self.open_watchdog_definition)
         self.eva = Evaluator()
-        for watchdog in variables_handling.watchdogs.values():
-            watchdog.eva = self.eva
+        self.update_watchdogs()
 
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
@@ -258,7 +259,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # Connect the queue_protocol signal of the fastAPI to the queue_protocol method
             self.fastapi_thread.queue_protocol_signal.connect(self.queue_protocol)
             # Connect the remove_queue_protocol_signal of the fastAPI to the remove_queue_protocol method
-            self.fastapi_thread.remove_queue_protocol_signal.connect(self.remove_queue_protocol)
+            self.fastapi_thread.remove_queue_protocol_signal.connect(
+                self.remove_queue_protocol
+            )
             # Connect the set checkbox signal of the fastAPI to the set_checkbox method
             self.fastapi_thread.set_checkbox_signal.connect(self.set_checkbox)
 
@@ -310,14 +313,26 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Set the checkbox of a protocol in the run queue. Called by the API.
         """
         self.run_queue_widget.check_checkbox(protocol_name)
-    
+
     def open_watchdog_definition(self):
         """Opens the Watchdog_Definer dialog."""
         # IMPORT Watchdog_Definer only if it is needed
         from nomad_camels.bluesky_handling.watchdogs import Watchdog_Definer
 
         dialog = Watchdog_Definer(self)
+        for watchdog in variables_handling.watchdogs.values():
+            if not watchdog.active:
+                continue
+            watchdog.condition_met.disconnect(self.watchdog_triggered)
         dialog.exec()
+        self.update_watchdogs()
+
+    def update_watchdogs(self):
+        for watchdog in variables_handling.watchdogs.values():
+            if not watchdog.active:
+                continue
+            watchdog.eva = self.eva
+            watchdog.condition_met.connect(self.watchdog_triggered)
 
     def show_hide_log(self):
         """ """
@@ -415,20 +430,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         import databroker
 
         self.run_engine = RunEngine()
-        for watchdog in variables_handling.watchdogs.values():
-            watchdog.condition_met.connect(self.pause_protocol)
         self.run_engine.subscribe(self.eva)
         bec = BestEffortCallback()
         self.run_engine.subscribe(bec)
         self.change_catalog_name()
-        try:
-            self.databroker_catalog = databroker.catalog[
-                self.preferences["databroker_catalog_name"]
-            ]
-        except KeyError:
-            print("Could not find databroker catalog, using temporary")
-            self.databroker_catalog = databroker.temp().v2
-        self.run_engine.subscribe(self.databroker_catalog.v1.insert)
+        self.importer_thread.wait()
+        self.databroker_catalog = self.importer_thread.catalog
         self.run_engine.subscribe(self.protocol_finished, "stop")
         self.still_running = False
         self.re_subs = []
@@ -529,6 +536,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if self.open_windows:
             a0.ignore()
             return
+        self.stop_API_server()
         super().closeEvent(a0)
         if self.preferences["autosave"]:
             self.save_state()
@@ -1061,7 +1069,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             "manual_controls": self.manual_controls,
             "protocol_tabs_dict": self.protocol_tabs_dict,
             "manual_tabs_dict": self.manual_tabs_dict,
-            "watchdogs": variables_handling.watchdogs,
+            "watchdogs": {
+                name: wd.get_definition()
+                for name, wd in variables_handling.watchdogs.items()
+            },
         }
         for key in self.preset_save_dict:
             add_string = load_save_functions.get_save_str(self.preset_save_dict[key])
@@ -1574,6 +1585,24 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             plots, subs, _ = self.protocol_module.create_plots(self.run_engine)
             for plot in plots:
                 self.add_to_plots(plot)
+            if self.protocols_dict[protocol_name].h5_during_run:
+                from nomad_camels.bluesky_handling.helper_functions import (
+                    saving_function,
+                )
+                from event_model import RunRouter
+
+                self.run_router = RunRouter(
+                    [
+                        lambda x, y: saving_function(
+                            x,
+                            y,
+                            self.protocol_module.save_path,
+                            self.protocol_module.new_file_each_run,
+                            self.protocol_module.plots,
+                        )
+                    ]
+                )
+                self.re_subs.append(self.run_engine.subscribe(self.run_router))
             device_list = protocol.get_used_devices()
             self.current_protocol_device_list = list(device_list)
             self.re_subs += subs
@@ -1692,10 +1721,130 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         Pause the protocol if the run engine is running. The run engine is requested to pause and the buttons are updated.
         """
-        if self.run_engine.state == "running":
+        if self.run_engine and self.run_engine.state == "running":
             self.run_engine.request_pause()
             self.pushButton_resume.setEnabled(True)
             self.pushButton_pause.setEnabled(False)
+
+    def watchdog_triggered(self, watchdog):
+        """
+        Called when a watchdog is triggered. The protocol is paused and the watchdog is reset.
+
+        Parameters
+        ----------
+        watchdog : str
+            The name of the watchdog that was triggered.
+        """
+        from nomad_camels.utility import device_handling
+        import bluesky, ophyd
+        import bluesky.plan_stubs as bps
+
+        print("trigger")
+        watchdog.was_triggered = True
+        warning = warn_popup.WarnPopup(
+            self,
+            f"Watchdog {watchdog.name} triggered with condition {watchdog.condition}",
+            "Watchdog Triggered",
+            do_not_pause=True,
+        )
+        self.pause_protocol()
+        self.setEnabled(False)
+        subs = []
+        try:
+            if not self.run_engine:
+                self.bluesky_setup()
+            from nomad_camels.bluesky_handling.protocol_builder import build_from_path
+
+            if not watchdog.execute_at_condition:
+                raise Exception(
+                    f'Watchdog "{watchdog.name}" has nothing to execute when condition is met'
+                )
+            protocol = load_save_functions.load_protocol(watchdog.execute_at_condition)
+            protocol_name = protocol.name
+
+            user, userdata = self.get_user_name_data()
+            sample, sampledata = self.get_sample_name_data()
+            savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/watchdog_execution.nxs'
+            build_from_path(
+                watchdog.execute_at_condition,
+                save_path=savepath,
+                userdata=userdata,
+                sampledata=sampledata,
+                catalog=self.databroker_catalog,
+            )
+            path = pathlib.Path(watchdog.execute_at_condition)
+            spec = importlib.util.spec_from_file_location(
+                path.stem, path.with_suffix(".py")
+            )
+            module = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = module
+            spec.loader.exec_module(module)
+            if not watchdog.plots:
+                plots, subs, _ = module.create_plots(
+                    self.run_engine, stream="watchdog_triggered"
+                )
+                watchdog.plots = plots
+            else:
+                for plot in watchdog.plots:
+                    self.run_engine.subscribe(plot.livePlot)
+            for plot in watchdog.plots:
+                self.add_to_plots(plot)
+            device_list = protocol.get_used_devices()
+            devs, dev_data = device_handling.instantiate_devices(
+                device_list, skip_config=protocol.skip_config
+            )
+            additionals = module.steps_add_main(self.run_engine, devs)
+            self.add_subs_and_plots_from_dict(additionals)
+            module.protocol_stepper_signal = self.fake_signal
+            module.protocol_step_information["protocol_stepper_signal"] = (
+                self.fake_signal
+            )
+            if self.run_engine.state == "paused":
+
+                def pause_plan():
+                    yield from getattr(module, f"{protocol_name}_plan_inner")(
+                        devs, self.eva, stream_name="watchdog_triggered"
+                    )
+                    yield from bps.checkpoint()
+                    yield from bps.pause()
+                    yield from bps.checkpoint()
+
+                self.run_engine._plan_stack.append(pause_plan())
+                self.run_engine._response_stack.append(None)
+                self.run_engine.resume()
+                # wait for run engine to pause again
+                while self.run_engine.state == "running":
+                    import time
+
+                    time.sleep(0.1)
+            else:
+                module.run_protocol_main(
+                    self.run_engine,
+                    catalog=self.databroker_catalog,
+                    devices=devs,
+                    md={
+                        "devices": dev_data,
+                        "description": protocol.description,
+                        "versions": {
+                            "NOMAD CAMELS": "0.1",
+                            "EPICS": "7.0.6.2",
+                            "bluesky": bluesky.__version__,
+                            "ophyd": ophyd.__version__,
+                        },
+                    },
+                )
+        except Exception as e:
+            if not isinstance(e, bluesky.utils.RunEngineInterrupted):
+                self.stop_protocol()
+                self.setEnabled(True)
+                raise e
+        finally:
+            for sub in subs:
+                self.run_engine.unsubscribe(sub)
+            self.setEnabled(True)
+            if not warning.clicked_by_user:
+                warning.exec()
+            watchdog.was_triggered = False
 
     def stop_protocol(self):
         """
@@ -1746,6 +1895,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)
+        self.re_subs.clear()
         self.devices_from_queue.append(self.current_protocol_device_list)
         if self.run_queue_widget.check_next_protocol():
             return
@@ -1855,6 +2005,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             user = userdata["name"]
         elif self.extension_user:
             userdata = self.extension_user
+            user = userdata["name"]
         else:
             user = self.active_user or "default_user"
             userdata = (

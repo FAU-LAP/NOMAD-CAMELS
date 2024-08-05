@@ -25,7 +25,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff
           pip install -r requirements.txt
-          pip install pytest pytest-qt
+          pip install pytest pytest-qt pytest-order pytest-mock
       - name: List packages
         run: pip list
       - name: Lint with ruff
@@ -53,7 +53,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff
           pip install -r requirements.txt
-          pip install pytest pytest-qt pytest-xvfb
+          pip install pytest pytest-qt pytest-xvfb pytest-cov pytest-order pytest-mock
           export QT_DEBUG_PLUGINS=1
       - name: List packages
         run: pip list
@@ -64,7 +64,9 @@ jobs:
       - name: Prepare databroker
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
-        run: pytest -v
+        run: |
+          cd nomad_camels
+          pytest -v --cov-config=./tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels tests/
   macos_test:
     runs-on: macos-latest
     steps:
@@ -80,7 +82,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff
           pip install -r requirements.txt
-          pip install pytest pytest-qt
+          pip install pytest pytest-qt pytest-order pytest-mock
       - name: List packages
         run: pip list
       - name: Lint with ruff

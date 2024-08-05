@@ -45,7 +45,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
 )
 from PySide6.QtGui import QAction
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QTimer, Signal, SignalInstance
 
 from datetime import datetime, timedelta
 import json
@@ -106,6 +106,8 @@ save_dict_skip = [
     QGridLayout,
     QTimer,
     Evaluator,
+    Signal,
+    SignalInstance,
 ]
 
 # Get the current operating system
@@ -618,7 +620,6 @@ def load_devices_dict(string_dict, devices_dict):
     local_packages = load_local_packages()
 
     path = f"{os.path.dirname(os.path.dirname(__file__))}/manual_controls/set_panel"
-    print(path)
     sys.path.append(path)
     for key in string_dict:
         dev_data = string_dict[key]

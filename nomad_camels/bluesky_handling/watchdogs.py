@@ -2,7 +2,6 @@ from PySide6.QtCore import QTimer, Signal, QObject
 from PySide6.QtWidgets import (
     QWidget,
     QGridLayout,
-    QPushButton,
     QDialog,
     QCheckBox,
     QDialogButtonBox,
@@ -13,23 +12,23 @@ from PySide6.QtWidgets import (
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.variable_tool_tip_box import Variable_Box
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
-from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
+from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
+from nomad_camels.ui_widgets.warn_popup import WarnPopup
 from nomad_camels.utility import variables_handling
 
 
 class Watchdog(QObject):
-    condition_met = Signal()
+    condition_met = Signal(QObject)
 
     def __init__(
         self,
         channels=None,
         condition="",
-        execute_at_condition=None,
+        execute_at_condition="",
         read_periodic=False,
         read_timer=10,
         active=True,
         name="watchdog",
-        **kwargs,
     ):
         super().__init__()
         self.name = name
@@ -43,9 +42,26 @@ class Watchdog(QObject):
         self.eva = None
         self.timer.timeout.connect(self.read)
         self.subscriptions = {}
+        self.was_triggered = False
+        self.plots = []
+        self.ophyd_channels = []
+        if self.read_periodic:
+            self.timer.start(self.read_timer * 1000)
+
+    def get_definition(self):
+        return {
+            "channels": self.channels,
+            "condition": self.condition,
+            "execute_at_condition": self.execute_at_condition,
+            "read_periodic": self.read_periodic,
+            "read_timer": self.read_timer,
+            "active": self.active,
+            "name": self.name,
+        }
 
     def read(self):
-        pass
+        for channel in self.ophyd_channels:
+            channel.read()
 
     def get_device_list(self):
         """Goes through the cannels and returns a list of all needed devices"""
@@ -59,24 +75,36 @@ class Watchdog(QObject):
     def remove_device(self, device_name, ophyd_device):
         """Unsubscribes the respective channels corresponding to the device"""
         for channel in self.channels:
-            chan = variables_handling.channels[channel]
-            if chan.device == device_name:
-                getattr(ophyd_device, chan.name.split(".")[-1]).unsubscribe(
-                    self.subscriptions[channel]
-                )
-                self.subscriptions.pop(channel)
+            try:
+                chan = variables_handling.channels[channel]
+                if chan.device == device_name:
+                    ophyd_channel = getattr(ophyd_device, chan.name.split(".")[-1])
+                    ophyd_channel.unsubscribe(self.subscriptions[channel])
+                    self.subscriptions.pop(channel)
+                    self.ophyd_channels.remove(ophyd_channel)
+                if channel in self.eva.namespace:
+                    self.eva.namespace.pop(channel)
+            except:
+                pass
 
     def add_device(self, device_name, ophyd_device):
         """Subscribes the respective channels corresponding to the device"""
+        if not self.active:
+            return
         for channel in self.channels:
+            print(channel)
+            if channel in self.subscriptions:
+                continue
             chan = variables_handling.channels[channel]
             if chan.device == device_name:
-                sub = getattr(ophyd_device, chan.name.split(".")[-1]).subscribe(
-                    self.callback
-                )
+                ophyd_channel = getattr(ophyd_device, chan.name.split(".")[-1])
+                sub = ophyd_channel.subscribe(self.callback)
                 self.subscriptions[channel] = sub
+                self.ophyd_channels.append(ophyd_channel)
 
     def callback(self, value, **kwargs):
+        if not self.active:
+            return
         if "obj" in kwargs and hasattr(kwargs["obj"], "name"):
             self.eva.namespace[kwargs["obj"].name] = value
         try:
@@ -85,8 +113,18 @@ class Watchdog(QObject):
             print(f'Evaluating condition failed for watchdog "{self.name}"!')
             return
         if condition:
-            self.condition_met.emit()
-            print("condition")
+            if not self.was_triggered:
+                self.condition_met.emit(self)
+            self.was_triggered = True
+
+    def update_settings(self):
+        if self.timer.isActive():
+            if not self.read_periodic:
+                self.timer.stop()
+            else:
+                self.timer.setInterval(self.read_timer * 1000)
+        elif self.read_periodic:
+            self.timer.start(self.read_timer * 1000)
 
 
 class Watchdog_Definer(QDialog):
@@ -154,6 +192,12 @@ class Watchdog_Definer(QDialog):
         self.update_watchdogs()
         self.update_watchdog_view()
         variables_handling.watchdogs = self.watchdogs
+        WarnPopup(
+            self,
+            "Watchdogs updated. Some functions might not work correclty right away. Restart CAMELS to make sure everything is working correctly.\n\nWatchdogs only read values of instruments that are being used by protocols or manual controls.\n(Further, channels that can only be read only work well if the instrument driver uses the Signals from CAMELS.)",
+            "restart recommended, information",
+            True,
+        )
         super().accept()
 
 
@@ -166,7 +210,13 @@ class Watchdog_View(QWidget):
         self.channels_table = Channels_Check_Table(
             self, ["use", "channel"], title="connected channels"
         )
-        self.execution_button = QPushButton("Execute at condition")
+
+        self.label_protocol = QLabel("Execute at condition")
+        self.protocol_selection = Path_Button_Edit(
+            self,
+            default_dir=variables_handling.preferences["py_files_path"],
+            file_extension="*.cprot",
+        )
 
         self.read_check = QCheckBox("force periodic read")
         self.read_timer = QSpinBox()
@@ -184,7 +234,7 @@ class Watchdog_View(QWidget):
         self.widgets = [
             self.condition_box,
             self.channels_table,
-            self.execution_button,
+            self.protocol_selection,
             self.read_check,
             self.read_timer,
             self.label_name,
@@ -199,7 +249,7 @@ class Watchdog_View(QWidget):
         self.layout().addWidget(self.read_check, 3, 0)
         self.layout().addWidget(self.read_timer, 3, 1)
         self.layout().addWidget(self.channels_table, 4, 0, 1, 2)
-        self.layout().addWidget(self.execution_button, 5, 0, 1, 2)
+        self.layout().addWidget(self.protocol_selection, 5, 0, 1, 2)
 
         self.update_watchdog(None)
 
@@ -218,6 +268,7 @@ class Watchdog_View(QWidget):
         self.read_timer.setValue(self.watchdog.read_timer)
         self.checkbox_active.setChecked(self.watchdog.active)
         self.name_box.setText(self.watchdog.name)
+        self.protocol_selection.set_path(self.watchdog.execute_at_condition)
 
     def read_check_changed(self):
         self.read_timer.setEnabled(self.read_check.isChecked())
@@ -232,4 +283,6 @@ class Watchdog_View(QWidget):
         self.watchdog.read_timer = self.read_timer.value()
         self.watchdog.active = self.checkbox_active.isChecked()
         self.watchdog.name = self.name_box.text()
+        self.watchdog.execute_at_condition = self.protocol_selection.get_path()
+        self.watchdog.update_settings()
         return self.watchdog

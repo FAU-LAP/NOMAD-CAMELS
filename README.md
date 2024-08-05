@@ -27,18 +27,31 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 ## 1.3.0
 
-Features:
+Major Features:
 
 - Added an API web server. Connect to your localhost with port 5000 (127.0.0.1:5000). The homepage gives you an overview of the available API calls and how to use them. You need to create an API key in the settings to be able to use most of the API calls. At the moment only very basic functionality is supported. You can get a list of the available protocols you can execute with `GET /protocols` and run a specific protocol by using `POST /protocols/{protocol_name}` For more information check the documentation.
+- Added a Watchdog feature to monitor certain values and execute operations when their condition is met.
+
+Features:
 - The `Execute Python Files` step passes the current value of variables passed to the script if no value is entered in the `value` field.
+- "Shared" scope now possible in NOMAD sample selection
+- Added more metadata to instruments in the data
 
 Changes:
 - Variable signal is now saved as group instead of dataset
+- Can now read variables also without channels
+- moved databroker catalog loading to import thread, should speed up starting
 
 Fixes:
 - Can now save variables with non-scalar size
 - x-y plot now working with array-data again
 - Multiple occurances of same protocol in tab-dictionary in save-json removed
+- Pause would trigger unsubscribe of run-router for live data saving, now moved so it does not happen
+- List-plot now shows again on new data
+- Fixed a bug that would not allow extension-users to show up in data
+- Fixed bug where a custom function signal that does not use force-sequential would not work
+- Fixed bug that prevented fits from being displayed if the fit had many variables
+- Number of databroker files setting never did anything, now it does
 
 ## 1.2.2
 Features:

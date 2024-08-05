@@ -279,6 +279,9 @@ def instantiate_devices(device_list, skip_config=False):
             device_config[dev].update(helper_functions.simplify_configs_dict(configs))
             device_config[dev].update(settings)
             device_config[dev].update(additional_info)
+            device_config[dev]["instrument_camels_channels"] = {
+                name: data.__dict__ for name, data in device.channels.items()
+            }
             for watchdog in variables_handling.watchdogs.values():
                 if dev in watchdog.get_device_list():
                     watchdog.add_device(dev, ophyd_device)
@@ -327,7 +330,8 @@ class InstantiateDevicesThread(QThread):
                 if dev.main_thread_only:
                     main_thread_devs.append(device)
                     for d in dev.get_necessary_devices():
-                        main_thread_devs.insert(0, d)
+                        if d not in main_thread_devs:
+                            main_thread_devs.insert(0, d)
         for dev in main_thread_devs:
             self.device_list.remove(dev)
         if self.channels:

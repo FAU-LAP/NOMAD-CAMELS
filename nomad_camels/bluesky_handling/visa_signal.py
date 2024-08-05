@@ -305,6 +305,7 @@ class VISA_Signal_RO(SignalRO):
         The returned string is parsed regarding `self.parse` and converted to
         the datatype specified by `self.parse_return_type`.
         """
+        old_value = self._readback
         if isinstance(self.query, str):
             query = self.query
         else:
@@ -330,6 +331,12 @@ class VISA_Signal_RO(SignalRO):
             except:
                 val = val
         self._readback = val
+        self._run_subs(
+            sub_type=self.SUB_VALUE,
+            old_value=old_value,
+            value=val,
+            timestamp=time.time(),
+        )
         return super().get()
 
     def describe(self):
