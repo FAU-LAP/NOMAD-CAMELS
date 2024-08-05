@@ -25,7 +25,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff
           pip install -r requirements.txt
-          pip install pytest pytest-qt pytest-order pytest-mock socket
+          pip install pytest pytest-qt pytest-order pytest-mock
       - name: List packages
         run: pip list
       - name: Lint with ruff
@@ -53,7 +53,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff
           pip install -r requirements.txt
-          pip install pytest pytest-qt pytest-xvfb pytest-cov pytest-order pytest-mock socket
+          pip install pytest pytest-qt pytest-xvfb pytest-cov pytest-order pytest-mock
           export QT_DEBUG_PLUGINS=1
       - name: List packages
         run: pip list
@@ -82,7 +82,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff
           pip install -r requirements.txt
-          pip install pytest pytest-qt pytest-order pytest-mock socket
+          pip install pytest pytest-qt pytest-order pytest-mock
       - name: List packages
         run: pip list
       - name: Lint with ruff
