@@ -5,6 +5,7 @@ from unittest.mock import patch, MagicMock
 from nomad_camels.api.api import FastapiThread, validate_credentials
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
 import socket
+import time
 
 
 # Mocked dependency to replace validate_credentials during tests
@@ -44,6 +45,19 @@ def client_and_thread():
     # Get the FastAPI app and set up the TestClient
     app = thread.app
     client = TestClient(app)
+    # Wait for the server to start
+    timeout = 10  # seconds
+    start_time = time.time()
+    while True:
+        try:
+            response = client.get("/")
+            if response.status_code == status.HTTP_200_OK:
+                break
+        except:
+            pass
+        if time.time() - start_time > timeout:
+            raise TimeoutError("Server did not start within the timeout period")
+        time.sleep(0.1)  # wait for 100ms before retrying
 
     # Override the validate_credentials dependency with the mock
     app.dependency_overrides[validate_credentials] = mock_validate_credentials
@@ -62,6 +76,11 @@ def client_and_thread():
 @pytest.mark.order(-1)
 def test_root_redirect(client_and_thread):
     client, thread = client_and_thread
+    # Ensure the client exists
+    assert client is not None, "Client is not initialized"
+
+    # Ensure the thread exists and is running
+    assert thread is not None, "Thread is not initialized"
     response = client.get("/")
     assert response.status_code == status.HTTP_200_OK
     assert str(response.url).endswith("/docs")
@@ -71,6 +90,11 @@ def test_root_redirect(client_and_thread):
 @pytest.mark.order(-1)
 def test_get_protocols(client_and_thread):
     client, thread = client_and_thread
+    # Ensure the client exists
+    assert client is not None, "Client is not initialized"
+
+    # Ensure the thread exists and is running
+    assert thread is not None, "Thread is not initialized"
     response = client.get("/api/v1/protocols", auth=("user", "valid_api_key"))
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {"Protocols": ["protocol1", "protocol2"]}
@@ -80,6 +104,11 @@ def test_get_protocols(client_and_thread):
 @pytest.mark.order(-1)
 def test_run_protocol(client_and_thread):
     client, thread = client_and_thread
+    # Ensure the client exists
+    assert client is not None, "Client is not initialized"
+
+    # Ensure the thread exists and is running
+    assert thread is not None, "Thread is not initialized"
     protocol_name = "protocol1"
 
     # Patch the emit method of the start_protocol signal
@@ -97,6 +126,11 @@ def test_run_protocol(client_and_thread):
 @pytest.mark.order(-1)
 def test_invalid_api_key(client_and_thread):
     client, thread = client_and_thread
+    # Ensure the client exists
+    assert client is not None, "Client is not initialized"
+
+    # Ensure the thread exists and is running
+    assert thread is not None, "Thread is not initialized"
     response = client.get("/api/v1/protocols", auth=("user", "invalid_api_key"))
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert response.json() == {"detail": "Invalid API Key"}
@@ -106,6 +140,11 @@ def test_invalid_api_key(client_and_thread):
 @pytest.mark.order(-1)
 def test_favicon(client_and_thread):
     client, thread = client_and_thread
+    # Ensure the client exists
+    assert client is not None, "Client is not initialized"
+
+    # Ensure the thread exists and is running
+    assert thread is not None, "Thread is not initialized"
     response = client.get("/favicon.ico")
     assert response.status_code == status.HTTP_200_OK
     assert response.headers["content-type"] in [
