@@ -70,7 +70,8 @@ def test_run_protocol(client_and_thread):
     # Patch the emit method of the start_protocol signal
     with patch.object(thread.start_protocol_signal, "emit") as mock_emit:
         response = client.get(
-            f"/api/v1/actions/run/protocols/{protocol_name}", auth=("user", "valid_api_key")
+            f"/api/v1/actions/run/protocols/{protocol_name}",
+            auth=("user", "valid_api_key"),
         )
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == {"status": "success"}
@@ -90,4 +91,7 @@ def test_favicon(client_and_thread):
     client, thread = client_and_thread
     response = client.get("/favicon.ico")
     assert response.status_code == status.HTTP_200_OK
-    assert response.headers["content-type"] in ["image/x-icon", "image/vnd.microsoft.icon"]
+    assert response.headers["content-type"] in [
+        "image/x-icon",
+        "image/vnd.microsoft.icon",
+    ]
