@@ -23,6 +23,7 @@ def make_yml(datapath, catalog_name="CAMELS_CATALOG", ask_restart=False):
          The name, the catalog should have.
     """
     catalog_path = databroker.catalog_search_path()[0]
+    print(catalog_path)
     if not isinstance(datapath, pathlib.Path):
         datapath = pathlib.Path(datapath)
     if not isinstance(catalog_path, pathlib.Path):
@@ -33,6 +34,7 @@ def make_yml(datapath, catalog_name="CAMELS_CATALOG", ask_restart=False):
     brokerpath = datapath / "databroker" / catalog_name
     if not os.path.isdir(brokerpath):
         os.makedirs(brokerpath)
+        print("making dir")
     with open(fname, "w", encoding="utf-8") as f:
         f.write(
             "sources:\n"
@@ -50,3 +52,4 @@ def make_yml(datapath, catalog_name="CAMELS_CATALOG", ask_restart=False):
             "Databroker catalog not loaded",
         )
         update_camels.restart_camels(ask_restart=True)
+    print("done")
