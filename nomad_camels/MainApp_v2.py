@@ -1664,12 +1664,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             md={
                 "devices": dev_data,
                 "description": protocol.description,
-                "versions": {
-                    "NOMAD CAMELS": "1.3.1",
-                    "EPICS": "7.0.6.2",
-                    "bluesky": bluesky.__version__,
-                    "ophyd": ophyd.__version__,
-                },
                 "api_uuid": api_uuid,  # Include the uuid in the metadata
             },
         )
