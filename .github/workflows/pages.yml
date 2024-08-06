@@ -65,7 +65,7 @@ jobs:
       - name: Sphinx build
         run: |
           sphinx-apidoc -f -o ./docs/source/ ./nomad_camels/
-          sphinx-apidoc -f -o ./docs/source/ $(python -c "import suitcase.nomad_camels_hdf5; print(suitcase.nomad_camels_hdf5.__path__[0])")
+          python apidoc_for_camels_suitcase.py
           sphinx-build -b html ./docs/source/ ./docs/html_out/
       - name: Setup Pages
         uses: actions/configure-pages@v3

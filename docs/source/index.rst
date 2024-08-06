@@ -97,6 +97,7 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    :caption: Code Reference
 
    nomad-camels <nomad_camels.rst>
+   suitcase-nomad-camels-hdf5 <suitcase.nomad_camels_hdf5.rst>
    genindex
 
 
