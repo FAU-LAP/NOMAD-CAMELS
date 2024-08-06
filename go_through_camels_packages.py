@@ -3,6 +3,12 @@ import subprocess
 import sys
 import os
 import importlib
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 def get_user_packages(username):
@@ -37,11 +43,11 @@ extension_str += "   :maxdepth: 4\n\n"
 
 
 for package in camels_packages:
+    logging.info(f"Processing package: {package}")
     if package == "nomad_camels" or package == "suitcase_nomad_camels_hdf5":
         continue
     # install the package if not yet installed
     if not importlib.util.find_spec(package):
-        continue
         subprocess.run(["pip", "install", package])
     # import the package
     importlib.import_module(package)
@@ -68,6 +74,7 @@ for package in camels_packages:
         extension_str += f"   {package}\n"
     else:
         helping_str += f"   {package}\n"
+    logging.info(f"{package} successful")
 
 # Write the helping packages to the docs
 with open("./docs/source/helping_packages.rst", "w") as file:
