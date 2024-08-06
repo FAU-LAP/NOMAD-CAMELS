@@ -2,7 +2,7 @@
 
 This protocol step allows you to set channels of the instruments you have installed and also created instances of.
 
-The name of each channel that you can set is `<instrument_name>_set_<parameter>` where parameter is some thing like `voltage`, `current`, `camera`. The available channels you can set are defined in the drivers. Signals create readable channels.
+The name of each channel that you can set is `<instrument_name>_set_<parameter>` where `<parameter>` is some thing like `voltage`, `current`, `camera_exposure_time`. The available channels you can set are defined in the drivers. Signals create readable channels.
 
 If you are using a SweepMe! instrument you can only set channels if the instrument has a `SweepMode`. Depending on the mode selected in the *Instrument Manager* you will have the corresponding *Set Channel*.
 
