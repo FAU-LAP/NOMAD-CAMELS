@@ -48,7 +48,11 @@ for package in camels_packages:
         continue
     # install the package if not yet installed
     if not importlib.util.find_spec(package):
-        subprocess.run(["pip", "install", package])
+        logging.info(f"Installing {package}...")
+        res = subprocess.run(["pip", "install", package])
+        if res.returncode != 0:
+            logging.error(f"Failed to install {package}")
+            continue
     # import the package
     importlib.import_module(package)
     # get the package path
