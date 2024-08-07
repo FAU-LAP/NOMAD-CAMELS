@@ -1,5 +1,8 @@
-"""The functions in this module may be used inside a protocol. It is much
-simpler to use these than writing them as a string into the protocol-file."""
+"""Functions to be used in protocols.
+
+The functions in this module may be used inside a protocol. It is much
+simpler to use these than writing them as a string into the protocol-file.
+"""
 
 import numpy as np
 from bluesky import plan_stubs as bps
@@ -32,6 +35,22 @@ import glob
 
 
 def get_newest_file(directory):
+    """
+    Return the newest file in the given directory.
+
+    Parameters
+    ----------
+    directory : str
+        The directory where the newest file should be found.
+
+    Returns
+    -------
+    newest_file : str
+        The path to the newest file in the directory.
+    """
+    # If the given directory is a file, take the directory of the file
+    if os.path.isfile(directory):
+        directory = os.path.dirname(directory)
     # List all files in the directory
     files = glob.glob(os.path.join(directory, "*"))
     # Find the newest file
@@ -48,6 +67,32 @@ def export_function(
     export_json=False,
     plot_data=None,
 ):
+    """
+    Export the given runs to the given path.
+
+    Parameters
+    ----------
+    runs : list[databroker.core.BlueskyRun]
+        The runs to be exported.
+    save_path : str
+        The path where the files should be saved.
+    do_export : bool
+        Whether the runs should be exported.
+    new_file_each : bool, optional
+        (Default value = True)
+        Whether a new file should be created for each run. If True, the files are
+        padded with the start-time of the run. Ignored if `do_export` is False.
+    export_csv : bool, optional
+        (Default value = False)
+        Whether the data should be exported to a csv file.
+    export_json : bool, optional
+        (Default value = False)
+        Whether the metadata should be exported to a json file.
+    plot_data : dict, optional
+        (Default value = None)
+        The data to be plotted.
+
+    """
     if os.path.splitext(save_path)[1] == ".nxs":
         fname = os.path.basename(save_path)
         path = os.path.dirname(save_path)
@@ -65,6 +110,35 @@ def export_function(
 
 
 def saving_function(name, start_doc, path, new_file_each=True, plot_data=None):
+    """
+    Create a Serializer and return it.
+
+    The serializer is from the suitcase.nomad_camels_hdf5 module and used to save
+    the data during a run.
+
+    Parameters
+    ----------
+    name : str
+        The name of the file.
+    start_doc : dict
+        The start document of the run.
+    path : str
+        The path where the file should be saved.
+    new_file_each : bool, optional
+        (Default value = True)
+        Whether a new file should be created for each run. If True, the files are
+        padded with the start-time of the run.
+    plot_data : dict, optional
+        (Default value = None)
+        The data to be plotted.
+
+    Returns
+    -------
+    serializers : list
+        The serializers to be used.
+    resources : list
+        The resources to be used. In this case, an empty list.
+    """
     fname = start_doc["uid"]
     if os.path.splitext(path)[1] == ".nxs":
         fname = os.path.basename(path)
@@ -76,7 +150,7 @@ def saving_function(name, start_doc, path, new_file_each=True, plot_data=None):
 
 def trigger_multi(devices, grp=None):
     """
-    This function triggers multiple devices
+    Trigger multiple devices.
 
     Parameters
     ----------
@@ -93,8 +167,7 @@ def trigger_multi(devices, grp=None):
 
 def read_wo_trigger(devices, grp=None, stream="primary"):
     """
-    Used if not reading by trigger_and_read, but splitting both. This function
-    only reads, without triggering.
+    Used if not reading by trigger_and_read, but splitting both. This function only reads, without triggering.
 
     Parameters
     ----------
@@ -108,7 +181,8 @@ def read_wo_trigger(devices, grp=None, stream="primary"):
 
     Returns
     -------
-
+    ret : dict
+        The readings of the devices.
     """
     if grp is not None:
         yield from bps.wait(grp)
@@ -124,8 +198,7 @@ def read_wo_trigger(devices, grp=None, stream="primary"):
 
 def simplify_configs_dict(configs):
     """
-    Returns a simplified version of the given dictionary `configs` by returning
-    confs[key] = configs[key]['value'].
+    Returns a simplified version of the given dictionary `configs` by returning confs[key] = configs[key]['value'].
 
     Parameters
     ----------
@@ -278,14 +351,12 @@ def gradient_descent(
         The history of evaluated values
 
     """
-
     if set_channel not in read_channels:
         read_channels += [set_channel]
 
     def obj_func(set_val):
         """
-        This function sets the value and then reads the channels for each
-        iteration of the algorithm.
+        Set the value and then read the channels for each iteration of the algorithm.
 
         Parameters
         ----------
@@ -378,7 +449,8 @@ def get_range(
     use_distance=False,
 ):
     """
-    This is a helper function for steps like sweeps and the for loop.
+    Helper function for steps like sweeps and the for loop.
+
     Using the evaluator, it creates the range of iterations given the other
     values.
 
@@ -415,6 +487,13 @@ def get_range(
     endpoint : bool
          (Default value = True)
          Whether to include the endpoint into the range.
+    distance : float, str
+        (Default value = np.nan)
+        The distance between the points.
+    use_distance : bool
+        (Default value = False)
+        If True, the distance is used to calculate the range.
+
     Returns
     -------
         An array of the calculated range.
@@ -578,7 +657,7 @@ class BoxHelper(QWidget):
 
 class Value_Box(QDialog):
     """
-    This dialog is used to set variables or channels at runtime of a protocol.
+    Dialog to set variables or channels at runtime of a protocol.
 
     Parameters
     ----------
@@ -861,8 +940,8 @@ def get_opyd_and_py_file_contents(classname, md, device_name):
 
 def create_venv_run_file_delete_venv(packages, script_to_run):
     """
-    This function creates a virtual environment, installs the specified packages
-    in it, runs the specified Python script, and then deletes the virtual environment.
+    Create a virtual environment, install the specified packages
+    in it, run the specified Python script, and then delete the virtual environment.
     """
     import venv
     import subprocess
@@ -921,12 +1000,15 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
 
 
 def evaluate_python_file_output(stdout, namespace):
+    """Evaluates the stdout of a Python file execution and writes the returned key value pairs to the namespace, so CAMELS can access their values"""
     import json
     import re
 
-    """Evaluates the stdout of a Python file execution and writes the returned key value pairs to the namespace, so CAMELS can access their values"""
     if stdout:
-        json_pattern = re.compile(r"\{.*\}")  # Extract the dictionary from the stdout
+        json_pattern = re.compile(
+            r"\{(?:[^{}]*|\{.*?\})*\}"
+        )  # Extract the dictionary from the stdout, can handle one level of nested dictionaries
+
         # Search for JSON in the stdout
         match = json_pattern.search(stdout)
 
@@ -954,6 +1036,8 @@ def evaluate_python_file_output(stdout, namespace):
 
 
 class Value_Setter(QWidget):
+    """A widget to set a value and a wait-time for a waiting bar."""
+
     set_signal = Signal(float)
     hide_signal = Signal()
 
@@ -965,11 +1049,13 @@ class Value_Setter(QWidget):
         self.wait_time = 0
 
     def set_wait_time(self, wait_time):
+        """Set the wait time for the waiting bar."""
         import datetime as dt
 
         self.wait_time = dt.timedelta(seconds=wait_time).total_seconds()
 
     def update_timer(self):
+        """Update the timer of the waiting bar."""
         import datetime as dt
 
         self.timer = (dt.datetime.now() - self.start_time).total_seconds()
@@ -977,6 +1063,30 @@ class Value_Setter(QWidget):
 
 
 class Waiting_Bar(QWidget):
+    """A widget to show a waiting bar.
+
+    Used in the wait step with a progress bar or also to wait for a condition and
+    display the list plot of the condition.
+
+    Parameters
+    ----------
+    parent : QWidget
+        The parent widget.
+    title : str
+        The title of the waiting bar.
+    skipable : bool
+        (Default value = True)
+        Whether the waiting bar can be skipped and shows a skip button.
+    with_timer : bool
+        (Default value = False)
+        Whether the waiting bar has a timer.
+    display_bar : bool
+        (Default value = True)
+        Whether the waiting bar should be displayed.
+    plot : QWidget, optional
+        A plot to be displayed together with the waiting bar.
+    """
+
     def __init__(
         self,
         parent=None,
@@ -1014,9 +1124,11 @@ class Waiting_Bar(QWidget):
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
 
     def setValue(self, value):
+        """Set the value of the progress bar."""
         self.progressBar.setValue(value)
 
     def skipping(self):
+        """Set the skip flag to True and hide the waiting bar."""
         self.skip = True
         self.hide()
 

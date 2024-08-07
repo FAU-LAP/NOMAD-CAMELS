@@ -279,6 +279,12 @@ def instantiate_devices(device_list, skip_config=False):
             device_config[dev].update(helper_functions.simplify_configs_dict(configs))
             device_config[dev].update(settings)
             device_config[dev].update(additional_info)
+            device_config[dev]["instrument_camels_channels"] = {
+                name: data.__dict__ for name, data in device.channels.items()
+            }
+            for watchdog in variables_handling.watchdogs.values():
+                if dev in watchdog.get_device_list():
+                    watchdog.add_device(dev, ophyd_device)
             started_devs.append(dev)
     except Exception as e:
         close_devices(started_devs)
@@ -324,7 +330,8 @@ class InstantiateDevicesThread(QThread):
                 if dev.main_thread_only:
                     main_thread_devs.append(device)
                     for d in dev.get_necessary_devices():
-                        main_thread_devs.insert(0, d)
+                        if d not in main_thread_devs:
+                            main_thread_devs.insert(0, d)
         for dev in main_thread_devs:
             self.device_list.remove(dev)
         if self.channels:
@@ -335,6 +342,8 @@ class InstantiateDevicesThread(QThread):
             self.devices, self.device_config = instantiate_devices(
                 main_thread_devs, skip_config=skip_config
             )
+        # uncomment next line for testing purposes
+        # self.run()
 
     def run(self):
         try:
@@ -375,3 +384,6 @@ def close_devices(device_list):
                 ophyd_dev.finalize_steps
             ):
                 ophyd_dev.finalize_steps()
+            for watchdog in variables_handling.watchdogs.values():
+                if dev in watchdog.get_device_list():
+                    watchdog.remove_device(dev, ophyd_dev)

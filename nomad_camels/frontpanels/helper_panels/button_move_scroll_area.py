@@ -423,7 +423,6 @@ class RenameTabWidget(QTabWidget):
         self.plus_tab.setStyleSheet(
             """
             QPushButton {
-                background-color: #4CAF50; /* green */
                 border: none; /* Remove border for a cleaner look */
                 color: white; /* Text color */
                 padding: 0px; /* Adjust padding as needed */
@@ -432,13 +431,13 @@ class RenameTabWidget(QTabWidget):
                 font-size: 22px;
                 font-weight: bold;
                 text-align: center;
-                margin: 2px 2px;
+                margin: 0px; /* Remove margin to avoid green box */
             }
             QPushButton:hover {
-                background-color: #45a049; /* Slightly lighter green on hover */
+                color: #abaaa7; /* Slightly darker gray on hover */
             }
             QPushButton:pressed {
-                background-color: #2f6331; /* Slightly darker green when pressed */
+                color: #5e5e5c; /* Slightly darker gray when pressed */
             }
             """
         )
@@ -465,9 +464,9 @@ class RenameTabWidget(QTabWidget):
         )
         if delete_question != QMessageBox.Yes:
             return
-        for protocol_ in self.mainWindow.protocol_tabs_dict[self.tabText(index)]:
-            del self.mainWindow.protocols_dict[protocol_]
-        del self.mainWindow.protocol_tabs_dict[self.tabText(index)]
+        for protocol_ in self.tab_button_dict[self.tabText(index)]:
+            del self.tab_button_dict[protocol_]
+        del self.tab_button_dict[self.tabText(index)]
         self.removeTab(index)
 
     def rename_tab(self, index):
@@ -491,6 +490,7 @@ class RenameTabWidget(QTabWidget):
             self.tabBar().setTabText(index, new_name)
         else:
             self.tabBar().setTabText(index, old_name)
+            new_name = old_name
         self.tabBar().setTabButton(index, QTabBar.RightSide, None)
         self.tab_button_dict[new_name] = self.tab_button_dict.pop(old_name)
 

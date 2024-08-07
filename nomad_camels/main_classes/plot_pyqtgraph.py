@@ -634,6 +634,7 @@ class LivePlot(QObject, CallbackBase):
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
         self.use_abs = {"x": False, "y": False, "y2": False}
+        self.setup_is_done = False
 
         def setup():
             # this is the setup function, it is called when the first event is received
@@ -655,6 +656,7 @@ class LivePlot(QObject, CallbackBase):
                 self.plotItem.setTitle(title)
             self._epoch_offset = None
             self._epoch = epoch
+            self.setup_is_done = True
 
         self.x_data = []
         self.y_data = {}
@@ -760,6 +762,8 @@ class LivePlot(QObject, CallbackBase):
         doc : dict
             The descriptor document
         """
+        if not self.setup_is_done:
+            self.start(doc)
         if doc["name"] == self.stream_name:
             self.desc.append(doc["uid"])
         elif doc["name"].startswith(f"{self.stream_name}_fits_readying_"):
@@ -826,6 +830,9 @@ class LivePlot(QObject, CallbackBase):
             plot_x = np.abs(self.x_data)
         else:
             plot_x = self.x_data
+        plot_x = np.asarray(plot_x)
+        if plot_x.ndim > 1:
+            plot_x = plot_x[-1]
         for y in self.ys:
             y_abs = False
             y2_abs = False
@@ -841,6 +848,9 @@ class LivePlot(QObject, CallbackBase):
                 plot_y = np.abs(self.y_data[y]) if y2_abs else self.y_data[y]
             else:
                 plot_y = np.abs(self.y_data[y]) if y_abs else self.y_data[y]
+            plot_y = np.asarray(plot_y)
+            if plot_y.ndim > 1:
+                plot_y = plot_y[-1]
             if not y in self.current_plots:
                 self.add_plot(y)
             self.current_plots[y].setData(plot_x, plot_y)
@@ -994,14 +1004,20 @@ class LiveFitPlot(CallbackBase):
                 legendPos = legend.scenePos()
                 y0 = legendPos.y() + legendRect.height()
             vals = self.livefit.result.values
+            variables = self.livefit.result.var_names
             if self.line_position is None:
                 self.line_position = self.parent_plot.line_number
-                self.parent_plot.line_number += len(vals)
+                self.parent_plot.line_number += len(variables)
             for i, (name, value) in enumerate(vals.items()):
-                error = np.sqrt(self.livefit.result.covar[i, i])
-                text = pg.TextItem(
-                    f"{name}: {value:.3e} ± {error:.3e}", color=self.color
-                )
+                if name not in variables:
+                    continue
+                if self.livefit.result.covar is not None:
+                    error = np.sqrt(self.livefit.result.covar[i, i])
+                    text = pg.TextItem(
+                        f"{name}: {value:.3e} ± {error:.3e}", color=self.color
+                    )
+                else:
+                    text = pg.TextItem(f"{name}: {value:.3e}", color=self.color)
                 text.setParentItem(self.plotItem.vb)
                 text.setPos(5, (i + self.line_position) * 20 + y0)
                 self.text_objects.append(text)
@@ -1289,7 +1305,8 @@ class LivePlot_NoBluesky(QObject):
         self.plotItem.setLabel("left", ylabel)
         self.ax2_viewbox = ax2_viewbox
         self.ax2_axis = ax2_axis
-        self.ax2_axis.setLabel("right", ylabel2)
+        if self.ax2_axis:
+            self.ax2_axis.setLabel("right", ylabel2)
         self.labels = labels
         self.maxlen = np.inf
         self.x_data = []
@@ -1380,6 +1397,9 @@ class LivePlot_NoBluesky(QObject):
             plot_x = np.abs(self.x_data)
         else:
             plot_x = self.x_data
+        plot_x = np.asarray(plot_x)
+        if plot_x.ndim > 1:
+            plot_x = plot_x[-1]
         for y in self.labels:
             y_abs = False
             y2_abs = False
@@ -1395,6 +1415,9 @@ class LivePlot_NoBluesky(QObject):
                 plot_y = np.abs(self.y_data[y]) if y2_abs else self.y_data[y]
             else:
                 plot_y = np.abs(self.y_data[y]) if y_abs else self.y_data[y]
+            plot_y = np.asarray(plot_y)
+            if plot_y.ndim > 1:
+                plot_y = plot_y[-1]
             self.current_plots[y].setData(plot_x, plot_y)
         self.new_data_signal.emit()
 

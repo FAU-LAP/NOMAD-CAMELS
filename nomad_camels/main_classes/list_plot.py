@@ -1,6 +1,6 @@
 import numpy as np
 
-from bluesky.callbacks.mpl_plotting import QtAwareCallback
+from bluesky.callbacks.core import CallbackBase
 
 from PySide6.QtWidgets import QTableWidgetItem, QTableWidget, QWidget, QGridLayout
 from PySide6.QtCore import Qt, QEvent, QObject
@@ -87,7 +87,15 @@ class Values_List_Plot(QWidget):
         super().closeEvent(a0)
 
 
-class Live_List(QtAwareCallback, QObject):
+class Teleporter(QObject):
+    name_doc_escape = pySignal(str, dict, object)
+
+
+def handle_teleport(name, doc, obj):
+    obj(name, doc, escape=True)
+
+
+class Live_List(QObject, CallbackBase):
     new_data = pySignal()
 
     def __init__(
@@ -102,10 +110,10 @@ class Live_List(QtAwareCallback, QObject):
         plot_all_available=False,
         **kwargs,
     ):
-        QObject.__init__(self, parent=parent)
-        QtAwareCallback.__init__(
-            self, use_teleporter=kwargs.pop("use_teleporter", None)
-        )
+        CallbackBase.__init__(self)
+        QObject.__init__(self)
+        self.__teleporter = Teleporter()
+        self.__teleporter.name_doc_escape.connect(handle_teleport)
         if isinstance(value_list, str):
             value_list = [value_list]
         self.value_list = value_list
@@ -218,4 +226,22 @@ class Live_List(QtAwareCallback, QObject):
                 except:
                     self.add_items[name].setText(str(value))
         self.table.resizeColumnsToContents()
-        self.new_data.emit(None)
+        self.new_data.emit()
+
+    def __call__(self, name, doc, *, escape=False):
+        """
+        The call method of the callback. This method is called when a new event is received. If `__teleporter` is set, the event is sent to the `__teleporter`, otherwise the event is processed directly. The teleporter is necessary to send the event to a different thread, since Qt objects can only be accessed from the thread they were created in.
+
+        Parameters
+        ----------
+        name : str
+            The name of the event
+        doc : dict
+            The event document
+        escape : bool, (default: False)
+            If True, the event is always processed directly, otherwise it is sent to the teleporter
+        """
+        if not escape and self.__teleporter is not None:
+            self.__teleporter.name_doc_escape.emit(name, doc, self)
+        else:
+            return CallbackBase.__call__(self, name, doc)

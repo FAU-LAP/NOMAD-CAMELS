@@ -31,7 +31,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1200, 681)
+        MainWindow.resize(1207, 681)
         self.actionPresets = QAction(MainWindow)
         self.actionPresets.setObjectName(u"actionPresets")
         self.actionOptions = QAction(MainWindow)
@@ -90,6 +90,8 @@ class Ui_MainWindow(object):
         self.actionExport_CAMELS_hdf5_to_csv_json.setObjectName(u"actionExport_CAMELS_hdf5_to_csv_json")
         self.actionQuit = QAction(MainWindow)
         self.actionQuit.setObjectName(u"actionQuit")
+        self.actionWatchdogs = QAction(MainWindow)
+        self.actionWatchdogs.setObjectName(u"actionWatchdogs")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout_5 = QGridLayout(self.centralwidget)
@@ -669,7 +671,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1200, 21))
+        self.menubar.setGeometry(QRect(0, 0, 1207, 21))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuHelp = QMenu(self.menubar)
@@ -694,6 +696,8 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionQuit)
         self.menuHelp.addAction(self.actionDocumentation)
         self.menuHelp.addAction(self.actionReport_Bug)
+        self.menuTools.addAction(self.actionWatchdogs)
+        self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionUpdate_CAMELS)
         self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionExport_from_databroker)
@@ -739,6 +743,7 @@ class Ui_MainWindow(object):
         self.actionManage_Extensions.setText(QCoreApplication.translate("MainWindow", u"Manage Extensions", None))
         self.actionExport_CAMELS_hdf5_to_csv_json.setText(QCoreApplication.translate("MainWindow", u"Export CAMELS hdf5 to csv/json", None))
         self.actionQuit.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
+        self.actionWatchdogs.setText(QCoreApplication.translate("MainWindow", u"Watchdogs", None))
         self.label_logo.setText("")
         self.pushButton_manage_instr.setText(QCoreApplication.translate("MainWindow", u"Manage\n"
 "Instruments", None))

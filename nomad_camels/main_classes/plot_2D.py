@@ -1,3 +1,9 @@
+# THIS IS DEPRECATED
+
+print(
+    "You are using a deprecated version of the code. Please update to the newest version."
+)
+
 import threading
 import numpy as np
 

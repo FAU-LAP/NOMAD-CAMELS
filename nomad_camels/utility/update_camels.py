@@ -171,7 +171,3 @@ def auto_update(parent):
     """
     if not check_up_to_date():
         question_message_box(parent)
-
-
-if __name__ == "__main__":
-    print(get_latest_version())

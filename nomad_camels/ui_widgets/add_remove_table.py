@@ -440,7 +440,7 @@ class AddRemoveTable(QWidget):
         Parameters
         ----------
         vals :
-             (Default value = None)
+            (Default value = None)
 
         Returns
         -------
@@ -514,6 +514,10 @@ class AddRemoveTable(QWidget):
             for j, i in enumerate(table_indexes):
                 index = self.table_model.index(self.table_model.rowCount() - 1, i)
                 self.table.setIndexWidget(index, tables[j])
+            # Set focus to the first editable cell in the newly added row
+            focus_index = self.table_model.index(self.table_model.rowCount() - 1, 0)
+            self.table.setCurrentIndex(focus_index)
+            self.table.edit(focus_index)
         else:
             self.table_model.appendColumn(items)
             for j, i in enumerate(box_indexes):
@@ -522,6 +526,10 @@ class AddRemoveTable(QWidget):
             for j, i in enumerate(table_indexes):
                 index = self.table_model.index(i, self.table_model.columnCount() - 1)
                 self.table.setIndexWidget(index, tables[j])
+            # Set focus to the first editable cell in the newly added column
+            focus_index = self.table_model.index(0, self.table_model.columnCount() - 1)
+            self.table.setCurrentIndex(focus_index)
+            self.table.edit(focus_index)
         for item in items:
             self.check_string(item)
         self.table.resizeColumnsToContents()
@@ -532,6 +540,7 @@ class AddRemoveTable(QWidget):
         else:
             self.added.emit(items[0].column())
         self.check_selection()
+
 
     def remove(self):
         """ """

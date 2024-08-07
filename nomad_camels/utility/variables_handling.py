@@ -62,6 +62,7 @@ channels = {}
 config_channels = {}
 loop_step_variables = {}
 devices = {}
+watchdogs = {}
 current_protocol = None
 dark_mode = False
 

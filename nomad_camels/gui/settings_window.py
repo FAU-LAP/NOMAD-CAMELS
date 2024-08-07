@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'settings_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.0
+## Created by: Qt User Interface Compiler version 6.6.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,222 +17,26 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QComboBox,
     QDialog, QDialogButtonBox, QFrame, QGridLayout,
-    QLabel, QLineEdit, QRadioButton, QSizePolicy,
-    QSpacerItem, QSpinBox, QWidget)
+    QHBoxLayout, QLabel, QLineEdit, QPushButton,
+    QRadioButton, QSizePolicy, QSpacerItem, QSpinBox,
+    QWidget)
 
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
+import settings_window_resource_rc
 
 class Ui_settings_window(object):
     def setupUi(self, settings_window):
         if not settings_window.objectName():
             settings_window.setObjectName(u"settings_window")
-        settings_window.resize(603, 514)
+        settings_window.resize(652, 606)
         self.gridLayout = QGridLayout(settings_window)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.right = QWidget(settings_window)
-        self.right.setObjectName(u"right")
-        self.gridLayout_9 = QGridLayout(self.right)
-        self.gridLayout_9.setSpacing(9)
-        self.gridLayout_9.setObjectName(u"gridLayout_9")
-        self.gridLayout_9.setContentsMargins(3, 3, 3, 3)
-        self.drivers = QWidget(self.right)
-        self.drivers.setObjectName(u"drivers")
-        self.gridLayout_10 = QGridLayout(self.drivers)
-        self.gridLayout_10.setObjectName(u"gridLayout_10")
-        self.gridLayout_10.setContentsMargins(0, 0, 0, 0)
-        self.label_13 = QLabel(self.drivers)
-        self.label_13.setObjectName(u"label_13")
-        font = QFont()
-        font.setBold(True)
-        self.label_13.setFont(font)
+        self.buttonBox = QDialogButtonBox(settings_window)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
 
-        self.gridLayout_10.addWidget(self.label_13, 0, 0, 1, 1)
-
-        self.label_8 = QLabel(self.drivers)
-        self.label_8.setObjectName(u"label_8")
-        self.label_8.setMaximumSize(QSize(16777215, 17))
-
-        self.gridLayout_10.addWidget(self.label_8, 1, 0, 1, 1)
-
-        self.line_5 = QFrame(self.drivers)
-        self.line_5.setObjectName(u"line_5")
-        self.line_5.setFrameShadow(QFrame.Raised)
-        self.line_5.setLineWidth(5)
-        self.line_5.setFrameShape(QFrame.HLine)
-
-        self.gridLayout_10.addWidget(self.line_5, 2, 0, 1, 3)
-
-        self.pathButton_device_path = Path_Button_Edit(self.drivers)
-        self.pathButton_device_path.setObjectName(u"pathButton_device_path")
-
-        self.gridLayout_10.addWidget(self.pathButton_device_path, 1, 1, 1, 2)
-
-
-        self.gridLayout_9.addWidget(self.drivers, 1, 0, 1, 1)
-
-        self.eln = QWidget(self.right)
-        self.eln.setObjectName(u"eln")
-        self.gridLayout_11 = QGridLayout(self.eln)
-        self.gridLayout_11.setObjectName(u"gridLayout_11")
-        self.gridLayout_11.setContentsMargins(0, 0, 0, 0)
-        self.label_19 = QLabel(self.eln)
-        self.label_19.setObjectName(u"label_19")
-
-        self.gridLayout_11.addWidget(self.label_19, 1, 0, 1, 1)
-
-        self.lineEdit_oasis = QLineEdit(self.eln)
-        self.lineEdit_oasis.setObjectName(u"lineEdit_oasis")
-
-        self.gridLayout_11.addWidget(self.lineEdit_oasis, 1, 1, 1, 1)
-
-        self.label_18 = QLabel(self.eln)
-        self.label_18.setObjectName(u"label_18")
-        self.label_18.setFont(font)
-
-        self.gridLayout_11.addWidget(self.label_18, 0, 0, 1, 2)
-
-        self.line_3 = QFrame(self.eln)
-        self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShadow(QFrame.Raised)
-        self.line_3.setLineWidth(5)
-        self.line_3.setFrameShape(QFrame.HLine)
-
-        self.gridLayout_11.addWidget(self.line_3, 2, 0, 1, 2)
-
-
-        self.gridLayout_9.addWidget(self.eln, 2, 0, 1, 1)
-
-        self.files = QWidget(self.right)
-        self.files.setObjectName(u"files")
-        self.gridLayout_7 = QGridLayout(self.files)
-        self.gridLayout_7.setObjectName(u"gridLayout_7")
-        self.gridLayout_7.setContentsMargins(0, 0, 0, 0)
-        self.label_7 = QLabel(self.files)
-        self.label_7.setObjectName(u"label_7")
-        self.label_7.setMaximumSize(QSize(16777215, 17))
-
-        self.gridLayout_7.addWidget(self.label_7, 2, 0, 1, 1)
-
-        self.label_6 = QLabel(self.files)
-        self.label_6.setObjectName(u"label_6")
-        self.label_6.setMaximumSize(QSize(16777215, 17))
-
-        self.gridLayout_7.addWidget(self.label_6, 1, 0, 1, 1)
-
-        self.label_10 = QLabel(self.files)
-        self.label_10.setObjectName(u"label_10")
-
-        self.gridLayout_7.addWidget(self.label_10, 3, 0, 1, 1)
-
-        self.lineEdit_catalog_name = QLineEdit(self.files)
-        self.lineEdit_catalog_name.setObjectName(u"lineEdit_catalog_name")
-
-        self.gridLayout_7.addWidget(self.lineEdit_catalog_name, 3, 1, 1, 1)
-
-        self.line_6 = QFrame(self.files)
-        self.line_6.setObjectName(u"line_6")
-        self.line_6.setFrameShadow(QFrame.Raised)
-        self.line_6.setLineWidth(5)
-        self.line_6.setFrameShape(QFrame.HLine)
-
-        self.gridLayout_7.addWidget(self.line_6, 6, 0, 1, 2)
-
-        self.label_5 = QLabel(self.files)
-        self.label_5.setObjectName(u"label_5")
-        self.label_5.setMaximumSize(QSize(16777215, 17))
-        self.label_5.setFont(font)
-
-        self.gridLayout_7.addWidget(self.label_5, 0, 0, 1, 1)
-
-        self.pathButton_meas_files = Path_Button_Edit(self.files)
-        self.pathButton_meas_files.setObjectName(u"pathButton_meas_files")
-
-        self.gridLayout_7.addWidget(self.pathButton_meas_files, 2, 1, 1, 1)
-
-        self.pathButton_py_files = Path_Button_Edit(self.files)
-        self.pathButton_py_files.setObjectName(u"pathButton_py_files")
-
-        self.gridLayout_7.addWidget(self.pathButton_py_files, 1, 1, 1, 1)
-
-        self.label_20 = QLabel(self.files)
-        self.label_20.setObjectName(u"label_20")
-
-        self.gridLayout_7.addWidget(self.label_20, 5, 0, 1, 1)
-
-        self.spinBox_n_databroker_files = QSpinBox(self.files)
-        self.spinBox_n_databroker_files.setObjectName(u"spinBox_n_databroker_files")
-
-        self.gridLayout_7.addWidget(self.spinBox_n_databroker_files, 5, 1, 1, 1)
-
-
-        self.gridLayout_9.addWidget(self.files, 0, 0, 1, 1)
-
-        self.extensions = QWidget(self.right)
-        self.extensions.setObjectName(u"extensions")
-        self.gridLayout_12 = QGridLayout(self.extensions)
-        self.gridLayout_12.setObjectName(u"gridLayout_12")
-        self.gridLayout_12.setContentsMargins(0, 0, 0, 0)
-        self.label_21 = QLabel(self.extensions)
-        self.label_21.setObjectName(u"label_21")
-        self.label_21.setMaximumSize(QSize(16777215, 17))
-
-        self.gridLayout_12.addWidget(self.label_21, 1, 0, 1, 1)
-
-        self.label_22 = QLabel(self.extensions)
-        self.label_22.setObjectName(u"label_22")
-        self.label_22.setFont(font)
-
-        self.gridLayout_12.addWidget(self.label_22, 0, 0, 1, 2)
-
-        self.pathButton_extension_path = Path_Button_Edit(self.extensions)
-        self.pathButton_extension_path.setObjectName(u"pathButton_extension_path")
-
-        self.gridLayout_12.addWidget(self.pathButton_extension_path, 1, 1, 1, 1)
-
-        self.line_9 = QFrame(self.extensions)
-        self.line_9.setObjectName(u"line_9")
-        self.line_9.setFrameShadow(QFrame.Raised)
-        self.line_9.setLineWidth(5)
-        self.line_9.setFrameShape(QFrame.HLine)
-
-        self.gridLayout_12.addWidget(self.line_9, 2, 0, 1, 2)
-
-
-        self.gridLayout_9.addWidget(self.extensions, 3, 0, 1, 1)
-
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.gridLayout_9.addItem(self.verticalSpacer_2, 5, 0, 1, 1)
-
-        self.updates = QWidget(self.right)
-        self.updates.setObjectName(u"updates")
-        self.gridLayout_13 = QGridLayout(self.updates)
-        self.gridLayout_13.setObjectName(u"gridLayout_13")
-        self.gridLayout_13.setContentsMargins(0, 0, 0, 0)
-        self.checkBox_auto_check_updates = QCheckBox(self.updates)
-        self.checkBox_auto_check_updates.setObjectName(u"checkBox_auto_check_updates")
-
-        self.gridLayout_13.addWidget(self.checkBox_auto_check_updates, 1, 0, 1, 1)
-
-        self.label_23 = QLabel(self.updates)
-        self.label_23.setObjectName(u"label_23")
-        self.label_23.setFont(font)
-
-        self.gridLayout_13.addWidget(self.label_23, 0, 0, 1, 1)
-
-        self.line_10 = QFrame(self.updates)
-        self.line_10.setObjectName(u"line_10")
-        self.line_10.setFrameShadow(QFrame.Raised)
-        self.line_10.setLineWidth(5)
-        self.line_10.setFrameShape(QFrame.HLine)
-
-        self.gridLayout_13.addWidget(self.line_10, 2, 0, 1, 1)
-
-
-        self.gridLayout_9.addWidget(self.updates, 4, 0, 1, 1)
-
-
-        self.gridLayout.addWidget(self.right, 0, 3, 1, 1)
+        self.gridLayout.addWidget(self.buttonBox, 2, 0, 1, 4)
 
         self.line_vertical = QFrame(settings_window)
         self.line_vertical.setObjectName(u"line_vertical")
@@ -241,13 +45,6 @@ class Ui_settings_window(object):
         self.line_vertical.setFrameShape(QFrame.VLine)
 
         self.gridLayout.addWidget(self.line_vertical, 0, 2, 1, 1)
-
-        self.buttonBox = QDialogButtonBox(settings_window)
-        self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
-
-        self.gridLayout.addWidget(self.buttonBox, 2, 0, 1, 4)
 
         self.left = QWidget(settings_window)
         self.left.setObjectName(u"left")
@@ -262,6 +59,8 @@ class Ui_settings_window(object):
         self.gridLayout_4.setContentsMargins(0, 0, 0, 0)
         self.label_9 = QLabel(self.logging)
         self.label_9.setObjectName(u"label_9")
+        font = QFont()
+        font.setBold(True)
         self.label_9.setFont(font)
 
         self.gridLayout_4.addWidget(self.label_9, 0, 0, 1, 1)
@@ -521,6 +320,295 @@ class Ui_settings_window(object):
 
         self.gridLayout.addWidget(self.left, 0, 0, 2, 2)
 
+        self.right = QWidget(settings_window)
+        self.right.setObjectName(u"right")
+        self.gridLayout_9 = QGridLayout(self.right)
+        self.gridLayout_9.setSpacing(9)
+        self.gridLayout_9.setObjectName(u"gridLayout_9")
+        self.gridLayout_9.setContentsMargins(3, 3, 3, 3)
+        self.eln = QWidget(self.right)
+        self.eln.setObjectName(u"eln")
+        self.gridLayout_11 = QGridLayout(self.eln)
+        self.gridLayout_11.setObjectName(u"gridLayout_11")
+        self.gridLayout_11.setContentsMargins(0, 0, 0, 0)
+        self.label_19 = QLabel(self.eln)
+        self.label_19.setObjectName(u"label_19")
+
+        self.gridLayout_11.addWidget(self.label_19, 1, 0, 1, 1)
+
+        self.lineEdit_oasis = QLineEdit(self.eln)
+        self.lineEdit_oasis.setObjectName(u"lineEdit_oasis")
+
+        self.gridLayout_11.addWidget(self.lineEdit_oasis, 1, 1, 1, 1)
+
+        self.label_18 = QLabel(self.eln)
+        self.label_18.setObjectName(u"label_18")
+        self.label_18.setFont(font)
+
+        self.gridLayout_11.addWidget(self.label_18, 0, 0, 1, 2)
+
+        self.line_3 = QFrame(self.eln)
+        self.line_3.setObjectName(u"line_3")
+        self.line_3.setFrameShadow(QFrame.Raised)
+        self.line_3.setLineWidth(5)
+        self.line_3.setFrameShape(QFrame.HLine)
+
+        self.gridLayout_11.addWidget(self.line_3, 2, 0, 1, 2)
+
+
+        self.gridLayout_9.addWidget(self.eln, 2, 0, 1, 1)
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(-1, -1, -1, 0)
+        self.pushButton_generate_Api_key = QPushButton(self.right)
+        self.pushButton_generate_Api_key.setObjectName(u"pushButton_generate_Api_key")
+        font2 = QFont()
+        font2.setPointSize(9)
+        font2.setBold(True)
+        self.pushButton_generate_Api_key.setFont(font2)
+        self.pushButton_generate_Api_key.setStyleSheet(u"QPushButton {\n"
+"    background-color: #0db002;\n"
+"}\n"
+"\n"
+"QPushButton:disabled {\n"
+"    background-color:#4fa14a; /* A grayish-green color */\n"
+"}")
+
+        self.horizontalLayout.addWidget(self.pushButton_generate_Api_key)
+
+        self.pushButton_delete_Api_keys = QPushButton(self.right)
+        self.pushButton_delete_Api_keys.setObjectName(u"pushButton_delete_Api_keys")
+        self.pushButton_delete_Api_keys.setFont(font2)
+        self.pushButton_delete_Api_keys.setStyleSheet(u"QPushButton {\n"
+"    background-color: #fa0000;\n"
+"}\n"
+"\n"
+"QPushButton:disabled {\n"
+"    background-color: #A52A2A; /* A grayish-red color */\n"
+"}")
+
+        self.horizontalLayout.addWidget(self.pushButton_delete_Api_keys)
+
+
+        self.gridLayout_9.addLayout(self.horizontalLayout, 11, 0, 4, 1)
+
+        self.pushButton_copy_Api_key_clipboard = QPushButton(self.right)
+        self.pushButton_copy_Api_key_clipboard.setObjectName(u"pushButton_copy_Api_key_clipboard")
+        self.pushButton_copy_Api_key_clipboard.setEnabled(False)
+        self.pushButton_copy_Api_key_clipboard.setStyleSheet(u"")
+        icon = QIcon()
+        icon.addFile(u":/images/graphics/copy_to_clipboard.svg", QSize(), QIcon.Normal, QIcon.Off)
+        self.pushButton_copy_Api_key_clipboard.setIcon(icon)
+        self.pushButton_copy_Api_key_clipboard.setIconSize(QSize(16, 16))
+
+        self.gridLayout_9.addWidget(self.pushButton_copy_Api_key_clipboard, 20, 0, 1, 1)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(-1, -1, -1, 9)
+        self.checkBox_enable_Api = QCheckBox(self.right)
+        self.checkBox_enable_Api.setObjectName(u"checkBox_enable_Api")
+        self.checkBox_enable_Api.setFont(font)
+
+        self.horizontalLayout_2.addWidget(self.checkBox_enable_Api)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer_2)
+
+        self.label_14 = QLabel(self.right)
+        self.label_14.setObjectName(u"label_14")
+        self.label_14.setFont(font)
+
+        self.horizontalLayout_2.addWidget(self.label_14)
+
+        self.lineEdit_api_port = QLineEdit(self.right)
+        self.lineEdit_api_port.setObjectName(u"lineEdit_api_port")
+
+        self.horizontalLayout_2.addWidget(self.lineEdit_api_port)
+
+
+        self.gridLayout_9.addLayout(self.horizontalLayout_2, 6, 0, 1, 1)
+
+        self.updates = QWidget(self.right)
+        self.updates.setObjectName(u"updates")
+        self.gridLayout_13 = QGridLayout(self.updates)
+        self.gridLayout_13.setObjectName(u"gridLayout_13")
+        self.gridLayout_13.setContentsMargins(0, 0, 0, 0)
+        self.line_10 = QFrame(self.updates)
+        self.line_10.setObjectName(u"line_10")
+        self.line_10.setFrameShadow(QFrame.Raised)
+        self.line_10.setLineWidth(5)
+        self.line_10.setFrameShape(QFrame.HLine)
+
+        self.gridLayout_13.addWidget(self.line_10, 2, 0, 1, 1)
+
+        self.label_23 = QLabel(self.updates)
+        self.label_23.setObjectName(u"label_23")
+        self.label_23.setFont(font)
+        self.label_23.setStyleSheet(u"")
+
+        self.gridLayout_13.addWidget(self.label_23, 0, 0, 1, 1)
+
+        self.checkBox_auto_check_updates = QCheckBox(self.updates)
+        self.checkBox_auto_check_updates.setObjectName(u"checkBox_auto_check_updates")
+
+        self.gridLayout_13.addWidget(self.checkBox_auto_check_updates, 1, 0, 1, 1)
+
+
+        self.gridLayout_9.addWidget(self.updates, 4, 0, 1, 1)
+
+        self.Api_key_lineEdit = QLineEdit(self.right)
+        self.Api_key_lineEdit.setObjectName(u"Api_key_lineEdit")
+        self.Api_key_lineEdit.setReadOnly(True)
+
+        self.gridLayout_9.addWidget(self.Api_key_lineEdit, 19, 0, 1, 1)
+
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.gridLayout_9.addItem(self.verticalSpacer_2, 24, 0, 1, 1)
+
+        self.drivers = QWidget(self.right)
+        self.drivers.setObjectName(u"drivers")
+        self.gridLayout_10 = QGridLayout(self.drivers)
+        self.gridLayout_10.setObjectName(u"gridLayout_10")
+        self.gridLayout_10.setContentsMargins(0, 0, 0, 0)
+        self.label_13 = QLabel(self.drivers)
+        self.label_13.setObjectName(u"label_13")
+        self.label_13.setFont(font)
+
+        self.gridLayout_10.addWidget(self.label_13, 0, 0, 1, 1)
+
+        self.label_8 = QLabel(self.drivers)
+        self.label_8.setObjectName(u"label_8")
+        self.label_8.setMaximumSize(QSize(16777215, 17))
+
+        self.gridLayout_10.addWidget(self.label_8, 1, 0, 1, 1)
+
+        self.line_5 = QFrame(self.drivers)
+        self.line_5.setObjectName(u"line_5")
+        self.line_5.setFrameShadow(QFrame.Raised)
+        self.line_5.setLineWidth(5)
+        self.line_5.setFrameShape(QFrame.HLine)
+
+        self.gridLayout_10.addWidget(self.line_5, 2, 0, 1, 3)
+
+        self.pathButton_device_path = Path_Button_Edit(self.drivers)
+        self.pathButton_device_path.setObjectName(u"pathButton_device_path")
+
+        self.gridLayout_10.addWidget(self.pathButton_device_path, 1, 1, 1, 2)
+
+
+        self.gridLayout_9.addWidget(self.drivers, 1, 0, 1, 1)
+
+        self.files = QWidget(self.right)
+        self.files.setObjectName(u"files")
+        self.gridLayout_7 = QGridLayout(self.files)
+        self.gridLayout_7.setObjectName(u"gridLayout_7")
+        self.gridLayout_7.setContentsMargins(0, 0, 0, 0)
+        self.label_7 = QLabel(self.files)
+        self.label_7.setObjectName(u"label_7")
+        self.label_7.setMaximumSize(QSize(16777215, 17))
+
+        self.gridLayout_7.addWidget(self.label_7, 2, 0, 1, 1)
+
+        self.label_6 = QLabel(self.files)
+        self.label_6.setObjectName(u"label_6")
+        self.label_6.setMaximumSize(QSize(16777215, 17))
+
+        self.gridLayout_7.addWidget(self.label_6, 1, 0, 1, 1)
+
+        self.label_10 = QLabel(self.files)
+        self.label_10.setObjectName(u"label_10")
+
+        self.gridLayout_7.addWidget(self.label_10, 3, 0, 1, 1)
+
+        self.lineEdit_catalog_name = QLineEdit(self.files)
+        self.lineEdit_catalog_name.setObjectName(u"lineEdit_catalog_name")
+
+        self.gridLayout_7.addWidget(self.lineEdit_catalog_name, 3, 1, 1, 1)
+
+        self.line_6 = QFrame(self.files)
+        self.line_6.setObjectName(u"line_6")
+        self.line_6.setFrameShadow(QFrame.Raised)
+        self.line_6.setLineWidth(5)
+        self.line_6.setFrameShape(QFrame.HLine)
+
+        self.gridLayout_7.addWidget(self.line_6, 6, 0, 1, 2)
+
+        self.label_5 = QLabel(self.files)
+        self.label_5.setObjectName(u"label_5")
+        self.label_5.setMaximumSize(QSize(16777215, 17))
+        self.label_5.setFont(font)
+
+        self.gridLayout_7.addWidget(self.label_5, 0, 0, 1, 1)
+
+        self.pathButton_meas_files = Path_Button_Edit(self.files)
+        self.pathButton_meas_files.setObjectName(u"pathButton_meas_files")
+
+        self.gridLayout_7.addWidget(self.pathButton_meas_files, 2, 1, 1, 1)
+
+        self.pathButton_py_files = Path_Button_Edit(self.files)
+        self.pathButton_py_files.setObjectName(u"pathButton_py_files")
+
+        self.gridLayout_7.addWidget(self.pathButton_py_files, 1, 1, 1, 1)
+
+        self.label_20 = QLabel(self.files)
+        self.label_20.setObjectName(u"label_20")
+
+        self.gridLayout_7.addWidget(self.label_20, 5, 0, 1, 1)
+
+        self.spinBox_n_databroker_files = QSpinBox(self.files)
+        self.spinBox_n_databroker_files.setObjectName(u"spinBox_n_databroker_files")
+
+        self.gridLayout_7.addWidget(self.spinBox_n_databroker_files, 5, 1, 1, 1)
+
+
+        self.gridLayout_9.addWidget(self.files, 0, 0, 1, 1)
+
+        self.label_ApiKey = QLabel(self.right)
+        self.label_ApiKey.setObjectName(u"label_ApiKey")
+        self.label_ApiKey.setStyleSheet(u"font-weight: bold;")
+
+        self.gridLayout_9.addWidget(self.label_ApiKey, 5, 0, 1, 1)
+
+        self.extensions = QWidget(self.right)
+        self.extensions.setObjectName(u"extensions")
+        self.gridLayout_12 = QGridLayout(self.extensions)
+        self.gridLayout_12.setObjectName(u"gridLayout_12")
+        self.gridLayout_12.setContentsMargins(0, 0, 0, 0)
+        self.label_21 = QLabel(self.extensions)
+        self.label_21.setObjectName(u"label_21")
+        self.label_21.setMaximumSize(QSize(16777215, 17))
+
+        self.gridLayout_12.addWidget(self.label_21, 1, 0, 1, 1)
+
+        self.label_22 = QLabel(self.extensions)
+        self.label_22.setObjectName(u"label_22")
+        self.label_22.setFont(font)
+
+        self.gridLayout_12.addWidget(self.label_22, 0, 0, 1, 2)
+
+        self.pathButton_extension_path = Path_Button_Edit(self.extensions)
+        self.pathButton_extension_path.setObjectName(u"pathButton_extension_path")
+
+        self.gridLayout_12.addWidget(self.pathButton_extension_path, 1, 1, 1, 1)
+
+        self.line_9 = QFrame(self.extensions)
+        self.line_9.setObjectName(u"line_9")
+        self.line_9.setFrameShadow(QFrame.Raised)
+        self.line_9.setLineWidth(5)
+        self.line_9.setFrameShape(QFrame.HLine)
+
+        self.gridLayout_12.addWidget(self.line_9, 2, 0, 1, 2)
+
+
+        self.gridLayout_9.addWidget(self.extensions, 3, 0, 1, 1)
+
+
+        self.gridLayout.addWidget(self.right, 0, 3, 1, 1)
+
 
         self.retranslateUi(settings_window)
         self.buttonBox.accepted.connect(settings_window.accept)
@@ -531,22 +619,6 @@ class Ui_settings_window(object):
 
     def retranslateUi(self, settings_window):
         settings_window.setWindowTitle(QCoreApplication.translate("settings_window", u"Dialog", None))
-        self.label_13.setText(QCoreApplication.translate("settings_window", u"Drivers", None))
-        self.label_8.setText(QCoreApplication.translate("settings_window", u"Local drivers path", None))
-        self.label_19.setText(QCoreApplication.translate("settings_window", u"NOMAD Oasis URL", None))
-        self.label_18.setText(QCoreApplication.translate("settings_window", u"ELN integration", None))
-        self.label_7.setText(QCoreApplication.translate("settings_window", u"Measurement-Data Path", None))
-        self.label_6.setText(QCoreApplication.translate("settings_window", u"Python-Files Path", None))
-        self.label_10.setText(QCoreApplication.translate("settings_window", u"Databroker catalog-name", None))
-        self.label_5.setText(QCoreApplication.translate("settings_window", u"Files", None))
-        self.label_20.setText(QCoreApplication.translate("settings_window", u"# databroker files", None))
-#if QT_CONFIG(tooltip)
-        self.spinBox_n_databroker_files.setToolTip(QCoreApplication.translate("settings_window", u"with \"0\" all files will be kept", None))
-#endif // QT_CONFIG(tooltip)
-        self.label_21.setText(QCoreApplication.translate("settings_window", u"Local extensions path", None))
-        self.label_22.setText(QCoreApplication.translate("settings_window", u"Extensions", None))
-        self.checkBox_auto_check_updates.setText(QCoreApplication.translate("settings_window", u"automatically search for updates", None))
-        self.label_23.setText(QCoreApplication.translate("settings_window", u"Updates", None))
         self.label_9.setText(QCoreApplication.translate("settings_window", u"Logging", None))
         self.label_17.setText(QCoreApplication.translate("settings_window", u"old logfile backups", None))
         self.label_16.setText(QCoreApplication.translate("settings_window", u"max. logfile size (MB)", None))
@@ -570,5 +642,30 @@ class Ui_settings_window(object):
         self.radioButton_scientific.setText(QCoreApplication.translate("settings_window", u"Scientific", None))
         self.checkBox_dark.setText(QCoreApplication.translate("settings_window", u"dark mode", None))
         self.label_2.setText(QCoreApplication.translate("settings_window", u"Theme", None))
+        self.label_19.setText(QCoreApplication.translate("settings_window", u"NOMAD Oasis URL", None))
+        self.label_18.setText(QCoreApplication.translate("settings_window", u"ELN integration", None))
+        self.pushButton_generate_Api_key.setText(QCoreApplication.translate("settings_window", u"Generate\n"
+"API Key", None))
+        self.pushButton_delete_Api_keys.setText(QCoreApplication.translate("settings_window", u"Delete ALL\n"
+"API keys", None))
+        self.pushButton_copy_Api_key_clipboard.setText(QCoreApplication.translate("settings_window", u"Copy key to clipboard", None))
+        self.checkBox_enable_Api.setText(QCoreApplication.translate("settings_window", u"Enable API", None))
+        self.label_14.setText(QCoreApplication.translate("settings_window", u"API Port:", None))
+        self.lineEdit_api_port.setPlaceholderText(QCoreApplication.translate("settings_window", u"API Port", None))
+        self.label_23.setText(QCoreApplication.translate("settings_window", u"Updates", None))
+        self.checkBox_auto_check_updates.setText(QCoreApplication.translate("settings_window", u"automatically search for updates", None))
+        self.label_13.setText(QCoreApplication.translate("settings_window", u"Drivers", None))
+        self.label_8.setText(QCoreApplication.translate("settings_window", u"Local drivers path", None))
+        self.label_7.setText(QCoreApplication.translate("settings_window", u"Measurement-Data Path", None))
+        self.label_6.setText(QCoreApplication.translate("settings_window", u"Python-Files Path", None))
+        self.label_10.setText(QCoreApplication.translate("settings_window", u"Databroker catalog-name", None))
+        self.label_5.setText(QCoreApplication.translate("settings_window", u"Files", None))
+        self.label_20.setText(QCoreApplication.translate("settings_window", u"# databroker files", None))
+#if QT_CONFIG(tooltip)
+        self.spinBox_n_databroker_files.setToolTip(QCoreApplication.translate("settings_window", u"with \"0\" all files will be kept", None))
+#endif // QT_CONFIG(tooltip)
+        self.label_ApiKey.setText(QCoreApplication.translate("settings_window", u"API Key", None))
+        self.label_21.setText(QCoreApplication.translate("settings_window", u"Local extensions path", None))
+        self.label_22.setText(QCoreApplication.translate("settings_window", u"Extensions", None))
     # retranslateUi
 
