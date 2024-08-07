@@ -553,8 +553,7 @@ class RenameTabWidget(QTabWidget):
         for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             self.widget(i).enable_single_run(name)
 
-    def create_new_tab(self):
-        name = "New Tab"
+    def create_new_tab(self, name='New Tab'):
         i = 1
         while name in self.tab_button_dict:
             name = f"New Tab {i}"

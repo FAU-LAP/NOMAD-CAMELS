@@ -28,6 +28,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Fixes:
 - Removed unnecessary import in protocols
 - Having quotation marks in a prompt or a step description could break the protocol, now fixed
+- Fixed tabs on first startup of CAMELS
 
 ## 1.3.0
 

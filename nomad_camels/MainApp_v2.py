@@ -1042,6 +1042,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.load_preset(preset)
         else:
             self.save_state(True)
+            self.load_state()
 
     def change_preset(self, preset):
         """saves the old device preset,
@@ -1081,9 +1082,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self._current_preset[0] = "empty_preset"
         self.update_channels()
         variables_handling.preset = self._current_preset[0]
-        self.with_or_without_instruments()
         self.populate_meas_buttons()
         self.populate_manuals_buttons()
+        self.with_or_without_instruments()
         self.adjustSize()
 
     def make_save_dict(self):
@@ -1275,10 +1276,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         Clears the manual controls area and adds the buttons for all manual controls."""
         self.button_area_manual.clear_area()
-        if not self.manual_controls:
-            self.button_area_manual.setHidden(True)
-        else:
-            self.button_area_manual.setHidden(False)
         for control in self.manual_controls:
             added = False
             for tab, controls in self.manual_tabs_dict.items():
@@ -1288,6 +1285,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     break
             if not added:
                 self.add_button_to_manuals(control, "manual controls")
+        if not self.protocols_dict:
+            self.button_area_manual.create_new_tab('manual controls')
 
     def start_manual_control(self, name):
         """
@@ -1541,11 +1540,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def populate_meas_buttons(self):
         """Clear the protocols area and adds the buttons for all protocols."""
         self.button_area_meas.clear_area()
-        if not self.protocols_dict:
-            # The protocls button should always be visible even when no protocol is added
-            self.button_area_meas.setHidden(False)
-        else:
-            self.button_area_meas.setHidden(False)
         for prot in self.protocols_dict:
             added = False
             for tab, protocols in list(self.protocol_tabs_dict.items()):
@@ -1557,6 +1551,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     break
             if not added:
                 self.add_button_to_meas(prot, "protocols")
+        if not self.protocols_dict:
+            self.button_area_meas.create_new_tab('protocols')
 
     def next_queued_protocol(self, protocol_name, variables, api_uuid=None):
         """
