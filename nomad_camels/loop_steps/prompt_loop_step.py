@@ -50,9 +50,10 @@ class Prompt_Loop_Step(Loop_Step):
     def get_add_main_string(self):
         """Adds the setup of the box to the `steps_add_main` function of the
         protocol."""
-        long_text = self.long_text.replace("\n", "\\n")
+        long_text = self.long_text.replace("\n", "\\n").replace('"', '\\"')
+        short_text = self.short_text.replace('"', '\\"').replace("\n", "\\n")
         add_main_string = super().get_add_main_string()
-        add_main_string += f'\tboxes["prompt_{self.name}"] = helper_functions.Prompt_Box("{self.icon}", "{long_text}", "{self.short_text}")\n'
+        add_main_string += f'\tboxes["prompt_{self.name}"] = helper_functions.Prompt_Box("{self.icon}", "{long_text}", "{short_text}")\n'
         return add_main_string
 
 
