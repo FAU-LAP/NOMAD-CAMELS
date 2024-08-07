@@ -1,3 +1,5 @@
+"""The main window of the program. It contains all the other classes and is the main interface for the user."""
+
 import sys
 import os
 import re
@@ -16,7 +18,6 @@ from importlib import resources
 from nomad_camels import graphics
 
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import (
-    Drop_Scroll_Area,
     RenameTabWidget,
 )
 from nomad_camels.utility import (
@@ -235,6 +236,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.importer_thread.start(priority=QThread.LowPriority)
 
     def start_API_server(self, api_port):
+        """
+        Start the FastAPI server on the given port.
+
+        Parameters
+        ----------
+        api_port : int
+            The port on which the FastAPI server should be started.
+        """
         if hasattr(self, "fastapi_thread") and self.fastapi_thread is not None:
             pass
         else:
@@ -1530,9 +1539,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             subprocess.Popen(["xdg-open", os.path.dirname(savepath)])
 
     def populate_meas_buttons(self):
-        """
-        Clears the protocols area and adds the buttons for all protocols.
-        """
+        """Clear the protocols area and adds the buttons for all protocols."""
         self.button_area_meas.clear_area()
         if not self.protocols_dict:
             # The protocls button should always be visible even when no protocol is added
@@ -1671,9 +1678,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_finished()
             raise e
         import time
-        from bluesky import __version__ as bluesky_version
-        from ophyd import __version__ as ophyd_version
-        from nomad_camels import __version__ as nomad_camels_version
 
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)

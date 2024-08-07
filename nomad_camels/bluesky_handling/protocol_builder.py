@@ -64,7 +64,7 @@ standard_string += "from PySide6.QtCore import QCoreApplication, QThread\n"
 standard_string += "import datetime\n"
 standard_string += "import subprocess\n"
 standard_string += (
-    "from nomad_camels.main_classes import plot_pyqtgraph, list_plot, plot_2D\n"
+    "from nomad_camels.main_classes import plot_pyqtgraph, list_plot\n"
 )
 standard_string += "from nomad_camels.utility import theme_changing\n"
 standard_string += (
