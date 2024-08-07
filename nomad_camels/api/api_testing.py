@@ -5,7 +5,7 @@ import json
 
 api_key = "4hdB9w9_CHHkZH6f3pHCT6l7rLKvoNPRlhP62o7q7LM6L_6GhGhIDQ"
 # %%
-data = {'variables': {'test': 567, 'var2': 21}}
+data = {'variables': {'start_stop': 10, 'points': 31}}
 # convert data to json
 data_json = json.dumps(data)
 # %%

@@ -47,23 +47,33 @@ def validate_api_key(api_key: str) -> bool:
     return result is not None
 
 
-def write_protocol_result_path_to_db(api_uuid, file_path):
+def write_protocol_result_path_to_db(api_uuid, message="currently running"):
     # Database setup
     data_base_path = os.path.join(load_save_functions.appdata_path, "CAMELS_API.db")
     conn = sqlite3.connect(data_base_path, check_same_thread=False)
     c = conn.cursor()
 
-    # Update the entry with the given api_uuid to set the status to the provided file_path
+    # Create table if it doesn't exist
     c.execute(
         """
-        UPDATE protocol_run_status
-        SET status = ?
-        WHERE uuid = ?
-        """,
-        (file_path, api_uuid),
+        CREATE TABLE IF NOT EXISTS protocol_run_status (
+            uuid TEXT PRIMARY KEY,
+            status TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+        """
     )
     conn.commit()
 
+    # Insert new entry with UUID and status "currently running"
+    c.execute(
+        """
+        INSERT OR REPLACE INTO protocol_run_status (uuid, status)
+        VALUES (?, ?)
+        """,
+        (api_uuid, message),
+    )
+    conn.commit()
     # Close the database connection
     conn.close()
 
@@ -98,11 +108,15 @@ class FastapiThread(QThread):
     # Signal to set the session name in the main window
     set_session_signal = Signal(str)
     # Signal to queue a protocol
-    queue_protocol_signal = Signal(str)
+    queue_protocol_signal = Signal(str, str)
     # Signal to remove a protocol from the queue
     remove_queue_protocol_signal = Signal(str)
     # Signal to check the checkbox of the next protocol in the queue
     set_checkbox_signal = Signal(str)
+    # Signal to change the variables when adding a protocol to the queue
+    queue_protocol_with_variables_signal = Signal(str, dict, int, str)
+    # Signal to update the variables of a protocol that is already in the queue
+    update_variables_queued_protocol_signal = Signal(str, dict, int, str)
 
     def __init__(self, main_window, api_port):
         super().__init__()
@@ -147,36 +161,8 @@ class FastapiThread(QThread):
             """Run a protocol by name"""
             protocol_uuid = str(uuid.uuid4())
 
-            # Database setup
-            data_base_path = os.path.join(
-                load_save_functions.appdata_path, "CAMELS_API.db"
-            )
-            conn = sqlite3.connect(data_base_path, check_same_thread=False)
-            c = conn.cursor()
+            write_protocol_result_path_to_db(protocol_uuid)
 
-            # Create table if it doesn't exist
-            c.execute(
-                """
-                CREATE TABLE IF NOT EXISTS protocol_run_status (
-                    uuid TEXT PRIMARY KEY,
-                    status TEXT NOT NULL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )
-                """
-            )
-            conn.commit()
-
-            # Insert new entry with UUID and status "currently running"
-            c.execute(
-                """
-                INSERT INTO protocol_run_status (uuid, status)
-                VALUES (?, ?)
-                """,
-                (protocol_uuid, "currently running"),
-            )
-            conn.commit()
-            # Close the database connection
-            conn.close()
             self.start_protocol_signal.emit(str(protocol_name), protocol_uuid, None)
             return JSONResponse(
                 content={
@@ -197,36 +183,8 @@ class FastapiThread(QThread):
 
             protocol_uuid = str(uuid.uuid4())
 
-            # Database setup
-            data_base_path = os.path.join(
-                load_save_functions.appdata_path, "CAMELS_API.db"
-            )
-            conn = sqlite3.connect(data_base_path, check_same_thread=False)
-            c = conn.cursor()
+            write_protocol_result_path_to_db(protocol_uuid)
 
-            # Create table if it doesn't exist
-            c.execute(
-                """
-                CREATE TABLE IF NOT EXISTS protocol_run_status (
-                    uuid TEXT PRIMARY KEY,
-                    status TEXT NOT NULL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )
-                """
-            )
-            conn.commit()
-
-            # Insert new entry with UUID and status "currently running"
-            c.execute(
-                """
-                INSERT INTO protocol_run_status (uuid, status)
-                VALUES (?, ?)
-                """,
-                (protocol_uuid, "currently running"),
-            )
-            conn.commit()
-            # Close the database connection
-            conn.close()
             self.start_protocol_signal.emit(
                 str(protocol_name), protocol_uuid, variables["variables"]
             )
@@ -275,6 +233,7 @@ class FastapiThread(QThread):
             protocols = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
             )
+            print(protocols)
             indexed_protocols = [
                 [index] + protocol for index, protocol in enumerate(protocols)
             ]
@@ -285,8 +244,10 @@ class FastapiThread(QThread):
             protocol_name: str, api_key: str = Depends(validate_credentials)
         ):
             """Add a protocol to the queue by name"""
+            protocol_uuid = str(uuid.uuid4())
+            write_protocol_result_path_to_db(protocol_uuid, "added to queue")
             try:
-                self.queue_protocol_signal.emit(str(protocol_name))
+                self.queue_protocol_signal.emit(str(protocol_name), protocol_uuid)
             except ValueError as e:
                 raise HTTPException(
                     status_code=500,
@@ -315,6 +276,113 @@ class FastapiThread(QThread):
                 raise HTTPException(
                     status_code=500,
                     detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.",
+                )
+
+        # Add protocol to queue with variables
+        @app.post("/api/v1/actions/queue/protocols/{protocol_name}")
+        async def queue_protocol_with_variables(
+            protocol_name: str,
+            variables: Variables,
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Add a protocol to the queue by name and pass variables to it"""
+            # Get dictionary from the variables model
+            variables = variables.model_dump()
+            protocol_uuid = str(uuid.uuid4())
+            write_protocol_result_path_to_db(protocol_uuid, "added to queue")
+
+            try:
+                self.queue_protocol_with_variables_signal.emit(
+                    str(protocol_name),
+                    variables["variables"],
+                    -1,
+                    protocol_uuid,
+                )
+            except ValueError as e:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.\n{e}",
+                )
+            time.sleep(0.05)
+            protocol_values = list(
+                self.main_window.run_queue_widget.protocol_name_variables.values()
+            )
+            if len(protocol_values) > 0:
+                # Get the name of the last protocol in the queue
+                last_protocol = protocol_values[-1]
+                last_protocol_name = last_protocol[0]
+                # Check if the provided protocol name matches the last one in the queue
+                if protocol_name == last_protocol_name:
+                    return JSONResponse(
+                        content={"status": "success adding protocol to queue"}
+                    )
+                else:
+                    raise HTTPException(
+                        status_code=500,
+                        detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.",
+                    )
+            else:
+                # Return a failure response if the queue is empty
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.",
+                )
+
+        # Change variables of a protocol already in the queue
+        @app.post("/api/v1/actions/queue/protocols/{protocol_name}_{index}")
+        async def update_queued_protocol(
+            protocol_name: str,
+            index: int,
+            variables: Variables,
+            api_key: str = Depends(validate_credentials),
+        ):
+            """Update the variables of a protocol already in the queue"""
+            # Get dictionary from the variables model
+            variables = variables.model_dump()
+            # Get the current queue
+            queue_response = await get_queue(api_key)
+            # Extract the queue content from the JSON response
+            queue_content = queue_response.body.decode("utf-8")
+            queue_list = json.loads(queue_content)
+            qt_items = list(
+                self.main_window.run_queue_widget.protocol_name_variables.keys()
+            )
+            for item in queue_list:
+                if item[1] == protocol_name and item[0] == index:
+                    try:
+                        self.update_variables_queued_protocol_signal.emit(
+                            str(qt_items[index]),
+                            variables["variables"],
+                            index,
+                        )
+                    except ValueError as e:
+                        raise HTTPException(
+                            status_code=500,
+                            detail=f"Failed to update protocol {protocol_name} in queue as the protocol was not found.\n{e}",
+                        )
+            time.sleep(0.05)
+            protocol_values = list(
+                self.main_window.run_queue_widget.protocol_name_variables.values()
+            )
+            if len(protocol_values) > 0:
+                # Get the name of the last protocol in the queue
+                last_protocol = protocol_values[-1]
+                last_protocol_name = last_protocol[0]
+                # Check if the provided protocol name matches the last one in the queue
+                if protocol_name == last_protocol_name:
+                    return JSONResponse(
+                        content={"status": "success updating protocol in queue"}
+                    )
+                else:
+                    raise HTTPException(
+                        status_code=500,
+                        detail=f"Failed to update protocol {protocol_name} in queue as the protocol was not found.",
+                    )
+            else:
+                # Return a failure response if the queue is empty
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to update protocol {protocol_name} in queue as the protocol was not found.",
                 )
 
         # Remove protocol from queue
