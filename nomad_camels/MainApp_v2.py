@@ -274,6 +274,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # Connect the set checkbox signal of the fastAPI to the set_checkbox method
             self.fastapi_thread.set_checkbox_signal.connect(self.set_checkbox)
 
+            # Connect the update_variables_queue signal of the fastAPI to the update_variables_queue method
+            self.fastapi_thread.queue_protocol_with_variables_signal.connect(self.queue_protocol_with_variables_signal)
+
+            # Connect the update_variables_queued_protocol signal of the fastAPI to the update_variables_queued_protocol method
+            self.fastapi_thread.update_variables_queued_protocol_signal.connect(self.update_variables_queued_protocol)
+
             # Start the FastAPI server
             self.fastapi_thread.start()
 
@@ -323,6 +329,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         self.run_queue_widget.check_checkbox(protocol_name)
 
+    def queue_protocol_with_variables_signal(self, protocol_name, variables, index, api_uuid):
+        """
+        Update the variables of a protocol in the run queue. Called by the API.
+        """
+        if protocol_name in self.protocols_dict:
+            self.run_queue_widget.add_item(protocol_name, api_uuid)
+        self.run_queue_widget.update_variables_queue(protocol_name, variables, index=index)
+    
+    def update_variables_queued_protocol(self, protocol_name, variables, index):
+        self.run_queue_widget.update_variables_queue(protocol_name, variables, index=index)
+    
     def open_watchdog_definition(self):
         """Opens the Watchdog_Definer dialog."""
         # IMPORT Watchdog_Definer only if it is needed
@@ -1541,13 +1558,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             if not added:
                 self.add_button_to_meas(prot, "protocols")
 
-    def next_queued_protocol(self, protocol_name, variables):
+    def next_queued_protocol(self, protocol_name, variables, api_uuid=None):
         """
         Checks whether the run engine is idle and if so, runs the next protocol in the queue.
         """
         if self.run_engine and self.run_engine.state != "idle":
             return
-        self.run_protocol(protocol_name, variables=variables)
+        if api_uuid == '':
+            api_uuid = None
+        self.run_protocol(protocol_name, api_uuid=api_uuid, variables=variables)
         self.run_queue_widget.remove_first()
 
     def run_protocol(self, protocol_name, api_uuid=None, variables=None):
@@ -1688,8 +1707,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # Check if the protocol was executed using the api and save rsults to db if true
         if api_uuid is not None:
             from nomad_camels.api.api import write_protocol_result_path_to_db
-
-            write_protocol_result_path_to_db(api_uuid, file)
+            write_protocol_result_path_to_db(api_uuid, message=file)
         if not nomad:
             return
         while self.still_running:
@@ -2002,7 +2020,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         print("\n\nBuild successful!\n")
         self.progressBar_protocols.setValue(100 if ask_file else 1)
 
-    def queue_protocol(self, protocol_name):
+    def queue_protocol(self, protocol_name, api_uuid=None):
         """
         Add a protocol to the queue. The protocol is added to the queue widget and the next protocol is checked. See `ui_widgets.run_queue.RunQueue.add_item`.
 
@@ -2012,7 +2030,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             The name of the protocol to add to the queue.
         """
         if protocol_name in self.protocols_dict:
-            self.run_queue_widget.add_item(protocol_name)
+            self.run_queue_widget.add_item(protocol_name, api_uuid=api_uuid)
 
     def get_user_name_data(self):
         """
