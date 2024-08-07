@@ -24,6 +24,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+## 1.3.1
+Fixes:
+- Removed unnecessary import in protocols
 
 ## 1.3.0
 
