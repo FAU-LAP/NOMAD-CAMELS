@@ -1,4 +1,21 @@
+<!-- vscode-markdown-toc -->
+* 1. [General Information](#GeneralInformation)
+* 2. [Executing Protocols](#ExecutingProtocols)
+* 3. [Get Protocol Names](#GetProtocolNames)
+* 4. [Running Protocols](#RunningProtocols)
+
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
+
 # Using the API
+
+This page should help you use and understand the API and its functionality.
+
+
+##  1. <a name='GeneralInformation'></a>General Information
 
 You can send http requests to the web server to communicate with CAMELS. Documentation on the allowed requests and their logic is displayed on the landing page of the web server `//localhost:<port>/` or  `//localhost:<port>/docs`.
 
@@ -10,7 +27,10 @@ If you are using a regular browser to access the web server you will be asked to
 Once logged in the browser will stay authenticated when using further requests until you close the browser.
 Following there are descriptions for the most useful commands.
 
-## Get Protocol Names
+##  2. <a name='ExecutingProtocols'></a>Executing Protocols
+
+
+##  3. <a name='GetProtocolNames'></a>Get Protocol Names
 
 You can get all protocol names that are currently defined in CAMELS by going to `//localhost:<port>/protocols`. 
 
@@ -28,7 +48,7 @@ The API will return a JSON string of the form:
 {"Protocols":["ProtocolXYZ","DefaultProtocol","..."]}
 ```
 
-## Running Protocols
+##  4. <a name='RunningProtocols'></a>Running Protocols
 
 You can run an already defined protocol by going to `//localhost:<port>/protocols/{protocol_name}` or using Python:
 

@@ -4,6 +4,8 @@ The CAMELS API (starting with CAMELS version 1.3.0) allows you to interact with 
 
 CAMELS API uses a web server running on the machines `//localhost:`. You interact with the API by sending http requests to the web server.
 
+Documentation on the allowed requests and their syntax is displayed on the landing page of the web server: `//localhost:<port>/` or on: `//localhost:<port>/docs`.
+
 ```{toctree}
 :maxdepth: 1
 :caption: Overview
