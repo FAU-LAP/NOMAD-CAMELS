@@ -127,8 +127,8 @@ class RunQueue(QListWidget):
             The new variables for the protocol.
         """
         item = self.order_list[index]
-        if name.startswith(self.protocol_name_variables[str(item)][0]):
-            item = self.order_list[index]
+        if name == str(item):
+            pass
         else:
             raise ValueError("The name of the protocol does not match the name of the protocol at this index in the queue.")
         self.protocol_name_variables[str(item)][1] = variables

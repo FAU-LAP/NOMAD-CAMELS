@@ -116,7 +116,7 @@ class FastapiThread(QThread):
     # Signal to change the variables when adding a protocol to the queue
     queue_protocol_with_variables_signal = Signal(str, dict, int, str)
     # Signal to update the variables of a protocol that is already in the queue
-    update_variables_queued_protocol_signal = Signal(str, dict, int, str)
+    change_variables_queued_protocol_signal = Signal(str, dict, int)
 
     def __init__(self, main_window, api_port):
         super().__init__()
@@ -180,6 +180,19 @@ class FastapiThread(QThread):
             """Run a protocol by name and pass variables to it (only already defined variables can be passed)"""
             # Get dictionary from the variables model
             variables = variables.model_dump()
+            response = await get_protocol_variables(protocol_name)
+            response_content = response.body.decode("utf-8")
+            accepted_variables = json.loads(response_content)["Variables"]
+            # Check if all variables are in accepted variables
+            for key in variables["variables"]:
+                if key not in accepted_variables:
+                    print(
+                        f"Variable {key} is not accepted by the protocol {protocol_name}"
+                    )
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Variable {key} is not accepted by the protocol {protocol_name}",
+                    )
 
             protocol_uuid = str(uuid.uuid4())
 
@@ -233,7 +246,6 @@ class FastapiThread(QThread):
             protocols = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
             )
-            print(protocols)
             indexed_protocols = [
                 [index] + protocol for index, protocol in enumerate(protocols)
             ]
@@ -264,7 +276,10 @@ class FastapiThread(QThread):
                 # Check if the provided protocol name matches the last one in the queue
                 if protocol_name == last_protocol_name:
                     return JSONResponse(
-                        content={"status": "success adding protocol to queue"}
+                        content={
+                            "status": "success adding protocol to queue",
+                            "uuid": protocol_uuid,
+                        }
                     )
                 else:
                     raise HTTPException(
@@ -314,7 +329,10 @@ class FastapiThread(QThread):
                 # Check if the provided protocol name matches the last one in the queue
                 if protocol_name == last_protocol_name:
                     return JSONResponse(
-                        content={"status": "success adding protocol to queue"}
+                        content={
+                            "status": "success adding protocol to queue",
+                            "uuid": protocol_uuid,
+                        }
                     )
                 else:
                     raise HTTPException(
@@ -329,14 +347,14 @@ class FastapiThread(QThread):
                 )
 
         # Change variables of a protocol already in the queue
-        @app.post("/api/v1/actions/queue/protocols/{protocol_name}_{index}")
-        async def update_queued_protocol(
+        @app.post("/api/v1/actions/queue/variables/protocols/{protocol_name}_{index}")
+        async def change_variables_queued_protocol(
             protocol_name: str,
             index: int,
             variables: Variables,
             api_key: str = Depends(validate_credentials),
         ):
-            """Update the variables of a protocol already in the queue"""
+            """Change the variables of a protocol already in the queue"""
             # Get dictionary from the variables model
             variables = variables.model_dump()
             # Get the current queue
@@ -350,7 +368,7 @@ class FastapiThread(QThread):
             for item in queue_list:
                 if item[1] == protocol_name and item[0] == index:
                     try:
-                        self.update_variables_queued_protocol_signal.emit(
+                        self.change_variables_queued_protocol_signal.emit(
                             str(qt_items[index]),
                             variables["variables"],
                             index,
@@ -386,7 +404,7 @@ class FastapiThread(QThread):
                 )
 
         # Remove protocol from queue
-        @app.get("/api/v1/actions/queue_remove/protocols/{protocol_name}_{index}")
+        @app.get("/api/v1/actions/queue/remove/protocols/{protocol_name}_{index}")
         async def remove_protocol(
             protocol_name: str, index: int, api_key: str = Depends(validate_credentials)
         ):
@@ -399,6 +417,9 @@ class FastapiThread(QThread):
             qt_items = list(
                 self.main_window.run_queue_widget.protocol_name_variables.keys()
             )
+            # If index is -1 set to the last element of qt_items
+            if index == -1:
+                index = len(qt_items) - 1
             for item in queue_list:
                 if item[1] == protocol_name and item[0] == index:
                     self.remove_queue_protocol_signal.emit(str(qt_items[index]))
@@ -411,8 +432,8 @@ class FastapiThread(QThread):
             )
 
         # Check the ready checkbox of protocols in the queue
-        @app.get("/api/v1/actions/queue_check/protocols/{protocol_name}_{index}")
-        async def check_protocol(
+        @app.get("/api/v1/actions/queue/ready/protocols/{protocol_name}_{index}")
+        async def protocol_ready(
             protocol_name: str, index: int, api_key: str = Depends(validate_credentials)
         ):
             """Check the ready checkbox of protocols in the queue"""
@@ -424,6 +445,8 @@ class FastapiThread(QThread):
             qt_items = list(
                 self.main_window.run_queue_widget.protocol_name_variables.keys()
             )
+            if index == -1:
+                index = len(qt_items) - 1
             for item in queue_list:
                 if item[1] == protocol_name and item[0] == index:
                     self.set_checkbox_signal.emit(str(qt_items[index]))
@@ -485,12 +508,6 @@ class FastapiThread(QThread):
                 return JSONResponse(content={"status": "success setting session name"})
             else:
                 return JSONResponse(content={"status": "failed setting session name"})
-
-        # TODO: Fix this to actually work using the body of the POST!!
-        # @app.post("/protocol/{protocol_name}")
-        # async def run_protocol(protocol_name: str, api_key: str = Depends(validate_credentials)):
-        #     self.start_protocol_signal.emit(str(protocol_name))
-        #     return JSONResponse(content={"status": "success"})
 
         # Root redirects to the API documentation
         @app.get("/")
