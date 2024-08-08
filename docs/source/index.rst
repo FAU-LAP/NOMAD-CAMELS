@@ -97,6 +97,9 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    :caption: Code Reference
 
    nomad-camels <nomad_camels.rst>
+   helping packages <helping_packages.rst>
+   drivers <drivers.rst>
+   extensions <extensions.rst>
    genindex
 
 
