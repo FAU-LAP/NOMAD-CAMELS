@@ -65,7 +65,7 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    :maxdepth: 2
    :caption: CAMELS API
 
-   Using the API <doc/api/api_landing.md>
+   CAMELS API Overview <doc/api/api_landing.md>
    
 
 .. toctree::
