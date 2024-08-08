@@ -2,8 +2,9 @@
 
 This page should help you use and understand the API and its functionality.
 
-* TOC
-{:toc}
+```{toctree}
+:maxdepth: 1
+```
 
 ## General Information
 
