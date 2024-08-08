@@ -25,6 +25,13 @@ class Variables(BaseModel):
         },
     )
 
+# Define the response model
+class ProtocolRunResponse(BaseModel):
+    check_protocol_status_here: str = Field(
+        ...,
+        description="A URL to check the protocol status"
+    )
+
 
 # Define the validate_api_key function
 def validate_api_key(api_key: str) -> bool:
@@ -158,7 +165,7 @@ class FastapiThread(QThread):
             )
 
         # Run a protocol by name
-        @app.get("/api/v1/actions/run/protocols/{protocol_name}")
+        @app.get("/api/v1/actions/run/protocols/{protocol_name}", response_model=ProtocolRunResponse)
         async def run_protocol(
             protocol_name: str, api_key: str = Depends(validate_credentials)
         ):
@@ -175,7 +182,7 @@ class FastapiThread(QThread):
             )
 
         # Run a protocol by name and pass variables to it (only already defined variables can be passed)
-        @app.post("/api/v1/actions/run/protocols/{protocol_name}")
+        @app.post("/api/v1/actions/run/protocols/{protocol_name}", response_model=ProtocolRunResponse)
         async def run_protocol_with_variables(
             protocol_name: str,
             variables: Variables,
@@ -505,7 +512,7 @@ class FastapiThread(QThread):
                 if item[1] == protocol_name and item[0] == index:
                     self.set_checkbox_signal.emit(str(qt_items[index]))
                     return JSONResponse(
-                        content={"status": "success checking next protocol"}
+                        content={"status": "success checking protocol"}
                     )
             raise HTTPException(
                 status_code=500,
