@@ -78,6 +78,10 @@ def write_protocol_result_path_to_db(api_uuid, message="currently running"):
     conn.close()
 
 
+def is_valid_path(file_path):
+    return os.path.exists(file_path)
+
+
 # Initialize HTTP Basic Authentication
 security = HTTPBasic()
 
@@ -234,6 +238,56 @@ class FastapiThread(QThread):
                 return JSONResponse(
                     content={"uuid": protocol_uuid, "status": result[0]}
                 )
+            else:
+                return JSONResponse(
+                    content={"error": "UUID not found"}, status_code=404
+                )
+
+        # Get the literal hdf5 file of a successful protocol run by UUID
+        @app.get("/api/v1/protocols/results/{protocol_uuid}/file")
+        async def get_protocol_hdf5(
+            protocol_uuid: str, api_key: str = Depends(validate_credentials)
+        ):
+            """Get the literal hdf5 file of a successful protocol run by UUID"""
+            # Database setup
+            data_base_path = os.path.join(
+                load_save_functions.appdata_path, "CAMELS_API.db"
+            )
+            conn = sqlite3.connect(data_base_path, check_same_thread=False)
+            c = conn.cursor()
+
+            # Query the status of the protocol run by UUID
+            c.execute(
+                """
+                SELECT status FROM protocol_run_status WHERE uuid = ?
+                """,
+                (protocol_uuid,),
+            )
+            status = c.fetchone()[0]
+            if status == "currently running":
+                return JSONResponse(
+                    content={
+                        "error": "Protocol is currently running. You can access the results once the protocol has finished."
+                    },
+                    status_code=202,
+                )
+            if status == "added to queue":
+                return JSONResponse(
+                    content={
+                        "error": "Protocol is in the queue and was not started yet. You can access the results once the protocol has finished."
+                    },
+                    status_code=202,
+                )
+            file_path = os.path.abspath(status)
+            # Close the database connection
+            conn.close()
+            if file_path:
+                if is_valid_path(file_path):
+                    return FileResponse(file_path, filename=os.path.basename(file_path))
+                else:
+                    return JSONResponse(
+                        content={"error": "File does not exists"}, status_code=404
+                    )
             else:
                 return JSONResponse(
                     content={"error": "UUID not found"}, status_code=404
