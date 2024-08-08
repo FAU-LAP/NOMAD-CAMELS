@@ -2,10 +2,6 @@
 
 This page should help you use and understand the API and its functionality.
 
-```{toctree}
-:maxdepth: 1
-```
-
 ## General Information
 
 You can send http requests to the web server to communicate with CAMELS. Documentation on the allowed requests and their logic is displayed on the landing page of the web server `//localhost:<port>/` or  `//localhost:<port>/docs`.
@@ -18,7 +14,22 @@ If you are using a regular browser to access the web server you will be asked to
 Once logged in the browser will stay authenticated when using further requests until you close the browser.
 Following there are descriptions for the most useful commands.
 
+```{attention}
+In the following all paths are given als relative paths from `//localhost:<port>/`.
+```
+
+```{note}
+All `GET` API calls (requests) can also be performed using a browser. `POST` requests can not be performed using a browser, as you need to pass information in the body of the request.
+```
+
+
+
 ## Executing Protocols
+
+There are different ways you can execute a protocol you defined in CAMELS via the API.
+
+### 1. GET Protocols
+
 
 
 ## Get Protocol Names
