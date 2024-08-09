@@ -400,7 +400,7 @@ class RenameTabWidget(QTabWidget):
         self.plus_tab.setFlat(True)
         self.plus_tab.setFocusPolicy(Qt.NoFocus)
         self.plus_tab.setFixedSize(25, 25)
-        self.plus_tab.clicked.connect(self.create_new_tab)
+        self.plus_tab.clicked.connect(lambda x: self.create_new_tab())
 
         # Add the plus tab
         self.tab_button_dict = tab_button_dict or {}
