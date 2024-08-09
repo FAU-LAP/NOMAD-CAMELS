@@ -29,6 +29,9 @@ Fixes:
 - Removed unnecessary import in protocols
 - Having quotation marks in a prompt or a step description could break the protocol, now fixed
 - Fixed tabs on first startup of CAMELS
+- Fixed naming of empty tabs
+- Packages that could not be loaded might have hindered opening the instrument manager, now fixed
+- Making new preset now actually loads said one and does not overwrite the old one
 
 ## 1.3.0
 

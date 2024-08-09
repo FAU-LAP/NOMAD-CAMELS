@@ -1005,6 +1005,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             },
         )
         self._current_preset[0] = preset_name
+        self.load_state()
 
     def save_preset_as(self):
         """Opens a QFileDialog to save the preset.
@@ -1285,7 +1286,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     break
             if not added:
                 self.add_button_to_manuals(control, "manual controls")
-        if not self.protocols_dict:
+        if not self.manual_controls:
+            self.manual_tabs_dict.clear()
             self.button_area_manual.create_new_tab('manual controls')
 
     def start_manual_control(self, name):
@@ -1552,6 +1554,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             if not added:
                 self.add_button_to_meas(prot, "protocols")
         if not self.protocols_dict:
+            self.protocol_tabs_dict.clear()
             self.button_area_meas.create_new_tab('protocols')
 
     def next_queued_protocol(self, protocol_name, variables, api_uuid=None):
