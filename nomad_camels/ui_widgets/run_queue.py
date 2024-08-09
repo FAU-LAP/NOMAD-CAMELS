@@ -127,13 +127,15 @@ class RunQueue(QListWidget):
             The new variables for the protocol.
         """
         item = self.order_list[index]
-        if name.startswith(self.protocol_name_variables[str(item)][0]):
-            item = self.order_list[index]
+        if name == str(item):
+            pass
         else:
-            raise ValueError("The name of the protocol does not match the name of the protocol at this index in the queue.")
+            raise ValueError(
+                "The name of the protocol does not match the name of the protocol at this index in the queue."
+            )
         self.protocol_name_variables[str(item)][1] = variables
         self.change_variable_table()
-    
+
     def check_next_protocol(self):
         """
         Check if the first protocol in the queue is ready to run. If it is, emit the protocol_signal with the name of the protocol and its variables. If the protocol is not ready to run, do nothing.
@@ -155,6 +157,12 @@ class RunQueue(QListWidget):
         # If the checkbox is checked, emit the run signal
         if checkbox.isChecked():
             self.change_variable_table()
+            if self.protocol_name_variables[str(item)][2] is not None:
+                from nomad_camels.api.api import write_protocol_result_path_to_db
+
+                write_protocol_result_path_to_db(
+                    self.protocol_name_variables[str(item)][2], "currently running"
+                )
             self.protocol_signal.emit(*self.protocol_name_variables[str(item)])
             return True
         return False
@@ -237,7 +245,12 @@ class RunQueue(QListWidget):
             self.variable_table.setHidden(True)
             return
         # Get the variables for the current item
-        name, variables, = self.protocol_name_variables[str(self.last_selected)][:2]
+        (
+            name,
+            variables,
+        ) = self.protocol_name_variables[
+            str(self.last_selected)
+        ][:2]
         self.variable_table.protocol = self.protocols_dict[name]
         for var in variables:
             self.variable_table.append_variable(var, str(variables[var]), unique=False)

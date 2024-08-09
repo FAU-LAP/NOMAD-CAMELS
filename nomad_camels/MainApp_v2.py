@@ -277,8 +277,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # Connect the update_variables_queue signal of the fastAPI to the update_variables_queue method
             self.fastapi_thread.queue_protocol_with_variables_signal.connect(self.queue_protocol_with_variables_signal)
 
-            # Connect the update_variables_queued_protocol signal of the fastAPI to the update_variables_queued_protocol method
-            self.fastapi_thread.update_variables_queued_protocol_signal.connect(self.update_variables_queued_protocol)
+            # Connect the change_variables_queued_protocol signal of the fastAPI to the update_variables_queued_protocol method
+            self.fastapi_thread.change_variables_queued_protocol_signal.connect(self.change_variables_queued_protocol)
 
             # Start the FastAPI server
             self.fastapi_thread.start()
@@ -335,9 +335,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         if protocol_name in self.protocols_dict:
             self.run_queue_widget.add_item(protocol_name, api_uuid)
+        protocol_name = list(self.run_queue_widget.protocol_name_variables.keys())[index]
         self.run_queue_widget.update_variables_queue(protocol_name, variables, index=index)
     
-    def update_variables_queued_protocol(self, protocol_name, variables, index):
+    def change_variables_queued_protocol(self, protocol_name, variables, index):
         self.run_queue_widget.update_variables_queue(protocol_name, variables, index=index)
     
     def open_watchdog_definition(self):
