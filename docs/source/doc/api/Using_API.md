@@ -4,6 +4,8 @@ This page should help you use and understand the API and its functionality.
 
 Make sure to check the automatic documentation under `//localhost:<port>/` or `//localhost:<port>/docs`. There you can also find more information on the request schemas and responses.
 
+<!-- TOC -->autoauto- [Using the API (v1)](#using-the-api-v1)auto    - [General Information](#general-information)auto    - [Get Protocol Parameters](#get-protocol-parameters)auto    - [Executing Protocols](#executing-protocols)auto    - [Protocol Queue](#protocol-queue)auto    - [Protocol Results](#protocol-results)autoauto<!-- /TOC -->
+
 ## General Information
 
 To communicate with CAMELS send HTTP requests to its web server.
@@ -119,7 +121,7 @@ To do this you must change the `"key1"` to match the varaible name and the `"val
 
 For a protocol like this
 
-<img src="images/image-1.png" width="450">
+<img src="images/image-1.png" width="450" alt="Image">
 
 You could use a body like
 
