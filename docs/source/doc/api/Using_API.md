@@ -4,14 +4,12 @@ This page should help you use and understand the API and its functionality.
 
 Make sure to check the automatic documentation under `//localhost:<port>/` or `//localhost:<port>/docs`. There you can also find more information on the request schemas and responses.
 
-- [Using the API (v1)](#using-the-api-v1)
-  - [General Information](#general-information)
-  - [Get Protocol Parameters](#get-protocol-parameters)
-  - [Executing Protocols](#executing-protocols)
-  - [Protocol Queue](#protocol-queue)
-  - [Protocol Results](#protocol-results)
-  - [Measurement Metadata](#measurement-metadata)
-
+- [General Information](#general-information)
+- [Get Protocol Parameters](#get-protocol-parameters)
+- [Executing Protocols](#executing-protocols)
+- [Protocol Queue](#protocol-queue)
+- [Protocol Results](#protocol-results)
+- [Measurement Metadata](#measurement-metadata)
 
 ## General Information
 
@@ -55,7 +53,7 @@ result = requests.get("http://localhost:5000//api/v1/protocols", auth=("", f"{ap
 
 The API will return a JSON string of the form:
 
-```JSON
+```python
 {"Protocols":["ProtocolXYZ","DefaultProtocol","..."]}
 ```
 
@@ -76,7 +74,7 @@ The status can either be `currently in queue`, `currently running` or the file p
 
 If you go to the URL returned by the request, for example:
 
-```JSON
+```python
 {
   "check protocol status here": "/api/v1/protocols/results/ae593c12-8938-4e24-b05b-77c169f10f76"
 }
@@ -84,7 +82,7 @@ If you go to the URL returned by the request, for example:
 
 and the protocol is finished you will be able to get the path to the measurement file under `status`:
 
-```JSON
+```python
 {
     "uuid":"ae593c12-8938-4e24-b05b-77c169f10f76",
     "status":"C:\\Users\\User\\Documents\\NOMAD_CAMELS_data\\default_user\\default_sample\\data_2024-08-08T14-26-13.848567+02-00.nxs"
@@ -113,7 +111,7 @@ In response to the request, you will receive the UUID, which allows you to track
 POST /api/v1/actions/run/protocols/{protocol_name}
 ```
 
-```JSON
+```python
 body: {
   "variables": {
     "key1": "value1",
@@ -128,14 +126,11 @@ To do this you must change the `"key1"` to match the variable name and the `"val
 
 For a protocol like this
 
-<img src="images/image-1.png" alt="Image of example protocol" width="450"/>
-
-
 ![Image of example protocol](images/image-1.png)
 
 You could use a body like
 
-```JSON
+```python
 body: {
   "variables": {
     "points": 21,
@@ -182,7 +177,7 @@ The status can either be `currently in queue`, `currently running` or the file p
 /api/v1/actions/run/protocols/{protocol_name}
 ```
 
-```JSON
+```python
 body: {
   "variables": {
     "points": 21,
@@ -203,7 +198,7 @@ If you already added a protocol to the queue but want to change its variables af
 /api/v1/actions/queue/variables/protocols/{protocol_name}_{index}
 ```
 
-```JSON
+```python
 body: {
   "variables": {
     "points": 21,
