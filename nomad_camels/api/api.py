@@ -426,6 +426,9 @@ class FastapiThread(QThread):
             qt_items = list(
                 self.main_window.run_queue_widget.protocol_name_variables.keys()
             )
+            # make negative indexes work
+            if index < 0:
+                index = len(qt_items) + index
             for item in queue_list:
                 if item[1] == protocol_name and item[0] == index:
                     try:
@@ -478,9 +481,9 @@ class FastapiThread(QThread):
             qt_items = list(
                 self.main_window.run_queue_widget.protocol_name_variables.keys()
             )
-            # If index is -1 set to the last element of qt_items
-            if index == -1:
-                index = len(qt_items) - 1
+            # Negative index work as well
+            if index < 0:
+                index = len(qt_items) + index
             for item in queue_list:
                 if item[1] == protocol_name and item[0] == index:
                     self.remove_queue_protocol_signal.emit(str(qt_items[index]))
@@ -506,8 +509,8 @@ class FastapiThread(QThread):
             qt_items = list(
                 self.main_window.run_queue_widget.protocol_name_variables.keys()
             )
-            if index == -1:
-                index = len(qt_items) - 1
+            if index < 0:
+                index = len(qt_items) + index
             for item in queue_list:
                 if item[1] == protocol_name and item[0] == index:
                     self.set_checkbox_signal.emit(str(qt_items[index]))
