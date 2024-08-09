@@ -149,7 +149,9 @@ data = {'variables': {'start_stop': 10, 'points': 31}}
 data_json = json.dumps(data)
 # %%
 result = requests.post(
-    f"http://127.0.0.1:5000/api/v1/actions/run/protocols/{protocol_name}", auth=("", f"{api_key}"), json=data
+    f"http://127.0.0.1:5000/api/v1/actions/run/protocols/{protocol_name}",
+    auth=("", f"{api_key}"),
+    json=data
 )
 ```
 
