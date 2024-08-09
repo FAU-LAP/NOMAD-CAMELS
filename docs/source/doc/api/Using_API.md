@@ -28,7 +28,7 @@ All `GET` API calls (requests) can also be performed using a browser. `POST` req
 
 ## Get Protocol Parameters
 
-Use these requests to find out which protocols exists and what varaibles each protocol has.
+Use these requests to find out which protocols exists and what variables each protocol has.
 
 ### GET: Get available Protocols
 
@@ -52,7 +52,7 @@ The API will return a JSON string of the form:
 {"Protocols":["ProtocolXYZ","DefaultProtocol","..."]}
 ```
 
-### GET: Protocol Varaibles
+### GET: Protocol Variables
 
 Get the changeable variables of a protocol:
 
@@ -117,11 +117,13 @@ body: {
 
 You can modify variables that are defined in the protocol and then execute the protocol with the newly defined variables.
 
-To do this you must change the `"key1"` to match the varaible name and the `"value1"` to the desired value.
+To do this you must change the `"key1"` to match the variable name and the `"value1"` to the desired value.
 
 For a protocol like this
 
 <img src="images/image-1.png" width="450" alt="Image of example protocol">
+
+![Image of example protocol](images/image-1.png)
 
 You could use a body like
 
@@ -185,7 +187,7 @@ In response to the request, you will receive the UUID, which allows you to track
 
 The status can either be `currently in queue`, `currently running` or the file path to the data.
 
-### POST: Change Varaibles of Protocol in Queue
+### POST: Change Variables of Protocol in Queue
 
 If you already added a protocol to the queue but want to change its variables afterwards you can use this request.
 
@@ -279,3 +281,9 @@ To get the actual file use
 ```
 
 If the protocol is still in the queue or is not finished yet it will display `currently in queue` or `currently running` respectively.
+
+## Measurement Metadata
+
+You can modify the measurements metadata like the *user* performing the measurement, the *sample* used or a *session name* to better describe what you are doing. 
+
+## GET: 
