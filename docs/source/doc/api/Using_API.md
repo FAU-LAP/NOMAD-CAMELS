@@ -121,7 +121,7 @@ To do this you must change the `"key1"` to match the variable name and the `"val
 
 For a protocol like this
 
-<img src="/images/image-1.png" width="450" alt="Image of example protocol">
+<img src="./images/image-1.png" width="450" alt="Image of example protocol">
 
 ![Image of example protocol](images/image-1.png)
 
