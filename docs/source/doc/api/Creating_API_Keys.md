@@ -1,6 +1,8 @@
 # Creating API Keys
 
-You need to authenticate yourself with an API ke so that the web server accepts most http requests. You can generate such a key in the settings window (`File -> Settings`) by clicking `Generate API Key`. Now make sure to copy and paste this key somewhere and save it. You could either simply save it in a text file or in something more secure like a password manager.
+The CAMELS API uses the HTTP "Basic" authentication. You need to authenticate yourself with an API key as the password input of the HTTP "Basic" authentication so that the web server accepts most http requests. 
+
+You can generate such an API key in the settings window (`File -> Settings`) by clicking `Generate API Key`. Now make sure to copy and paste this key somewhere and save it. You could either save it in a text file or in something more secure like a password manager.
 
 ```{attention}
 You can not get back the API key if you do not save it now! Although you can always just create a new API key if you lose an existing one.
