@@ -556,7 +556,7 @@ class RenameTabWidget(QTabWidget):
     def create_new_tab(self, name='New Tab'):
         i = 1
         while name in self.tab_button_dict:
-            name = f"New Tab {i}"
+            name = f"{name} {i}"
             i += 1
         new_tab = Drop_Scroll_Area()
         self.insertTab(self.count() - 1, new_tab, name)  # Insert before the plus tab
