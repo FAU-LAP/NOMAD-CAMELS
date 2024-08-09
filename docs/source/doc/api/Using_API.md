@@ -119,7 +119,8 @@ To do this you must change the `"key1"` to match the varaible name and the `"val
 
 For a protocol like this
 
-![Example protocol with predefined variables](images/image-1.png){: style="width: 450px;"}
+![Example protocol with predefined variables]({{ site.baseurl }}/images/image-1.png){: style="width: 450px;"}
+
 
 You could use a body like
 
