@@ -119,7 +119,7 @@ To do this you must change the `"key1"` to match the varaible name and the `"val
 
 For a protocol like this
 
-<img src="images/image-1.png" alt="Example protocol with predefined variables" width="450"/>
+![Example protocol with predefined variables](images/image-1.png){: style="width: 450px;"}
 
 You could use a body like
 
