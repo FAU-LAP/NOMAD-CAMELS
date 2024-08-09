@@ -32,6 +32,7 @@ Fixes:
 - Packages that could not be loaded might have hindered opening the instrument manager, now fixed
 - Making new preset now actually loads said one and does not overwrite the old one
 - API: Fixed changing variables of protocols already added to the queue
+- API: You can now use negative index in the API calls
 
 Features:
 
