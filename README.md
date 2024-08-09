@@ -25,10 +25,17 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ## 1.3.1
+
 Fixes:
+
 - Removed unnecessary import in protocols
 - Having quotation marks in a prompt or a step description could break the protocol, now fixed
 - Fixed tabs on first startup of CAMELS
+- API: Fixed changing variables of protocols already added to the queue
+
+Features:
+
+- API: Now adds a UUID to all protocol executions performed via API. Allows you to track and retrieve the results of each protocol run.
 
 ## 1.3.0
 
