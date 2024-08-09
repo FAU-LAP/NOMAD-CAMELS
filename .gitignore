@@ -8,7 +8,6 @@ __pycache__/
 **/html_out/
 docs/source/doc/programmers_guide/drivers/backup.md
 CAMELS_Docu.code-workspace
-docs/
 .python-version
 dist/
 *.egg-info
@@ -17,3 +16,4 @@ CAMELS.code-workspace
 **/config_path
 startup_packages.txt
 /.42c
+.venv/
