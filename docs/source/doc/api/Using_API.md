@@ -4,7 +4,14 @@ This page should help you use and understand the API and its functionality.
 
 Make sure to check the automatic documentation under `//localhost:<port>/` or `//localhost:<port>/docs`. There you can also find more information on the request schemas and responses.
 
-<!-- TOC -->autoauto- [Using the API (v1)](#using-the-api-v1)auto    - [General Information](#general-information)auto    - [Get Protocol Parameters](#get-protocol-parameters)auto    - [Executing Protocols](#executing-protocols)auto    - [Protocol Queue](#protocol-queue)auto    - [Protocol Results](#protocol-results)autoauto<!-- /TOC -->
+- [Using the API (v1)](#using-the-api-v1)
+  - [General Information](#general-information)
+  - [Get Protocol Parameters](#get-protocol-parameters)
+  - [Executing Protocols](#executing-protocols)
+  - [Protocol Queue](#protocol-queue)
+  - [Protocol Results](#protocol-results)
+  - [Measurement Metadata](#measurement-metadata)
+
 
 ## General Information
 
@@ -121,7 +128,8 @@ To do this you must change the `"key1"` to match the variable name and the `"val
 
 For a protocol like this
 
-<img src="./images/image-1.png" width="450" alt="Image of example protocol">
+<img src="images/image-1.png" alt="Image of example protocol" width="450"/>
+
 
 ![Image of example protocol](images/image-1.png)
 
@@ -276,7 +284,7 @@ If the protocol is still in the queue or is not finished yet it will return `cur
 
 To get the actual file use
 
-```bash
+```shell
 /api/v1/protocols/results/{protocol_uuid}/file
 ```
 
@@ -284,6 +292,52 @@ If the protocol is still in the queue or is not finished yet it will display `cu
 
 ## Measurement Metadata
 
-You can modify the measurements metadata like the *user* performing the measurement, the *sample* used or a *session name* to better describe what you are doing. 
+You can get and modify the measurements metadata like the *user* performing the measurement, the *sample* used or a *session name* to better describe what you are doing. 
 
-## GET: 
+### GET: Samples
+
+You can get all the available samples using
+
+```shell
+/api/v1/samples
+```
+
+### GET: Set Sample
+
+You can set the current sample by using
+
+```shell
+/api/v1/actions/set/samples/{sample_name}
+```
+
+### GET: Users
+
+You can get all the available users using
+
+```shell
+/api/v1/users
+```
+
+### GET: Set User
+
+You can set the current user by using
+
+```shell
+/api/v1/actions/set/users/{user_name}
+```
+
+### GET: Session Description
+
+You can get the current session description by using
+
+```shell
+/api/v1/session
+```
+
+### GET: Set Session Description
+
+You can set the current session description by using
+
+```shell
+/api/v1/actions/set/session/{session_name}
+```
