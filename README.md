@@ -23,8 +23,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 ## 1.3.1
 
-Fixes:
+Features:
+- API: Now adds a UUID to all protocol executions performed via API. Allows you to track and retrieve the results of each protocol run.
 
+Fixes:
 - Removed unnecessary import in protocols
 - Having quotation marks in a prompt or a step description could break the protocol, now fixed
 - Fixed tabs on first startup of CAMELS
@@ -34,14 +36,9 @@ Fixes:
 - API: Fixed changing variables of protocols already added to the queue
 - API: You can now use negative index in the API calls
 
-Features:
-
-- API: Now adds a UUID to all protocol executions performed via API. Allows you to track and retrieve the results of each protocol run.
-
 ## 1.3.0
 
 Major Features:
-
 - Added an API web server. The homepage `http:\\localhost:<PORT>` gives you an overview of the available API calls and how to use them. You need to create an API key in the settings to be able to use most of the API calls. You can get a list of the available protocols you can execute with `GET /protocols` and run a specific protocol by using `POST /protocols/{protocol_name}` For more information check the documentation.
 - Added a Watchdog feature to monitor certain values and execute operations when their condition is met.
 
