@@ -66,11 +66,18 @@ def getInstalledDevices(force=False, return_packages=False):
     packages = dict(device_handling.load_local_packages())
     for package in packages:
         installed_instr[package] = "local"
+    not_loaded = []
     for instr in installed_instr:
         if instr not in packages:
-            packages[instr] = importlib.import_module(
-                f"nomad_camels_driver_{instr}.{instr}"
-            )
+            try:
+                packages[instr] = importlib.import_module(
+                    f"nomad_camels_driver_{instr}.{instr}"
+                )
+            except Exception as e:
+                print(instr, e)
+                not_loaded.append(instr)
+    for instr in not_loaded:
+        installed_instr.pop(instr)
     if return_packages:
         return installed_instr, packages
     return installed_instr
