@@ -1,7 +1,4 @@
-![NOMAD CAMELS horizontal logo](/nomad_camels/graphics/camels_horizontal.png)
-
-# NOMAD CAMELS
-
+![NOMAD CAMELS](/nomad_camels/graphics/camels_horizontal.png)
 
 ## Configurable Application for Measurements, Experiments and Laboratory Systems  
 
