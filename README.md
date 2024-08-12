@@ -22,6 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 Features:
 - API: Now adds a UUID to all protocol executions performed via API. Allows you to track and retrieve the results of each protocol run.
+- Set Value Popup step now allows to define comboboxes
 
 Fixes:
 - Removed unnecessary import in protocols

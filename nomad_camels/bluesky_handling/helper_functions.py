@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QProgressBar,
     QPushButton,
+    QComboBox
 )
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QFont
@@ -690,6 +691,7 @@ class Value_Box(QDialog):
         free_channels=False,
         parent=None,
         devs=None,
+        comboboxes=None,
     ):
         super().__init__(parent)
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
@@ -734,7 +736,11 @@ class Value_Box(QDialog):
         self.variables = variables
         for i, variable in enumerate(variables):
             variable_label = QLabel(f"{variable}:")
-            variable_box = QLineEdit()
+            if comboboxes and comboboxes[i]:
+                variable_box = QComboBox()
+                variable_box.addItems([str(x) for x in comboboxes[i]])
+            else:
+                variable_box = QLineEdit()
             self.variable_boxes.append(variable_box)
             layout.addWidget(variable_label, 2 + i, 2)
             layout.addWidget(variable_box, 2 + i, 3)
@@ -785,7 +791,10 @@ class Value_Box(QDialog):
         self.set_variables = {}
         self.set_channels = {}
         for i, v_box in enumerate(self.variable_boxes):
-            val = v_box.text()
+            if isinstance(v_box, QLineEdit):
+                val = v_box.text()
+            else:
+                val = v_box.currentText()
             if val:
                 self.set_variables[self.variables[i]] = val
         for i, c_box in enumerate(self.channel_boxes):
