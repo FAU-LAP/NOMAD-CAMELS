@@ -33,6 +33,7 @@ Fixes:
 - Making new preset now actually loads said one and does not overwrite the old one
 - API: Fixed changing variables of protocols already added to the queue
 - API: You can now use negative index in the API calls
+- Evaluator does not break on non-string inputs, but simply returns them
 
 ## 1.3.0
 

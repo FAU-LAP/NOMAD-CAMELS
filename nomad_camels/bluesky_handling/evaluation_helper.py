@@ -132,6 +132,8 @@ def get_eval(eval_str, namespace):
     """This evaluates the given string within the given namespace.
     Most functionality is taken from bluesky.utils.call_or_eval_one."""
     # If it is a key in our namespace, look it up.
+    if not isinstance(eval_str, str):
+        return eval_str
     eval_str = eval_str.strip()
     try:
         # This handles field or stream names that are not valid
