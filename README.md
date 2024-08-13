@@ -34,6 +34,8 @@ Fixes:
 - API: Fixed changing variables of protocols already added to the queue
 - API: You can now use negative index in the API calls
 - Evaluator does not break on non-string inputs, but simply returns them
+- Fixed different read-channel steps when using a subprotocol
+- fixed subprotocol evaluator not updating
 
 ## 1.3.0
 

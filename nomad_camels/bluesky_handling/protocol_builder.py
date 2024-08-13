@@ -206,6 +206,8 @@ def build_protocol(
         save_path = save_path.as_posix()
 
     # clearing leftovers from former builds
+    read_channel_names_old = list(variables_handling.read_channel_names)
+    read_channel_sets_old = list(variables_handling.read_channel_sets)
     variables_handling.read_channel_names.clear()
     variables_handling.read_channel_sets.clear()
 
@@ -444,6 +446,9 @@ def build_protocol(
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(protocol_string)
+    
+    variables_handling.read_channel_names = read_channel_names_old
+    variables_handling.read_channel_sets = read_channel_sets_old
 
 
 def user_sample_string(userdata, sampledata):
