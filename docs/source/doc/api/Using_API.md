@@ -53,7 +53,7 @@ result = requests.get("http://localhost:5000//api/v1/protocols", auth=("", f"{ap
 
 The API will return a JSON string of the form:
 
-```python
+```JSON
 {"Protocols":["ProtocolXYZ","DefaultProtocol","..."]}
 ```
 
@@ -74,7 +74,7 @@ The status can either be `currently in queue`, `currently running` or the file p
 
 If you go to the URL returned by the request, for example:
 
-```python
+```JSON
 {
   "check protocol status here": "/api/v1/protocols/results/ae593c12-8938-4e24-b05b-77c169f10f76"
 }
@@ -82,7 +82,7 @@ If you go to the URL returned by the request, for example:
 
 and the protocol is finished you will be able to get the path to the measurement file under `status`:
 
-```python
+```JSON
 {
     "uuid":"ae593c12-8938-4e24-b05b-77c169f10f76",
     "status":"C:\\Users\\User\\Documents\\NOMAD_CAMELS_data\\default_user\\default_sample\\data_2024-08-08T14-26-13.848567+02-00.nxs"
