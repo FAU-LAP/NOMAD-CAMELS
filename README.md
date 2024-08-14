@@ -36,6 +36,7 @@ Fixes:
 - Evaluator does not break on non-string inputs, but simply returns them
 - Fixed different read-channel steps when using a subprotocol
 - fixed subprotocol evaluator not updating
+- fixed usage of quotation marks for advanced instrument config step
 
 ## 1.3.0
 

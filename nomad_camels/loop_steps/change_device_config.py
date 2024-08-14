@@ -85,7 +85,7 @@ class Change_DeviceConf(Loop_Step):
                         raise Exception(
                             f"Trying to configure {conf} in {self.full_name}, but it does not exist!"
                         )
-                    val = self.config_dict["value"][i]
+                    val = self.config_dict["value"][i].replace('"', '\\"')
                     protocol_string += f'"{conf_name}": eva.eval("{val}"), '
                 protocol_string = protocol_string[:-2] + "}\n"
                 protocol_string += f'{tabs}devs["{dev}"].configure(config_dict)\n'
