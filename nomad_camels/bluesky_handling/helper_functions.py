@@ -624,7 +624,7 @@ class Prompt_Box(QMessageBox):
         The window-title of the prompt.
     """
 
-    def __init__(self, icon="", text="", title="", parent=None):
+    def __init__(self, icon="", text="", title="", parent=None, abortable=False):
         super().__init__(parent=parent)
         if icon == "Error":
             self.setIcon(QMessageBox.Critical)
@@ -637,6 +637,14 @@ class Prompt_Box(QMessageBox):
         self.helper = BoxHelper()
         self.helper.executor.connect(self.start_execution)
         self.buttonClicked.connect(self.set_done)
+        self.abort_flag = False
+        if abortable:
+            self.ok_button = QPushButton("OK")
+            self.addButton(self.ok_button, QMessageBox.ButtonRole.AcceptRole)
+            self.ok_button.clicked.connect(self.set_done)
+            self.abort_button = QPushButton("Abort Protocol")
+            self.addButton(self.abort_button, QMessageBox.ButtonRole.NoRole)
+            self.abort_button.clicked.connect(self.abort_action)
         self.done_flag = False
 
     def set_done(self):
@@ -647,6 +655,12 @@ class Prompt_Box(QMessageBox):
         """Sets `self.done_flag` to False and starts `self.exec()`."""
         self.done_flag = False
         self.exec()
+    
+    def abort_action(self):
+        """
+        If the abort button is clicked, the protocol is stopped.
+        """
+        self.abort_flag = True
 
 
 class BoxHelper(QWidget):
@@ -700,6 +714,7 @@ class Value_Box(QDialog):
         self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
+        self.buttonBox.setToolTip('"OK" will set the values, click "Cancel" to set no new values.')
         layout = QGridLayout()
 
         self.helper = BoxHelper()
