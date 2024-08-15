@@ -17,6 +17,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QDrag, QPixmap
 from PySide6.QtCore import Qt, QMimeData, Signal, QByteArray, QMimeData
 
+from collections import OrderedDict
+
 
 class DragButton(QPushButton):
     """ """
@@ -577,9 +579,12 @@ class RenameTabWidget(QTabWidget):
         return self.tabText(self.currentIndex())
 
     def update_order(self):
+        new_dict = OrderedDict()
         for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             tab_name = self.tabText(i)
-            self.tab_button_dict[tab_name] = self.widget(i).get_button_order()
+            new_dict[tab_name] = self.widget(i).get_button_order()
+        self.tab_button_dict =  new_dict
+        return new_dict
 
 
 class MoveDialog(QDialog):

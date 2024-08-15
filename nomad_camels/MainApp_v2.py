@@ -1097,6 +1097,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def make_save_dict(self):
         """Creates the save dictionary for the current preset. It includes the current preset, the active instruments, the protocols, the manual controls, the protocol tabs and the manual tabs."""
+        self.manual_tabs_dict = self.button_area_manual.update_order()
+        self.protocol_tabs_dict = self.button_area_meas.update_order()
         self.preset_save_dict = {
             "_current_preset": self._current_preset,
             "active_instruments": self.active_instruments,
@@ -1201,7 +1203,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.remove_manual_control(control_name)
             self.add_button_to_manuals(control_name, new_tab)
             self.manual_controls[control_name] = control_data
-            self.button_area_manual.update_order()
+            self.manual_tabs_dict = self.button_area_manual.update_order()
             self.button_area_manual.setHidden(False)
 
     def update_man_cont_data(self, control_data, old_name):
@@ -1433,7 +1435,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.remove_protocol(protocol_name)
             self.add_button_to_meas(protocol_name, new_tab)
             self.protocols_dict[protocol_name] = protocol
-            self.button_area_meas.update_order()
+            self.protocol_tabs_dict = self.button_area_meas.update_order()
             self.button_area_meas.setHidden(False)
 
     def update_prot_data(self, protocol, old_name):
@@ -1550,17 +1552,28 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def populate_meas_buttons(self):
         """Clear the protocols area and adds the buttons for all protocols."""
         self.button_area_meas.clear_area()
-        for prot in self.protocols_dict:
-            added = False
-            for tab, protocols in list(self.protocol_tabs_dict.items()):
-                if not protocols:
-                    del self.protocol_tabs_dict[tab]
-                elif prot in protocols:
+        addeds = []
+        for tab, protocols in list(self.protocol_tabs_dict.items()):
+            if not protocols:
+                del self.protocol_tabs_dict[tab]
+            for prot in protocols:
+                if prot in self.protocols_dict:
                     self.add_button_to_meas(prot, tab)
-                    added = True
-                    break
-            if not added:
+                    addeds.append(prot)
+        for prot in self.protocols_dict:
+            if prot not in addeds:
                 self.add_button_to_meas(prot, "protocols")
+        # for prot in self.protocols_dict:
+        #     added = False
+        #     for tab, protocols in list(self.protocol_tabs_dict.items()):
+        #         if not protocols:
+        #             del self.protocol_tabs_dict[tab]
+        #         elif prot in protocols:
+        #             self.add_button_to_meas(prot, tab)
+        #             added = True
+        #             break
+        #     if not added:
+        #         self.add_button_to_meas(prot, "protocols")
         if not self.protocols_dict:
             self.protocol_tabs_dict.clear()
             self.button_area_meas.create_new_tab('protocols')
