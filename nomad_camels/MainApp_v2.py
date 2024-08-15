@@ -1073,6 +1073,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         except FileNotFoundError:
             with open(preset, "r", encoding="utf-8") as f:
                 preset_dict = json.load(f)
+        self.active_instruments.clear()
+        self.protocols_dict.clear()
+        self.manual_controls.clear()
+        self.protocol_tabs_dict.clear()
+        self.manual_tabs_dict.clear()
+        variables_handling.watchdogs.clear()
         try:
             load_save_functions.load_save_dict(preset_dict, self.preset_save_dict)
         except Exception as e:
@@ -1290,6 +1296,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if not self.manual_controls:
             self.manual_tabs_dict.clear()
             self.button_area_manual.create_new_tab('manual controls')
+        self.button_area_manual.setCurrentIndex(0)
 
     def start_manual_control(self, name):
         """
@@ -1557,6 +1564,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if not self.protocols_dict:
             self.protocol_tabs_dict.clear()
             self.button_area_meas.create_new_tab('protocols')
+        self.button_area_meas.setCurrentIndex(0)
 
     def next_queued_protocol(self, protocol_name, variables, api_uuid=None):
         """

@@ -38,6 +38,7 @@ Fixes:
 - Fixed different read-channel steps when using a subprotocol
 - fixed subprotocol evaluator not updating
 - fixed usage of quotation marks for advanced instrument config step
+- when switching the preset, the tabs now load correctly
 
 ## 1.3.0
 

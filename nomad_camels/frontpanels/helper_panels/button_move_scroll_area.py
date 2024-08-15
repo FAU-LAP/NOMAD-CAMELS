@@ -523,6 +523,9 @@ class RenameTabWidget(QTabWidget):
     def clear_area(self):
         for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             self.widget(i).clear_area()
+        # remove all tabs except the plus tab
+        while self.count() > 1:
+            self.removeTab(0)
 
     def get_button_order(self, tab_name=""):
         for i in range(self.count() - 1):  # Skip the last tab (plus tab)
