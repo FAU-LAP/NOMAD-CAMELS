@@ -51,6 +51,7 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    Home <self>
    Installing CAMELS <doc/installation/installation.md>
    Getting Started <doc/tutorials/quick_start.md>
+   Protocol Steps Explained <doc/protocol_steps/protocol_steps_landing.md>
    Handling HDF5 Files <doc/handling_hdf5.md>
 
 .. toctree::
@@ -59,6 +60,13 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
 
    Available Instruments <doc/instruments/instruments.rst>
    Create New Instrument Drivers <doc/programmers_guide/instrument_drivers.md>
+
+.. toctree::
+   :maxdepth: 2
+   :caption: CAMELS API
+
+   CAMELS API Overview <doc/api/api_landing.md>
+   
 
 .. toctree::
    :maxdepth: 2
@@ -89,6 +97,9 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    :caption: Code Reference
 
    nomad-camels <nomad_camels.rst>
+   helping packages <helping_packages.rst>
+   drivers <drivers.rst>
+   extensions <extensions.rst>
    genindex
 
 

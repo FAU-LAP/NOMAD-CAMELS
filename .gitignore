@@ -8,3 +8,12 @@ __pycache__/
 **/html_out/
 docs/source/doc/programmers_guide/drivers/backup.md
 CAMELS_Docu.code-workspace
+.python-version
+dist/
+*.egg-info
+/nomad_camels/test.py
+CAMELS.code-workspace
+**/config_path
+startup_packages.txt
+/.42c
+.venv/
