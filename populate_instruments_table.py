@@ -4,7 +4,7 @@ import time
 
 url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/driver_list/driver_list.txt"
 
-for i in range(10):
+for i in range(100):
     try:
         response = requests.get(url).text
         break
@@ -47,7 +47,7 @@ if "SweepMe_device" in devices:
     sweep_me_version = devices.pop("SweepMe_device")["version"]
 
 url = "https://api.github.com/repos/SweepMe/instrument-drivers/contents/src"
-for i in range(10):
+for i in range(100):
     try:
         response = requests.get(url).json()
         test_var = response[0]["type"]
