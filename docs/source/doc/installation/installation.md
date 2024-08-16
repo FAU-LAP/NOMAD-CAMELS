@@ -22,6 +22,10 @@ python -m nomad_camels
 
 to start CAMELS.
 
+```{warning}
+Some of the drivers do not support python 3.12 yet, so we suggest to stay with python 3.11.
+```
+
 If this does not work you can go to `/.desertenv/Lib/site-packages/nomad_camels/` and run
 
 ```bash
