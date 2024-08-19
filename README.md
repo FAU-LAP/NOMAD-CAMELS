@@ -40,6 +40,7 @@ Fixes:
 - fixed usage of quotation marks for advanced instrument config step
 - when switching the preset, the tabs now load correctly
 - tab order is now remembered
+- log plots might not show correctly, now they have a minimum size
 
 ## 1.3.0
 

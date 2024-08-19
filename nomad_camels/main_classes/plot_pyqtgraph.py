@@ -325,6 +325,7 @@ class PlotWidget(QWidget):
         self.layout().addWidget(self.lineEdit_n_data, 2, 4)
         self.layout().addWidget(self.plot_options, 0, 0, 3, 1)
         self.plot_options.hide()
+        self.setMinimumSize(500, 400)
         self.adjustSize()
         place_widget(self)
 
