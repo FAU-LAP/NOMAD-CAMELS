@@ -35,7 +35,7 @@ jobs:
       - name: Prepare databroker
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
-        run: pytest -vv --timeout=300
+        run: pytest -vv --timeout=100
   ubuntu_test:
     runs-on: ubuntu-latest
     env:
@@ -66,7 +66,7 @@ jobs:
       - name: Run tests with pytest
         run: |
           cd nomad_camels
-          pytest -vv --timeout=300 --cov-config=./tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels tests/
+          pytest -vv --timeout=100 --cov-config=./tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels tests/
   macos_test:
     runs-on: macos-latest
     steps:
@@ -92,7 +92,7 @@ jobs:
       - name: Prepare databroker
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
-        run: pytest -vv --timeout=300
+        run: pytest -vv --timeout=100
 #  changelog:
 #    needs: [ubuntu_test, macos_test, windows_test]
 #    runs-on: ubuntu-latest
