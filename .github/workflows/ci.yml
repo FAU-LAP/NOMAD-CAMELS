@@ -25,7 +25,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff
           pip install -r requirements.txt
-          pip install pytest pytest-qt pytest-order pytest-mock
+          pip install pytest pytest-qt pytest-order pytest-mock pytest-timeout
       - name: List packages
         run: pip list
       - name: Lint with ruff
@@ -35,7 +35,7 @@ jobs:
       - name: Prepare databroker
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
-        run: pytest -v
+        run: pytest -vv --timeout=300
   ubuntu_test:
     runs-on: ubuntu-latest
     env:
@@ -82,7 +82,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff
           pip install -r requirements.txt
-          pip install pytest pytest-qt pytest-order pytest-mock
+          pip install pytest pytest-qt pytest-order pytest-mock pytest-timeout
       - name: List packages
         run: pip list
       - name: Lint with ruff
@@ -92,7 +92,7 @@ jobs:
       - name: Prepare databroker
         run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
-        run: pytest -v
+        run: pytest -vv --timeout=300
 #  changelog:
 #    needs: [ubuntu_test, macos_test, windows_test]
 #    runs-on: ubuntu-latest
