@@ -41,6 +41,7 @@ Fixes:
 - when switching the preset, the tabs now load correctly
 - tab order is now remembered
 - log plots might not show correctly, now they have a minimum size
+- quotation mark problems with protocol overview fixed
 
 ## 1.3.0
 

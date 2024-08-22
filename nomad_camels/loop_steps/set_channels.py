@@ -59,7 +59,7 @@ class Set_Channels(Loop_Step):
                 )
             dev, chan = variables_handling.channels[channel].name.split(".")
             val = self.channels_values["Values"][i]
-            protocol_string += f'{tabs}yield from bps.abs_set(devs["{dev}"].{chan}, eva.eval("{val}"), group="A")\n'
+            protocol_string += f'{tabs}yield from bps.abs_set(devs["{dev}"].{chan}, eva.eval("{val.replace('"', '\\"')}"), group="A")\n'
         if self.wait_for_set:
             protocol_string += f'{tabs}yield from bps.wait("A")\n'
         return protocol_string
@@ -67,7 +67,8 @@ class Set_Channels(Loop_Step):
     def get_protocol_short_string(self, n_tabs=0):
         """Displays the channels and their values."""
         short_string = super().get_protocol_short_string(n_tabs)
-        short_string = f"{short_string[:-1]} - {self.channels_values}\n"
+        val_dic = {self.channels_values["Channels"][i]: self.channels_values["Values"][i].replace('"', '\'') for i in range(len(self.channels_values["Channels"]))}
+        short_string = f"{short_string[:-1]} - {val_dic}\n"
         return short_string
 
 

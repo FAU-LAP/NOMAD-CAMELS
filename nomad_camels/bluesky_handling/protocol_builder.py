@@ -366,7 +366,7 @@ def build_protocol(
     sampledata = sampledata or {"name": "default_sample"}
     userdata = userdata or {"name": "default_user"}
     protocol_string += user_sample_string(userdata, sampledata)
-    protocol_string += f'\tmd["protocol_overview"] = "{protocol.get_short_string().encode("unicode_escape").decode()}"\n'
+    protocol_string += f'\tmd["protocol_overview"] = """{protocol.get_short_string().encode("unicode_escape").decode()}"""\n'
 
     protocol_string += f"\ttry:\n"
     protocol_string += f'\t\twith open("{cprot_path}", "r", encoding="utf-8") as f:\n'
