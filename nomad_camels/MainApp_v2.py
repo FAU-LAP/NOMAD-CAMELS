@@ -2,6 +2,7 @@
 
 import sys
 import os
+import platform, subprocess
 import re
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -101,6 +102,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             name = os.environ["COMPUTERNAME"]
         else:
             name = os.uname()[1]
+
         self._current_preset = [name]
         self.active_instruments = {}
         variables_handling.devices = self.active_instruments
@@ -170,10 +172,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionEPICS_driver_builder.triggered.connect(self.launch_epics_builder)
         self.actionExport_from_databroker.triggered.connect(self.launch_data_exporter)
         self.actionReport_Bug.triggered.connect(
-            lambda x: os.startfile(f"{camels_github}/issues")
+            lambda x: self.open_link(f"{camels_github}/issues")
         )
         self.actionDocumentation.triggered.connect(
-            lambda x: os.startfile(camels_github_pages)
+            lambda x: self.open_link(camels_github_pages)
         )
         self.actionUpdate_CAMELS.triggered.connect(
             lambda x: update_camels.question_message_box(self)
@@ -1537,7 +1539,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         savepath = os.path.normpath(savepath)
         while not os.path.exists(savepath):
             savepath = os.path.dirname(savepath)
-        import platform, subprocess
 
         if platform.system() == "Windows":
             # /select, specifies that the file should be highlighted
@@ -2108,7 +2109,23 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
         if not os.path.isfile(path):
             self.build_protocol(protocol_name, False)
-        os.startfile(path)
+        self.open_link(path)
+
+    def open_link(self, link):
+        """
+        Open a link in the default program. Should work in all operating systems.
+
+        Parameters
+        ----------
+        link : str
+            The link to open.
+        """
+        if platform.system() == "Windows":
+            os.startfile(link)
+        else:
+            opener = "open" if platform.system() == "Darwin" else "xdg-open"
+            subprocess.call([opener, link])
+
 
     # --------------------------------------------------
     # tools

@@ -1,4 +1,5 @@
 import os
+import platform, subprocess
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -120,7 +121,11 @@ class LoginDialog(QDialog):
             path = f"{path}/gui/analyze/apis"
         else:
             path = nomad_url
-        os.startfile(path)
+        if platform.system() == "Windows":
+            os.startfile(path)
+        else:
+            opener = "open" if platform.system() == "Darwin" else "xdg-open"
+            subprocess.call([opener, path])
 
     def accept(self):
         oasis = self.comboBox_nomad_choice.currentText() == "NOMAD Oasis"
