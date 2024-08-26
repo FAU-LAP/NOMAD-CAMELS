@@ -62,6 +62,7 @@ def login_to_nomad(parent=None):
     if dialog.exec() != QDialog.Accepted:
         return
     nomad_url = dialog.url
+    make_correct_url()
     if not nomad_url:
         nomad_url = central_url
     if dialog.token:
@@ -95,14 +96,18 @@ def ensure_login(parent=None):
         if url and url != nomad_url and nomad_url != central_url:
             nomad_url = url
             logout_of_nomad()
+    make_correct_url()
+    if not token:
+        login_to_nomad(parent)
+
+def make_correct_url():
+    global nomad_url
     if "/gui/" in nomad_url:
         nomad_url = nomad_url.split("/gui/")[0]
     if nomad_url.endswith("/"):
         nomad_url = nomad_url[:-1]
     if not nomad_url.endswith("/api/v1"):
         nomad_url += "/api/v1"
-    if not token:
-        login_to_nomad(parent)
 
 
 def check_response(response, fail_info=""):
