@@ -57,6 +57,7 @@ class While_Loop_Step(Loop_Step_Container):
         count_var = f'{self.name.replace(" ", "_")}_Count'
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f"{tabs}{count_var} = 0\n"
+        protocol_string += f'{tabs}namespace["{count_var}"] = {count_var}\n'
         protocol_string += f'{tabs}while eva.eval("{self.condition}"):\n'
         protocol_string += f'{tabs}\tnamespace["{count_var}"] = {count_var}\n'
         protocol_string += self.get_children_strings(n_tabs + 1)

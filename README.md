@@ -25,6 +25,9 @@ Features:
 - Set Value Popup step now allows to define comboboxes
 - Can allow prompt step to abort protocol now
 
+Changes:
+- Resetting positions for plots at each run, hoping to keep plots visible for remote-sessions
+
 Fixes:
 - Removed unnecessary import in protocols
 - Having quotation marks in a prompt or a step description could break the protocol, now fixed
@@ -46,6 +49,7 @@ Fixes:
 - ctrl+v now works in container-steps
 - should now correctly handle /gui urls for NOMAD oasis
 - ElapsedTime now displays correctly in plots
+- Adding while-loop counter earlier to namespace so it can be part of the while condition
 
 ## 1.3.0
 
