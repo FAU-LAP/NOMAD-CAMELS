@@ -753,6 +753,7 @@ class LivePlot(QObject, CallbackBase):
         self.setup_done_signal.emit()
         for fit in self.fitPlots:
             fit.start(doc)
+        self.eva.start(doc)
 
     def descriptor(self, doc):
         """

@@ -95,7 +95,7 @@ class Evaluator(CallbackBase):
         namespace.
         See bluesky's documentation for more information.
         """
-        self.namespace["StartTime"] = doc["time"]
+        self.namespace["StartTime"] = time.time()
         super().start(doc)
 
     def event(self, doc):

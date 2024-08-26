@@ -45,6 +45,7 @@ Fixes:
 - links now open correctly on unix and mac
 - ctrl+v now works in container-steps
 - should now correctly handle /gui urls for NOMAD oasis
+- ElapsedTime now displays correctly in plots
 
 ## 1.3.0
 
