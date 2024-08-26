@@ -8,6 +8,7 @@ from nomad_camels.nomad_integration.nomad_login import LoginDialog
 from nomad_camels.utility.dict_recursive_string import dict_recursive_string
 from nomad_camels.utility import variables_handling
 import re
+import logging
 
 
 def correct_timestamp(file_path):
@@ -149,7 +150,13 @@ def get_user_uploads(parent=None):
     ensure_login(parent)
     response = requests.get(f"{nomad_url}/uploads", headers=auth)
     check_response(response, "Could not get uploads!")
-    return response.json()["data"]
+    try:
+        response_json = response.json()
+    except requests.exceptions.JSONDecodeError as e:
+        logging.error(f"Failed to decode JSON response: {e}")
+        logging.error(f"Response content: {response.content}")
+        raise e
+    return response_json.get("data", [])
 
 
 def get_user_upload_names(parent=None):
