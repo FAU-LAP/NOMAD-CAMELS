@@ -42,6 +42,7 @@ Fixes:
 - tab order is now remembered
 - log plots might not show correctly, now they have a minimum size
 - quotation mark problems with protocol overview fixed
+- links now open correctly on unix and mac
 
 ## 1.3.0
 
