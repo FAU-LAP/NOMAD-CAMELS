@@ -27,6 +27,7 @@ Features:
 
 Changes:
 - Resetting positions for plots at each run, hoping to keep plots visible for remote-sessions
+- Allowed for stopping a protocol during instrument instantiation
 
 Fixes:
 - Removed unnecessary import in protocols

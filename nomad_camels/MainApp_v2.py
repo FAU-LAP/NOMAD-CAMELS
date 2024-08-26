@@ -1605,6 +1605,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Closing devices not used in the protocol is done in `close_old_queue_devices`.
         """
         self.setCursor(Qt.WaitCursor)
+        plot_placement.reset_variables()
         # IMPORT importlib, bluesky, ophyd and time only if needed
         import importlib
 
@@ -1618,6 +1619,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.save_state(do_backup=self.preferences["backup_before_run"])
         self.button_area_meas.disable_run_buttons()
         try:
+            self.pushButton_resume.setEnabled(False)
+            self.pushButton_pause.setEnabled(False)
+            self.pushButton_stop.setEnabled(True)
             self.build_protocol(protocol_name, ask_file=False, variables=variables)
             protocol = self.protocols_dict[protocol_name]
             self.running_protocol = protocol
@@ -1910,7 +1914,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         if self.run_engine.state != "idle":
             self.run_engine.abort("Aborted by user")
+        if self.instantiate_devices_thread.isRunning():
+            self.instantiate_devices_thread.successful.disconnect()
+            self.instantiate_devices_thread.exception_raised.disconnect()
+            self.old_devices_thread = self.instantiate_devices_thread
+            self.old_devices_thread.finished.connect(self.close_unused_instantiated_devices)
+            self.protocol_finished()
         # self.protocol_finished()
+
+    def close_unused_instantiated_devices(self):
+        devs = self.old_devices_thread.devices
+        from nomad_camels.utility import device_handling
+
+        device_handling.close_devices(devs)
+
 
     def resume_protocol(self):
         """
