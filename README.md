@@ -51,6 +51,8 @@ Fixes:
 - should now correctly handle /gui urls for NOMAD oasis
 - ElapsedTime now displays correctly in plots
 - Adding while-loop counter earlier to namespace so it can be part of the while condition
+- fixed a bug where a short queued protocol would be run endlessly
+- when the most recent preset was no viable json, it might break camels, now the second newest will be loaded instead of breaking
 
 ## 1.3.0
 

@@ -1041,12 +1041,23 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def load_state(self):
         """Loads the most recent preset."""
-        preset = load_save_functions.get_most_recent_presets()
-        if preset is not None:
-            self.load_preset(preset)
-        else:
-            self.save_state(True)
-            self.load_state()
+        n_preset = 1
+        while True:
+            try:
+                preset = load_save_functions.get_most_recent_presets(True)[-n_preset]
+                if preset is not None:
+                    self.load_preset(preset)
+                else:
+                    self.save_state(True)
+                    self.load_state()
+                break
+            except Exception as e:
+                warn_popup.WarnPopup(
+                    self,
+                    f"Could not load the most recent preset \"{preset}\".\nThe second newest will be loaded instead.\n\nError Message:\n{e}",
+                    "Load Error",
+                )
+                n_preset += 1
 
     def change_preset(self, preset):
         """saves the old device preset,
@@ -1588,8 +1599,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             return
         if api_uuid == '':
             api_uuid = None
-        self.run_protocol(protocol_name, api_uuid=api_uuid, variables=variables)
         self.run_queue_widget.remove_first()
+        self.run_protocol(protocol_name, api_uuid=api_uuid, variables=variables)
 
     def run_protocol(self, protocol_name, api_uuid=None, variables=None):
         """
