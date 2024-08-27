@@ -678,6 +678,8 @@ def get_most_recent_presets(return_all=False):
     for name in listdir(preset_path):
         if name.endswith(".preset"):
             presets.append(name)
+    if preset_path is None:
+        return None if not return_all else []
     if presets:
         presets = [x[:-7] for x in sorted(
             presets, key=lambda x: os.path.getmtime(os.path.join(preset_path, x))
