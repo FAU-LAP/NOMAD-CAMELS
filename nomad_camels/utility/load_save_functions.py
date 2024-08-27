@@ -672,20 +672,20 @@ def get_most_recent_presets(return_all=False):
     preset : str
         the name of the newest preset
     """
-    presets = [None]
+    presets = []
     if not os.path.isdir(preset_path):
         makedirs(preset_path)
     for name in listdir(preset_path):
         if name.endswith(".preset"):
             presets.append(name)
     if preset_path is None:
-        return None if not return_all else []
+        return None if not return_all else [None]
     if presets:
         presets = [x[:-7] for x in sorted(
             presets, key=lambda x: os.path.getmtime(os.path.join(preset_path, x))
         )]
     else:
-        return None if not return_all else []
+        return None if not return_all else [None]
     return presets[-1] if not return_all else presets
 
 
