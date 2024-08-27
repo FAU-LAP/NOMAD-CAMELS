@@ -1044,7 +1044,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         n_preset = 1
         while True:
             try:
-                preset = load_save_functions.get_most_recent_presets(True)[-n_preset]
+                presets = load_save_functions.get_most_recent_presets(True)
+                preset = presets[-n_preset]
                 if preset is not None:
                     self.load_preset(preset)
                 else:

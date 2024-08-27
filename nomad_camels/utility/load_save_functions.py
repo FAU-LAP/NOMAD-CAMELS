@@ -672,7 +672,7 @@ def get_most_recent_presets(return_all=False):
     preset : str
         the name of the newest preset
     """
-    presets = []
+    presets = [None]
     if not os.path.isdir(preset_path):
         makedirs(preset_path)
     for name in listdir(preset_path):
