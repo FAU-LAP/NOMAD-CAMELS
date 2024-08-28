@@ -13,15 +13,16 @@ Make sure to check the automatic documentation under `//localhost:<port>/` or `/
 
 ## General Information
 
-To communicate with CAMELS send HTTP requests to its web server.
+The CAMELS API works by sending HTTP requests to its web server.
 
-To use any request other than the home path of the web server you need to authenticate your request using the API key (see [here](Creating_API_Keys.md) how to create API keys).
+To use any request other than the home path of the web server you need to authenticate your request using the API key (see [Creating API Keys](Creating_API_Keys.md)).
 
-If you are using a regular browser to access the web server you will be asked to authenticate yourself. Simply enter the API key in the password section. The username can be left empty or be anything. This will look something like this
+If you are using a regular browser to access the web server you will be asked to authenticate yourself. Simply enter the API key in the password section. The username can be anything or empty. This will look something like this
 ![Example image of the authentication pop up in the browser](images/image.png)
 
 Once logged in the browser will stay authenticated when using further requests until you close the browser.
-Following there are descriptions for the most useful commands.
+
+Bellow are descriptions for the most useful commands.
 
 ```{attention}
 In the following all paths are given als relative paths from `//localhost:<port>/`.
