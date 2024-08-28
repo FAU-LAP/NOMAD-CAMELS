@@ -2,6 +2,7 @@
 
 import sys
 import os
+import platform, subprocess
 import re
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -101,6 +102,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             name = os.environ["COMPUTERNAME"]
         else:
             name = os.uname()[1]
+
         self._current_preset = [name]
         self.active_instruments = {}
         variables_handling.devices = self.active_instruments
@@ -170,10 +172,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionEPICS_driver_builder.triggered.connect(self.launch_epics_builder)
         self.actionExport_from_databroker.triggered.connect(self.launch_data_exporter)
         self.actionReport_Bug.triggered.connect(
-            lambda x: os.startfile(f"{camels_github}/issues")
+            lambda x: self.open_link(f"{camels_github}/issues")
         )
         self.actionDocumentation.triggered.connect(
-            lambda x: os.startfile(camels_github_pages)
+            lambda x: self.open_link(camels_github_pages)
         )
         self.actionUpdate_CAMELS.triggered.connect(
             lambda x: update_camels.question_message_box(self)
@@ -274,6 +276,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # Connect the set checkbox signal of the fastAPI to the set_checkbox method
             self.fastapi_thread.set_checkbox_signal.connect(self.set_checkbox)
 
+            # Connect the update_variables_queue signal of the fastAPI to the update_variables_queue method
+            self.fastapi_thread.queue_protocol_with_variables_signal.connect(self.queue_protocol_with_variables_signal)
+
+            # Connect the change_variables_queued_protocol signal of the fastAPI to the update_variables_queued_protocol method
+            self.fastapi_thread.change_variables_queued_protocol_signal.connect(self.change_variables_queued_protocol)
+
             # Start the FastAPI server
             self.fastapi_thread.start()
 
@@ -323,6 +331,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         self.run_queue_widget.check_checkbox(protocol_name)
 
+    def queue_protocol_with_variables_signal(self, protocol_name, variables, index, api_uuid):
+        """
+        Update the variables of a protocol in the run queue. Called by the API.
+        """
+        if protocol_name in self.protocols_dict:
+            self.run_queue_widget.add_item(protocol_name, api_uuid)
+        protocol_name = list(self.run_queue_widget.protocol_name_variables.keys())[index]
+        self.run_queue_widget.update_variables_queue(protocol_name, variables, index=index)
+    
+    def change_variables_queued_protocol(self, protocol_name, variables, index):
+        self.run_queue_widget.update_variables_queue(protocol_name, variables, index=index)
+    
     def open_watchdog_definition(self):
         """Opens the Watchdog_Definer dialog."""
         # IMPORT Watchdog_Definer only if it is needed
@@ -988,6 +1008,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             },
         )
         self._current_preset[0] = preset_name
+        self.load_state()
 
     def save_preset_as(self):
         """Opens a QFileDialog to save the preset.
@@ -1020,11 +1041,24 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def load_state(self):
         """Loads the most recent preset."""
-        preset = load_save_functions.get_most_recent_presets()
-        if preset is not None:
-            self.load_preset(preset)
-        else:
-            self.save_state(True)
+        n_preset = 1
+        while True:
+            try:
+                presets = load_save_functions.get_most_recent_presets(True)
+                preset = presets[-n_preset]
+                if preset is not None:
+                    self.load_preset(preset)
+                else:
+                    self.save_state(True)
+                    self.load_state()
+                break
+            except Exception as e:
+                warn_popup.WarnPopup(
+                    self,
+                    f"Could not load the most recent preset \"{preset}\".\nThe second newest will be loaded instead.\n\nError Message:\n{e}",
+                    "Load Error",
+                )
+                n_preset += 1
 
     def change_preset(self, preset):
         """saves the old device preset,
@@ -1053,6 +1087,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         except FileNotFoundError:
             with open(preset, "r", encoding="utf-8") as f:
                 preset_dict = json.load(f)
+        self.active_instruments.clear()
+        self.protocols_dict.clear()
+        self.manual_controls.clear()
+        self.protocol_tabs_dict.clear()
+        self.manual_tabs_dict.clear()
+        variables_handling.watchdogs.clear()
         try:
             load_save_functions.load_save_dict(preset_dict, self.preset_save_dict)
         except Exception as e:
@@ -1064,13 +1104,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self._current_preset[0] = "empty_preset"
         self.update_channels()
         variables_handling.preset = self._current_preset[0]
-        self.with_or_without_instruments()
         self.populate_meas_buttons()
         self.populate_manuals_buttons()
+        self.with_or_without_instruments()
         self.adjustSize()
 
     def make_save_dict(self):
         """Creates the save dictionary for the current preset. It includes the current preset, the active instruments, the protocols, the manual controls, the protocol tabs and the manual tabs."""
+        self.manual_tabs_dict = self.button_area_manual.update_order()
+        self.protocol_tabs_dict = self.button_area_meas.update_order()
         self.preset_save_dict = {
             "_current_preset": self._current_preset,
             "active_instruments": self.active_instruments,
@@ -1175,7 +1217,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.remove_manual_control(control_name)
             self.add_button_to_manuals(control_name, new_tab)
             self.manual_controls[control_name] = control_data
-            self.button_area_manual.update_order()
+            self.manual_tabs_dict = self.button_area_manual.update_order()
             self.button_area_manual.setHidden(False)
 
     def update_man_cont_data(self, control_data, old_name):
@@ -1258,10 +1300,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         Clears the manual controls area and adds the buttons for all manual controls."""
         self.button_area_manual.clear_area()
-        if not self.manual_controls:
-            self.button_area_manual.setHidden(True)
-        else:
-            self.button_area_manual.setHidden(False)
         for control in self.manual_controls:
             added = False
             for tab, controls in self.manual_tabs_dict.items():
@@ -1271,6 +1309,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     break
             if not added:
                 self.add_button_to_manuals(control, "manual controls")
+        if not self.manual_controls:
+            self.manual_tabs_dict.clear()
+            self.button_area_manual.create_new_tab('manual controls')
+        self.button_area_manual.setCurrentIndex(0)
 
     def start_manual_control(self, name):
         """
@@ -1407,7 +1449,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.remove_protocol(protocol_name)
             self.add_button_to_meas(protocol_name, new_tab)
             self.protocols_dict[protocol_name] = protocol
-            self.button_area_meas.update_order()
+            self.protocol_tabs_dict = self.button_area_meas.update_order()
             self.button_area_meas.setHidden(False)
 
     def update_prot_data(self, protocol, old_name):
@@ -1509,7 +1551,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         savepath = os.path.normpath(savepath)
         while not os.path.exists(savepath):
             savepath = os.path.dirname(savepath)
-        import platform, subprocess
 
         if platform.system() == "Windows":
             # /select, specifies that the file should be highlighted
@@ -1524,31 +1565,43 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def populate_meas_buttons(self):
         """Clear the protocols area and adds the buttons for all protocols."""
         self.button_area_meas.clear_area()
-        if not self.protocols_dict:
-            # The protocls button should always be visible even when no protocol is added
-            self.button_area_meas.setHidden(False)
-        else:
-            self.button_area_meas.setHidden(False)
-        for prot in self.protocols_dict:
-            added = False
-            for tab, protocols in list(self.protocol_tabs_dict.items()):
-                if not protocols:
-                    del self.protocol_tabs_dict[tab]
-                elif prot in protocols:
+        addeds = []
+        for tab, protocols in list(self.protocol_tabs_dict.items()):
+            if not protocols:
+                del self.protocol_tabs_dict[tab]
+            for prot in protocols:
+                if prot in self.protocols_dict:
                     self.add_button_to_meas(prot, tab)
-                    added = True
-                    break
-            if not added:
+                    addeds.append(prot)
+        for prot in self.protocols_dict:
+            if prot not in addeds:
                 self.add_button_to_meas(prot, "protocols")
+        # for prot in self.protocols_dict:
+        #     added = False
+        #     for tab, protocols in list(self.protocol_tabs_dict.items()):
+        #         if not protocols:
+        #             del self.protocol_tabs_dict[tab]
+        #         elif prot in protocols:
+        #             self.add_button_to_meas(prot, tab)
+        #             added = True
+        #             break
+        #     if not added:
+        #         self.add_button_to_meas(prot, "protocols")
+        if not self.protocols_dict:
+            self.protocol_tabs_dict.clear()
+            self.button_area_meas.create_new_tab('protocols')
+        self.button_area_meas.setCurrentIndex(0)
 
-    def next_queued_protocol(self, protocol_name, variables):
+    def next_queued_protocol(self, protocol_name, variables, api_uuid=None):
         """
         Checks whether the run engine is idle and if so, runs the next protocol in the queue.
         """
         if self.run_engine and self.run_engine.state != "idle":
             return
-        self.run_protocol(protocol_name, variables=variables)
+        if api_uuid == '':
+            api_uuid = None
         self.run_queue_widget.remove_first()
+        self.run_protocol(protocol_name, api_uuid=api_uuid, variables=variables)
 
     def run_protocol(self, protocol_name, api_uuid=None, variables=None):
         """
@@ -1564,6 +1617,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Closing devices not used in the protocol is done in `close_old_queue_devices`.
         """
         self.setCursor(Qt.WaitCursor)
+        plot_placement.reset_variables()
         # IMPORT importlib, bluesky, ophyd and time only if needed
         import importlib
 
@@ -1577,6 +1631,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.save_state(do_backup=self.preferences["backup_before_run"])
         self.button_area_meas.disable_run_buttons()
         try:
+            self.pushButton_resume.setEnabled(False)
+            self.pushButton_pause.setEnabled(False)
+            self.pushButton_stop.setEnabled(True)
             self.build_protocol(protocol_name, ask_file=False, variables=variables)
             protocol = self.protocols_dict[protocol_name]
             self.running_protocol = protocol
@@ -1688,8 +1745,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # Check if the protocol was executed using the api and save rsults to db if true
         if api_uuid is not None:
             from nomad_camels.api.api import write_protocol_result_path_to_db
-
-            write_protocol_result_path_to_db(api_uuid, file)
+            write_protocol_result_path_to_db(api_uuid, message=file)
         if not nomad:
             return
         while self.still_running:
@@ -1870,7 +1926,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         if self.run_engine.state != "idle":
             self.run_engine.abort("Aborted by user")
+        if self.instantiate_devices_thread.isRunning():
+            self.instantiate_devices_thread.successful.disconnect()
+            self.instantiate_devices_thread.exception_raised.disconnect()
+            self.old_devices_thread = self.instantiate_devices_thread
+            self.old_devices_thread.finished.connect(self.close_unused_instantiated_devices)
+            self.protocol_finished()
         # self.protocol_finished()
+
+    def close_unused_instantiated_devices(self):
+        devs = self.old_devices_thread.devices
+        from nomad_camels.utility import device_handling
+
+        device_handling.close_devices(devs)
+
 
     def resume_protocol(self):
         """
@@ -2002,7 +2071,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         print("\n\nBuild successful!\n")
         self.progressBar_protocols.setValue(100 if ask_file else 1)
 
-    def queue_protocol(self, protocol_name):
+    def queue_protocol(self, protocol_name, api_uuid=None):
         """
         Add a protocol to the queue. The protocol is added to the queue widget and the next protocol is checked. See `ui_widgets.run_queue.RunQueue.add_item`.
 
@@ -2012,7 +2081,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             The name of the protocol to add to the queue.
         """
         if protocol_name in self.protocols_dict:
-            self.run_queue_widget.add_item(protocol_name)
+            self.run_queue_widget.add_item(protocol_name, api_uuid=api_uuid)
 
     def get_user_name_data(self):
         """
@@ -2069,7 +2138,23 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
         if not os.path.isfile(path):
             self.build_protocol(protocol_name, False)
-        os.startfile(path)
+        self.open_link(path)
+
+    def open_link(self, link):
+        """
+        Open a link in the default program. Should work in all operating systems.
+
+        Parameters
+        ----------
+        link : str
+            The link to open.
+        """
+        if platform.system() == "Windows":
+            os.startfile(link)
+        else:
+            opener = "open" if platform.system() == "Darwin" else "xdg-open"
+            subprocess.call([opener, link])
+
 
     # --------------------------------------------------
     # tools

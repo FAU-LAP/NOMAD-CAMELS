@@ -3,13 +3,24 @@ import requests
 from requests.auth import HTTPBasicAuth
 import json
 
-api_key = "4hdB9w9_CHHkZH6f3pHCT6l7rLKvoNPRlhP62o7q7LM6L_6GhGhIDQ"
+api_key = "fgzT7KuEcCkEbP_Sh9BDHqwBCDCE3MhtpnKpHbUb47PTmS4vaccGJQ"
 # %%
-data = {'variables': {'test': 567, 'var2': 21}}
+protocol_name = "demo"
+data = {"variables": {"start_stop": 10, "points": 31}}
 # convert data to json
 data_json = json.dumps(data)
 # %%
+# result = requests.post(
+#     f"http://127.0.0.1:5000/api/v1/actions/run/protocols/{protocol_name}", auth=("", f"{api_key}"), json=data
+# )
+# print(result.text)
+# %%
+protocol_name = "demo"
+index = -1
+data = {"variables": {"start_stop": 120, "points": 31}}
 result = requests.post(
-    "http://127.0.0.1:5000/api/v1/actions/run/protocols/demo", auth=("", f"{api_key}"), json=data
+    f"http://127.0.0.1:5000/api/v1/actions/queue/variables/protocols/{protocol_name}_{index}",
+    auth=("", f"{api_key}"),
+    json=data,
 )
-print(result.text)
+# %%

@@ -17,6 +17,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QDrag, QPixmap
 from PySide6.QtCore import Qt, QMimeData, Signal, QByteArray, QMimeData
 
+from collections import OrderedDict
+
 
 class DragButton(QPushButton):
     """ """
@@ -400,7 +402,7 @@ class RenameTabWidget(QTabWidget):
         self.plus_tab.setFlat(True)
         self.plus_tab.setFocusPolicy(Qt.NoFocus)
         self.plus_tab.setFixedSize(25, 25)
-        self.plus_tab.clicked.connect(self.create_new_tab)
+        self.plus_tab.clicked.connect(lambda x: self.create_new_tab())
 
         # Add the plus tab
         self.tab_button_dict = tab_button_dict or {}
@@ -523,6 +525,9 @@ class RenameTabWidget(QTabWidget):
     def clear_area(self):
         for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             self.widget(i).clear_area()
+        # remove all tabs except the plus tab
+        while self.count() > 1:
+            self.removeTab(0)
 
     def get_button_order(self, tab_name=""):
         for i in range(self.count() - 1):  # Skip the last tab (plus tab)
@@ -553,11 +558,10 @@ class RenameTabWidget(QTabWidget):
         for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             self.widget(i).enable_single_run(name)
 
-    def create_new_tab(self):
-        name = "New Tab"
+    def create_new_tab(self, name='New Tab'):
         i = 1
         while name in self.tab_button_dict:
-            name = f"New Tab {i}"
+            name = f"{name} {i}"
             i += 1
         new_tab = Drop_Scroll_Area()
         self.insertTab(self.count() - 1, new_tab, name)  # Insert before the plus tab
@@ -575,9 +579,12 @@ class RenameTabWidget(QTabWidget):
         return self.tabText(self.currentIndex())
 
     def update_order(self):
+        new_dict = OrderedDict()
         for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             tab_name = self.tabText(i)
-            self.tab_button_dict[tab_name] = self.widget(i).get_button_order()
+            new_dict[tab_name] = self.widget(i).get_button_order()
+        self.tab_button_dict =  new_dict
+        return new_dict
 
 
 class MoveDialog(QDialog):

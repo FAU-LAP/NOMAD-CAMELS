@@ -64,7 +64,7 @@ standard_string += "from PySide6.QtCore import QCoreApplication, QThread\n"
 standard_string += "import datetime\n"
 standard_string += "import subprocess\n"
 standard_string += (
-    "from nomad_camels.main_classes import plot_pyqtgraph, list_plot, plot_2D\n"
+    "from nomad_camels.main_classes import plot_pyqtgraph, list_plot\n"
 )
 standard_string += "from nomad_camels.utility import theme_changing\n"
 standard_string += (
@@ -206,6 +206,8 @@ def build_protocol(
         save_path = save_path.as_posix()
 
     # clearing leftovers from former builds
+    read_channel_names_old = list(variables_handling.read_channel_names)
+    read_channel_sets_old = list(variables_handling.read_channel_sets)
     variables_handling.read_channel_names.clear()
     variables_handling.read_channel_sets.clear()
 
@@ -364,7 +366,7 @@ def build_protocol(
     sampledata = sampledata or {"name": "default_sample"}
     userdata = userdata or {"name": "default_user"}
     protocol_string += user_sample_string(userdata, sampledata)
-    protocol_string += f'\tmd["protocol_overview"] = "{protocol.get_short_string().encode("unicode_escape").decode()}"\n'
+    protocol_string += f'\tmd["protocol_overview"] = """{protocol.get_short_string().encode("unicode_escape").decode()}"""\n'
 
     protocol_string += f"\ttry:\n"
     protocol_string += f'\t\twith open("{cprot_path}", "r", encoding="utf-8") as f:\n'
@@ -444,6 +446,9 @@ def build_protocol(
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(protocol_string)
+    
+    variables_handling.read_channel_names = read_channel_names_old
+    variables_handling.read_channel_sets = read_channel_sets_old
 
 
 def user_sample_string(userdata, sampledata):

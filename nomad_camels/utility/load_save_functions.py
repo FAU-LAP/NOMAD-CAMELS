@@ -664,7 +664,7 @@ def load_devices_dict(string_dict, devices_dict):
         devices_dict.update({key: dev})
 
 
-def get_most_recent_presets():
+def get_most_recent_presets(return_all=False):
     """Goes through all files in the `preset_path` and returns the newest preset.
 
     Returns
@@ -678,13 +678,15 @@ def get_most_recent_presets():
     for name in listdir(preset_path):
         if name.endswith(".preset"):
             presets.append(name)
+    if preset_path is None:
+        return None if not return_all else [None]
     if presets:
-        preset = sorted(
+        presets = [x[:-7] for x in sorted(
             presets, key=lambda x: os.path.getmtime(os.path.join(preset_path, x))
-        )[-1][:-7]
+        )]
     else:
-        preset = None
-    return preset
+        return None if not return_all else [None]
+    return presets[-1] if not return_all else presets
 
 
 def get_preferences():

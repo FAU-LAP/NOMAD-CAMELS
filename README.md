@@ -1,11 +1,5 @@
+![NOMAD CAMELS](/nomad_camels/graphics/camels_horizontal.png)
 
-```
- _  _   ___   __  __  ___  ___        ___  ___  __  __  ___  _     ___ 
-| \| | / _ \ |  \/  |/   \|   \      / __|/   \|  \/  || __|| |   / __|
-| .  || (_) || |\/| || - || |) |    | (__ | - || |\/| || _| | |__ \__ \
-|_|\_| \___/ |_|  |_||_|_||___/      \___||_|_||_|  |_||___||____||___/
-```
-# NOMAD CAMELS
 ## Configurable Application for Measurements, Experiments and Laboratory Systems  
 
 NOMAD CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics. Here many experiments utilize a multitude of measurement devices used in dynamically changing setups. CAMELS allows to define instrument control and measurement protocols using a graphical user interface (GUI). This provides a low entry threshold enabling the creation of new measurement protocols without programming knowledge or a deeper understanding of device communication. The GUI generates python code that interfaces with instruments and allows users to modify the code for specific applications and implementations of arbitrary instruments if necessary. Even large-scale distributed systems can be implemented. CAMELS generates FAIR-compliant data including rich metadata. NeXus standards, immediate NOMAD integration and hence a FAIRmat-compliant data pipeline can be readily implemented.
@@ -24,11 +18,45 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+## 1.3.1
+
+Features:
+- API: Now adds a UUID to all protocol executions performed via API. Allows you to track and retrieve the results of each protocol run.
+- Set Value Popup step now allows to define comboboxes
+- Can allow prompt step to abort protocol now
+
+Changes:
+- Resetting positions for plots at each run, hoping to keep plots visible for remote-sessions
+- Allowed for stopping a protocol during instrument instantiation
+
+Fixes:
+- Removed unnecessary import in protocols
+- Having quotation marks in a prompt or a step description could break the protocol, now fixed
+- Fixed tabs on first startup of CAMELS
+- Fixed naming of empty tabs
+- Packages that could not be loaded might have hindered opening the instrument manager, now fixed
+- Making new preset now actually loads said one and does not overwrite the old one
+- API: Fixed changing variables of protocols already added to the queue
+- API: You can now use negative index in the API calls
+- Evaluator does not break on non-string inputs, but simply returns them
+- Fixed different read-channel steps when using a subprotocol
+- fixed subprotocol evaluator not updating
+- fixed usage of quotation marks for advanced instrument config step
+- when switching the preset, the tabs now load correctly
+- tab order is now remembered
+- log plots might not show correctly, now they have a minimum size
+- quotation mark problems with protocol overview fixed
+- links now open correctly on unix and mac
+- ctrl+v now works in container-steps
+- should now correctly handle /gui urls for NOMAD oasis
+- ElapsedTime now displays correctly in plots
+- Adding while-loop counter earlier to namespace so it can be part of the while condition
+- fixed a bug where a short queued protocol would be run endlessly
+- when the most recent preset was no viable json, it might break camels, now the second newest will be loaded instead of breaking
 
 ## 1.3.0
 
 Major Features:
-
 - Added an API web server. The homepage `http:\\localhost:<PORT>` gives you an overview of the available API calls and how to use them. You need to create an API key in the settings to be able to use most of the API calls. You can get a list of the available protocols you can execute with `GET /protocols` and run a specific protocol by using `POST /protocols/{protocol_name}` For more information check the documentation.
 - Added a Watchdog feature to monitor certain values and execute operations when their condition is met.
 

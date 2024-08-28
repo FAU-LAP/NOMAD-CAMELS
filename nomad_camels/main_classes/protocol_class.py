@@ -300,7 +300,7 @@ class Measurement_Protocol:
     def get_plan_string(self):
         """Get the string for the protocol-plan, including the loopsteps."""
         variables_handling.current_protocol = self
-        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, eva=None, stream_name="primary"):\n'
+        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, eva=None, stream_name="primary", runEngine=None):\n'
         prot_vars = dict(variables_handling.protocol_variables)
         if "StartTime" in prot_vars:
             prot_vars.pop("StartTime")
@@ -320,7 +320,7 @@ class Measurement_Protocol:
         plan_string += "\teva = Evaluator(namespace=namespace)\n"
         plan_string += "\tsub_eva = runEngine.subscribe(eva)\n"
         plan_string += "\tyield from bps.open_run(md=md)\n"
-        plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name)\n'
+        plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name, runEngine)\n'
         plan_string += (
             "\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
         )

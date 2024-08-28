@@ -5,6 +5,8 @@ from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
+import ast
+
 
 class Set_Value_Popup(Loop_Step):
     """
@@ -30,6 +32,7 @@ class Set_Value_Popup(Loop_Step):
         if step_info is None:
             step_info = {}
         self.variables = step_info["variables"] if "variables" in step_info else []
+        self.combo_list = step_info["combo_list"] if "combo_list" in step_info else []
         self.channels = step_info["channels"] if "channels" in step_info else []
         self.free_variables = (
             step_info["free_variables"] if "free_variables" in step_info else False
@@ -60,7 +63,7 @@ class Set_Value_Popup(Loop_Step):
     def get_add_main_string(self):
         """Adds the setup of the box."""
         add_main_string = super().get_add_main_string()
-        add_main_string += f'\tboxes["values_{self.name}"] = helper_functions.Value_Box("", "Set Values!", {self.variables}, {self.channels}, {self.free_variables}, {self.free_channels}, devs=devs)\n'
+        add_main_string += f'\tboxes["values_{self.name}"] = helper_functions.Value_Box("", "Set Values!", {self.variables}, {self.channels}, {self.free_variables}, {self.free_channels}, devs=devs, comboboxes={self.combo_list})\n'
         return add_main_string
 
 
@@ -69,9 +72,13 @@ class Set_Value_Popup_Config(Loop_Step_Config):
 
     def __init__(self, loop_step: Set_Value_Popup, parent=None):
         super().__init__(parent, loop_step)
+        combo_list = loop_step.combo_list or ['' for _ in loop_step.variables]
+        table_data = {'variable': loop_step.variables,
+                      'combobox-list': combo_list}
         self.variables_table = AddRemoveTable(
-            tableData=loop_step.variables, title="Variables", headerLabels=[]
+            tableData=table_data, title="Variables", headerLabels=['variable', 'combobox-list']
         )
+        self.variables_table.setToolTip("If you want to allow free setting, keep combobox-list empty, otherwise you can fill it with a list of possible values.\nExample: ['value1', 'value2'] or [2, 3, 4]")
         labels = ["use", "channel"]
         info_dict = {"channel": loop_step.channels}
         self.channels_table = Channels_Check_Table(
@@ -88,7 +95,8 @@ class Set_Value_Popup_Config(Loop_Step_Config):
     def update_step_config(self):
         """ """
         super().update_step_config()
-        self.loop_step.variables = self.variables_table.update_table_data()
+        self.loop_step.variables = self.variables_table.update_table_data()['variable']
+        self.loop_step.combo_list = [ast.literal_eval(x) if x else "" for x in self.variables_table.update_table_data()['combobox-list']]
         self.loop_step.channels = self.channels_table.get_info()["channel"]
         self.loop_step.free_channels = self.checkBox_free_channels.isChecked()
         self.loop_step.free_variables = self.checkBox_free_variables.isChecked()
