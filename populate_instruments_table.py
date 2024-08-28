@@ -4,7 +4,7 @@ import time
 
 url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/driver_list/driver_list.txt"
 
-for i in range(10):
+for i in range(100):
     try:
         response = requests.get(url).text
         break

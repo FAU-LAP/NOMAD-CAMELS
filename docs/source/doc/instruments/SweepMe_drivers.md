@@ -1,5 +1,9 @@
 # SweepMe! devices
 
+```{warning}
+PySweepMe seems to not work with python 3.12 yet!
+```
+
 NOMAD CAMELS provides a wrapper for the vast library of device drivers from [SweepMe!](https://sweep-me.net/)
 
 ## How to use
