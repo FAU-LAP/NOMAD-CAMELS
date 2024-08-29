@@ -1300,14 +1300,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         Clears the manual controls area and adds the buttons for all manual controls."""
         self.button_area_manual.clear_area()
-        for control in self.manual_controls:
-            added = False
-            for tab, controls in self.manual_tabs_dict.items():
-                if control in controls:
+        addeds = []
+        for tab, controls in list(self.manual_tabs_dict.items()):
+            if not controls:
+                del self.manual_tabs_dict[tab]
+            for control in controls:
+                if control in self.manual_controls and control not in addeds:
                     self.add_button_to_manuals(control, tab)
-                    added = True
-                    break
-            if not added:
+                    addeds.append(control)
+        for control in self.manual_controls:
+            if control not in addeds:
                 self.add_button_to_manuals(control, "manual controls")
         if not self.manual_controls:
             self.manual_tabs_dict.clear()
@@ -1570,23 +1572,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             if not protocols:
                 del self.protocol_tabs_dict[tab]
             for prot in protocols:
-                if prot in self.protocols_dict:
+                if prot in self.protocols_dict and prot not in addeds:
                     self.add_button_to_meas(prot, tab)
                     addeds.append(prot)
         for prot in self.protocols_dict:
             if prot not in addeds:
                 self.add_button_to_meas(prot, "protocols")
-        # for prot in self.protocols_dict:
-        #     added = False
-        #     for tab, protocols in list(self.protocol_tabs_dict.items()):
-        #         if not protocols:
-        #             del self.protocol_tabs_dict[tab]
-        #         elif prot in protocols:
-        #             self.add_button_to_meas(prot, tab)
-        #             added = True
-        #             break
-        #     if not added:
-        #         self.add_button_to_meas(prot, "protocols")
         if not self.protocols_dict:
             self.protocol_tabs_dict.clear()
             self.button_area_meas.create_new_tab('protocols')
