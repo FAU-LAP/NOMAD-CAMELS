@@ -25,11 +25,11 @@ class Variables(BaseModel):
         },
     )
 
+
 # Define the response model
 class ProtocolRunResponse(BaseModel):
     check_protocol_status_here: str = Field(
-        ...,
-        description="A URL to check the protocol status"
+        ..., description="A URL to check the protocol status"
     )
 
 
@@ -165,7 +165,10 @@ class FastapiThread(QThread):
             )
 
         # Run a protocol by name
-        @app.get("/api/v1/actions/run/protocols/{protocol_name}", response_model=ProtocolRunResponse)
+        @app.get(
+            "/api/v1/actions/run/protocols/{protocol_name}",
+            response_model=ProtocolRunResponse,
+        )
         async def run_protocol(
             protocol_name: str, api_key: str = Depends(validate_credentials)
         ):
@@ -182,7 +185,10 @@ class FastapiThread(QThread):
             )
 
         # Run a protocol by name and pass variables to it (only already defined variables can be passed)
-        @app.post("/api/v1/actions/run/protocols/{protocol_name}", response_model=ProtocolRunResponse)
+        @app.post(
+            "/api/v1/actions/run/protocols/{protocol_name}",
+            response_model=ProtocolRunResponse,
+        )
         async def run_protocol_with_variables(
             protocol_name: str,
             variables: Variables,
@@ -514,9 +520,7 @@ class FastapiThread(QThread):
             for item in queue_list:
                 if item[1] == protocol_name and item[0] == index:
                     self.set_checkbox_signal.emit(str(qt_items[index]))
-                    return JSONResponse(
-                        content={"status": "success checking protocol"}
-                    )
+                    return JSONResponse(content={"status": "success checking protocol"})
             raise HTTPException(
                 status_code=500,
                 detail=f"Failed to check next protocol {protocol_name} with index {index} from queue as the protocol was not found at that position.",
@@ -595,7 +599,7 @@ class FastapiThread(QThread):
         # Start the uvicorn server
         try:
             self.server_config = uvicorn.Config(
-                app, host="127.0.0.1", port=int(self.api_port), log_level="info"
+                app, host="0.0.0.0", port=int(self.api_port), log_level="info"
             )
             self.server = uvicorn.Server(self.server_config)
 
