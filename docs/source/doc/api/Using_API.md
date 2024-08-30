@@ -104,7 +104,7 @@ This will directly execute the Protocol with the name `protocol_name`.
 
 This is equivalent to pressing the `run`-button on a protocol.
 
-In response to the request, you will receive the UUID, which allows you to track the current state of the protocol.
+In response to the request, you will receive the UUID, which allows you to track the current state of the protocol. See [Protocol Results](#protocol-results) for more information on protocol status.
 
 ### POST: Run Protocols with Variables
 
@@ -261,11 +261,12 @@ Again give the name of the protocol (for example `demo`) and the index of where 
 
 ## Protocol Results
 
-Every protocol run will generate data. Either into a single file or individual HDF5 files for each measurement.
-To be able to retrieve the results of a protocl run via the API you can either get the [file path](#protocol-results-file-path) for the data file created or get the [actual file](#protocol-results-file).
+Every protocol run will generate data. Either into a single file or individual HDF5 files for each measurement. You can check the current status of the measurement using the command found [bellow](#protocol-results-file-path).
+
+To be able to retrieve the results of a protocol run via the API you can either get the [file path](#protocol-results-file-path) for the data file created or get the [actual file](#protocol-results-file).
 
 ```{warning}
-Retrieving the actual data file can crash for large files. Onyl do this if you are sure that the file is small enough to be handled by your RAM and browser.
+Retrieving the actual data file can crash for large files. Only do this if you are sure that the file is small enough to be handled by your RAM and browser.
 ```
 
 ### Protocol Results File Path

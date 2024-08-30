@@ -15,6 +15,3 @@ Creating API Keys <Creating_API_Keys.md>
 Using the API <Using_API.md>
 Deleting API Keys <Deleting_API_Keys.md>
 ```
-
-
-
