@@ -18,6 +18,11 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+## 1.3.2
+Fixes:
+- Fixed a bug where a protocol would show multiple times
+- installed version should now be found correctly when searching for updates
+
 ## 1.3.1
 
 Features:

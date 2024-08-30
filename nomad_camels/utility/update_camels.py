@@ -15,12 +15,12 @@ from PySide6.QtWidgets import QMessageBox
 def get_version():
     """checks the installed version of nomad-camels and returns it."""
     try:
-        return nomad_camels.__version__
+        import pkg_resources
+
+        return pkg_resources.get_distribution("nomad-camels").version
     except AttributeError:
         try:
-            import pkg_resources
-
-            return pkg_resources.get_distribution("nomad-camels").version
+            return nomad_camels.__version__
         except Exception:
             return None
 
