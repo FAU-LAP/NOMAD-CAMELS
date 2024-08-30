@@ -90,11 +90,17 @@ and the protocol is finished you will be able to get the path to the measurement
 }
 ```
 
-There are two ways you can directly **execute** a protocol you defined in CAMELS via the API.
+There are two ways you can directly **execute** a protocol you defined in CAMELS via the API:
+
+- [GET Protocols](#get-run-protocols)
+- [POST Protocols](#post-run-protocols-with-variables).
 
 If you want to queue protocols see [here](#protocol-queue) for more information.
 
 ### GET: Run Protocols
+
+> [!IMPORTANT]
+> `GET` requests can be performed using a regular browser by entering the URL below.
 
 ```bash
 GET /api/v1/actions/run/protocols/{protocol_name}
@@ -104,9 +110,15 @@ This will directly execute the Protocol with the name `protocol_name`.
 
 This is equivalent to pressing the `run`-button on a protocol.
 
-In response to the request, you will receive the UUID, which allows you to track the current state of the protocol. See [Protocol Results](#protocol-results) for more information on protocol status.
+In response to the request, you will receive the UUID, which allows you to track the current state of the protocol. See [Executing Protocls](#executing-protocols) or [Protocol Results](#protocol-results) for more information on protocol status.
+
+
+
 
 ### POST: Run Protocols with Variables
+
+> [!IMPORTANT]
+> `POST` requests can **NOT** be performed using a regular browser.
 
 ```bash
 POST /api/v1/actions/run/protocols/{protocol_name}
