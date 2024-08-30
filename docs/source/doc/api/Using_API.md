@@ -99,7 +99,7 @@ If you want to queue protocols see [here](#protocol-queue) for more information.
 
 ### GET: Run Protocols
 
-> [!IMPORTANT]
+> [!NOTE]
 > `GET` requests can be performed using a regular browser by entering the URL below.
 
 ```bash
@@ -117,7 +117,7 @@ In response to the request, you will receive the UUID, which allows you to track
 
 ### POST: Run Protocols with Variables
 
-> [!IMPORTANT]
+> [!NOTE]
 > `POST` requests can **NOT** be performed using a regular browser.
 
 ```bash
