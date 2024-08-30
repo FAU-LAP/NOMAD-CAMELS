@@ -1,6 +1,7 @@
 import sys
 
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Response
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from PySide6.QtCore import QThread, Signal
@@ -162,6 +163,20 @@ class FastapiThread(QThread):
                         self.main_window.protocols_dict[protocol_name].variables
                     )
                 }
+            )
+
+        # Get a JSON representation of the protocol
+        @app.get("/api/v1/protocols/{protocol_name}/JSON")
+        async def get_protocol_json(
+            protocol_name: str, api_key: str = Depends(validate_credentials)
+        ):
+            """Get a JSON representation of the protocol"""
+            protocol = self.main_window.protocols_dict[protocol_name]
+            print(protocol)
+            protocol_JSON = json.dumps(load_save_functions.get_save_str(protocol))
+            print(type(protocol_JSON))
+            return Response(
+                content=protocol_JSON,
             )
 
         # Run a protocol by name
