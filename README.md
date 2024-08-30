@@ -22,6 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Fixes:
 - Fixed a bug where a protocol would show multiple times
 - installed version should now be found correctly when searching for updates
+- removing / moving of buttons in tabs fixed
 
 ## 1.3.1
 
