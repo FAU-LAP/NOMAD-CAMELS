@@ -19,6 +19,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ## 1.3.2
+Changes:
+- renamed comment / uncomment to enable / disable to make it more clear
+
 Fixes:
 - Fixed a bug where a protocol would show multiple times
 - installed version should now be found correctly when searching for updates
