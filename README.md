@@ -22,6 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Changes:
 - renamed comment / uncomment to enable / disable to make it more clear
 - Data passing from the Execute Python Script step was changed. Now should be more stable, as it looks for the Data between the `###Start Data` und `###End Data` strings. See our [documentation](https://fau-lap.github.io/NOMAD-CAMELS/doc/protocol_steps/step_Execute_Python_File.html#returning-results) for more details. 
+- CAMELS API server now accessible from network. (Changed host setting to `0.0.0.0`)
 
 Fixes:
 - Fixed a bug where a protocol would show multiple times
