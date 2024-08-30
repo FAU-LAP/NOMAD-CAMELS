@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QProgressBar,
     QPushButton,
-    QComboBox
+    QComboBox,
 )
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QFont
@@ -655,7 +655,7 @@ class Prompt_Box(QMessageBox):
         """Sets `self.done_flag` to False and starts `self.exec()`."""
         self.done_flag = False
         self.exec()
-    
+
     def abort_action(self):
         """
         If the abort button is clicked, the protocol is stopped.
@@ -714,7 +714,9 @@ class Value_Box(QDialog):
         self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.buttonBox.setToolTip('"OK" will set the values, click "Cancel" to set no new values.')
+        self.buttonBox.setToolTip(
+            '"OK" will set the values, click "Cancel" to set no new values.'
+        )
         layout = QGridLayout()
 
         self.helper = BoxHelper()
@@ -1029,15 +1031,13 @@ def evaluate_python_file_output(stdout, namespace):
     import re
 
     if stdout:
-        json_pattern = re.compile(
-            r"\{(?:[^{}]*|\{.*?\})*\}"
-        )  # Extract the dictionary from the stdout, can handle one level of nested dictionaries
+        json_pattern = re.compile(r"###Start Data(.*?)###End Data", re.DOTALL)
 
         # Search for JSON in the stdout
         match = json_pattern.search(stdout)
 
         if match:
-            json_str = match.group()
+            json_str = match.group(1).strip()
 
             # Load the JSON string into a Python dictionary
             data = json.loads(json_str)
@@ -1053,10 +1053,12 @@ def evaluate_python_file_output(stdout, namespace):
 
             for key, value in variables_dict.items():
                 namespace[key] = value
+                print(f"Python File returned:\n{key} = {value}")
 
         if isinstance(data, dict):
             for key, value in data.items():
                 namespace[key] = value
+                print(f"Python File returned:\n{key} = {value}")
 
 
 class Value_Setter(QWidget):
