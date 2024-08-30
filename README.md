@@ -21,6 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ## 1.3.2
 Changes:
 - renamed comment / uncomment to enable / disable to make it more clear
+- Data passing from the Execute Python Script step was changed. Now should be more stable, as it looks for the Data between the `###Start Data` und `###End Data` strings. See our [documentation](https://fau-lap.github.io/NOMAD-CAMELS/doc/protocol_steps/step_Execute_Python_File.html#returning-results) for more details. 
 
 Fixes:
 - Fixed a bug where a protocol would show multiple times
