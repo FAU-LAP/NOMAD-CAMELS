@@ -49,7 +49,6 @@ for arg in arguments:
 
 and then use the `arguments_dict` to use the passed variables in any way you like.
 
-
 ## Returning Results
 
 CAMELS can also read the results returned by your Python script. For this your script must `print()` the results, as CAMELS gets its results from the `stdout` of `subprocess.run`
@@ -64,18 +63,69 @@ data = {
 # Serialize the dictionary to a JSON formatted string
 json_data = json.dumps(data)
 # Print the JSON string and make sure it is passed to CAMELS
+print("###Start Data") # Required so that CAMELS knows where to find the returned data!
 print(json_data)
+print("###End Data") # Required so that CAMELS knows where to find the returned data!
 sys.stdout.flush()
 ```
 
 where the keys of the returned dictionary match the variable names defined in the "Values returned by the Python file" table.
 
-CAMELS will then match the returned dictionary with the names of the values you defined that will be returned by the file. CAMELS looks for the beginning of a curly brace `{` and matches after it until the end of the closing brace; it can handle one level of nested dictionaries.
+> [!IMPORTANT]
+> You **MUST** print the `###Start Data` and `###End Data` strings so that CAMELS knows where to find the returned dictionary. This prevents other prints from your script from disturbing the data extraction later on.
 
-To be able to use the returned variable and its contents in the rest of the protocol it might make sense to define the variable in the left of the window, so you can easily add it to the following steps if you use the value to perform further steps.
+CAMELS will then match the returned dictionary with the names of the values you defined that will be returned by the file and saves them to your data file.
+
+Every key of the returned data dictionary is added to the Python namespace. This means you can access this variable the same way you would any other variable. You can use it for example to set an instrument channel to this value.
+
+> [!IMPORTANT]
+> You do not need to define the returned variable names. But if you do not, the returned value is not saved to the final data file! 
+>
+> You can still access **ALL** the variables that are returned by the Python script in following protocol steps. In the example above you could still use `results2` as the variable for a *Set Channel* after the Python script execution.  
 
 An example of a `Execute Python Script` step can be seen here.
-![Example Image showing hwo to use the Execute Python Script step.](images/image-4.png)
-This passes `exponent=2` and what ever value the `Keithley_2000_read_voltage` channel read above to the script.
-It expects a single returned result that will be accessible using the variable name `results`.
+![Example Image showing hwo to use the Execute Python Script step.](images/image-6.png)
+This passes `factor=3` and what ever value the `Keithley_2000_read_voltage` channel read above to the script.
+It expects a single returned result that will be saved and is accessible using the variable name `results`.
 
+### Returning Arrays
+
+Your Python file can also return arrays. Unfortunately numpy arrays can not be serialized with JSON, this means you must first convert your array to a list. This can be easily done using the `.tolist()` method. So something like
+
+```python
+array = np.arange(10)
+data = {
+    "results": array.tolist(),
+}
+# Serialize the dictionary to a JSON formatted string
+json_data = json.dumps(data)
+print("###Start Data")
+print(json_data)
+print("###End Data")
+sys.stdout.flush()
+```
+
+will work. The returned array is now a list, so you must consider this if you want to perform further interactions with the variable. So something like `results.mean()` will not work!
+
+For multidimensional arrays you can use:
+
+```python
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
+
+a = np.array([[1, 2, 3], [4, 5, 6]])
+print(a.shape)
+json_dump = json.dumps({'a': a, 'aa': [2, (2, 3, 4), a], 'bb': [2]}, 
+                       cls=NumpyEncoder)
+print(json_dump)
+
+--> Output:
+(2, 3)
+{"a": [[1, 2, 3], [4, 5, 6]], "aa": [2, [2, 3, 4], [[1, 2, 3], [4, 5, 6]]], "bb": [2]}
+```
+
+> [!NOTE]
+> Anything that can be serialized with JSON can be returned by your Python file.
