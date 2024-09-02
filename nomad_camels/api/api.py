@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from PySide6.QtCore import QThread, Signal
 from nomad_camels.frontpanels.settings_window import hash_api_key
-from nomad_camels.utility import load_save_functions
+from nomad_camels.utility import load_save_functions, variables_handling
 import uvicorn
 import sqlite3
 import os
@@ -198,6 +198,16 @@ class FastapiThread(QThread):
             cleaned_protocol = sanitize_dict(protocol)
             return JSONResponse(
                 content=cleaned_protocol,
+            )
+
+        # Get JSON representation of the current CAMELS settings (also called preferences)
+        @app.get("/api/v1/settings/JSON")
+        async def get_settings_json(api_key: str = Depends(validate_credentials)):
+            """Get a JSON representation of the current CAMELS settings"""
+            settings = self.main_window.preferences
+            cleaned_settings = sanitize_dict(settings)
+            return JSONResponse(
+                content=cleaned_settings,
             )
 
         # Run a protocol by name
