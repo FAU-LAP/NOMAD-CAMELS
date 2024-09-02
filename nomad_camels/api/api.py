@@ -15,6 +15,28 @@ import time
 import json
 import uuid
 from pydantic import BaseModel, Field
+import math
+
+
+def sanitize_dict(d):
+    for key, value in d.items():
+        if isinstance(value, float):
+            if math.isinf(value):
+                d[key] = "inf123"  # Replace with None or another placeholder
+            if math.isnan(value):
+                d[key] = "nan"
+        elif isinstance(value, dict):
+            sanitize_dict(value)
+        elif isinstance(value, list):
+            for i in range(len(value)):
+                if isinstance(value[i], float):
+                    if math.isinf(value[i]):
+                        value[i] = "inf123"  # Replace with None or another placeholder
+                    if math.isnan(value[i]):
+                        value[i] = "nan"
+                elif isinstance(value[i], dict):
+                    sanitize_dict(value[i])
+    return d
 
 
 class Variables(BaseModel):
@@ -171,12 +193,11 @@ class FastapiThread(QThread):
             protocol_name: str, api_key: str = Depends(validate_credentials)
         ):
             """Get a JSON representation of the protocol"""
-            protocol = self.main_window.protocols_dict[protocol_name]
-            print(protocol)
-            protocol_JSON = json.dumps(load_save_functions.get_save_str(protocol))
-            print(type(protocol_JSON))
-            return Response(
-                content=protocol_JSON,
+            protocol_class_instance = self.main_window.protocols_dict[protocol_name]
+            protocol = load_save_functions.get_save_str(protocol_class_instance)
+            cleaned_protocol = sanitize_dict(protocol)
+            return JSONResponse(
+                content=cleaned_protocol,
             )
 
         # Run a protocol by name
@@ -614,7 +635,11 @@ class FastapiThread(QThread):
         # Start the uvicorn server
         try:
             self.server_config = uvicorn.Config(
-                app, host="0.0.0.0", port=int(self.api_port), log_level="info"
+                app,
+                host="0.0.0.0",
+                port=int(self.api_port),
+                log_level="info",
+                reload=False,
             )
             self.server = uvicorn.Server(self.server_config)
 
