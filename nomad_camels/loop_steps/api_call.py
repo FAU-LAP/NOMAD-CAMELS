@@ -48,11 +48,17 @@ class API_Call(Loop_Step):
             if "authentication_string" in step_info
             else ""
         )
+        self.selected_camels_function_index = step_info.get(
+            "selected_camels_function_index", None
+        )
+        self.camels_function_parameters = step_info.get(
+            "camels_function_parameters", None
+        )
 
-    def get_protocol_short_string(self, n_tabs=0):
-        short_string = super().get_protocol_short_string(n_tabs)
-        short_string = f"{short_string[:-1]}: {os.path.basename(self.file_path)}"
-        return short_string
+    # def get_protocol_short_string(self, n_tabs=0):
+    #     short_string = super().get_protocol_short_string(n_tabs)
+    #     short_string = f"{short_string[:-1]}: {os.path.basename(self.file_path)}"
+    #     return short_string
 
     def get_protocol_string(self, n_tabs=1):
         """
@@ -61,7 +67,11 @@ class API_Call(Loop_Step):
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.api_type == "CAMELS":
-            protocol_string += f"{tabs}helper_functions.execute_camels_api_call()\n"
+            protocol_string += f"{tabs}post_body = helper_functions.evaluate_post_body({self.post_body}, eva)\n"
+            protocol_string += f"{tabs}api_result = helper_functions.execute_camels_api_call("
+            protocol_string += f"host='{self.host}', port={self.port}, api_type='{self.api_type}', post_body=post_body, authentication_type='{self.authentication_type}', authentication_string='{self.authentication_string}', selected_camels_function_index={self.selected_camels_function_index}, camels_function_parameters={self.camels_function_parameters}"
+            protocol_string += ")\n"
+            protocol_string += f"{tabs}helper_functions.save_API_response_to_variable(api_result, namespace)\n"
         else:
             protocol_string += f"{tabs}helper_functions.execute_generic_api_call()\n"
         return protocol_string
@@ -96,8 +106,6 @@ class API_Call_Config(Loop_Step_Config):
         self.combobox_api_type.addItem("CAMELS")
         self.combobox_api_type.addItem("Generic")
         self.combobox_api_type.currentIndexChanged.connect(self.api_type_changed)
-        
-        
 
         # Line edit host
         self.line_edit_host = QLineEdit()
@@ -141,7 +149,9 @@ class API_Call_Config(Loop_Step_Config):
         self.line_edit_authentication_string.setToolTip(
             "For HTTP Basic Authentication, use the format 'username:password'.\nFor API Key Authentication, use the API key."
         )
-        self.line_edit_authentication_string.setText(self.loop_step.authentication_string)
+        self.line_edit_authentication_string.setText(
+            self.loop_step.authentication_string
+        )
 
         # Combobox for CAMELS API functions
         self.CAMELS_functions_layout = QGridLayout()
@@ -190,8 +200,9 @@ class API_Call_Config(Loop_Step_Config):
         layout.addWidget(self.line_edit_authentication_string, 21, 1)
 
         self.combobox_api_type.setCurrentText(self.loop_step.api_type)
-        self.combobox_api_type.currentIndexChanged.emit(self.combobox_api_type.currentIndex())
-
+        self.combobox_api_type.currentIndexChanged.emit(
+            self.combobox_api_type.currentIndex()
+        )
 
     def update_host(self):
         """
@@ -214,7 +225,9 @@ class API_Call_Config(Loop_Step_Config):
         """
         Update the authentication string.
         """
-        self.loop_step.authentication_string = self.line_edit_authentication_string.text()
+        self.loop_step.authentication_string = (
+            self.line_edit_authentication_string.text()
+        )
 
     def api_type_changed(self):
         """ """
@@ -222,12 +235,12 @@ class API_Call_Config(Loop_Step_Config):
         if self.loop_step.api_type == "CAMELS":
             self.label_camels_api_functions.setVisible(True)
             self.combobox_camels_api_functions.setVisible(True)
-            
+
             # Set authentication type and hide it
             self.combobox_authentication_type.setCurrentText("API Key")
             self.label_authentication_type.setVisible(False)
             self.combobox_authentication_type.setVisible(False)
-        
+
             if self.loop_step.host and self.loop_step.port:
                 self.extract_all_api_functionality_from_json()
             if self.loop_step.selected_camels_function_index is not None:
@@ -257,7 +270,9 @@ class API_Call_Config(Loop_Step_Config):
 
     def authentication_type_changed(self):
         """ """
-        self.loop_step.authentication_type = self.combobox_authentication_type.currentText()
+        self.loop_step.authentication_type = (
+            self.combobox_authentication_type.currentText()
+        )
 
     def extract_all_api_functionality_from_json(self):
         """ """
@@ -274,7 +289,7 @@ class API_Call_Config(Loop_Step_Config):
             self.combobox_camels_api_functions.addItem(
                 "Could not connect to the server."
             )
-            raise e
+            return
         # Parse the JSON response
         openapi_schema = json.loads(json_response.text)
         paths = openapi_schema.get("paths", {})
@@ -355,6 +370,8 @@ class API_Call_Config(Loop_Step_Config):
         selected_index = self.combobox_camels_api_functions.currentIndex()
         if index is not None:
             selected_index = index
+        if len(self.api_functions_list) == 0:
+            return
         selected_function = self.api_functions_list[selected_index]
         if selected_function["parameters"]:
             # clear the layout
@@ -386,7 +403,10 @@ class API_Call_Config(Loop_Step_Config):
         """ """
         self.extract_all_api_functionality_from_json()
         self.combobox_camels_api_functions.setCurrentIndex(index)
-        self.update_camels_function_parameters(index)
+        try:
+            self.update_camels_function_parameters(index)
+        except KeyError as e:
+            print("Could not load the CAMELS function. Check your connection to the server.")
         if self.loop_step.camels_function_parameters is not None:
             for (
                 parameter_name,
