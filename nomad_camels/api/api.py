@@ -3,7 +3,7 @@ import sys
 from fastapi import FastAPI, HTTPException, Depends, status, Response
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from PySide6.QtCore import QThread, Signal
 from nomad_camels.frontpanels.settings_window import hash_api_key
 from nomad_camels.utility import load_save_functions, variables_handling
@@ -112,20 +112,20 @@ def is_valid_path(file_path):
     return os.path.exists(file_path)
 
 
-# Initialize HTTP Basic Authentication
-security = HTTPBasic()
+# Initialize HTTP Bearer Authentication
+security = HTTPBearer()
 
 
 # Define the dependency for API key validation
-async def validate_credentials(credentials: HTTPBasicCredentials = Depends(security)):
-    api_key = credentials.password
+async def validate_credentials(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    api_key = credentials.credentials
     # The api_key is directly taken from credentials.password
     if api_key and validate_api_key(api_key):
         return True
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid API Key",
-        headers={"WWW-Authenticate": "Basic"},
+        headers={"WWW-Authenticate": "Bearer"},
     )
 
 
