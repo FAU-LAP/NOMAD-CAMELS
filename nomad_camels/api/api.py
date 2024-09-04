@@ -1,11 +1,12 @@
 import sys
 
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Response
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from PySide6.QtCore import QThread, Signal
 from nomad_camels.frontpanels.settings_window import hash_api_key
-from nomad_camels.utility import load_save_functions
+from nomad_camels.utility import load_save_functions, variables_handling
 import uvicorn
 import sqlite3
 import os
@@ -14,6 +15,28 @@ import time
 import json
 import uuid
 from pydantic import BaseModel, Field
+import math
+
+
+def sanitize_dict(d):
+    for key, value in d.items():
+        if isinstance(value, float):
+            if math.isinf(value):
+                d[key] = "inf123"  # Replace with None or another placeholder
+            if math.isnan(value):
+                d[key] = "nan"
+        elif isinstance(value, dict):
+            sanitize_dict(value)
+        elif isinstance(value, list):
+            for i in range(len(value)):
+                if isinstance(value[i], float):
+                    if math.isinf(value[i]):
+                        value[i] = "inf123"  # Replace with None or another placeholder
+                    if math.isnan(value[i]):
+                        value[i] = "nan"
+                elif isinstance(value[i], dict):
+                    sanitize_dict(value[i])
+    return d
 
 
 class Variables(BaseModel):
@@ -89,20 +112,20 @@ def is_valid_path(file_path):
     return os.path.exists(file_path)
 
 
-# Initialize HTTP Basic Authentication
-security = HTTPBasic()
+# Initialize HTTP Bearer Authentication
+security = HTTPBearer()
 
 
 # Define the dependency for API key validation
-async def validate_credentials(credentials: HTTPBasicCredentials = Depends(security)):
-    api_key = credentials.password
+async def validate_credentials(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    api_key = credentials.credentials
     # The api_key is directly taken from credentials.password
     if api_key and validate_api_key(api_key):
         return True
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid API Key",
-        headers={"WWW-Authenticate": "Basic"},
+        headers={"WWW-Authenticate": "Bearer"},
     )
 
 
@@ -162,6 +185,29 @@ class FastapiThread(QThread):
                         self.main_window.protocols_dict[protocol_name].variables
                     )
                 }
+            )
+
+        # Get a JSON representation of the protocol
+        @app.get("/api/v1/protocols/{protocol_name}/JSON")
+        async def get_protocol_json(
+            protocol_name: str, api_key: str = Depends(validate_credentials)
+        ):
+            """Get a JSON representation of the protocol"""
+            protocol_class_instance = self.main_window.protocols_dict[protocol_name]
+            protocol = load_save_functions.get_save_str(protocol_class_instance)
+            cleaned_protocol = sanitize_dict(protocol)
+            return JSONResponse(
+                content=cleaned_protocol,
+            )
+
+        # Get JSON representation of the current CAMELS settings (also called preferences)
+        @app.get("/api/v1/settings/JSON")
+        async def get_settings_json(api_key: str = Depends(validate_credentials)):
+            """Get a JSON representation of the current CAMELS settings"""
+            settings = self.main_window.preferences
+            cleaned_settings = sanitize_dict(settings)
+            return JSONResponse(
+                content=cleaned_settings,
             )
 
         # Run a protocol by name
@@ -599,7 +645,11 @@ class FastapiThread(QThread):
         # Start the uvicorn server
         try:
             self.server_config = uvicorn.Config(
-                app, host="0.0.0.0", port=int(self.api_port), log_level="info"
+                app,
+                host="0.0.0.0",
+                port=int(self.api_port),
+                log_level="info",
+                reload=False,
             )
             self.server = uvicorn.Server(self.server_config)
 

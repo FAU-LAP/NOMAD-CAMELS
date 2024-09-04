@@ -100,7 +100,7 @@ class Execute_Python_File(Loop_Step):
         else:
             variables_string = ""
         if self.use_existing_env:
-            protocol_string = (
+            protocol_string += (
                 f"{tabs}result_python_file = subprocess.run(['"
                 f'r"{os.path.abspath(self.python_exe_path)}", '
                 f'r"{os.path.abspath(self.file_path)}", '
