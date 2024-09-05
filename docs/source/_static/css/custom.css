@@ -1,1 +1,7 @@
 .wy-side-nav-search{background-color: #000000}
+/* Make the page content wider */
+.wy-nav-content {
+    max-width: 100%;
+    margin-left: 0;
+    padding: 0;
+}
