@@ -5,6 +5,7 @@ This page should help you use and understand the API and its functionality.
 Make sure to check the automatic documentation under `//localhost:<port>/` or `//localhost:<port>/docs`. There you can also find more information on the request schemas and responses.
 
 - [General Information](#general-information)
+- [Most Useful Commands](#most-useful-commands)
 - [Get Protocol Parameters](#get-protocol-parameters)
 - [Executing Protocols](#executing-protocols)
 - [Protocol Queue](#protocol-queue)
@@ -17,10 +18,14 @@ The CAMELS API works by sending HTTP requests to its web server.
 
 To use any request other than the home path of the web server you need to authenticate your request using the API key (see [Creating API Keys](Creating_API_Keys.md)).
 
-If you are using a regular browser to access the web server you will be asked to authenticate yourself. Simply enter the API key in the password section. The username can be anything or empty. This will look something like this
-![Example image of the authentication pop up in the browser](images/image.png)
+If you are using a regular browser and want to use the API manually it is best to navigate to `<host>:<port>`. You can then select the request you want to perform and click on *Try it out* and then *Execute*.
+![Example image of how to manually use the API via the browser](images/image-2.png)
+You will be need to authenticate yourself to send any API requests. Simply enter the API key in the password section. The username can be anything or empty. This will look something like this
+![Example image of the authentication pop up in the browser](images/image-4.png)
+Once authorized in the browser you will stay authenticated when using further requests until you close the browser.
 
-Once logged in the browser will stay authenticated when using further requests until you close the browser.
+
+## Most Useful Commands
 
 Bellow are descriptions for the most useful commands.
 
