@@ -2,6 +2,4 @@
 /* Make the page content wider */
 .wy-nav-content {
     max-width: 75%;
-    margin-left: 0;
-    padding: 0;
 }
