@@ -537,12 +537,11 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.layout().addWidget(self.textEdit_desc_protocol, 5, 0, 1, 6)
 
         self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
-        self.layout().addWidget(self.checkBox_perform_at_end, 7, 0, 1, 6)
-        self.layout().addWidget(self.ending_protocol_selection, 8, 0, 1, 6)
-        # self.layout().addWidget(self.checkBox_NeXus, 7, 0, 1, 6)
-        # self.layout().addWidget(self.table_channel_NX_paths, 9, 0, 1, 6)
-        # self.layout().addWidget(self.table_config_NX_paths, 10, 0, 1, 6)
-        # self.layout().addWidget(self.table_metadata, 11, 0, 1, 6)
+        self.layout().addWidget(self.checkBox_perform_at_end, 20, 0, 1, 6)
+        self.layout().addWidget(self.ending_protocol_selection, 21, 0, 1, 6)
+        # ! Ui_Protocol_Settings.ui file adds the Variables Table at position 8 and 9 !!!
+
+        
 
         self.checkBox_NeXus.setHidden(True)
         self.enable_nexus()
