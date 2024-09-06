@@ -36,8 +36,16 @@ class API_Call(Loop_Step):
         self.host = step_info["host"] if "host" in step_info else ""
         # Get the port
         self.port = step_info["port"] if "port" in step_info else ""
+        self.api_url = step_info["api_url"] if "api_url" in step_info else ""
+        self.generic_api_method = (
+            step_info["generic_api_method"]
+            if "generic_api_method" in step_info
+            else "GET"
+        )
         self.api_type = step_info["api_type"] if "api_type" in step_info else "CAMELS"
-        self.post_body = step_info["post_body"] if "post_body" in step_info else ""
+        self.message_body = (
+            step_info["message_body"] if "message_body" in step_info else ""
+        )
         self.authentication_type = (
             step_info["authentication_type"]
             if "authentication_type" in step_info
@@ -54,11 +62,7 @@ class API_Call(Loop_Step):
         self.camels_function_parameters = step_info.get(
             "camels_function_parameters", None
         )
-
-    # def get_protocol_short_string(self, n_tabs=0):
-    #     short_string = super().get_protocol_short_string(n_tabs)
-    #     short_string = f"{short_string[:-1]}: {os.path.basename(self.file_path)}"
-    #     return short_string
+        self.protocol_step_name = step_info.get("name", None)
 
     def get_protocol_string(self, n_tabs=1):
         """
@@ -67,13 +71,21 @@ class API_Call(Loop_Step):
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.api_type == "CAMELS":
-            protocol_string += f"{tabs}post_body = helper_functions.evaluate_post_body({self.post_body}, eva)\n"
-            protocol_string += f"{tabs}api_result = helper_functions.execute_camels_api_call("
-            protocol_string += f"host='{self.host}', port={self.port}, api_type='{self.api_type}', post_body=post_body, authentication_type='{self.authentication_type}', authentication_string='{self.authentication_string}', selected_camels_function_index={self.selected_camels_function_index}, camels_function_parameters={self.camels_function_parameters}"
+            protocol_string += f"{tabs}message_body = helper_functions.evaluate_message_body({self.message_body}, eva)\n"
+            protocol_string += (
+                f"{tabs}api_result = helper_functions.execute_camels_api_call("
+            )
+            protocol_string += f"host='{self.host}', port={self.port}, api_type='{self.api_type}', message_body=message_body, authentication_type='{self.authentication_type}', authentication_string='{self.authentication_string}', selected_camels_function_index={self.selected_camels_function_index}, camels_function_parameters={self.camels_function_parameters}"
             protocol_string += ")\n"
-            protocol_string += f"{tabs}helper_functions.save_API_response_to_variable(api_result, namespace)\n"
-        else:
-            protocol_string += f"{tabs}helper_functions.execute_generic_api_call()\n"
+            protocol_string += f"{tabs}helper_functions.save_API_response_to_variable(api_result, namespace, protocol_step_name='{self.protocol_step_name}')\n"
+        elif self.api_type == "Generic":
+            protocol_string += (
+                f"{tabs}api_result = helper_functions.execute_generic_api_call("
+            )
+            protocol_string += f"host='{self.host}', port={self.port}, api_type='{self.api_type}', api_url='{self.api_url}', http_method='{self.generic_api_method}', message_body={self.message_body}, authentication_type='{self.authentication_type}', authentication_string='{self.authentication_string}'"
+            protocol_string += ")\n"
+            protocol_string += f"{tabs}helper_functions.save_API_response_to_variable(api_result, namespace, protocol_step_name='{self.protocol_step_name}')\n"
+
         return protocol_string
 
 
@@ -95,10 +107,12 @@ class API_Call_Config(Loop_Step_Config):
         self.label_host = QLabel("Host:")
         self.label_port = QLabel("Port:")
         self.label_api_type = QLabel("API Type:")
-        self.label_post_body = QLabel("Post Body:")
+        self.label_message_body = QLabel("Message Body:")
         self.label_authentication_type = QLabel("Authentication Type:")
         self.label_authentication_string = QLabel("Authentication:")
         self.label_camels_api_functions = QLabel("CAMELS API Functions:")
+        self.label_api_url = QLabel("API URL:")
+        self.label_generic_api_method = QLabel("HTTP Method:")
 
         # Create combobox for API type
         self.combobox_camels_api_functions = None
@@ -106,6 +120,22 @@ class API_Call_Config(Loop_Step_Config):
         self.combobox_api_type.addItem("CAMELS")
         self.combobox_api_type.addItem("Generic")
         self.combobox_api_type.currentIndexChanged.connect(self.api_type_changed)
+
+        # Create combobox for HTTP method
+        self.combobox_generic_api_method = QComboBox()
+        self.combobox_generic_api_method.addItem("GET")
+        self.combobox_generic_api_method.addItem("POST")
+        self.combobox_generic_api_method.addItem("DELETE")
+        self.combobox_generic_api_method.addItem("PATCH")
+        self.combobox_generic_api_method.addItem("PUT")
+        self.combobox_generic_api_method.currentIndexChanged.connect(
+            self.update_generic_api_method
+        )
+
+        # Line edit for API URL
+        self.line_edit_api_url = QLineEdit()
+        self.line_edit_api_url.setText(self.loop_step.api_url)
+        self.line_edit_api_url.textChanged.connect(self.update_api_url)
 
         # Line edit host
         self.line_edit_host = QLineEdit()
@@ -116,15 +146,15 @@ class API_Call_Config(Loop_Step_Config):
         self.line_edit_port.setText(self.loop_step.port)
         self.line_edit_port.textChanged.connect(self.update_port)
         # Text edit post body
-        self.text_edit_post_body = QTextEdit()
-        self.text_edit_post_body.setText(self.loop_step.post_body)
-        self.text_edit_post_body.textChanged.connect(self.update_post_body)
+        self.text_edit_message_body = QTextEdit()
+        self.text_edit_message_body.setText(self.loop_step.message_body)
+        self.text_edit_message_body.textChanged.connect(self.update_message_body)
 
         # Combobox for authentication type
         self.combobox_authentication_type = QComboBox()
         self.combobox_authentication_type.addItem("None")
         self.combobox_authentication_type.addItem("HTTP Basic")
-        self.combobox_authentication_type.addItem("API Key")
+        self.combobox_authentication_type.addItem("Bearer Token")
         self.combobox_authentication_type.setCurrentText(
             self.loop_step.authentication_type
         )
@@ -136,10 +166,10 @@ class API_Call_Config(Loop_Step_Config):
             0, "No authentication required", Qt.ToolTipRole
         )
         self.combobox_authentication_type.setItemData(
-            1, "Use format: 'username:password'", Qt.ToolTipRole
+            1, "Use format: username:password", Qt.ToolTipRole
         )
         self.combobox_authentication_type.setItemData(
-            2, "Use format: API key", Qt.ToolTipRole
+            2, "Use format: Token", Qt.ToolTipRole
         )
         # Line edit authentication string
         self.line_edit_authentication_string = QLineEdit()
@@ -147,7 +177,7 @@ class API_Call_Config(Loop_Step_Config):
             self.update_authentication_string
         )
         self.line_edit_authentication_string.setToolTip(
-            "For HTTP Basic Authentication, use the format 'username:password'.\nFor API Key Authentication, use the API key."
+            "For HTTP Basic Authentication, use the format: username:password.\nFor Bearer Token Authentication, use the format: Token."
         )
         self.line_edit_authentication_string.setText(
             self.loop_step.authentication_string
@@ -171,38 +201,58 @@ class API_Call_Config(Loop_Step_Config):
 
         # Layout setup
         layout = self.layout()
+        # Set host
+        layout.addWidget(self.label_host, 1, 0)
+        layout.addWidget(self.line_edit_host, 1, 1)
+        # Set port
+        layout.addWidget(self.label_port, 2, 0)
+        layout.addWidget(self.line_edit_port, 2, 1)
         # Set API type
-        layout.addWidget(self.label_api_type, 1, 0)
-        layout.addWidget(self.combobox_api_type, 1, 1)
+        layout.addWidget(self.label_api_type, 3, 0)
+        layout.addWidget(self.combobox_api_type, 3, 1)
         # Set CAMELS API functions
-        layout.addWidget(self.label_camels_api_functions, 2, 0)
-        layout.addWidget(self.combobox_camels_api_functions, 2, 1)
+        layout.addWidget(self.label_camels_api_functions, 4, 0)
+        layout.addWidget(self.combobox_camels_api_functions, 4, 1)
+        # Set Generic API URL
+        layout.addWidget(self.label_api_url, 5, 0)
+        layout.addWidget(self.line_edit_api_url, 5, 1)
+        # Set genereic API HTTP method
+        layout.addWidget(self.label_generic_api_method, 6, 0)
+        layout.addWidget(self.combobox_generic_api_method, 6, 1)
         # Set CAMELS parameter layout
         camels_function_parameter_widget = QWidget()
         camels_function_parameter_widget.setLayout(self.CAMELS_functions_layout)
-        layout.addWidget(camels_function_parameter_widget, 3, 0, 1, 2)
-        # Set host
-        layout.addWidget(self.label_host, 10, 0)
-        layout.addWidget(self.line_edit_host, 10, 1)
-        # Set port
-        layout.addWidget(self.label_port, 11, 0)
-        layout.addWidget(self.line_edit_port, 11, 1)
+        layout.addWidget(camels_function_parameter_widget, 7, 0, 1, 2)
 
         # Set post body
-        layout.addWidget(self.label_post_body, 12, 0)
-        layout.addWidget(self.text_edit_post_body, 12, 1)
+        layout.addWidget(self.label_message_body, 12, 0)
+        layout.addWidget(self.text_edit_message_body, 12, 1)
 
         # Set authentication type
         layout.addWidget(self.label_authentication_type, 20, 0)
         layout.addWidget(self.combobox_authentication_type, 20, 1)
+        self.combobox_authentication_type.setToolTip(
+            "For HTTP Basic Authentication, use the format 'username:password'.\nFor Bearer Token Authentication, use the format: Token."
+        )
         # Set authentication string
         layout.addWidget(self.label_authentication_string, 21, 0)
         layout.addWidget(self.line_edit_authentication_string, 21, 1)
 
+        # Set the saved API type to the combobox
         self.combobox_api_type.setCurrentText(self.loop_step.api_type)
         self.combobox_api_type.currentIndexChanged.emit(
             self.combobox_api_type.currentIndex()
         )
+        # Set the saved HTTP method to the combobox
+        self.combobox_generic_api_method.setCurrentIndex(
+            self.combobox_generic_api_method.findText(self.loop_step.generic_api_method)
+        )
+
+    def update_api_url(self):
+        """
+        Update the API URL.
+        """
+        self.loop_step.api_url = self.line_edit_api_url.text()
 
     def update_host(self):
         """
@@ -216,10 +266,10 @@ class API_Call_Config(Loop_Step_Config):
         """
         self.loop_step.port = self.line_edit_port.text()
 
-    def update_post_body(self):
+    def update_message_body(self):
         """
         Update the post body. Keeps the formatting."""
-        self.loop_step.post_body = self.text_edit_post_body.toPlainText()
+        self.loop_step.message_body = self.text_edit_message_body.toPlainText()
 
     def update_authentication_string(self):
         """
@@ -229,15 +279,31 @@ class API_Call_Config(Loop_Step_Config):
             self.line_edit_authentication_string.text()
         )
 
+    def update_generic_api_method(self):
+        """ """
+        self.loop_step.generic_api_method = (
+            self.combobox_generic_api_method.currentText()
+        )
+        if self.loop_step.generic_api_method in {"GET", "DELETE"}:
+            self.label_message_body.setVisible(False)
+            self.text_edit_message_body.setVisible(False)
+        elif self.loop_step.generic_api_method in {"POST", "PATCH", "PUT"}:
+            self.label_message_body.setVisible(True)
+            self.text_edit_message_body.setVisible(True)
+
     def api_type_changed(self):
         """ """
         self.loop_step.api_type = self.combobox_api_type.currentText()
         if self.loop_step.api_type == "CAMELS":
             self.label_camels_api_functions.setVisible(True)
             self.combobox_camels_api_functions.setVisible(True)
+            self.label_api_url.setVisible(False)
+            self.line_edit_api_url.setVisible(False)
+            self.label_generic_api_method.setVisible(False)
+            self.combobox_generic_api_method.setVisible(False)
 
             # Set authentication type and hide it
-            self.combobox_authentication_type.setCurrentText("API Key")
+            self.combobox_authentication_type.setCurrentText("Bearer Token")
             self.label_authentication_type.setVisible(False)
             self.combobox_authentication_type.setVisible(False)
 
@@ -251,6 +317,16 @@ class API_Call_Config(Loop_Step_Config):
         elif self.loop_step.api_type == "Generic":
             self.label_authentication_type.setVisible(True)
             self.combobox_authentication_type.setVisible(True)
+            self.label_api_url.setVisible(True)
+            self.line_edit_api_url.setVisible(True)
+            self.label_generic_api_method.setVisible(True)
+            self.combobox_generic_api_method.setVisible(True)
+            # emit signal of the combobox to update the method
+            self.combobox_generic_api_method.setCurrentIndex(
+                self.combobox_generic_api_method.findText(self.loop_step.generic_api_method)
+            )
+            self.combobox_camels_api_functions.setVisible(False)
+            self.label_camels_api_functions.setVisible(False)
             if self.combobox_camels_api_functions is not None:
                 # Temporarily disconnect the signal
                 self.combobox_camels_api_functions.currentIndexChanged.disconnect(
@@ -262,8 +338,7 @@ class API_Call_Config(Loop_Step_Config):
                 self.combobox_camels_api_functions.currentIndexChanged.connect(
                     self.update_camels_function_parameters
                 )
-                self.combobox_camels_api_functions.setVisible(False)
-                self.label_camels_api_functions.setVisible(False)
+
                 # Hide camels function parameters
                 for i in reversed(range(self.CAMELS_functions_layout.count())):
                     self.CAMELS_functions_layout.itemAt(i).widget().setParent(None)
@@ -373,6 +448,12 @@ class API_Call_Config(Loop_Step_Config):
         if len(self.api_functions_list) == 0:
             return
         selected_function = self.api_functions_list[selected_index]
+        if selected_function["method"] == "GET":
+            self.label_message_body.setVisible(False)
+            self.text_edit_message_body.setVisible(False)
+        elif selected_function["method"] == "POST":
+            self.label_message_body.setVisible(True)
+            self.text_edit_message_body.setVisible(True)
         if selected_function["parameters"]:
             # clear the layout
             for i in reversed(range(self.CAMELS_functions_layout.count())):
@@ -406,7 +487,9 @@ class API_Call_Config(Loop_Step_Config):
         try:
             self.update_camels_function_parameters(index)
         except KeyError as e:
-            print("Could not load the CAMELS function. Check your connection to the server.")
+            print(
+                "Could not load the CAMELS function. Check your connection to the server."
+            )
         if self.loop_step.camels_function_parameters is not None:
             for (
                 parameter_name,
