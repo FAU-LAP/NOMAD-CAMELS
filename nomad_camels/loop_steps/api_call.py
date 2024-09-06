@@ -57,8 +57,10 @@ class API_Call(Loop_Step):
             else ""
         )
         self.selected_camels_function_index = step_info.get(
-            "selected_camels_function_index", None
+            "selected_camels_function_index", 0
         )
+        if self.selected_camels_function_index == 'None':
+            self.selected_camels_function_index = None
         self.camels_function_parameters = step_info.get(
             "camels_function_parameters", None
         )
@@ -406,7 +408,7 @@ class API_Call_Config(Loop_Step_Config):
         )
         if self.loop_step.selected_camels_function_index is not None:
             self.combobox_camels_api_functions.setCurrentIndex(
-                self.loop_step.selected_camels_function_index
+                int(self.loop_step.selected_camels_function_index)
             )
             selected_function = self.api_functions_list[
                 self.loop_step.selected_camels_function_index
@@ -427,7 +429,7 @@ class API_Call_Config(Loop_Step_Config):
                         line_edit_parameter, i + 1, 1
                     )
                     # match the parameter name with the value
-                    if self.loop_step.camels_function_parameters is not None:
+                    if self.loop_step.camels_function_parameters is not None and self.loop_step.camels_function_parameters != 'None':
                         for (
                             parameter_name,
                             value,
@@ -490,7 +492,7 @@ class API_Call_Config(Loop_Step_Config):
             print(
                 "Could not load the CAMELS function. Check your connection to the server."
             )
-        if self.loop_step.camels_function_parameters is not None:
+        if self.loop_step.camels_function_parameters is not None or self.loop_step.camels_function_parameters != 'None':
             for (
                 parameter_name,
                 value,
