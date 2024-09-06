@@ -7,7 +7,7 @@ def execute_camels_api_call(
     host,
     port,
     api_type,
-    post_body,
+    message_body,
     authentication_type,
     authentication_string,
     selected_camels_function_index,
@@ -46,7 +46,7 @@ def execute_camels_api_call(
             result = requests.post(
                 f"http://{host}:{port}{selected_function['formatted_path']}",
                 headers={"Authorization": f"Bearer {authentication_string}"},
-                json=post_body,
+                json=message_body,
             )
         elif authentication_type == "HTTP Basic":
             raise ValueError(
@@ -64,7 +64,7 @@ def execute_generic_api_call(
     api_type,
     api_url,
     http_method,
-    post_body,
+    message_body,
     authentication_type,
     authentication_string,
 ):
@@ -97,18 +97,18 @@ def execute_generic_api_call(
             result = requests.post(
                 f"http://{host}:{port}{api_url}",
                 headers={"Authorization": f"Bearer {authentication_string}"},
-                json=post_body,
+                json=message_body,
             )
         elif authentication_type == "HTTP Basic":
             result = requests.post(
                 f"http://{host}:{port}{api_url}",
                 auth=HTTPBasicAuth(*authentication_string.split(":")),
-                json=post_body,
+                json=message_body,
             )
         elif authentication_type == "None":
             result = requests.post(
                 f"http://{host}:{port}{api_url}",
-                json=post_body,
+                json=message_body,
             )
     elif http_method == "DELETE":
         # Check the authentication type
@@ -131,18 +131,18 @@ def execute_generic_api_call(
                 result = requests.patch(
                     f"http://{host}:{port}{api_url}",
                     headers={"Authorization": f"Bearer {authentication_string}"},
-                    json=post_body,
+                    json=message_body,
                 )
             elif authentication_type == "HTTP Basic":
                 result = requests.patch(
                     f"http://{host}:{port}{api_url}",
                     auth=HTTPBasicAuth(*authentication_string.split(":")),
-                    json=post_body,
+                    json=message_body,
                 )
             elif authentication_type == "None":
                 result = requests.patch(
                     f"http://{host}:{port}{api_url}",
-                    json=post_body,
+                    json=message_body,
                 )
 
             elif http_method == "PUT":
@@ -151,18 +151,18 @@ def execute_generic_api_call(
                     result = requests.put(
                         f"http://{host}:{port}{api_url}",
                         headers={"Authorization": f"Bearer {authentication_string}"},
-                        json=post_body,
+                        json=message_body,
                     )
                 elif authentication_type == "HTTP Basic":
                     result = requests.put(
                         f"http://{host}:{port}{api_url}",
                         auth=HTTPBasicAuth(*authentication_string.split(":")),
-                        json=post_body,
+                        json=message_body,
                     )
                 elif authentication_type == "None":
                     result = requests.put(
                         f"http://{host}:{port}{api_url}",
-                        json=post_body,
+                        json=message_body,
                     )
 
     return result.json()
@@ -178,16 +178,16 @@ def save_API_response_to_variable(response, namespace, protocol_step_name):
     return None
 
 
-def evaluate_post_body(post_body, eva):
+def evaluate_message_body(message_body, eva):
     """
-    This function evaluates the values of the post_body items if the value is empty.
+    This function evaluates the values of the message_body items if the value is empty.
     This allows you to use variables and values that are obtained during the script execution.
     """
-    # For key value pair in post_body dictionary evaluate the value
-    for key, value in post_body["variables"].items():
+    # For key value pair in message_body dictionary evaluate the value
+    for key, value in message_body["variables"].items():
         if value == "":
-            post_body["variables"][key] = eva.eval(key)
-    return post_body
+            message_body["variables"][key] = eva.eval(key)
+    return message_body
 
 
 def get_available_camels_api_functions(host, port, camels_function_parameters):
