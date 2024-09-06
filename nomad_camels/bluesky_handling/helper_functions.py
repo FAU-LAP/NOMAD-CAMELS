@@ -34,7 +34,7 @@ import os
 import sys
 import glob
 
-from nomad_camels.bluesky_handling.loop_step_functions_api_call import execute_camels_api_call, execute_generic_api_call, save_API_response_to_variable, evaluate_post_body
+from nomad_camels.bluesky_handling.loop_step_functions_api_call import execute_camels_api_call, execute_generic_api_call, save_API_response_to_variable, evaluate_message_body
 
 
 def get_newest_file(directory):
