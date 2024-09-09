@@ -11,6 +11,8 @@ from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 import os
 import json
 import requests
+from urllib.parse import urlparse
+import re
 
 
 class API_Call(Loop_Step):
@@ -255,6 +257,28 @@ class API_Call_Config(Loop_Step_Config):
         Update the API URL.
         """
         self.loop_step.api_url = self.line_edit_api_url.text()
+        parsed_url = urlparse(self.loop_step.api_url)
+        if parsed_url.scheme == "":
+            api_url_with_schema = "http://" + self.loop_step.api_url
+        parsed_url = urlparse(api_url_with_schema)
+        if parsed_url.netloc == "":
+            pass
+        elif re.match(r'^[^:]+:\d+$', parsed_url.netloc):
+            try:
+                self.loop_step.host = parsed_url.netloc.split(":")[0]
+            except ValueError:
+                print('Failed to parse the host from the URL. Please check the URL format.')
+            try:
+                self.loop_step.port = parsed_url.netloc.split(":")[1]
+            except IndexError:
+                print('Failed to parse the port from the URL. Please check the URL format.')
+            self.line_edit_host.setText(self.loop_step.host)
+            self.line_edit_host.textChanged.emit(self.line_edit_host.text())
+            self.line_edit_port.setText(self.loop_step.port)
+            self.line_edit_port.textChanged.emit(self.line_edit_port.text())
+    
+
+
 
     def update_host(self):
         """
@@ -327,6 +351,9 @@ class API_Call_Config(Loop_Step_Config):
             self.combobox_generic_api_method.setCurrentIndex(
                 self.combobox_generic_api_method.findText(self.loop_step.generic_api_method)
             )
+            self.combobox_generic_api_method.currentIndexChanged.emit(
+                self.combobox_generic_api_method.currentIndex()
+            )
             self.combobox_camels_api_functions.setVisible(False)
             self.label_camels_api_functions.setVisible(False)
             if self.combobox_camels_api_functions is not None:
@@ -356,6 +383,14 @@ class API_Call_Config(Loop_Step_Config):
         # Make the API call to get the OpenAPI schema
         host = self.loop_step.host
         port = self.loop_step.port
+        if host == "":
+            self.combobox_camels_api_functions.clear()
+            self.combobox_camels_api_functions.addItem("Please enter a host address first.")
+            return
+        if port == "":
+            self.combobox_camels_api_functions.clear()
+            self.combobox_camels_api_functions.addItem("Please enter a port first.")
+            return
         try:
             json_response = requests.get(f"http://{host}:{port}/openapi.json")
         except requests.exceptions.ConnectionError as e:
@@ -492,7 +527,7 @@ class API_Call_Config(Loop_Step_Config):
             print(
                 "Could not load the CAMELS function. Check your connection to the server."
             )
-        if self.loop_step.camels_function_parameters is not None or self.loop_step.camels_function_parameters != 'None':
+        if self.loop_step.camels_function_parameters is not None and self.loop_step.camels_function_parameters != 'None':
             for (
                 parameter_name,
                 value,
