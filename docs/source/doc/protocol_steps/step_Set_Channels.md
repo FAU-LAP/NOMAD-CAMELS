@@ -1,4 +1,4 @@
-# Set Channels
+# Set Channels - Protocol Step
 
 This protocol step allows you to set channels of the instruments you have installed and also created instances of.
 

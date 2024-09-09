@@ -1,16 +1,18 @@
-# Execute Python File
+# Execute Python File - Protocol Step
 
 This step allows you to execute (run) any Python file on your system. To do this, enter the path to the file in the protocol step.
 
-You can pass values to the Python script as well as save its results in variables so that you can continue to work with the returned data.
+You can pass arguments to the Python script and save its results in variables so that you can continue to work with the returned data.
 
-## Basic Function
+## Basic Functionality
 
-This step basically calls something like
+This step calls something like
 
 ```python
 subprocess.run(['python_exe_path', 'python_file_path', 'key=value', 'key2=value2', ...])
 ```
+
+allowing you to execute a Python file with arbitrary arguments passed to it.
 
 ## The Python Environment
 

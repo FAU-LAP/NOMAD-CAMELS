@@ -1,4 +1,4 @@
-# Read Channels
+# Read Channels - Protocol Step
 
 This protocol step allows you to read data from all the instruments you have installed and also created instances of.
 

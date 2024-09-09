@@ -1,4 +1,4 @@
-# For Loop
+# For Loop - Protocol Step
 
 This protocol step allows you to define a loop that will be iterated over. You can then add other steps into the loop by right-clicking and selecting `Add Into`. You can also drag and drop other steps into the loop.
 
