@@ -12,7 +12,6 @@ What is NOMAD CAMELS?
         <iframe src="https://drive.google.com/file/d/1vyCj8uKWgcPVzxCEM3sWp37-NMb3WVXD/preview" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allow="autoplay" frameborder="0" allowfullscreen></iframe>
     </div>
 
-
 **CAMELS** (\ **C**\ onfigurable \ **A**\ pplication for \ **M**\ easurements, \ **E**\ xperiments and \ **L**\ aboratory \ **S**\ ystems) is an open-source measurement software, targeted towards the requirements of experimental physics. Ease of use, rich metadata and FAIR-compliant data are at the heart of CAMELS design.
 
 
