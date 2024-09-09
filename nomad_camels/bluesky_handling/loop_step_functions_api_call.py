@@ -164,7 +164,8 @@ def execute_generic_api_call(
                         f"http://{host}:{port}{api_url}",
                         json=message_body,
                     )
-
+    if result.status_code == 403:
+        raise ValueError("The authentication failed. Please check your credentials.")
     return result.json()
 
 
