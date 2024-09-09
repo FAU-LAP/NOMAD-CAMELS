@@ -6,12 +6,9 @@ NOMAD CAMELS - Your Simple Path to FAIR Experimental Data
 What is NOMAD CAMELS?
 =========================
 
-.. raw:: html
-
-    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto;">
-        <iframe src="https://www.youtube.com/watch?v=rVmxgwhoEVg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allow="autoplay" frameborder="0" allowfullscreen></iframe>
-    </div>
-www.youtube.com/embed/
+.. image:: https://img.youtube.com/vi/rVmxgwhoEVg/maxresdefault.jpg
+    :alt: Explanation video of NOMAD CAMELS
+    :target: https://www.youtube.com/watch?v=rVmxgwhoEVg
 
 **CAMELS** (\ **C**\ onfigurable \ **A**\ pplication for \ **M**\ easurements, \ **E**\ xperiments and \ **L**\ aboratory \ **S**\ ystems) is an open-source measurement software, targeted towards the requirements of experimental physics. Ease of use, rich metadata and FAIR-compliant data are at the heart of CAMELS design.
 
