@@ -1715,6 +1715,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             dev_data = self.instantiate_devices_thread.device_config
             additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
             self.add_subs_and_plots_from_dict(additionals)
+            self.current_protocol_devices = devs
         except Exception as e:
             self.protocol_finished()
             raise e
@@ -1930,6 +1931,21 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         if self.run_engine.state != "idle":
             self.run_engine.abort("Aborted by user")
+            if self.running_protocol.use_end_protocol:
+                for i in range(10):
+                    if self.run_engine.state == "idle":
+                        break
+                    import time
+
+                    time.sleep(0.5)
+                try:
+                    self.run_engine(
+                        self.protocol_module.ending_steps(
+                            self.run_engine, self.current_protocol_devices
+                        )
+                    )
+                except Exception as e:
+                    print(e)
         if self.instantiate_devices_thread.isRunning():
             self.instantiate_devices_thread.successful.disconnect()
             self.instantiate_devices_thread.exception_raised.disconnect()

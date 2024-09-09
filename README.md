@@ -23,6 +23,7 @@ Features:
 - CAMELS API server now accessible from network. (Changed host setting to `0.0.0.0`)
 - CAMELS API now lets you get a JSON string containing the protocol and all its settings
 - CAMELS API now lets you get a JSON string containing the current CAMELS settings.
+- A protocol to execute at the end of a protocol, no matter wether it finishes correctly or breaks can now be added
 
 Changes:
 - renamed `comment / uncomment` to `enable / disable` to make it more clear

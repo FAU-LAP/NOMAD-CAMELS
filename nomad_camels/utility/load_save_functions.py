@@ -601,6 +601,10 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.export_csv = prot_data["export_csv"]
         if "h5_during_run" in prot_data:
             prot.h5_during_run = prot_data["h5_during_run"]
+        if "use_end_protocol" in prot_data:
+            prot.use_end_protocol = prot_data["use_end_protocol"]
+        if "end_protocol" in prot_data:
+            prot.end_protocol = prot_data["end_protocol"]
         prot_dict.update({key: prot})
 
 
@@ -681,9 +685,12 @@ def get_most_recent_presets(return_all=False):
     if preset_path is None:
         return None if not return_all else [None]
     if presets:
-        presets = [x[:-7] for x in sorted(
-            presets, key=lambda x: os.path.getmtime(os.path.join(preset_path, x))
-        )]
+        presets = [
+            x[:-7]
+            for x in sorted(
+                presets, key=lambda x: os.path.getmtime(os.path.join(preset_path, x))
+            )
+        ]
     else:
         return None if not return_all else [None]
     return presets[-1] if not return_all else presets
