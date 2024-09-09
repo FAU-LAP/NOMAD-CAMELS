@@ -19,17 +19,20 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ## 1.3.2
-Changes:
-- renamed `comment / uncomment` to `enable / disable` to make it more clear
-- Data passing from the Execute Python Script step was changed. Now should be more stable, as it looks for the Data between the `###Start Data` und `###End Data` strings. See our [documentation](https://fau-lap.github.io/NOMAD-CAMELS/doc/protocol_steps/step_Execute_Python_File.html#returning-results) for more details. 
+Features:
 - CAMELS API server now accessible from network. (Changed host setting to `0.0.0.0`)
 - CAMELS API now lets you get a JSON string containing the protocol and all its settings
 - CAMELS API now lets you get a JSON string containing the current CAMELS settings.
+
+Changes:
+- renamed `comment / uncomment` to `enable / disable` to make it more clear
+- Data passing from the Execute Python Script step was changed. Now should be more stable, as it looks for the Data between the `###Start Data` und `###End Data` strings. See our [documentation](https://fau-lap.github.io/NOMAD-CAMELS/doc/protocol_steps/step_Execute_Python_File.html#returning-results) for more details. 
 
 Fixes:
 - Fixed a bug where a protocol would show multiple times
 - installed version should now be found correctly when searching for updates
 - removing / moving of buttons in tabs fixed
+- requirement updated to camels suitcase 0.2.2, fixing datasets in instruments
 
 ## 1.3.1
 
