@@ -63,9 +63,7 @@ standard_string += "from PySide6.QtWidgets import QApplication, QMessageBox\n"
 standard_string += "from PySide6.QtCore import QCoreApplication, QThread\n"
 standard_string += "import datetime\n"
 standard_string += "import subprocess\n"
-standard_string += (
-    "from nomad_camels.main_classes import plot_pyqtgraph, list_plot\n"
-)
+standard_string += "from nomad_camels.main_classes import plot_pyqtgraph, list_plot\n"
 standard_string += "from nomad_camels.utility import theme_changing\n"
 standard_string += (
     "from nomad_camels.bluesky_handling.evaluation_helper import Evaluator\n"
@@ -409,6 +407,14 @@ def build_protocol(
     if protocol.h5_during_run:
         save_string += "\t\tRE.unsubscribe(subscription_rr)\n"
 
+    protocol_string += "\n\ndef ending_steps(runEngine, devs):\n"
+    if protocol.use_end_protocol:
+        protocol_string += sub_protocol_string(
+            protocol_path=protocol.end_protocol, n_tabs=1
+        )
+    else:
+        protocol_string += "\tyield from bps.checkpoint()\n"
+
     protocol_string += standard_start_string
 
     # checking for databroker catalog, using temp if not available
@@ -446,7 +452,7 @@ def build_protocol(
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(protocol_string)
-    
+
     variables_handling.read_channel_names = read_channel_names_old
     variables_handling.read_channel_sets = read_channel_sets_old
 
@@ -468,3 +474,89 @@ def user_sample_string(userdata, sampledata):
     u_s_string = f'\tmd["user"] = {userdata}\n'
     u_s_string += f'\tmd["sample"] = {sampledata}\n'
     return u_s_string
+
+
+def sub_protocol_string(
+    protocol_path,
+    n_tabs=1,
+    variables_in=None,
+    variables_out=None,
+    data_output="sub-stream",
+):
+    """Overwrites the signal for the progressbar and the number of steps in
+    the subprotocol's module. Evaluates the input variables, then writes
+    them into the subprotocol's namespace and starts the subprotocol's
+    _plan_inner function. Afterwards the output variables are written to the
+    main namespace."""
+    tabs = "\t" * n_tabs
+    build_from_path(protocol_path)
+    prot_name = os.path.basename(protocol_path)[:-6]
+    protocol_string = (
+        f"{tabs}{prot_name}_mod.protocol_step_information = protocol_step_information\n"
+    )
+    variables_in = variables_in or {"Variable": [], "Value": []}
+    variables_out = variables_out or {"Variable": [], "Write to name": []}
+    for i, var in enumerate(variables_in["Variable"]):
+        protocol_string += (
+            f'{tabs}{prot_name}_mod.{var} = eva.eval("{variables_in["Value"][i]}")\n'
+        )
+        protocol_string += f'{tabs}{prot_name}_mod.namespace["{var}"] = eva.eval("{variables_in["Value"][i]}")\n'
+    protocol_string += (
+        f"{tabs}{prot_name}_eva = Evaluator(namespace={prot_name}_mod.namespace)\n"
+    )
+    protocol_string += (
+        f"{tabs}sub_eva_{prot_name} = runEngine.subscribe({prot_name}_eva)\n"
+    )
+    stream = prot_name
+    if data_output == "main stream":
+        stream = "primary"
+    protocol_string += f'{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, {prot_name}_eva, "{stream}", runEngine)\n'
+    for i, var in enumerate(variables_out["Variable"]):
+        protocol_string += f'{tabs}namespace["{variables_out["Write to name"][i]}"] = {prot_name}_mod.namespace["{var}"]\n'
+    protocol_string += f"{tabs}runEngine.unsubscribe(sub_eva_{prot_name})\n"
+    return protocol_string
+
+
+def import_protocol_string(protocol_path, n_tabs=0):
+    """Imports the subprotocol as <protocol_name>_mod."""
+    tabs = "\t" * n_tabs
+    prot_name = os.path.basename(protocol_path)[:-6]
+    py_file = f"{protocol_path[:-6]}.py"
+    if not os.path.isfile(py_file):
+        sub_protocol = load_save_functions.load_protocol(protocol_path)
+        build_protocol(sub_protocol, py_file)
+    outer_string = f'{tabs}spec = importlib.util.spec_from_file_location("{prot_name}", "{py_file}")\n'
+    outer_string += f"{tabs}{prot_name}_mod = importlib.util.module_from_spec(spec)\n"
+    outer_string += f"{tabs}sys.modules[spec.name] = {prot_name}_mod\n"
+    outer_string += f"{tabs}spec.loader.exec_module({prot_name}_mod)\n"
+    return outer_string
+
+
+def make_plots_string_of_protocol(
+    protocol_path, use_own_plots=True, data_output="sub-stream", n_tabs=1
+):
+    """Creates the string to add the plots of the protocol to the main protocol.
+
+    Parameters
+    ----------
+    protocol_path : str
+        The path to the protocol that should be built.
+    Returns
+    -------
+    plot_string : str
+        The string that adds the plots of the protocol to the main protocol.
+    """
+    from nomad_camels.bluesky_handling import builder_helper_functions
+
+    tabs = "\t" * n_tabs
+    prot_name = os.path.basename(protocol_path)[:-6]
+    plot_string = ""
+    if use_own_plots:
+        stream = f'"{prot_name}"'
+        if data_output == "main stream":
+            stream = '"primary"'
+        plot_string += builder_helper_functions.get_plot_add_string(
+            prot_name, stream, True, n_tabs
+        )
+    plot_string += f'{tabs}returner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs)\n'
+    return plot_string
