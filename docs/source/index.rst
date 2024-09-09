@@ -9,9 +9,9 @@ What is NOMAD CAMELS?
 .. raw:: html
 
     <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto;">
-        <iframe src="https://www.youtube.com/watch?v=rVmxgwhoEVg&list=PLrRaxjvn6FDWR-8SWOfy0j7ux5u3TF_VJ&index=2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allow="autoplay" frameborder="0" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/watch?v=rVmxgwhoEVg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allow="autoplay" frameborder="0" allowfullscreen></iframe>
     </div>
-
+www.youtube.com/embed/
 
 **CAMELS** (\ **C**\ onfigurable \ **A**\ pplication for \ **M**\ easurements, \ **E**\ xperiments and \ **L**\ aboratory \ **S**\ ystems) is an open-source measurement software, targeted towards the requirements of experimental physics. Ease of use, rich metadata and FAIR-compliant data are at the heart of CAMELS design.
 
@@ -26,7 +26,12 @@ Learn more about CAMELS in our peer-reviewed paper
 Why CAMELS?
 ===========
 
-
+#. **Smooth installation** CAMELS is a python package distributed via PyPI. It is easily installable on any computer. On Windows, let the installer do all the work for you.
+#. **Easy to use** No programming skills required. Just configure your measurement and process protocols. Get it done within minutes.
+#. **FAIR data** Automatically store FAIR data with rich metadata that lets you and others understand your experiment in detail. Optionally connect directly with your NOMAD Oasis.
+#. **Flexible and extendable** Add further instruments to your setup at will. Reuse and adapt existing measurements quickly.
+#. **Scalable** Work with small setups using directly connected instruments. Or connect to large distributed systems using advanced protocols like EPICS.
+#. **Community driven** Contribute to CAMELS and add further instruments on GitHub. CAMELS comes with an instrument driver wizard that helps you implement new instruments.
 
 In experimental physics many experiments utilize a multitude of different measurement devices used in dynamically changing setups where changing measurement procedures or adding new devices is often cumbersome and difficult as it often requires advanced programming knowledge. CAMELS will allow you to define instrument control and measurement protocols using a graphical user interface (GUI) where each measurement step can be added with the click of a button. This provides a low entry-threshold enabling the creation of new and sophisticated measurement protocols without programming knowledge or a deeper understanding of device communication.
 
