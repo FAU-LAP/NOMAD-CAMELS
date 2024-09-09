@@ -75,18 +75,27 @@ class API_Call(Loop_Step):
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.api_type == "CAMELS":
-            protocol_string += f"{tabs}message_body = helper_functions.evaluate_message_body({self.message_body}, eva)\n"
+            if self.message_body == "" and self.message_body is not None and self.message_body != 'None':
+                protocol_string += f"{tabs}message_body = ''\n"
+            else:
+                protocol_string += f"{tabs}message_body = helper_functions.evaluate_message_body({self.message_body}, eva)\n"
+            # Set port to empty string if it is not set
+            
             protocol_string += (
                 f"{tabs}api_result = helper_functions.execute_camels_api_call("
             )
-            protocol_string += f"host='{self.host}', port={self.port}, api_type='{self.api_type}', message_body=message_body, authentication_type='{self.authentication_type}', authentication_string='{self.authentication_string}', selected_camels_function_index={self.selected_camels_function_index}, camels_function_parameters={self.camels_function_parameters}"
+            protocol_string += f"host='{self.host}', port='{self.port}', api_type='{self.api_type}', message_body=message_body, authentication_type='{self.authentication_type}', authentication_string='{self.authentication_string}', selected_camels_function_index={self.selected_camels_function_index}, camels_function_parameters={self.camels_function_parameters}"
             protocol_string += ")\n"
             protocol_string += f"{tabs}helper_functions.save_API_response_to_variable(api_result, namespace, protocol_step_name='{self.protocol_step_name}')\n"
         elif self.api_type == "Generic":
+            if self.message_body == "" and self.message_body is not None and self.message_body != 'None':
+                protocol_string += f"{tabs}message_body = ''\n"
+            else:
+                protocol_string += f"{tabs}message_body = helper_functions.evaluate_message_body({self.message_body}, eva)\n"
             protocol_string += (
                 f"{tabs}api_result = helper_functions.execute_generic_api_call("
             )
-            protocol_string += f"host='{self.host}', port={self.port}, api_type='{self.api_type}', api_url='{self.api_url}', http_method='{self.generic_api_method}', message_body={self.message_body}, authentication_type='{self.authentication_type}', authentication_string='{self.authentication_string}'"
+            protocol_string += f"host='{self.host}', port='{self.port}', api_type='{self.api_type}', api_url='{self.api_url}', http_method='{self.generic_api_method}', message_body=message_body, authentication_type='{self.authentication_type}', authentication_string='{self.authentication_string}'"
             protocol_string += ")\n"
             protocol_string += f"{tabs}helper_functions.save_API_response_to_variable(api_result, namespace, protocol_step_name='{self.protocol_step_name}')\n"
 

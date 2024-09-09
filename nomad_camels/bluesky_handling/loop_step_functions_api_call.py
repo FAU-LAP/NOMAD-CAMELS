@@ -16,6 +16,15 @@ def execute_camels_api_call(
     """
     This function executes the CAMELS API call and returns the results.
     """
+    # Make sure there is HTTP schema in the host
+    if not host.startswith("http"):
+        host = f"http://{host}"
+    # Use port 80 for http and 443 for https if no port is provided
+    if port == "":
+        if host.startswith("https"):
+            port = "443"
+        else:   
+            port = "80"
     if api_type != "CAMELS":
         raise ValueError(
             "The API type is not CAMELS. This function is only for executing CAMELS API functions."
@@ -30,7 +39,7 @@ def execute_camels_api_call(
         # Check the authentication type
         if authentication_type == "Bearer Token":
             result = requests.get(
-                f"http://{host}:{port}{selected_function['formatted_path']}",
+                f"{host}:{port}{selected_function['formatted_path']}",
                 headers={"Authorization": f"Bearer {authentication_string}"},
             )
         elif authentication_type == "HTTP Basic":
@@ -44,7 +53,7 @@ def execute_camels_api_call(
         # Check the authentication type
         if authentication_type == "Bearer Token":
             result = requests.post(
-                f"http://{host}:{port}{selected_function['formatted_path']}",
+                f"{host}:{port}{selected_function['formatted_path']}",
                 headers={"Authorization": f"Bearer {authentication_string}"},
                 json=message_body,
             )
@@ -71,6 +80,15 @@ def execute_generic_api_call(
     """
     This function executes the generic API call and returns the results.
     """
+    # Make sure there is HTTP schema in the host
+    if not host.startswith("http"):
+        host = f"http://{host}"
+    # Use port 80 for http and 443 for https if no port is provided
+    if port == "":
+        if host.startswith("https"):
+            port = "443"
+        else:   
+            port = "80"
     if api_type != "Generic":
         raise ValueError(
             "The API type is not Generic. This function is only for executing Generic API functions."
@@ -80,68 +98,68 @@ def execute_generic_api_call(
         # Check the authentication type
         if authentication_type == "Bearer Token":
             result = requests.get(
-                f"http://{host}:{port}{api_url}",
+                f"{host}:{port}{api_url}",
                 headers={"Authorization": f"Bearer {authentication_string}"},
             )
         elif authentication_type == "HTTP Basic":
             result = requests.get(
-                f"http://{host}:{port}{api_url}",
+                f"{host}:{port}{api_url}",
                 auth=HTTPBasicAuth(*authentication_string.split(":")),
             )
         elif authentication_type == "None":
-            result = requests.get(f"http://{host}:{port}{api_url}")
+            result = requests.get(f"{host}:{port}{api_url}")
 
     elif http_method == "POST":
         # Check the authentication type
         if authentication_type == "Bearer Token":
             result = requests.post(
-                f"http://{host}:{port}{api_url}",
+                f"{host}:{port}{api_url}",
                 headers={"Authorization": f"Bearer {authentication_string}"},
                 json=message_body,
             )
         elif authentication_type == "HTTP Basic":
             result = requests.post(
-                f"http://{host}:{port}{api_url}",
+                f"{host}:{port}{api_url}",
                 auth=HTTPBasicAuth(*authentication_string.split(":")),
                 json=message_body,
             )
         elif authentication_type == "None":
             result = requests.post(
-                f"http://{host}:{port}{api_url}",
+                f"{host}:{port}{api_url}",
                 json=message_body,
             )
     elif http_method == "DELETE":
         # Check the authentication type
         if authentication_type == "Bearer Token":
             result = requests.delete(
-                f"http://{host}:{port}{api_url}",
+                f"{host}:{port}{api_url}",
                 headers={"Authorization": f"Bearer {authentication_string}"},
             )
         elif authentication_type == "HTTP Basic":
             result = requests.delete(
-                f"http://{host}:{port}{api_url}",
+                f"{host}:{port}{api_url}",
                 auth=HTTPBasicAuth(*authentication_string.split(":")),
             )
         elif authentication_type == "None":
-            result = requests.delete(f"http://{host}:{port}{api_url}")
+            result = requests.delete(f"{host}:{port}{api_url}")
 
         elif http_method == "PATCH":
             # Check the authentication type
             if authentication_type == "Bearer Token":
                 result = requests.patch(
-                    f"http://{host}:{port}{api_url}",
+                    f"{host}:{port}{api_url}",
                     headers={"Authorization": f"Bearer {authentication_string}"},
                     json=message_body,
                 )
             elif authentication_type == "HTTP Basic":
                 result = requests.patch(
-                    f"http://{host}:{port}{api_url}",
+                    f"{host}:{port}{api_url}",
                     auth=HTTPBasicAuth(*authentication_string.split(":")),
                     json=message_body,
                 )
             elif authentication_type == "None":
                 result = requests.patch(
-                    f"http://{host}:{port}{api_url}",
+                    f"{host}:{port}{api_url}",
                     json=message_body,
                 )
 
@@ -149,19 +167,19 @@ def execute_generic_api_call(
                 # Check the authentication type
                 if authentication_type == "Bearer Token":
                     result = requests.put(
-                        f"http://{host}:{port}{api_url}",
+                        f"{host}:{port}{api_url}",
                         headers={"Authorization": f"Bearer {authentication_string}"},
                         json=message_body,
                     )
                 elif authentication_type == "HTTP Basic":
                     result = requests.put(
-                        f"http://{host}:{port}{api_url}",
+                        f"{host}:{port}{api_url}",
                         auth=HTTPBasicAuth(*authentication_string.split(":")),
                         json=message_body,
                     )
                 elif authentication_type == "None":
                     result = requests.put(
-                        f"http://{host}:{port}{api_url}",
+                        f"{host}:{port}{api_url}",
                         json=message_body,
                     )
     if result.status_code == 403:
@@ -188,6 +206,8 @@ def evaluate_message_body(message_body, eva):
     for key, value in message_body["variables"].items():
         if value == "":
             message_body["variables"][key] = eva.eval(key)
+    if message_body is None:
+        message_body = ''
     return message_body
 
 
@@ -196,7 +216,7 @@ def get_available_camels_api_functions(host, port, camels_function_parameters):
     This function gets all the available CAMELS API functions.
     """
     # Get all the available functions from the API
-    result = requests.get(f"http://{host}:{port}/openapi.json")
+    result = requests.get(f"{host}:{port}/openapi.json")
     # Parse the JSON response
     openapi_schema = result.json()
     paths = openapi_schema.get("paths", {})
