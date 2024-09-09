@@ -26,17 +26,23 @@ Learn more about CAMELS in our peer-reviewed paper
 Why CAMELS?
 ===========
    
-#. **Smooth installation** 
+#. **Smooth installation**
+ 
    CAMELS is a python package distributed via PyPI. It is easily installable on any computer. On Windows, let the installer do all the work for you.
-#. **Easy to use** 
+#. **Easy to use**
+ 
    No programming skills required. Just configure your measurement and process protocols. Get it done within minutes.
-#. **FAIR data** 
+#. **FAIR data**
+ 
    Automatically store FAIR data with rich metadata that lets you and others understand your experiment in detail. Optionally connect directly with your NOMAD Oasis.
-#. **Flexible and extendable** 
+#. **Flexible and extendable**
+ 
    Add further instruments to your setup at will. Reuse and adapt existing measurements quickly.
-#. **Scalable** 
+#. **Scalable**
+ 
    Work with small setups using directly connected instruments. Or connect to large distributed systems using advanced protocols like EPICS.
-#. **Community driven** 
+#. **Community driven**
+ 
    Contribute to CAMELS and add further instruments on GitHub. CAMELS comes with an instrument driver wizard that helps you implement new instruments.
 
 In experimental physics many experiments utilize a multitude of different measurement devices used in dynamically changing setups where changing measurement procedures or adding new devices is often cumbersome and difficult as it often requires advanced programming knowledge. CAMELS will allow you to define instrument control and measurement protocols using a graphical user interface (GUI) where each measurement step can be added with the click of a button. This provides a low entry-threshold enabling the creation of new and sophisticated measurement protocols without programming knowledge or a deeper understanding of device communication.
