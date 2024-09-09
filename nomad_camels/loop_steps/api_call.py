@@ -454,9 +454,16 @@ class API_Call_Config(Loop_Step_Config):
             self.combobox_camels_api_functions.setCurrentIndex(
                 int(self.loop_step.selected_camels_function_index)
             )
-            selected_function = self.api_functions_list[
-                self.loop_step.selected_camels_function_index
-            ]
+            try:
+                selected_function = self.api_functions_list[
+                    self.loop_step.selected_camels_function_index
+                ]
+            except IndexError:
+                self.loop_step.selected_camels_function_index = -1
+                print(
+                    "Could not load the CAMELS function. Check your connection to the server."
+                )
+                return
             if selected_function["parameters"]:
                 # clear the layout
                 for i in reversed(range(self.CAMELS_functions_layout.count())):
