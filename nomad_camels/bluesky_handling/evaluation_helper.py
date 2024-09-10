@@ -160,7 +160,8 @@ def get_eval(eval_str, namespace, evaluator=None):
         return eval(eval_str, namespace)
     except Exception as err:
         error_text = f"Could not find {eval_str!r} in namespace or evaluate it."
-        if evaluator and error_text in evaluator.raised_exceptions:
-            return np.nan
-        evaluator.raised_exceptions.append(error_text)
+        if evaluator is not None:
+            if evaluator and error_text in evaluator.raised_exceptions:
+                return np.nan
+            evaluator.raised_exceptions.append(error_text)
         raise ValueError(error_text) from err
