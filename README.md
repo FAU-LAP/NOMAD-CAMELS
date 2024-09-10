@@ -34,6 +34,7 @@ Fixes:
 - installed version should now be found correctly when searching for updates
 - removing / moving of buttons in tabs fixed
 - requirement updated to camels suitcase 0.2.2, fixing datasets in instruments
+- Some raised exceptions now provide additional traceback
 
 ## 1.3.1
 
