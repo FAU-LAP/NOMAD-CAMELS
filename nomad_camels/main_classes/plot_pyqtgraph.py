@@ -805,7 +805,7 @@ class LivePlot(QObject, CallbackBase):
             else:
                 if not self.eva.is_to_date(doc["time"]):
                     self.eva.event(doc)
-                new_x = self.eva.eval(self.x)
+                new_x = self.eva.eval(self.x, do_not_reraise=True)
         if self.x == "time" and self._epoch == "run":
             new_x -= self._epoch_offset
 
@@ -816,7 +816,7 @@ class LivePlot(QObject, CallbackBase):
             except KeyError:
                 if not self.eva.is_to_date(doc["time"]):
                     self.eva.event(doc)
-                new_y[y] = self.eva.eval(y)
+                new_y[y] = self.eva.eval(y, do_not_reraise=True)
         self.update_caches(new_x, new_y)
         for fit in self.fitPlots:
             fit.event(doc)
@@ -1211,19 +1211,19 @@ class LivePlot_2D(QObject, CallbackBase):
             else:
                 if not self.eva.is_to_date(doc["time"]):
                     self.eva.event(doc)
-                x = self.eva.eval(self.x)
+                x = self.eva.eval(self.x, do_not_reraise=True)
         try:
             y = doc["data"][self.y]
         except KeyError:
             if not self.eva.is_to_date(doc["time"]):
                 self.eva.event(doc)
-            y = self.eva.eval(self.y)
+            y = self.eva.eval(self.y, do_not_reraise=True)
         try:
             z = doc["data"][self.z]
         except KeyError:
             if not self.eva.is_to_date(doc["time"]):
                 self.eva.event(doc)
-            z = self.eva.eval(self.z)
+            z = self.eva.eval(self.z, do_not_reraise=True)
         self.update(x, y, z)
         self.new_data.emit()
 

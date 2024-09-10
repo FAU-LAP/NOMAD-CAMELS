@@ -31,6 +31,7 @@ class Evaluator(CallbackBase):
         self.namespace = dict(base_namespace)
         self.update_namespace()
         self.last_update = 0
+        self.raised_exceptions = []
 
     def eval_string(self, eval_str: str):
         """
@@ -69,7 +70,7 @@ class Evaluator(CallbackBase):
         except Exception as err:
             raise ValueError(f"Could not evaluate {eval_str!r}") from err
 
-    def eval(self, eval_str: str):
+    def eval(self, eval_str: str, do_not_reraise=False):
         """
         Evaluates the string within the given namespace.
         Checks if the namespace is up to date before evaluating.
@@ -87,6 +88,8 @@ class Evaluator(CallbackBase):
 
         """
         self.update_namespace()
+        if do_not_reraise:
+            return get_eval(eval_str, self.namespace, self)
         return get_eval(eval_str, self.namespace)
 
     def start(self, doc):
@@ -128,7 +131,7 @@ class Evaluator(CallbackBase):
         return self.last_update == t
 
 
-def get_eval(eval_str, namespace):
+def get_eval(eval_str, namespace, evaluator=None):
     """This evaluates the given string within the given namespace.
     Most functionality is taken from bluesky.utils.call_or_eval_one."""
     # If it is a key in our namespace, look it up.
@@ -145,6 +148,10 @@ def get_eval(eval_str, namespace):
     try:
         ast.parse(eval_str)
     except SyntaxError as err:
+        error_text = f"Could not find {eval_str!r} in namespace or evaluate it."
+        if evaluator and error_text in evaluator.raised_exceptions:
+            return np.nan
+        evaluator.raised_exceptions.append(error_text)
         raise ValueError(
             f"Could not find {eval_str!r} in namespace or parse it as a Python expression."
         ) from err
@@ -152,6 +159,8 @@ def get_eval(eval_str, namespace):
     try:
         return eval(eval_str, namespace)
     except Exception as err:
-        raise ValueError(
-            f"Could not find {eval_str!r} in namespace or evaluate it."
-        ) from err
+        error_text = f"Could not find {eval_str!r} in namespace or evaluate it."
+        if evaluator and error_text in evaluator.raised_exceptions:
+            return np.nan
+        evaluator.raised_exceptions.append(error_text)
+        raise ValueError(error_text) from err

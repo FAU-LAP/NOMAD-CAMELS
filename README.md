@@ -35,6 +35,7 @@ Fixes:
 - removing / moving of buttons in tabs fixed
 - requirement updated to camels suitcase 0.2.2, fixing datasets in instruments
 - Some raised exceptions now provide additional traceback
+- Errors raised by plots now only raised once, not for each datapoint
 
 ## 1.3.1
 
