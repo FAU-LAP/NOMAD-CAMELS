@@ -328,6 +328,7 @@ class PlotWidget(QWidget):
         self.setMinimumSize(500, 400)
         self.adjustSize()
         place_widget(self)
+        self.change_maxlen()
 
     def show_again(self):
         if not self.isVisible():
