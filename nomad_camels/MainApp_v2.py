@@ -1692,8 +1692,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_finished()
             if isinstance(e, IndentationError):
                 text = "The protocol did not compile correctly, please check whether there are for example any if-statements or loops that do not have children-steps."
-                raise Exception(text).with_traceback(e.__traceback__)
-            raise e
+                raise Exception(text) from e
+            else:
+                raise e
         self.close_old_queue_devices()
 
     def propagate_exception(self, exception):

@@ -48,7 +48,7 @@ def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
     if main_app is None:
         main_app = QApplication.instance()
         if main_app is None:
-            raise RuntimeError("MainApp not found.")
+            raise RuntimeError("MainApp not found for changing the color theme.")
     if theme in QStyleFactory.keys():
         main_app.setStyleSheet("")
         palette = None

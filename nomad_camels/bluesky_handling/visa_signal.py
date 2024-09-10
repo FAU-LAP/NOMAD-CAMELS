@@ -209,7 +209,7 @@ def retry_query_or_write(
         except Exception as e:
             if i == retries:
                 print(excs)
-                raise Exception(e)
+                raise e
             excs.append(e)
 
 

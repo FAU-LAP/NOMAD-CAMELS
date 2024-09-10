@@ -217,8 +217,8 @@ def retry_function(
     if parent:
         parent.currently_reading = False
     raise Exception(
-        f"Failed to execute function {func} after {retries} retries. Last exception: {excs[-1]}"
-    )
+        f"Failed to execute function {func} after {retries} retries.\nLast exception: {excs[-1]}\nFirst exception: {excs[0]}"
+    ) from excs[-1]
 
 
 class Custom_Function_SignalRO(SignalRO):
