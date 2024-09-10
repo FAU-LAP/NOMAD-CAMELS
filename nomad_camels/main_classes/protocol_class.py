@@ -505,7 +505,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.ending_protocol_selection.setToolTip(
             "Select a protocol to be performed at the end of this protocol or when it is aborted by the user.\nThis may be useful e.g. to turn something of in a controlled way.\nThis is NOT executed, when the protocol is run as a subprotocol."
         )
-        self.checkBox_perform_at_end.checkStateChanged.connect(
+        self.checkBox_perform_at_end.stateChanged.connect(
             self.check_use_ending_steps
         )
         self.check_use_ending_steps()
