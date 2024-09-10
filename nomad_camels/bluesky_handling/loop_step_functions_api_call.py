@@ -4,14 +4,14 @@ from requests.auth import HTTPBasicAuth
 
 
 def execute_camels_api_call(
-    host,
-    port,
-    api_type,
-    message_body,
-    authentication_type,
-    authentication_string,
-    selected_camels_function_index,
-    camels_function_parameters,
+    host: str,
+    port: str,
+    api_type: str,
+    message_body: dict,
+    authentication_type: str,
+    authentication_string: str,
+    selected_camels_function_index: int,
+    camels_function_parameters: dict,
 ):
     """
     This function executes the CAMELS API call and returns the results.
@@ -23,7 +23,7 @@ def execute_camels_api_call(
     if port == "":
         if host.startswith("https"):
             port = "443"
-        else:   
+        else:
             port = "80"
     if api_type != "CAMELS":
         raise ValueError(
@@ -68,14 +68,16 @@ def execute_camels_api_call(
 
 
 def execute_generic_api_call(
-    host,
-    port,
-    api_type,
-    api_url,
-    http_method,
-    message_body,
-    authentication_type,
-    authentication_string,
+    host: str,
+    port: str,
+    api_type: str,
+    api_url: str,
+    http_method: str,
+    message_body: dict,
+    authentication_type: str,
+    authentication_string: str,
+    http_parameters: dict,
+
 ):
     """
     This function executes the generic API call and returns the results.
@@ -87,12 +89,26 @@ def execute_generic_api_call(
     if port == "":
         if host.startswith("https"):
             port = "443"
-        else:   
+        else:
             port = "80"
     if api_type != "Generic":
         raise ValueError(
             "The API type is not Generic. This function is only for executing Generic API functions."
         )
+    
+    # Add the http_parameters to the api_url
+    if http_parameters:
+        print(http_parameters)
+        api_url = api_url + "?"
+        parameters = http_parameters['Parameter']
+        values = http_parameters['Value']
+        for param, value in zip(parameters, values):
+            api_url = api_url + f"{param}={value}&"
+        api_url = api_url[:-1]
+        print(api_url)
+        print('_'   * 50)
+    
+    
     # Check the HTTP method
     if http_method == "GET":
         # Check the authentication type
@@ -202,12 +218,20 @@ def evaluate_message_body(message_body, eva):
     This function evaluates the values of the message_body items if the value is empty.
     This allows you to use variables and values that are obtained during the script execution.
     """
+    # Check if the message_body is None or empty
+    if (
+        message_body is None
+        or message_body == ""
+        or message_body == {}
+        or message_body == "None"
+    ):
+        return message_body
     # For key value pair in message_body dictionary evaluate the value
     for key, value in message_body["variables"].items():
         if value == "":
             message_body["variables"][key] = eva.eval(key)
     if message_body is None:
-        message_body = ''
+        message_body = ""
     return message_body
 
 

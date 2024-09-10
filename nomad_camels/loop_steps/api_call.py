@@ -7,8 +7,8 @@ from PySide6.QtWidgets import (
     QTextEdit,
 )
 from PySide6.QtCore import Qt, Signal
+from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
-import os
 import json
 import requests
 from urllib.parse import urlparse
@@ -61,12 +61,13 @@ class API_Call(Loop_Step):
         self.selected_camels_function_index = step_info.get(
             "selected_camels_function_index", 0
         )
-        if self.selected_camels_function_index == 'None':
+        if self.selected_camels_function_index == "None":
             self.selected_camels_function_index = None
         self.camels_function_parameters = step_info.get(
             "camels_function_parameters", None
         )
         self.protocol_step_name = step_info.get("name", None)
+        self.http_parameters = step_info.get("http_parameters", {})
 
     def get_protocol_string(self, n_tabs=1):
         """
@@ -75,12 +76,16 @@ class API_Call(Loop_Step):
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.api_type == "CAMELS":
-            if self.message_body == "" and self.message_body is not None and self.message_body != 'None':
+            if (
+                self.message_body == ""
+                and self.message_body is not None
+                and self.message_body != "None"
+            ):
                 protocol_string += f"{tabs}message_body = ''\n"
             else:
                 protocol_string += f"{tabs}message_body = helper_functions.evaluate_message_body({self.message_body}, eva)\n"
             # Set port to empty string if it is not set
-            
+
             protocol_string += (
                 f"{tabs}api_result = helper_functions.execute_camels_api_call("
             )
@@ -88,14 +93,18 @@ class API_Call(Loop_Step):
             protocol_string += ")\n"
             protocol_string += f"{tabs}helper_functions.save_API_response_to_variable(api_result, namespace, protocol_step_name='{self.protocol_step_name}')\n"
         elif self.api_type == "Generic":
-            if self.message_body == "" and self.message_body is not None and self.message_body != 'None':
+            if (
+                self.message_body == ""
+                and self.message_body is not None
+                and self.message_body != "None"
+            ):
                 protocol_string += f"{tabs}message_body = ''\n"
             else:
                 protocol_string += f"{tabs}message_body = helper_functions.evaluate_message_body({self.message_body}, eva)\n"
             protocol_string += (
                 f"{tabs}api_result = helper_functions.execute_generic_api_call("
             )
-            protocol_string += f"host='{self.host}', port='{self.port}', api_type='{self.api_type}', api_url='{self.api_url}', http_method='{self.generic_api_method}', message_body=message_body, authentication_type='{self.authentication_type}', authentication_string='{self.authentication_string}'"
+            protocol_string += f"host='{self.host}', port='{self.port}', api_type='{self.api_type}', api_url='{self.api_url}', http_method='{self.generic_api_method}', message_body=message_body, authentication_type='{self.authentication_type}', authentication_string='{self.authentication_string}', http_parameters={self.http_parameters}"
             protocol_string += ")\n"
             protocol_string += f"{tabs}helper_functions.save_API_response_to_variable(api_result, namespace, protocol_step_name='{self.protocol_step_name}')\n"
 
@@ -126,6 +135,7 @@ class API_Call_Config(Loop_Step_Config):
         self.label_camels_api_functions = QLabel("CAMELS API Functions:")
         self.label_api_url = QLabel("API URL:")
         self.label_generic_api_method = QLabel("HTTP Method:")
+        self.label_table_parameters = QLabel("HTTP Parameters:")
 
         # Create combobox for API type
         self.combobox_camels_api_functions = None
@@ -162,6 +172,19 @@ class API_Call_Config(Loop_Step_Config):
         self.text_edit_message_body = QTextEdit()
         self.text_edit_message_body.setText(self.loop_step.message_body)
         self.text_edit_message_body.textChanged.connect(self.update_message_body)
+
+        # Variables table for the HTTP parameters
+        self.table_http_parameters = AddRemoveTable(headerLabels=["Parameter", "Value"])
+        self.table_http_parameters.setToolTip(
+            "Add the parameters and their values for the HTTP request.\nThey are appended to the URL like\n<URL>?<parameter1>=<value1>&<parameter2>=<value2>&..."
+        )
+        self.table_http_parameters.table_model.itemChanged.connect(
+            self.update_parameters_table
+        )
+        self.table_http_parameters.change_table_data(self.loop_step.http_parameters)
+        self.table_http_parameters.table_model.rowsRemoved.connect(
+            self.update_parameters_table
+        )
 
         # Combobox for authentication type
         self.combobox_authentication_type = QComboBox()
@@ -242,6 +265,10 @@ class API_Call_Config(Loop_Step_Config):
         layout.addWidget(self.label_message_body, 12, 0)
         layout.addWidget(self.text_edit_message_body, 12, 1)
 
+        # Set parameters table
+        layout.addWidget(self.label_table_parameters, 15, 0)
+        layout.addWidget(self.table_http_parameters, 16, 0, 1, 2)
+
         # Set authentication type
         layout.addWidget(self.label_authentication_type, 20, 0)
         layout.addWidget(self.combobox_authentication_type, 20, 1)
@@ -262,6 +289,18 @@ class API_Call_Config(Loop_Step_Config):
             self.combobox_generic_api_method.findText(self.loop_step.generic_api_method)
         )
 
+    def update_parameters_table(self):
+        """
+        Update the parameters table.
+        """
+        self.loop_step.http_parameters = self.table_http_parameters.update_table_data()
+
+    def rows_removed_parameters_table(self):
+        """
+        Update the parameters table.
+        """
+        self.loop_step.http_parameters = self.table_http_parameters.update_table_data()
+
     def update_api_url(self):
         """
         Update the API URL.
@@ -273,22 +312,23 @@ class API_Call_Config(Loop_Step_Config):
         parsed_url = urlparse(api_url_with_schema)
         if parsed_url.netloc == "":
             pass
-        elif re.match(r'^[^:]+:\d+$', parsed_url.netloc):
+        elif re.match(r"^[^:]+:\d+$", parsed_url.netloc):
             try:
                 self.loop_step.host = parsed_url.netloc.split(":")[0]
             except ValueError:
-                print('Failed to parse the host from the URL. Please check the URL format.')
+                print(
+                    "Failed to parse the host from the URL. Please check the URL format."
+                )
             try:
                 self.loop_step.port = parsed_url.netloc.split(":")[1]
             except IndexError:
-                print('Failed to parse the port from the URL. Please check the URL format.')
+                print(
+                    "Failed to parse the port from the URL. Please check the URL format."
+                )
             self.line_edit_host.setText(self.loop_step.host)
             self.line_edit_host.textChanged.emit(self.line_edit_host.text())
             self.line_edit_port.setText(self.loop_step.port)
             self.line_edit_port.textChanged.emit(self.line_edit_port.text())
-    
-
-
 
     def update_host(self):
         """
@@ -359,7 +399,9 @@ class API_Call_Config(Loop_Step_Config):
             self.combobox_generic_api_method.setVisible(True)
             # emit signal of the combobox to update the method
             self.combobox_generic_api_method.setCurrentIndex(
-                self.combobox_generic_api_method.findText(self.loop_step.generic_api_method)
+                self.combobox_generic_api_method.findText(
+                    self.loop_step.generic_api_method
+                )
             )
             self.combobox_generic_api_method.currentIndexChanged.emit(
                 self.combobox_generic_api_method.currentIndex()
@@ -395,7 +437,9 @@ class API_Call_Config(Loop_Step_Config):
         port = self.loop_step.port
         if host == "":
             self.combobox_camels_api_functions.clear()
-            self.combobox_camels_api_functions.addItem("Please enter a host address first.")
+            self.combobox_camels_api_functions.addItem(
+                "Please enter a host address first."
+            )
             return
         if port == "":
             self.combobox_camels_api_functions.clear()
@@ -481,7 +525,10 @@ class API_Call_Config(Loop_Step_Config):
                         line_edit_parameter, i + 1, 1
                     )
                     # match the parameter name with the value
-                    if self.loop_step.camels_function_parameters is not None and self.loop_step.camels_function_parameters != 'None':
+                    if (
+                        self.loop_step.camels_function_parameters is not None
+                        and self.loop_step.camels_function_parameters != "None"
+                    ):
                         for (
                             parameter_name,
                             value,
@@ -544,7 +591,10 @@ class API_Call_Config(Loop_Step_Config):
             print(
                 "Could not load the CAMELS function. Check your connection to the server."
             )
-        if self.loop_step.camels_function_parameters is not None and self.loop_step.camels_function_parameters != 'None':
+        if (
+            self.loop_step.camels_function_parameters is not None
+            and self.loop_step.camels_function_parameters != "None"
+        ):
             for (
                 parameter_name,
                 value,
