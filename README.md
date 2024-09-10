@@ -30,10 +30,13 @@ Changes:
 - Data passing from the Execute Python Script step was changed. Now should be more stable, as it looks for the Data between the `###Start Data` und `###End Data` strings. See our [documentation](https://fau-lap.github.io/NOMAD-CAMELS/doc/protocol_steps/step_Execute_Python_File.html#returning-results) for more details. 
 
 Fixes:
-- Fixed a bug where a protocol would show multiple times
+- fixed a bug where a protocol would show multiple times
 - installed version should now be found correctly when searching for updates
 - removing / moving of buttons in tabs fixed
 - requirement updated to camels suitcase 0.2.2, fixing datasets in instruments
+- some raised exceptions now provide additional traceback
+- errors raised by plots now only raised once, not for each datapoint
+- number of datapoints set in plot definition now correctly taken over to plot
 
 ## 1.3.1
 

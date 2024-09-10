@@ -980,11 +980,11 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
     try:
         temp_folder = tempfile.mkdtemp()
     except Exception as e:
-        raise Exception(f"Error creating temporary folder: {e}")
+        raise Exception(f"Error creating temporary folder: {e}") from e
     try:
         venv.create(temp_folder, with_pip=True)
     except Exception as e:
-        raise Exception(f"Error creating virtual environment: {e}")
+        raise Exception(f"Error creating virtual environment: {e}") from e
 
     # Path to the virtual environment's Python interpreter
     python_executable = (
@@ -1001,14 +1001,14 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
                     [python_executable, "-m", "pip", "install", f"{package}"]
                 )
             except Exception as e:
-                raise Exception(f"Error installing package {package}: {e}")
+                raise Exception(f"Error installing package {package}: {e}") from e
         else:
             try:
                 subprocess.run(
                     [python_executable, "-m", "pip", "install", f"{package}=={version}"]
                 )
             except Exception as e:
-                raise Exception(f"Error installing package {package}=={version}: {e}")
+                raise Exception(f"Error installing package {package}=={version}: {e}") from e
 
     # Step 3: Run the specified Python script
     try:
@@ -1016,14 +1016,14 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
             [python_executable, script_to_run], cwd=os.path.dirname(script_to_run)
         )
     except Exception as e:
-        raise Exception(f"Error running script {script_to_run}: {e}")
+        raise Exception(f"Error running script {script_to_run}: {e}") from e
 
     # Step 4: Delete the virtual environment
     try:
         if os.path.exists(temp_folder):
             shutil.rmtree(temp_folder)
     except Exception as e:
-        raise Exception(f"Error deleting temporary folder: {e}")
+        raise Exception(f"Error deleting temporary folder: {e}") from e
     return result_python_file
 
 

@@ -71,7 +71,7 @@ def validate_api_key(api_key: str) -> bool:
             conn.close()
             return False
         else:
-            raise  # Re-raise the exception if it's not the specific one we're looking for
+            raise e # Re-raise the exception if it's not the specific one we're looking for
     result = c.fetchone()
     conn.close()
     return result is not None
@@ -377,7 +377,7 @@ class FastapiThread(QThread):
                 raise HTTPException(
                     status_code=500,
                     detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.\n{e}",
-                )
+                ) from e
             time.sleep(0.05)
             protocol_values = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
@@ -430,7 +430,7 @@ class FastapiThread(QThread):
                 raise HTTPException(
                     status_code=500,
                     detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.\n{e}",
-                )
+                ) from e
             time.sleep(0.05)
             protocol_values = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
@@ -493,7 +493,7 @@ class FastapiThread(QThread):
                         raise HTTPException(
                             status_code=500,
                             detail=f"Failed to update protocol {protocol_name} in queue as the protocol was not found.\n{e}",
-                        )
+                        ) from e
             time.sleep(0.05)
             protocol_values = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
