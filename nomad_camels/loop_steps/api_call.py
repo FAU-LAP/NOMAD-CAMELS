@@ -186,6 +186,7 @@ class API_Call_Config(Loop_Step_Config):
         )
         # Line edit authentication string
         self.line_edit_authentication_string = QLineEdit()
+        self.line_edit_authentication_string.setEchoMode(QLineEdit.Password)
         self.line_edit_authentication_string.textChanged.connect(
             self.update_authentication_string
         )
