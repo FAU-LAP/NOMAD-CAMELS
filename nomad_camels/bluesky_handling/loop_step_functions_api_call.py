@@ -218,20 +218,10 @@ def evaluate_message_body(message_body, eva):
     This function evaluates the values of the message_body items if the value is empty.
     This allows you to use variables and values that are obtained during the script execution.
     """
-    # Check if the message_body is None or empty
-    if (
-        message_body is None
-        or message_body == ""
-        or message_body == {}
-        or message_body == "None"
-    ):
-        return message_body
     # For key value pair in message_body dictionary evaluate the value
     for key, value in message_body["variables"].items():
         if value == "":
             message_body["variables"][key] = eva.eval(key)
-    if message_body is None:
-        message_body = ""
     return message_body
 
 

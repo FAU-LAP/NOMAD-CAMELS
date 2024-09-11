@@ -76,14 +76,10 @@ class API_Call(Loop_Step):
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.api_type == "CAMELS":
-            if (
-                self.message_body == ""
-                and self.message_body is not None
-                and self.message_body != "None"
-            ):
+            if not isinstance(self.message_body, dict):
                 protocol_string += f"{tabs}message_body = ''\n"
             else:
-                protocol_string += f"{tabs}message_body = helper_functions.evaluate_message_body({self.message_body}, eva)\n"
+                protocol_string += f"{tabs}message_body = helper_functions.evaluate_message_body({self.message_body}, eva, camels=True)\n"
             # Set port to empty string if it is not set
 
             protocol_string += (
@@ -93,14 +89,10 @@ class API_Call(Loop_Step):
             protocol_string += ")\n"
             protocol_string += f"{tabs}helper_functions.save_API_response_to_variable(api_result, namespace, protocol_step_name='{self.protocol_step_name}')\n"
         elif self.api_type == "Generic":
-            if (
-                self.message_body == ""
-                and self.message_body is not None
-                and self.message_body != "None"
-            ):
+            if not isinstance(self.message_body, dict):
                 protocol_string += f"{tabs}message_body = ''\n"
             else:
-                protocol_string += f"{tabs}message_body = helper_functions.evaluate_message_body({self.message_body}, eva)\n"
+                protocol_string += f"{tabs}message_body = helper_functions.evaluate_message_body({self.message_body}, eva, camels=False)\n"
             protocol_string += (
                 f"{tabs}api_result = helper_functions.execute_generic_api_call("
             )
