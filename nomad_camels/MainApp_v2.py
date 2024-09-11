@@ -225,6 +225,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.extension_user = {}
         self.extension_sample = {}
         self.eln_context = extension_contexts.ELN_Context(self)
+        extension_contexts.active_eln_context = self.eln_context
         self.extension_contexts = {"ELN_Context": self.eln_context}
         self.extensions = []
         self.load_extensions()
@@ -835,11 +836,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def select_nomad_sample(self):
         """Opens a dialog to select a sample from NOMAD."""
         # IMPORT sample_selection only if it is needed
-        from nomad_camels.nomad_integration import sample_selection
+        from nomad_camels.nomad_integration import entry_selection
 
-        dialog = sample_selection.Sample_Selector(self)
+        dialog = entry_selection.EntrySelector(self)
         if dialog.exec():
-            self.nomad_sample = dialog.sample_data
+            self.nomad_sample = dialog.return_data
             if "name" in self.nomad_sample:
                 name = self.nomad_sample["name"]
             else:
