@@ -311,9 +311,9 @@ def build_protocol(
         for k, v in extra_config.items():
             devices_string += f'\t\tconfig["{k}"] = {v}\n'
         devices_string += f"\t\tconfigs = {dev}.configure(config)[1]\n"
-        devices_string += f'\t\tdevice_config["{dev}"] = {{}}\n'
-        devices_string += f'\t\tdevice_config["{dev}"].update(helper_functions.simplify_configs_dict(configs))\n'
-        devices_string += f'\t\tdevice_config["{dev}"].update(settings)\n'
+        devices_string += f'\t\tdevice_config["{dev}"] = {{"settings": {{}}}}\n'
+        devices_string += f'\t\tdevice_config["{dev}"]["settings"].update(helper_functions.simplify_configs_dict(configs))\n'
+        devices_string += f'\t\tdevice_config["{dev}"]["settings"].update(settings)\n'
         devices_string += f'\t\tdevice_config["{dev}"].update(additional_info)\n'
         devices_string += f'\t\tdevs.update({{"{dev}": {dev}}})\n'
         if device.name in device_handling.local_packages:

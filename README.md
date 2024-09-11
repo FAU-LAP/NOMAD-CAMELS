@@ -28,7 +28,8 @@ Features:
 
 Changes:
 - renamed `comment / uncomment` to `enable / disable` to make it more clear
-- Data passing from the Execute Python Script step was changed. Now should be more stable, as it looks for the Data between the `###Start Data` und `###End Data` strings. See our [documentation](https://fau-lap.github.io/NOMAD-CAMELS/doc/protocol_steps/step_Execute_Python_File.html#returning-results) for more details. 
+- Data passing from the Execute Python Script step was changed. Now should be more stable, as it looks for the Data between the `###Start Data` und `###End Data` strings. See our [documentation](https://fau-lap.github.io/NOMAD-CAMELS/doc/protocol_steps/step_Execute_Python_File.html#returning-results) for more details.
+- Refactored the way metadata is saved in instruments
 
 Fixes:
 - fixed a bug where a protocol would show multiple times
