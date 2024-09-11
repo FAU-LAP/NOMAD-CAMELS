@@ -37,6 +37,7 @@ Fixes:
 - some raised exceptions now provide additional traceback
 - errors raised by plots now only raised once, not for each datapoint
 - number of datapoints set in plot definition now correctly taken over to plot
+- fixed a bug that would stop users from logging in to the central NOMAD
 
 ## 1.3.1
 

@@ -62,9 +62,9 @@ def login_to_nomad(parent=None):
     if dialog.exec() != QDialog.Accepted:
         return
     nomad_url = dialog.url
-    make_correct_url()
     if not nomad_url:
         nomad_url = central_url
+    make_correct_url()
     if dialog.token:
         local_auth = {"Authorization": f"Bearer {dialog.token}"}
         response = requests.get(f"{nomad_url}/auth/signature_token", headers=local_auth)
