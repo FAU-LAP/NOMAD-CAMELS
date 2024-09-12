@@ -42,7 +42,7 @@ Fixes:
 - errors raised by plots now only raised once, not for each datapoint
 - number of datapoints set in plot definition now correctly taken over to plot
 - fixed a bug that would stop users from logging in to the central NOMAD
-- logging used a bad file handler, now working
+- logging used a bad file handler that would stop logs, now corrected
 
 ## 1.3.1
 
