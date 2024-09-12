@@ -73,17 +73,19 @@ sys.stdout.flush()
 
 where the keys of the returned dictionary match the variable names defined in the "Values returned by the Python file" table.
 
-> [!IMPORTANT]
-> You **MUST** print the `###Start Data` and `###End Data` strings so that CAMELS knows where to find the returned dictionary. This prevents other prints from your script from disturbing the data extraction later on.
+```{important}
+You **MUST** print the `###Start Data` and `###End Data` strings so that CAMELS knows where to find the returned dictionary. This prevents other prints from your script from disturbing the data extraction later on.
+``` 
 
 CAMELS will then match the returned dictionary with the names of the values you defined that will be returned by the file and saves them to your data file.
 
 Every key of the returned data dictionary is added to the Python namespace. This means you can access this variable the same way you would any other variable. You can use it for example to set an instrument channel to this value.
 
-> [!IMPORTANT]
-> You do not need to define the returned variable names. But if you do not, the returned value is not saved to the final data file! 
->
-> You can still access **ALL** the variables that are returned by the Python script in following protocol steps. In the example above you could still use `results2` as the variable for a *Set Channel* after the Python script execution.  
+```{important}
+You do not need to define the returned variable names. But if you do not, the returned value is not saved to the final data file! 
+
+You can still access **ALL** the variables that are returned by the Python script in following protocol steps. In the example above you could still use `results2` as the variable for a *Set Channel* after the Python script execution. 
+``` 
 
 An example of a `Execute Python Script` step can be seen here.
 ![Example Image showing hwo to use the Execute Python Script step.](images/image-6.png)
@@ -129,5 +131,6 @@ print(json_dump)
 {"a": [[1, 2, 3], [4, 5, 6]], "aa": [2, [2, 3, 4], [[1, 2, 3], [4, 5, 6]]], "bb": [2]}
 ```
 
-> [!NOTE]
-> Anything that can be serialized with JSON can be returned by your Python file.
+```{note}
+Anything that can be serialized with JSON can be returned by your Python file.
+```

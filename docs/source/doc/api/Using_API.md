@@ -104,8 +104,9 @@ If you want to queue protocols see [here](#protocol-queue) for more information.
 
 ### GET: Run Protocols
 
-> [!NOTE]
-> `GET` requests can be performed using a regular browser by entering the URL below.
+```{note}
+`GET` requests can be performed using a regular browser by entering the URL below.
+``` 
 
 ```bash
 GET /api/v1/actions/run/protocols/{protocol_name}
@@ -122,8 +123,9 @@ In response to the request, you will receive the UUID, which allows you to track
 
 ### POST: Run Protocols with Variables
 
-> [!NOTE]
-> `POST` requests can **NOT** be performed using a regular browser.
+```{note}
+`POST` requests can **NOT** be performed using a regular browser.
+``` 
 
 ```bash
 POST /api/v1/actions/run/protocols/{protocol_name}
