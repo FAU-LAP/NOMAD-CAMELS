@@ -1,4 +1,4 @@
-![NOMAD CAMELS](/nomad_camels/graphics/camels_horizontal.png)
+<img src="https://fau-lap.github.io/NOMAD-CAMELS/_images/camels-horizontal.svg" alt="NOMAD CAMELS" width="300"/>
 
 ## Configurable Application for Measurements, Experiments and Laboratory Systems  
 
