@@ -2,7 +2,7 @@
 
 This step allows you to call any API that is hosted on a server. It uses HTTP requests so you can communicate with any API that answers to something like
 
-```http
+```bash
 <host>:<port>/path/to/api?parameter=value
 ```
 
@@ -21,15 +21,18 @@ There are several options to configure your API call:
 This is the host of the web server that you want to access. This can be an IP address or a URL.
 
 If you enter a URL the host should end with the top-level domain, so something like `.com`, `.de`, `.org`, ...
-> [!NOTE]
-> If the host URL you enter does not start with `http://` or `https://` then `http://` is **automatically prepended** to the URL.
+
+```{note}
+If the host URL you enter does not start with `http://` or `https://` then `http://` is **automatically prepended** to the URL.
+```
 
 ### Port - [Integer]
 
 You might need to specify the exact port of the host you want to address.
 
-> [!NOTE]
-> If you do not enter a port, then CAMELS will automatically add `80` for `http` requests and `443` for `https` requests. These are the default ports that for example browsers also use.
+```{note}
+If you do not enter a port, then CAMELS will automatically add `80` for `http` requests and `443` for `https` requests. These are the default ports that for example browsers also use.
+```
 
 ### API Type - [Selection]
 
@@ -67,8 +70,9 @@ Which method you need depends on the the API you want to call. If you want to ca
 
 Only available if you are using the `CAMELS` API call. This selection box will try and connect to the given CAMELS API and get all available functions.
 
-> [!CAUTION]
-> You must enter the correct host and port for this to work. Otherwise you will not see the available functions but only the message `Could not connect to the sever.`
+```{caution}
+You must enter the correct host and port for this to work. Otherwise you will not see the available functions but only the message `Could not connect to the sever.
+```
 
 Depending on the API function selected you will have different options of further configuring the request. You can for example enter a [message body](#message-body---string) and/or [function parameters](#camels-function-parameters-value---string) for some. The available settings will be automatically displayed for you to fill out.
 
@@ -97,9 +101,6 @@ Some CAMELS API functions have parameters that can either be used directly in th
 
 with the parameters `protocol_name` and `index`. Simply enter the string and/or number that fits your protocols.
 
-> [!TIP]
-> Helpful advice for doing things better or more easily.
-
 ### HTTP Parameters - [Key:Value - String]
 
 When using the `Generic` API calls you can define any number of parameters that you want to pass with the HTTP request in the form of 
@@ -124,40 +125,29 @@ Currently we support:
 
 You can pass all variables used in the protocol to the body of the HTTP requests.
 
-The returned data (a dictionary) is converted to variables where the key name of the dictionary becomes the variable name prefixed by the *API Call* step name. You can use these variables in the following protocol steps.
+The returned data (a dictionary) is converted to variables where the key name of the dictionary becomes the variable name prefixed by the *API Call* step name:
 
-> [!NOTE]
-> As CAMELS can not know what variables it will be getting, it will display all uses of the new variables in red. You can simply ignore this visual warning.
+```python
+<API Call step name>_key
+```
 
-## API Options
+ You can use these variables in the protocol steps following the API call.
 
-You can chose between two general API types to communicate with:
+So if your API call returns a dictionary like
 
-1. [`CAMELS`](#api-type---camels)
+```JSON
+{
+    "final_result": 123,
+    "additional_result": 456
+}
+```
 
-   If you want to communicate with the CAMELS API. This can either be the API of the same instance of CAMELS running the protocol or it could be a CAMELS instance running on some other hardware.
-2. [`Generic`](#api-type---generic)
+The *API Call* protocol step has the name `API_Call` so you can access the returned values in the following steps by using the variables
+`API_Call_final_result` and `API_Call_additional_result`.
+This would look like this for example
 
-   With this you can communicate easily with other APIs or web servers and can configure the correct request settings in the GUI.
+![alt text](images/image-4.png)
 
-### API Type - `CAMELS`
-
-This step is used to execute the functions offered by the CAMELS API.
-
-#### Available Functions
-
-If you select this API type you will get a drop down menu of all available API requests offered by the CAMELS API. This list is created dynamically every time you click the drop down menu. For this to work you must enter a working `host` and `port` address of a running CAMELS API instance.
-
-#### Parameters
-
-Some CAMELS API requests require the user to enter parameters such as the protocol name you want to run or the index of the queue item you want to remove. For each function selection you can enter values for these parameters.
-
-For `POST` requests you can pass a message body. This is done to modify the variables of protocols.
-
-### API Type - `Generic`
-
-This options allows you to address any API that accepts HTTP requests to a specific URL.
-
-
-
-For `POST`, `PUT` and `PATCH` requests you can pass a message body. This is done to modify the variables of protocols.
+```{attention}
+As CAMELS can not know what variables it will be getting, it will display all uses of these kinds of variables in red. You can simply ignore this visual warning.
+```
