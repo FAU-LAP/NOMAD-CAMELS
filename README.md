@@ -22,7 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 Features:
 
-- Added a **new** protocol step called `API Call`. This step allows you the user to call other APIs via HTTP requests. There is native support for CAMELS API calls. Results retunred by the API calls can then be used in the following steps.
+- Added a **new** protocol step called `API Call`. This step allows you the user to call other APIs via HTTP requests. There is native support for CAMELS API calls. Results returned by the API calls can then be used in the following steps.
 - CAMELS API server now accessible from network. (Changed host setting to `0.0.0.0`)
 - CAMELS API now lets you get a JSON string containing the protocol and all its settings
 - CAMELS API now lets you get a JSON string containing the current CAMELS settings.
@@ -31,7 +31,7 @@ Features:
 
 Changes:
 
-- renamed `comment / uncomment` to `enable / disable` to make it more clear
+- Renamed `comment / uncomment` to `enable / disable` for protocol steps to make it more clear
 - Data passing from the Execute Python Script step was changed. Now should be more stable, as it looks for the Data between the `###Start Data` und `###End Data` strings. See our [documentation](https://fau-lap.github.io/NOMAD-CAMELS/doc/protocol_steps/step_Execute_Python_File.html#returning-results) for more details.
 - Refactored the way metadata is saved in instruments
 
