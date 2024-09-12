@@ -50,6 +50,8 @@ def update_log_settings():
 
         app_log.addHandler(my_handler)
 
+    my_handler.baseFilename = logfile
+
     prefs = variables_handling.preferences
     if "log_level" in prefs and prefs["log_level"]:
         log_level = prefs["log_level"]
