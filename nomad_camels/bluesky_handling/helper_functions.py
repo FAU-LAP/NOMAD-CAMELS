@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QProgressBar,
     QPushButton,
-    QComboBox
+    QComboBox,
 )
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QFont
@@ -33,6 +33,8 @@ import inspect
 import os
 import sys
 import glob
+
+from nomad_camels.bluesky_handling.loop_step_functions_api_call import execute_camels_api_call, execute_generic_api_call, save_API_response_to_variable, evaluate_message_body
 
 
 def get_newest_file(directory):
@@ -655,7 +657,7 @@ class Prompt_Box(QMessageBox):
         """Sets `self.done_flag` to False and starts `self.exec()`."""
         self.done_flag = False
         self.exec()
-    
+
     def abort_action(self):
         """
         If the abort button is clicked, the protocol is stopped.
@@ -714,7 +716,9 @@ class Value_Box(QDialog):
         self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.buttonBox.setToolTip('"OK" will set the values, click "Cancel" to set no new values.')
+        self.buttonBox.setToolTip(
+            '"OK" will set the values, click "Cancel" to set no new values.'
+        )
         layout = QGridLayout()
 
         self.helper = BoxHelper()
@@ -976,11 +980,11 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
     try:
         temp_folder = tempfile.mkdtemp()
     except Exception as e:
-        raise Exception(f"Error creating temporary folder: {e}")
+        raise Exception(f"Error creating temporary folder: {e}") from e
     try:
         venv.create(temp_folder, with_pip=True)
     except Exception as e:
-        raise Exception(f"Error creating virtual environment: {e}")
+        raise Exception(f"Error creating virtual environment: {e}") from e
 
     # Path to the virtual environment's Python interpreter
     python_executable = (
@@ -997,14 +1001,14 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
                     [python_executable, "-m", "pip", "install", f"{package}"]
                 )
             except Exception as e:
-                raise Exception(f"Error installing package {package}: {e}")
+                raise Exception(f"Error installing package {package}: {e}") from e
         else:
             try:
                 subprocess.run(
                     [python_executable, "-m", "pip", "install", f"{package}=={version}"]
                 )
             except Exception as e:
-                raise Exception(f"Error installing package {package}=={version}: {e}")
+                raise Exception(f"Error installing package {package}=={version}: {e}") from e
 
     # Step 3: Run the specified Python script
     try:
@@ -1012,14 +1016,14 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
             [python_executable, script_to_run], cwd=os.path.dirname(script_to_run)
         )
     except Exception as e:
-        raise Exception(f"Error running script {script_to_run}: {e}")
+        raise Exception(f"Error running script {script_to_run}: {e}") from e
 
     # Step 4: Delete the virtual environment
     try:
         if os.path.exists(temp_folder):
             shutil.rmtree(temp_folder)
     except Exception as e:
-        raise Exception(f"Error deleting temporary folder: {e}")
+        raise Exception(f"Error deleting temporary folder: {e}") from e
     return result_python_file
 
 
@@ -1029,15 +1033,13 @@ def evaluate_python_file_output(stdout, namespace):
     import re
 
     if stdout:
-        json_pattern = re.compile(
-            r"\{(?:[^{}]*|\{.*?\})*\}"
-        )  # Extract the dictionary from the stdout, can handle one level of nested dictionaries
+        json_pattern = re.compile(r"###Start Data(.*?)###End Data", re.DOTALL)
 
         # Search for JSON in the stdout
         match = json_pattern.search(stdout)
 
         if match:
-            json_str = match.group()
+            json_str = match.group(1).strip()
 
             # Load the JSON string into a Python dictionary
             data = json.loads(json_str)
@@ -1053,10 +1055,12 @@ def evaluate_python_file_output(stdout, namespace):
 
             for key, value in variables_dict.items():
                 namespace[key] = value
+                print(f"Python File returned:\n{key} = {value}")
 
         if isinstance(data, dict):
             for key, value in data.items():
                 namespace[key] = value
+                print(f"Python File returned:\n{key} = {value}")
 
 
 class Value_Setter(QWidget):

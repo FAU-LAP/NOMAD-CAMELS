@@ -382,10 +382,10 @@ def check_variable_name(name, raise_not_warn=False, parent=None):
         return False
     try:
         parse(f"{name} = None")
-    except (ValueError, SyntaxError, TypeError):
+    except (ValueError, SyntaxError, TypeError) as e:
         text = f'The name "{name}" is not a valid name! Remove e.g. spaces or special characters.'
         if raise_not_warn:
-            raise Exception(text)
+            raise Exception(text) from e
         WarnPopup(parent, text, "Invalid Name")
         return False
     return True

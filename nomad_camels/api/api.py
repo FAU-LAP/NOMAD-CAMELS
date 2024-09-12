@@ -1,11 +1,12 @@
 import sys
 
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Response
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from PySide6.QtCore import QThread, Signal
 from nomad_camels.frontpanels.settings_window import hash_api_key
-from nomad_camels.utility import load_save_functions
+from nomad_camels.utility import load_save_functions, variables_handling
 import uvicorn
 import sqlite3
 import os
@@ -14,6 +15,28 @@ import time
 import json
 import uuid
 from pydantic import BaseModel, Field
+import math
+
+
+def sanitize_dict(d):
+    for key, value in d.items():
+        if isinstance(value, float):
+            if math.isinf(value):
+                d[key] = "inf"  # Replace with None or another placeholder
+            if math.isnan(value):
+                d[key] = "nan"
+        elif isinstance(value, dict):
+            sanitize_dict(value)
+        elif isinstance(value, list):
+            for i in range(len(value)):
+                if isinstance(value[i], float):
+                    if math.isinf(value[i]):
+                        value[i] = "inf"  # Replace with None or another placeholder
+                    if math.isnan(value[i]):
+                        value[i] = "nan"
+                elif isinstance(value[i], dict):
+                    sanitize_dict(value[i])
+    return d
 
 
 class Variables(BaseModel):
@@ -25,11 +48,11 @@ class Variables(BaseModel):
         },
     )
 
+
 # Define the response model
 class ProtocolRunResponse(BaseModel):
     check_protocol_status_here: str = Field(
-        ...,
-        description="A URL to check the protocol status"
+        ..., description="A URL to check the protocol status"
     )
 
 
@@ -48,7 +71,7 @@ def validate_api_key(api_key: str) -> bool:
             conn.close()
             return False
         else:
-            raise  # Re-raise the exception if it's not the specific one we're looking for
+            raise e # Re-raise the exception if it's not the specific one we're looking for
     result = c.fetchone()
     conn.close()
     return result is not None
@@ -89,20 +112,20 @@ def is_valid_path(file_path):
     return os.path.exists(file_path)
 
 
-# Initialize HTTP Basic Authentication
-security = HTTPBasic()
+# Initialize HTTP Bearer Authentication
+security = HTTPBearer()
 
 
 # Define the dependency for API key validation
-async def validate_credentials(credentials: HTTPBasicCredentials = Depends(security)):
-    api_key = credentials.password
+async def validate_credentials(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    api_key = credentials.credentials
     # The api_key is directly taken from credentials.password
     if api_key and validate_api_key(api_key):
         return True
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid API Key",
-        headers={"WWW-Authenticate": "Basic"},
+        headers={"WWW-Authenticate": "Bearer"},
     )
 
 
@@ -164,8 +187,34 @@ class FastapiThread(QThread):
                 }
             )
 
+        # Get a JSON representation of the protocol
+        @app.get("/api/v1/protocols/{protocol_name}/JSON")
+        async def get_protocol_json(
+            protocol_name: str, api_key: str = Depends(validate_credentials)
+        ):
+            """Get a JSON representation of the protocol"""
+            protocol_class_instance = self.main_window.protocols_dict[protocol_name]
+            protocol = load_save_functions.get_save_str(protocol_class_instance)
+            cleaned_protocol = sanitize_dict(protocol)
+            return JSONResponse(
+                content=cleaned_protocol,
+            )
+
+        # Get JSON representation of the current CAMELS settings (also called preferences)
+        @app.get("/api/v1/settings/JSON")
+        async def get_settings_json(api_key: str = Depends(validate_credentials)):
+            """Get a JSON representation of the current CAMELS settings"""
+            settings = self.main_window.preferences
+            cleaned_settings = sanitize_dict(settings)
+            return JSONResponse(
+                content=cleaned_settings,
+            )
+
         # Run a protocol by name
-        @app.get("/api/v1/actions/run/protocols/{protocol_name}", response_model=ProtocolRunResponse)
+        @app.get(
+            "/api/v1/actions/run/protocols/{protocol_name}",
+            response_model=ProtocolRunResponse,
+        )
         async def run_protocol(
             protocol_name: str, api_key: str = Depends(validate_credentials)
         ):
@@ -182,7 +231,10 @@ class FastapiThread(QThread):
             )
 
         # Run a protocol by name and pass variables to it (only already defined variables can be passed)
-        @app.post("/api/v1/actions/run/protocols/{protocol_name}", response_model=ProtocolRunResponse)
+        @app.post(
+            "/api/v1/actions/run/protocols/{protocol_name}",
+            response_model=ProtocolRunResponse,
+        )
         async def run_protocol_with_variables(
             protocol_name: str,
             variables: Variables,
@@ -325,7 +377,7 @@ class FastapiThread(QThread):
                 raise HTTPException(
                     status_code=500,
                     detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.\n{e}",
-                )
+                ) from e
             time.sleep(0.05)
             protocol_values = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
@@ -378,7 +430,7 @@ class FastapiThread(QThread):
                 raise HTTPException(
                     status_code=500,
                     detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.\n{e}",
-                )
+                ) from e
             time.sleep(0.05)
             protocol_values = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
@@ -441,7 +493,7 @@ class FastapiThread(QThread):
                         raise HTTPException(
                             status_code=500,
                             detail=f"Failed to update protocol {protocol_name} in queue as the protocol was not found.\n{e}",
-                        )
+                        ) from e
             time.sleep(0.05)
             protocol_values = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
@@ -514,9 +566,7 @@ class FastapiThread(QThread):
             for item in queue_list:
                 if item[1] == protocol_name and item[0] == index:
                     self.set_checkbox_signal.emit(str(qt_items[index]))
-                    return JSONResponse(
-                        content={"status": "success checking protocol"}
-                    )
+                    return JSONResponse(content={"status": "success checking protocol"})
             raise HTTPException(
                 status_code=500,
                 detail=f"Failed to check next protocol {protocol_name} with index {index} from queue as the protocol was not found at that position.",
@@ -595,7 +645,11 @@ class FastapiThread(QThread):
         # Start the uvicorn server
         try:
             self.server_config = uvicorn.Config(
-                app, host="127.0.0.1", port=int(self.api_port), log_level="info"
+                app,
+                host="0.0.0.0",
+                port=int(self.api_port),
+                log_level="info",
+                reload=False,
             )
             self.server = uvicorn.Server(self.server_config)
 

@@ -326,7 +326,7 @@ class Additional_Imports_Thread(QThread):
         from nomad_camels.nomad_integration import nomad_communication
         import pandas as pd
         from nomad_camels.ui_widgets import add_remove_table
-        from nomad_camels.nomad_integration import sample_selection
+        from nomad_camels.nomad_integration import entry_selection
         from nomad_camels.bluesky_handling import make_catalog
         import warnings
         from nomad_camels.frontpanels.settings_window import Settings_Window
@@ -354,7 +354,7 @@ class Additional_Imports_Thread(QThread):
         self.imports.append(nomad_communication)
         self.imports.append(pd)
         self.imports.append(add_remove_table)
-        self.imports.append(sample_selection)
+        self.imports.append(entry_selection)
         self.imports.append(make_catalog)
         self.imports.append(warnings)
         self.imports.append(Settings_Window)

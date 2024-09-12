@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QFrame,
     QCheckBox,
     QTextEdit,
+    QPushButton,
 )
 from PySide6.QtGui import QFont
 from PySide6.QtCore import Signal
@@ -16,6 +17,10 @@ from ophyd import Device as OphydDevice
 from ophyd.signal import SignalRO
 
 from nomad_camels.main_classes.measurement_channel import Measurement_Channel
+from nomad_camels.ui_widgets.warn_popup import WarnPopup
+
+from nomad_camels.extensions import extension_contexts
+from nomad_camels.nomad_integration import entry_selection, nomad_communication
 
 
 class Device:
@@ -411,18 +416,32 @@ class Device_Config(QWidget):
         self.label_connection = QLabel("Connection-type:")
         self.comboBox_connection_type = QComboBox()
         self.connector = Connection_Config()
-        layout.addWidget(self.label_connection, 4, 0)
-        layout.addWidget(self.comboBox_connection_type, 4, 1, 1, 2)
-        layout.addWidget(self.connector, 6, 0, 1, 5)
         self.comboBox_connection_type.currentTextChanged.connect(
             self.connection_type_changed
         )
 
+        self.label_id = QLabel("ID:")
+        self.lineEdit_id = QLineEdit()
+        if additional_info and "ELN-instrument-id" in additional_info:
+            self.lineEdit_id.setText(additional_info["ELN-instrument-id"])
+        self.pushbutton_id = QPushButton("...")
+        self.pushbutton_id.setFixedWidth(30)
+        id_info_text = "If you use an ELN, you can get the instrument's ID there. The ID can help to connect to other entries in the ELN.\nIn NOMAD Oasis, it is the Lab-ID of the instrument's entry.\nYou can leave this empty if you do not have an ID."
+        self.pushbutton_id.setToolTip(id_info_text)
+        self.label_id.setToolTip(id_info_text)
+        self.lineEdit_id.setToolTip(id_info_text)
+
         layout.addWidget(label_title, 0, 0, 1, 5)
         layout.addWidget(self.label_custom_name, 1, 0)
-        layout.addWidget(self.lineEdit_custom_name, 1, 1, 1, 2)
+        layout.addWidget(self.lineEdit_custom_name, 1, 1, 1, 4)
         layout.addWidget(self.textEdit_desc, 2, 0, 1, 5)
-        layout.addWidget(self.line_2, 3, 0, 1, 5)
+        layout.addWidget(self.label_id, 3, 0)
+        layout.addWidget(self.lineEdit_id, 3, 1, 1, 3)
+        layout.addWidget(self.pushbutton_id, 3, 4)
+        layout.addWidget(self.line_2, 4, 0, 1, 5)
+        layout.addWidget(self.label_connection, 5, 0)
+        layout.addWidget(self.comboBox_connection_type, 5, 1, 1, 4)
+        layout.addWidget(self.connector, 6, 0, 1, 5)
 
         self.settings_dict = settings_dict
         self.config_dict = config_dict
@@ -430,7 +449,52 @@ class Device_Config(QWidget):
         self.lineEdit_custom_name.textChanged.connect(
             lambda x: self.name_change.emit(x)
         )
+        self.ELN_metadata = {}
+        if additional_info and "ELN-metadata" in additional_info:
+            self.ELN_metadata = additional_info["ELN-metadata"]
+        self.pushbutton_id.clicked.connect(self.eln_connection_button_clicked)
         self.load_settings()
+
+    def eln_connection_button_clicked(self):
+        logged_in = check_logged_in()
+        if not logged_in:
+            WarnPopup(
+                self,
+                "You need to be logged in to NOMAD or another ELN to use this feature!\nCannot get instrument ID from ELN.",
+                "Not logged in!",
+                info_icon=True,
+            )
+        elif logged_in == "NOMAD":
+            selector = entry_selection.EntrySelector(self, "Instrument")
+            if selector.exec():
+                self.ELN_metadata = selector.return_data
+                self.lineEdit_id.setText(
+                    self.ELN_metadata["lab_id"]
+                    if "lab_id" in self.ELN_metadata
+                    else (
+                        self.ELN_metadata["name"]
+                        if "name" in self.ELN_metadata
+                        else self.ELN_metadata["Name"]
+                    )
+                )
+        elif logged_in == "ELN":
+            try:
+                eln_data = extension_contexts.active_eln_context.selection_function(
+                    self
+                )
+                if eln_data:
+                    self.ELN_metadata = eln_data
+                    self.lineEdit_id.setText(
+                        self.ELN_metadata["lab_id"]
+                        if "lab_id" in self.ELN_metadata
+                        else (
+                            self.ELN_metadata["name"]
+                            if "name" in self.ELN_metadata
+                            else self.ELN_metadata["Name"]
+                        )
+                    )
+            except Exception as e:
+                raise Exception("Selection of ELN entry failed!") from e
 
     def showEvent(self, event):
         """Called when the widget is shown."""
@@ -515,6 +579,8 @@ class Device_Config(QWidget):
     def get_info(self):
         """ """
         self.additional_info["description"] = self.textEdit_desc.toPlainText()
+        self.additional_info["ELN-instrument-id"] = self.lineEdit_id.text()
+        self.additional_info["ELN-metadata"] = self.ELN_metadata
         return self.additional_info
 
 
@@ -576,8 +642,6 @@ class Connection_Config(QWidget):
 
         """
         pass
-
-
 
 
 class Local_VISA(Connection_Config):
@@ -972,3 +1036,14 @@ class Simple_Config_Sub(Device_Config_Sub):
             except:
                 self.config_dict[name] = float(widge.text())
         return super().get_config()
+
+
+def check_logged_in():
+    if nomad_communication.token:
+        return "NOMAD"
+    if (
+        extension_contexts.active_eln_context
+        and extension_contexts.active_eln_context.extension_user
+    ):
+        return "ELN"
+    return False

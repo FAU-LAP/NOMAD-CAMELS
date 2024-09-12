@@ -17,11 +17,11 @@ from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.nomad_integration import nomad_communication
 
 
-class Sample_Selector(QDialog):
-    def __init__(self, parent=None):
+class EntrySelector(QDialog):
+    def __init__(self, parent=None, selection="Sample"):
         super().__init__(parent)
         self.reloading = False
-        self.setWindowTitle("Select Sample")
+        self.setWindowTitle(f"Select {selection}")
         self.entry_metadata = []
         self.entry_names = []
         self.entry_uploads = []
@@ -77,7 +77,7 @@ class Sample_Selector(QDialog):
         self.entry_box.currentTextChanged.connect(self.entry_change)
         self.comboBox_entry_scope.currentTextChanged.connect(self.update_entries)
 
-        self.sample_data = {}
+        self.return_data = {}
 
         self.adjustSize()
 
@@ -153,7 +153,7 @@ class Sample_Selector(QDialog):
         return {}
 
     def accept(self):
-        self.sample_data = self.get_current_entry_data(True)
-        if "name" not in self.sample_data and "Name" not in self.sample_data:
-            self.sample_data["name"] = self.entry_box.currentText().split(".")[0]
+        self.return_data = self.get_current_entry_data(True)
+        if "name" not in self.return_data and "Name" not in self.return_data:
+            self.return_data["name"] = self.entry_box.currentText().split(".")[0]
         super().accept()

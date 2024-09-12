@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QComboBox, QWidget
+active_eln_context = None
 
 
 class ELN_Context:
@@ -11,3 +11,4 @@ class ELN_Context:
         self.run_done_file_signal = ui.run_done_file_signal
         self.extension_user = ui.extension_user
         self.extension_sample = ui.extension_sample
+        self.selection_function = None

@@ -1,5 +1,4 @@
-from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit, QMessageBox, QTableView
-from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit, QMessageBox, QPushButton
 from PySide6.QtCore import Signal
 
 from nomad_camels.frontpanels.plot_definer import Plot_Button_Overview
@@ -7,6 +6,7 @@ from nomad_camels.loop_steps import make_step_of_type
 from nomad_camels.gui.general_protocol_settings import Ui_Protocol_Settings
 
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
+from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.utility import variables_handling
 
 
@@ -85,6 +85,10 @@ class Measurement_Protocol:
         self.h5_during_run = (
             kwargs["h5_during_run"] if "h5_during_run" in kwargs else True
         )
+        self.use_end_protocol = (
+            kwargs["use_end_protocol"] if "use_end_protocol" in kwargs else False
+        )
+        self.end_protocol = kwargs["end_protocol"] if "end_protocol" in kwargs else ""
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -320,10 +324,15 @@ class Measurement_Protocol:
         plan_string += "\teva = Evaluator(namespace=namespace)\n"
         plan_string += "\tsub_eva = runEngine.subscribe(eva)\n"
         plan_string += "\tyield from bps.open_run(md=md)\n"
-        plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name, runEngine)\n'
-        plan_string += (
-            "\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
-        )
+        if self.use_end_protocol:
+            plan_string += "\ttry:\n"
+            plan_string += f'\t\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name, runEngine)\n'
+            plan_string += "\t\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
+            plan_string += "\tfinally:\n"
+            plan_string += "\t\tyield from ending_steps(runEngine, devs)\n"
+        else:
+            plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name, runEngine)\n'
+            plan_string += "\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
         plan_string += "\tyield from bps.close_run()\n"
         plan_string += "\trunEngine.unsubscribe(sub_eva)\n"
         return plan_string
@@ -347,6 +356,13 @@ class Measurement_Protocol:
             if not step.is_active:
                 continue
             add_main_string += step.get_add_main_string()
+        if self.use_end_protocol:
+            from nomad_camels.bluesky_handling import protocol_builder
+
+            add_main_string += protocol_builder.make_plots_string_of_protocol(
+                self.end_protocol, 1
+            )
+
         add_main_string += "\treturn returner\n\n\n"
         return add_main_string
 
@@ -363,11 +379,17 @@ class Measurement_Protocol:
     def get_outer_string(self):
         """Strings outside of all other functions of the script, e.g. more
         functions to create step-specific plots."""
-        outer_string = ""
+        outer_string = "\n"
         for step in self.loop_steps:
             if not step.is_active:
                 continue
             outer_string += step.get_outer_string()
+        if self.use_end_protocol:
+            from nomad_camels.bluesky_handling import protocol_builder
+
+            outer_string += protocol_builder.import_protocol_string(
+                self.end_protocol, 0
+            )
         return outer_string
 
     def get_used_devices(self):
@@ -382,6 +404,11 @@ class Measurement_Protocol:
         for dev in devices:
             adds += variables_handling.devices[dev].get_necessary_devices()
         devices += adds
+        if self.use_end_protocol:
+            from nomad_camels.utility import load_save_functions
+
+            end_protocol = load_save_functions.load_protocol(self.end_protocol)
+            devices += end_protocol.get_used_devices()
         devices = list(set(devices))
         devices = sorted(devices, key=lambda x: x in adds, reverse=True)
         return devices
@@ -464,6 +491,25 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
         # self.variable_model.itemChanged.connect(self.check_variable)
 
+        self.checkBox_perform_at_end = QCheckBox("Perform steps at end of protocol")
+        self.checkBox_perform_at_end.setChecked(self.protocol.use_end_protocol)
+        self.ending_protocol_selection = Path_Button_Edit(
+            self,
+            self.protocol.end_protocol,
+            default_dir=variables_handling.preferences["py_files_path"],
+            file_extension="*.cprot",
+        )
+        self.checkBox_perform_at_end.setToolTip(
+            "Select a protocol to be performed at the end of this protocol or when it is aborted by the user.\nThis may be useful e.g. to turn something of in a controlled way.\nThis is NOT executed, when the protocol is run as a subprotocol."
+        )
+        self.ending_protocol_selection.setToolTip(
+            "Select a protocol to be performed at the end of this protocol or when it is aborted by the user.\nThis may be useful e.g. to turn something of in a controlled way.\nThis is NOT executed, when the protocol is run as a subprotocol."
+        )
+        self.checkBox_perform_at_end.stateChanged.connect(
+            self.check_use_ending_steps
+        )
+        self.check_use_ending_steps()
+
         self.plot_widge = Plot_Button_Overview(self, self.protocol.plots)
 
         cols = ["Channel", "NeXus-path"]
@@ -518,12 +564,11 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.radioButton_h5_after.setChecked(not self.protocol.h5_during_run)
 
         self.layout().addWidget(self.textEdit_desc_protocol, 5, 0, 1, 6)
-        
+
         self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
-        self.layout().addWidget(self.checkBox_NeXus, 7, 0, 1, 6)
-        self.layout().addWidget(self.table_channel_NX_paths, 9, 0, 1, 6)
-        self.layout().addWidget(self.table_config_NX_paths, 10, 0, 1, 6)
-        self.layout().addWidget(self.table_metadata, 11, 0, 1, 6)
+        self.layout().addWidget(self.checkBox_perform_at_end, 20, 0, 1, 6)
+        self.layout().addWidget(self.ending_protocol_selection, 21, 0, 1, 6)
+        # ! Ui_Protocol_Settings.ui file adds the Variables Table at position 8 and 9 !!!
 
         self.checkBox_NeXus.setHidden(True)
         self.enable_nexus()
@@ -531,6 +576,15 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.selectionModel().selectionChanged.connect(
             self.update_variable_select
         )
+
+    def check_use_ending_steps(self):
+        """If the checkBox_perform_at_end is checked, the ending_protocol_selection
+        is enabled, otherwise disabled."""
+        if self.checkBox_perform_at_end.isChecked():
+            self.ending_protocol_selection.setEnabled(True)
+        else:
+            self.ending_protocol_selection.setEnabled(False)
+
     def showEvent(self, event):
         """Called when the widget is shown."""
         super().showEvent(event)
@@ -540,8 +594,9 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         """Adjusts the size of the textEdit_desc_protocol based on its content."""
         document = self.textEdit_desc_protocol.document()
         document_height = document.size().height()
-        self.textEdit_desc_protocol.setFixedHeight(document_height + 5)  # Add some padding
-
+        self.textEdit_desc_protocol.setFixedHeight(
+            document_height + 5
+        )  # Add some padding
 
     def enable_disable_config(self):
         disabling = self.checkBox_no_config.isChecked()
@@ -655,6 +710,8 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.update_variables()
         self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
         self.protocol.h5_during_run = self.radioButton_h5_during.isChecked()
+        self.protocol.use_end_protocol = self.checkBox_perform_at_end.isChecked()
+        self.protocol.end_protocol = self.ending_protocol_selection.get_path()
 
     # def load_variables(self):
     #     """Called when starting, loads the variables from the protocol

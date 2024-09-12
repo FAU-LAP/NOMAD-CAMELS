@@ -225,6 +225,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.extension_user = {}
         self.extension_sample = {}
         self.eln_context = extension_contexts.ELN_Context(self)
+        extension_contexts.active_eln_context = self.eln_context
         self.extension_contexts = {"ELN_Context": self.eln_context}
         self.extensions = []
         self.load_extensions()
@@ -277,10 +278,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.fastapi_thread.set_checkbox_signal.connect(self.set_checkbox)
 
             # Connect the update_variables_queue signal of the fastAPI to the update_variables_queue method
-            self.fastapi_thread.queue_protocol_with_variables_signal.connect(self.queue_protocol_with_variables_signal)
+            self.fastapi_thread.queue_protocol_with_variables_signal.connect(
+                self.queue_protocol_with_variables_signal
+            )
 
             # Connect the change_variables_queued_protocol signal of the fastAPI to the update_variables_queued_protocol method
-            self.fastapi_thread.change_variables_queued_protocol_signal.connect(self.change_variables_queued_protocol)
+            self.fastapi_thread.change_variables_queued_protocol_signal.connect(
+                self.change_variables_queued_protocol
+            )
 
             # Start the FastAPI server
             self.fastapi_thread.start()
@@ -331,18 +336,26 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         self.run_queue_widget.check_checkbox(protocol_name)
 
-    def queue_protocol_with_variables_signal(self, protocol_name, variables, index, api_uuid):
+    def queue_protocol_with_variables_signal(
+        self, protocol_name, variables, index, api_uuid
+    ):
         """
         Update the variables of a protocol in the run queue. Called by the API.
         """
         if protocol_name in self.protocols_dict:
             self.run_queue_widget.add_item(protocol_name, api_uuid)
-        protocol_name = list(self.run_queue_widget.protocol_name_variables.keys())[index]
-        self.run_queue_widget.update_variables_queue(protocol_name, variables, index=index)
-    
+        protocol_name = list(self.run_queue_widget.protocol_name_variables.keys())[
+            index
+        ]
+        self.run_queue_widget.update_variables_queue(
+            protocol_name, variables, index=index
+        )
+
     def change_variables_queued_protocol(self, protocol_name, variables, index):
-        self.run_queue_widget.update_variables_queue(protocol_name, variables, index=index)
-    
+        self.run_queue_widget.update_variables_queue(
+            protocol_name, variables, index=index
+        )
+
     def open_watchdog_definition(self):
         """Opens the Watchdog_Definer dialog."""
         # IMPORT Watchdog_Definer only if it is needed
@@ -823,11 +836,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def select_nomad_sample(self):
         """Opens a dialog to select a sample from NOMAD."""
         # IMPORT sample_selection only if it is needed
-        from nomad_camels.nomad_integration import sample_selection
+        from nomad_camels.nomad_integration import entry_selection
 
-        dialog = sample_selection.Sample_Selector(self)
+        dialog = entry_selection.EntrySelector(self)
         if dialog.exec():
-            self.nomad_sample = dialog.sample_data
+            self.nomad_sample = dialog.return_data
             if "name" in self.nomad_sample:
                 name = self.nomad_sample["name"]
             else:
@@ -1055,7 +1068,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             except Exception as e:
                 warn_popup.WarnPopup(
                     self,
-                    f"Could not load the most recent preset \"{preset}\".\nThe second newest will be loaded instead.\n\nError Message:\n{e}",
+                    f'Could not load the most recent preset "{preset}".\nThe second newest will be loaded instead.\n\nError Message:\n{e}',
                     "Load Error",
                 )
                 n_preset += 1
@@ -1184,10 +1197,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             The name of the manual control to remove.
         """
         self.manual_controls.pop(control_name)
-        for controls in self.manual_tabs_dict.values():
-            if control_name in controls:
-                controls.remove(control_name)
-                break
+        # for controls in self.manual_tabs_dict.values():
+        #     if control_name in controls:
+        #         controls.remove(control_name)
+        #         break
         self.button_area_manual.remove_button(control_name)
         if not self.manual_controls:
             self.button_area_manual.setHidden(True)
@@ -1300,18 +1313,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         Clears the manual controls area and adds the buttons for all manual controls."""
         self.button_area_manual.clear_area()
-        for control in self.manual_controls:
-            added = False
-            for tab, controls in self.manual_tabs_dict.items():
-                if control in controls:
+        addeds = []
+        for tab, controls in list(self.manual_tabs_dict.items()):
+            if not controls:
+                del self.manual_tabs_dict[tab]
+            for control in controls:
+                if control in self.manual_controls and control not in addeds:
                     self.add_button_to_manuals(control, tab)
-                    added = True
-                    break
-            if not added:
+                    addeds.append(control)
+        for control in self.manual_controls:
+            if control not in addeds:
                 self.add_button_to_manuals(control, "manual controls")
         if not self.manual_controls:
             self.manual_tabs_dict.clear()
-            self.button_area_manual.create_new_tab('manual controls')
+            self.button_area_manual.create_new_tab("manual controls")
         self.button_area_manual.setCurrentIndex(0)
 
     def start_manual_control(self, name):
@@ -1416,10 +1431,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             The name of the protocol to remove.
         """
         self.protocols_dict.pop(prot_name)
-        for prots in self.protocol_tabs_dict.values():
-            if prot_name in prots:
-                prots.remove(prot_name)
-                break
+        # for prots in self.protocol_tabs_dict.values():
+        #     if prot_name in prots:
+        #         prots.remove(prot_name)
+        #         break
         self.button_area_meas.remove_button(prot_name)
         if not self.protocols_dict:
             self.button_area_meas.setHidden(True)
@@ -1570,26 +1585,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             if not protocols:
                 del self.protocol_tabs_dict[tab]
             for prot in protocols:
-                if prot in self.protocols_dict:
+                if prot in self.protocols_dict and prot not in addeds:
                     self.add_button_to_meas(prot, tab)
                     addeds.append(prot)
         for prot in self.protocols_dict:
             if prot not in addeds:
                 self.add_button_to_meas(prot, "protocols")
-        # for prot in self.protocols_dict:
-        #     added = False
-        #     for tab, protocols in list(self.protocol_tabs_dict.items()):
-        #         if not protocols:
-        #             del self.protocol_tabs_dict[tab]
-        #         elif prot in protocols:
-        #             self.add_button_to_meas(prot, tab)
-        #             added = True
-        #             break
-        #     if not added:
-        #         self.add_button_to_meas(prot, "protocols")
         if not self.protocols_dict:
             self.protocol_tabs_dict.clear()
-            self.button_area_meas.create_new_tab('protocols')
+            self.button_area_meas.create_new_tab("protocols")
         self.button_area_meas.setCurrentIndex(0)
 
     def next_queued_protocol(self, protocol_name, variables, api_uuid=None):
@@ -1598,7 +1602,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         if self.run_engine and self.run_engine.state != "idle":
             return
-        if api_uuid == '':
+        if api_uuid == "":
             api_uuid = None
         self.run_queue_widget.remove_first()
         self.run_protocol(protocol_name, api_uuid=api_uuid, variables=variables)
@@ -1689,8 +1693,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_finished()
             if isinstance(e, IndentationError):
                 text = "The protocol did not compile correctly, please check whether there are for example any if-statements or loops that do not have children-steps."
-                raise Exception(text).with_traceback(e.__traceback__)
-            raise e
+                raise Exception(text) from e
+            else:
+                raise e
         self.close_old_queue_devices()
 
     def propagate_exception(self, exception):
@@ -1712,6 +1717,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             dev_data = self.instantiate_devices_thread.device_config
             additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
             self.add_subs_and_plots_from_dict(additionals)
+            self.current_protocol_devices = devs
         except Exception as e:
             self.protocol_finished()
             raise e
@@ -1745,6 +1751,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # Check if the protocol was executed using the api and save rsults to db if true
         if api_uuid is not None:
             from nomad_camels.api.api import write_protocol_result_path_to_db
+
             write_protocol_result_path_to_db(api_uuid, message=file)
         if not nomad:
             return
@@ -1926,11 +1933,28 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         if self.run_engine.state != "idle":
             self.run_engine.abort("Aborted by user")
+            if self.running_protocol.use_end_protocol:
+                for i in range(10):
+                    if self.run_engine.state == "idle":
+                        break
+                    import time
+
+                    time.sleep(0.5)
+                try:
+                    self.run_engine(
+                        self.protocol_module.ending_steps(
+                            self.run_engine, self.current_protocol_devices
+                        )
+                    )
+                except Exception as e:
+                    print(e)
         if self.instantiate_devices_thread.isRunning():
             self.instantiate_devices_thread.successful.disconnect()
             self.instantiate_devices_thread.exception_raised.disconnect()
             self.old_devices_thread = self.instantiate_devices_thread
-            self.old_devices_thread.finished.connect(self.close_unused_instantiated_devices)
+            self.old_devices_thread.finished.connect(
+                self.close_unused_instantiated_devices
+            )
             self.protocol_finished()
         # self.protocol_finished()
 
@@ -1939,7 +1963,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         from nomad_camels.utility import device_handling
 
         device_handling.close_devices(devs)
-
 
     def resume_protocol(self):
         """
@@ -2154,7 +2177,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         else:
             opener = "open" if platform.system() == "Darwin" else "xdg-open"
             subprocess.call([opener, link])
-
 
     # --------------------------------------------------
     # tools

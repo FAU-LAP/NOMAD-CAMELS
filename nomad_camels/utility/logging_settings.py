@@ -35,7 +35,12 @@ def update_log_settings():
             pass
     app_log = logging.getLogger("root")
     if my_handler is None:
-        my_handler = RotatingFileHandler(logfile, mode="a")
+        my_handler = RotatingFileHandler(
+            logfile,
+            mode="a",
+            maxBytes=standard_pref["logfile_size"] * 1024 * 1024,
+            backupCount=standard_pref["logfile_backups"],
+        )
 
         log_formatter = logging.Formatter(
             "%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s",
@@ -45,7 +50,7 @@ def update_log_settings():
 
         app_log.addHandler(my_handler)
 
-    my_handler.rotation_filename = logfile
+    my_handler.baseFilename = logfile
 
     prefs = variables_handling.preferences
     if "log_level" in prefs and prefs["log_level"]:

@@ -18,6 +18,32 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+## 1.4.0
+
+Features:
+- Added a **new** protocol step called `API Call`. This step allows you the user to call other APIs via HTTP requests. There is native support for CAMELS API calls. Results returned by the API calls can then be used in the following steps.
+- CAMELS API server now accessible from network. (Changed host setting to `0.0.0.0`)
+- CAMELS API now lets you get a JSON string containing the protocol and all its settings
+- CAMELS API now lets you get a JSON string containing the current CAMELS settings.
+- A protocol to execute at the end of a protocol, no matter wether it finishes correctly or breaks can now be added
+- Instruments can now get metadata from ELNs
+
+Changes:
+- Renamed `comment / uncomment` to `enable / disable` for protocol steps to make it more clear
+- Data passing from the Execute Python Script step was changed. Now should be more stable, as it looks for the Data between the `###Start Data` und `###End Data` strings. See our [documentation](https://fau-lap.github.io/NOMAD-CAMELS/doc/protocol_steps/step_Execute_Python_File.html#returning-results) for more details.
+- Refactored the way metadata is saved in instruments
+
+Fixes:
+- fixed a bug where a protocol would show multiple times
+- installed version should now be found correctly when searching for updates
+- removing / moving of buttons in tabs fixed
+- requirement updated to camels suitcase 0.2.2, fixing datasets in instruments
+- some raised exceptions now provide additional traceback
+- errors raised by plots now only raised once, not for each datapoint
+- number of datapoints set in plot definition now correctly taken over to plot
+- fixed a bug that would stop users from logging in to the central NOMAD
+- logging used a bad file handler that would stop logs, now corrected
+
 ## 1.3.1
 
 Features:

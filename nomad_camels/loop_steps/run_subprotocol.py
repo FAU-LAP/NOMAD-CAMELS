@@ -52,25 +52,14 @@ class Run_Subprotocol(Loop_Step):
         them into the subprotocol's namespace and starts the subprotocol's
         _plan_inner function. Afterwards the output variables are written to the
         main namespace."""
-        tabs = "\t" * n_tabs
-        protocol_builder.build_from_path(self.prot_path)
-        prot_name = os.path.basename(self.prot_path)[:-6]
         protocol_string = super().get_protocol_string(n_tabs)
-        protocol_string += f"{tabs}{prot_name}_mod.protocol_step_information = protocol_step_information\n"
-        for i, var in enumerate(self.vars_in["Variable"]):
-            protocol_string += f'{tabs}{prot_name}_mod.{var} = eva.eval("{self.vars_in["Value"][i]}")\n'
-            protocol_string += f'{tabs}{prot_name}_mod.namespace["{var}"] = eva.eval("{self.vars_in["Value"][i]}")\n'
-        protocol_string += (
-            f"{tabs}{prot_name}_eva = Evaluator(namespace={prot_name}_mod.namespace)\n"
+        protocol_string += protocol_builder.sub_protocol_string(
+            protocol_path=self.prot_path,
+            n_tabs=n_tabs,
+            variables_in=self.vars_in,
+            variables_out=self.vars_out,
+            data_output=self.data_output,
         )
-        protocol_string += f"{tabs}sub_eva_{prot_name} = runEngine.subscribe({prot_name}_eva)\n"
-        stream = prot_name
-        if self.data_output == "main stream":
-            stream = "primary"
-        protocol_string += f'{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, {prot_name}_eva, "{stream}", runEngine)\n'
-        for i, var in enumerate(self.vars_out["Variable"]):
-            protocol_string += f'{tabs}namespace["{self.vars_out["Write to name"][i]}"] = {prot_name}_mod.namespace["{var}"]\n'
-        protocol_string += f'{tabs}runEngine.unsubscribe(sub_eva_{prot_name})\n'
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
@@ -81,31 +70,35 @@ class Run_Subprotocol(Loop_Step):
 
     def get_outer_string(self):
         """Imports the subprotocol as <protocol_name>_mod."""
-        prot_name = os.path.basename(self.prot_path)[:-6]
-        py_file = f"{self.prot_path[:-6]}.py"
-        if not os.path.isfile(py_file):
-            sub_protocol = load_save_functions.load_protocol(self.prot_path)
-            protocol_builder.build_protocol(sub_protocol, py_file)
-        outer_string = f'spec = importlib.util.spec_from_file_location("{prot_name}", "{py_file}")\n'
-        outer_string += f"{prot_name}_mod = importlib.util.module_from_spec(spec)\n"
-        outer_string += f"sys.modules[spec.name] = {prot_name}_mod\n"
-        outer_string += f"spec.loader.exec_module({prot_name}_mod)\n"
-        return outer_string
+        return protocol_builder.import_protocol_string(self.prot_path)
+        # prot_name = os.path.basename(self.prot_path)[:-6]
+        # py_file = f"{self.prot_path[:-6]}.py"
+        # if not os.path.isfile(py_file):
+        #     sub_protocol = load_save_functions.load_protocol(self.prot_path)
+        #     protocol_builder.build_protocol(sub_protocol, py_file)
+        # outer_string = f'spec = importlib.util.spec_from_file_location("{prot_name}", "{py_file}")\n'
+        # outer_string += f"{prot_name}_mod = importlib.util.module_from_spec(spec)\n"
+        # outer_string += f"sys.modules[spec.name] = {prot_name}_mod\n"
+        # outer_string += f"spec.loader.exec_module({prot_name}_mod)\n"
+        # return outer_string
 
     def get_add_main_string(self):
         """If using its own plots, adds them to the steps. In any case, the
         added steps from the subprotocol are added here as well."""
-        prot_name = os.path.basename(self.prot_path)[:-6]
-        add_main_string = ""
-        if self.own_plots:
-            stream = f'"{prot_name}"'
-            if self.data_output == "main stream":
-                stream = '"primary"'
-            add_main_string += builder_helper_functions.get_plot_add_string(
-                prot_name, stream, True
-            )
-        add_main_string += f'\treturner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs)\n'
-        return add_main_string
+        return protocol_builder.make_plots_string_of_protocol(
+            self.prot_path, self.own_plots, self.data_output, 1
+        )
+        # prot_name = os.path.basename(self.prot_path)[:-6]
+        # add_main_string = ""
+        # if self.own_plots:
+        #     stream = f'"{prot_name}"'
+        #     if self.data_output == "main stream":
+        #         stream = '"primary"'
+        #     add_main_string += builder_helper_functions.get_plot_add_string(
+        #         prot_name, stream, True
+        #     )
+        # add_main_string += f'\treturner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs)\n'
+        # return add_main_string
 
     def update_used_devices(self):
         """Uses the devices that are used in the subprotocol."""

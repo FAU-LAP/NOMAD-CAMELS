@@ -406,9 +406,9 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 menu.addAction(del_action)
             menu.addSeparator()
             if item.text().startswith("# "):
-                comment_action = QAction("Uncomment\tCtrl + K")
+                comment_action = QAction("Enable step\tCtrl + K")
             else:
-                comment_action = QAction("Comment\tCtrl + K")
+                comment_action = QAction("Disable step\tCtrl + K")
             comment_action.triggered.connect(
                 lambda state=None, x=item.data(): self.comment_loop_step(x)
             )

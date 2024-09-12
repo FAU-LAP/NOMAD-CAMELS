@@ -275,9 +275,11 @@ def instantiate_devices(device_list, skip_config=False):
             devices[dev] = ophyd_device
 
             # updating the config data
-            device_config[dev] = {}
-            device_config[dev].update(helper_functions.simplify_configs_dict(configs))
-            device_config[dev].update(settings)
+            device_config[dev] = {"settings": {}}
+            device_config[dev]["settings"].update(
+                helper_functions.simplify_configs_dict(configs)
+            )
+            device_config[dev]["settings"].update(settings)
             device_config[dev].update(additional_info)
             device_config[dev]["instrument_camels_channels"] = {
                 name: data.__dict__ for name, data in device.channels.items()

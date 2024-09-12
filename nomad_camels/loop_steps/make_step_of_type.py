@@ -18,6 +18,7 @@ from nomad_camels.loop_steps import (
     export_data,
     call_function,
     execute_python_file,
+    api_call,
 )
 
 from nomad_camels.utility import variables_handling
@@ -65,6 +66,10 @@ step_type_config = {
     "Execute Python File": [
         execute_python_file.Execute_Python_File,
         execute_python_file.Execute_Python_File_Config,
+    ],
+    "API Call": [
+        api_call.API_Call,
+        api_call.API_Call_Config,
     ],
 }
 

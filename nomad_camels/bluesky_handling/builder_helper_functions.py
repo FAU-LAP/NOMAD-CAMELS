@@ -19,7 +19,7 @@ standard_plot_string += "\t\tplot_pyqtgraph.activate_dark_mode()\n"
 # standard_plot_string += '\t\tapp.setStyleSheet(qdarkstyle.load_stylesheet(qt_api="pyqt5"))\n'
 
 
-def get_plot_add_string(name, stream, subprotocol=False):
+def get_plot_add_string(name, stream, subprotocol=False, n_tabs=1):
     """
     This function generates the necessary lines for the "steps_add_main"
     function in the protocol-script to open the plots of a sub-step of the
@@ -44,16 +44,19 @@ def get_plot_add_string(name, stream, subprotocol=False):
         The string to be added.
 
     """
-    add_main_string = '\tif "subs" not in returner:\n'
-    add_main_string += '\t\treturner["subs"] = []\n'
-    add_main_string += '\tif "plots" not in returner:\n'
-    add_main_string += '\t\treturner["plots"] = []\n'
+    tabs = "\t" * n_tabs
+    add_main_string = f'{tabs}if "subs" not in returner:\n'
+    add_main_string += f'{tabs}\treturner["subs"] = []\n'
+    add_main_string += f'{tabs}if "plots" not in returner:\n'
+    add_main_string += f'{tabs}\treturner["plots"] = []\n'
     if subprotocol:
-        add_main_string += f"\tplots, subs, _ = {name}_mod.create_plots(RE, {stream})\n"
+        add_main_string += (
+            f"{tabs}plots, subs, _ = {name}_mod.create_plots(RE, {stream})\n"
+        )
     else:
-        add_main_string += f"\tplots, subs, _ = create_plots_{name}(RE, {stream})\n"
-    add_main_string += '\treturner["subs"] += subs\n'
-    add_main_string += '\treturner["plots"] += plots\n'
+        add_main_string += f"{tabs}plots, subs, _ = create_plots_{name}(RE, {stream})\n"
+    add_main_string += f'{tabs}returner["subs"] += subs\n'
+    add_main_string += f'{tabs}returner["plots"] += plots\n'
     return add_main_string
 
 
