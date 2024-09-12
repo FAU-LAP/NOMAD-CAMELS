@@ -10,7 +10,7 @@ This step allows you to call any API that is hosted on a server. It uses HTTP re
 
 Below is an example configuration for two different API calls. One to the CAMELS API and one generic call to [NOMAD](https://nomad-lab.eu/nomad-lab/).
 
-![alt text](images/bitmap.png)
+![Example images of a CAMELS API call and a generic API call using the new step](images/overview.png)
 
 ## Configuration
 
