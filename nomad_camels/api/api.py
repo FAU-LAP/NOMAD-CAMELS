@@ -22,7 +22,7 @@ def sanitize_dict(d):
     for key, value in d.items():
         if isinstance(value, float):
             if math.isinf(value):
-                d[key] = "inf123"  # Replace with None or another placeholder
+                d[key] = "inf"  # Replace with None or another placeholder
             if math.isnan(value):
                 d[key] = "nan"
         elif isinstance(value, dict):
@@ -31,7 +31,7 @@ def sanitize_dict(d):
             for i in range(len(value)):
                 if isinstance(value[i], float):
                     if math.isinf(value[i]):
-                        value[i] = "inf123"  # Replace with None or another placeholder
+                        value[i] = "inf"  # Replace with None or another placeholder
                     if math.isnan(value[i]):
                         value[i] = "nan"
                 elif isinstance(value[i], dict):
