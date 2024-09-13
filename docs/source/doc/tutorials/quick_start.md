@@ -79,13 +79,11 @@ After successful [installation](../installation/installation.md) of CAMELS you a
   <a href="quick_start_install.html" class="box">
     <span class="box-title">How to Add and Configure Instruments</span>
     <p class="box-content">The easiest way to get comfortable with CAMELS is to first learn how to add and configure already implemented instruments.</p>
-    <span class="more-link" onclick="toggleContent(event, this)">More</span>
   </a>
 
   <a href="quick_start_protocols.html" class="box">
     <span class="box-title">How to Setup Measurement Protocols</span>
     <p class="box-content">Learn how to setup measurement protocols. Use the instruments you configured in measurement sequences.</p>
-    <span class="more-link" onclick="toggleContent(event, this)">More</span>
   </a>
 
   <a href="../protocol_steps/protocol_steps_landing.html" class="box">
@@ -103,7 +101,6 @@ After successful [installation](../installation/installation.md) of CAMELS you a
   <a href="../instruments/instruments.html" class="box">
     <span class="box-title">List of Available Instruments</span>
     <p class="box-content">Here you find a list of available instruments that are already implemented.</p>
-    <span class="more-link" onclick="toggleContent(event, this)">More</span>
   </a>
 
   <a href="../programmers_guide/drivers/drivers_tutorial.html" class="box">
