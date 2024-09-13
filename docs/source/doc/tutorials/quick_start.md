@@ -15,13 +15,12 @@
   flex-grow: 1;
   text-align: left;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease, max-height 0.3s ease; /* Add transition for height */
   position: relative;
   overflow: hidden;
-  max-height: 150px; /* Set a fixed height for all boxes */
   display: flex;
   flex-direction: column; /* Arrange content in a column */
-  justify-content: space-between; /* Space out content and 'More' link */
+  justify-content: flex-start; /* Align items at the start */
 }
 
 .box:hover {
@@ -40,13 +39,13 @@
 .box-content {
   font-size: 14px;
   color: #555;
-  max-height: 80px; /* Limit the visible height of the text */
+  max-height: 80px; /* Initial height when not expanded */
   overflow: hidden;
   transition: max-height 0.3s ease; /* Smooth transition for expansion */
 }
 
 .box-content.expanded {
-  max-height: 500px; /* Allow more space when expanded */
+  max-height: 500px; /* Expand height when clicked */
 }
 
 .more-link {
