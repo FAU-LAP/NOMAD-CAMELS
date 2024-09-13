@@ -39,7 +39,7 @@
 .box-content {
   font-size: 14px;
   color: #555;
-  max-height: 80px; /* Initial height when not expanded */
+  max-height: 92px; /* Initial height when not expanded */
   overflow: hidden;
   transition: max-height 0.3s ease; /* Smooth transition for expansion */
 }
@@ -51,7 +51,7 @@
 .more-link {
   color: #2d64f2;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 2px;
   align-self: flex-start; /* Align 'More' link to start */
 }
 </style>
@@ -111,6 +111,7 @@ After successful [installation](../installation/installation.md) of CAMELS you a
     <p class="box-content">You can add your own instruments that have not yet been implemented by writing your own drivers. You can follow our step-by-step guide for writing drivers or start with the new driver documentation directly.</p>
     <span class="more-link" onclick="toggleContent(event, this)">More</span>
   </a>
+  <br><br>
 </div>
 
 <!-- 
