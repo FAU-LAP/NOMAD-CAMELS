@@ -19,6 +19,9 @@
   position: relative;
   overflow: hidden;
   max-height: 150px; /* Set a fixed height for all boxes */
+  display: flex;
+  flex-direction: column; /* Arrange content in a column */
+  justify-content: space-between; /* Space out content and 'More' link */
 }
 
 .box:hover {
@@ -39,24 +42,24 @@
   color: #555;
   max-height: 80px; /* Limit the visible height of the text */
   overflow: hidden;
+  transition: max-height 0.3s ease; /* Smooth transition for expansion */
 }
 
 .box-content.expanded {
-  max-height: none; /* Remove height restriction when expanded */
+  max-height: 500px; /* Allow more space when expanded */
 }
 
 .more-link {
   color: #2d64f2;
   cursor: pointer;
-  display: block;
   margin-top: 8px;
-  position: absolute;
-  bottom: 16px; /* Aligns "More" link at the bottom */
+  align-self: flex-start; /* Align 'More' link to start */
 }
 </style>
 
 <script>
-function toggleContent(element) {
+function toggleContent(event, element) {
+  event.preventDefault(); // Prevent the default link action
   const content = element.previousElementSibling;
   if (content.classList.contains('expanded')) {
     content.classList.remove('expanded');
