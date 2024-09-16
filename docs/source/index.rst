@@ -38,9 +38,8 @@ Why CAMELS?
         <div class="box">
             <a href="#" class="box-title">Smooth installation</a>
             <div class="box-content">
-                CAMELS is a python package distributed via PyPI. It is easily installable on any computer. On Windows, let the installer do all the work for you.
+                CAMELS is a Python package distributed via PyPI. It is easily installable on any computer. On Windows, let the installer do all the work for you.
             </div>
-            <a href="#" class="more-link" onclick="toggleContent(event, this)">More</a>
         </div>
 
         <div class="box">
@@ -48,7 +47,6 @@ Why CAMELS?
             <div class="box-content">
                 No programming skills required. Just configure your measurement and process protocols. Get it done within minutes.
             </div>
-            <a href="#" class="more-link" onclick="toggleContent(event, this)">More</a>
         </div>
 
         <div class="box">
@@ -56,7 +54,6 @@ Why CAMELS?
             <div class="box-content">
                 Automatically store FAIR data with rich metadata that lets you and others understand your experiment in detail. Optionally connect directly with your NOMAD Oasis.
             </div>
-            <a href="#" class="more-link" onclick="toggleContent(event, this)">More</a>
         </div>
 
         <div class="box">
@@ -64,7 +61,6 @@ Why CAMELS?
             <div class="box-content">
                 Add further instruments to your setup at will. Reuse and adapt existing measurements quickly.
             </div>
-            <a href="#" class="more-link" onclick="toggleContent(event, this)">More</a>
         </div>
 
         <div class="box">
@@ -72,7 +68,6 @@ Why CAMELS?
             <div class="box-content">
                 Work with small setups using directly connected instruments. Or connect to large distributed systems using advanced protocols like EPICS.
             </div>
-            <a href="#" class="more-link" onclick="toggleContent(event, this)">More</a>
         </div>
 
         <div class="box">
@@ -80,14 +75,13 @@ Why CAMELS?
             <div class="box-content">
                 Contribute to CAMELS and add further instruments on GitHub. CAMELS comes with an instrument driver wizard that helps you implement new instruments.
             </div>
-            <a href="#" class="more-link" onclick="toggleContent(event, this)">More</a>
         </div>
 
     </div>
 
 #. **Smooth installation**
 
-   CAMELS is a python package distributed via PyPI. It is easily installable on any computer. On Windows, let the installer do all the work for you.
+   CAMELS is a Python package distributed via PyPI. It is easily installable on any computer. On Windows, let the installer do all the work for you.
 #. **Easy to use**
 
    No programming skills required. Just configure your measurement and process protocols. Get it done within minutes.
