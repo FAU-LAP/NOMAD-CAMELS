@@ -206,7 +206,7 @@ jobs:
           git diff
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git commit -am "Update code documentation" || exit 0
+          git commit -am "Update code documentation" || true
           git push origin HEAD:documentation_test
       - name: make instrument table
         run: |
@@ -216,7 +216,7 @@ jobs:
           git diff
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git commit -am "Update code documentation" || exit 0
+          git commit -am "Update code documentation" || true
           git push origin HEAD:documentation_test
       - name: Setup Pages
         uses: actions/configure-pages@v3
