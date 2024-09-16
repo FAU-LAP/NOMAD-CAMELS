@@ -1,7 +1,9 @@
 # macOS - Installation Using Pyenv
 
 ## 1. Pyenv and Python Installation
-This uses `homebrew` to install pyenv ([see here](https://brew.sh/) for more information on `homebrew`).
+
+Use `homebrew` to install pyenv ([see here](https://brew.sh/) for more information on `homebrew`).
+
 - Run
   ```bash
   brew update
@@ -32,10 +34,13 @@ This uses `homebrew` to install pyenv ([see here](https://brew.sh/) for more inf
 - Now  run the command `python -m venv .desertenv` in this folder to create a virtual Python environment (using the Python version given by `pyenv local <python_version>`)
 - Now  activate the environment with `.\.desertenv\Scripts\activate`
 - Now type
+- 
   ```bash
   pip install nomad-camels 
   ```
+
   to install CAMELS.
+
 ## 4. Run CAMELS
 
 You can then run
