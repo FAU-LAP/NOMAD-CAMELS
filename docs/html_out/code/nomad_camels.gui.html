@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nomad_camels.gui package &mdash; NOMAD-CAMELS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=1ebad8af" />
+
+  
+    <link rel="shortcut icon" href="../_static/CAMELS.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="nomad_camels.loop_steps package" href="nomad_camels.loop_steps.html" />
+    <link rel="prev" title="nomad_camels.frontpanels.helper_panels package" href="nomad_camels.frontpanels.helper_panels.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NOMAD-CAMELS
+              <img src="../_static/camels_horizontal.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Instruments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/instruments/instruments.html">Available Instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/instrument_drivers.html">Create New Instrument Drivers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CAMELS API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/api/api_landing.html">CAMELS API Overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Combine with EPICS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/new_ioc.html">Create New EPICS IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/procServ.html">Run IOCs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/ArchiverAppliance.html">Archiver Appliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/examples.html">Example Setups</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/programmers_guide.html">Maintain CAMELS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute to CAMELS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/general_process.html">General Process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/running_tests.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/code_of_conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="nomad_camels.html">nomad-camels</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="nomad_camels.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html">nomad_camels.bluesky_handling package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.commands.html">nomad_camels.commands package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.extensions.html">nomad_camels.extensions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html">nomad_camels.frontpanels package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">nomad_camels.gui package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.device_installer">nomad_camels.gui.device_installer module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.device_installer.CustomTextEdit"><code class="docutils literal notranslate"><span class="pre">CustomTextEdit</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.device_installer.Ui_Form"><code class="docutils literal notranslate"><span class="pre">Ui_Form</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.enterTextDialog">nomad_camels.gui.enterTextDialog module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.enterTextDialog.Ui_EnterTextDialog"><code class="docutils literal notranslate"><span class="pre">Ui_EnterTextDialog</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.extension_manager">nomad_camels.gui.extension_manager module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.extension_manager.Ui_Form"><code class="docutils literal notranslate"><span class="pre">Ui_Form</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.fit_definer">nomad_camels.gui.fit_definer module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.fit_definer.Ui_Fit_Definer"><code class="docutils literal notranslate"><span class="pre">Ui_Fit_Definer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.for_loop">nomad_camels.gui.for_loop module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.for_loop.Ui_for_loop_config"><code class="docutils literal notranslate"><span class="pre">Ui_for_loop_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.general_protocol_settings">nomad_camels.gui.general_protocol_settings module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.general_protocol_settings.Ui_Protocol_Settings"><code class="docutils literal notranslate"><span class="pre">Ui_Protocol_Settings</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.gradient_descent_step">nomad_camels.gui.gradient_descent_step module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.gradient_descent_step.Ui_Grad_Desc"><code class="docutils literal notranslate"><span class="pre">Ui_Grad_Desc</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.instrument_config">nomad_camels.gui.instrument_config module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.instrument_config.Ui_Form"><code class="docutils literal notranslate"><span class="pre">Ui_Form</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.mainWindow_v2">nomad_camels.gui.mainWindow_v2 module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.mainWindow_v2.Ui_MainWindow"><code class="docutils literal notranslate"><span class="pre">Ui_MainWindow</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.pass_ask">nomad_camels.gui.pass_ask module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.pass_ask.Ui_Pass_Ask"><code class="docutils literal notranslate"><span class="pre">Ui_Pass_Ask</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.plot_definer">nomad_camels.gui.plot_definer module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.plot_definer.Ui_Plot_Definer"><code class="docutils literal notranslate"><span class="pre">Ui_Plot_Definer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.plot_definer_2d">nomad_camels.gui.plot_definer_2d module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D"><code class="docutils literal notranslate"><span class="pre">Ui_Plot_Definer_2D</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.plot_options">nomad_camels.gui.plot_options module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.plot_options.Ui_Plot_Options"><code class="docutils literal notranslate"><span class="pre">Ui_Plot_Options</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.protocol_view">nomad_camels.gui.protocol_view module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.protocol_view.Ui_Protocol_View"><code class="docutils literal notranslate"><span class="pre">Ui_Protocol_View</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.read_channels">nomad_camels.gui.read_channels module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.read_channels.Ui_read_channels_config"><code class="docutils literal notranslate"><span class="pre">Ui_read_channels_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.set_channels">nomad_camels.gui.set_channels module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.set_channels.Ui_Form"><code class="docutils literal notranslate"><span class="pre">Ui_Form</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.settings_window">nomad_camels.gui.settings_window module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.settings_window.Ui_settings_window"><code class="docutils literal notranslate"><span class="pre">Ui_settings_window</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.settings_window_resource_rc">nomad_camels.gui.settings_window_resource_rc module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.settings_window_resource_rc.qCleanupResources"><code class="docutils literal notranslate"><span class="pre">qCleanupResources()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.settings_window_resource_rc.qInitResources"><code class="docutils literal notranslate"><span class="pre">qInitResources()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.loop_steps.html">nomad_camels.loop_steps package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.main_classes.html">nomad_camels.main_classes package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.manual_controls.html">nomad_camels.manual_controls package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.nomad_integration.html">nomad_camels.nomad_integration package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html">nomad_camels.tests package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tools.html">nomad_camels.tools package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.ui_widgets.html">nomad_camels.ui_widgets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html">nomad_camels.utility package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels.CAMELS_start">nomad_camels.CAMELS_start module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels.MainApp_v2">nomad_camels.MainApp_v2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/FAU-LAP/NOMAD-CAMELS">Find us on GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.06371">Cite NOMAD CAMELS</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nomad-lab.eu/nomad-lab/">NOMAD Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.fairmat-nfdi.eu/fairmat">FAIRmat Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.eu/">FAU/LAP Website</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Imprint/Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_privacy.html">Data Privacy</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NOMAD-CAMELS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="nomad_camels.html">nomad_camels package</a></li>
+      <li class="breadcrumb-item active">nomad_camels.gui package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code/nomad_camels.gui.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nomad-camels-gui-package">
+<h1>nomad_camels.gui package<a class="headerlink" href="#nomad-camels-gui-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-nomad_camels.gui.device_installer">
+<span id="nomad-camels-gui-device-installer-module"></span><h2>nomad_camels.gui.device_installer module<a class="headerlink" href="#module-nomad_camels.gui.device_installer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.device_installer.CustomTextEdit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.device_installer.</span></span><span class="sig-name descname"><span class="pre">CustomTextEdit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.device_installer.CustomTextEdit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QTextEdit</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.gui.device_installer.CustomTextEdit.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;CustomTextEdit&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QTextEdit&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.gui.device_installer.CustomTextEdit.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.device_installer.Ui_Form">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.device_installer.</span></span><span class="sig-name descname"><span class="pre">Ui_Form</span></span><a class="headerlink" href="#nomad_camels.gui.device_installer.Ui_Form" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.device_installer.Ui_Form.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Form</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.device_installer.Ui_Form.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.device_installer.Ui_Form.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Form</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.device_installer.Ui_Form.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.enterTextDialog">
+<span id="nomad-camels-gui-entertextdialog-module"></span><h2>nomad_camels.gui.enterTextDialog module<a class="headerlink" href="#module-nomad_camels.gui.enterTextDialog" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.enterTextDialog.Ui_EnterTextDialog">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.enterTextDialog.</span></span><span class="sig-name descname"><span class="pre">Ui_EnterTextDialog</span></span><a class="headerlink" href="#nomad_camels.gui.enterTextDialog.Ui_EnterTextDialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.enterTextDialog.Ui_EnterTextDialog.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">EnterTextDialog</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.enterTextDialog.Ui_EnterTextDialog.retranslateUi" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>EnterTextDialog</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.enterTextDialog.Ui_EnterTextDialog.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">EnterTextDialog</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.enterTextDialog.Ui_EnterTextDialog.setupUi" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>EnterTextDialog</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.extension_manager">
+<span id="nomad-camels-gui-extension-manager-module"></span><h2>nomad_camels.gui.extension_manager module<a class="headerlink" href="#module-nomad_camels.gui.extension_manager" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.extension_manager.Ui_Form">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.extension_manager.</span></span><span class="sig-name descname"><span class="pre">Ui_Form</span></span><a class="headerlink" href="#nomad_camels.gui.extension_manager.Ui_Form" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.extension_manager.Ui_Form.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Form</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.extension_manager.Ui_Form.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.extension_manager.Ui_Form.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Form</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.extension_manager.Ui_Form.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.fit_definer">
+<span id="nomad-camels-gui-fit-definer-module"></span><h2>nomad_camels.gui.fit_definer module<a class="headerlink" href="#module-nomad_camels.gui.fit_definer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.fit_definer.Ui_Fit_Definer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.fit_definer.</span></span><span class="sig-name descname"><span class="pre">Ui_Fit_Definer</span></span><a class="headerlink" href="#nomad_camels.gui.fit_definer.Ui_Fit_Definer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.fit_definer.Ui_Fit_Definer.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Fit_Definer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.fit_definer.Ui_Fit_Definer.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.fit_definer.Ui_Fit_Definer.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Fit_Definer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.fit_definer.Ui_Fit_Definer.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.for_loop">
+<span id="nomad-camels-gui-for-loop-module"></span><h2>nomad_camels.gui.for_loop module<a class="headerlink" href="#module-nomad_camels.gui.for_loop" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.for_loop.Ui_for_loop_config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.for_loop.</span></span><span class="sig-name descname"><span class="pre">Ui_for_loop_config</span></span><a class="headerlink" href="#nomad_camels.gui.for_loop.Ui_for_loop_config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.for_loop.Ui_for_loop_config.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">for_loop_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.for_loop.Ui_for_loop_config.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.for_loop.Ui_for_loop_config.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">for_loop_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.for_loop.Ui_for_loop_config.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.general_protocol_settings">
+<span id="nomad-camels-gui-general-protocol-settings-module"></span><h2>nomad_camels.gui.general_protocol_settings module<a class="headerlink" href="#module-nomad_camels.gui.general_protocol_settings" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.general_protocol_settings.Ui_Protocol_Settings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.general_protocol_settings.</span></span><span class="sig-name descname"><span class="pre">Ui_Protocol_Settings</span></span><a class="headerlink" href="#nomad_camels.gui.general_protocol_settings.Ui_Protocol_Settings" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.general_protocol_settings.Ui_Protocol_Settings.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Protocol_Settings</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.general_protocol_settings.Ui_Protocol_Settings.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.general_protocol_settings.Ui_Protocol_Settings.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Protocol_Settings</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.general_protocol_settings.Ui_Protocol_Settings.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.gradient_descent_step">
+<span id="nomad-camels-gui-gradient-descent-step-module"></span><h2>nomad_camels.gui.gradient_descent_step module<a class="headerlink" href="#module-nomad_camels.gui.gradient_descent_step" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.gradient_descent_step.Ui_Grad_Desc">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.gradient_descent_step.</span></span><span class="sig-name descname"><span class="pre">Ui_Grad_Desc</span></span><a class="headerlink" href="#nomad_camels.gui.gradient_descent_step.Ui_Grad_Desc" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.gradient_descent_step.Ui_Grad_Desc.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Grad_Desc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.gradient_descent_step.Ui_Grad_Desc.retranslateUi" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Grad_Desc</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.gradient_descent_step.Ui_Grad_Desc.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Grad_Desc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.gradient_descent_step.Ui_Grad_Desc.setupUi" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Grad_Desc</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.instrument_config">
+<span id="nomad-camels-gui-instrument-config-module"></span><h2>nomad_camels.gui.instrument_config module<a class="headerlink" href="#module-nomad_camels.gui.instrument_config" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.instrument_config.Ui_Form">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.instrument_config.</span></span><span class="sig-name descname"><span class="pre">Ui_Form</span></span><a class="headerlink" href="#nomad_camels.gui.instrument_config.Ui_Form" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.instrument_config.Ui_Form.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Form</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.instrument_config.Ui_Form.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.instrument_config.Ui_Form.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Form</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.instrument_config.Ui_Form.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.mainWindow_v2">
+<span id="nomad-camels-gui-mainwindow-v2-module"></span><h2>nomad_camels.gui.mainWindow_v2 module<a class="headerlink" href="#module-nomad_camels.gui.mainWindow_v2" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.mainWindow_v2.Ui_MainWindow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.mainWindow_v2.</span></span><span class="sig-name descname"><span class="pre">Ui_MainWindow</span></span><a class="headerlink" href="#nomad_camels.gui.mainWindow_v2.Ui_MainWindow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.mainWindow_v2.Ui_MainWindow.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">MainWindow</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.mainWindow_v2.Ui_MainWindow.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.mainWindow_v2.Ui_MainWindow.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">MainWindow</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.mainWindow_v2.Ui_MainWindow.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.pass_ask">
+<span id="nomad-camels-gui-pass-ask-module"></span><h2>nomad_camels.gui.pass_ask module<a class="headerlink" href="#module-nomad_camels.gui.pass_ask" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.pass_ask.Ui_Pass_Ask">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.pass_ask.</span></span><span class="sig-name descname"><span class="pre">Ui_Pass_Ask</span></span><a class="headerlink" href="#nomad_camels.gui.pass_ask.Ui_Pass_Ask" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.pass_ask.Ui_Pass_Ask.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Pass_Ask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.pass_ask.Ui_Pass_Ask.retranslateUi" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Pass_Ask</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.pass_ask.Ui_Pass_Ask.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Pass_Ask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.pass_ask.Ui_Pass_Ask.setupUi" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Pass_Ask</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.plot_definer">
+<span id="nomad-camels-gui-plot-definer-module"></span><h2>nomad_camels.gui.plot_definer module<a class="headerlink" href="#module-nomad_camels.gui.plot_definer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.plot_definer.Ui_Plot_Definer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Ui_Plot_Definer</span></span><a class="headerlink" href="#nomad_camels.gui.plot_definer.Ui_Plot_Definer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.plot_definer.Ui_Plot_Definer.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Plot_Definer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.plot_definer.Ui_Plot_Definer.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.plot_definer.Ui_Plot_Definer.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Plot_Definer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.plot_definer.Ui_Plot_Definer.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.plot_definer_2d">
+<span id="nomad-camels-gui-plot-definer-2d-module"></span><h2>nomad_camels.gui.plot_definer_2d module<a class="headerlink" href="#module-nomad_camels.gui.plot_definer_2d" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.plot_definer_2d.</span></span><span class="sig-name descname"><span class="pre">Ui_Plot_Definer_2D</span></span><a class="headerlink" href="#nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Plot_Definer_2D</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D.retranslateUi" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Plot_Definer_2D</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Plot_Definer_2D</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D.setupUi" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Plot_Definer_2D</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.plot_options">
+<span id="nomad-camels-gui-plot-options-module"></span><h2>nomad_camels.gui.plot_options module<a class="headerlink" href="#module-nomad_camels.gui.plot_options" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.plot_options.Ui_Plot_Options">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.plot_options.</span></span><span class="sig-name descname"><span class="pre">Ui_Plot_Options</span></span><a class="headerlink" href="#nomad_camels.gui.plot_options.Ui_Plot_Options" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.plot_options.Ui_Plot_Options.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Plot_Options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.plot_options.Ui_Plot_Options.retranslateUi" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Plot_Options</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.plot_options.Ui_Plot_Options.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Plot_Options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.plot_options.Ui_Plot_Options.setupUi" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Plot_Options</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.protocol_view">
+<span id="nomad-camels-gui-protocol-view-module"></span><h2>nomad_camels.gui.protocol_view module<a class="headerlink" href="#module-nomad_camels.gui.protocol_view" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.protocol_view.Ui_Protocol_View">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.protocol_view.</span></span><span class="sig-name descname"><span class="pre">Ui_Protocol_View</span></span><a class="headerlink" href="#nomad_camels.gui.protocol_view.Ui_Protocol_View" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.protocol_view.Ui_Protocol_View.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Protocol_View</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.protocol_view.Ui_Protocol_View.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.protocol_view.Ui_Protocol_View.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Protocol_View</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.protocol_view.Ui_Protocol_View.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.read_channels">
+<span id="nomad-camels-gui-read-channels-module"></span><h2>nomad_camels.gui.read_channels module<a class="headerlink" href="#module-nomad_camels.gui.read_channels" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.read_channels.Ui_read_channels_config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.read_channels.</span></span><span class="sig-name descname"><span class="pre">Ui_read_channels_config</span></span><a class="headerlink" href="#nomad_camels.gui.read_channels.Ui_read_channels_config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.read_channels.Ui_read_channels_config.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_channels_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.read_channels.Ui_read_channels_config.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.read_channels.Ui_read_channels_config.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_channels_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.read_channels.Ui_read_channels_config.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.set_channels">
+<span id="nomad-camels-gui-set-channels-module"></span><h2>nomad_camels.gui.set_channels module<a class="headerlink" href="#module-nomad_camels.gui.set_channels" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.set_channels.Ui_Form">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.set_channels.</span></span><span class="sig-name descname"><span class="pre">Ui_Form</span></span><a class="headerlink" href="#nomad_camels.gui.set_channels.Ui_Form" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.set_channels.Ui_Form.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Form</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.set_channels.Ui_Form.retranslateUi" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Form</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.set_channels.Ui_Form.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Form</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.set_channels.Ui_Form.setupUi" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Form</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.settings_window">
+<span id="nomad-camels-gui-settings-window-module"></span><h2>nomad_camels.gui.settings_window module<a class="headerlink" href="#module-nomad_camels.gui.settings_window" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.settings_window.Ui_settings_window">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.settings_window.</span></span><span class="sig-name descname"><span class="pre">Ui_settings_window</span></span><a class="headerlink" href="#nomad_camels.gui.settings_window.Ui_settings_window" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.settings_window.Ui_settings_window.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settings_window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.settings_window.Ui_settings_window.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.settings_window.Ui_settings_window.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settings_window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.settings_window.Ui_settings_window.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.settings_window_resource_rc">
+<span id="nomad-camels-gui-settings-window-resource-rc-module"></span><h2>nomad_camels.gui.settings_window_resource_rc module<a class="headerlink" href="#module-nomad_camels.gui.settings_window_resource_rc" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.gui.settings_window_resource_rc.qCleanupResources">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.settings_window_resource_rc.</span></span><span class="sig-name descname"><span class="pre">qCleanupResources</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.settings_window_resource_rc.qCleanupResources" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.gui.settings_window_resource_rc.qInitResources">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.settings_window_resource_rc.</span></span><span class="sig-name descname"><span class="pre">qInitResources</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.settings_window_resource_rc.qInitResources" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels.gui" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nomad_camels.frontpanels.helper_panels.html" class="btn btn-neutral float-left" title="nomad_camels.frontpanels.helper_panels package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nomad_camels.loop_steps.html" class="btn btn-neutral float-right" title="nomad_camels.loop_steps package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+<br><br>
+<a href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/data_privacy.html">Data privacy statement</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/contact.html">Contact</a>
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

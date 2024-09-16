@@ -129,10 +129,10 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    :maxdepth: 2
    :caption: Code Reference
 
-   nomad-camels <nomad_camels.rst>
-   helping packages <helping_packages.rst>
-   drivers <drivers.rst>
-   extensions <extensions.rst>
+   nomad-camels <code/nomad_camels.rst>
+   helping packages <code/helping_packages.rst>
+   drivers <code/drivers.rst>
+   extensions <code/extensions.rst>
    genindex
 
 

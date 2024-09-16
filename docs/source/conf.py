@@ -7,14 +7,20 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import os, sys
 
-import suitcase.nomad_camels_hdf5
-
 
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.abspath("../"))
 sys.path.insert(0, os.path.abspath("../../"))
 sys.path.insert(0, os.path.abspath("../../nomad_camels"))
-sys.path.insert(0, suitcase.nomad_camels_hdf5.__path__[0])
+
+exclude_patterns = []
+print(os.getenv("EXCLUDE_CODE_DIR"))
+if os.getenv("EXCLUDE_CODE_DIR") == "true":
+    exclude_patterns.append("code/**")
+else:
+    import suitcase.nomad_camels_hdf5
+
+    sys.path.insert(0, suitcase.nomad_camels_hdf5.__path__[0])
 
 project = "NOMAD-CAMELS"
 # copyright = '2021, FAIRmat'
@@ -32,7 +38,6 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = []
 
 source_suffix = [".rst", ".md"]
 

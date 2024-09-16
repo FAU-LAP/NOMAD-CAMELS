@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nomad_camels_driver_keithley_237 package &mdash; NOMAD-CAMELS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=1ebad8af" />
+
+  
+    <link rel="shortcut icon" href="../_static/CAMELS.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="nomad_camels_driver_keithley_2400 package" href="nomad_camels_driver_keithley_2400.html" />
+    <link rel="prev" title="nomad_camels_driver_keithley_2000 package" href="nomad_camels_driver_keithley_2000.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NOMAD-CAMELS
+              <img src="../_static/camels_horizontal.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Instruments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/instruments/instruments.html">Available Instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/instrument_drivers.html">Create New Instrument Drivers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CAMELS API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/api/api_landing.html">CAMELS API Overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Combine with EPICS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/new_ioc.html">Create New EPICS IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/procServ.html">Run IOCs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/ArchiverAppliance.html">Archiver Appliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/examples.html">Example Setups</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/programmers_guide.html">Maintain CAMELS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute to CAMELS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/general_process.html">General Process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/running_tests.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/code_of_conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels.html">nomad-camels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="drivers.html">drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_agilent_34401a.html">nomad_camels_driver_agilent_34401a package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_andor_newton.html">nomad_camels_driver_andor_newton package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_andor_shamrock_500.html">nomad_camels_driver_andor_shamrock_500 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_cam_control_pylablib.html">nomad_camels_driver_cam_control_pylablib package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_cryovac_tic_500.html">nomad_camels_driver_cryovac_tic_500 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_demo_digital_multimeter.html">nomad_camels_driver_demo_digital_multimeter package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_demo_instrument.html">nomad_camels_driver_demo_instrument package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_demo_source_measure_unit.html">nomad_camels_driver_demo_source_measure_unit package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_eurotherm_bisynch.html">nomad_camels_driver_eurotherm_bisynch package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_iBeam_smart.html">nomad_camels_driver_iBeam_smart package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keithley_2000.html">nomad_camels_driver_keithley_2000 package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">nomad_camels_driver_keithley_237 package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_keithley_237.keithley_237">nomad_camels_driver_keithley_237.keithley_237 module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237.subclass"><code class="docutils literal notranslate"><span class="pre">subclass</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237.subclass_config"><code class="docutils literal notranslate"><span class="pre">subclass_config</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237.subclass_config.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">subclass_config.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_keithley_237.keithley_237_ophyd">nomad_camels_driver_keithley_237.keithley_237_ophyd module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237"><code class="docutils literal notranslate"><span class="pre">Keithley_237</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Averages"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Averages</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Averages_put_function"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Averages_put_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Bias_delay"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Bias_delay</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Current_compliance"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Current_compliance</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Current_compliance_range"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Current_compliance_range</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Four_wire"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Four_wire</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Integration_time"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Integration_time</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Integration_time_put_function"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Integration_time_put_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Source_Type"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Source_Type</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Sweep_Hysteresis"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Sweep_Hysteresis</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Sweep_Hysteresis_put_function"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Sweep_Hysteresis_put_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Voltage_compliance"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Voltage_compliance</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Voltage_compliance_range"><code class="docutils literal notranslate"><span class="pre">Keithley_237.Voltage_compliance_range</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.compliance_put_function"><code class="docutils literal notranslate"><span class="pre">Keithley_237.compliance_put_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.component_names"><code class="docutils literal notranslate"><span class="pre">Keithley_237.component_names</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.disable"><code class="docutils literal notranslate"><span class="pre">Keithley_237.disable</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.idn"><code class="docutils literal notranslate"><span class="pre">Keithley_237.idn</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_current"><code class="docutils literal notranslate"><span class="pre">Keithley_237.read_current</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_current_function"><code class="docutils literal notranslate"><span class="pre">Keithley_237.read_current_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_current_sweep"><code class="docutils literal notranslate"><span class="pre">Keithley_237.read_current_sweep</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_voltage"><code class="docutils literal notranslate"><span class="pre">Keithley_237.read_voltage</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_voltage_function"><code class="docutils literal notranslate"><span class="pre">Keithley_237.read_voltage_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_voltage_sweep"><code class="docutils literal notranslate"><span class="pre">Keithley_237.read_voltage_sweep</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Level"><code class="docutils literal notranslate"><span class="pre">Keithley_237.setSweep_Level</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Points"><code class="docutils literal notranslate"><span class="pre">Keithley_237.setSweep_Points</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Pulses"><code class="docutils literal notranslate"><span class="pre">Keithley_237.setSweep_Pulses</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Start"><code class="docutils literal notranslate"><span class="pre">Keithley_237.setSweep_Start</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Step"><code class="docutils literal notranslate"><span class="pre">Keithley_237.setSweep_Step</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Stop"><code class="docutils literal notranslate"><span class="pre">Keithley_237.setSweep_Stop</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_T_off"><code class="docutils literal notranslate"><span class="pre">Keithley_237.setSweep_T_off</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_T_on"><code class="docutils literal notranslate"><span class="pre">Keithley_237.setSweep_T_on</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Type"><code class="docutils literal notranslate"><span class="pre">Keithley_237.setSweep_Type</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.set_current"><code class="docutils literal notranslate"><span class="pre">Keithley_237.set_current</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.set_current_function"><code class="docutils literal notranslate"><span class="pre">Keithley_237.set_current_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.set_voltage"><code class="docutils literal notranslate"><span class="pre">Keithley_237.set_voltage</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.set_voltage_function"><code class="docutils literal notranslate"><span class="pre">Keithley_237.set_voltage_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.start_current_sweep"><code class="docutils literal notranslate"><span class="pre">Keithley_237.start_current_sweep</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.start_current_sweep_function"><code class="docutils literal notranslate"><span class="pre">Keithley_237.start_current_sweep_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.start_voltage_sweep"><code class="docutils literal notranslate"><span class="pre">Keithley_237.start_voltage_sweep</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.start_voltage_sweep_function"><code class="docutils literal notranslate"><span class="pre">Keithley_237.start_voltage_sweep_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.subscriptions"><code class="docutils literal notranslate"><span class="pre">Keithley_237.subscriptions</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.get_current_range_value"><code class="docutils literal notranslate"><span class="pre">get_current_range_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.get_integration_time_value"><code class="docutils literal notranslate"><span class="pre">get_integration_time_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.get_voltage_range_value"><code class="docutils literal notranslate"><span class="pre">get_voltage_range_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.read_sweep_array"><code class="docutils literal notranslate"><span class="pre">read_sweep_array()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_keithley_237">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keithley_2400.html">nomad_camels_driver_keithley_2400 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keysight_b2912a.html">nomad_camels_driver_keysight_b2912a package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keysight_e5270b.html">nomad_camels_driver_keysight_e5270b package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_mechonics_cu30cl.html">nomad_camels_driver_mechonics_cu30cl package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_ni_daq.html">nomad_camels_driver_ni_daq package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_PID.html">nomad_camels_driver_PID package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_pi_stage_e709.html">nomad_camels_driver_pi_stage_e709 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_swabianinstruments_timetagger.html">nomad_camels_driver_swabianinstruments_timetagger package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_SweepMe_device.html">nomad_camels_driver_SweepMe_device package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_thorlabs_K10CR1.html">nomad_camels_driver_thorlabs_K10CR1 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_thorlabs_MFF.html">nomad_camels_driver_thorlabs_MFF package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_thorlabs_TLPM.html">nomad_camels_driver_thorlabs_TLPM package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_trinamic_tmcm_1110.html">nomad_camels_driver_trinamic_tmcm_1110 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_voltcraft_pps.html">nomad_camels_driver_voltcraft_pps package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/FAU-LAP/NOMAD-CAMELS">Find us on GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.06371">Cite NOMAD CAMELS</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nomad-lab.eu/nomad-lab/">NOMAD Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.fairmat-nfdi.eu/fairmat">FAIRmat Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.eu/">FAU/LAP Website</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Imprint/Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_privacy.html">Data Privacy</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NOMAD-CAMELS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="drivers.html">Drivers</a></li>
+      <li class="breadcrumb-item active">nomad_camels_driver_keithley_237 package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code/nomad_camels_driver_keithley_237.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nomad-camels-driver-keithley-237-package">
+<h1>nomad_camels_driver_keithley_237 package<a class="headerlink" href="#nomad-camels-driver-keithley-237-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-nomad_camels_driver_keithley_237.keithley_237">
+<span id="nomad-camels-driver-keithley-237-keithley-237-module"></span><h2>nomad_camels_driver_keithley_237.keithley_237 module<a class="headerlink" href="#module-nomad_camels_driver_keithley_237.keithley_237" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237.subclass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_keithley_237.keithley_237.</span></span><span class="sig-name descname"><span class="pre">subclass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237.subclass" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.device_class.Device" title="nomad_camels.main_classes.device_class.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237.subclass_config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_keithley_237.keithley_237.</span></span><span class="sig-name descname"><span class="pre">subclass_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237.subclass_config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.device_class.Simple_Config" title="nomad_camels.main_classes.device_class.Simple_Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simple_Config</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237.subclass_config.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;subclass_config&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Simple_Config&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237.subclass_config.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels_driver_keithley_237.keithley_237_ophyd">
+<span id="nomad-camels-driver-keithley-237-keithley-237-ophyd-module"></span><h2>nomad_camels_driver_keithley_237.keithley_237_ophyd module<a class="headerlink" href="#module-nomad_camels_driver_keithley_237.keithley_237_ophyd" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_keithley_237.keithley_237_ophyd.</span></span><span class="sig-name descname"><span class="pre">Keithley_237</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration_attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baud_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_termination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\r\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_termination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\r\n'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.visa_signal.VISA_Device" title="nomad_camels.bluesky_handling.visa_signal.VISA_Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">VISA_Device</span></code></a></p>
+<p>Driver for the Keithley 237:
+The K237 needs to be initialized before measurement! (set initialize loop-step to any value)
+Basic functions:
+F: Set source and function
+P: Select filter
+S: Set integration time
+W: Enable/ disable default delay
+L: Program compliance
+B: Program bias operation
+Q: Create/append sweep list
+A: Modify sweep list
+T: Select trigger configuration
+R: Enable/ disable triggers
+N: Select operate/ standby mode
+Y: Select terminator characters
+K: Select EOI and hold-off on X
+G: Select output data format
+V: 1100V range control
+J: Execute self-tests
+U: Request status
+H: Send IEEE immediate trigger, H0X needed to actually trigger device
+X: Execute DDCs</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Averages">
+<span class="sig-name descname"><span class="pre">Averages</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Averages" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Averages_put_function">
+<span class="sig-name descname"><span class="pre">Averages_put_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Averages_put_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Bias_delay">
+<span class="sig-name descname"><span class="pre">Bias_delay</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Bias_delay" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Current_compliance">
+<span class="sig-name descname"><span class="pre">Current_compliance</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Current_compliance" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Current_compliance_range">
+<span class="sig-name descname"><span class="pre">Current_compliance_range</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Current_compliance_range" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Four_wire">
+<span class="sig-name descname"><span class="pre">Four_wire</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Four_wire" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Integration_time">
+<span class="sig-name descname"><span class="pre">Integration_time</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Integration_time" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Integration_time_put_function">
+<span class="sig-name descname"><span class="pre">Integration_time_put_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Integration_time_put_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Source_Type">
+<span class="sig-name descname"><span class="pre">Source_Type</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Source_Type" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Sweep_Hysteresis">
+<span class="sig-name descname"><span class="pre">Sweep_Hysteresis</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Sweep_Hysteresis" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Sweep_Hysteresis_put_function">
+<span class="sig-name descname"><span class="pre">Sweep_Hysteresis_put_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Sweep_Hysteresis_put_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Voltage_compliance">
+<span class="sig-name descname"><span class="pre">Voltage_compliance</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Voltage_compliance" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Voltage_compliance_range">
+<span class="sig-name descname"><span class="pre">Voltage_compliance_range</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.Voltage_compliance_range" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.compliance_put_function">
+<span class="sig-name descname"><span class="pre">compliance_put_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.compliance_put_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.component_names">
+<span class="sig-name descname"><span class="pre">component_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('read_voltage',</span> <span class="pre">'read_current',</span> <span class="pre">'set_voltage',</span> <span class="pre">'set_current',</span> <span class="pre">'start_voltage_sweep',</span> <span class="pre">'start_current_sweep',</span> <span class="pre">'read_voltage_sweep',</span> <span class="pre">'read_current_sweep',</span> <span class="pre">'disable',</span> <span class="pre">'setSweep_Type',</span> <span class="pre">'setSweep_Level',</span> <span class="pre">'setSweep_Start',</span> <span class="pre">'setSweep_Stop',</span> <span class="pre">'setSweep_Step',</span> <span class="pre">'setSweep_Pulses',</span> <span class="pre">'setSweep_Points',</span> <span class="pre">'setSweep_T_on',</span> <span class="pre">'setSweep_T_off',</span> <span class="pre">'idn',</span> <span class="pre">'Source_Type',</span> <span class="pre">'Four_wire',</span> <span class="pre">'Averages',</span> <span class="pre">'Bias_delay',</span> <span class="pre">'Integration_time',</span> <span class="pre">'Current_compliance_range',</span> <span class="pre">'Current_compliance',</span> <span class="pre">'Voltage_compliance_range',</span> <span class="pre">'Voltage_compliance',</span> <span class="pre">'Sweep_Hysteresis')</span></em><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.component_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.disable">
+<span class="sig-name descname"><span class="pre">disable</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.disable" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.idn">
+<span class="sig-name descname"><span class="pre">idn</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.idn" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_current">
+<span class="sig-name descname"><span class="pre">read_current</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_current" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_current_function">
+<span class="sig-name descname"><span class="pre">read_current_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_current_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_current_sweep">
+<span class="sig-name descname"><span class="pre">read_current_sweep</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_current_sweep" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_voltage">
+<span class="sig-name descname"><span class="pre">read_voltage</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_voltage" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_voltage_function">
+<span class="sig-name descname"><span class="pre">read_voltage_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_voltage_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_voltage_sweep">
+<span class="sig-name descname"><span class="pre">read_voltage_sweep</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.read_voltage_sweep" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Level">
+<span class="sig-name descname"><span class="pre">setSweep_Level</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Level" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Points">
+<span class="sig-name descname"><span class="pre">setSweep_Points</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Points" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Pulses">
+<span class="sig-name descname"><span class="pre">setSweep_Pulses</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Pulses" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Start">
+<span class="sig-name descname"><span class="pre">setSweep_Start</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Start" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Step">
+<span class="sig-name descname"><span class="pre">setSweep_Step</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Step" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Stop">
+<span class="sig-name descname"><span class="pre">setSweep_Stop</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Stop" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_T_off">
+<span class="sig-name descname"><span class="pre">setSweep_T_off</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_T_off" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_T_on">
+<span class="sig-name descname"><span class="pre">setSweep_T_on</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_T_on" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Type">
+<span class="sig-name descname"><span class="pre">setSweep_Type</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.setSweep_Type" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.set_current">
+<span class="sig-name descname"><span class="pre">set_current</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.set_current" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.set_current_function">
+<span class="sig-name descname"><span class="pre">set_current_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">set_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.set_current_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.set_voltage">
+<span class="sig-name descname"><span class="pre">set_voltage</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.set_voltage" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.set_voltage_function">
+<span class="sig-name descname"><span class="pre">set_voltage_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">set_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.set_voltage_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.start_current_sweep">
+<span class="sig-name descname"><span class="pre">start_current_sweep</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.start_current_sweep" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.start_current_sweep_function">
+<span class="sig-name descname"><span class="pre">start_current_sweep_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">passed_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.start_current_sweep_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.start_voltage_sweep">
+<span class="sig-name descname"><span class="pre">start_voltage_sweep</span></span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.start_voltage_sweep" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.start_voltage_sweep_function">
+<span class="sig-name descname"><span class="pre">start_voltage_sweep_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">passed_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.start_voltage_sweep_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.subscriptions">
+<span class="sig-name descname"><span class="pre">subscriptions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">FrozenSet</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'acq_done'})</span></em><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.Keithley_237.subscriptions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.get_current_range_value">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_keithley_237.keithley_237_ophyd.</span></span><span class="sig-name descname"><span class="pre">get_current_range_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_range_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.get_current_range_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.get_integration_time_value">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_keithley_237.keithley_237_ophyd.</span></span><span class="sig-name descname"><span class="pre">get_integration_time_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">integration_time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.get_integration_time_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.get_voltage_range_value">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_keithley_237.keithley_237_ophyd.</span></span><span class="sig-name descname"><span class="pre">get_voltage_range_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voltage_range_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.get_voltage_range_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_driver_keithley_237.keithley_237_ophyd.read_sweep_array">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_keithley_237.keithley_237_ophyd.</span></span><span class="sig-name descname"><span class="pre">read_sweep_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_keithley_237.keithley_237_ophyd.read_sweep_array" title="Link to this definition"></a></dt>
+<dd><p>Converts the long sweep string to numpy arrays.
+:param read_string: The string returned by the instrument. It is a comma separated string
+containing pairs of source and measure values.
+Like: ‘&lt;source1&gt;,&lt;meas1&gt;,&lt;source2&gt;,&lt;meas2&gt;,&lt;source3&gt;,&lt;meas3&gt;’
+:return: Returns a numpy array with the first column containing the sourced values and the
+second column containing the measured values</p>
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels_driver_keithley_237">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels_driver_keithley_237" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nomad_camels_driver_keithley_2000.html" class="btn btn-neutral float-left" title="nomad_camels_driver_keithley_2000 package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nomad_camels_driver_keithley_2400.html" class="btn btn-neutral float-right" title="nomad_camels_driver_keithley_2400 package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+<br><br>
+<a href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/data_privacy.html">Data privacy statement</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/contact.html">Contact</a>
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

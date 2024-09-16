@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nomad_camels_sandbox package &mdash; NOMAD-CAMELS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=1ebad8af" />
+
+  
+    <link rel="shortcut icon" href="../_static/CAMELS.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="nomad_camels_sandbox.digitaltwins package" href="nomad_camels_sandbox.digitaltwins.html" />
+    <link rel="prev" title="nomad_camels_hdf5.tests package" href="suitcase.nomad_camels_hdf5.tests.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NOMAD-CAMELS
+              <img src="../_static/camels_horizontal.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Instruments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/instruments/instruments.html">Available Instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/instrument_drivers.html">Create New Instrument Drivers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CAMELS API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/api/api_landing.html">CAMELS API Overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Combine with EPICS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/new_ioc.html">Create New EPICS IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/procServ.html">Run IOCs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/ArchiverAppliance.html">Archiver Appliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/examples.html">Example Setups</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/programmers_guide.html">Maintain CAMELS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute to CAMELS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/general_process.html">General Process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/running_tests.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/code_of_conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels.html">nomad-camels</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="helping_packages.html">helping packages</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html">nomad_camels_hdf5 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html">nomad_camels package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">nomad_camels_sandbox package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html">nomad_camels_sandbox.digitaltwins package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_sandbox.CAMELS_sandbox">nomad_camels_sandbox.CAMELS_sandbox module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxForCAMELS"><code class="docutils literal notranslate"><span class="pre">SandboxForCAMELS</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxForCAMELS.do_GET"><code class="docutils literal notranslate"><span class="pre">SandboxForCAMELS.do_GET()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxForCAMELS.experiment1"><code class="docutils literal notranslate"><span class="pre">SandboxForCAMELS.experiment1</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxForCAMELS.log_message"><code class="docutils literal notranslate"><span class="pre">SandboxForCAMELS.log_message()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxServer"><code class="docutils literal notranslate"><span class="pre">SandboxServer</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxServer.add_using_instrument"><code class="docutils literal notranslate"><span class="pre">SandboxServer.add_using_instrument()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxServer.remove_using_instrument"><code class="docutils literal notranslate"><span class="pre">SandboxServer.remove_using_instrument()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_sandbox.CAMELS_sandbox.ServerThread"><code class="docutils literal notranslate"><span class="pre">ServerThread</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.CAMELS_sandbox.ServerThread.run"><code class="docutils literal notranslate"><span class="pre">ServerThread.run()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.CAMELS_sandbox.ServerThread.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">ServerThread.staticMetaObject</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.CAMELS_sandbox.ServerThread.stop"><code class="docutils literal notranslate"><span class="pre">ServerThread.stop()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_sandbox.server_signals">nomad_camels_sandbox.server_signals module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_Device"><code class="docutils literal notranslate"><span class="pre">Demo_Server_Device</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_Device.component_names"><code class="docutils literal notranslate"><span class="pre">Demo_Server_Device.component_names</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_Device.finalize_steps"><code class="docutils literal notranslate"><span class="pre">Demo_Server_Device.finalize_steps()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_Device.subscriptions"><code class="docutils literal notranslate"><span class="pre">Demo_Server_Device.subscriptions</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_Signal"><code class="docutils literal notranslate"><span class="pre">Demo_Server_Signal</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_Signal.describe"><code class="docutils literal notranslate"><span class="pre">Demo_Server_Signal.describe()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_Signal.put"><code class="docutils literal notranslate"><span class="pre">Demo_Server_Signal.put()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_Signal.set_port"><code class="docutils literal notranslate"><span class="pre">Demo_Server_Signal.set_port()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_Signal.subscriptions"><code class="docutils literal notranslate"><span class="pre">Demo_Server_Signal.subscriptions</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_SignalRO"><code class="docutils literal notranslate"><span class="pre">Demo_Server_SignalRO</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_SignalRO.describe"><code class="docutils literal notranslate"><span class="pre">Demo_Server_SignalRO.describe()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_SignalRO.get"><code class="docutils literal notranslate"><span class="pre">Demo_Server_SignalRO.get()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_SignalRO.set_port"><code class="docutils literal notranslate"><span class="pre">Demo_Server_SignalRO.set_port()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.Demo_Server_SignalRO.subscriptions"><code class="docutils literal notranslate"><span class="pre">Demo_Server_SignalRO.subscriptions</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.ServerConnection"><code class="docutils literal notranslate"><span class="pre">ServerConnection</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.ServerConnection.get_settings"><code class="docutils literal notranslate"><span class="pre">ServerConnection.get_settings()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.ServerConnection.load_settings"><code class="docutils literal notranslate"><span class="pre">ServerConnection.load_settings()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_sandbox.server_signals.ServerConnection.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">ServerConnection.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_sandbox">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/FAU-LAP/NOMAD-CAMELS">Find us on GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.06371">Cite NOMAD CAMELS</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nomad-lab.eu/nomad-lab/">NOMAD Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.fairmat-nfdi.eu/fairmat">FAIRmat Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.eu/">FAU/LAP Website</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Imprint/Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_privacy.html">Data Privacy</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NOMAD-CAMELS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="helping_packages.html">Helping Packages</a></li>
+      <li class="breadcrumb-item active">nomad_camels_sandbox package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code/nomad_camels_sandbox.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nomad-camels-sandbox-package">
+<h1>nomad_camels_sandbox package<a class="headerlink" href="#nomad-camels-sandbox-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html">nomad_camels_sandbox.digitaltwins package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#module-nomad_camels_sandbox.digitaltwins.diode">nomad_camels_sandbox.digitaltwins.diode module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.diode.diode"><code class="docutils literal notranslate"><span class="pre">diode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.diode.diode.execute_command"><code class="docutils literal notranslate"><span class="pre">diode.execute_command()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.diode.diode.get_current"><code class="docutils literal notranslate"><span class="pre">diode.get_current()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.diode.diode.get_voltage"><code class="docutils literal notranslate"><span class="pre">diode.get_voltage()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.diode.diode.set_current"><code class="docutils literal notranslate"><span class="pre">diode.set_current()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.diode.diode.set_temperature"><code class="docutils literal notranslate"><span class="pre">diode.set_temperature()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.diode.diode.set_voltage"><code class="docutils literal notranslate"><span class="pre">diode.set_voltage()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#module-nomad_camels_sandbox.digitaltwins.dmm">nomad_camels_sandbox.digitaltwins.dmm module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.dmm.dmm"><code class="docutils literal notranslate"><span class="pre">dmm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.dmm.dmm.execute_command"><code class="docutils literal notranslate"><span class="pre">dmm.execute_command()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.dmm.dmm.get_current"><code class="docutils literal notranslate"><span class="pre">dmm.get_current()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.dmm.dmm.get_resistance"><code class="docutils literal notranslate"><span class="pre">dmm.get_resistance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.dmm.dmm.get_voltage"><code class="docutils literal notranslate"><span class="pre">dmm.get_voltage()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.dmm.dmm.set_nplc"><code class="docutils literal notranslate"><span class="pre">dmm.set_nplc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.dmm.is_float"><code class="docutils literal notranslate"><span class="pre">is_float()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#module-nomad_camels_sandbox.digitaltwins.experiment">nomad_camels_sandbox.digitaltwins.experiment module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.experiment.experiment"><code class="docutils literal notranslate"><span class="pre">experiment</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.experiment.experiment.execute_command"><code class="docutils literal notranslate"><span class="pre">experiment.execute_command()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.experiment.experiment.experiments"><code class="docutils literal notranslate"><span class="pre">experiment.experiments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.experiment.experiment.get_object"><code class="docutils literal notranslate"><span class="pre">experiment.get_object()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.experiment.experiment.set_temperature"><code class="docutils literal notranslate"><span class="pre">experiment.set_temperature()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.experiment.experiment.setup"><code class="docutils literal notranslate"><span class="pre">experiment.setup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.experiment.experiment.setup_diode_on_heater"><code class="docutils literal notranslate"><span class="pre">experiment.setup_diode_on_heater()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.experiment.experiment.setup_semiconductor_resistor_on_heater"><code class="docutils literal notranslate"><span class="pre">experiment.setup_semiconductor_resistor_on_heater()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#module-nomad_camels_sandbox.digitaltwins.heater">nomad_camels_sandbox.digitaltwins.heater module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.heater.heater"><code class="docutils literal notranslate"><span class="pre">heater</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.heater.heater.area"><code class="docutils literal notranslate"><span class="pre">heater.area</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.heater.heater.density"><code class="docutils literal notranslate"><span class="pre">heater.density</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.heater.heater.emissivity"><code class="docutils literal notranslate"><span class="pre">heater.emissivity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.heater.heater.execute_command"><code class="docutils literal notranslate"><span class="pre">heater.execute_command()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.heater.heater.get_resistance"><code class="docutils literal notranslate"><span class="pre">heater.get_resistance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.heater.heater.get_temperature"><code class="docutils literal notranslate"><span class="pre">heater.get_temperature()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.heater.heater.heat_transfer_coefficient"><code class="docutils literal notranslate"><span class="pre">heater.heat_transfer_coefficient</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.heater.heater.set_current"><code class="docutils literal notranslate"><span class="pre">heater.set_current()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.heater.heater.specific_heat_capacity"><code class="docutils literal notranslate"><span class="pre">heater.specific_heat_capacity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.heater.heater.thickness"><code class="docutils literal notranslate"><span class="pre">heater.thickness</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#module-nomad_camels_sandbox.digitaltwins.peltierelement">nomad_camels_sandbox.digitaltwins.peltierelement module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.peltierelement.peltierelement"><code class="docutils literal notranslate"><span class="pre">peltierelement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.peltierelement.peltierelement.heatpower"><code class="docutils literal notranslate"><span class="pre">peltierelement.heatpower()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.peltierelement.peltierelement.heatpower_coefficients"><code class="docutils literal notranslate"><span class="pre">peltierelement.heatpower_coefficients()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.peltierelement.peltierelement.peltier_current_max"><code class="docutils literal notranslate"><span class="pre">peltierelement.peltier_current_max</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.peltierelement.peltierelement.peltier_delta_temp_max"><code class="docutils literal notranslate"><span class="pre">peltierelement.peltier_delta_temp_max</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.peltierelement.peltierelement.peltier_power_max"><code class="docutils literal notranslate"><span class="pre">peltierelement.peltier_power_max</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.peltierelement.peltierelement.peltier_temp_hot"><code class="docutils literal notranslate"><span class="pre">peltierelement.peltier_temp_hot</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.peltierelement.peltierelement.peltier_voltage_max"><code class="docutils literal notranslate"><span class="pre">peltierelement.peltier_voltage_max</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#module-nomad_camels_sandbox.digitaltwins.ptxxxx">nomad_camels_sandbox.digitaltwins.ptxxxx module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.ptxxxx.ptxxxx"><code class="docutils literal notranslate"><span class="pre">ptxxxx</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.ptxxxx.ptxxxx.a"><code class="docutils literal notranslate"><span class="pre">ptxxxx.a</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.ptxxxx.ptxxxx.b"><code class="docutils literal notranslate"><span class="pre">ptxxxx.b</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.ptxxxx.ptxxxx.c"><code class="docutils literal notranslate"><span class="pre">ptxxxx.c</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.ptxxxx.ptxxxx.get_resistance"><code class="docutils literal notranslate"><span class="pre">ptxxxx.get_resistance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.ptxxxx.ptxxxx.get_temperature"><code class="docutils literal notranslate"><span class="pre">ptxxxx.get_temperature()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.ptxxxx.ptxxxx.set_temperature"><code class="docutils literal notranslate"><span class="pre">ptxxxx.set_temperature()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#module-nomad_camels_sandbox.digitaltwins.semiconductor_resistor">nomad_camels_sandbox.digitaltwins.semiconductor_resistor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.semiconductor_resistor.semiconductor_resistor"><code class="docutils literal notranslate"><span class="pre">semiconductor_resistor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.semiconductor_resistor.semiconductor_resistor.execute_command"><code class="docutils literal notranslate"><span class="pre">semiconductor_resistor.execute_command()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.semiconductor_resistor.semiconductor_resistor.get_current"><code class="docutils literal notranslate"><span class="pre">semiconductor_resistor.get_current()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.semiconductor_resistor.semiconductor_resistor.get_voltage"><code class="docutils literal notranslate"><span class="pre">semiconductor_resistor.get_voltage()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.semiconductor_resistor.semiconductor_resistor.set_current"><code class="docutils literal notranslate"><span class="pre">semiconductor_resistor.set_current()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.semiconductor_resistor.semiconductor_resistor.set_temperature"><code class="docutils literal notranslate"><span class="pre">semiconductor_resistor.set_temperature()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.semiconductor_resistor.semiconductor_resistor.set_voltage"><code class="docutils literal notranslate"><span class="pre">semiconductor_resistor.set_voltage()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#module-nomad_camels_sandbox.digitaltwins.smu">nomad_camels_sandbox.digitaltwins.smu module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.smu.is_float"><code class="docutils literal notranslate"><span class="pre">is_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.smu.smu"><code class="docutils literal notranslate"><span class="pre">smu</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.smu.smu.execute_command"><code class="docutils literal notranslate"><span class="pre">smu.execute_command()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.smu.smu.get_current"><code class="docutils literal notranslate"><span class="pre">smu.get_current()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.smu.smu.get_voltage"><code class="docutils literal notranslate"><span class="pre">smu.get_voltage()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.smu.smu.set_current"><code class="docutils literal notranslate"><span class="pre">smu.set_current()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#nomad_camels_sandbox.digitaltwins.smu.smu.set_voltage"><code class="docutils literal notranslate"><span class="pre">smu.set_voltage()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_sandbox.digitaltwins.html#module-nomad_camels_sandbox.digitaltwins">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-nomad_camels_sandbox.CAMELS_sandbox">
+<span id="nomad-camels-sandbox-camels-sandbox-module"></span><h2>nomad_camels_sandbox.CAMELS_sandbox module<a class="headerlink" href="#module-nomad_camels_sandbox.CAMELS_sandbox" title="Link to this heading"></a></h2>
+<p>Created on Wed Mar  6 15:03:22 2024</p>
+<p>&#64;author: Michael Krieger (lapmk)</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.CAMELS_sandbox.SandboxForCAMELS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_sandbox.CAMELS_sandbox.</span></span><span class="sig-name descname"><span class="pre">SandboxForCAMELS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxForCAMELS" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseHTTPRequestHandler</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.CAMELS_sandbox.SandboxForCAMELS.do_GET">
+<span class="sig-name descname"><span class="pre">do_GET</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxForCAMELS.do_GET" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.CAMELS_sandbox.SandboxForCAMELS.experiment1">
+<span class="sig-name descname"><span class="pre">experiment1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;nomad_camels_sandbox.digitaltwins.experiment.experiment</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxForCAMELS.experiment1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.CAMELS_sandbox.SandboxForCAMELS.log_message">
+<span class="sig-name descname"><span class="pre">log_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxForCAMELS.log_message" title="Link to this definition"></a></dt>
+<dd><p>Log an arbitrary message.</p>
+<p>This is used by all other logging functions.  Override
+it if you have specific logging wishes.</p>
+<p>The first argument, FORMAT, is a format string for the
+message to be logged.  If the format string contains
+any % escapes requiring parameters, they should be
+specified as subsequent arguments (it’s just like
+printf!).</p>
+<p>The client ip and current date/time are prefixed to
+every message.</p>
+<p>Unicode control characters are replaced with escaped hex
+before writing the output to stderr.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.CAMELS_sandbox.SandboxServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_sandbox.CAMELS_sandbox.</span></span><span class="sig-name descname"><span class="pre">SandboxServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxServer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.CAMELS_sandbox.SandboxServer.add_using_instrument">
+<span class="sig-name descname"><span class="pre">add_using_instrument</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxServer.add_using_instrument" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.CAMELS_sandbox.SandboxServer.remove_using_instrument">
+<span class="sig-name descname"><span class="pre">remove_using_instrument</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.CAMELS_sandbox.SandboxServer.remove_using_instrument" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.CAMELS_sandbox.ServerThread">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_sandbox.CAMELS_sandbox.</span></span><span class="sig-name descname"><span class="pre">ServerThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.CAMELS_sandbox.ServerThread" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QThread</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.CAMELS_sandbox.ServerThread.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels_sandbox.CAMELS_sandbox.ServerThread.run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.CAMELS_sandbox.ServerThread.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ServerThread&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QThread&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_sandbox.CAMELS_sandbox.ServerThread.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.CAMELS_sandbox.ServerThread.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.CAMELS_sandbox.ServerThread.stop" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels_sandbox.server_signals">
+<span id="nomad-camels-sandbox-server-signals-module"></span><h2>nomad_camels_sandbox.server_signals module<a class="headerlink" href="#module-nomad_camels_sandbox.server_signals" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_Device">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_sandbox.server_signals.</span></span><span class="sig-name descname"><span class="pre">Demo_Server_Device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration_attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">demo_server_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8080</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">demo_server_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_Device" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></p>
+<p>A class to create a device that can be used to communicate with the demo server</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_Device.component_names">
+<span class="sig-name descname"><span class="pre">component_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_Device.component_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_Device.finalize_steps">
+<span class="sig-name descname"><span class="pre">finalize_steps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_Device.finalize_steps" title="Link to this definition"></a></dt>
+<dd><p>A function to finalize the steps of the device</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_Device.subscriptions">
+<span class="sig-name descname"><span class="pre">subscriptions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">FrozenSet</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'acq_done'})</span></em><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_Device.subscriptions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_Signal">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_sandbox.server_signals.</span></span><span class="sig-name descname"><span class="pre">Demo_Server_Signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hinted'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">demo_server_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8080</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_Signal" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Signal</span></code></p>
+<p>A class to create a signal that can be used to communicate with the demo server</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_Signal.describe">
+<span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_Signal.describe" title="Link to this definition"></a></dt>
+<dd><p>Add “Demo Server” as source to the description of the signal.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_Signal.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_Signal.put" title="Link to this definition"></a></dt>
+<dd><p>A function to put a value to the server</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_Signal.set_port">
+<span class="sig-name descname"><span class="pre">set_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">demo_server_port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">demo_server_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_Signal.set_port" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_Signal.subscriptions">
+<span class="sig-name descname"><span class="pre">subscriptions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">FrozenSet</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'meta',</span> <span class="pre">'value'})</span></em><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_Signal.subscriptions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_SignalRO">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_sandbox.server_signals.</span></span><span class="sig-name descname"><span class="pre">Demo_Server_SignalRO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hinted'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">demo_server_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8080</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_SignalRO" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SignalRO</span></code></p>
+<p>A class to create a signal that can be used to communicate with the demo server</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_SignalRO.describe">
+<span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_SignalRO.describe" title="Link to this definition"></a></dt>
+<dd><p>Add “Demo Server” as source to the description of the signal.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_SignalRO.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_SignalRO.get" title="Link to this definition"></a></dt>
+<dd><p>A function to get a value from the server</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_SignalRO.set_port">
+<span class="sig-name descname"><span class="pre">set_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">demo_server_port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">demo_server_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_SignalRO.set_port" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.Demo_Server_SignalRO.subscriptions">
+<span class="sig-name descname"><span class="pre">subscriptions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">FrozenSet</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'meta',</span> <span class="pre">'value'})</span></em><a class="headerlink" href="#nomad_camels_sandbox.server_signals.Demo_Server_SignalRO.subscriptions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.ServerConnection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_sandbox.server_signals.</span></span><span class="sig-name descname"><span class="pre">ServerConnection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.ServerConnection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.device_class.Connection_Config" title="nomad_camels.main_classes.device_class.Connection_Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Connection_Config</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.ServerConnection.get_settings">
+<span class="sig-name descname"><span class="pre">get_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.ServerConnection.get_settings" title="Link to this definition"></a></dt>
+<dd><p>Overwrite to return the connection-specific settings</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.ServerConnection.load_settings">
+<span class="sig-name descname"><span class="pre">load_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settings_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_sandbox.server_signals.ServerConnection.load_settings" title="Link to this definition"></a></dt>
+<dd><p>Overwrite to load the connection-specific settings from
+<cite>settings_dict</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>settings_dict</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_sandbox.server_signals.ServerConnection.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ServerConnection&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Connection_Config&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_sandbox.server_signals.ServerConnection.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels_sandbox">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels_sandbox" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="suitcase.nomad_camels_hdf5.tests.html" class="btn btn-neutral float-left" title="nomad_camels_hdf5.tests package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nomad_camels_sandbox.digitaltwins.html" class="btn btn-neutral float-right" title="nomad_camels_sandbox.digitaltwins package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+<br><br>
+<a href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/data_privacy.html">Data privacy statement</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/contact.html">Contact</a>
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
