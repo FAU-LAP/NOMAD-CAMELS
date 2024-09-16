@@ -1,12 +1,20 @@
 # Installation of CAMELS Using Anaconda
-This How-to-guide will teach how to install CAMELS if you already have installed [Anaconda](https://www.anaconda.com/) on your machine or want to use Anaconda to install the python environment needed for CAMELS. 
 
-This guide is also useful if `pyenv` does not work on your machine due to restrictions set by your facility (package-filters, rights-problems, etc.). 
+This How-to-guide will teach how to install CAMELS if you already have [Anaconda](https://www.anaconda.com/) installed on your machine or want to use Anaconda to install the Python environment needed for CAMELS.
 
-## 1. Anaconda Installation
-Download [Anaconda](https://www.anaconda.com/download) and install. 
-## 2. Create Environment
-Now set up the correct python environment for CAMELS using Anaconda. For this open the `Anaconda Prompt` terminal. 
+This guide is also useful if `pyenv` does not work on your machine due to restrictions set by your facility (package-filters, rights-problems, etc.).
+
+## 0. Anaconda Installation
+
+Do this if you do not have Anaconda installed yet:
+
+Download [Anaconda](https://www.anaconda.com/download) and [install](https://docs.anaconda.com/anaconda/install/).
+
+## 1. Create Environment
+
+After successfully installing Anaconda continue here:
+
+Set up the correct Python environment for CAMELS using Anaconda. For this open the `Anaconda Prompt` terminal. 
 
 Run 
 
@@ -24,7 +32,7 @@ The beginning of a line in your terminal should look something like this
 ```
 indicating that you are currently using the `desertenv` python environment.
 
-## 3. Install CAMELS
+## 2. Install CAMELS
 
 Now run the following command to install CAMELS from PyPI.
 
@@ -32,7 +40,7 @@ Now run the following command to install CAMELS from PyPI.
 pip install nomad-camels
 ```
 
-## 4. Run CAMELS
+## 3. Run CAMELS
 
 You can then run
 
@@ -66,6 +74,7 @@ You can find the save location of your packages using
 ```bash
 pip list -v
 ```
+
 which lists all the paths to your packages.
 
 Now go to the `nomad-camels` package 
@@ -81,8 +90,3 @@ python CAMELS_start.py
 ```
 
 this starts CAMELS.
-
-```{note}
-  You might receive a `CATALOG ERROR`.\
-If you do, then re-run the command `python CAMELS_start.py`. This should fix the error.
-```
