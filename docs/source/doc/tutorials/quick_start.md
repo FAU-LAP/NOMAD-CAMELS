@@ -48,11 +48,30 @@
   max-height: 500px; /* Expand height when clicked */
 }
 
-.more-link {
+/* .more-link {
   color: #2d64f2;
   cursor: pointer;
   margin-top: 2px;
-  align-self: flex-start; /* Align 'More' link to start */
+  align-self: flex-start;
+} */
+.more-link {
+  color: #ffffff; /* Change text color to white for contrast */
+  background-color: #2d64f2; /* Button background color */
+  padding: 8px 12px; /* Add padding for button-like appearance */
+  margin-top: 8px; /* Add margin to separate it from content */
+  border: none; /* Remove default border */
+  border-radius: 4px; /* Round the corners */
+  cursor: pointer; /* Show pointer cursor on hover */
+  font-size: 14px; /* Adjust font size if necessary */
+  text-align: center; /* Center the text */
+  text-decoration: none; /* Remove underline */
+  align-self: flex-start; /* Align to the start of the flex container */
+}
+
+.more-link:hover {
+  color: #1a46c0; /* Change text color on hover */
+  text-decoration: underline; /* Add underline on hover */
+  /* You can add more styles like background color, font weight, etc. */
 }
 </style>
 
