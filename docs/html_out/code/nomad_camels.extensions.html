@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nomad_camels.extensions package &mdash; NOMAD-CAMELS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=1ebad8af" />
+
+  
+    <link rel="shortcut icon" href="../_static/CAMELS.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="nomad_camels.frontpanels package" href="nomad_camels.frontpanels.html" />
+    <link rel="prev" title="nomad_camels.commands package" href="nomad_camels.commands.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NOMAD-CAMELS
+              <img src="../_static/camels_horizontal.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Instruments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/instrument_drivers.html">Create New Instrument Drivers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CAMELS API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/api/api_landing.html">CAMELS API Overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Combine with EPICS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/new_ioc.html">Create New EPICS IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/procServ.html">Run IOCs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/ArchiverAppliance.html">Archiver Appliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/examples.html">Example Setups</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/programmers_guide.html">Maintain CAMELS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute to CAMELS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/general_process.html">General Process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/running_tests.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/code_of_conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="nomad_camels.html">nomad-camels</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="nomad_camels.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html">nomad_camels.bluesky_handling package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.commands.html">nomad_camels.commands package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">nomad_camels.extensions package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.extensions.extension_contexts">nomad_camels.extensions.extension_contexts module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.extensions.extension_contexts.ELN_Context"><code class="docutils literal notranslate"><span class="pre">ELN_Context</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.extensions.extension_interface">nomad_camels.extensions.extension_interface module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.extensions.extension_interface.Extension"><code class="docutils literal notranslate"><span class="pre">Extension</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.extensions.extension_management">nomad_camels.extensions.extension_management module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.extensions.extension_management.Extension_Manager"><code class="docutils literal notranslate"><span class="pre">Extension_Manager</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.extensions.extension_management.Info_Widget"><code class="docutils literal notranslate"><span class="pre">Info_Widget</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.extensions.extension_management.Install_Thread"><code class="docutils literal notranslate"><span class="pre">Install_Thread</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.extensions.extension_management.get_installed_extensions"><code class="docutils literal notranslate"><span class="pre">get_installed_extensions()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.extensions.extension_management.get_license_text"><code class="docutils literal notranslate"><span class="pre">get_license_text()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.extensions.extension_management.get_local_extensions"><code class="docutils literal notranslate"><span class="pre">get_local_extensions()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.extensions.extension_management.get_online_extensions"><code class="docutils literal notranslate"><span class="pre">get_online_extensions()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.extensions.extension_management.get_readme_text"><code class="docutils literal notranslate"><span class="pre">get_readme_text()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.extensions">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html">nomad_camels.frontpanels package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html">nomad_camels.gui package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.loop_steps.html">nomad_camels.loop_steps package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.main_classes.html">nomad_camels.main_classes package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.manual_controls.html">nomad_camels.manual_controls package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.nomad_integration.html">nomad_camels.nomad_integration package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html">nomad_camels.tests package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tools.html">nomad_camels.tools package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.ui_widgets.html">nomad_camels.ui_widgets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html">nomad_camels.utility package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels.CAMELS_start">nomad_camels.CAMELS_start module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels.MainApp_v2">nomad_camels.MainApp_v2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/FAU-LAP/NOMAD-CAMELS">Find us on GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.06371">Cite NOMAD CAMELS</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nomad-lab.eu/nomad-lab/">NOMAD Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.fairmat-nfdi.eu/fairmat">FAIRmat Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.eu/">FAU/LAP Website</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Imprint/Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_privacy.html">Data Privacy</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NOMAD-CAMELS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="nomad_camels.html">nomad_camels package</a></li>
+      <li class="breadcrumb-item active">nomad_camels.extensions package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code/nomad_camels.extensions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nomad-camels-extensions-package">
+<h1>nomad_camels.extensions package<a class="headerlink" href="#nomad-camels-extensions-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-nomad_camels.extensions.extension_contexts">
+<span id="nomad-camels-extensions-extension-contexts-module"></span><h2>nomad_camels.extensions.extension_contexts module<a class="headerlink" href="#module-nomad_camels.extensions.extension_contexts" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_contexts.ELN_Context">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.extensions.extension_contexts.</span></span><span class="sig-name descname"><span class="pre">ELN_Context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_contexts.ELN_Context" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.extensions.extension_interface">
+<span id="nomad-camels-extensions-extension-interface-module"></span><h2>nomad_camels.extensions.extension_interface module<a class="headerlink" href="#module-nomad_camels.extensions.extension_interface" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_interface.Extension">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.extensions.extension_interface.</span></span><span class="sig-name descname"><span class="pre">Extension</span></span><a class="headerlink" href="#nomad_camels.extensions.extension_interface.Extension" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_interface.Extension.stop_extension">
+<span class="sig-name descname"><span class="pre">stop_extension</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_interface.Extension.stop_extension" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.extensions.extension_management">
+<span id="nomad-camels-extensions-extension-management-module"></span><h2>nomad_camels.extensions.extension_management module<a class="headerlink" href="#module-nomad_camels.extensions.extension_management" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Extension_Manager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.extensions.extension_management.</span></span><span class="sig-name descname"><span class="pre">Extension_Manager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preferences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Extension_Manager" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Extension_Manager.accept">
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Extension_Manager.accept" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Extension_Manager.build_table">
+<span class="sig-name descname"><span class="pre">build_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Extension_Manager.build_table" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Extension_Manager.install_selected">
+<span class="sig-name descname"><span class="pre">install_selected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uninstall</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Extension_Manager.install_selected" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Extension_Manager.propagate_exception">
+<span class="sig-name descname"><span class="pre">propagate_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Extension_Manager.propagate_exception" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Extension_Manager.show_hide_info">
+<span class="sig-name descname"><span class="pre">show_hide_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Extension_Manager.show_hide_info" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Extension_Manager.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Extension_Manager&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.extensions.extension_management.Extension_Manager.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Extension_Manager.table_click">
+<span class="sig-name descname"><span class="pre">table_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Extension_Manager.table_click" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Extension_Manager.update_config">
+<span class="sig-name descname"><span class="pre">update_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Extension_Manager.update_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Info_Widget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.extensions.extension_management.</span></span><span class="sig-name descname"><span class="pre">Info_Widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Info_Widget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSplitter</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Info_Widget.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Info_Widget&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QSplitter&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.extensions.extension_management.Info_Widget.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Info_Widget.update_texts">
+<span class="sig-name descname"><span class="pre">update_texts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Info_Widget.update_texts" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Install_Thread">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.extensions.extension_management.</span></span><span class="sig-name descname"><span class="pre">Install_Thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uninstall</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Install_Thread" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QThread</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Install_Thread.exception_signal">
+<span class="sig-name descname"><span class="pre">exception_signal</span></span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Install_Thread.exception_signal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Install_Thread.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.extensions.extension_management.Install_Thread.run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.Install_Thread.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Install_Thread&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QThread&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#12</span> <span class="pre">type=Signal,</span> <span class="pre">signature=exception_signal(PyObject),</span> <span class="pre">parameters=PyObject</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.extensions.extension_management.Install_Thread.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.get_installed_extensions">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.extensions.extension_management.</span></span><span class="sig-name descname"><span class="pre">get_installed_extensions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.get_installed_extensions" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of all installed extensions.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.get_license_text">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.extensions.extension_management.</span></span><span class="sig-name descname"><span class="pre">get_license_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.get_license_text" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.get_local_extensions">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.extensions.extension_management.</span></span><span class="sig-name descname"><span class="pre">get_local_extensions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.get_local_extensions" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of all local extensions.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.get_online_extensions">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.extensions.extension_management.</span></span><span class="sig-name descname"><span class="pre">get_online_extensions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.get_online_extensions" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of all extensions.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.extensions.extension_management.get_readme_text">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.extensions.extension_management.</span></span><span class="sig-name descname"><span class="pre">get_readme_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.extensions.extension_management.get_readme_text" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-nomad_camels.extensions">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels.extensions" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nomad_camels.commands.html" class="btn btn-neutral float-left" title="nomad_camels.commands package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nomad_camels.frontpanels.html" class="btn btn-neutral float-right" title="nomad_camels.frontpanels package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+<br><br>
+<a href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/data_privacy.html">Data privacy statement</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/contact.html">Contact</a>
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

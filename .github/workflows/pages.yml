@@ -15,7 +15,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -138,8 +138,6 @@ jobs:
           git config --global user.name "GitHub Action"
           git commit -am "Update code documentation" || exit 0
           git push origin HEAD:documentation_test
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact

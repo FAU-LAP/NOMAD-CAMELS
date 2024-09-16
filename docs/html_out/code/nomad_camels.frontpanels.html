@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nomad_camels.frontpanels package &mdash; NOMAD-CAMELS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=1ebad8af" />
+
+  
+    <link rel="shortcut icon" href="../_static/CAMELS.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="nomad_camels.frontpanels.helper_panels package" href="nomad_camels.frontpanels.helper_panels.html" />
+    <link rel="prev" title="nomad_camels.extensions package" href="nomad_camels.extensions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NOMAD-CAMELS
+              <img src="../_static/camels_horizontal.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Instruments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/instrument_drivers.html">Create New Instrument Drivers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CAMELS API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/api/api_landing.html">CAMELS API Overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Combine with EPICS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/new_ioc.html">Create New EPICS IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/procServ.html">Run IOCs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/ArchiverAppliance.html">Archiver Appliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/examples.html">Example Setups</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/programmers_guide.html">Maintain CAMELS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute to CAMELS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/general_process.html">General Process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/running_tests.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/code_of_conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="nomad_camels.html">nomad-camels</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="nomad_camels.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html">nomad_camels.bluesky_handling package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.commands.html">nomad_camels.commands package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.extensions.html">nomad_camels.extensions package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">nomad_camels.frontpanels package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html">nomad_camels.frontpanels.helper_panels package</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.frontpanels.instrument_config">nomad_camels.frontpanels.instrument_config module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config"><code class="docutils literal notranslate"><span class="pre">Instrument_Config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.frontpanels.instrument_installer">nomad_camels.frontpanels.instrument_installer module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter"><code class="docutils literal notranslate"><span class="pre">CustomTextEdit_new_painter</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.instrument_installer.Info_Widget"><code class="docutils literal notranslate"><span class="pre">Info_Widget</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.instrument_installer.Install_Thread"><code class="docutils literal notranslate"><span class="pre">Install_Thread</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer"><code class="docutils literal notranslate"><span class="pre">Instrument_Installer</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.instrument_installer.getAllDevices"><code class="docutils literal notranslate"><span class="pre">getAllDevices()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.instrument_installer.getInstalledDevices"><code class="docutils literal notranslate"><span class="pre">getInstalledDevices()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.instrument_installer.get_instr_license_text"><code class="docutils literal notranslate"><span class="pre">get_instr_license_text()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.instrument_installer.get_instr_readme_text"><code class="docutils literal notranslate"><span class="pre">get_instr_readme_text()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.instrument_installer.install_instrument"><code class="docutils literal notranslate"><span class="pre">install_instrument()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.frontpanels.manage_instruments">nomad_camels.frontpanels.manage_instruments module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.manage_instruments.ManageInstruments"><code class="docutils literal notranslate"><span class="pre">ManageInstruments</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.frontpanels.plot_definer">nomad_camels.frontpanels.plot_definer module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Fit_Definer"><code class="docutils literal notranslate"><span class="pre">Fit_Definer</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Fit_Info"><code class="docutils literal notranslate"><span class="pre">Fit_Info</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Button_Overview"><code class="docutils literal notranslate"><span class="pre">Plot_Button_Overview</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer"><code class="docutils literal notranslate"><span class="pre">Plot_Definer</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info"><code class="docutils literal notranslate"><span class="pre">Plot_Info</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_2D</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_List</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_XY</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.add_fit"><code class="docutils literal notranslate"><span class="pre">add_fit()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.make_table_data"><code class="docutils literal notranslate"><span class="pre">make_table_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.frontpanels.protocol_config">nomad_camels.frontpanels.protocol_config module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config"><code class="docutils literal notranslate"><span class="pre">Protocol_Config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.frontpanels.settings_window">nomad_camels.frontpanels.settings_window module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.settings_window.Settings_Window"><code class="docutils literal notranslate"><span class="pre">Settings_Window</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.settings_window.hash_api_key"><code class="docutils literal notranslate"><span class="pre">hash_api_key()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.settings_window.store_api_key"><code class="docutils literal notranslate"><span class="pre">store_api_key()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.frontpanels">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html">nomad_camels.gui package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.loop_steps.html">nomad_camels.loop_steps package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.main_classes.html">nomad_camels.main_classes package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.manual_controls.html">nomad_camels.manual_controls package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.nomad_integration.html">nomad_camels.nomad_integration package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html">nomad_camels.tests package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tools.html">nomad_camels.tools package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.ui_widgets.html">nomad_camels.ui_widgets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html">nomad_camels.utility package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels.CAMELS_start">nomad_camels.CAMELS_start module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels.MainApp_v2">nomad_camels.MainApp_v2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/FAU-LAP/NOMAD-CAMELS">Find us on GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.06371">Cite NOMAD CAMELS</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nomad-lab.eu/nomad-lab/">NOMAD Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.fairmat-nfdi.eu/fairmat">FAIRmat Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.eu/">FAU/LAP Website</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Imprint/Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_privacy.html">Data Privacy</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NOMAD-CAMELS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="nomad_camels.html">nomad_camels package</a></li>
+      <li class="breadcrumb-item active">nomad_camels.frontpanels package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code/nomad_camels.frontpanels.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nomad-camels-frontpanels-package">
+<h1>nomad_camels.frontpanels package<a class="headerlink" href="#nomad-camels-frontpanels-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html">nomad_camels.frontpanels.helper_panels package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#module-nomad_camels.frontpanels.helper_panels.button_move_scroll_area">nomad_camels.frontpanels.helper_panels.button_move_scroll_area module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.BidirectionalDict"><code class="docutils literal notranslate"><span class="pre">BidirectionalDict</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.BidirectionalDict.clear"><code class="docutils literal notranslate"><span class="pre">BidirectionalDict.clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.BidirectionalDict.get_key"><code class="docutils literal notranslate"><span class="pre">BidirectionalDict.get_key()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.BidirectionalDict.get_value"><code class="docutils literal notranslate"><span class="pre">BidirectionalDict.get_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.BidirectionalDict.items"><code class="docutils literal notranslate"><span class="pre">BidirectionalDict.items()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.BidirectionalDict.keys"><code class="docutils literal notranslate"><span class="pre">BidirectionalDict.keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.BidirectionalDict.pop"><code class="docutils literal notranslate"><span class="pre">BidirectionalDict.pop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.BidirectionalDict.values"><code class="docutils literal notranslate"><span class="pre">BidirectionalDict.values()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.DragButton"><code class="docutils literal notranslate"><span class="pre">DragButton</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.DragButton.mouseMoveEvent"><code class="docutils literal notranslate"><span class="pre">DragButton.mouseMoveEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.DragButton.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">DragButton.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.DropArea"><code class="docutils literal notranslate"><span class="pre">DropArea</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.DropArea.dragEnterEvent"><code class="docutils literal notranslate"><span class="pre">DropArea.dragEnterEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.DropArea.dropEvent"><code class="docutils literal notranslate"><span class="pre">DropArea.dropEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.DropArea.get_drop_position"><code class="docutils literal notranslate"><span class="pre">DropArea.get_drop_position()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.DropArea.order_changed"><code class="docutils literal notranslate"><span class="pre">DropArea.order_changed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.DropArea.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">DropArea.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.DropArea.updateLayout"><code class="docutils literal notranslate"><span class="pre">DropArea.updateLayout()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.add_button"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.add_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.clear_area"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.clear_area()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.disable_run_buttons"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.disable_run_buttons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.disable_single_run"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.disable_single_run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.enable_run_buttons"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.enable_run_buttons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.enable_single_run"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.enable_single_run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.get_button_order"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.get_button_order()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.order_changed"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.order_changed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.remove_button"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.remove_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.rename_button"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.rename_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.resizeEvent"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.resizeEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.Drop_Scroll_Area.updateLayout"><code class="docutils literal notranslate"><span class="pre">Drop_Scroll_Area.updateLayout()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.MoveDialog"><code class="docutils literal notranslate"><span class="pre">MoveDialog</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.MoveDialog.add_tabs_from_widget"><code class="docutils literal notranslate"><span class="pre">MoveDialog.add_tabs_from_widget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.MoveDialog.get_tab"><code class="docutils literal notranslate"><span class="pre">MoveDialog.get_tab()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.MoveDialog.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">MoveDialog.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.addPlusTab"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.addPlusTab()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.addTab"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.addTab()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.add_button"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.add_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.clear_area"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.clear_area()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.context_menu"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.context_menu()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.create_new_tab"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.create_new_tab()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.disable_run_buttons"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.disable_run_buttons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.disable_single_run"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.disable_single_run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.enable_run_buttons"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.enable_run_buttons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.enable_single_run"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.enable_single_run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.get_active_tab"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.get_active_tab()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.get_button_order"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.get_button_order()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.get_tab_by_name"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.get_tab_by_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.handle_editing_finished"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.handle_editing_finished()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.order_changed"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.order_changed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.remove_button"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.remove_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.rename_button"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.rename_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.rename_tab"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.rename_tab()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.showEvent"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.showEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.tab_removing"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.tab_removing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.updateLayout"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.updateLayout()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.button_move_scroll_area.RenameTabWidget.update_order"><code class="docutils literal notranslate"><span class="pre">RenameTabWidget.update_order()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#module-nomad_camels.frontpanels.helper_panels.enterTextDialog">nomad_camels.frontpanels.helper_panels.enterTextDialog module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.enterTextDialog.EnterTextDialog"><code class="docutils literal notranslate"><span class="pre">EnterTextDialog</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.enterTextDialog.EnterTextDialog.accept"><code class="docutils literal notranslate"><span class="pre">EnterTextDialog.accept()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.enterTextDialog.EnterTextDialog.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">EnterTextDialog.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#module-nomad_camels.frontpanels.helper_panels.pass_ask">nomad_camels.frontpanels.helper_panels.pass_ask module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.pass_ask.Pass_Ask"><code class="docutils literal notranslate"><span class="pre">Pass_Ask</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#nomad_camels.frontpanels.helper_panels.pass_ask.Pass_Ask.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Pass_Ask.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.frontpanels.helper_panels.html#module-nomad_camels.frontpanels.helper_panels">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-nomad_camels.frontpanels.instrument_config">
+<span id="nomad-camels-frontpanels-instrument-config-module"></span><h2>nomad_camels.frontpanels.instrument_config module<a class="headerlink" href="#module-nomad_camels.frontpanels.instrument_config" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_config.</span></span><span class="sig-name descname"><span class="pre">Instrument_Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active_instruments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.instrument_config.Ui_Form" title="nomad_camels.gui.instrument_config.Ui_Form"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_Form</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.add_instance">
+<span class="sig-name descname"><span class="pre">add_instance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config.add_instance" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.build_table">
+<span class="sig-name descname"><span class="pre">build_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config.build_table" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.get_all_names">
+<span class="sig-name descname"><span class="pre">get_all_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config.get_all_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config.get_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.get_current_config">
+<span class="sig-name descname"><span class="pre">get_current_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config.get_current_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.name_config_changed">
+<span class="sig-name descname"><span class="pre">name_config_changed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config.name_config_changed" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>new_name</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.remove_instance">
+<span class="sig-name descname"><span class="pre">remove_instance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config.remove_instance" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.show_hide_info">
+<span class="sig-name descname"><span class="pre">show_hide_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config.show_hide_info" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Instrument_Config&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.table_click">
+<span class="sig-name descname"><span class="pre">table_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config.table_click" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.toggle_info_hidden">
+<span class="sig-name descname"><span class="pre">toggle_info_hidden</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config.toggle_info_hidden" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.update_channels">
+<span class="sig-name descname"><span class="pre">update_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config.update_channels" title="Link to this definition"></a></dt>
+<dd><p>Called when the active devices change.
+The channels in variables_handling are updated with the ones
+provided by the active devices.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.frontpanels.instrument_installer">
+<span id="nomad-camels-frontpanels-instrument-installer-module"></span><h2>nomad_camels.frontpanels.instrument_installer module<a class="headerlink" href="#module-nomad_camels.frontpanels.instrument_installer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">CustomTextEdit_new_painter</span></span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QTextEdit</span></code></p>
+<p>Custom QTextEdit that paints custom text when the text is empty.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtGui.QPaintEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter.paintEvent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;CustomTextEdit_new_painter&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QTextEdit&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Info_Widget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">Info_Widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Info_Widget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSplitter</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Info_Widget.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Info_Widget&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QSplitter&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Info_Widget.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Info_Widget.update_texts">
+<span class="sig-name descname"><span class="pre">update_texts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Info_Widget.update_texts" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Install_Thread">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">Install_Thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">devs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uninstall</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Install_Thread" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QThread</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Install_Thread.info_step">
+<span class="sig-name descname"><span class="pre">info_step</span></span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Install_Thread.info_step" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Install_Thread.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Install_Thread.run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Install_Thread.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Install_Thread&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QThread&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#12</span> <span class="pre">type=Signal,</span> <span class="pre">signature=info_step(QString),</span> <span class="pre">parameters=QString</span>&#160;&#160; <span class="pre">#13</span> <span class="pre">type=Signal,</span> <span class="pre">signature=val_step(int),</span> <span class="pre">parameters=int</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Install_Thread.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Install_Thread.val_step">
+<span class="sig-name descname"><span class="pre">val_step</span></span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Install_Thread.val_step" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">Instrument_Installer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active_instruments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.device_installer.Ui_Form" title="nomad_camels.gui.device_installer.Ui_Form"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_Form</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.build_table">
+<span class="sig-name descname"><span class="pre">build_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.build_table" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.checkBox_change">
+<span class="sig-name descname"><span class="pre">checkBox_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.checkBox_change" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>row</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.get_checked_devs">
+<span class="sig-name descname"><span class="pre">get_checked_devs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ignore_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.get_checked_devs" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ignore_version</strong> – (Default value = False)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.install_selected">
+<span class="sig-name descname"><span class="pre">install_selected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uninstall</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.install_selected" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uninstall</strong> – (Default value = False)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.instruments_updated">
+<span class="sig-name descname"><span class="pre">instruments_updated</span></span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.instruments_updated" title="Link to this definition"></a></dt>
+<dd><p>param parent: handed over to QWidget.
+:type parent: QWidget</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.select_all">
+<span class="sig-name descname"><span class="pre">select_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.select_all" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.select_none">
+<span class="sig-name descname"><span class="pre">select_none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.select_none" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.show_hide_info">
+<span class="sig-name descname"><span class="pre">show_hide_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.show_hide_info" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Instrument_Installer&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=instruments_updated()</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.table_click">
+<span class="sig-name descname"><span class="pre">table_click</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.table_click" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.thread_done">
+<span class="sig-name descname"><span class="pre">thread_done</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.thread_done" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.uninstall_selected">
+<span class="sig-name descname"><span class="pre">uninstall_selected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.uninstall_selected" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.update_installed">
+<span class="sig-name descname"><span class="pre">update_installed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.update_installed" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.getAllDevices">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">getAllDevices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.getAllDevices" title="Link to this definition"></a></dt>
+<dd><p>So far only returns the installed devices, should in future work
+with the online repository of drivers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.getInstalledDevices">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">getInstalledDevices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_packages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.getInstalledDevices" title="Link to this definition"></a></dt>
+<dd><p>Goes through the given device_driver_path and returns a list of
+the available devices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>force</strong> – (Default value = False)</p></li>
+<li><p><strong>return_packages</strong> – (Default value = False)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.get_instr_license_text">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">get_instr_license_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instr_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.get_instr_license_text" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.get_instr_readme_text">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">get_instr_readme_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instr_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.get_instr_readme_text" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.install_instrument">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">install_instrument</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.install_instrument" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device_name</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.frontpanels.manage_instruments">
+<span id="nomad-camels-frontpanels-manage-instruments-module"></span><h2>nomad_camels.frontpanels.manage_instruments module<a class="headerlink" href="#module-nomad_camels.frontpanels.manage_instruments" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.manage_instruments.ManageInstruments">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.manage_instruments.</span></span><span class="sig-name descname"><span class="pre">ManageInstruments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active_instruments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.manage_instruments.ManageInstruments" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.manage_instruments.ManageInstruments.accept">
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.manage_instruments.ManageInstruments.accept" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.manage_instruments.ManageInstruments.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QCloseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.manage_instruments.ManageInstruments.closeEvent" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a0</strong> (<em>QCloseEvent :</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.manage_instruments.ManageInstruments.keyPressEvent">
+<span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QKeyEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.manage_instruments.ManageInstruments.keyPressEvent" title="Link to this definition"></a></dt>
+<dd><p>Overwrites the keyPressEvent of the QDialog so that it does
+not close when pressing Enter/Return.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a0</strong> (<em>QKeyEvent :</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.manage_instruments.ManageInstruments.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ManageInstruments&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.manage_instruments.ManageInstruments.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.frontpanels.plot_definer">
+<span id="nomad-camels-frontpanels-plot-definer-module"></span><h2>nomad_camels.frontpanels.plot_definer module<a class="headerlink" href="#module-nomad_camels.frontpanels.plot_definer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Definer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Fit_Definer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Fit_Info" title="nomad_camels.frontpanels.plot_definer.Fit_Info"><span class="pre">Fit_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_to</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Definer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.fit_definer.Ui_Fit_Definer" title="nomad_camels.gui.fit_definer.Ui_Fit_Definer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_Fit_Definer</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Definer.change_func">
+<span class="sig-name descname"><span class="pre">change_func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Definer.change_func" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Definer.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Definer.get_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Definer.load_data">
+<span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Definer.load_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Definer.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Fit_Definer&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Definer.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Fit_Info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">do_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predef_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_custom_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.get_name">
+<span class="sig-name descname"><span class="pre">get_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.get_name" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stream</strong> – (Default value = ‘’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.get_variables">
+<span class="sig-name descname"><span class="pre">get_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.get_variables" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stream</strong> – (Default value = ‘’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Button_Overview">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Plot_Button_Overview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Button_Overview" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Button_Overview.define_plots">
+<span class="sig-name descname"><span class="pre">define_plots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Button_Overview.define_plots" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Button_Overview.keyPressEvent">
+<span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QKeyEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Button_Overview.keyPressEvent" title="Link to this definition"></a></dt>
+<dd><p>Overwrites the keyPressEvent of the QDialog so that it does
+not close when pressing Enter/Return.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a0</strong> (<em>QKeyEvent :</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Button_Overview.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Plot_Button_Overview&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Button_Overview.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Plot_Definer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer.accept">
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer.accept" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer.change_plot_def">
+<span class="sig-name descname"><span class="pre">change_plot_def</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer.change_plot_def" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a0</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer.plot_added">
+<span class="sig-name descname"><span class="pre">plot_added</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer.plot_added" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer.plot_removed">
+<span class="sig-name descname"><span class="pre">plot_removed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer.plot_removed" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer.reject">
+<span class="sig-name descname"><span class="pre">reject</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer.reject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Plot_Definer&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Plot_Info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plt_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'X-Y</span> <span class="pre">plot'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">same_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logX</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logY2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.get_fit_vars">
+<span class="sig-name descname"><span class="pre">get_fit_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.get_fit_vars" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stream</strong> – (Default value = ‘’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.update_name">
+<span class="sig-name descname"><span class="pre">update_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.update_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Single_Plot_Definer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><span class="pre">Plot_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.add_y">
+<span class="sig-name descname"><span class="pre">add_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.add_y" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.get_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.remove_y">
+<span class="sig-name descname"><span class="pre">remove_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.remove_y" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Single_Plot_Definer&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Single_Plot_Definer_2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><span class="pre">Plot_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D" title="nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_Plot_Definer_2D</span></code></a>, <a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer" title="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Single_Plot_Definer</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.get_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Single_Plot_Definer_2D&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Single_Plot_Definer&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Single_Plot_Definer_List</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><span class="pre">Plot_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer" title="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Single_Plot_Definer</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List.get_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Single_Plot_Definer_List&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Single_Plot_Definer&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Single_Plot_Definer_XY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><span class="pre">Plot_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.plot_definer.Ui_Plot_Definer" title="nomad_camels.gui.plot_definer.Ui_Plot_Definer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_Plot_Definer</span></code></a>, <a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer" title="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Single_Plot_Definer</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.fit_change">
+<span class="sig-name descname"><span class="pre">fit_change</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.fit_change" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.get_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.load_data">
+<span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.load_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Single_Plot_Definer_XY&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Single_Plot_Definer&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.add_fit">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">add_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tableData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.add_fit" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tableData</strong></p></li>
+<li><p><strong>fit</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.make_table_data">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">make_table_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.make_table_data" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>plot_data</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.frontpanels.protocol_config">
+<span id="nomad-camels-frontpanels-protocol-config-module"></span><h2>nomad_camels.frontpanels.protocol_config module<a class="headerlink" href="#module-nomad_camels.frontpanels.protocol_config" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.protocol_config.</span></span><span class="sig-name descname"><span class="pre">Protocol_Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.protocol_view.Ui_Protocol_View" title="nomad_camels.gui.protocol_view.Ui_Protocol_View"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_Protocol_View</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.accept">
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.accept" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.accepted">
+<span class="sig-name descname"><span class="pre">accepted</span></span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.accepted" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.add_loop_step">
+<span class="sig-name descname"><span class="pre">add_loop_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copied_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.add_loop_step" title="Link to this definition"></a></dt>
+<dd><p>Add a loop_step of given step_type. Updates the current
+sequence into the protocol, then initializes the new step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_type</strong> – (Default value = ‘’)</p></li>
+<li><p><strong>position</strong> – (Default value = -1)</p></li>
+<li><p><strong>parent</strong> – (Default value = None)</p></li>
+<li><p><strong>copied_step</strong> – (Default value = False)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>step</strong> – the newly added loop_step</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.loop_step.Loop_Step" title="nomad_camels.main_classes.loop_step.Loop_Step">Loop_Step</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.build_protocol_sequence">
+<span class="sig-name descname"><span class="pre">build_protocol_sequence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.build_protocol_sequence" title="Link to this definition"></a></dt>
+<dd><p>Shows / builds the protocol sequence in the treeView
+dependent on the loop_steps in the current_protocol.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.change_name">
+<span class="sig-name descname"><span class="pre">change_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.change_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.change_step_name">
+<span class="sig-name descname"><span class="pre">change_step_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.change_step_name" title="Link to this definition"></a></dt>
+<dd><p>Called when a loop_step changes its name, then updates the
+shown sequence, and also the protocol-data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.check_file_name">
+<span class="sig-name descname"><span class="pre">check_file_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.check_file_name" title="Link to this definition"></a></dt>
+<dd><p>check if the filename contains any characters that might cause problems</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.check_movability">
+<span class="sig-name descname"><span class="pre">check_movability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.check_movability" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.check_protocol_name">
+<span class="sig-name descname"><span class="pre">check_protocol_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.check_protocol_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QCloseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.closeEvent" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a0</strong> (<em>QCloseEvent :</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.closing">
+<span class="sig-name descname"><span class="pre">closing</span></span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.closing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.comment_loop_step">
+<span class="sig-name descname"><span class="pre">comment_loop_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.comment_loop_step" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.comment_shortcut">
+<span class="sig-name descname"><span class="pre">comment_shortcut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.comment_shortcut" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.copy_loop_step">
+<span class="sig-name descname"><span class="pre">copy_loop_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.copy_loop_step" title="Link to this definition"></a></dt>
+<dd><p>Makes a deepcopy of the given step and stores it in
+copied_loop_step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>step_name</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.copy_shortcut">
+<span class="sig-name descname"><span class="pre">copy_shortcut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.copy_shortcut" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.cut_loop_step">
+<span class="sig-name descname"><span class="pre">cut_loop_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.cut_loop_step" title="Link to this definition"></a></dt>
+<dd><p>Copies the given step, then removes it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>step_name</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.cut_shortcut">
+<span class="sig-name descname"><span class="pre">cut_shortcut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.cut_shortcut" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.enable_step_move">
+<span class="sig-name descname"><span class="pre">enable_step_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.enable_step_move" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enable</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.get_step_config">
+<span class="sig-name descname"><span class="pre">get_step_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.get_step_config" title="Link to this definition"></a></dt>
+<dd><p>Updates the data in the currently-to-configure loop_step.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.keyPressEvent">
+<span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QKeyEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.keyPressEvent" title="Link to this definition"></a></dt>
+<dd><p>Overwrites the keyPressEvent of the QDialog so that it does
+not close when pressing Enter/Return.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a0</strong> (<em>QKeyEvent :</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.move_loop_step">
+<span class="sig-name descname"><span class="pre">move_loop_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">up_down</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.move_loop_step" title="Link to this definition"></a></dt>
+<dd><p>Moves a loop_step up or down in the sequence. It can also be
+moved in or out (into the loop_step above, it if accepts children).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>up_down</strong> – (Default value = 0)</p></li>
+<li><p><strong>in_out</strong> – (Default value = 0)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.paste_shortcut">
+<span class="sig-name descname"><span class="pre">paste_shortcut</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.paste_shortcut" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.remove_loop_step">
+<span class="sig-name descname"><span class="pre">remove_loop_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.remove_loop_step" title="Link to this definition"></a></dt>
+<dd><p>After updating the loop_step order in the protocol, the
+selected loop step is deleted (if the messagebox is accepted).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ask</strong> – (Default value = True)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.replace_loop_step">
+<span class="sig-name descname"><span class="pre">replace_loop_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.replace_loop_step" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.sequence_right_click">
+<span class="sig-name descname"><span class="pre">sequence_right_click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.sequence_right_click" title="Link to this definition"></a></dt>
+<dd><p>Opens a specific Menu on right click in the protocol-sequence.
+If selection is not on a loop_step, it consists only of Add Step,
+otherwise it consists of Delete Step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pos</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Protocol_Config&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=accepted(PyObject),</span> <span class="pre">parameters=PyObject</span>&#160;&#160; <span class="pre">#34</span> <span class="pre">type=Signal,</span> <span class="pre">signature=closing()</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.tree_click_sequence">
+<span class="sig-name descname"><span class="pre">tree_click_sequence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.tree_click_sequence" title="Link to this definition"></a></dt>
+<dd><p>Called when clicking the treeView_protocol_sequence.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.update_add_step_actions">
+<span class="sig-name descname"><span class="pre">update_add_step_actions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.update_add_step_actions" title="Link to this definition"></a></dt>
+<dd><p>Called when the devices change, updating the possible
+loopsteps to include new device steps.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.update_loop_step_order">
+<span class="sig-name descname"><span class="pre">update_loop_step_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config.update_loop_step_order" title="Link to this definition"></a></dt>
+<dd><p>Goes through all the loop_steps in the sequence, then
+rearranges them in the protocol.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.frontpanels.settings_window">
+<span id="nomad-camels-frontpanels-settings-window-module"></span><h2>nomad_camels.frontpanels.settings_window module<a class="headerlink" href="#module-nomad_camels.frontpanels.settings_window" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.settings_window.</span></span><span class="sig-name descname"><span class="pre">Settings_Window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.settings_window.Ui_settings_window" title="nomad_camels.gui.settings_window.Ui_settings_window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_settings_window</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>Dialog to change the settings used in CAMELS.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window.accept">
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.accept" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window.autosave_run_change">
+<span class="sig-name descname"><span class="pre">autosave_run_change</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.autosave_run_change" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window.change_enable_API">
+<span class="sig-name descname"><span class="pre">change_enable_API</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.change_enable_API" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window.change_theme">
+<span class="sig-name descname"><span class="pre">change_theme</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.change_theme" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window.confirm_delete_api_keys">
+<span class="sig-name descname"><span class="pre">confirm_delete_api_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.confirm_delete_api_keys" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window.copy_to_clipboard">
+<span class="sig-name descname"><span class="pre">copy_to_clipboard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.copy_to_clipboard" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window.generate_api_key">
+<span class="sig-name descname"><span class="pre">generate_api_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.generate_api_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window.get_settings">
+<span class="sig-name descname"><span class="pre">get_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.get_settings" title="Link to this definition"></a></dt>
+<dd><p>Reading all the UI-elements to get the selected settings,
+then returning those as a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window.keyPressEvent">
+<span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QKeyEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.keyPressEvent" title="Link to this definition"></a></dt>
+<dd><p>Overwrites the keyPressEvent of the QDialog so that it does
+not close when pressing Enter/Return.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a0</strong> (<em>QKeyEvent :</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window.number_change">
+<span class="sig-name descname"><span class="pre">number_change</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.number_change" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Settings_Window&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.hash_api_key">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.settings_window.</span></span><span class="sig-name descname"><span class="pre">hash_api_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.hash_api_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.store_api_key">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.settings_window.</span></span><span class="sig-name descname"><span class="pre">store_api_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.store_api_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-nomad_camels.frontpanels">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels.frontpanels" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nomad_camels.extensions.html" class="btn btn-neutral float-left" title="nomad_camels.extensions package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nomad_camels.frontpanels.helper_panels.html" class="btn btn-neutral float-right" title="nomad_camels.frontpanels.helper_panels package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+<br><br>
+<a href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/data_privacy.html">Data privacy statement</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/contact.html">Contact</a>
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

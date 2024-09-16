@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nomad_camels.tests package &mdash; NOMAD-CAMELS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=1ebad8af" />
+
+  
+    <link rel="shortcut icon" href="../_static/CAMELS.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="nomad_camels.tools package" href="nomad_camels.tools.html" />
+    <link rel="prev" title="nomad_camels.nomad_integration package" href="nomad_camels.nomad_integration.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NOMAD-CAMELS
+              <img src="../_static/camels_horizontal.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Instruments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/instrument_drivers.html">Create New Instrument Drivers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CAMELS API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/api/api_landing.html">CAMELS API Overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Combine with EPICS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/new_ioc.html">Create New EPICS IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/procServ.html">Run IOCs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/ArchiverAppliance.html">Archiver Appliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/examples.html">Example Setups</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/programmers_guide.html">Maintain CAMELS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute to CAMELS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/general_process.html">General Process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/running_tests.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/code_of_conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="nomad_camels.html">nomad-camels</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="nomad_camels.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html">nomad_camels.bluesky_handling package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.commands.html">nomad_camels.commands package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.extensions.html">nomad_camels.extensions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html">nomad_camels.frontpanels package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html">nomad_camels.gui package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.loop_steps.html">nomad_camels.loop_steps package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.main_classes.html">nomad_camels.main_classes package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.manual_controls.html">nomad_camels.manual_controls package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.nomad_integration.html">nomad_camels.nomad_integration package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">nomad_camels.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.tests.api_test">nomad_camels.tests.api_test module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.api_test.client_and_thread"><code class="docutils literal notranslate"><span class="pre">client_and_thread()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.api_test.is_port_available"><code class="docutils literal notranslate"><span class="pre">is_port_available()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.api_test.mock_validate_credentials"><code class="docutils literal notranslate"><span class="pre">mock_validate_credentials()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.api_test.test_favicon"><code class="docutils literal notranslate"><span class="pre">test_favicon()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.api_test.test_get_protocols"><code class="docutils literal notranslate"><span class="pre">test_get_protocols()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.api_test.test_invalid_api_key"><code class="docutils literal notranslate"><span class="pre">test_invalid_api_key()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.api_test.test_root_redirect"><code class="docutils literal notranslate"><span class="pre">test_root_redirect()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.api_test.test_run_protocol"><code class="docutils literal notranslate"><span class="pre">test_run_protocol()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.tests.instrument_management_test">nomad_camels.tests.instrument_management_test module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.instrument_management_test.install_demo"><code class="docutils literal notranslate"><span class="pre">install_demo()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.instrument_management_test.test_add_device"><code class="docutils literal notranslate"><span class="pre">test_add_device()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.instrument_management_test.test_install_demo_instrument"><code class="docutils literal notranslate"><span class="pre">test_install_demo_instrument()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.tests.mainapp_test">nomad_camels.tests.mainapp_test module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.mainapp_test.app"><code class="docutils literal notranslate"><span class="pre">app()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.mainapp_test.test_check_password_protection"><code class="docutils literal notranslate"><span class="pre">test_check_password_protection()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.mainapp_test.test_set_sample"><code class="docutils literal notranslate"><span class="pre">test_set_sample()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.mainapp_test.test_set_user"><code class="docutils literal notranslate"><span class="pre">test_set_user()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.mainapp_test.test_show_hide_log"><code class="docutils literal notranslate"><span class="pre">test_show_hide_log()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.mainapp_test.test_signal_slots"><code class="docutils literal notranslate"><span class="pre">test_signal_slots()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.mainapp_test.test_ui_initialization"><code class="docutils literal notranslate"><span class="pre">test_ui_initialization()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.tests.protocol_test">nomad_camels.tests.protocol_test module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.catalog_maker"><code class="docutils literal notranslate"><span class="pre">catalog_maker()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.ensure_demo_in_devices"><code class="docutils literal notranslate"><span class="pre">ensure_demo_in_devices()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.get_action_from_name"><code class="docutils literal notranslate"><span class="pre">get_action_from_name()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.get_row_from_channel_table"><code class="docutils literal notranslate"><span class="pre">get_row_from_channel_table()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.mock_message_box"><code class="docutils literal notranslate"><span class="pre">mock_message_box()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.run_test_protocol"><code class="docutils literal notranslate"><span class="pre">run_test_protocol()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.select_step_by_name"><code class="docutils literal notranslate"><span class="pre">select_step_by_name()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.single_variable_if"><code class="docutils literal notranslate"><span class="pre">single_variable_if()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.test_change_dev_config"><code class="docutils literal notranslate"><span class="pre">test_change_dev_config()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.test_for_loop"><code class="docutils literal notranslate"><span class="pre">test_for_loop()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.test_gradient_descent"><code class="docutils literal notranslate"><span class="pre">test_gradient_descent()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.test_if_and_set_variables"><code class="docutils literal notranslate"><span class="pre">test_if_and_set_variables()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.test_nd_sweep"><code class="docutils literal notranslate"><span class="pre">test_nd_sweep()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.test_read_channels"><code class="docutils literal notranslate"><span class="pre">test_read_channels()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.test_run_subprotocol"><code class="docutils literal notranslate"><span class="pre">test_run_subprotocol()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.test_set_channels"><code class="docutils literal notranslate"><span class="pre">test_set_channels()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.test_simple_sweep_with_plot_and_fit"><code class="docutils literal notranslate"><span class="pre">test_simple_sweep_with_plot_and_fit()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.test_trigger_and_read_channels"><code class="docutils literal notranslate"><span class="pre">test_trigger_and_read_channels()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.test_wait"><code class="docutils literal notranslate"><span class="pre">test_wait()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.protocol_test.test_while_loop"><code class="docutils literal notranslate"><span class="pre">test_while_loop()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.tests.startup_test">nomad_camels.tests.startup_test module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.startup_test.MockDialog"><code class="docutils literal notranslate"><span class="pre">MockDialog</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.startup_test.app"><code class="docutils literal notranslate"><span class="pre">app()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.startup_test.instance"><code class="docutils literal notranslate"><span class="pre">instance()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.startup_test.test_import_thread"><code class="docutils literal notranslate"><span class="pre">test_import_thread()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.startup_test.test_set_progress"><code class="docutils literal notranslate"><span class="pre">test_set_progress()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.startup_test.test_set_text"><code class="docutils literal notranslate"><span class="pre">test_set_text()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.tests.startup_test.test_start_camels"><code class="docutils literal notranslate"><span class="pre">test_start_camels()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tools.html">nomad_camels.tools package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.ui_widgets.html">nomad_camels.ui_widgets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html">nomad_camels.utility package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels.CAMELS_start">nomad_camels.CAMELS_start module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels.MainApp_v2">nomad_camels.MainApp_v2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/FAU-LAP/NOMAD-CAMELS">Find us on GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.06371">Cite NOMAD CAMELS</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nomad-lab.eu/nomad-lab/">NOMAD Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.fairmat-nfdi.eu/fairmat">FAIRmat Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.eu/">FAU/LAP Website</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Imprint/Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_privacy.html">Data Privacy</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NOMAD-CAMELS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="nomad_camels.html">nomad_camels package</a></li>
+      <li class="breadcrumb-item active">nomad_camels.tests package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code/nomad_camels.tests.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nomad-camels-tests-package">
+<h1>nomad_camels.tests package<a class="headerlink" href="#nomad-camels-tests-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-nomad_camels.tests.api_test">
+<span id="nomad-camels-tests-api-test-module"></span><h2>nomad_camels.tests.api_test module<a class="headerlink" href="#module-nomad_camels.tests.api_test" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.api_test.client_and_thread">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.api_test.</span></span><span class="sig-name descname"><span class="pre">client_and_thread</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.api_test.client_and_thread" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.api_test.is_port_available">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.api_test.</span></span><span class="sig-name descname"><span class="pre">is_port_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.api_test.is_port_available" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.api_test.mock_validate_credentials">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.api_test.</span></span><span class="sig-name descname"><span class="pre">mock_validate_credentials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">credentials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPBasicCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBasic)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.api_test.mock_validate_credentials" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.api_test.test_favicon">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.api_test.</span></span><span class="sig-name descname"><span class="pre">test_favicon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_and_thread</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.api_test.test_favicon" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.api_test.test_get_protocols">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.api_test.</span></span><span class="sig-name descname"><span class="pre">test_get_protocols</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_and_thread</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.api_test.test_get_protocols" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.api_test.test_invalid_api_key">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.api_test.</span></span><span class="sig-name descname"><span class="pre">test_invalid_api_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_and_thread</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.api_test.test_invalid_api_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.api_test.test_root_redirect">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.api_test.</span></span><span class="sig-name descname"><span class="pre">test_root_redirect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_and_thread</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.api_test.test_root_redirect" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.api_test.test_run_protocol">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.api_test.</span></span><span class="sig-name descname"><span class="pre">test_run_protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_and_thread</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.api_test.test_run_protocol" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-nomad_camels.tests.instrument_management_test">
+<span id="nomad-camels-tests-instrument-management-test-module"></span><h2>nomad_camels.tests.instrument_management_test module<a class="headerlink" href="#module-nomad_camels.tests.instrument_management_test" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.instrument_management_test.install_demo">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.instrument_management_test.</span></span><span class="sig-name descname"><span class="pre">install_demo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">installer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.instrument_management_test.install_demo" title="Link to this definition"></a></dt>
+<dd><p>A helper function, used by <cite>test_install_demo_instrument</cite> and also by
+<cite>test_add_device</cite>, if the device is not yet installed</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.instrument_management_test.test_add_device">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.instrument_management_test.</span></span><span class="sig-name descname"><span class="pre">test_add_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.instrument_management_test.test_add_device" title="Link to this definition"></a></dt>
+<dd><p>Going through the instrument management, if demo_instrument is not installed,
+it will be. Then the config widget is used to add a demo_instrument.
+In the end there is a check whether it is in the list of devices.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.instrument_management_test.test_install_demo_instrument">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.instrument_management_test.</span></span><span class="sig-name descname"><span class="pre">test_install_demo_instrument</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.instrument_management_test.test_install_demo_instrument" title="Link to this definition"></a></dt>
+<dd><p>This test tries to install the demo device, using the
+instrument_installer widget.</p>
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.tests.mainapp_test">
+<span id="nomad-camels-tests-mainapp-test-module"></span><h2>nomad_camels.tests.mainapp_test module<a class="headerlink" href="#module-nomad_camels.tests.mainapp_test" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.mainapp_test.app">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.mainapp_test.</span></span><span class="sig-name descname"><span class="pre">app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.mainapp_test.app" title="Link to this definition"></a></dt>
+<dd><p>Fixture for initializing the application and the MainWindow.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.mainapp_test.test_check_password_protection">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.mainapp_test.</span></span><span class="sig-name descname"><span class="pre">test_check_password_protection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.mainapp_test.test_check_password_protection" title="Link to this definition"></a></dt>
+<dd><p>Test checking password protection.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.mainapp_test.test_set_sample">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.mainapp_test.</span></span><span class="sig-name descname"><span class="pre">test_set_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.mainapp_test.test_set_sample" title="Link to this definition"></a></dt>
+<dd><p>Test setting the sample.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.mainapp_test.test_set_user">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.mainapp_test.</span></span><span class="sig-name descname"><span class="pre">test_set_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.mainapp_test.test_set_user" title="Link to this definition"></a></dt>
+<dd><p>Test setting the user.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.mainapp_test.test_show_hide_log">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.mainapp_test.</span></span><span class="sig-name descname"><span class="pre">test_show_hide_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.mainapp_test.test_show_hide_log" title="Link to this definition"></a></dt>
+<dd><p>Test showing and hiding the log.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.mainapp_test.test_signal_slots">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.mainapp_test.</span></span><span class="sig-name descname"><span class="pre">test_signal_slots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.mainapp_test.test_signal_slots" title="Link to this definition"></a></dt>
+<dd><p>Test to verify that signal-slot connections are properly set.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.mainapp_test.test_ui_initialization">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.mainapp_test.</span></span><span class="sig-name descname"><span class="pre">test_ui_initialization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.mainapp_test.test_ui_initialization" title="Link to this definition"></a></dt>
+<dd><p>Test to check if UI components are initialized correctly.</p>
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.tests.protocol_test">
+<span id="nomad-camels-tests-protocol-test-module"></span><h2>nomad_camels.tests.protocol_test module<a class="headerlink" href="#module-nomad_camels.tests.protocol_test" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.catalog_maker">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">catalog_maker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.catalog_maker" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmp_path</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.ensure_demo_in_devices">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">ensure_demo_in_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.ensure_demo_in_devices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.get_action_from_name">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">get_action_from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">actions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.get_action_from_name" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>actions</strong></p></li>
+<li><p><strong>name</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.get_row_from_channel_table">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">get_row_from_channel_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.get_row_from_channel_table" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong></p></li>
+<li><p><strong>table</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.mock_message_box">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">mock_message_box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monkeypatch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.mock_message_box" title="Link to this definition"></a></dt>
+<dd><p>If a messagebox, e.g. asking whether to discard all changes to the
+protocol, pops up, it is automatically accepted</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.run_test_protocol">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">run_test_protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.run_test_protocol" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tmp_path</strong></p></li>
+<li><p><strong>protocol</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.select_step_by_name">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">select_step_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.select_step_by_name" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conf</strong></p></li>
+<li><p><strong>name</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.single_variable_if">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">single_variable_if</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_if</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_prot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.single_variable_if" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qtbot</strong></p></li>
+<li><p><strong>conf</strong></p></li>
+<li><p><strong>wait_in</strong> – (Default value = 1)</p></li>
+<li><p><strong>n_prompt</strong> – (Default value = 0)</p></li>
+<li><p><strong>n_if</strong> – (Default value = 0)</p></li>
+<li><p><strong>len_prot</strong> – (Default value = 0)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.test_change_dev_config">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">test_change_dev_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.test_change_dev_config" title="Link to this definition"></a></dt>
+<dd><p>Opens the config for “change device config” tries to configure it for the
+demo instrument and tries to run a protocol with this step.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.test_for_loop">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">test_for_loop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.test_for_loop" title="Link to this definition"></a></dt>
+<dd><p>Opens the config for a “For Loop” tries to configure it looping over a
+wait-step and tries to run a protocol with this step.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.test_gradient_descent">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">test_gradient_descent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.test_gradient_descent" title="Link to this definition"></a></dt>
+<dd><p>Opens the config for “Gradient Descent” tries to configure it for the
+demo instrument and tries to run a protocol with this step.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.test_if_and_set_variables">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">test_if_and_set_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.test_if_and_set_variables" title="Link to this definition"></a></dt>
+<dd><p>Opens the config for “If” tries to configure to run the correct way if
+the variables have the correct value, which is done by a “Set Variables” step.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.test_nd_sweep">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">test_nd_sweep</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.test_nd_sweep" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.test_read_channels">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">test_read_channels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.test_read_channels" title="Link to this definition"></a></dt>
+<dd><p>Opens the config for “Read Channels” tries to configure it for the
+demo instrument and tries to run a protocol with this step.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.test_run_subprotocol">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">test_run_subprotocol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.test_run_subprotocol" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.test_set_channels">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">test_set_channels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.test_set_channels" title="Link to this definition"></a></dt>
+<dd><p>Opens the config for “Set Channels” tries to configure it for the
+demo instrument and tries to run a protocol with this step.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.test_simple_sweep_with_plot_and_fit">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">test_simple_sweep_with_plot_and_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.test_simple_sweep_with_plot_and_fit" title="Link to this definition"></a></dt>
+<dd><p>Opens the config for “Simple Sweep” tries to configure it for the
+demo instrument. Further it adds a plot and a fit to the sweep and tries to
+run a protocol with this step.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.test_trigger_and_read_channels">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">test_trigger_and_read_channels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.test_trigger_and_read_channels" title="Link to this definition"></a></dt>
+<dd><p>Opens the config for “Read Channels” tries to configure it with a split
+triggering of the channels, then configures the trigger-step and tries to
+run a protocol with these steps.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.test_wait">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">test_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.test_wait" title="Link to this definition"></a></dt>
+<dd><p>Opens the config for “Wait” tries to configure it to a wait time of
+1.0 second and tries to run a protocol with this step.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.protocol_test.test_while_loop">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.protocol_test.</span></span><span class="sig-name descname"><span class="pre">test_while_loop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.protocol_test.test_while_loop" title="Link to this definition"></a></dt>
+<dd><p>Opens the config for a “While Loop” and tries to configure it with the
+condition being <cite>While_Loop_Count &lt; 5</cite>. Into the loop, a wait-step is added.
+Tries to run a protocol with this step.</p>
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.tests.startup_test">
+<span id="nomad-camels-tests-startup-test-module"></span><h2>nomad_camels.tests.startup_test module<a class="headerlink" href="#module-nomad_camels.tests.startup_test" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.tests.startup_test.MockDialog">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.startup_test.</span></span><span class="sig-name descname"><span class="pre">MockDialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.startup_test.MockDialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.tests.startup_test.MockDialog.exec">
+<span class="sig-name descname"><span class="pre">exec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.startup_test.MockDialog.exec" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.startup_test.app">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.startup_test.</span></span><span class="sig-name descname"><span class="pre">app</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.startup_test.app" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.startup_test.instance">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.startup_test.</span></span><span class="sig-name descname"><span class="pre">instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.startup_test.instance" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.startup_test.test_import_thread">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.startup_test.</span></span><span class="sig-name descname"><span class="pre">test_import_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.startup_test.test_import_thread" title="Link to this definition"></a></dt>
+<dd><p>Test the ImportThread class.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.startup_test.test_set_progress">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.startup_test.</span></span><span class="sig-name descname"><span class="pre">test_set_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.startup_test.test_set_progress" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.startup_test.test_set_text">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.startup_test.</span></span><span class="sig-name descname"><span class="pre">test_set_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.startup_test.test_set_text" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.tests.startup_test.test_start_camels">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.tests.startup_test.</span></span><span class="sig-name descname"><span class="pre">test_start_camels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qtbot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capfd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tests.startup_test.test_start_camels" title="Link to this definition"></a></dt>
+<dd><p>Test the startup of the CAMELS application.</p>
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels.tests">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels.tests" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nomad_camels.nomad_integration.html" class="btn btn-neutral float-left" title="nomad_camels.nomad_integration package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nomad_camels.tools.html" class="btn btn-neutral float-right" title="nomad_camels.tools package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+<br><br>
+<a href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/data_privacy.html">Data privacy statement</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/contact.html">Contact</a>
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

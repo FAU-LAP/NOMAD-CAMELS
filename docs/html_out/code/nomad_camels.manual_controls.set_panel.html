@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nomad_camels.manual_controls.set_panel package &mdash; NOMAD-CAMELS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=1ebad8af" />
+
+  
+    <link rel="shortcut icon" href="../_static/CAMELS.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device package" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html" />
+    <link rel="prev" title="nomad_camels.manual_controls package" href="nomad_camels.manual_controls.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NOMAD-CAMELS
+              <img src="../_static/camels_horizontal.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Instruments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/instrument_drivers.html">Create New Instrument Drivers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CAMELS API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/api/api_landing.html">CAMELS API Overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Combine with EPICS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/new_ioc.html">Create New EPICS IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/procServ.html">Run IOCs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/ArchiverAppliance.html">Archiver Appliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/examples.html">Example Setups</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/programmers_guide.html">Maintain CAMELS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute to CAMELS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/general_process.html">General Process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/running_tests.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/code_of_conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="nomad_camels.html">nomad-camels</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="nomad_camels.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html">nomad_camels.bluesky_handling package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.commands.html">nomad_camels.commands package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.extensions.html">nomad_camels.extensions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html">nomad_camels.frontpanels package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html">nomad_camels.gui package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.loop_steps.html">nomad_camels.loop_steps package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.main_classes.html">nomad_camels.main_classes package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="nomad_camels.manual_controls.html">nomad_camels.manual_controls package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="nomad_camels.manual_controls.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l5 current"><a class="current reference internal" href="#">nomad_camels.manual_controls.set_panel package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.manual_controls.stage_control.html">nomad_camels.manual_controls.stage_control package</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.html#module-nomad_camels.manual_controls.get_manual_controls">nomad_camels.manual_controls.get_manual_controls module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.html#module-nomad_camels.manual_controls">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.nomad_integration.html">nomad_camels.nomad_integration package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html">nomad_camels.tests package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tools.html">nomad_camels.tools package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.ui_widgets.html">nomad_camels.ui_widgets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html">nomad_camels.utility package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels.CAMELS_start">nomad_camels.CAMELS_start module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels.MainApp_v2">nomad_camels.MainApp_v2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/FAU-LAP/NOMAD-CAMELS">Find us on GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.06371">Cite NOMAD CAMELS</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nomad-lab.eu/nomad-lab/">NOMAD Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.fairmat-nfdi.eu/fairmat">FAIRmat Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.eu/">FAU/LAP Website</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Imprint/Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_privacy.html">Data Privacy</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NOMAD-CAMELS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="nomad_camels.html">nomad_camels package</a></li>
+          <li class="breadcrumb-item"><a href="nomad_camels.manual_controls.html">nomad_camels.manual_controls package</a></li>
+      <li class="breadcrumb-item active">nomad_camels.manual_controls.set_panel package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code/nomad_camels.manual_controls.set_panel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nomad-camels-manual-controls-set-panel-package">
+<h1>nomad_camels.manual_controls.set_panel package<a class="headerlink" href="#nomad-camels-manual-controls-set-panel-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html">nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#module-nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device">nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device.subclass"><code class="docutils literal notranslate"><span class="pre">subclass</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device.subclass.get_channels"><code class="docutils literal notranslate"><span class="pre">subclass.get_channels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device.subclass.get_necessary_devices"><code class="docutils literal notranslate"><span class="pre">subclass.get_necessary_devices()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device.subclass_config"><code class="docutils literal notranslate"><span class="pre">subclass_config</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device.subclass_config.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">subclass_config.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#module-nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd">nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.component_names"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.component_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_1"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_10"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_10</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_11"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_11</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_12"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_12</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_13"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_13</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_14"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_14</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_15"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_15</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_16"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_16</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_17"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_17</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_18"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_18</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_19"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_19</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_2"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_20"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_20</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_3"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_3</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_4"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_4</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_5"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_5</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_6"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_6</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_7"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_7</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_8"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_8</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.group_9"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.group_9</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.set_value"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.set_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.set_panel_device_ophyd.Set_Panel_Device.subscriptions"><code class="docutils literal notranslate"><span class="pre">Set_Panel_Device.subscriptions</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html#module-nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-nomad_camels.manual_controls.set_panel.set_panel">
+<span id="nomad-camels-manual-controls-set-panel-set-panel-module"></span><h2>nomad_camels.manual_controls.set_panel.set_panel module<a class="headerlink" href="#module-nomad_camels.manual_controls.set_panel.set_panel" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.manual_controls.set_panel.set_panel.</span></span><span class="sig-name descname"><span class="pre">Button_Group_Tab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.add_button">
+<span class="sig-name descname"><span class="pre">add_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.add_button" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.get_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.remove_button">
+<span class="sig-name descname"><span class="pre">remove_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.remove_button" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.signal_move_left">
+<span class="sig-name descname"><span class="pre">signal_move_left</span></span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.signal_move_left" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.signal_move_right">
+<span class="sig-name descname"><span class="pre">signal_move_right</span></span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.signal_move_right" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.signal_name_change">
+<span class="sig-name descname"><span class="pre">signal_name_change</span></span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.signal_name_change" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.signal_remove">
+<span class="sig-name descname"><span class="pre">signal_remove</span></span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.signal_remove" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Button_Group_Tab&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=signal_remove()</span>&#160;&#160; <span class="pre">#34</span> <span class="pre">type=Signal,</span> <span class="pre">signature=signal_move_left()</span>&#160;&#160; <span class="pre">#35</span> <span class="pre">type=Signal,</span> <span class="pre">signature=signal_move_right()</span>&#160;&#160; <span class="pre">#36</span> <span class="pre">type=Signal,</span> <span class="pre">signature=signal_name_change(QString),</span> <span class="pre">parameters=QString</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Button_Group_Tab.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Readback_Thread">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.manual_controls.set_panel.set_panel.</span></span><span class="sig-name descname"><span class="pre">Readback_Thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Readback_Thread" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QThread</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Readback_Thread.data_sig">
+<span class="sig-name descname"><span class="pre">data_sig</span></span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Readback_Thread.data_sig" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Readback_Thread.do_reading">
+<span class="sig-name descname"><span class="pre">do_reading</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Readback_Thread.do_reading" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Readback_Thread.exception_signal">
+<span class="sig-name descname"><span class="pre">exception_signal</span></span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Readback_Thread.exception_signal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Readback_Thread.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Readback_Thread.run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Readback_Thread.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Readback_Thread&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QThread&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#12</span> <span class="pre">type=Signal,</span> <span class="pre">signature=data_sig(QVariantMap),</span> <span class="pre">parameters=QVariantMap</span>&#160;&#160; <span class="pre">#13</span> <span class="pre">type=Signal,</span> <span class="pre">signature=exception_signal(PyObject),</span> <span class="pre">parameters=PyObject</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Readback_Thread.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.manual_controls.set_panel.set_panel.</span></span><span class="sig-name descname"><span class="pre">Set_Panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.manual_control.Manual_Control" title="nomad_camels.main_classes.manual_control.Manual_Control"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manual_Control</span></code></a></p>
+<p>This class provides convenience to set given values quickly at the push
+of a button. Further, it provides a utility-instrument using the buttons as
+channels to easily use the functionality in protocols.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.button_pushed">
+<span class="sig-name descname"><span class="pre">button_pushed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.button_pushed" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.check_readback">
+<span class="sig-name descname"><span class="pre">check_readback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vals</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.check_readback" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.close" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.closeEvent" title="Link to this definition"></a></dt>
+<dd><p>Overwritten, so that <cite>self.closing</cite> is emitted, telling the main UI
+window that this manual control is no longer opened.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.device_ready">
+<span class="sig-name descname"><span class="pre">device_ready</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.device_ready" title="Link to this definition"></a></dt>
+<dd><p>Called when the devices are ready to be used, i.e. when the
+<cite>instantiate_devices_thread</cite> is finished.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.read_error">
+<span class="sig-name descname"><span class="pre">read_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.read_error" title="Link to this definition"></a></dt>
+<dd><p>Shows a message box with the error message. And asks wether the read thread should be restarted</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.start_read_thread">
+<span class="sig-name descname"><span class="pre">start_read_thread</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.start_read_thread" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Set_Panel&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Manual_Control&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.manual_controls.set_panel.set_panel.</span></span><span class="sig-name descname"><span class="pre">Set_Panel_Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.manual_control.Manual_Control_Config" title="nomad_camels.main_classes.manual_control.Manual_Control_Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manual_Control_Config</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.accept">
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.accept" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.add_button_group">
+<span class="sig-name descname"><span class="pre">add_button_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.add_button_group" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.change_tab_name">
+<span class="sig-name descname"><span class="pre">change_tab_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.change_tab_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.move_tab">
+<span class="sig-name descname"><span class="pre">move_tab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.move_tab" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>direction</strong> – (Default value = 1)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.provide_instrument">
+<span class="sig-name descname"><span class="pre">provide_instrument</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.provide_instrument" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.remove_button_group">
+<span class="sig-name descname"><span class="pre">remove_button_group</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.remove_button_group" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.remove_instrument">
+<span class="sig-name descname"><span class="pre">remove_instrument</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.remove_instrument" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Set_Panel_Config&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Manual_Control_Config&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.Set_Panel_Config.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.manual_controls.set_panel.set_panel.conv_value">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.manual_controls.set_panel.set_panel.</span></span><span class="sig-name descname"><span class="pre">conv_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.manual_controls.set_panel.set_panel.conv_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-nomad_camels.manual_controls.set_panel">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels.manual_controls.set_panel" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nomad_camels.manual_controls.html" class="btn btn-neutral float-left" title="nomad_camels.manual_controls package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device.html" class="btn btn-neutral float-right" title="nomad_camels.manual_controls.set_panel.nomad_camels_driver_set_panel_device package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+<br><br>
+<a href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/data_privacy.html">Data privacy statement</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/contact.html">Contact</a>
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

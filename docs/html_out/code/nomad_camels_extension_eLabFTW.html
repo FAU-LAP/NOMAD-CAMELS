@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nomad_camels_extension_eLabFTW package &mdash; NOMAD-CAMELS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=1ebad8af" />
+
+  
+    <link rel="shortcut icon" href="../_static/CAMELS.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Extensions" href="extensions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NOMAD-CAMELS
+              <img src="../_static/camels_horizontal.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Instruments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/instrument_drivers.html">Create New Instrument Drivers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CAMELS API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/api/api_landing.html">CAMELS API Overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Combine with EPICS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/new_ioc.html">Create New EPICS IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/procServ.html">Run IOCs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/ArchiverAppliance.html">Archiver Appliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/examples.html">Example Setups</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/programmers_guide.html">Maintain CAMELS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute to CAMELS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/general_process.html">General Process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/running_tests.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/code_of_conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels.html">nomad-camels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">drivers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="extensions.html">extensions</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">nomad_camels_extension_eLabFTW package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_extension_eLabFTW.elabFTW_extension">nomad_camels_extension_eLabFTW.elabFTW_extension module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.AskUploadDialog"><code class="docutils literal notranslate"><span class="pre">AskUploadDialog</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.AskUploadDialog.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">AskUploadDialog.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension"><code class="docutils literal notranslate"><span class="pre">ELabFTW_Extension</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.change_user_type"><code class="docutils literal notranslate"><span class="pre">ELabFTW_Extension.change_user_type()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.sample_checked"><code class="docutils literal notranslate"><span class="pre">ELabFTW_Extension.sample_checked()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.sample_selected"><code class="docutils literal notranslate"><span class="pre">ELabFTW_Extension.sample_selected()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.show_elab_sample"><code class="docutils literal notranslate"><span class="pre">ELabFTW_Extension.show_elab_sample()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.show_upload_widget"><code class="docutils literal notranslate"><span class="pre">ELabFTW_Extension.show_upload_widget()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.upload_data"><code class="docutils literal notranslate"><span class="pre">ELabFTW_Extension.upload_data()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.user_logged_in_out"><code class="docutils literal notranslate"><span class="pre">ELabFTW_Extension.user_logged_in_out()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget"><code class="docutils literal notranslate"><span class="pre">Elab_Sample_Widget</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.sample_checked"><code class="docutils literal notranslate"><span class="pre">Elab_Sample_Widget.sample_checked()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.sample_checked_signal"><code class="docutils literal notranslate"><span class="pre">Elab_Sample_Widget.sample_checked_signal</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.sample_selected_signal"><code class="docutils literal notranslate"><span class="pre">Elab_Sample_Widget.sample_selected_signal</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.select_sample"><code class="docutils literal notranslate"><span class="pre">Elab_Sample_Widget.select_sample()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Elab_Sample_Widget.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget"><code class="docutils literal notranslate"><span class="pre">Elab_User_Widget</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget.ensure_login"><code class="docutils literal notranslate"><span class="pre">Elab_User_Widget.ensure_login()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget.log_in_out"><code class="docutils literal notranslate"><span class="pre">Elab_User_Widget.log_in_out()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget.log_in_out_signal"><code class="docutils literal notranslate"><span class="pre">Elab_User_Widget.log_in_out_signal</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Elab_User_Widget.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.UploadElabWidget"><code class="docutils literal notranslate"><span class="pre">UploadElabWidget</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.UploadElabWidget.item_type_changed"><code class="docutils literal notranslate"><span class="pre">UploadElabWidget.item_type_changed()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.UploadElabWidget.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">UploadElabWidget.staticMetaObject</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.UploadElabWidget.update_boxes"><code class="docutils literal notranslate"><span class="pre">UploadElabWidget.update_boxes()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_extension_eLabFTW.elab_communication">nomad_camels_extension_eLabFTW.elab_communication module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.ItemSelector"><code class="docutils literal notranslate"><span class="pre">ItemSelector</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.accept"><code class="docutils literal notranslate"><span class="pre">ItemSelector.accept()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.get_current_item_data"><code class="docutils literal notranslate"><span class="pre">ItemSelector.get_current_item_data()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.item_change"><code class="docutils literal notranslate"><span class="pre">ItemSelector.item_change()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.item_filtering"><code class="docutils literal notranslate"><span class="pre">ItemSelector.item_filtering()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">ItemSelector.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.LoginDialog"><code class="docutils literal notranslate"><span class="pre">LoginDialog</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.LoginDialog.accept"><code class="docutils literal notranslate"><span class="pre">LoginDialog.accept()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.LoginDialog.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">LoginDialog.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.ensure_login"><code class="docutils literal notranslate"><span class="pre">ensure_login()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.get_elab_settings"><code class="docutils literal notranslate"><span class="pre">get_elab_settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.get_experiments"><code class="docutils literal notranslate"><span class="pre">get_experiments()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.get_item_types"><code class="docutils literal notranslate"><span class="pre">get_item_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.get_items"><code class="docutils literal notranslate"><span class="pre">get_items()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.get_user_information"><code class="docutils literal notranslate"><span class="pre">get_user_information()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.login_to_elab"><code class="docutils literal notranslate"><span class="pre">login_to_elab()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.logout_of_elab"><code class="docutils literal notranslate"><span class="pre">logout_of_elab()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_extension_eLabFTW.elab_communication.upload_file"><code class="docutils literal notranslate"><span class="pre">upload_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_extension_eLabFTW">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/FAU-LAP/NOMAD-CAMELS">Find us on GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.06371">Cite NOMAD CAMELS</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nomad-lab.eu/nomad-lab/">NOMAD Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.fairmat-nfdi.eu/fairmat">FAIRmat Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.eu/">FAU/LAP Website</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Imprint/Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_privacy.html">Data Privacy</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NOMAD-CAMELS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="extensions.html">Extensions</a></li>
+      <li class="breadcrumb-item active">nomad_camels_extension_eLabFTW package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code/nomad_camels_extension_eLabFTW.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nomad-camels-extension-elabftw-package">
+<h1>nomad_camels_extension_eLabFTW package<a class="headerlink" href="#nomad-camels-extension-elabftw-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-nomad_camels_extension_eLabFTW.elabFTW_extension">
+<span id="nomad-camels-extension-elabftw-elabftw-extension-module"></span><h2>nomad_camels_extension_eLabFTW.elabFTW_extension module<a class="headerlink" href="#module-nomad_camels_extension_eLabFTW.elabFTW_extension" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.AskUploadDialog">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elabFTW_extension.</span></span><span class="sig-name descname"><span class="pre">AskUploadDialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.AskUploadDialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.AskUploadDialog.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;AskUploadDialog&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.AskUploadDialog.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elabFTW_extension.</span></span><span class="sig-name descname"><span class="pre">ELabFTW_Extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ELN_Context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="nomad_camels.extensions.html#nomad_camels.extensions.extension_contexts.ELN_Context" title="nomad_camels.extensions.extension_contexts.ELN_Context"><span class="pre">ELN_Context</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.extensions.html#nomad_camels.extensions.extension_interface.Extension" title="nomad_camels.extensions.extension_interface.Extension"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extension</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.change_user_type">
+<span class="sig-name descname"><span class="pre">change_user_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.change_user_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.sample_checked">
+<span class="sig-name descname"><span class="pre">sample_checked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checked</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.sample_checked" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.sample_selected">
+<span class="sig-name descname"><span class="pre">sample_selected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.sample_selected" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.show_elab_sample">
+<span class="sig-name descname"><span class="pre">show_elab_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logged_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.show_elab_sample" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.show_upload_widget">
+<span class="sig-name descname"><span class="pre">show_upload_widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logged_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.show_upload_widget" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.upload_data">
+<span class="sig-name descname"><span class="pre">upload_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.upload_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.user_logged_in_out">
+<span class="sig-name descname"><span class="pre">user_logged_in_out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logged_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.ELabFTW_Extension.user_logged_in_out" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elabFTW_extension.</span></span><span class="sig-name descname"><span class="pre">Elab_Sample_Widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.sample_checked">
+<span class="sig-name descname"><span class="pre">sample_checked</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.sample_checked" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.sample_checked_signal">
+<span class="sig-name descname"><span class="pre">sample_checked_signal</span></span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.sample_checked_signal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.sample_selected_signal">
+<span class="sig-name descname"><span class="pre">sample_selected_signal</span></span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.sample_selected_signal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.select_sample">
+<span class="sig-name descname"><span class="pre">select_sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.select_sample" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Elab_Sample_Widget&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=sample_selected_signal(QVariantMap),</span> <span class="pre">parameters=QVariantMap</span>&#160;&#160; <span class="pre">#34</span> <span class="pre">type=Signal,</span> <span class="pre">signature=sample_checked_signal(bool),</span> <span class="pre">parameters=bool</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_Sample_Widget.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elabFTW_extension.</span></span><span class="sig-name descname"><span class="pre">Elab_User_Widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget.ensure_login">
+<span class="sig-name descname"><span class="pre">ensure_login</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget.ensure_login" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget.log_in_out">
+<span class="sig-name descname"><span class="pre">log_in_out</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget.log_in_out" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget.log_in_out_signal">
+<span class="sig-name descname"><span class="pre">log_in_out_signal</span></span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget.log_in_out_signal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Elab_User_Widget&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=log_in_out_signal(bool),</span> <span class="pre">parameters=bool</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.Elab_User_Widget.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.UploadElabWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elabFTW_extension.</span></span><span class="sig-name descname"><span class="pre">UploadElabWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.UploadElabWidget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.UploadElabWidget.item_type_changed">
+<span class="sig-name descname"><span class="pre">item_type_changed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.UploadElabWidget.item_type_changed" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.UploadElabWidget.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;UploadElabWidget&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.UploadElabWidget.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elabFTW_extension.UploadElabWidget.update_boxes">
+<span class="sig-name descname"><span class="pre">update_boxes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elabFTW_extension.UploadElabWidget.update_boxes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels_extension_eLabFTW.elab_communication">
+<span id="nomad-camels-extension-elabftw-elab-communication-module"></span><h2>nomad_camels_extension_eLabFTW.elab_communication module<a class="headerlink" href="#module-nomad_camels_extension_eLabFTW.elab_communication" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.ItemSelector">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elab_communication.</span></span><span class="sig-name descname"><span class="pre">ItemSelector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.ItemSelector" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>This UI dialog handles the selection of an item from eLabFTW.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.accept">
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.accept" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.get_current_item_data">
+<span class="sig-name descname"><span class="pre">get_current_item_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.get_current_item_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.item_change">
+<span class="sig-name descname"><span class="pre">item_change</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.item_change" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.item_filtering">
+<span class="sig-name descname"><span class="pre">item_filtering</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.item_filtering" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ItemSelector&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.ItemSelector.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.LoginDialog">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elab_communication.</span></span><span class="sig-name descname"><span class="pre">LoginDialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.LoginDialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>This UI dialog handles the login to elabFTW.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.LoginDialog.accept">
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.LoginDialog.accept" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.LoginDialog.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;LoginDialog&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.LoginDialog.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.ensure_login">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elab_communication.</span></span><span class="sig-name descname"><span class="pre">ensure_login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.ensure_login" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.get_elab_settings">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elab_communication.</span></span><span class="sig-name descname"><span class="pre">get_elab_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.get_elab_settings" title="Link to this definition"></a></dt>
+<dd><p>Returns the eLabFTW settings from the preferences.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.get_experiments">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elab_communication.</span></span><span class="sig-name descname"><span class="pre">get_experiments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.get_experiments" title="Link to this definition"></a></dt>
+<dd><p>Returns the experiments from eLabFTW.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.get_item_types">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elab_communication.</span></span><span class="sig-name descname"><span class="pre">get_item_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.get_item_types" title="Link to this definition"></a></dt>
+<dd><p>Returns the item types from eLabFTW.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.get_items">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elab_communication.</span></span><span class="sig-name descname"><span class="pre">get_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.get_items" title="Link to this definition"></a></dt>
+<dd><p>Returns the items from eLabFTW.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.get_user_information">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elab_communication.</span></span><span class="sig-name descname"><span class="pre">get_user_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.get_user_information" title="Link to this definition"></a></dt>
+<dd><p>Returns the user information from eLabFTW.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.login_to_elab">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elab_communication.</span></span><span class="sig-name descname"><span class="pre">login_to_elab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.login_to_elab" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.logout_of_elab">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elab_communication.</span></span><span class="sig-name descname"><span class="pre">logout_of_elab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.logout_of_elab" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_extension_eLabFTW.elab_communication.upload_file">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_extension_eLabFTW.elab_communication.</span></span><span class="sig-name descname"><span class="pre">upload_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_extension_eLabFTW.elab_communication.upload_file" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-nomad_camels_extension_eLabFTW">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels_extension_eLabFTW" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="extensions.html" class="btn btn-neutral float-left" title="Extensions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+<br><br>
+<a href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/data_privacy.html">Data privacy statement</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/contact.html">Contact</a>
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

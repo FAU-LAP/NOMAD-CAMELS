@@ -5,7 +5,7 @@ __pycache__/
 .vscode/
 .desertenv
 .python-version
-**/html_out/
+**/html_out/**
 docs/source/doc/programmers_guide/drivers/backup.md
 CAMELS_Docu.code-workspace
 .python-version
@@ -17,3 +17,7 @@ CAMELS.code-workspace
 startup_packages.txt
 /.42c
 .venv/
+
+!docs/html_out/
+!docs/html_out/code/
+!docs/html_out/code/**

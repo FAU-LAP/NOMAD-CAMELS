@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nomad_camels_driver_andor_shamrock_500 package &mdash; NOMAD-CAMELS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=1ebad8af" />
+
+  
+    <link rel="shortcut icon" href="../_static/CAMELS.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="nomad_camels_driver_cam_control_pylablib package" href="nomad_camels_driver_cam_control_pylablib.html" />
+    <link rel="prev" title="nomad_camels_driver_andor_newton package" href="nomad_camels_driver_andor_newton.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NOMAD-CAMELS
+              <img src="../_static/camels_horizontal.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Instruments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/instrument_drivers.html">Create New Instrument Drivers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CAMELS API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/api/api_landing.html">CAMELS API Overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Combine with EPICS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/new_ioc.html">Create New EPICS IOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/procServ.html">Run IOCs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/ArchiverAppliance.html">Archiver Appliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/examples.html">Example Setups</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/programmers_guide.html">Maintain CAMELS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute to CAMELS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/general_process.html">General Process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/running_tests.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/contribute/code_of_conduct.html">Code of Conduct</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels.html">nomad-camels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="drivers.html">drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_agilent_34401a.html">nomad_camels_driver_agilent_34401a package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_andor_newton.html">nomad_camels_driver_andor_newton package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">nomad_camels_driver_andor_shamrock_500 package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500 module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass"><code class="docutils literal notranslate"><span class="pre">subclass</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass.get_necessary_devices"><code class="docutils literal notranslate"><span class="pre">subclass.get_necessary_devices()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config"><code class="docutils literal notranslate"><span class="pre">subclass_config</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config.get_config"><code class="docutils literal notranslate"><span class="pre">subclass_config.get_config()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config.get_settings"><code class="docutils literal notranslate"><span class="pre">subclass_config.get_settings()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">subclass_config.staticMetaObject</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config.update_dll"><code class="docutils literal notranslate"><span class="pre">subclass_config.update_dll()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config.Ui_andor_shamrock500_config"><code class="docutils literal notranslate"><span class="pre">Ui_andor_shamrock500_config</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config.Ui_andor_shamrock500_config.retranslateUi"><code class="docutils literal notranslate"><span class="pre">Ui_andor_shamrock500_config.retranslateUi()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config.Ui_andor_shamrock500_config.setupUi"><code class="docutils literal notranslate"><span class="pre">Ui_andor_shamrock500_config.setupUi()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.subclass_config_sub"><code class="docutils literal notranslate"><span class="pre">subclass_config_sub</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.subclass_config_sub.get_config"><code class="docutils literal notranslate"><span class="pre">subclass_config_sub.get_config()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.subclass_config_sub.load_config"><code class="docutils literal notranslate"><span class="pre">subclass_config_sub.load_config()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.subclass_config_sub.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">subclass_config_sub.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.change_camera_config"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.change_camera_config()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.close"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.close()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.closeEvent"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.closeEvent()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.continuous_spectra"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.continuous_spectra()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.device_ready"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.device_ready()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.measure_spectrum"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.measure_spectrum()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.save_spectrum"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.save_spectrum()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_grating"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.set_grating()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_horizontal_flip"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.set_horizontal_flip()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_input_port"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.set_input_port()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_input_slit_size"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.set_input_slit_size()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_output_port"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.set_output_port()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_output_slit_size"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.set_output_slit_size()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_wavelength"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.set_wavelength()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.show_spectrum"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.show_spectrum()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.start_job"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.start_job()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.staticMetaObject</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.stop_job"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.stop_job()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.update_cam_config"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.update_cam_config()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.update_config"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control.update_config()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control_Config"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control_Config</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control_Config.accept"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control_Config.accept()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control_Config.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Andor_Manual_Control_Config.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.change_camera_config"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.change_camera_config()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.continuous_function"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.continuous_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.do_function"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.do_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.job_done"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.job_done</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.measure_spectrum"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.measure_spectrum()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.new_cam_config"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.new_cam_config</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.new_spec_config"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.new_spec_config</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.run"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.run()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_grating"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.set_grating()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_input_port"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.set_input_port()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_input_slit_size"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.set_input_slit_size()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_output_port"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.set_output_port()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_output_slit_size"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.set_output_slit_size()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_wavelength"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.set_wavelength()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.spectrum_data_signal"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.spectrum_data_signal</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.staticMetaObject</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.update_configs"><code class="docutils literal notranslate"><span class="pre">Spectrometer_Work_Thread.update_configs()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.camera"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.camera</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.camera_function"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.camera_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.center_wavelength"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.center_wavelength</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.center_wavelength_function"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.center_wavelength_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.component_names"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.component_names</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.finalize_steps"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.finalize_steps()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.get_camera_device"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.get_camera_device()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.get_wavelengths"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.get_wavelengths()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.horizontal_cam_flip"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.horizontal_cam_flip</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.horizontal_cam_flip_function"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.horizontal_cam_flip_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.input_port"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.input_port</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.input_port_function"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.input_port_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.input_slit_size"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.input_slit_size</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.input_slit_size_function"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.input_slit_size_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.output_port"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.output_port</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.output_port_function"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.output_port_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.output_slit_size"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.output_slit_size</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.output_slit_size_function"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.output_slit_size_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.read_spectrum"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.read_spectrum()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.set_grating_number"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.set_grating_number</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.set_grating_number_function"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.set_grating_number_function()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.spectrum"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.spectrum</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.subscriptions"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.subscriptions</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.wavelength"><code class="docutils literal notranslate"><span class="pre">Andor_Shamrock_500.wavelength</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_andor_shamrock_500">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_cam_control_pylablib.html">nomad_camels_driver_cam_control_pylablib package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_cryovac_tic_500.html">nomad_camels_driver_cryovac_tic_500 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_demo_digital_multimeter.html">nomad_camels_driver_demo_digital_multimeter package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_demo_instrument.html">nomad_camels_driver_demo_instrument package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_demo_source_measure_unit.html">nomad_camels_driver_demo_source_measure_unit package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_eurotherm_bisynch.html">nomad_camels_driver_eurotherm_bisynch package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_iBeam_smart.html">nomad_camels_driver_iBeam_smart package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keithley_2000.html">nomad_camels_driver_keithley_2000 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keithley_237.html">nomad_camels_driver_keithley_237 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keithley_2400.html">nomad_camels_driver_keithley_2400 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keysight_b2912a.html">nomad_camels_driver_keysight_b2912a package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keysight_e5270b.html">nomad_camels_driver_keysight_e5270b package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_mechonics_cu30cl.html">nomad_camels_driver_mechonics_cu30cl package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_ni_daq.html">nomad_camels_driver_ni_daq package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_PID.html">nomad_camels_driver_PID package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_pi_stage_e709.html">nomad_camels_driver_pi_stage_e709 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_swabianinstruments_timetagger.html">nomad_camels_driver_swabianinstruments_timetagger package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_SweepMe_device.html">nomad_camels_driver_SweepMe_device package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_thorlabs_K10CR1.html">nomad_camels_driver_thorlabs_K10CR1 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_thorlabs_MFF.html">nomad_camels_driver_thorlabs_MFF package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_thorlabs_TLPM.html">nomad_camels_driver_thorlabs_TLPM package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_trinamic_tmcm_1110.html">nomad_camels_driver_trinamic_tmcm_1110 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_voltcraft_pps.html">nomad_camels_driver_voltcraft_pps package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/FAU-LAP/NOMAD-CAMELS">Find us on GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.06371">Cite NOMAD CAMELS</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nomad-lab.eu/nomad-lab/">NOMAD Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.fairmat-nfdi.eu/fairmat">FAIRmat Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.eu/">FAU/LAP Website</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Imprint/Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_privacy.html">Data Privacy</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NOMAD-CAMELS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="drivers.html">Drivers</a></li>
+      <li class="breadcrumb-item active">nomad_camels_driver_andor_shamrock_500 package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code/nomad_camels_driver_andor_shamrock_500.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nomad-camels-driver-andor-shamrock-500-package">
+<h1>nomad_camels_driver_andor_shamrock_500 package<a class="headerlink" href="#nomad-camels-driver-andor-shamrock-500-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500">
+<span id="nomad-camels-driver-andor-shamrock-500-andor-shamrock-500-module"></span><h2>nomad_camels_driver_andor_shamrock_500.andor_shamrock_500 module<a class="headerlink" href="#module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.</span></span><span class="sig-name descname"><span class="pre">subclass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.device_class.Device" title="nomad_camels.main_classes.device_class.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass.get_necessary_devices">
+<span class="sig-name descname"><span class="pre">get_necessary_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass.get_necessary_devices" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of the devices that this device needs to function
+(e.g. for a PID controller).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.</span></span><span class="sig-name descname"><span class="pre">subclass_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.device_class.Device_Config" title="nomad_camels.main_classes.device_class.Device_Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device_Config</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config.get_config" title="Link to this definition"></a></dt>
+<dd><p>Returns the config_dict of the device. Overwrite this
+function for each device to specify the config.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config.get_settings">
+<span class="sig-name descname"><span class="pre">get_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config.get_settings" title="Link to this definition"></a></dt>
+<dd><p>Updates the settings_dict with the current settings.
+Overwrite this function for each device to specify the settings.
+It is recommended to still call the super() method for the
+connection-settings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;subclass_config&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Device_Config&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config.update_dll">
+<span class="sig-name descname"><span class="pre">update_dll</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500.subclass_config.update_dll" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config">
+<span id="nomad-camels-driver-andor-shamrock-500-andor-shamrock-500-config-module"></span><h2>nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config module<a class="headerlink" href="#module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config.Ui_andor_shamrock500_config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config.</span></span><span class="sig-name descname"><span class="pre">Ui_andor_shamrock500_config</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config.Ui_andor_shamrock500_config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config.Ui_andor_shamrock500_config.retranslateUi">
+<span class="sig-name descname"><span class="pre">retranslateUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">andor_shamrock500_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config.Ui_andor_shamrock500_config.retranslateUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config.Ui_andor_shamrock500_config.setupUi">
+<span class="sig-name descname"><span class="pre">setupUi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">andor_shamrock500_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config.Ui_andor_shamrock500_config.setupUi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub">
+<span id="nomad-camels-driver-andor-shamrock-500-andor-shamrock-500-config-sub-module"></span><h2>nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub module<a class="headerlink" href="#module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.subclass_config_sub">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.</span></span><span class="sig-name descname"><span class="pre">subclass_config_sub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.subclass_config_sub" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.device_class.Device_Config_Sub" title="nomad_camels.main_classes.device_class.Device_Config_Sub"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device_Config_Sub</span></code></a>, <a class="reference internal" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config.Ui_andor_shamrock500_config" title="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config.Ui_andor_shamrock500_config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_andor_shamrock500_config</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.subclass_config_sub.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.subclass_config_sub.get_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.subclass_config_sub.load_config">
+<span class="sig-name descname"><span class="pre">load_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.subclass_config_sub.load_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.subclass_config_sub.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;subclass_config_sub&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Device_Config_Sub&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_config_sub.subclass_config_sub.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control">
+<span id="nomad-camels-driver-andor-shamrock-500-andor-shamrock-500-manual-control-module"></span><h2>nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control module<a class="headerlink" href="#module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.</span></span><span class="sig-name descname"><span class="pre">Andor_Manual_Control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.manual_control.Manual_Control" title="nomad_camels.main_classes.manual_control.Manual_Control"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manual_Control</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.change_camera_config">
+<span class="sig-name descname"><span class="pre">change_camera_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.change_camera_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.close" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.closeEvent" title="Link to this definition"></a></dt>
+<dd><p>Overwritten, so that <cite>self.closing</cite> is emitted, telling the main UI
+window that this manual control is no longer opened.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.continuous_spectra">
+<span class="sig-name descname"><span class="pre">continuous_spectra</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.continuous_spectra" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.device_ready">
+<span class="sig-name descname"><span class="pre">device_ready</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.device_ready" title="Link to this definition"></a></dt>
+<dd><p>Called when the devices are ready to be used, i.e. when the
+<cite>instantiate_devices_thread</cite> is finished.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.measure_spectrum">
+<span class="sig-name descname"><span class="pre">measure_spectrum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.measure_spectrum" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.save_spectrum">
+<span class="sig-name descname"><span class="pre">save_spectrum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.save_spectrum" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_grating">
+<span class="sig-name descname"><span class="pre">set_grating</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_grating" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_horizontal_flip">
+<span class="sig-name descname"><span class="pre">set_horizontal_flip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_horizontal_flip" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_input_port">
+<span class="sig-name descname"><span class="pre">set_input_port</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_input_port" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_input_slit_size">
+<span class="sig-name descname"><span class="pre">set_input_slit_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_input_slit_size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_output_port">
+<span class="sig-name descname"><span class="pre">set_output_port</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_output_port" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_output_slit_size">
+<span class="sig-name descname"><span class="pre">set_output_slit_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_output_slit_size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_wavelength">
+<span class="sig-name descname"><span class="pre">set_wavelength</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.set_wavelength" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.show_spectrum">
+<span class="sig-name descname"><span class="pre">show_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intensity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.show_spectrum" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.start_job">
+<span class="sig-name descname"><span class="pre">start_job</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.start_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Andor_Manual_Control&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Manual_Control&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.stop_job">
+<span class="sig-name descname"><span class="pre">stop_job</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.stop_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.update_cam_config">
+<span class="sig-name descname"><span class="pre">update_cam_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.update_cam_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.update_config">
+<span class="sig-name descname"><span class="pre">update_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control.update_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control_Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.</span></span><span class="sig-name descname"><span class="pre">Andor_Manual_Control_Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control_Config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.manual_control.Manual_Control_Config" title="nomad_camels.main_classes.manual_control.Manual_Control_Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manual_Control_Config</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control_Config.accept">
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control_Config.accept" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control_Config.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Andor_Manual_Control_Config&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Manual_Control_Config&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Andor_Manual_Control_Config.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.</span></span><span class="sig-name descname"><span class="pre">Spectrometer_Work_Thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrometer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QThread</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.change_camera_config">
+<span class="sig-name descname"><span class="pre">change_camera_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.change_camera_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.continuous_function">
+<span class="sig-name descname"><span class="pre">continuous_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.continuous_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.do_function">
+<span class="sig-name descname"><span class="pre">do_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.do_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.job_done">
+<span class="sig-name descname"><span class="pre">job_done</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.job_done" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.measure_spectrum">
+<span class="sig-name descname"><span class="pre">measure_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.measure_spectrum" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.new_cam_config">
+<span class="sig-name descname"><span class="pre">new_cam_config</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.new_cam_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.new_spec_config">
+<span class="sig-name descname"><span class="pre">new_spec_config</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.new_spec_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_grating">
+<span class="sig-name descname"><span class="pre">set_grating</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_grating" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_input_port">
+<span class="sig-name descname"><span class="pre">set_input_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_input_port" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_input_slit_size">
+<span class="sig-name descname"><span class="pre">set_input_slit_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_input_slit_size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_output_port">
+<span class="sig-name descname"><span class="pre">set_output_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_output_port" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_output_slit_size">
+<span class="sig-name descname"><span class="pre">set_output_slit_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_output_slit_size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_wavelength">
+<span class="sig-name descname"><span class="pre">set_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.set_wavelength" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.spectrum_data_signal">
+<span class="sig-name descname"><span class="pre">spectrum_data_signal</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.spectrum_data_signal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Spectrometer_Work_Thread&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QThread&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#12</span> <span class="pre">type=Signal,</span> <span class="pre">signature=job_done()</span>&#160;&#160; <span class="pre">#13</span> <span class="pre">type=Signal,</span> <span class="pre">signature=spectrum_data_signal(PyObject,PyObject),</span> <span class="pre">parameters=PyObject,</span> <span class="pre">PyObject</span>&#160;&#160; <span class="pre">#14</span> <span class="pre">type=Signal,</span> <span class="pre">signature=new_spec_config(QVariantMap),</span> <span class="pre">parameters=QVariantMap</span>&#160;&#160; <span class="pre">#15</span> <span class="pre">type=Signal,</span> <span class="pre">signature=new_cam_config(QVariantMap),</span> <span class="pre">parameters=QVariantMap</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.update_configs">
+<span class="sig-name descname"><span class="pre">update_configs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_manual_control.Spectrometer_Work_Thread.update_configs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd">
+<span id="nomad-camels-driver-andor-shamrock-500-andor-shamrock-500-ophyd-module"></span><h2>nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd module<a class="headerlink" href="#module-nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.</span></span><span class="sig-name descname"><span class="pre">Andor_Shamrock_500</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration_attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrometer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dll_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Sequential_Device" title="nomad_camels.bluesky_handling.custom_function_signal.Sequential_Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequential_Device</span></code></a></p>
+<p>Driver for the Andor Shamrock 500 spectrometer (not the camera!).
+The camera is implemented separately.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.camera">
+<span class="sig-name descname"><span class="pre">camera</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.camera" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.camera_function">
+<span class="sig-name descname"><span class="pre">camera_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.camera_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.center_wavelength">
+<span class="sig-name descname"><span class="pre">center_wavelength</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.center_wavelength" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.center_wavelength_function">
+<span class="sig-name descname"><span class="pre">center_wavelength_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.center_wavelength_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.component_names">
+<span class="sig-name descname"><span class="pre">component_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('spectrum',</span> <span class="pre">'wavelength',</span> <span class="pre">'set_grating_number',</span> <span class="pre">'center_wavelength',</span> <span class="pre">'input_port',</span> <span class="pre">'output_port',</span> <span class="pre">'camera',</span> <span class="pre">'input_slit_size',</span> <span class="pre">'output_slit_size',</span> <span class="pre">'horizontal_cam_flip')</span></em><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.component_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.finalize_steps">
+<span class="sig-name descname"><span class="pre">finalize_steps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.finalize_steps" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.get_camera_device">
+<span class="sig-name descname"><span class="pre">get_camera_device</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.get_camera_device" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.get_wavelengths">
+<span class="sig-name descname"><span class="pre">get_wavelengths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.get_wavelengths" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.horizontal_cam_flip">
+<span class="sig-name descname"><span class="pre">horizontal_cam_flip</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.horizontal_cam_flip" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.horizontal_cam_flip_function">
+<span class="sig-name descname"><span class="pre">horizontal_cam_flip_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.horizontal_cam_flip_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.input_port">
+<span class="sig-name descname"><span class="pre">input_port</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.input_port" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.input_port_function">
+<span class="sig-name descname"><span class="pre">input_port_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.input_port_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.input_slit_size">
+<span class="sig-name descname"><span class="pre">input_slit_size</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.input_slit_size" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.input_slit_size_function">
+<span class="sig-name descname"><span class="pre">input_slit_size_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.input_slit_size_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.output_port">
+<span class="sig-name descname"><span class="pre">output_port</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.output_port" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.output_port_function">
+<span class="sig-name descname"><span class="pre">output_port_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.output_port_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.output_slit_size">
+<span class="sig-name descname"><span class="pre">output_slit_size</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.output_slit_size" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.output_slit_size_function">
+<span class="sig-name descname"><span class="pre">output_slit_size_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.output_slit_size_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.read_spectrum">
+<span class="sig-name descname"><span class="pre">read_spectrum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.read_spectrum" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.set_grating_number">
+<span class="sig-name descname"><span class="pre">set_grating_number</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.set_grating_number" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.set_grating_number_function">
+<span class="sig-name descname"><span class="pre">set_grating_number_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.set_grating_number_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.spectrum">
+<span class="sig-name descname"><span class="pre">spectrum</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.spectrum" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.subscriptions">
+<span class="sig-name descname"><span class="pre">subscriptions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">FrozenSet</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'acq_done'})</span></em><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.subscriptions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.wavelength">
+<span class="sig-name descname"><span class="pre">wavelength</span></span><a class="headerlink" href="#nomad_camels_driver_andor_shamrock_500.andor_shamrock_500_ophyd.Andor_Shamrock_500.wavelength" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nomad_camels_driver_andor_shamrock_500">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels_driver_andor_shamrock_500" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nomad_camels_driver_andor_newton.html" class="btn btn-neutral float-left" title="nomad_camels_driver_andor_newton package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nomad_camels_driver_cam_control_pylablib.html" class="btn btn-neutral float-right" title="nomad_camels_driver_cam_control_pylablib package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+<br><br>
+<a href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/data_privacy.html">Data privacy statement</a><br>
+<a href="https://fau-lap.github.io/NOMAD-CAMELS/contact.html">Contact</a>
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
