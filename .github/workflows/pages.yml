@@ -113,12 +113,10 @@ jobs:
       # - run: rm -rf ./docs/
       - name: make instrument table
         run: |
-          cd ./docbranch/
           python -m pip install requests
           python populate_instruments_table.py
           python apidoc_for_camels_suitcase.py
           python go_through_camels_packages.py
-          cd ..
       # - run: cp -r ./docbranch/docs ./docs
       # - run: rm -rf ./docbranch/
       - name: Sphinx build
