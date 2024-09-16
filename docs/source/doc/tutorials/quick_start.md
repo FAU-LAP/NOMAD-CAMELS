@@ -4,6 +4,7 @@
   gap: 16px;
   justify-content: start;
   flex-wrap: wrap;
+  margin-bottom: 15px;
 }
 
 .box {
