@@ -36,67 +36,48 @@ Why CAMELS?
     <div class="box-container">
 
         <div class="box">
-            <a href="#" class="box-title">Smooth installation</a>
+            <a href="#why-camels" class="box-title">Smooth installation</a>
             <div class="box-content">
                 CAMELS is a Python package distributed via PyPI. It is easily installable on any computer. On Windows, let the installer do all the work for you.
             </div>
         </div>
 
         <div class="box">
-            <a href="#" class="box-title">Easy to use</a>
+            <a href="#why-camels" class="box-title">Easy to use</a>
             <div class="box-content">
                 No programming skills required. Just configure your measurement and process protocols. Get it done within minutes.
             </div>
         </div>
 
         <div class="box">
-            <a href="#" class="box-title">FAIR data</a>
+            <a href="#why-camels" class="box-title">FAIR data</a>
             <div class="box-content">
                 Automatically store FAIR data with rich metadata that lets you and others understand your experiment in detail. Optionally connect directly with your NOMAD Oasis.
             </div>
         </div>
 
         <div class="box">
-            <a href="#" class="box-title">Flexible and extendable</a>
+            <a href="#why-camels" class="box-title">Flexible and extendable</a>
             <div class="box-content">
                 Add further instruments to your setup at will. Reuse and adapt existing measurements quickly.
             </div>
         </div>
 
         <div class="box">
-            <a href="#" class="box-title">Scalable</a>
+            <a href="#why-camels" class="box-title">Scalable</a>
             <div class="box-content">
                 Work with small setups using directly connected instruments. Or connect to large distributed systems using advanced protocols like EPICS.
             </div>
         </div>
 
         <div class="box">
-            <a href="#" class="box-title">Community driven</a>
+            <a href="#why-camels" class="box-title">Community driven</a>
             <div class="box-content">
                 Contribute to CAMELS and add further instruments on GitHub. CAMELS comes with an instrument driver wizard that helps you implement new instruments.
             </div>
         </div>
 
     </div>
-
-#. **Smooth installation**
-
-   CAMELS is a Python package distributed via PyPI. It is easily installable on any computer. On Windows, let the installer do all the work for you.
-#. **Easy to use**
-
-   No programming skills required. Just configure your measurement and process protocols. Get it done within minutes.
-#. **FAIR data**
-
-   Automatically store FAIR data with rich metadata that lets you and others understand your experiment in detail. Optionally connect directly with your NOMAD Oasis.
-#. **Flexible and extendable**
-
-   Add further instruments to your setup at will. Reuse and adapt existing measurements quickly.
-#. **Scalable**
-
-   Work with small setups using directly connected instruments. Or connect to large distributed systems using advanced protocols like EPICS.
-#. **Community driven**
-
-   Contribute to CAMELS and add further instruments on GitHub. CAMELS comes with an instrument driver wizard that helps you implement new instruments.
 
 In experimental physics many experiments utilize a multitude of different measurement devices used in dynamically changing setups where changing measurement procedures or adding new devices is often cumbersome and difficult as it often requires advanced programming knowledge. CAMELS will allow you to define instrument control and measurement protocols using a graphical user interface (GUI) where each measurement step can be added with the click of a button. This provides a low entry-threshold enabling the creation of new and sophisticated measurement protocols without programming knowledge or a deeper understanding of device communication.
 
