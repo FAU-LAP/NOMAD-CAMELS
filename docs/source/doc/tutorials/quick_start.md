@@ -69,7 +69,7 @@
 }
 
 .more-link:hover {
-  color: #1a46c0; /* Change text color on hover */
+  color: #c2c6cf; /* Change text color on hover */
   text-decoration: underline; /* Add underline on hover */
   /* You can add more styles like background color, font weight, etc. */
 }
