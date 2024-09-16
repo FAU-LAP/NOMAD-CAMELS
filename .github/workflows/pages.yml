@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - documentation
+      - documentation_test
   pull_request:
     types:
       - closed
@@ -10,6 +11,8 @@ on:
       - documentation
   release:
     types: [published]
+  workflow_dispatch:
+
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -23,34 +26,91 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  docs_mac:
+  docs_mac_simple:
     runs-on: macos-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout latest release
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Get latest release tag
-        id: get_latest_release
-        run: echo "RELEASE_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_ENV
-      - name: Checkout latest release tag
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ env.RELEASE_TAG }}
+      # - name: Checkout latest release
+      #   uses: actions/checkout@v3
+      #   with:
+      #     fetch-depth: 0
+      # - name: Get latest release tag
+      #   id: get_latest_release
+      #   run: echo "RELEASE_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_ENV
+      # - name: Checkout latest release tag
+      #   uses: actions/checkout@v3
+      #   with:
+      #     ref: ${{ env.RELEASE_TAG }}
       - uses: actions/checkout@v3
+        # with:
+        #   ref: 'documentation'
+          # path: './docbranch'
+      - uses: actions/setup-python@v4
         with:
-          ref: 'documentation'
-          path: './docbranch'
+          python-version: 3.11
       - name: Install dependencies
         run: |
           brew install hdf5
           python -m pip install --upgrade pip
           pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs
-          pip install -r requirements.txt
-      - run: rm -rf ./docs/
+      #    pip install -r requirements.txt
+      # - run: rm -rf ./docs/
+      # - name: make instrument table
+      #   run: |
+      #     cd ./docbranch/
+      #     python -m pip install requests
+      #     python populate_instruments_table.py
+      #     python apidoc_for_camels_suitcase.py
+      #     python go_through_camels_packages.py
+      #     cd ..
+      # - run: cp -r ./docbranch/docs ./docs
+      # - run: rm -rf ./docbranch/
+      - name: Sphinx build
+        run: |
+          sphinx-build -b html ./docs/source/ ./docs/html_out/
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload entire repository
+          path: './docs/html_out'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+        
+  docs_mac_complete:
+    runs-on: macos-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # - name: Checkout latest release
+      #   uses: actions/checkout@v3
+      #   with:
+      #     fetch-depth: 0
+      # - name: Get latest release tag
+      #   id: get_latest_release
+      #   run: echo "RELEASE_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_ENV
+      # - name: Checkout latest release tag
+      #   uses: actions/checkout@v3
+      #   with:
+      #     ref: ${{ env.RELEASE_TAG }}
+      - uses: actions/checkout@v3
+        # with:
+        #   ref: 'documentation'
+          # path: './docbranch'
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Install dependencies
+        run: |
+          brew install hdf5
+          python -m pip install --upgrade pip
+          pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs nomad-camels
+      # - run: rm -rf ./docs/
       - name: make instrument table
         run: |
           cd ./docbranch/
@@ -59,15 +119,18 @@ jobs:
           python apidoc_for_camels_suitcase.py
           python go_through_camels_packages.py
           cd ..
-      - run: cp -r ./docbranch/docs ./docs
-      - run: rm -rf ./docbranch/
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
+      # - run: cp -r ./docbranch/docs ./docs
+      # - run: rm -rf ./docbranch/
       - name: Sphinx build
         run: |
-          sphinx-apidoc -f -o ./docs/source/ ./nomad_camels/
           sphinx-build -b html ./docs/source/ ./docs/html_out/
+      - name: Commit and push if changed
+        run: |
+          git diff
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git commit -am "Update code documentation" || exit 0
+          git push origin HEAD:documentation_test
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact

@@ -44,7 +44,7 @@ extension_str += "   :maxdepth: 4\n\n"
 
 for package in camels_packages:
     logging.info(f"Processing package: {package}")
-    if package == "nomad_camels" or package == "suitcase_nomad_camels_hdf5":
+    if package == "suitcase_nomad_camels_hdf5":
         continue
     # install the package if not yet installed
     if not importlib.util.find_spec(package):
