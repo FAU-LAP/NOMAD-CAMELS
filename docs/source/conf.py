@@ -14,7 +14,8 @@ sys.path.insert(0, os.path.abspath("../../"))
 sys.path.insert(0, os.path.abspath("../../nomad_camels"))
 
 exclude_patterns = []
-if os.getenv("EXCLUDE_CODE_DIR") == "true":
+print(os.getenv("EXCLUDE_CODE_DIR"))
+if os.getenv("EXCLUDE_CODE_DIR") == True:
     exclude_patterns.append("code/**")
 else:
     import suitcase.nomad_camels_hdf5

@@ -31,6 +31,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      EXCLUDE_CODE_DIR: true
     steps:
       # - name: Checkout latest release
       #   uses: actions/checkout@v3
@@ -69,7 +71,6 @@ jobs:
       # - run: rm -rf ./docbranch/
       - name: Sphinx build
         run: |
-          echo "EXCLUDE_CODE_DIR=true" >> $GITHUB_ENV
           sphinx-build -b html ./docs/source/ ./docs/html_out/
       - name: Setup Pages
         uses: actions/configure-pages@v3
@@ -82,102 +83,104 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v2
         
-  docs_mac_complete:
-    runs-on: macos-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      # - name: Checkout latest release
-      #   uses: actions/checkout@v3
-      #   with:
-      #     fetch-depth: 0
-      # - name: Get latest release tag
-      #   id: get_latest_release
-      #   run: echo "RELEASE_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_ENV
-      # - name: Checkout latest release tag
-      #   uses: actions/checkout@v3
-      #   with:
-      #     ref: ${{ env.RELEASE_TAG }}
-      - uses: actions/checkout@v3
-        # with:
-        #   ref: 'documentation'
-          # path: './docbranch'
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-      - name: Install dependencies
-        run: |
-          brew install hdf5
-          brew install mono
-          python -m pip install --upgrade pip
-          pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs requests pytest pytest-qt pytest-order pytest-mock pytest-timeout nomad-camels
-          python -m pip install --upgrade nomad-camels
-      # - run: rm -rf ./docs/
-      - name: make apidoc
-        run: |
-          python go_through_camels_packages.py
-          python apidoc_for_camels_suitcase.py
-      # - run: cp -r ./docbranch/docs ./docs
-      # - run: rm -rf ./docbranch/
-      - name: Sphinx build
-        run: |
-          sphinx-build -b html ./docs/source/ ./docs/html_out/
-      - name: Commit and push if changed
-        run: |
-          git diff
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git commit -am "Update code documentation" || exit 0
-          git push origin HEAD:documentation_test
-      - name: make instrument table
-        run: |
-          python populate_instruments_table.py
-      - name: Commit and push if changed
-        run: |
-          git diff
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git commit -am "Update code documentation" || exit 0
-          git push origin HEAD:documentation_test
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          # Upload entire repository
-          path: './docs/html_out'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+  # docs_mac_complete:
+  #   runs-on: macos-latest
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   steps:
+  #     # - name: Checkout latest release
+  #     #   uses: actions/checkout@v3
+  #     #   with:
+  #     #     fetch-depth: 0
+  #     # - name: Get latest release tag
+  #     #   id: get_latest_release
+  #     #   run: echo "RELEASE_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_ENV
+  #     # - name: Checkout latest release tag
+  #     #   uses: actions/checkout@v3
+  #     #   with:
+  #     #     ref: ${{ env.RELEASE_TAG }}
+  #     - uses: actions/checkout@v3
+  #       # with:
+  #       #   ref: 'documentation'
+  #         # path: './docbranch'
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: 3.11
+  #     - name: Install dependencies
+  #       run: |
+  #         brew install hdf5
+  #         brew install mono
+  #         python -m pip install --upgrade pip
+  #         pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs requests pytest pytest-qt pytest-order pytest-mock pytest-timeout nomad-camels
+  #         python -m pip install --upgrade nomad-camels
+  #     # - run: rm -rf ./docs/
+  #     - name: make apidoc
+  #       run: |
+  #         python go_through_camels_packages.py
+  #         python apidoc_for_camels_suitcase.py
+  #     # - run: cp -r ./docbranch/docs ./docs
+  #     # - run: rm -rf ./docbranch/
+  #     - name: Sphinx build
+  #       run: |
+  #         sphinx-build -b html ./docs/source/ ./docs/html_out/
+  #     - name: Commit and push if changed
+  #       run: |
+  #         git diff
+  #         git config --global user.email "action@github.com"
+  #         git config --global user.name "GitHub Action"
+  #         git commit -am "Update code documentation" || exit 0
+  #         git push origin HEAD:documentation_test
+  #     - name: make instrument table
+  #       run: |
+  #         python populate_instruments_table.py
+  #     - name: Commit and push if changed
+  #       run: |
+  #         git diff
+  #         git config --global user.email "action@github.com"
+  #         git config --global user.name "GitHub Action"
+  #         git commit -am "Update code documentation" || exit 0
+  #         git push origin HEAD:documentation_test
+  #     - name: Setup Pages
+  #       uses: actions/configure-pages@v3
+  #     - name: Upload artifact
+  #       uses: actions/upload-pages-artifact@v1
+  #       with:
+  #         # Upload entire repository
+  #         path: './docs/html_out'
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v2
 
-  docs_windows_simple:
-    runs-on: windows-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs
-      - name: Sphinx build
-        run: |
-          echo "EXCLUDE_CODE_DIR=true" >> $GITHUB_ENV
-          sphinx-build -b html ./docs/source/ ./docs/html_out/
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: './docs/html_out'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+  # docs_windows_simple:
+  #   runs-on: windows-latest
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   env:
+  #     EXCLUDE_CODE_DIR: true
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: 3.11
+  #     - name: Install dependencies
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs
+  #     - name: Sphinx build
+  #       run: |
+  #         echo "EXCLUDE_CODE_DIR=true" >> $GITHUB_ENV
+  #         sphinx-build -b html ./docs/source/ ./docs/html_out/
+  #     - name: Setup Pages
+  #       uses: actions/configure-pages@v3
+  #     - name: Upload artifact
+  #       uses: actions/upload-pages-artifact@v1
+  #       with:
+  #         path: './docs/html_out'
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v2
         
   docs_windows_complete:
     runs-on: windows-latest
