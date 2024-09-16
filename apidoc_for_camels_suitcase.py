@@ -9,7 +9,7 @@ logging.basicConfig(
 )
 
 # Paths
-output_dir = "./docs/source/"
+output_dir = "./docs/source/code/"
 module_path = suitcase.nomad_camels_hdf5.__path__[0]
 
 # Run sphinx-apidoc
@@ -31,6 +31,8 @@ def rename_file(name):
     new_filename = os.path.join(output_dir, f"suitcase.{name}.rst")
     if os.path.exists(old_filename):
         logging.info(f"Renaming {old_filename} to {new_filename}...")
+        if os.path.exists(new_filename):
+            os.remove(new_filename)
         os.rename(old_filename, new_filename)
         logging.info("File renamed successfully.")
     else:

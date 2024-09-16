@@ -44,7 +44,7 @@ extension_str += "   :maxdepth: 4\n\n"
 
 for package in camels_packages:
     logging.info(f"Processing package: {package}")
-    if package == "suitcase_nomad_camels_hdf5":
+    if package in ["suitcase_nomad_camels_hdf5"]:
         continue
     # install the package if not yet installed
     if not importlib.util.find_spec(package):
@@ -63,7 +63,7 @@ for package in camels_packages:
         with open(f"{package_path}/__init__.py", "w") as file:
             pass
 
-    output_dir = "./docs/source/"
+    output_dir = "./docs/source/code/"
 
     result = subprocess.run(
         ["sphinx-apidoc", "-f", "-o", output_dir, package_path],
@@ -81,13 +81,13 @@ for package in camels_packages:
     logging.info(f"{package} successful")
 
 # Write the helping packages to the docs
-with open("./docs/source/helping_packages.rst", "w") as file:
+with open("./docs/source/code/helping_packages.rst", "w") as file:
     file.write(helping_str)
 
 # Write the drivers to the docs
-with open("./docs/source/drivers.rst", "w") as file:
+with open("./docs/source/code/drivers.rst", "w") as file:
     file.write(driver_str)
 
 # Write the extensions to the docs
-with open("./docs/source/extensions.rst", "w") as file:
+with open("./docs/source/code/extensions.rst", "w") as file:
     file.write(extension_str)

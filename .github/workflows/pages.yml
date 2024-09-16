@@ -109,11 +109,11 @@ jobs:
         run: |
           brew install hdf5
           python -m pip install --upgrade pip
-          pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs nomad-camels
+          pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs requests pytest pytest-qt pytest-order pytest-mock pytest-timeout nomad-camels
+          python -m pip install --upgrade nomad-camels
       # - run: rm -rf ./docs/
       - name: make apidoc
         run: |
-          python -m pip install requests
           python go_through_camels_packages.py
           python apidoc_for_camels_suitcase.py
       # - run: cp -r ./docbranch/docs ./docs
@@ -131,6 +131,13 @@ jobs:
       - name: make instrument table
         run: |
           python populate_instruments_table.py
+      - name: Commit and push if changed
+        run: |
+          git diff
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git commit -am "Update code documentation" || exit 0
+          git push origin HEAD:documentation_test
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
