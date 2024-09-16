@@ -33,6 +33,8 @@ extensions = [
 
 templates_path = ["_templates"]
 exclude_patterns = []
+if os.getenv("EXCLUDE_CODE_DIR") == "true":
+    exclude_patterns.append("code/**")
 
 source_suffix = [".rst", ".md"]
 

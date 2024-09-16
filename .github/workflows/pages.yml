@@ -69,7 +69,8 @@ jobs:
       # - run: rm -rf ./docbranch/
       - name: Sphinx build
         run: |
-          sphinx-build -b html ./docs/source/ ./docs/html_out/ || true
+          echo "EXCLUDE_CODE_DIR=true" >> $GITHUB_ENV
+          sphinx-build -b html ./docs/source/ ./docs/html_out/
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
@@ -166,7 +167,8 @@ jobs:
           pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs
       - name: Sphinx build
         run: |
-          sphinx-build -b html ./docs/source/ ./docs/html_out/ || true
+          echo "EXCLUDE_CODE_DIR=true" >> $GITHUB_ENV
+          sphinx-build -b html ./docs/source/ ./docs/html_out/
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
