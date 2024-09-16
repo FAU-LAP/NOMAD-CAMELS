@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - documentation
-      - documentation_test
   pull_request:
     types:
       - closed
