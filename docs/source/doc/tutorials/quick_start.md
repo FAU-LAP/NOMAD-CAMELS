@@ -127,8 +127,9 @@ After successful [installation](../installation/installation.md) of CAMELS you a
     <p class="box-content">You can add your own instruments that have not yet been implemented by writing your own drivers. You can follow our step-by-step guide for writing drivers or start with the new driver documentation directly.</p>
     <span class="more-link" onclick="toggleContent(event, this)">More</span>
   </a>
-  <br><br>
 </div>
+
+
 
 <!-- 
 ### How to Add and Configure Instruments
