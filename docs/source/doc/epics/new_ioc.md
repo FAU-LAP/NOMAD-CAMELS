@@ -16,7 +16,7 @@ Clone the epics-edge-setup from the [FHI GitLab](https://gitlab.fhi.mpg.de/epics
 git clone https://gitlab.fhi.mpg.de/epics-tools/epics-edge-setup.git
 ```
 
-Then run the python installer with
+Then run the Python installer with
 ```
 sudo python3 debian-setup.py
 ```

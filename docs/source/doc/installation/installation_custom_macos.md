@@ -25,7 +25,7 @@ Use `homebrew` to install pyenv ([see here](https://brew.sh/) for more informati
   pyenv install <python_version>
   ``` 
   for example `pyenv install 3.11.3`.\
-`<python_version>` is the python version you want to install (3.11.3 or higher is suggested for NOMAD-CAMELS).  
+`<python_version>` is the Python version you want to install (3.11.3 or higher is suggested for NOMAD-CAMELS).  
 
 ## 3. Install CAMELS
 - Create a folder where you want to install CAMELS (e.g. `\NOMAD-CAMELS\`)
