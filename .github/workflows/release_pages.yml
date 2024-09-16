@@ -21,6 +21,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: documentation
       - uses: actions/setup-python@v4
         with:
           python-version: 3.11

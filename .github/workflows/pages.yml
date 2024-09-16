@@ -32,6 +32,8 @@ jobs:
       EXCLUDE_CODE_DIR: true
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: documentation
       - uses: actions/setup-python@v4
         with:
           python-version: 3.11
