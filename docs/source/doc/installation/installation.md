@@ -1,4 +1,4 @@
-<style>
+<!-- <style>
 .box-container {
   display: flex;
   gap: 16px;
@@ -89,7 +89,7 @@ function toggleContent(event, element) {
     element.textContent = 'Less';
   }
 }
-</script>
+</script> -->
 
 # CAMELS Installation
 
