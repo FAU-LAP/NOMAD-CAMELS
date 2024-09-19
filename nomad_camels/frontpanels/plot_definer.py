@@ -412,6 +412,7 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.lineEdit_ylabel.setText(self.plot_data.ylabel)
         self.lineEdit_zlabel.setText(self.plot_data.zlabel)
         self.lineEdit_title.setText(self.plot_data.title)
+        self.lineEdit_n_data_points.setText(str(self.plot_data.maxlen))
         self.plot_data.update_name()
 
     def get_data(self):
@@ -435,6 +436,7 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.plot_data.y_axes["formula"][0] = self.lineEdit_y_axis.text()
         self.plot_data.z_axis = self.lineEdit_z_axis.text()
         self.plot_data.title = self.lineEdit_title.text()
+        self.plot_data.maxlen = self.lineEdit_n_data_points.text() or "inf"
         self.plot_data.update_name()
         return super().get_data()
 

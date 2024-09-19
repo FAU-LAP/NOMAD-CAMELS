@@ -1,13 +1,7 @@
 name: Sphinx Docs
 on:
-  push:
-    branches:
-      - documentation
-  pull_request:
-    types:
-      - closed
-    branches:
-      - documentation
+  release:
+    types: [published]
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -18,18 +12,13 @@ permissions:
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
-  docs_mac_simple:
-    runs-on: macos-latest
+  docs_windows_complete:
+    runs-on: windows-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    env:
-      EXCLUDE_CODE_DIR: true
     steps:
       - uses: actions/checkout@v3
         with:
@@ -39,18 +28,38 @@ jobs:
           python-version: 3.11
       - name: Install dependencies
         run: |
-          brew install hdf5
           python -m pip install --upgrade pip
-          pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs
+          pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs requests pytest pytest-qt pytest-order pytest-mock pytest-timeout nomad-camels
+          python -m pip install --upgrade nomad-camels
+      - name: make apidoc
+        run: |
+          python go_through_camels_packages.py
+          python apidoc_for_camels_suitcase.py
       - name: Sphinx build
         run: |
           sphinx-build -b html ./docs/source/ ./docs/html_out/
+      - name: Commit and push if changed
+        run: |
+          git diff
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git commit -am "Update code documentation" || true
+          git push origin HEAD:documentation
+      - name: make instrument table
+        run: |
+          python populate_instruments_table.py
+      - name: Commit and push if changed
+        run: |
+          git diff
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git commit -am "Update code documentation" || true
+          git push origin HEAD:documentation
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # Upload entire repository
           path: './docs/html_out'
       - name: Deploy to GitHub Pages
         id: deployment

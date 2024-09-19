@@ -1,4 +1,4 @@
-![NOMAD CAMELS](/nomad_camels/graphics/camels_horizontal.png)
+<img src="https://fau-lap.github.io/NOMAD-CAMELS/_images/camels-horizontal.svg" alt="NOMAD CAMELS" width="300"/>
 
 ## Configurable Application for Measurements, Experiments and Laboratory Systems  
 
@@ -18,7 +18,15 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-## 1.4.0
+### 1.4.1 2D plot features
+Features:
+- Clear plot no possible for 2D plots
+- 2D plot now has maximum number of data points
+
+Fixes:
+- fixed compatibility of 2D plot with newer numpy versions (np.ptp(x) instead of x.ptp())
+
+## 1.4.0 API improvements, clean protocol exit, more metadata
 
 Features:
 - Added a **new** protocol step called `API Call`. This step allows you the user to call other APIs via HTTP requests. There is native support for CAMELS API calls. Results returned by the API calls can then be used in the following steps.
@@ -44,7 +52,7 @@ Fixes:
 - fixed a bug that would stop users from logging in to the central NOMAD
 - logging used a bad file handler that would stop logs, now corrected
 
-## 1.3.1
+### 1.3.1
 
 Features:
 - API: Now adds a UUID to all protocol executions performed via API. Allows you to track and retrieve the results of each protocol run.
@@ -80,7 +88,7 @@ Fixes:
 - fixed a bug where a short queued protocol would be run endlessly
 - when the most recent preset was no viable json, it might break camels, now the second newest will be loaded instead of breaking
 
-## 1.3.0
+## 1.3.0 API and Watchdogs
 
 Major Features:
 - Added an API web server. The homepage `http:\\localhost:<PORT>` gives you an overview of the available API calls and how to use them. You need to create an API key in the settings to be able to use most of the API calls. You can get a list of the available protocols you can execute with `GET /protocols` and run a specific protocol by using `POST /protocols/{protocol_name}` For more information check the documentation.
@@ -108,7 +116,7 @@ Fixes:
 - Number of databroker files setting never did anything, now it does
 - Would upload wrong file to NOMAD if always new file
 
-## 1.2.2
+### 1.2.2
 Features:
 - Included the protocol's json used by the configuration in CAMELS into the data file
 - Added functionality to replace loopsteps (instead of delete + add a new one)
@@ -126,7 +134,7 @@ Fixes:
 - Search bar of menu of editable boxes now appears at the top instead of bottom
 - cannot display empty menus for insert-variables anymore --> search does not break menu anymore
 
-## 1.2.1
+### 1.2.1
 Features:
 - added NOMAD metadata to NOMAD samples
 
@@ -155,14 +163,14 @@ Fixes:
 - Fixed the hide/show information when installing instruments
 
 
-## 1.1.2
+### 1.1.2
 
 Fixes:
 
 - Removed empty fit parameters, which would cause an error before
 - Fixed requirement of pyepics, version 3.5.3 seems broken on windows, going back to version 3.5.2
 
-## 1.1.1
+### 1.1.1
 Features:
 - parsing now understands physical constants with `const.<constant_name>` by using `scipy.constants` as `const`
 
@@ -185,7 +193,7 @@ Fixes:
 - Plots being placed somewhere should now not kill the program anymore
 
 
-## 1.0.6
+### 1.0.6
 Features:
 - Added an "owner" field to the samples, it is automatically populated when a new sample is created. This should stop cluttering the samples for all users. Only the current user's samples will show in the comboBox, or those without owner.
 - Added possibility to use instruments that generate their channels at runtime. 
@@ -195,7 +203,7 @@ Features:
 Fixes:
 - "Hide info" button in instrument installer now working
 
-## 1.0.5
+### 1.0.5
 Changes:
 - Driver versions now have a separate branch on CAMELS_drivers to improve keeping them up to date
 - Same for extensions
@@ -206,12 +214,12 @@ Fixes:
 - Fixed checking for currently used version
 - Extensions can now actually be downloaded
 
-## 1.0.4
+### 1.0.4
 Fixes:
 - NOMAD upload now uses the correct file if new file for every run
 - Dependency updated to python>=3.11.3
 
-## 1.0.3
+### 1.0.3
 Changes:
 - Removed "environment" from saved hdf5 files, moved instrument information up on step in hirarchy
 - changed file extension to .nxs for better NOMAD integration
@@ -222,7 +230,7 @@ Fixes:
 - fixed trigger for Custom_Function_SignalRO
 - fixed parameters for custom function in fits
 
-## 1.0.2
+### 1.0.2
 Features:
 - Added functionality to select path for exporting hdf5 to csv/json
 
@@ -231,7 +239,7 @@ Fixes:
 - If exporting hdf5 to csv/json and not specifying the path for the export, the path of the hdf5 should now be selected correctly
 
 
-## 1.0.1
+### 1.0.1
 Features:
 - Now asking for the path, where to save measurement data when starting up CAMELS for the first time (or there is no preferences.json)
 - Added "Quit" button to file menu
@@ -240,7 +248,7 @@ Changes:
 - changed the default configuration files path for linux and mac; now the user is asked at the first startup where to put configuration files and can set the path in the settings
 - improved usability of moving steps in sequence
 
-## 1.0.0
+# 1.0.0
 Features:
 - Fit values can now be displayed directly in the plot
 - Refactor device instantiation to be handled in another thread to keep the UI responsive, this might cause some problems with instrument-specific manual controls that are not yet updated accordingly
@@ -269,7 +277,7 @@ Fixes:
 - Fix issue of stage control not updating set_channel when moving manually
 
 
-## 0.2.3
+### 0.2.3
 
 Features:
 
@@ -287,7 +295,7 @@ Fixes:
 - fixed error when changing the sweep channel in the ND sweep step 
 
 
-## 0.2.2
+### 0.2.2
 
 Features:
 - Reading/Saving of variables ad Read_Channels is now possible, appears as an array in the data
@@ -303,7 +311,7 @@ Fixes:
 - use abs for y axis should now be possible (again)
 - color settings for material theme are now remembered when opening the settings
 
-## 0.2.1
+### 0.2.1
 
 Minor features:
 - callable functions for manual move of stage control
@@ -336,7 +344,7 @@ Fixes:
 - Can now set log scale when using only one y-axis
 - now using settings of log-scale from definition window at startup of plot
 
-## 0.1.9
+### 0.1.9
 
 New features:
 - Retry on error for VISA-devices
@@ -351,14 +359,14 @@ Fixes:
 - int in instrument config is now saved as int
 - pyvisa added to requirements to support local drivers
 
-## 0.1.8
+### 0.1.8
 
 Fixes:
 - finalize steps of instruments are now being called
 - fixed issue with handing variables to subprotocol
 - fixed update function for Windows, function for Unix/Mac not tested
 
-## 0.1.7
+### 0.1.7
 
 Added functionalities:
 - Added functionality to import protocols
@@ -368,7 +376,7 @@ Fixes:
 - Fixed login for central NOMAD
 - fixed comment/uncomment of steps being saved correctly
 
-## 0.1.6
+### 0.1.6
 
 Added functionalities:
 - Added capabilities to interact with NOMAD (Oasis), uploading files, getting user information and using a NOMAD entry as sample
@@ -381,20 +389,20 @@ Fixes:
 - search in channels-tables not case sensitive anymore
 - fixed that protocol without plots starts QApplication when run outside CAMELS
 
-## 0.1.5
+### 0.1.5
 
 - Fixed the 'Update CAMELS' tool.\
 - Renamed input and output to read and set in the 'Update CAMELS' tool.\
 - Small fix to the VISA device builder.
 
-## 0.1.4
+### 0.1.4
 
 - Added a timeout setting to all VISA instruments. Setting the timeout determines how long the instrument waits after sending a command before raising a timeout exception
 
-## 0.1.3
+### 0.1.3
 
 - First stable and working release
 
-## 0.1.0 to 0.1.2 
+### 0.1.0 to 0.1.2 
 
 - &#9888; Broken releases due to minor bugs that were fixed in 0.1.3

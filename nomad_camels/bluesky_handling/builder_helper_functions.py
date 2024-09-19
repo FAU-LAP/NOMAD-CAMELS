@@ -146,7 +146,7 @@ def plot_creator(
             plot_string += f"\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n"
         elif plot.plt_type == "2D plot":
             plotting = True
-            plot_string += f'\tplot_{i} = plot_pyqtgraph.PlotWidget_2D("{plot.x_axis}", "{plot.y_axes["formula"][0]}", "{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", title="{plot.title}", stream_name=stream, namespace=namespace)\n'
+            plot_string += f'\tplot_{i} = plot_pyqtgraph.PlotWidget_2D("{plot.x_axis}", "{plot.y_axes["formula"][0]}", "{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", title="{plot.title}", maxlen="{plot.maxlen}", stream_name=stream, namespace=namespace)\n'
             plot_string += f"\tplots.append(plot_{i})\n"
             plot_string += f"\tplot_{i}.show()\n"
             plot_string += f"\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n"
