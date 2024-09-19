@@ -14,8 +14,8 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_5">
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_7">
      <property name="font">
       <font>
        <pointsize>9</pointsize>
@@ -24,7 +24,7 @@
       </font>
      </property>
      <property name="text">
-      <string>x-axis:</string>
+      <string>z-axis:</string>
      </property>
     </widget>
    </item>
@@ -42,8 +42,8 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_7">
+   <item row="3" column="2">
+    <widget class="QLabel" name="label_8">
      <property name="font">
       <font>
        <pointsize>9</pointsize>
@@ -52,21 +52,70 @@
       </font>
      </property>
      <property name="text">
-      <string>z-axis:</string>
+      <string>y-label:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="Variable_Box" name="lineEdit_x_axis"/>
+   <item row="3" column="3">
+    <widget class="QLineEdit" name="lineEdit_ylabel"/>
    </item>
-   <item row="3" column="1">
-    <widget class="Variable_Box" name="lineEdit_y_axis"/>
+   <item row="5" column="1">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
-   <item row="4" column="1">
-    <widget class="Variable_Box" name="lineEdit_z_axis"/>
+   <item row="4" column="2">
+    <widget class="QLabel" name="label_10">
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>z-label:</string>
+     </property>
+    </widget>
    </item>
-   <item row="2" column="3">
-    <widget class="QLineEdit" name="lineEdit_xlabel"/>
+   <item row="2" column="2">
+    <widget class="QLabel" name="label_9">
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>x-label:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>x-axis:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_title"/>
    </item>
    <item row="0" column="0">
     <widget class="QLabel" name="label_11">
@@ -95,25 +144,23 @@
      </property>
     </spacer>
    </item>
-   <item row="4" column="2">
-    <widget class="QLabel" name="label_10">
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>z-label:</string>
-     </property>
-    </widget>
+   <item row="3" column="1">
+    <widget class="Variable_Box" name="lineEdit_y_axis"/>
+   </item>
+   <item row="4" column="1">
+    <widget class="Variable_Box" name="lineEdit_z_axis"/>
+   </item>
+   <item row="2" column="3">
+    <widget class="QLineEdit" name="lineEdit_xlabel"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="Variable_Box" name="lineEdit_x_axis"/>
    </item>
    <item row="4" column="3">
     <widget class="QLineEdit" name="lineEdit_zlabel"/>
    </item>
-   <item row="3" column="2">
-    <widget class="QLabel" name="label_8">
+   <item row="6" column="0" colspan="2">
+    <widget class="QLabel" name="label_12">
      <property name="font">
       <font>
        <pointsize>9</pointsize>
@@ -122,42 +169,16 @@
       </font>
      </property>
      <property name="text">
-      <string>y-label:</string>
+      <string># data points:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="3">
-    <widget class="QLineEdit" name="lineEdit_ylabel"/>
-   </item>
-   <item row="0" column="1" colspan="3">
-    <widget class="QLineEdit" name="lineEdit_title"/>
-   </item>
-   <item row="2" column="2">
-    <widget class="QLabel" name="label_9">
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
+   <item row="6" column="2" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_n_data_points">
      <property name="text">
-      <string>x-label:</string>
+      <string>inf</string>
      </property>
     </widget>
-   </item>
-   <item row="5" column="1">
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

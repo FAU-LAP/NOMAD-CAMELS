@@ -1092,19 +1092,33 @@ class PlotWidget_2D(QWidget):
         self.livePlot.new_data.connect(self.show_again)
         label_n_data = QLabel("# data points:")
         self.lineEdit_n_data = QLineEdit(str(maxlen))
-        # self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
+        self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
         self.pushButton_clear = QPushButton("Clear Plot")
         self.pushButton_clear.clicked.connect(self.clear_plot)
 
         self.setLayout(QGridLayout())
         self.layout().addWidget(self.graphics_layout, 0, 0, 1, 3)
-        self.layout().addWidget(self.pushButton_clear, 1, 0)
-        self.layout().addWidget(label_n_data, 1, 1)
-        self.layout().addWidget(self.lineEdit_n_data, 1, 2)
+        self.layout().addWidget(self.pushButton_clear, 2, 0)
+        self.layout().addWidget(label_n_data, 2, 1)
+        self.layout().addWidget(self.lineEdit_n_data, 2, 2)
         self.make_toolbar()
         self.adjustSize()
         place_widget(self)
-        # self.change_maxlen()
+        self.change_maxlen()
+
+    def change_maxlen(self):
+        """
+        Changes the maximum number of data points to show in the plot. Reads the value from the line edit and sets it as the new maximum length.
+        """
+        text = self.lineEdit_n_data.text()
+        if not text or text.lower() in ["none", "inf", "np.inf"]:
+            maxlen = np.inf
+        else:
+            try:
+                maxlen = int(text)
+            except ValueError:
+                return
+        self.livePlot.change_maxlen(maxlen)
 
     def show_again(self):
         if not self.isVisible():
@@ -1123,7 +1137,7 @@ class PlotWidget_2D(QWidget):
         actions = menu.actions()
         for action in actions:
             self.toolbar.addAction(action)
-        self.layout().addWidget(self.toolbar, 1, 0)
+        self.layout().addWidget(self.toolbar, 1, 0, 1, 3)
 
     def clear_plot(self):
         self.livePlot.clear_plot()
@@ -1275,6 +1289,8 @@ class LivePlot_2D(QObject, CallbackBase):
         mesh = self.make_colormesh(x_shape, y_shape)
         if mesh:
             x, y, z = mesh
+            if not x:
+                return
             self.image.clear()
             self.image.setImage(z)
             self.image.setRect(pg.QtCore.QRectF(x.min(), y.min(), np.ptp(x), np.ptp(y)))
@@ -1297,7 +1313,21 @@ class LivePlot_2D(QObject, CallbackBase):
             self.color_bar.show()
 
     def clear_plot(self):
-        pass
+        self.x_data.clear()
+        self.y_data.clear()
+        self.z_data.clear()
+        self.update(self.x_data, self.y_data, self.z_data)
+
+    def change_maxlen(self, maxlen):
+        self.maxlen = maxlen
+        if maxlen < np.inf:
+            self.x_data = deque(self.x_data, maxlen=maxlen)
+            self.y_data = deque(self.y_data, maxlen=maxlen)
+            self.z_data = deque(self.z_data, maxlen=maxlen)
+        else:
+            self.x_data = list(self.x_data)
+            self.y_data = list(self.y_data)
+            self.z_data = list(self.z_data)
 
 
 class LivePlot_NoBluesky(QObject):
