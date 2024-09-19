@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+## 1.4.1
+Fixes:
+- fixed compatibility of 2D plot with newer numpy versions (np.ptp(x) instead of x.ptp())
+
 ## 1.4.0
 
 Features:

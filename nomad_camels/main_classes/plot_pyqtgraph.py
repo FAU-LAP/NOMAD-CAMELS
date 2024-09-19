@@ -1058,10 +1058,15 @@ class PlotWidget_2D(QWidget):
         ylabel="",
         zlabel="",
         title="",
+        maxlen=np.inf,
         stream_name="primary",
         **kwargs,
     ):
         super().__init__(parent=parent)
+        self.setWindowTitle(
+            title or f"{zlabel or z_name} vs. {xlabel or x_name}, {ylabel or y_name}"
+        )
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
         self.graphics_layout = pg.GraphicsLayoutWidget()
         self.plot = self.graphics_layout.addPlot(col=0, row=0)
         self.x_name = x_name
@@ -1085,12 +1090,21 @@ class PlotWidget_2D(QWidget):
             **kwargs,
         )
         self.livePlot.new_data.connect(self.show_again)
+        label_n_data = QLabel("# data points:")
+        self.lineEdit_n_data = QLineEdit(str(maxlen))
+        # self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
+        self.pushButton_clear = QPushButton("Clear Plot")
+        self.pushButton_clear.clicked.connect(self.clear_plot)
 
         self.setLayout(QGridLayout())
-        self.layout().addWidget(self.graphics_layout, 0, 0)
+        self.layout().addWidget(self.graphics_layout, 0, 0, 1, 3)
+        self.layout().addWidget(self.pushButton_clear, 1, 0)
+        self.layout().addWidget(label_n_data, 1, 1)
+        self.layout().addWidget(self.lineEdit_n_data, 1, 2)
         self.make_toolbar()
         self.adjustSize()
         place_widget(self)
+        # self.change_maxlen()
 
     def show_again(self):
         if not self.isVisible():
@@ -1263,7 +1277,7 @@ class LivePlot_2D(QObject, CallbackBase):
             x, y, z = mesh
             self.image.clear()
             self.image.setImage(z)
-            self.image.setRect(pg.QtCore.QRectF(x.min(), y.min(), x.ptp(), y.ptp()))
+            self.image.setRect(pg.QtCore.QRectF(x.min(), y.min(), np.ptp(x), np.ptp(y)))
             self.image.setLookupTable(self.cmap.getLookupTable())
             self.scatter_plot.hide()
             self.color_bar.hide()
