@@ -10,8 +10,7 @@ Here you can find help for the most frequently asked questions regarding all asp
     <!-- FAQ Item -->
     <a href="../installation/installation.md" class="box">
     <span class="box-title">What do I need to install CAMELS?</span>
-    <p class="box-content">All you need to install CAMELS is a Python +3.11 environment. Then run <code>pip install nomad-camels</code>. For more details click the header.</p>
-    <span class="more-link" onclick="toggleContent(event, this)">More</span>
+    <p class="box-content">All you need to install CAMELS is a Python +3.11 environment. Then run <code>pip install nomad-camels</code>.</p>
     </a>
     <a href="../api/api_landing.html" class="box">
     <span class="box-title">How do I control CAMELS from a different program?</span>
