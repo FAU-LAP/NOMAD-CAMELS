@@ -115,7 +115,7 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    Getting Started <doc/tutorials/quick_start.md>
    Protocol Steps Explained <doc/protocol_steps/protocol_steps_landing.md>
    Handling HDF5 Files <doc/handling_hdf5.md>
-   FAQ <doc/faq/faqs.html>
+   FAQ <doc/faq/faq.md>
 
 .. toctree::
    :maxdepth: 2
