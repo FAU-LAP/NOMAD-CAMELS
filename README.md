@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.4.2
+Fixes:
+- fixed error from empty 2D plot
+
 ### 1.4.1 2D plot features
 Features:
 - Clear plot now possible for 2D plots

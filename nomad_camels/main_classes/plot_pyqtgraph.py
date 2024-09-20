@@ -1289,7 +1289,7 @@ class LivePlot_2D(QObject, CallbackBase):
         mesh = self.make_colormesh(x_shape, y_shape)
         if mesh:
             x, y, z = mesh
-            if not x:
+            if not self.x_data:
                 return
             self.image.clear()
             self.image.setImage(z)
