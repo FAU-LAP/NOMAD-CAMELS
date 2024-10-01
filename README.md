@@ -19,6 +19,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.4.2
+Changes:
+- improved the NOMAD identifier for samples, user and instruments
+
 Fixes:
 - fixed error from empty 2D plot
 
