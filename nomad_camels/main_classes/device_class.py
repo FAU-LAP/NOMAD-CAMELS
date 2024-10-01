@@ -422,7 +422,9 @@ class Device_Config(QWidget):
 
         self.label_id = QLabel("ID:")
         self.lineEdit_id = QLineEdit()
-        if additional_info and "ELN-instrument-id" in additional_info:
+        if additional_info and "identifier" in additional_info:
+            self.lineEdit_id.setText(additional_info["identifier"]["identifier"])
+        elif additional_info and "ELN-instrument-id" in additional_info:
             self.lineEdit_id.setText(additional_info["ELN-instrument-id"])
         self.pushbutton_id = QPushButton("...")
         self.pushbutton_id.setFixedWidth(30)
@@ -579,7 +581,7 @@ class Device_Config(QWidget):
     def get_info(self):
         """ """
         self.additional_info["description"] = self.textEdit_desc.toPlainText()
-        self.additional_info["ELN-instrument-id"] = self.lineEdit_id.text()
+        self.additional_info["identifier"] = {"identifier": self.lineEdit_id.text()}
         self.additional_info["ELN-metadata"] = self.ELN_metadata
         return self.additional_info
 

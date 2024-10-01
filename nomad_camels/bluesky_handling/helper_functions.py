@@ -34,7 +34,12 @@ import os
 import sys
 import glob
 
-from nomad_camels.bluesky_handling.loop_step_functions_api_call import execute_camels_api_call, execute_generic_api_call, save_API_response_to_variable, evaluate_message_body
+from nomad_camels.bluesky_handling.loop_step_functions_api_call import (
+    execute_camels_api_call,
+    execute_generic_api_call,
+    save_API_response_to_variable,
+    evaluate_message_body,
+)
 
 
 def get_newest_file(directory):
@@ -1008,7 +1013,9 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
                     [python_executable, "-m", "pip", "install", f"{package}=={version}"]
                 )
             except Exception as e:
-                raise Exception(f"Error installing package {package}=={version}: {e}") from e
+                raise Exception(
+                    f"Error installing package {package}=={version}: {e}"
+                ) from e
 
     # Step 3: Run the specified Python script
     try:
@@ -1170,3 +1177,12 @@ class Waiting_Bar(QWidget):
             self.setter.start_time = dt.datetime.now()
 
         self.show()
+
+
+def update_protocol_progress_bar(protocol_step_information):
+    protocol_step_information["protocol_stepper_signal"].emit(
+        protocol_step_information["protocol_step_counter"]
+        / protocol_step_information["total_protocol_steps"]
+        * 100
+    )
+    protocol_step_information["protocol_step_counter"] += 1

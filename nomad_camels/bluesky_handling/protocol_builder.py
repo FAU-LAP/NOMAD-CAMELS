@@ -68,9 +68,7 @@ standard_string += "from nomad_camels.utility import theme_changing\n"
 standard_string += (
     "from nomad_camels.bluesky_handling.evaluation_helper import Evaluator\n"
 )
-standard_string += (
-    "from nomad_camels.bluesky_handling import helper_functions, variable_reading\n"
-)
+standard_string += "from nomad_camels.bluesky_handling import helper_functions, variable_reading, step_functions\n"
 standard_string += "from event_model import RunRouter\n"
 standard_string += "darkmode = False\n"
 standard_string += 'theme = "default"\n'
