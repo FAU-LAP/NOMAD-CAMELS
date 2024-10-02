@@ -485,7 +485,7 @@ class Device_Config(QWidget):
                 if eln_data:
                     self.ELN_metadata = eln_data
                     self.lineEdit_id.setText(
-                        self.ELN_metadata["identifier"]
+                        str(self.ELN_metadata["identifier"])
                         if "identifier" in self.ELN_metadata
                         else (
                             self.ELN_metadata["name"]
@@ -582,6 +582,8 @@ class Device_Config(QWidget):
         self.additional_info["ELN-instrument-id"] = self.lineEdit_id.text()
         if "ELN-service" in self.ELN_metadata:
             self.additional_info["ELN-service"] = self.ELN_metadata.pop("ELN-service")
+        else:
+            self.additional_info["ELN-service"] = ""
         self.additional_info["ELN-metadata"] = self.ELN_metadata
         return self.additional_info
 
