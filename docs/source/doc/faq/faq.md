@@ -1,6 +1,6 @@
 # Frequently Asked Questions - FAQs
 
-Here you can find help for the most frequently asked questions regarding all aspects of CAMELS
+Here you can find help for the most frequently asked questions regarding all aspects of CAMELS. Click on the answers to go to more in-depth descriptions and explanations.
 
 <!-- Search Input -->
 <input type="text" id="searchInput" placeholder="Search FAQs..." onkeyup="filterFAQs()" />
