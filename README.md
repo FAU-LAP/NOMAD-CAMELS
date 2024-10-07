@@ -24,6 +24,7 @@ Changes:
 
 Fixes:
 - fixed error from empty 2D plot
+- fixed several issues with how the NOMAD Oasis URL is handled
 
 ### 1.4.1 2D plot features
 Features:

@@ -1,12 +1,13 @@
 from PySide6.QtWidgets import QDialog, QStyleFactory, QMessageBox, QApplication
 from PySide6.QtCore import Qt, QCoreApplication
-from PySide6.QtGui import QKeyEvent, QClipboard
+from PySide6.QtGui import QKeyEvent
 import qt_material
 
 from nomad_camels.gui.settings_window import Ui_settings_window
 from nomad_camels.utility import load_save_functions
 from nomad_camels.utility.theme_changing import change_theme
 from nomad_camels.utility.logging_settings import log_levels
+from nomad_camels.nomad_integration.nomad_communication import make_correct_url
 
 import secrets
 import hashlib
@@ -283,7 +284,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             "logfile_size": self.spinBox_logfile_size.value(),
             "logfile_backups": self.spinBox_logfile_number.value(),
             "backups": backups,
-            "NOMAD_URL": self.lineEdit_oasis.text(),
+            "NOMAD_URL": make_correct_url(self.lineEdit_oasis.text()),
             "password_protection": self.checkBox_password.isChecked(),
             "password_hash": self.password_hash,
             "new_file_each_run": self.checkBox_new_file_each_run.isChecked(),
@@ -316,9 +317,7 @@ class Settings_Window(Ui_settings_window, QDialog):
         self.Api_key_lineEdit.setText(api_key)
         # Save hash of the API key to the SQlite database file
         # Database setup
-        data_base_path = os.path.join(
-            load_save_functions.appdata_path, "CAMELS_API.db"
-        )
+        data_base_path = os.path.join(load_save_functions.appdata_path, "CAMELS_API.db")
         conn = sqlite3.connect(data_base_path, check_same_thread=False)
         c = conn.cursor()
         c.execute(

@@ -100,14 +100,21 @@ def ensure_login(parent=None):
     if not token:
         login_to_nomad(parent)
 
-def make_correct_url():
-    global nomad_url
+
+def make_correct_url(url=None):
+    if url is None:
+        global nomad_url
+    else:
+        nomad_url = url
     if "/gui/" in nomad_url:
         nomad_url = nomad_url.split("/gui/")[0]
+    elif nomad_url.endswith("/gui"):
+        nomad_url = nomad_url.split("/gui")[0]
     if nomad_url.endswith("/"):
         nomad_url = nomad_url[:-1]
     if not nomad_url.endswith("/api/v1"):
         nomad_url += "/api/v1"
+    return nomad_url
 
 
 def check_response(response, fail_info=""):

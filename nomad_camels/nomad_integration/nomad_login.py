@@ -114,8 +114,12 @@ class LoginDialog(QDialog):
             path = self.lineEdit_oasis_url.text()
             if "/api/" in path:
                 path = path.split("/api/")[0]
+            elif path.endswith("/api"):
+                path = path.split("/api")[0]
             if "/gui/" in path:
                 path = path.split("/gui/")[0]
+            elif path.endswith("/gui"):
+                path = path.split("/gui")[0]
             if path.endswith("/"):
                 path = path[:-1]
             path = f"{path}/gui/analyze/apis"
