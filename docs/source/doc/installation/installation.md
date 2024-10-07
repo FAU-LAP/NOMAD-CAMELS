@@ -21,7 +21,7 @@ CAMELS is written in Python and requires the correct Python environment to run p
     <p class="box-content">If you are familiar with Python and Python environments you can manually install CAMELS. Install Python, setup the environment and run CAMELS.</p>
   </a>
 
-  <a href="installation_custom_anaconda.html" class="box">
+  <a href="installation_custom_anaconda/installation_custom_anaconda.html" class="box">
     <span class="box-title">Manual Installation using Anaconda</span>
     <p class="box-content">If you already have Anaconda installed on your machine you can use it to install CAMELS.</p>
   </a>
