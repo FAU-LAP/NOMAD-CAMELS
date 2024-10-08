@@ -139,7 +139,13 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    Run IOCs <doc/epics/procServ.md>
    Archiver Appliance <doc/epics/ArchiverAppliance.md>
    Example Setups <doc/epics/examples.md>
-   
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Videos
+
+   User Feedback <doc/videos/user_feedback.md>
+   Developer Statements <doc/videos/developer_statements.md>
 
 .. toctree::
    :maxdepth: 2
