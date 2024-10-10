@@ -22,6 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Fixes:
 - removed bad version numbers from metadata
 - fixed an issue with the databroker catalog not being set
+- channel-metadata is now consistent over several measurements (metadata was lost because of mutable datatype)
 
 ### 1.4.2
 Changes:
