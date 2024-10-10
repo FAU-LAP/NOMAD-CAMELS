@@ -617,7 +617,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         for key in ["created", "is_admin", "is_oasis_admin"]:
             if key in user_data:
                 user_data.pop(key)
-        user_data['ELN-service'] = 'nomad'
+        user_data["ELN-service"] = "nomad"
         self.label_nomad_user.setText(user_data["name"])
         self.nomad_user = user_data
 
@@ -1907,12 +1907,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     md={
                         "devices": dev_data,
                         "description": protocol.description,
-                        "versions": {
-                            "NOMAD CAMELS": "0.1",
-                            "EPICS": "7.0.6.2",
-                            "bluesky": bluesky.__version__,
-                            "ophyd": ophyd.__version__,
-                        },
+                        # "versions": {
+                        #     "NOMAD CAMELS": "0.1",
+                        #     "EPICS": "7.0.6.2",
+                        #     "bluesky": bluesky.__version__,
+                        #     "ophyd": ophyd.__version__,
+                        # },
                     },
                 )
         except Exception as e:

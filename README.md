@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+## 1.5.0
+Fixes:
+- removed bad version numbers from metadata
+
 ### 1.4.2
 Changes:
 - improved the NOMAD identifier for samples, user and instruments
