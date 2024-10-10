@@ -376,7 +376,7 @@ class Additional_Imports_Thread(QThread):
         self.imports.append(helper_functions)
 
         try:
-            self.databroker_catalog = databroker.catalog[
+            self.catalog = databroker.catalog[
                 variables_handling.preferences["databroker_catalog_name"]
             ]
         except KeyError:
