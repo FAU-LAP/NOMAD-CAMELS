@@ -18,10 +18,21 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.4.2
+Changes:
+- improved the NOMAD identifier for samples, user and instruments
+
+Fixes:
+- fixed error from empty 2D plot
+- fixed several issues with how the NOMAD Oasis URL is handled
+- fixed session name not being used in data file
+
 ### 1.4.1 2D plot features
 Features:
-- Clear plot no possible for 2D plots
+- Clear plot now possible for 2D plots
 - 2D plot now has maximum number of data points
+
+
 
 Fixes:
 - fixed compatibility of 2D plot with newer numpy versions (np.ptp(x) instead of x.ptp())
@@ -51,6 +62,8 @@ Fixes:
 - number of datapoints set in plot definition now correctly taken over to plot
 - fixed a bug that would stop users from logging in to the central NOMAD
 - logging used a bad file handler that would stop logs, now corrected
+
+---
 
 ### 1.3.1
 
@@ -116,6 +129,8 @@ Fixes:
 - Number of databroker files setting never did anything, now it does
 - Would upload wrong file to NOMAD if always new file
 
+---
+
 ### 1.2.2
 Features:
 - Included the protocol's json used by the configuration in CAMELS into the data file
@@ -162,6 +177,7 @@ Fixes:
 - Filtering Set Channels now does not reset the value if the channel does not match the query.
 - Fixed the hide/show information when installing instruments
 
+---
 
 ### 1.1.2
 
@@ -192,6 +208,7 @@ Features:
 Fixes:
 - Plots being placed somewhere should now not kill the program anymore
 
+---
 
 ### 1.0.6
 Features:

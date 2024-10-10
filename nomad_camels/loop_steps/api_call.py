@@ -298,6 +298,9 @@ class API_Call_Config(Loop_Step_Config):
         Update the API URL.
         """
         self.loop_step.api_url = self.line_edit_api_url.text()
+        # Check if the URL starts with a forward slash, if not add it
+        if not self.loop_step.api_url.startswith("/"):
+            self.loop_step.api_url = "/" + self.loop_step.api_url
         parsed_url = urlparse(self.loop_step.api_url)
         if parsed_url.scheme == "":
             api_url_with_schema = "http://" + self.loop_step.api_url

@@ -617,6 +617,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         for key in ["created", "is_admin", "is_oasis_admin"]:
             if key in user_data:
                 user_data.pop(key)
+        user_data['ELN-service'] = 'nomad'
         self.label_nomad_user.setText(user_data["name"])
         self.nomad_user = user_data
 

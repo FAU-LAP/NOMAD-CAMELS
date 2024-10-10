@@ -364,6 +364,7 @@ def build_protocol(
     sampledata = sampledata or {"name": "default_sample"}
     userdata = userdata or {"name": "default_user"}
     protocol_string += user_sample_string(userdata, sampledata)
+    protocol_string += f'\tmd["session_name"] = session_name\n'
     protocol_string += f'\tmd["protocol_overview"] = """{protocol.get_short_string().encode("unicode_escape").decode()}"""\n'
 
     protocol_string += f"\ttry:\n"
