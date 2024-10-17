@@ -158,6 +158,6 @@ class EntrySelector(QDialog):
             self.return_data["name"] = self.entry_box.currentText().split(".")[0]
         self.return_data["ELN-service"] = "nomad"
         self.return_data["identifier"] = (
-            f'{nomad_communication.nomad_url.split("api")[0]}gui/user/uploads/upload/id/{self.return_data["NOMAD_entry_metadata"]["upload_id"]}/entry/id/{self.return_data["NOMAD_entry_metadata"]["entry_id"]}'
+            f'upload/id/{self.return_data["NOMAD_entry_metadata"]["upload_id"]}/entry/id/{self.return_data["NOMAD_entry_metadata"]["entry_id"]}'
         )
         super().accept()
