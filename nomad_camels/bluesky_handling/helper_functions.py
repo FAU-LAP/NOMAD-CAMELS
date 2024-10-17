@@ -34,7 +34,12 @@ import os
 import sys
 import glob
 
-from nomad_camels.bluesky_handling.loop_step_functions_api_call import execute_camels_api_call, execute_generic_api_call, save_API_response_to_variable, evaluate_message_body
+from nomad_camels.bluesky_handling.loop_step_functions_api_call import (
+    execute_camels_api_call,
+    execute_generic_api_call,
+    save_API_response_to_variable,
+    evaluate_message_body,
+)
 
 
 def get_newest_file(directory):
@@ -261,6 +266,16 @@ def get_fit_results(fits, namespace, yielding=False, stream="primary"):
                 namespace[f"{name}_{param}"] = fit.result.best_values[param]
         namespace[f"{name}_covar"] = fit.result.covar
         fit._reset()
+
+
+def make_recoursive_plot_list_of_sub_steps(sub_dict, plot_list=None):
+    plot_list = plot_list or []
+    for key, value in sub_dict.items():
+        if key == "plots":
+            plot_list += value
+        elif isinstance(value, dict):
+            plot_list = make_recoursive_plot_list_of_sub_steps(value, plot_list)
+    return plot_list
 
 
 def clear_plots(plots, stream="primary"):
@@ -1008,7 +1023,9 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
                     [python_executable, "-m", "pip", "install", f"{package}=={version}"]
                 )
             except Exception as e:
-                raise Exception(f"Error installing package {package}=={version}: {e}") from e
+                raise Exception(
+                    f"Error installing package {package}=={version}: {e}"
+                ) from e
 
     # Step 3: Run the specified Python script
     try:

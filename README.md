@@ -23,6 +23,7 @@ Fixes:
 - removed bad version numbers from metadata
 - fixed an issue with the databroker catalog not being set
 - channel-metadata is now consistent over several measurements (metadata was lost because of mutable datatype)
+- Plots from sub-steps are now in the data
 
 ### 1.4.2
 Changes:
