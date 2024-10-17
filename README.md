@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.4.4
+Fixes:
+- can now paste again with ctrl+v in most outer part of protocol
+
 ### 1.4.3
 Features:
 - Can now make a protocol stop on an if condition

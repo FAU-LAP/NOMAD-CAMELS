@@ -579,7 +579,10 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 parent = item.data()
             else:
                 pos = ind.row() + 1
-                parent = item.parent().data()
+                if item.parent():
+                    parent = item.parent().data()
+                else:
+                    parent = None
         else:
             pos = -1
             parent = None
