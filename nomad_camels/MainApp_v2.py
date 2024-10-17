@@ -475,9 +475,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.run_engine.subscribe(self.eva)
         bec = BestEffortCallback()
         self.run_engine.subscribe(bec)
-        self.change_catalog_name()
         self.importer_thread.wait()
         self.databroker_catalog = self.importer_thread.catalog
+        self.change_catalog_name()
+        self.run_engine.subscribe(self.databroker_catalog.v1.insert)
         self.run_engine.subscribe(self.protocol_finished, "stop")
         self.still_running = False
         self.re_subs = []
@@ -922,7 +923,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def change_catalog_name(self):
         """Changes the name of the databroker catalog. If the catalog does not exist, a temporary catalog is used."""
-        if not hasattr(self, "databroker_catalog") or not self.databroker_catalog:
+        if not hasattr(self, "databroker_catalog") or self.databroker_catalog is None:
             return
         # IMPORT databroker only if it is needed
         import databroker

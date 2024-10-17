@@ -46,7 +46,7 @@ def make_yml(datapath, catalog_name="CAMELS_CATALOG", ask_restart=False):
         databroker.catalog.force_reload()
     if ask_restart and catalog_name not in list(databroker.catalog):
         WarnPopup(
-            "Could not load the databroker catalog, you might have to restart CAMELS",
-            "Databroker catalog not loaded",
+            text="Could not load the databroker catalog, you might have to restart CAMELS",
+            title="Databroker catalog not loaded",
         )
         update_camels.restart_camels(ask_restart=True)
