@@ -18,7 +18,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-## 1.5.0
+### 1.4.3
 Fixes:
 - removed bad version numbers from metadata
 - fixed an issue with the databroker catalog not being set
