@@ -19,6 +19,13 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.4.3
+Features:
+- Can now make a protocol stop on an if condition
+
+Changes in UI:
+- steps now grouped in menu
+- renamed plots button
+
 Fixes:
 - removed bad version numbers from metadata
 - fixed an issue with the databroker catalog not being set
