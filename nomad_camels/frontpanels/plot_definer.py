@@ -132,7 +132,7 @@ class Fit_Info:
     def __init__(
         self,
         do_fit=False,
-        predef_func="Linear",
+        predef_func="",
         custom_func="",
         use_custom_func=False,
         guess_params=True,
@@ -641,6 +641,22 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
                 par_vals["upper bound"].append("")
             self.start_params.change_table_data(par_vals)
             self.fit_info.predef_func = func
+        if fit and not custom and func == "Linear" and par_vals["name"] == []:
+            mod = models_names[func]()
+            params = mod.param_names
+            par_vals = {
+                "name": [],
+                "initial value": [],
+                "lower bound": [],
+                "upper bound": [],
+            }
+            for param in params:
+                par_vals["name"].append(param)
+                par_vals["initial value"].append(1)
+                par_vals["lower bound"].append("")
+                par_vals["upper bound"].append("")
+            self.start_params.change_table_data(par_vals)
+
 
     def load_data(self):
         """ """
