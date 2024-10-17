@@ -218,8 +218,10 @@ def broker_to_NX(
         if new_file_each_run and os.path.isfile(filename):
             filename = os.path.splitext(filename)[0] + f"_{entry_name_non_iso}.nxs"
         filename = os.path.join(
-            os.path.abspath(os.path.dirname(filename))
-            , os.path.normpath(f'{clean_filename(os.path.splitext(os.path.basename(filename))[0])}.nxs')
+            os.path.abspath(os.path.dirname(filename)),
+            os.path.normpath(
+                f"{clean_filename(os.path.splitext(os.path.basename(filename))[0])}.nxs"
+            ),
         )
         if export_to_json:
             if not os.path.isdir(filename.split(".")[0]):
@@ -452,6 +454,10 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.tolist()
         elif isinstance(obj, np.bool_):
             return bool(obj)
+        elif isinstance(obj, bytes):
+            import base64
+
+            return base64.b64encode(obj).decode("utf-8")
         else:
             return super(NumpyEncoder, self).default(obj)
 

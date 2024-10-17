@@ -475,9 +475,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.run_engine.subscribe(self.eva)
         bec = BestEffortCallback()
         self.run_engine.subscribe(bec)
-        self.change_catalog_name()
         self.importer_thread.wait()
         self.databroker_catalog = self.importer_thread.catalog
+        self.change_catalog_name()
+        self.run_engine.subscribe(self.databroker_catalog.v1.insert)
         self.run_engine.subscribe(self.protocol_finished, "stop")
         self.still_running = False
         self.re_subs = []
@@ -922,7 +923,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def change_catalog_name(self):
         """Changes the name of the databroker catalog. If the catalog does not exist, a temporary catalog is used."""
-        if not hasattr(self, "databroker_catalog") or not self.databroker_catalog:
+        if not hasattr(self, "databroker_catalog") or self.databroker_catalog is None:
             return
         # IMPORT databroker only if it is needed
         import databroker
@@ -1654,24 +1655,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             plots, subs, _ = self.protocol_module.create_plots(self.run_engine)
             for plot in plots:
                 self.add_to_plots(plot)
-            if self.protocols_dict[protocol_name].h5_during_run:
-                from nomad_camels.bluesky_handling.helper_functions import (
-                    saving_function,
-                )
-                from event_model import RunRouter
-
-                self.run_router = RunRouter(
-                    [
-                        lambda x, y: saving_function(
-                            x,
-                            y,
-                            self.protocol_module.save_path,
-                            self.protocol_module.new_file_each_run,
-                            self.protocol_module.plots,
-                        )
-                    ]
-                )
-                self.re_subs.append(self.run_engine.subscribe(self.run_router))
             device_list = protocol.get_used_devices()
             self.current_protocol_device_list = list(device_list)
             self.re_subs += subs
@@ -1713,6 +1696,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         The protocol is run using the `run_protocol_main` function of the protocol module.
         After the protocol is finished, the `protocol_finished` function is called, the data is saved and uploaded to NOMAD if selected.
         """
+        additionals = {}
         try:
             devs = self.instantiate_devices_thread.devices
             dev_data = self.instantiate_devices_thread.device_config
@@ -1723,6 +1707,30 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_finished()
             raise e
         import time
+
+        if self.running_protocol.h5_during_run:
+            from nomad_camels.bluesky_handling.helper_functions import (
+                saving_function,
+            )
+            from event_model import RunRouter
+
+            saving_plots = (
+                self.protocol_module.plots
+                + helper_functions.make_recoursive_plot_list_of_sub_steps(additionals)
+            )
+
+            self.run_router = RunRouter(
+                [
+                    lambda x, y: saving_function(
+                        x,
+                        y,
+                        self.protocol_module.save_path,
+                        self.protocol_module.new_file_each_run,
+                        saving_plots,
+                    )
+                ]
+            )
+            self.re_subs.append(self.run_engine.subscribe(self.run_router))
 
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)

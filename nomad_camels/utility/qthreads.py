@@ -316,6 +316,7 @@ class Additional_Imports_Thread(QThread):
         super().__init__(parent)
         self.imports = []
         self.catalog = None
+        self.catalog_temporary = False
 
     def run(self) -> None:
         """ """
@@ -382,3 +383,4 @@ class Additional_Imports_Thread(QThread):
         except KeyError:
             print("Could not find databroker catalog, using temporary")
             self.catalog = databroker.temp().v2
+            self.catalog_temporary = True
