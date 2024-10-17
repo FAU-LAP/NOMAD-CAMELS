@@ -33,6 +33,7 @@ Fixes:
 - Plots from sub-steps are now in the data
 - databroker should now load correclty again
 - added export of bytes into json
+- not always focusing the new box in tables anymore
 
 ### 1.4.2
 Changes:
