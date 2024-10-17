@@ -742,7 +742,7 @@ class Plot_Button_Overview(QWidget):
         )
         self.plot_table.addButton.setHidden(True)
         self.plot_table.removeButton.setHidden(True)
-        self.plot_button = QPushButton("Add && Configure: Plots/Fits")
+        self.plot_button = QPushButton("Configure: Plots/Fits")
         font = QFont()
         font.setBold(True)
         self.plot_button.setStyleSheet(

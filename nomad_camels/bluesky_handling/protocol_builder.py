@@ -339,7 +339,7 @@ def build_protocol(
     plot_string, plotting = plot_creator(protocol.plots, multi_stream=True)
 
     # everything is put together for the complete protocol-string
-    protocol_string = "import sys\n"
+    protocol_string: str = "import sys\n"
     protocol_string += (
         f'sys.path.append(r"{os.path.dirname(variables_handling.CAMELS_path)}")\n'
     )
@@ -447,6 +447,9 @@ def build_protocol(
     protocol_string += final_string
     protocol_string += save_string
     protocol_string += standard_start_string3
+    protocol_string = protocol_string.expandtabs(4)
+
+
 
     # the string is written to the file
     if not os.path.isdir(os.path.dirname(file_path)):
