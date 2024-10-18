@@ -7,7 +7,7 @@
 }
 
 /* Media query for smaller screens (mobile) */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
     .wy-nav-content {
         max-width: 95%; /* Expand to nearly full width on small screens */
         padding: 0 5%; /* Add some padding for spacing */
