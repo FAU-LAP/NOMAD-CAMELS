@@ -2,20 +2,15 @@
 /* Make the page content wider */
 /* Make the page content responsive */
 .wy-nav-content {
-    max-width: calc(100% - 240px); /* Max width based on remaining space after the sidebar */
-    width: calc(100% - 240px); /* Fill the remaining width next to the sidebar */
-    margin-left: 240px; /* Offset content based on the sidebar width */
-    padding-left: 0; /* No padding on the left */
-    padding-right: 20px; /* Add some padding on the right */
+    max-width: 65%; /* Default for larger screens */
+    /*margin: auto;  Center the content */
 }
 
-/* Media query for smaller screens (tablets and mobile) */
+/* Media query for smaller screens (mobile) */
 @media (max-width: 768px) {
     .wy-nav-content {
-        padding-left: 0; /* Remove left padding for small screens */
-        margin-left: 0; /* Remove left margin for small screens */
-        width: 95%; /* Expand to nearly full width on small screens */
-        padding: 0 5%; /* Add padding for spacing */
+        max-width: 95%; /* Expand to nearly full width on small screens */
+        padding: 0 5%; /* Add some padding for spacing */
     }
 }
 
