@@ -327,13 +327,6 @@ def build_protocol(
     devices_string += '\t\tprint("devices connected")\n'
     devices_string += f'\t\tmd = {{"devices": device_config, "description": "{repr(protocol.description)}"}}\n'
 
-    # if using special nexus-format, some restructuring of metadata is done
-    if protocol.use_nexus:
-        md_dict = {}
-        for i, name in enumerate(protocol.metadata["Name"]):
-            md_dict[name] = protocol.metadata["Value"][i]
-        devices_string += f"\t\tmd.update({md_dict})\n"
-
     # the plots are created
     plot_string, plotting = plot_creator(protocol.plots, multi_stream=True)
 
