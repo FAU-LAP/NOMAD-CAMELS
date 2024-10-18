@@ -2,16 +2,17 @@
 /* Make the page content wider */
 /* Make the page content responsive */
 .wy-nav-content {
-    max-width: 100%; /* Fill the available width */
-    width: calc(100% - 240px); /* Adjust width to fill remaining space after the sidebar */
-    margin-left: 240px; /* Offset by the sidebar width */
-    padding: 0 20px; /* Add some padding for spacing */
+    max-width: calc(100% - 240px); /* Max width based on remaining space after the sidebar */
+    width: calc(100% - 240px); /* Fill the remaining width next to the sidebar */
+    margin-left: 0; /* No margin on the left */
+    padding-left: 240px; /* Offset content based on the sidebar width */
+    padding-right: 20px; /* Add some padding on the right */
 }
 
 /* Media query for smaller screens (tablets and mobile) */
 @media (max-width: 768px) {
     .wy-nav-content {
-        margin-left: 0; /* Remove the margin for small screens */
+        padding-left: 0; /* Remove left padding for small screens */
         width: 95%; /* Expand to nearly full width on small screens */
         padding: 0 5%; /* Add padding for spacing */
     }
