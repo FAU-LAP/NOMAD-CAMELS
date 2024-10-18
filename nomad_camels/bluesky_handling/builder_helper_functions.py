@@ -131,7 +131,7 @@ def plot_creator(
             plot_string += f'\tplot_info = dict(x_name="{plot.x_axis or "time"}", y_names={plot.y_axes["formula"]}, ylabel="{ylabel}", xlabel="{xlabel}", title="{plot.title}", stream_name=stream, namespace=namespace, fits=fits, multi_stream={multi_stream}, y_axes={y_axes}, ylabel2="{ylabel2}", logX={plot.logX}, logY={plot.logY}, logY2={plot.logY2}, maxlen="{plot.maxlen}")\n'
             plot_string += f"\tplot_{i} = plot_pyqtgraph.PlotWidget(**plot_info)\n"
             plot_string += f"\tplots.append(plot_{i})\n"
-            plot_string += f"\tplot_data.append(plot_info)\n"
+            # plot_string += f"\tplot_data.append(plot_info)\n"
             plot_string += f"\tplot_{i}.show()\n"
             plot_string += f"\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n"
             plot_string += f"\tfor fit in plot_{i}.liveFits:\n"

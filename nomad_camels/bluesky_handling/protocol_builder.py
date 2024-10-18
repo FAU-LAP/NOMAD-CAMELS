@@ -216,7 +216,7 @@ def build_protocol(
     variable_string = "\nnamespace = {}\n"
     variable_string += "all_fits = {}\n"
     variable_string += "plots = []\n"
-    variable_string += "plot_data = []\n"
+    # variable_string += "plot_data = []\n"
     variable_string += "boxes = {}\n"
     variable_string += "app = None\n"
     variable_string += f'save_path = "{save_path}"\n'
@@ -370,7 +370,7 @@ def build_protocol(
     protocol_string += '\t\tmd["python_script"] = f.read()\n'
     protocol_string += read_device_drivers_string
     protocol_string += '\tmd["variables"] = namespace\n'
-    protocol_string += '\tmd["plot_data"] = plot_data\n'
+    # protocol_string += '\tmd["plot_data"] = plot_data\n'
 
     # adding uid to RunEngine, calling the plan
     protocol_string += '\tsubscription_uid = RE.subscribe(uid_collector, "start")\n'
