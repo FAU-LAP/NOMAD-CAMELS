@@ -1,7 +1,17 @@
 .wy-side-nav-search{background-color: #000000}
 /* Make the page content wider */
+/* Make the page content responsive */
 .wy-nav-content {
-    max-width: 65%;
+    max-width: 65%; /* Default for larger screens */
+    margin: auto; /* Center the content */
+}
+
+/* Media query for smaller screens (mobile) */
+@media (max-width: 768px) {
+    .wy-nav-content {
+        max-width: 95%; /* Expand to nearly full width on small screens */
+        padding: 0 5%; /* Add some padding for spacing */
+    }
 }
 
 .box-container {
