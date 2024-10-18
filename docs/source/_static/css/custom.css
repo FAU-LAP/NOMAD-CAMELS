@@ -4,8 +4,8 @@
 .wy-nav-content {
     max-width: calc(100% - 240px); /* Max width based on remaining space after the sidebar */
     width: calc(100% - 240px); /* Fill the remaining width next to the sidebar */
-    margin-left: 0; /* No margin on the left */
-    padding-left: 240px; /* Offset content based on the sidebar width */
+    margin-left: 240px; /* Offset content based on the sidebar width */
+    padding-left: 0; /* No padding on the left */
     padding-right: 20px; /* Add some padding on the right */
 }
 
@@ -13,6 +13,7 @@
 @media (max-width: 768px) {
     .wy-nav-content {
         padding-left: 0; /* Remove left padding for small screens */
+        margin-left: 0; /* Remove left margin for small screens */
         width: 95%; /* Expand to nearly full width on small screens */
         padding: 0 5%; /* Add padding for spacing */
     }
