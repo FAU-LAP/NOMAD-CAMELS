@@ -2,14 +2,16 @@
 /* Make the page content wider */
 /* Make the page content responsive */
 .wy-nav-content {
-    max-width: 65%; /* Default for larger screens */
+    max-width: 1200px; /* Set a maximum width for larger screens */
+    width: 80%; /* Use a percentage for the width */
     margin: auto; /* Center the content */
+    padding: 0 20px; /* Add padding for some space around the content */
 }
 
-/* Media query for smaller screens (mobile) */
+/* Media query for smaller screens (tablets and mobile) */
 @media (max-width: 768px) {
     .wy-nav-content {
-        max-width: 95%; /* Expand to nearly full width on small screens */
+        width: 95%; /* Expand to nearly full width on small screens */
         padding: 0 5%; /* Add some padding for spacing */
     }
 }
