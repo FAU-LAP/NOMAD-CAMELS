@@ -1727,6 +1727,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         self.protocol_module.save_path,
                         self.protocol_module.new_file_each_run,
                         saving_plots,
+                        self.running_protocol.use_nexus,
                     )
                 ]
             )
@@ -2011,6 +2012,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 self.running_protocol.export_csv,
                 self.running_protocol.export_json,
                 self.protocol_module.plots,
+                self.running_protocol.use_nexus,
             )
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)

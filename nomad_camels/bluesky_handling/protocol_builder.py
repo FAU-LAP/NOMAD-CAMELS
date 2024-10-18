@@ -222,13 +222,12 @@ def build_protocol(
     variable_string += f'save_path = "{save_path}"\n'
     variable_string += f'session_name = "{protocol.session_name}"\n'
     variable_string += f"export_to_csv = {protocol.export_csv}\n"
-    variable_string += f"export_to_json={protocol.export_json}\n"
+    variable_string += f"export_to_json = {protocol.export_json}\n"
     if "new_file_each_run" in variables_handling.preferences:
-        variable_string += (
-            f'new_file_each_run={variables_handling.preferences["new_file_each_run"]}\n'
-        )
+        variable_string += f'new_file_each_run = {variables_handling.preferences["new_file_each_run"]}\n'
     else:
-        variable_string += f"new_file_each_run=False\n"
+        variable_string += f"new_file_each_run = False\n"
+    variable_string += f"do_nexus_output = {protocol.use_nexus}\n"
     additional_string_devices = ""
     final_string = "\t\tfor name, device in devs.items():\n"
     final_string += '\t\t\tif hasattr(device, "finalize_steps") and callable(device.finalize_steps):\n'
@@ -390,21 +389,14 @@ def build_protocol(
     # wait for RunEngine to finish, then save the data
     save_string = "\t\tif uids:\n"
     save_string += "\t\t\truns = catalog[tuple(uids)]\n"
-    if protocol.use_nexus:
-        nexus_dict = protocol.get_nexus_paths()
-        nexus_dict.update(standard_nexus_dict)
-        save_string += "\t\t\tdata = broker_to_dict(runs)\n"
-        save_string += f"\t\t\tnexus_mapper = {nexus_dict}\n\n"
-        # TODO finish this
-    else:
-        save_string += f"\t\t\thelper_functions.export_function(runs, save_path, {not protocol.h5_during_run}, new_file_each=new_file_each_run, plot_data=plots)\n"
-        # save_string += (
-        #     "\t\t\tbroker_to_NX(runs, save_path, plots,"
-        #     "session_name=session_name,"
-        #     "export_to_csv=export_to_csv,"
-        #     "export_to_json=export_to_json,"
-        #     "new_file_each_run=new_file_each_run)\n\n"
-        # )
+    save_string += f"\t\t\thelper_functions.export_function(runs, save_path, {not protocol.h5_during_run}, new_file_each=new_file_each_run, plot_data=plots, do_nexus_output=do_nexus_output)\n"
+    # save_string += (
+    #     "\t\t\tbroker_to_NX(runs, save_path, plots,"
+    #     "session_name=session_name,"
+    #     "export_to_csv=export_to_csv,"
+    #     "export_to_json=export_to_json,"
+    #     "new_file_each_run=new_file_each_run)\n\n"
+    # )
     if protocol.h5_during_run:
         save_string += "\t\tRE.unsubscribe(subscription_rr)\n"
 
@@ -440,7 +432,7 @@ def build_protocol(
     protocol_string += "\tdevs = {}\n\tdevice_config = {}\n\ttry:\n"
     protocol_string += devices_string
     if protocol.h5_during_run:
-        protocol_string += "\t\trr = RunRouter([lambda x, y: helper_functions.saving_function(x, y, save_path, new_file_each_run, plots)])\n"
+        protocol_string += "\t\trr = RunRouter([lambda x, y: helper_functions.saving_function(x, y, save_path, new_file_each_run, plots, do_nexus_output)])\n"
         protocol_string += "\t\tsubscription_rr = RE.subscribe(rr)\n"
     protocol_string += standard_start_string2
     protocol_string += standard_final_string
@@ -448,8 +440,6 @@ def build_protocol(
     protocol_string += save_string
     protocol_string += standard_start_string3
     protocol_string = protocol_string.expandtabs(4)
-
-
 
     # the string is written to the file
     if not os.path.isdir(os.path.dirname(file_path)):

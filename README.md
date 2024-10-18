@@ -19,6 +19,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.4.4
+Features:
+- added optional checkbox to make a NeXus entry in the hdf5 file when saving the data
+
 Fixes:
 - can now paste again with ctrl+v in most outer part of protocol
 
