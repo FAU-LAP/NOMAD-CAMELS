@@ -24,6 +24,7 @@ Features:
 
 Fixes:
 - can now paste again with ctrl+v in most outer part of protocol
+- fixed throwing errors when entering bad values in variable-boxes
 
 ### 1.4.3
 Features:
