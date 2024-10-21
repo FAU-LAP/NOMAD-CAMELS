@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'general_protocol_settings.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.7.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -44,31 +44,37 @@ class Ui_Protocol_Settings(object):
         self.gridLayout_2 = QGridLayout(self.widget_2)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.radioButton_h5_after = QRadioButton(self.widget_2)
+        self.radioButton_h5_after.setObjectName(u"radioButton_h5_after")
+
+        self.gridLayout_2.addWidget(self.radioButton_h5_after, 0, 1, 1, 1)
+
         self.checkBox_csv_exp = QCheckBox(self.widget_2)
         self.checkBox_csv_exp.setObjectName(u"checkBox_csv_exp")
 
         self.gridLayout_2.addWidget(self.checkBox_csv_exp, 1, 0, 1, 1)
-
-        self.checkBox_no_config = QCheckBox(self.widget_2)
-        self.checkBox_no_config.setObjectName(u"checkBox_no_config")
-
-        self.gridLayout_2.addWidget(self.checkBox_no_config, 2, 0, 1, 2)
 
         self.checkBox_json_exp = QCheckBox(self.widget_2)
         self.checkBox_json_exp.setObjectName(u"checkBox_json_exp")
 
         self.gridLayout_2.addWidget(self.checkBox_json_exp, 1, 1, 1, 1)
 
-        self.radioButton_h5_after = QRadioButton(self.widget_2)
-        self.radioButton_h5_after.setObjectName(u"radioButton_h5_after")
+        self.checkBox_no_config = QCheckBox(self.widget_2)
+        self.checkBox_no_config.setObjectName(u"checkBox_no_config")
 
-        self.gridLayout_2.addWidget(self.radioButton_h5_after, 0, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.checkBox_no_config, 3, 0, 1, 2)
 
         self.radioButton_h5_during = QRadioButton(self.widget_2)
         self.radioButton_h5_during.setObjectName(u"radioButton_h5_during")
         self.radioButton_h5_during.setChecked(True)
 
         self.gridLayout_2.addWidget(self.radioButton_h5_during, 0, 0, 1, 1)
+
+        self.checkBox_NeXus = QCheckBox(self.widget_2)
+        self.checkBox_NeXus.setObjectName(u"checkBox_NeXus")
+        self.checkBox_NeXus.setChecked(True)
+
+        self.gridLayout_2.addWidget(self.checkBox_NeXus, 2, 0, 1, 2)
 
 
         self.gridLayout.addWidget(self.widget_2, 4, 0, 1, 6)
@@ -180,11 +186,12 @@ class Ui_Protocol_Settings(object):
 
     def retranslateUi(self, Protocol_Settings):
         Protocol_Settings.setWindowTitle(QCoreApplication.translate("Protocol_Settings", u"Form", None))
-        self.checkBox_csv_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export data to csv", None))
-        self.checkBox_no_config.setText(QCoreApplication.translate("Protocol_Settings", u"do not reconfigure instruments at start", None))
-        self.checkBox_json_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export metadata to json", None))
         self.radioButton_h5_after.setText(QCoreApplication.translate("Protocol_Settings", u"write hdf5 after run", None))
+        self.checkBox_csv_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export data to csv", None))
+        self.checkBox_json_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export metadata to json", None))
+        self.checkBox_no_config.setText(QCoreApplication.translate("Protocol_Settings", u"do not reconfigure instruments at start", None))
         self.radioButton_h5_during.setText(QCoreApplication.translate("Protocol_Settings", u"write hdf5 during run", None))
+        self.checkBox_NeXus.setText(QCoreApplication.translate("Protocol_Settings", u"also write NeXus entry to data", None))
         self.pushButton_add_variable.setText(QCoreApplication.translate("Protocol_Settings", u"+", None))
         self.label_2.setText(QCoreApplication.translate("Protocol_Settings", u"Variables", None))
         self.label.setText(QCoreApplication.translate("Protocol_Settings", u"Filename:", None))

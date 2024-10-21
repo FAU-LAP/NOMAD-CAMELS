@@ -18,6 +18,18 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+## 1.5.0 metadata structuring
+Features:
+There is a new data output structure, making it clearer to understand, mostly consistent with old versions.
+The data / metadata are not saved in a rigid NeXus shape anymore. However, it is possible (turned on by default) to add the NX structure as an additional entry in the hdf5. If doing this, the data is not duplicated, everything is done by soft-links in the hdf5.
+
+Fixes:
+- can now paste again with ctrl+v in most outer part of protocol
+- fixed throwing errors when entering bad values in variable-boxes
+- removed additional appearance of plot_data in metadata
+
+---
+
 ### 1.4.3
 Features:
 - Can now make a protocol stop on an if condition

@@ -208,6 +208,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # self.show()
         self.adjustSize()
 
+        self.saving_plot_list = []
         self.run_engine = None
         self.databroker_catalog = None
         self.still_running = False
@@ -1708,16 +1709,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             raise e
         import time
 
+        self.saving_plot_list = list(
+            set(
+                self.protocol_module.plots
+                + helper_functions.make_recoursive_plot_list_of_sub_steps(additionals)
+            )
+        )
+
         if self.running_protocol.h5_during_run:
             from nomad_camels.bluesky_handling.helper_functions import (
                 saving_function,
             )
             from event_model import RunRouter
-
-            saving_plots = (
-                self.protocol_module.plots
-                + helper_functions.make_recoursive_plot_list_of_sub_steps(additionals)
-            )
 
             self.run_router = RunRouter(
                 [
@@ -1726,7 +1729,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         y,
                         self.protocol_module.save_path,
                         self.protocol_module.new_file_each_run,
-                        saving_plots,
+                        self.saving_plot_list,
+                        self.running_protocol.use_nexus,
                     )
                 ]
             )
@@ -2011,6 +2015,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 self.running_protocol.export_csv,
                 self.running_protocol.export_json,
                 self.protocol_module.plots,
+                self.running_protocol.use_nexus,
             )
         for sub in self.re_subs:
             self.run_engine.unsubscribe(sub)

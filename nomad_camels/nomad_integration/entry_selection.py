@@ -157,7 +157,8 @@ class EntrySelector(QDialog):
         if "name" not in self.return_data and "Name" not in self.return_data:
             self.return_data["name"] = self.entry_box.currentText().split(".")[0]
         self.return_data["ELN-service"] = "nomad"
-        self.return_data["identifier"] = (
+        self.return_data["full_identifier"] = (
             f'upload/id/{self.return_data["NOMAD_entry_metadata"]["upload_id"]}/entry/id/{self.return_data["NOMAD_entry_metadata"]["entry_id"]}'
         )
+        self.return_data["identifier"] = self.return_data["lab_id"]
         super().accept()

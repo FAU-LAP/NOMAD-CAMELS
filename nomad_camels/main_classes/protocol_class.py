@@ -45,14 +45,8 @@ class Measurement_Protocol:
         Dictionary of the channel-names and channels used inside the protocol
     name : str
         The name of the protocol. This also appears in the main UI
-    channel_metadata : dict
-        Currently deprecated. Only used for specific nexus output.
-    config_metadata : dict
-        Currently deprecated. Only used for specific nexus output.
-    metadata : dict
-        Currently deprecated. Only used for specific nexus output.
     use_nexus : bool
-        Currently deprecated. Only used for specific nexus output.
+        Whether to write a NeXus-entry into the datafile as well.
     """
 
     def __init__(
@@ -61,10 +55,7 @@ class Measurement_Protocol:
         plots=None,
         channels=None,
         name="",
-        channel_metadata=None,
-        metadata=None,
-        use_nexus=False,
-        config_metadata=None,
+        use_nexus=True,
         **kwargs,
     ):
         if plots is None:
@@ -73,10 +64,6 @@ class Measurement_Protocol:
             loop_steps = []
         if channels is None:
             channels = {}
-        if channel_metadata is None:
-            channel_metadata = {}
-        if metadata is None:
-            metadata = {}
         self.description = kwargs["description"] if "description" in kwargs else ""
         self.export_csv = kwargs["export_csv"] if "export_csv" in kwargs else False
         self.export_json = kwargs["export_json"] if "export_json" in kwargs else False
@@ -99,9 +86,6 @@ class Measurement_Protocol:
         self.loop_step_variables = {}
         self.channels = channels
         self.name = name or "Protocol"
-        self.channel_metadata = channel_metadata
-        self.config_metadata = config_metadata
-        self.metadata = metadata
         self.use_nexus = use_nexus
 
     def update_variables(self):
@@ -111,32 +95,6 @@ class Measurement_Protocol:
             if not step.is_active:
                 continue
             step.update_variables()
-
-    def get_nexus_paths(self):
-        """Get a dictionary containing the paths used for the output
-        NeXus-file. Currently deprecated."""
-        paths = {}
-        for i, name in enumerate(self.metadata["Name"]):
-            paths[self.metadata["NeXus-path"][i]] = f"metadata_start/{name}"
-        for i, name in enumerate(self.channel_metadata["Channel"]):
-            paths[self.channel_metadata["NeXus-path"][i]] = f"data/{name}"
-        for i, name in enumerate(self.config_metadata["Configuration"]):
-            path = ""
-            for dev in variables_handling.devices:
-                if dev in name:
-                    rn = name.split(dev)[1][1:]
-                    device = variables_handling.devices[dev]
-                    if (
-                        rn in device.get_config()
-                        or rn in device.get_config()
-                        or rn in device.get_passive_config()
-                    ):
-                        path = f"metadata_start/device_config/{dev}/{name}"
-                        break
-            if not path:
-                raise Exception(f"Cannot find {name} in any configuration!")
-            paths[self.config_metadata["NeXus-path"][i]] = path
-        return paths
 
     def add_loop_step(self, loop_step, position=-1, parent_step_name=None, model=None):
         """Adds a loop_step to the protocol (or the parent_step)at the specified
@@ -505,46 +463,11 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.ending_protocol_selection.setToolTip(
             "Select a protocol to be performed at the end of this protocol or when it is aborted by the user.\nThis may be useful e.g. to turn something of in a controlled way.\nThis is NOT executed, when the protocol is run as a subprotocol."
         )
-        self.checkBox_perform_at_end.stateChanged.connect(
-            self.check_use_ending_steps
-        )
+        self.checkBox_perform_at_end.stateChanged.connect(self.check_use_ending_steps)
         self.check_use_ending_steps()
 
         self.plot_widge = Plot_Button_Overview(self, self.protocol.plots)
 
-        cols = ["Channel", "NeXus-path"]
-        comboBoxes = {"Channel": list(variables_handling.channels.keys())}
-        self.table_channel_NX_paths = AddRemoveTable(
-            headerLabels=cols,
-            title="Channel-NeXus-Path",
-            comboBoxes=comboBoxes,
-            tableData=self.protocol.channel_metadata,
-        )
-
-        cols = ["Configuration", "NeXus-path"]
-        configs = []
-        for dev in variables_handling.devices:
-            device = variables_handling.devices[dev]
-            allconf = []
-            allconf += list(device.get_passive_config().keys())
-            allconf += list(device.get_config().keys())
-            for key in allconf:
-                configs.append(f"{device.name}_{key}")
-        comboBoxes = {"Configuration": configs}
-        self.table_config_NX_paths = AddRemoveTable(
-            headerLabels=cols,
-            title="Config-NeXus-Path",
-            comboBoxes=comboBoxes,
-            tableData=self.protocol.config_metadata,
-        )
-
-        cols = ["Name", "NeXus-path", "Value"]
-        self.table_metadata = AddRemoveTable(
-            headerLabels=cols, title="NeXus-Metadata", tableData=self.protocol.metadata
-        )
-
-        self.checkBox_NeXus = QCheckBox("Use NeXus-output")
-        self.checkBox_NeXus.clicked.connect(self.enable_nexus)
         self.checkBox_NeXus.setChecked(self.protocol.use_nexus)
         self.lineEdit_protocol_name.textChanged.connect(self.name_change)
         self.name_change()
@@ -570,8 +493,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.layout().addWidget(self.ending_protocol_selection, 21, 0, 1, 6)
         # ! Ui_Protocol_Settings.ui file adds the Variables Table at position 8 and 9 !!!
 
-        self.checkBox_NeXus.setHidden(True)
-        self.enable_nexus()
         self.update_variable_select()
         self.variable_table.selectionModel().selectionChanged.connect(
             self.update_variable_select
@@ -610,44 +531,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             result = msgBox.exec()
             if result != QMessageBox.Yes:
                 self.checkBox_no_config.setChecked(False)
-
-    def enable_nexus(self):
-        """When the checkBox_NeXus is clicked, enables / disables the
-        other widgets for the nexus-definition.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        """
-        nx = self.checkBox_NeXus.isChecked()
-        self.table_channel_NX_paths.setHidden(not nx)
-        self.table_metadata.setHidden(not nx)
-        self.table_config_NX_paths.setHidden(not nx)
-
-    # def get_unique_name(self, name="name"):
-    #     """Checks whether name already exists in the variables of the
-    #     protocol and returns a unique name (with added _i).
-
-    #     Parameters
-    #     ----------
-    #     name :
-    #          (Default value = 'name')
-
-    #     Returns
-    #     -------
-
-    #     """
-    #     i = 1
-    #     while name in self.protocol.variables:
-    #         if "_" not in name:
-    #             name += f"_{i}"
-    #         else:
-    #             name = f'{name.split("_")[0]}_{i}'
-    #         i += 1
-    #     return name
 
     def add_variable(self):
         """Add a variable to the list, given a unique name, then updates
@@ -701,9 +584,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.name = self.lineEdit_protocol_name.text()
         self.protocol.description = self.textEdit_desc_protocol.toPlainText()
         self.protocol.plots = self.plot_widge.plot_data
-        self.protocol.metadata = self.table_metadata.update_table_data()
-        self.protocol.channel_metadata = self.table_channel_NX_paths.update_table_data()
-        self.protocol.config_metadata = self.table_config_NX_paths.update_table_data()
         self.protocol.export_csv = self.checkBox_csv_exp.isChecked()
         self.protocol.export_json = self.checkBox_json_exp.isChecked()
         self.protocol.skip_config = self.checkBox_no_config.isChecked()

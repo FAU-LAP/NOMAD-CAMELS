@@ -74,6 +74,7 @@ def export_function(
     export_csv=False,
     export_json=False,
     plot_data=None,
+    do_nexus_output=True,
 ):
     """
     Export the given runs to the given path.
@@ -109,7 +110,14 @@ def export_function(
             runs = [runs]
         for run in runs:
             docs = run.documents(fill="yes")
-            export(docs, path, fname, new_file_each, plot_data=plot_data)
+            export(
+                docs,
+                path,
+                fname,
+                new_file_each,
+                plot_data=plot_data,
+                do_nexus_output=do_nexus_output,
+            )
     if export_csv or export_json:
         from nomad_camels.utility.databroker_export import export_h5_to_csv_json
 
@@ -117,7 +125,9 @@ def export_function(
         export_h5_to_csv_json(file, export_data=export_csv, export_metadata=export_json)
 
 
-def saving_function(name, start_doc, path, new_file_each=True, plot_data=None):
+def saving_function(
+    name, start_doc, path, new_file_each=True, plot_data=None, do_nexus_output=True
+):
     """
     Create a Serializer and return it.
 
@@ -152,7 +162,13 @@ def saving_function(name, start_doc, path, new_file_each=True, plot_data=None):
         fname = os.path.basename(path)
         path = os.path.dirname(path)
     return [
-        Serializer(path, fname, new_file_each=new_file_each, plot_data=plot_data)
+        Serializer(
+            path,
+            fname,
+            new_file_each=new_file_each,
+            plot_data=plot_data,
+            do_nexus_output=do_nexus_output,
+        )
     ], []
 
 
