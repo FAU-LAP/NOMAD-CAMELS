@@ -10,7 +10,7 @@
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=c0143a30" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=4c64c665" />
 
   
     <link rel="shortcut icon" href="../_static/CAMELS.ico"/>
@@ -3418,13 +3418,6 @@ is enabled, otherwise disabled.</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.General_Protocol_Settings.enable_nexus">
-<span class="sig-name descname"><span class="pre">enable_nexus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.General_Protocol_Settings.enable_nexus" title="Link to this definition"></a></dt>
-<dd><p>When the checkBox_NeXus is clicked, enables / disables the
-other widgets for the nexus-definition.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.General_Protocol_Settings.name_change">
 <span class="sig-name descname"><span class="pre">name_change</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.General_Protocol_Settings.name_change" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -3466,7 +3459,7 @@ other widgets for the nexus-definition.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.Measurement_Protocol">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.main_classes.protocol_class.</span></span><span class="sig-name descname"><span class="pre">Measurement_Protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loop_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nexus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.main_classes.protocol_class.</span></span><span class="sig-name descname"><span class="pre">Measurement_Protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loop_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nexus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class for the measurement protocols. It mainly contains
 loop_steps and plots.</p>
@@ -3608,42 +3601,9 @@ are included here.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.Measurement_Protocol.channel_metadata">
-<span class="sig-name descname"><span class="pre">channel_metadata</span></span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol.channel_metadata" title="Link to this definition"></a></dt>
-<dd><p>Currently deprecated. Only used for specific nexus output.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.Measurement_Protocol.config_metadata">
-<span class="sig-name descname"><span class="pre">config_metadata</span></span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol.config_metadata" title="Link to this definition"></a></dt>
-<dd><p>Currently deprecated. Only used for specific nexus output.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.Measurement_Protocol.metadata">
-<span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol.metadata" title="Link to this definition"></a></dt>
-<dd><p>Currently deprecated. Only used for specific nexus output.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.Measurement_Protocol.use_nexus">
 <span class="sig-name descname"><span class="pre">use_nexus</span></span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol.use_nexus" title="Link to this definition"></a></dt>
-<dd><p>Currently deprecated. Only used for specific nexus output.</p>
+<dd><p>Whether to write a NeXus-entry into the datafile as well.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -3702,13 +3662,6 @@ Where in the list to add the step</p></li>
 <span class="sig-name descname"><span class="pre">get_add_main_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol.get_add_main_string" title="Link to this definition"></a></dt>
 <dd><p>Gets all the steps that should be executed in the protocol’s main
 function.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.Measurement_Protocol.get_nexus_paths">
-<span class="sig-name descname"><span class="pre">get_nexus_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol.get_nexus_paths" title="Link to this definition"></a></dt>
-<dd><p>Get a dictionary containing the paths used for the output
-NeXus-file. Currently deprecated.</p>
 </dd></dl>
 
 <dl class="py method">
