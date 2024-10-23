@@ -92,10 +92,10 @@ How to get started?
 To get started with CAMELS first `install <https://fau-lap.github.io/NOMAD-CAMELS/doc/installation/installation.html>`_ it and learn how to use it with our "Getting started" `tutorial <https://fau-lap.github.io/NOMAD-CAMELS/doc/tutorials/quick_start.html>`_.
 
 
-Project and Community
+Contact and Community
 =====================
 
-If you have questions or problems with CAMELS we invite you to contact us via 
+If you have questions or problems with CAMELS we invite you to contact us via Discord:
 
 .. raw:: html
 
@@ -104,13 +104,15 @@ If you have questions or problems with CAMELS we invite you to contact us via
         <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0b52aa9e99b832574a53_full_logo_blurple_RGB.png" alt="Discord Logo" style="width: 187px; height: 36px;">
     </a>
 
-or by opening a
+search for the channels **discussion-camels** or **issues-camels**. 
+
+You can also open GitHub Issues:
 
 .. raw:: html
 
 
     <a href="https://github.com/FAU-LAP/NOMAD-CAMELS/issues" target="_blank" style="display: inline-flex; align-items: center;">
-    <img src="docs/source/assets/CAMELS_Issues_Logo.png" alt="GitHub Logo" style="width: 36px; height: 36px; vertical-align: middle;">
+    <img src="./docs/source/assets/CAMELS_Issues_Logo.png" alt="GitHub Logo" style="width: 36px; height: 36px; vertical-align: middle;">
     </a>
 
 CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_.
@@ -121,19 +123,17 @@ The source code of CAMELS is hosted on
 
 
     <a href="https://github.com/FAU-LAP/NOMAD-CAMELS" target="_blank" style="display: flex; align-items: center;">
-        <img src="docs/source/assets/CAMELS_GitHub_Logo.png" alt="GitHub Logo" style="width: 36px; height: 36px;">
+        <img src="./docs/source/assets/CAMELS_GitHub_Logo.png" alt="GitHub Logo" style="width: 36px; height: 36px;">
     </a>
 
 
 We invite you to open issues on GitHub if you encounter any problems or bugs.
 
-Contact
-=======
-If you have any questions or feedback you can reach the development team of CAMELS via:
+If you have any questions or feedback you can also always reach the development team of CAMELS via E-mail:
 
 E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
-Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussions>`_
+
 
 .. toctree::
    :maxdepth: 2
