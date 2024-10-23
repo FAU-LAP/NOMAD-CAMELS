@@ -108,27 +108,20 @@ search for the channels **discussion-camels** or **issues-camels**.
 
 You can also open GitHub Issues:
 
-.. raw:: html
+.. image:: /assets/CAMELS_Issues_Logo.png
+   :target: https://github.com/FAU-LAP/NOMAD-CAMELS/issues
+   :width: 150px
+   :height: 50px
 
-
-    <a href="https://github.com/FAU-LAP/NOMAD-CAMELS/issues" target="_blank" style="display: inline-flex; align-items: center;">
-    <img src="assets/CAMELS_Issues_Logo.png" alt="GitHub Logo" style="width: 135px; height: 36px; vertical-align: middle;">
-    </a>
 
 CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_.
 
-The source code of CAMELS is hosted on
-
-.. raw:: html
-
-
-    <a href="https://github.com/FAU-LAP/NOMAD-CAMELS" target="_blank" style="display: flex; align-items: center;">
-        <img src="assets/CAMELS_GitHub_Logo.png" alt="GitHub Logo" style="width: 154px; height: 36px;">
-    </a>
-
+The source code of CAMELS is hosted on GitHub:
 
 .. image:: /assets/CAMELS_GitHub_Logo.png
    :target: https://github.com/FAU-LAP/NOMAD-CAMELS
+   :width: 200px
+   :height: 50px
 
 We invite you to open issues on GitHub if you encounter any problems or bugs.
 
