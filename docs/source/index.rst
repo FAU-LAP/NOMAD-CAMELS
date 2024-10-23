@@ -94,9 +94,28 @@ To get started with CAMELS first `install <https://fau-lap.github.io/NOMAD-CAMEL
 
 Project and Community
 =====================
+
+If you have questions or problems with CAMELS we invite you to contact us via 
+
+<a href="https://discord.gg/yourserverlink" target="_blank">
+    <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0b52aa9e99b832574a53_full_logo_blurple_RGB.png" alt="Discord Logo" style="width: 24px; height: 24px; vertical-align: middle;">
+    Discord
+</a>
+or by opening a 
+<a href="https://github.com/FAU-LAP/NOMAD-CAMELS/issues" target="_blank">
+    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" style="width: 24px; height: 24px; vertical-align: middle;">
+    GitHub Issue
+</a>
+
 CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_.
 
-The CAMELS software can be viewed here https://github.com/FAU-LAP/CAMELS. We invite you to open issues on GitHub if you encounter any problems or bugs.
+The source code of CAMELS is hosted on 
+<a href="https://github.com/FAU-LAP/NOMAD-CAMELS" target="_blank">
+    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" style="width: 24px; height: 24px; vertical-align: middle;">
+    GitHub 
+</a>. 
+
+We invite you to open issues on GitHub if you encounter any problems or bugs.
 
 Contact
 =======
