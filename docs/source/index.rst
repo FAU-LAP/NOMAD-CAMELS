@@ -98,6 +98,8 @@ Project and Community
 If you have questions or problems with CAMELS we invite you to contact us via 
 
 .. raw:: html
+
+    
     <a href="https://discord.gg/yourserverlink" target="_blank">
         <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0b52aa9e99b832574a53_full_logo_blurple_RGB.png" alt="Discord Logo" style="width: 24px; height: 24px; vertical-align: middle;">
         Discord
@@ -106,6 +108,8 @@ If you have questions or problems with CAMELS we invite you to contact us via
 or by opening a
 
 .. raw:: html
+
+
     <a href="https://github.com/FAU-LAP/NOMAD-CAMELS/issues" target="_blank">
         <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" style="width: 24px; height: 24px; vertical-align: middle;">
         GitHub Issue
@@ -116,6 +120,8 @@ CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <http
 The source code of CAMELS is hosted on
 
 .. raw:: html
+
+
     <a href="https://github.com/FAU-LAP/NOMAD-CAMELS" target="_blank">
         <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" style="width: 24px; height: 24px; vertical-align: middle;">
         GitHub 
