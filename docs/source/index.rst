@@ -110,7 +110,7 @@ You can also open GitHub Issues:
 
 .. image:: /assets/CAMELS_Issues_Logo.png
    :target: https://github.com/FAU-LAP/NOMAD-CAMELS/issues
-   :width: 150px
+   :width: 187px
    :height: 50px
 
 
@@ -120,7 +120,7 @@ The source code of CAMELS is hosted on GitHub:
 
 .. image:: /assets/CAMELS_GitHub_Logo.png
    :target: https://github.com/FAU-LAP/NOMAD-CAMELS
-   :width: 200px
+   :width: 214px
    :height: 50px
 
 We invite you to open issues on GitHub if you encounter any problems or bugs.
