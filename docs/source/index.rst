@@ -101,8 +101,7 @@ If you have questions or problems with CAMELS we invite you to contact us via
 
 
     <a href="https://discord.gg/Gyzx3ukUw8" target="_blank" style="display: flex; align-items: center;">
-        <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0b52aa9e99b832574a53_full_logo_blurple_RGB.png" alt="Discord Logo" style="width: 36px; height: 36px;">
-        <span style="margin-left: 8px;">Discord</span>
+        <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0b52aa9e99b832574a53_full_logo_blurple_RGB.png" alt="Discord Logo" style="width: 187px; height: 36px;">
     </a>
 
 or by opening a
@@ -111,8 +110,7 @@ or by opening a
 
 
     <a href="https://github.com/FAU-LAP/NOMAD-CAMELS/issues" target="_blank" style="display: inline-flex; align-items: center;">
-    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" style="width: 36px; height: 36px; vertical-align: middle;">
-    <span style="line-height: 36px; margin-left: 8px;">GitHub Issue</span>
+    <img src="docs\source\assets\CAMELS_Issues_Logo.png" alt="GitHub Logo" style="width: 36px; height: 36px; vertical-align: middle;">
     </a>
 
 CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_.
@@ -123,8 +121,7 @@ The source code of CAMELS is hosted on
 
 
     <a href="https://github.com/FAU-LAP/NOMAD-CAMELS" target="_blank" style="display: flex; align-items: center;">
-        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" style="width: 36px; height: 36px;">
-        <span style="margin-left: 8px;">GitHub</span>
+        <img src="docs\source\assets\CAMELS_GitHub_Logo.png" alt="GitHub Logo" style="width: 36px; height: 36px;">
     </a>
 
 
