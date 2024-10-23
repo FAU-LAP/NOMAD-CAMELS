@@ -784,6 +784,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             dat["Name2"] = dat["name"]
             data = pd.DataFrame(dat)
             data.set_index("Name2", inplace=True)
+            data_dict = data.to_dict("index")
+            removers = []
+            for key, value in self.sampledata.items():
+                if value["owner"] == self.active_user and key not in data_dict:
+                    removers.append(key)
+            for key in removers:
+                self.sampledata.pop(key)
             self.sampledata.update(data.to_dict("index"))
             self.update_shown_samples()
 

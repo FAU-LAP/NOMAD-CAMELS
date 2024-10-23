@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.5.1
+Fixes:
+- samples can now be deleted again
+
 ## 1.5.0 metadata structuring
 Features:
 There is a new data output structure, making it clearer to understand, mostly consistent with old versions.
