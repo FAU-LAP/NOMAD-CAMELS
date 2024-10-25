@@ -237,7 +237,7 @@ class FastapiThread(QThread):
             self.start_protocol_signal.emit(str(protocol_name), protocol_uuid, None)
             return JSONResponse(
                 content={
-                    "check protocol status here": f"/api/v1/protocols/results/{protocol_uuid}, type of protocol_uuid: {type(protocol_uuid)}"
+                    "check protocol status here": f"/api/v1/protocols/results/{protocol_uuid}"
                 }
             )
 
