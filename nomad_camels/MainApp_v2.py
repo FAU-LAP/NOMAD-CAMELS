@@ -172,10 +172,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionEPICS_driver_builder.triggered.connect(self.launch_epics_builder)
         self.actionExport_from_databroker.triggered.connect(self.launch_data_exporter)
         self.actionReport_Bug.triggered.connect(
-            lambda x: self.open_link(f"{camels_github}/issues")
+            lambda x: variables_handling.open_link(f"{camels_github}/issues")
         )
         self.actionDocumentation.triggered.connect(
-            lambda x: self.open_link(camels_github_pages)
+            lambda x: variables_handling.open_link(camels_github_pages)
         )
         self.actionUpdate_CAMELS.triggered.connect(
             lambda x: update_camels.question_message_box(self)
@@ -2182,22 +2182,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
         if not os.path.isfile(path):
             self.build_protocol(protocol_name, False)
-        self.open_link(path)
-
-    def open_link(self, link):
-        """
-        Open a link in the default program. Should work in all operating systems.
-
-        Parameters
-        ----------
-        link : str
-            The link to open.
-        """
-        if platform.system() == "Windows":
-            os.startfile(link)
-        else:
-            opener = "open" if platform.system() == "Darwin" else "xdg-open"
-            subprocess.call([opener, link])
+        variables_handling.open_link(path)
 
     # --------------------------------------------------
     # tools
