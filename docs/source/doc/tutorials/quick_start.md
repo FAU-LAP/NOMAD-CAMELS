@@ -1,76 +1,3 @@
-<style>
-.box-container {
-  display: flex;
-  gap: 16px;
-  justify-content: start;
-  flex-wrap: wrap;
-}
-
-.box {
-  border: 1px solid #e0e0e0;
-  padding: 16px;
-  border-radius: 8px;
-  min-width: 200px;
-  max-width: 300px;
-  flex-grow: 1;
-  text-align: left;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease, max-height 0.3s ease; /* Add transition for height */
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column; /* Arrange content in a column */
-  justify-content: flex-start; /* Align items at the start */
-}
-
-.box:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.box-title {
-  font-size: 16px;
-  font-weight: bold;
-  color: #2d64f2;
-  text-decoration: none;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.box-content {
-  font-size: 14px;
-  color: #555;
-  max-height: 92px; /* Initial height when not expanded */
-  overflow: hidden;
-  transition: max-height 0.3s ease; /* Smooth transition for expansion */
-}
-
-.box-content.expanded {
-  max-height: 500px; /* Expand height when clicked */
-}
-
-.more-link {
-  color: #2d64f2;
-  cursor: pointer;
-  margin-top: 2px;
-  align-self: flex-start; /* Align 'More' link to start */
-}
-</style>
-
-<script>
-function toggleContent(event, element) {
-  event.preventDefault(); // Prevent the default link action
-  event.stopPropagation(); // Prevent the click from bubbling up to the anchor
-  const content = element.previousElementSibling;
-  if (content.classList.contains('expanded')) {
-    content.classList.remove('expanded');
-    element.textContent = 'More';
-  } else {
-    content.classList.add('expanded');
-    element.textContent = 'Less';
-  }
-}
-</script>
-
 # Getting Started
 
 After successful [installation](../installation/installation.md) of CAMELS you are ready to start your experiments.
@@ -108,8 +35,9 @@ After successful [installation](../installation/installation.md) of CAMELS you a
     <p class="box-content">You can add your own instruments that have not yet been implemented by writing your own drivers. You can follow our step-by-step guide for writing drivers or start with the new driver documentation directly.</p>
     <span class="more-link" onclick="toggleContent(event, this)">More</span>
   </a>
-  <br><br>
 </div>
+
+
 
 <!-- 
 ### How to Add and Configure Instruments

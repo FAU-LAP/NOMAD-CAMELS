@@ -1,13 +1,19 @@
-# UNIX - Installation Using Pyenv
+# Linux - Installation Using Pyenv
 
 ## 1. Pyenv Installation
 See the [official Pyenv installation guide](https://github.com/pyenv/pyenv#installation) for more details and the most recent version.
 
-- Install pyenv to install the necessary Python version (you do not need to do this if you already have the correct Python version installed):
+- Install pyenv to install the necessary Python version 
+  
+  ```{attention}
+  you do not need to do this if you already have the correct Python version installed:
+  ```
+
   ```bash
   sudo apt-get install git
   curl https://pyenv.run | bash
   ```
+
 - For **bash**:\
 Stock Bash startup files vary widely between distributions in which of them source which, under what circumstances, in what order and what additional configuration they perform. As such, the most reliable way to get Pyenv in all environments is to append Pyenv configuration commands to both `.bashrc` (for interactive shells) and the profile file that Bash would use (for login shells).
 
@@ -38,12 +44,12 @@ Stock Bash startup files vary widely between distributions in which of them sour
 - Install Python [build dependencies](https://github.com/pyenv/pyenv/wiki#suggested-build-environment) before attempting to install a new Python version.
 - **You can now begin using Pyenv.**
 ## 2. Python Installation
-- Type in to the terminal 
+- Run the following command
   ```
   pyenv install <python_version>
   ``` 
   for example `pyenv install 3.11.3`.\
-`<python_version>` is the python version you want to install (3.11.3 or higher is suggested for NOMAD-CAMELS).
+`<python_version>` is the Python version you want to install (3.11.3 or higher is suggested for NOMAD-CAMELS).
 
 ## 3. Install CAMELS
 - Create a folder where you want to install CAMELS (e.g. `\NOMAD-CAMELS\`)

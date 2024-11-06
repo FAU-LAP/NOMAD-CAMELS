@@ -6,7 +6,7 @@ The installer automatically does the following steps:
 - Creates all necessary folders and files
 - Installs pyenv to `%userprofile%/.pyenv/` if it is not already installed
 - Installs Python 3.11.3. using pyenv
-- Creates the correct python environment (called `.desertenv` using the pyenv 3.11.3 python version)
+- Creates the correct Python environment (called `.desertenv` using the pyenv 3.11.3 Python version)
 - Installs CAMELS (using pip in the `.desertenv` environment)
 
 This takes about 2-3 minutes depending on your system's performance.

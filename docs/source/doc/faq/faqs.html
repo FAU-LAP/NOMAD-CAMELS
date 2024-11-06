@@ -1,17 +1,13 @@
-.wy-side-nav-search{background-color: #000000}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ Page</title>
+    <style>
+        .wy-side-nav-search{background-color: #000000}
 /* Make the page content wider */
-/* Make the page content responsive */
 .wy-nav-content {
-    max-width: 65%; /* Default for larger screens */
-    /*margin: auto;  Center the content */
-}
-
-/* Media query for smaller screens (mobile) */
-@media (max-width: 1200px) {
-    .wy-nav-content {
-        max-width: 95%; /* Expand to nearly full width on small screens */
-        padding: 0 5%; /* Add some padding for spacing */
-    }
+    max-width: 65%;
 }
 
 .box-container {
@@ -89,3 +85,49 @@
   text-decoration: underline; /* Add underline on hover */
   /* You can add more styles like background color, font weight, etc. */
 }
+
+    </style>
+</head>
+<body>
+
+<div class="wy-nav-content">
+    <!-- Search Input -->
+    <input type="text" id="searchInput" placeholder="Search FAQs..." onkeyup="filterFAQs()" />
+
+    <!-- FAQ Container -->
+    <div class="box-container" id="faqContainer">
+        <!-- FAQ Item -->
+        <div class="box">
+            <a href="#" class="box-title" onclick="toggleContent(this)">What is your return policy?</a>
+            <div class="box-content">
+                Our return policy lasts 30 days. If 30 days have gone by since your purchase, unfortunately, we can't offer you a refund or exchange.
+            </div>
+            <a href="#" class="more-link" onclick="toggleContent(this)">Read More</a>
+        </div>
+        <div class="box">
+            <a href="#" class="box-title" onclick="toggleContent(this)">How can I track my order?</a>
+            <div class="box-content">
+                You can track your order using the tracking number provided in your confirmation email.
+            </div>
+            <a href="#" class="more-link" onclick="toggleContent(this)">Read More</a>
+        </div>
+        <div class="box">
+            <a href="#" class="box-title" onclick="toggleContent(this)">Test?</a>
+            <div class="box-content">
+                TEST!
+            </div>
+            <a href="#" class="more-link" onclick="toggleContent(this)">Read More</a>
+        </div>
+
+        <!-- Repeat similar blocks for other FAQs -->
+        <!-- ... -->
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // JavaScript code will go here
+</script>
+
+</body>
+</html>

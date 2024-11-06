@@ -189,7 +189,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Thorlabs</td>
                 <td>K10CR1</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-thorlabs-K10CR1'>0.1.0</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-thorlabs-K10CR1'>0.1.1</a></td>
             </tr>
             <tr>
                 <td>Thorlabs</td>

@@ -30,27 +30,56 @@ Learn more about CAMELS in our peer-reviewed paper
 
 Why CAMELS?
 ===========
-   
-#. **Smooth installation**
 
-   CAMELS is a python package distributed via PyPI. It is easily installable on any computer. On Windows, let the installer do all the work for you.
-#. **Easy to use**
+.. raw:: html
 
-   No programming skills required. Just configure your measurement and process protocols. Get it done within minutes.
-#. **FAIR data**
+    <div class="box-container">
 
-   Automatically store FAIR data with rich metadata that lets you and others understand your experiment in detail. Optionally connect directly with your NOMAD Oasis.
-#. **Flexible and extendable**
+        <div class="box">
+            <div class="box-title">Smooth installation</div>
+            <div class="box-content">
+                CAMELS is a Python package distributed via PyPI. It is easily installable on any computer. On Windows, let the installer do all the work for you.
+            </div>
+        </div>
 
-   Add further instruments to your setup at will. Reuse and adapt existing measurements quickly.
-#. **Scalable**
+        <div class="box">
+            <div class="box-title">Easy to use</div>
+            <div class="box-content">
+                No programming skills required. Just configure your measurement and process protocols. Get it done within minutes.
+            </div>
+        </div>
 
-   Work with small setups using directly connected instruments. Or connect to large distributed systems using advanced protocols like EPICS.
-#. **Community driven**
+        <div class="box">
+            <div class="box-title">FAIR data</div>
+            <div class="box-content">
+                Automatically store FAIR data with rich metadata that lets you and others understand your experiment in detail. Optionally connect directly with your NOMAD Oasis.
+            </div>
+        </div>
 
-   Contribute to CAMELS and add further instruments on GitHub. CAMELS comes with an instrument driver wizard that helps you implement new instruments.
+        <div class="box">
+            <div class="box-title">Flexible and extendable</div>
+            <div class="box-content">
+                Add further instruments to your setup at will. Reuse and adapt existing measurements quickly.
+            </div>
+        </div>
 
-In experimental physics many experiments utilize a multitude of different measurement devices used in dynamically changing setups where changing measurement procedures or adding new devices is often cumbersome and difficult as it often requires advanced programming knowledge. CAMELS will allow you to define instrument control and measurement protocols using a graphical user interface (GUI) where each measurement step can be added with the click of a button. This provides a low entry-threshold enabling the creation of new and sophisticated measurement protocols without programming knowledge or a deeper understanding of device communication.
+        <div class="box">
+            <div class="box-title">Scalable</div>
+            <div class="box-content">
+                Work with small setups using directly connected instruments. Or connect to large distributed systems using advanced protocols like EPICS.
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="box-title">Community driven</div>
+            <div class="box-content">
+                Contribute to CAMELS and add further instruments on GitHub. CAMELS comes with an instrument driver wizard that helps you implement new instruments.
+            </div>
+        </div>
+
+    </div>
+
+In experimental sciences experiments often utilize a multitude of different measurement devices used in dynamically changing setups. Changing measurement procedures or adding new devices is often cumbersome and difficult as it often requires advanced programming knowledge. CAMELS allows you to define instrument control and measurement protocols using a graphical user interface (GUI) where each measurement step can be added with the click of a button. This provides a low entry-threshold enabling the creation of new and sophisticated measurement protocols without programming knowledge or a deeper understanding of device communication.
 
 Who is CAMELS for?
 ==================
@@ -63,19 +92,44 @@ How to get started?
 To get started with CAMELS first `install <https://fau-lap.github.io/NOMAD-CAMELS/doc/installation/installation.html>`_ it and learn how to use it with our "Getting started" `tutorial <https://fau-lap.github.io/NOMAD-CAMELS/doc/tutorials/quick_start.html>`_.
 
 
-Project and Community
+Contact and Community
 =====================
+
+If you have questions or problems with CAMELS we invite you to contact us via Discord:
+
+.. raw:: html
+
+
+    <a href="https://discord.gg/Gyzx3ukUw8" target="_blank" style="display: flex; align-items: center;">
+        <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0b52aa9e99b832574a53_full_logo_blurple_RGB.png" alt="Discord Logo" style="width: 187px; height: 36px;">
+    </a>
+
+search for the channels **discussion-camels** or **issues-camels**. 
+
+You can also open GitHub Issues:
+
+.. image:: /assets/CAMELS_Issues_Logo.png
+   :target: https://github.com/FAU-LAP/NOMAD-CAMELS/issues
+   :width: 187px
+   :height: 50px
+
+
 CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_.
 
-The CAMELS software can be viewed here https://github.com/FAU-LAP/CAMELS. We invite you to open issues on GitHub if you encounter any problems or bugs.
+The source code of CAMELS is hosted on GitHub:
 
-Contact
-=======
-If you have any questions or feedback you can reach the development team of CAMELS via:
+.. image:: /assets/CAMELS_GitHub_Logo.png
+   :target: https://github.com/FAU-LAP/NOMAD-CAMELS
+   :width: 214px
+   :height: 50px
+
+We invite you to open issues on GitHub if you encounter any problems or bugs.
+
+If you have any questions or feedback you can also always reach the development team of CAMELS via E-mail:
 
 E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
-Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussions>`_
+
 
 .. toctree::
    :maxdepth: 2
@@ -86,6 +140,7 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    Getting Started <doc/tutorials/quick_start.md>
    Protocol Steps Explained <doc/protocol_steps/protocol_steps_landing.md>
    Handling HDF5 Files <doc/handling_hdf5.md>
+   FAQ <doc/faq/faq.md>
 
 .. toctree::
    :maxdepth: 2
@@ -109,7 +164,13 @@ Join the discussion on `GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS/discussi
    Run IOCs <doc/epics/procServ.md>
    Archiver Appliance <doc/epics/ArchiverAppliance.md>
    Example Setups <doc/epics/examples.md>
-   
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Videos
+
+   User Feedback <doc/videos/user_feedback.md>
+   Developer Statements <doc/videos/developer_statements.md>
 
 .. toctree::
    :maxdepth: 2

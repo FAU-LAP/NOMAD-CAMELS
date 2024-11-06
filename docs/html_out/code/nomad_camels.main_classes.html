@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
@@ -6,24 +8,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>nomad_camels.main_classes package &mdash; NOMAD-CAMELS  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=ff25430b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=4c64c665" />
 
   
     <link rel="shortcut icon" href="../_static/CAMELS.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/js/custom.js?v=b10435ba"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -58,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/faq/faq.html">FAQ</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Instruments</span></p>
 <ul>
@@ -74,6 +73,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../doc/epics/procServ.html">Run IOCs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/epics/ArchiverAppliance.html">Archiver Appliance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/epics/examples.html">Example Setups</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Videos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/videos/user_feedback.html">User Feedback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/videos/developer_statements.html">Developer Statements</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
 <ul>
@@ -1641,6 +1645,11 @@ attributes are the name, and the device.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.main_classes.plot_pyqtgraph.</span></span><span class="sig-name descname"><span class="pre">LivePlot_2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotItem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphics_layout</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'primary'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QObject</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">CallbackBase</span></code></p>
 <dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.change_maxlen">
+<span class="sig-name descname"><span class="pre">change_maxlen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxlen</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.change_maxlen" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.clear_plot">
 <span class="sig-name descname"><span class="pre">clear_plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.clear_plot" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -1822,8 +1831,14 @@ t=0 is 1 Jan 1970 (“the UNIX epoch”). Default is ‘run’.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.main_classes.plot_pyqtgraph.</span></span><span class="sig-name descname"><span class="pre">PlotWidget_2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'primary'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.main_classes.plot_pyqtgraph.</span></span><span class="sig-name descname"><span class="pre">PlotWidget_2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxlen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'primary'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D.change_maxlen">
+<span class="sig-name descname"><span class="pre">change_maxlen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D.change_maxlen" title="Link to this definition"></a></dt>
+<dd><p>Changes the maximum number of data points to show in the plot. Reads the value from the line edit and sets it as the new maximum length.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D.clear_plot">
 <span class="sig-name descname"><span class="pre">clear_plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D.clear_plot" title="Link to this definition"></a></dt>
@@ -3403,13 +3418,6 @@ is enabled, otherwise disabled.</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.General_Protocol_Settings.enable_nexus">
-<span class="sig-name descname"><span class="pre">enable_nexus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.General_Protocol_Settings.enable_nexus" title="Link to this definition"></a></dt>
-<dd><p>When the checkBox_NeXus is clicked, enables / disables the
-other widgets for the nexus-definition.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.General_Protocol_Settings.name_change">
 <span class="sig-name descname"><span class="pre">name_change</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.General_Protocol_Settings.name_change" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -3451,7 +3459,7 @@ other widgets for the nexus-definition.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.Measurement_Protocol">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.main_classes.protocol_class.</span></span><span class="sig-name descname"><span class="pre">Measurement_Protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loop_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nexus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.main_classes.protocol_class.</span></span><span class="sig-name descname"><span class="pre">Measurement_Protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loop_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nexus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class for the measurement protocols. It mainly contains
 loop_steps and plots.</p>
@@ -3593,42 +3601,9 @@ are included here.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.Measurement_Protocol.channel_metadata">
-<span class="sig-name descname"><span class="pre">channel_metadata</span></span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol.channel_metadata" title="Link to this definition"></a></dt>
-<dd><p>Currently deprecated. Only used for specific nexus output.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.Measurement_Protocol.config_metadata">
-<span class="sig-name descname"><span class="pre">config_metadata</span></span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol.config_metadata" title="Link to this definition"></a></dt>
-<dd><p>Currently deprecated. Only used for specific nexus output.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.Measurement_Protocol.metadata">
-<span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol.metadata" title="Link to this definition"></a></dt>
-<dd><p>Currently deprecated. Only used for specific nexus output.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.Measurement_Protocol.use_nexus">
 <span class="sig-name descname"><span class="pre">use_nexus</span></span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol.use_nexus" title="Link to this definition"></a></dt>
-<dd><p>Currently deprecated. Only used for specific nexus output.</p>
+<dd><p>Whether to write a NeXus-entry into the datafile as well.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -3687,13 +3662,6 @@ Where in the list to add the step</p></li>
 <span class="sig-name descname"><span class="pre">get_add_main_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol.get_add_main_string" title="Link to this definition"></a></dt>
 <dd><p>Gets all the steps that should be executed in the protocol’s main
 function.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels.main_classes.protocol_class.Measurement_Protocol.get_nexus_paths">
-<span class="sig-name descname"><span class="pre">get_nexus_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.protocol_class.Measurement_Protocol.get_nexus_paths" title="Link to this definition"></a></dt>
-<dd><p>Get a dictionary containing the paths used for the output
-NeXus-file. Currently deprecated.</p>
 </dd></dl>
 
 <dl class="py method">
