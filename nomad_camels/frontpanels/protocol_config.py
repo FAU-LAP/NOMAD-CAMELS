@@ -549,7 +549,30 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 )
                 device_actions.append(action)
             add_menu = QMenu("Add Step")
-            add_menu.addActions(add_actions)
+            # -------------- Above actions -----------------------------
+            add_menu_channels = QMenu("Channels")
+            add_menu_loops = QMenu("Loops")
+            add_menu_additional = QMenu("Additional")
+            # Filter out specific steps with a list of the .text of the QAction and then remove them from the list
+            duplicate_actions = add_actions[:]
+            for action in add_actions:
+                if action.text() in channel_action_list:
+                    add_menu_channels.addAction(action)
+                    # Remove from the list
+                    duplicate_actions.remove(action)
+                elif action.text() in loop_action_list:
+                    add_menu_loops.addAction(action)
+                    # Remove from the list
+                    duplicate_actions.remove(action)
+                elif action.text() in additional_action_list:
+                    add_menu_additional.addAction(action)
+                    # Remove from the list
+                    duplicate_actions.remove(action)
+            add_menu.addMenu(add_menu_channels)
+            add_menu.addMenu(add_menu_loops)
+            if len(duplicate_actions) > 0:
+                add_menu.addActions(duplicate_actions)
+            add_menu.addMenu(add_menu_additional)
             if device_actions:
                 add_menu.addSeparator()
                 add_menu.addActions(device_actions)
