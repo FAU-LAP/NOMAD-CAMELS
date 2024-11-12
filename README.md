@@ -19,6 +19,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.5.1
+New:
+- added a button to the API settings that redirects you to the API documentation
+
 Fixes:
 - samples can now be deleted again
 

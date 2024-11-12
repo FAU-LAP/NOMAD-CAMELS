@@ -195,6 +195,10 @@ class Settings_Window(Ui_settings_window, QDialog):
                 self.pushButton_delete_Api_keys.setEnabled(False)
         if "API_port" in settings:
             self.lineEdit_api_port.setText(settings["API_port"])
+        self.pushButton_API_docu.clicked.connect(self.open_api_docu)
+        self.pushButton_API_docu.setToolTip(
+            "If the page does not load, accept your settings and try again. The API server might not be started yet."
+        )
 
     def autosave_run_change(self):
         on = self.checkBox_autosave_run.isChecked()
@@ -376,11 +380,19 @@ class Settings_Window(Ui_settings_window, QDialog):
         if self.checkBox_enable_Api.isChecked():
             self.pushButton_generate_Api_key.setEnabled(True)
             self.pushButton_delete_Api_keys.setEnabled(True)
+            self.pushButton_API_docu.setEnabled(True)
         else:
             self.pushButton_generate_Api_key.setEnabled(False)
             self.pushButton_copy_Api_key_clipboard.setEnabled(False)
             self.pushButton_delete_Api_keys.setEnabled(False)
+            self.pushButton_API_docu.setEnabled(False)
             self.pushButton_copy_Api_key_clipboard.setStyleSheet("")
+
+    def open_api_docu(self):
+        from nomad_camels.utility import variables_handling
+
+        link = f"http://127.0.0.1:{self.lineEdit_api_port.text()}/docs"
+        variables_handling.open_link(link)
 
 
 def hash_api_key(api_key):
