@@ -101,6 +101,90 @@ def activate_dark_mode():
     colors = dark_mode_colors
 
 
+class ListDeque_skip:
+    def __init__(self, iterable=None, maxlen=None, skip_n_points=0):
+        if iterable is None:
+            iterable = []
+        self.maxlen = maxlen
+        self.skip_n_points = skip_n_points
+        self.counter_value = 0
+        if (
+            maxlen is None
+            or maxlen == np.inf
+            or (isinstance(maxlen, str) and maxlen.lower() in ["none", "inf", "np.inf"])
+        ):
+            self.data = list(iterable)
+        else:
+            self.data = deque(iterable, maxlen=maxlen)
+
+    def append(self, item):
+        self.counter_value += 1
+        if self.skip_n_points <= 0 or self.counter_value % self.skip_n_points == 0:
+            self.data.append(item)
+
+    def extend(self, iterable):
+        self.data.extend(iterable)
+
+    def __getitem__(self, index):
+        return self.data[index]
+
+    def __setitem__(self, index, value):
+        self.data[index] = value
+
+    def __delitem__(self, index):
+        del self.data[index]
+
+    def __len__(self):
+        return len(self.data)
+
+    def __iter__(self):
+        return iter(self.data)
+
+    def __repr__(self):
+        return repr(self.data)
+
+    def clear(self):
+        self.data.clear()
+
+    def pop(self):
+        return self.data.pop()
+
+    def popleft(self):
+        if isinstance(self.data, deque):
+            return self.data.popleft()
+        else:
+            raise AttributeError("'list' object has no attribute 'popleft'")
+
+    def appendleft(self, item):
+        if isinstance(self.data, deque):
+            self.data.appendleft(item)
+        else:
+            raise AttributeError("'list' object has no attribute 'appendleft'")
+
+    def extendleft(self, iterable):
+        if isinstance(self.data, deque):
+            self.data.extendleft(iterable)
+        else:
+            raise AttributeError("'list' object has no attribute 'extendleft'")
+
+    def rotate(self, n=1):
+        if isinstance(self.data, deque):
+            self.data.rotate(n)
+        else:
+            raise AttributeError("'list' object has no attribute 'rotate'")
+
+    def change_maxlen(self, maxlen):
+        self.maxlen = maxlen
+        if maxlen is None or maxlen == np.inf:
+            self.data = list(self.data)
+        else:
+            self.data = deque(self.data, maxlen=maxlen)
+
+    def change_skip_n_points(self, skip_n_points):
+        self.skip_n_points = skip_n_points
+        self.counter_value = 0
+
+
 class PlotWidget(QWidget):
     """Class for creating a plot widget.
 
@@ -317,12 +401,20 @@ class PlotWidget(QWidget):
         label_n_data = QLabel("# data points:")
         self.lineEdit_n_data = QLineEdit(str(maxlen))
         self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
+        label_skip_n_points = QLabel("skip n points:")
+        self.lineEdit_skip_n_points = QLineEdit("0")
+        self.lineEdit_skip_n_points.returnPressed.connect(self.change_skip_n_points)
+        skip_tool_tip = "Skip n points in the plot before plotting the next value. This may be useful for long measurements to speed up plotting and free up memory."
+        label_skip_n_points.setToolTip(skip_tool_tip)
+        self.lineEdit_skip_n_points.setToolTip(skip_tool_tip)
         self.setLayout(QGridLayout())
-        self.layout().addWidget(self.plot_widget, 0, 1, 1, 4)
+        self.layout().addWidget(self.plot_widget, 0, 1, 1, 6)
         self.layout().addWidget(self.pushButton_show_options, 2, 1)
         self.layout().addWidget(self.pushButton_clear, 2, 2)
-        self.layout().addWidget(label_n_data, 2, 3)
-        self.layout().addWidget(self.lineEdit_n_data, 2, 4)
+        self.layout().addWidget(label_n_data, 2, 5)
+        self.layout().addWidget(self.lineEdit_n_data, 2, 6)
+        self.layout().addWidget(label_skip_n_points, 2, 3)
+        self.layout().addWidget(self.lineEdit_skip_n_points, 2, 4)
         self.layout().addWidget(self.plot_options, 0, 0, 3, 1)
         self.plot_options.hide()
         self.setMinimumSize(500, 400)
@@ -350,7 +442,7 @@ class PlotWidget(QWidget):
             if action.text() == "View All":
                 action.triggered.connect(self.auto_range)
             self.toolbar.addAction(action)
-        self.layout().addWidget(self.toolbar, 1, 1, 1, 4)
+        self.layout().addWidget(self.toolbar, 1, 1, 1, 6)
         self.plot_options.set_log()
 
     def auto_range(self):
@@ -372,6 +464,17 @@ class PlotWidget(QWidget):
             except ValueError:
                 return
         self.livePlot.change_maxlen(maxlen)
+
+    def change_skip_n_points(self):
+        text = self.lineEdit_skip_n_points.text()
+        if not text:
+            skip_n_points = 0
+        else:
+            try:
+                skip_n_points = int(text)
+            except ValueError:
+                return
+        self.livePlot.change_skip_n_points(skip_n_points)
 
     def show_options(self):
         """
@@ -660,7 +763,7 @@ class LivePlot(QObject, CallbackBase):
             self._epoch = epoch
             self.setup_is_done = True
 
-        self.x_data = []
+        self.x_data = ListDeque_skip(maxlen=maxlen)
         self.y_data = {}
         self.y_axes = y_axes or {}
         self.maxlen = maxlen
@@ -669,7 +772,7 @@ class LivePlot(QObject, CallbackBase):
         self.y_names = y_names
         self.ys = get_obj_fields(y_names)
         for y in y_names:
-            self.y_data[y] = []
+            self.y_data[y] = ListDeque_skip(maxlen=maxlen)
         self.current_plots = {}
         self.legend = None
         self.desc = []
@@ -875,23 +978,23 @@ class LivePlot(QObject, CallbackBase):
     def clear_plot(self):
         for y in self.current_plots:
             self.current_plots[y].setData([], [])
-        self.x_data = []
+        self.x_data = ListDeque_skip(maxlen=self.maxlen)
         for y in self.y_data:
-            self.y_data[y] = []
+            self.y_data[y] = ListDeque_skip(maxlen=self.maxlen)
         for fit in self.fitPlots:
             fit.clear_plot()
         self.update_plot()
 
     def change_maxlen(self, maxlen):
         self.maxlen = maxlen
-        if maxlen < np.inf:
-            self.x_data = deque(self.x_data, maxlen=maxlen)
-            for y in self.y_data:
-                self.y_data[y] = deque(self.y_data[y], maxlen=maxlen)
-        else:
-            self.x_data = list(self.x_data)
-            for y in self.y_data:
-                self.y_data[y] = list(self.y_data[y])
+        self.x_data.change_maxlen(maxlen)
+        for y in self.y_data:
+            self.y_data[y].change_maxlen(maxlen)
+
+    def change_skip_n_points(self, n):
+        self.x_data.skip_n_points = n
+        for y in self.y_data:
+            self.y_data[y].skip_n_points = n
 
 
 class LiveFitPlot(CallbackBase):

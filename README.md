@@ -21,6 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.5.1
 Features:
 - Can now live-control the variables of a protocol while it is running
+- Can now skip some datapoints in plotting, useful for long measurements to free up some memory or improve speed
 
 Changes:
 - added a button to the API settings that redirects you to the API documentation
