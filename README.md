@@ -19,6 +19,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.5.1
+Features:
+- Can now live-control the variables of a protocol while it is running
+
 New:
 - added a button to the API settings that redirects you to the API documentation
 

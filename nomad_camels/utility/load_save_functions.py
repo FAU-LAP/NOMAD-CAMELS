@@ -605,6 +605,8 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.use_end_protocol = prot_data["use_end_protocol"]
         if "end_protocol" in prot_data:
             prot.end_protocol = prot_data["end_protocol"]
+        if "live_variable_update" in prot_data:
+            prot.live_variable_update = prot_data["live_variable_update"]
         prot_dict.update({key: prot})
 
 

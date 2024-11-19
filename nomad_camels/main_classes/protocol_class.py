@@ -76,6 +76,11 @@ class Measurement_Protocol:
             kwargs["use_end_protocol"] if "use_end_protocol" in kwargs else False
         )
         self.end_protocol = kwargs["end_protocol"] if "end_protocol" in kwargs else ""
+        self.live_variable_update = (
+            kwargs["live_variable_update"]
+            if "live_variable_update" in kwargs
+            else False
+        )
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -483,6 +488,8 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.checkBox_no_config.clicked.connect(self.enable_disable_config)
         self.adjust_text_edit_size_prot()
 
+        self.checkBox_live_variables.setChecked(self.protocol.live_variable_update)
+
         self.radioButton_h5_during.setChecked(self.protocol.h5_during_run)
         self.radioButton_h5_after.setChecked(not self.protocol.h5_during_run)
 
@@ -592,6 +599,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.h5_during_run = self.radioButton_h5_during.isChecked()
         self.protocol.use_end_protocol = self.checkBox_perform_at_end.isChecked()
         self.protocol.end_protocol = self.ending_protocol_selection.get_path()
+        self.protocol.live_variable_update = self.checkBox_live_variables.isChecked()
 
     # def load_variables(self):
     #     """Called when starting, loads the variables from the protocol

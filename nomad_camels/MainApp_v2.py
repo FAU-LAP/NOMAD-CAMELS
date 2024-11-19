@@ -50,6 +50,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     protocol_stepper_signal = Signal(int)
     run_done_file_signal = Signal(str)
     fake_signal = Signal(int)
+    protocol_finished_signal = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -207,6 +208,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         # self.show()
         self.adjustSize()
+
+        self.live_variable_box = None
 
         self.saving_plot_list = []
         self.run_engine = None
@@ -1743,6 +1746,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
             self.re_subs.append(self.run_engine.subscribe(self.run_router))
 
+        if self.running_protocol.live_variable_update:
+            from nomad_camels.ui_widgets.variable_table import VariableBox
+
+            self.live_variable_box = VariableBox(
+                protocol=self.running_protocol, editable_names=False
+            )
+            self.live_variable_box.show()
+            self.live_variable_box.new_values_signal.connect(self.update_live_variables)
+            self.add_to_open_windows(self.live_variable_box)
+            self.protocol_finished_signal.connect(self.live_variable_box.close)
+
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
         self.pushButton_stop.setEnabled(True)
@@ -1826,6 +1840,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.run_engine.request_pause()
             self.pushButton_resume.setEnabled(True)
             self.pushButton_pause.setEnabled(False)
+
+    def update_live_variables(self, variables):
+        """
+        Live update the variables in the protocol module.
+
+        Parameters
+        ----------
+        variables : dict
+            The new values of the variables.
+        """
+        self.protocol_module.namespace.update(variables)
 
     def watchdog_triggered(self, watchdog):
         """
@@ -2051,6 +2076,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         for file in files[:-n_files]:
                             os.remove(f"{catalog_dir}/{file}")
         self.still_running = False
+        self.protocol_finished_signal.emit()
 
     def close_old_queue_devices(self):
         """

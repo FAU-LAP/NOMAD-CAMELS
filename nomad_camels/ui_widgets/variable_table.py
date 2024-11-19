@@ -1,7 +1,10 @@
-from PySide6.QtWidgets import QTableView
-from PySide6.QtGui import QStandardItemModel, QStandardItem, QPainter, QColor
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QTableView, QWidget, QVBoxLayout, QPushButton
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QPainter, QColor, QIcon
+from PySide6.QtCore import Qt, Signal
 from nomad_camels.utility import variables_handling
+
+from importlib import resources
+from nomad_camels import graphics
 
 
 class VariableTable(QTableView):
@@ -23,17 +26,16 @@ class VariableTable(QTableView):
         if self.model.rowCount() == 0:
             painter = QPainter(self.viewport())
             painter.setPen(QColor(128, 128, 128))  # Gray color
-            
+
             # Set font to be larger and bold
             font = self.font()
             font.setPointSize(font.pointSize() + 2)  # Make font larger
             font.setBold(True)
             painter.setFont(font)
-            
+
             rect = self.viewport().rect()
             painter.drawText(rect, Qt.AlignCenter, "Define your variables here.")
 
-    
     def set_protocol(self, protocol):
         """ """
 
@@ -101,3 +103,35 @@ class VariableTable(QTableView):
         self.model.setHorizontalHeaderLabels(["Name", "Value", "Data-Type"])
         self.model.itemChanged.connect(self.check_variable)
         self.update_variables()
+
+
+class VariableBox(QWidget):
+    new_values_signal = Signal(dict)
+    closing = Signal()
+
+    def __init__(self, parent=None, protocol=None, editable_names=True):
+        super().__init__(parent)
+        self.setWindowTitle(f"Live variable control - {protocol.name} - NOMAD CAMELS")
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        self.table = VariableTable(
+            protocol=protocol, editable_names=editable_names, parent=self
+        )
+        self.layout.addWidget(self.table)
+        self.button = QPushButton("update values")
+        self.button.clicked.connect(self.update_values)
+        self.layout.addWidget(self.button)
+        # Disable the close button
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
+
+    def update_values(self):
+        variables = self.table.update_variables()
+        self.new_values_signal.emit(variables)
+        return variables
+
+    def closeEvent(self, event):
+        # Emit the closing signal
+        self.closing.emit()
+        # Accept the event to close the window
+        event.accept()
