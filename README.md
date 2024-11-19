@@ -22,8 +22,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Features:
 - Can now live-control the variables of a protocol while it is running
 
-New:
+Changes:
 - added a button to the API settings that redirects you to the API documentation
+- session now also creates a sub-folder
 
 Fixes:
 - samples can now be deleted again
