@@ -30,6 +30,7 @@ Changes:
 Fixes:
 - samples can now be deleted again
 - "Channels" or "Variables" do not appear in set value popup anymore if None of these are set
+- tree of protocol sequence not scrolling back to the top anymore on every click
 
 ## 1.5.0 metadata structuring
 Features:

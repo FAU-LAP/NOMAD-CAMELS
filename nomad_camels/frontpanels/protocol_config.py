@@ -192,6 +192,8 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
     def tree_click_sequence(self):
         """Called when clicking the treeView_protocol_sequence."""
+        # Preserve the current scroll position
+        scroll_position = self.treeView_protocol_sequence.verticalScrollBar().value()
         self.update_loop_step_order()
         self.get_step_config()
         self.protocol.update_variables()
@@ -225,6 +227,8 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 self.change_step_name
             )
         self.check_movability()
+        # Restore the scroll position
+        self.treeView_protocol_sequence.verticalScrollBar().setValue(scroll_position)
 
     def build_protocol_sequence(self):
         """Shows / builds the protocol sequence in the treeView
