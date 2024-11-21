@@ -90,7 +90,26 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.general_settings = General_Protocol_Settings(protocol=protocol)
         self.meas_splitter.insertWidget(0, self.general_settings)
 
-        self.toolButton_add_step.setPopupMode(QToolButton.InstantPopup)
+        class AddButton(QToolButton):
+            def __init__(self, function, parent=None):
+                super().__init__(parent)
+                self.setText("+")
+                self.function = function
+
+            def mousePressEvent(self, event):
+                if event.button() == Qt.LeftButton:
+                    self.function(event.pos())
+                else:
+                    super().mousePressEvent(event)
+
+        add_button = AddButton(self.sequence_right_click, self)
+        stylesheet = self.toolButton_add_step.styleSheet()
+        add_button.setStyleSheet(stylesheet)
+        self.sequence_main_widget.layout().replaceWidget(
+            self.toolButton_add_step, add_button
+        )
+        self.toolButton_add_step.deleteLater()
+        self.toolButton_add_step = add_button
         self.protocol = protocol
         self.loop_step_configuration_widget = None
 
@@ -186,9 +205,9 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             action = QAction(stp)
             action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
             self.device_actions.append(action)
-        self.toolButton_add_step.addActions(self.add_actions)
-        if self.device_actions:
-            self.toolButton_add_step.addActions(self.device_actions)
+        # self.toolButton_add_step.addActions(self.add_actions)
+        # if self.device_actions:
+        #     self.toolButton_add_step.addActions(self.device_actions)
 
     def tree_click_sequence(self):
         """Called when clicking the treeView_protocol_sequence."""
