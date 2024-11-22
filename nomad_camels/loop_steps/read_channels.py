@@ -38,6 +38,10 @@ class Read_Channels(Loop_Step):
             self.channel_list = step_info["channel_list"]
         else:
             self.channel_list = []
+        if "skip_failed" in step_info:
+            self.skip_failed = step_info["skip_failed"]
+        else:
+            self.skip_failed = [] * len(self.channel_list)
         if "read_variables" in step_info:
             self.read_variables = step_info["read_variables"]
         else:
@@ -184,10 +188,13 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         # self.comboBox_readType.addItems(['read all', 'read selected'])
         # self.comboBox_readType.currentTextChanged.connect(self.read_type_changed)
         self.load_data()
-        labels = ["read", "channel"]
-        info_dict = {"channel": self.loop_step.channel_list}
+        labels = ["read", "channel", "ignore failed"]
+        info_dict = {
+            "channel": self.loop_step.channel_list,
+            "ignore failed": self.loop_step.skip_failed,
+        }
         self.read_table = Channels_Check_Table(
-            self, labels, info_dict=info_dict, title="Read-Channels"
+            self, labels, info_dict=info_dict, title="Read-Channels", checkables=[2]
         )
         self.read_type_changed()
         self.layout().addWidget(self.read_table, 5, 0, 1, 3)
@@ -247,7 +254,9 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
 
     def update_step_config(self):
         """ """
-        self.loop_step.channel_list = self.read_table.get_info()["channel"]
+        info = self.read_table.get_info()
+        self.loop_step.channel_list = info["channel"]
+        self.loop_step.skip_failed = info["ignore failed"]
         self.loop_step.read_variables = self.checkBox_read_variables.isChecked()
         # self.lineEdit_search.clear()
         # self.build_channels_table()

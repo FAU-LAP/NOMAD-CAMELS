@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QWidgetAction,
 )
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QBrush, QFont
+from PySide6.QtGui import QBrush, QFont, QStandardItem
 
 from nomad_camels.utility import variables_handling
 
@@ -28,6 +28,7 @@ class Channels_Check_Table(QWidget):
         title="",
         channels=None,
         use_configs=False,
+        checkables=None,
     ):
         super().__init__(parent)
         if use_configs:
@@ -39,6 +40,7 @@ class Channels_Check_Table(QWidget):
         self.only_output = only_output
         self.headerLabels = headerLabels or []
         self.checkstrings = checkstrings or []
+        self.checkables = checkables or []
         self.info_dict = info_dict or {}
         if "channel" not in self.info_dict:
             self.info_dict["channel"] = []
@@ -242,8 +244,7 @@ class Channels_Check_Table(QWidget):
     def update_info(self):
         """ """
         channel_list = self.info_dict["channel"]
-        if "value"  in self.info_dict:
-            self.value_list = self.info_dict["value"].copy()
+        self.value_dict = self.info_dict.copy()
         for i in range(self.tableWidget_channels.rowCount()):
             name = self.tableWidget_channels.item(i, 1).text()
             if (
@@ -264,14 +265,22 @@ class Channels_Check_Table(QWidget):
                     while len(self.info_dict[lab]) < n + 1:
                         self.info_dict[lab].append(None)
                     item = self.tableWidget_channels.item(i, 2 + j)
-                    t = item.text()
-                    if not t:
-                        raise Exception(
-                            f"You need to enter a value for channel {name}!"
+                    if j + 2 in self.checkables:
+                        t = item.text()
+                        if t == "None":
+                            t = self.value_dict[lab][n]
+                        self.info_dict[lab][n] = (
+                            item.checkState() == Qt.CheckState.Checked
                         )
-                    if t == 'None':
-                        t = self.value_list[n]
-                    self.info_dict[lab][n] = t
+                    else:
+                        t = item.text()
+                        if not t:
+                            raise Exception(
+                                f"You need to enter a value for channel {name}!"
+                            )
+                        if t == "None":
+                            t = self.value_dict[lab][n]
+                        self.info_dict[lab][n] = t
         rems = []
         for channel in channel_list:
             if channel not in self.channels:
@@ -319,14 +328,28 @@ class Channels_Check_Table(QWidget):
             if channel in self.info_dict["channel"]:
                 n_chan = self.info_dict["channel"].index(channel)
                 for lab in self.headerLabels[2:]:
-                    if n_chan < len(self.info_dict[lab]):  # Check if index is within range
+                    if n_chan < len(
+                        self.info_dict[lab]
+                    ):  # Check if index is within range
                         vals.append(str(self.info_dict[lab][n_chan]))
                     else:
                         vals.append("")  # Append empty string if index is out of range
             for j in range(len(self.headerLabels[2:])):
-                item = QTableWidgetItem(vals[j] if vals else "")
-                self.tableWidget_channels.setItem(n, j + 2, item)
-                self.check_string(item)
+                if j + 2 in self.checkables:
+                    item = QTableWidgetItem()
+                    # set item checkable by user but set it to be not editable
+                    item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+                    item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                    item.setCheckState(
+                        Qt.CheckState.Checked
+                        if vals and vals[j] == "True"
+                        else Qt.CheckState.Unchecked
+                    )
+                    self.tableWidget_channels.setItem(n, j + 2, item)
+                else:
+                    item = QTableWidgetItem(vals[j] if vals else "")
+                    self.tableWidget_channels.setItem(n, j + 2, item)
+                    self.check_string(item)
                 if metadata:
                     item.setToolTip(metadata)
             n += 1
