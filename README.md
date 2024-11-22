@@ -28,6 +28,7 @@ Changes:
 - session now also creates a sub-folder
 
 Fixes:
+- opening the data path opened several windows in some cases, now fixed
 - samples can now be deleted again
 - "Channels" or "Variables" do not appear in set value popup anymore if None of these are set
 - tree of protocol sequence not scrolling back to the top anymore on every click
