@@ -6,6 +6,8 @@ simpler to use these than writing them as a string into the protocol-file.
 
 import numpy as np
 from bluesky import plan_stubs as bps
+from bluesky.preprocessors import contingency_wrapper, rewindable_wrapper
+from bluesky.utils import all_safe_rewind, short_uid
 
 from ophyd import SignalRO, Device
 
@@ -189,7 +191,7 @@ def trigger_multi(devices, grp=None):
             yield from bps.trigger(obj, group=grp)
 
 
-def read_wo_trigger(devices, grp=None, stream="primary"):
+def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None):
     """
     Used if not reading by trigger_and_read, but splitting both. This function only reads, without triggering.
 
@@ -208,16 +210,47 @@ def read_wo_trigger(devices, grp=None, stream="primary"):
     ret : dict
         The readings of the devices.
     """
+    skip_on_exception = skip_on_exception or [False] * len(devices)
     if grp is not None:
         yield from bps.wait(grp)
     yield from bps.create(stream)
-    ret = {}  # collect and return readings to give plan access to them
-    for obj in devices:
-        reading = yield from bps.read(obj)
-        if reading is not None:
-            ret.update(reading)
-    yield from bps.save()
+
+    def read_plan():
+        ret = {}
+        for i, obj in enumerate(devices):
+            try:
+                reading = yield from bps.read(obj)
+            except Exception as ex:
+                if not skip_on_exception[i]:
+                    raise ex
+                print(f"Skipping reading of {obj.name} due to exception: {ex}")
+                reading = (obj.name, {})
+            if reading is not None:
+                ret.update(reading)
+        return ret
+
+    def standard_path():
+        yield from bps.save()
+
+    def exception_path(ex):
+        yield from bps.drop()
+        raise ex
+
+    ret = yield from contingency_wrapper(
+        read_plan(), except_plan=exception_path, else_plan=standard_path
+    )
     return ret
+
+
+def trigger_and_read(devices, stream="primary", skip_on_exception=None):
+    rewindable = all_safe_rewind(devices)
+
+    def inner_trigger_read():
+        grp = short_uid("trigger")
+        yield from trigger_multi(devices, grp)
+        return (yield from read_wo_trigger(devices, grp, stream, skip_on_exception))
+
+    return (yield from rewindable_wrapper(inner_trigger_read(), rewindable))
 
 
 def simplify_configs_dict(configs):
