@@ -77,11 +77,11 @@ jobs:
           python-version: 3.11
       - name: Install dependencies
         run: |
-          brew install pkgconf
-          if brew list pkg-config &>/dev/null; then
-            brew unlink pkg-config
-          fi
-          brew link --overwrite pkgconf
+        if brew list pkg-config &>/dev/null; then
+          brew unlink pkg-config
+        fi
+        brew install pkgconf
+        brew link --overwrite pkgconf
           brew install hdf5
           echo "HDF5_DIR=$(brew --prefix hdf5)" >> $GITHUB_ENV
           python -m pip install --upgrade pip
