@@ -77,8 +77,9 @@ jobs:
           python-version: 3.11
       - name: Install dependencies
         run: |
-          if brew list pkg-config@0.29.2 &>/dev/null; then
-            brew unlink pkg-config@0.29.2
+          brew install pkgconf
+          if brew list pkg-config &>/dev/null; then
+            brew unlink pkg-config
           fi
           brew link --overwrite pkgconf
           brew install hdf5
