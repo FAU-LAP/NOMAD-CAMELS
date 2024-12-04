@@ -146,6 +146,7 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.main_classes.plot_pyqtgraph">nomad_camels.main_classes.plot_pyqtgraph module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip"><code class="docutils literal notranslate"><span class="pre">ListDeque_skip</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.main_classes.plot_pyqtgraph.LiveFitPlot"><code class="docutils literal notranslate"><span class="pre">LiveFitPlot</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot"><code class="docutils literal notranslate"><span class="pre">LivePlot</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D"><code class="docutils literal notranslate"><span class="pre">LivePlot_2D</span></code></a></li>
@@ -1497,6 +1498,62 @@ attributes are the name, and the device.</p>
 <span id="nomad-camels-main-classes-plot-pyqtgraph-module"></span><h2>nomad_camels.main_classes.plot_pyqtgraph module<a class="headerlink" href="#module-nomad_camels.main_classes.plot_pyqtgraph" title="Link to this heading"></a></h2>
 <p>This module contains the classes for the plot widgets, based on pyqtgraph.</p>
 <dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.main_classes.plot_pyqtgraph.</span></span><span class="sig-name descname"><span class="pre">ListDeque_skip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxlen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_n_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.append" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.appendleft">
+<span class="sig-name descname"><span class="pre">appendleft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.appendleft" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.change_maxlen">
+<span class="sig-name descname"><span class="pre">change_maxlen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxlen</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.change_maxlen" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.change_skip_n_points">
+<span class="sig-name descname"><span class="pre">change_skip_n_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skip_n_points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.change_skip_n_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.clear" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.extend">
+<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.extend" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.extendleft">
+<span class="sig-name descname"><span class="pre">extendleft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.extendleft" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.pop">
+<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.pop" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.popleft">
+<span class="sig-name descname"><span class="pre">popleft</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.popleft" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.rotate">
+<span class="sig-name descname"><span class="pre">rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.rotate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LiveFitPlot">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.main_classes.plot_pyqtgraph.</span></span><span class="sig-name descname"><span class="pre">LiveFitPlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">livefit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewbox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotItem</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LiveFitPlot" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CallbackBase</span></code></p>
@@ -1568,6 +1625,11 @@ attributes are the name, and the device.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot.change_maxlen">
 <span class="sig-name descname"><span class="pre">change_maxlen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxlen</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot.change_maxlen" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot.change_skip_n_points">
+<span class="sig-name descname"><span class="pre">change_skip_n_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot.change_skip_n_points" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1782,6 +1844,11 @@ t=0 is 1 Jan 1970 (“the UNIX epoch”). Default is ‘run’.</p></li>
 <span class="sig-name descname"><span class="pre">change_maxlen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.PlotWidget.change_maxlen" title="Link to this definition"></a></dt>
 <dd><p>Changes the maximum number of data points to show in the plot. Reads the value from the line edit and sets it as the new maximum length.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.PlotWidget.change_skip_n_points">
+<span class="sig-name descname"><span class="pre">change_skip_n_points</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.PlotWidget.change_skip_n_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.PlotWidget.clear_plot">

@@ -145,6 +145,7 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.ui_widgets.variable_table">nomad_camels.ui_widgets.variable_table module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.ui_widgets.variable_table.VariableBox"><code class="docutils literal notranslate"><span class="pre">VariableBox</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.ui_widgets.variable_table.VariableTable"><code class="docutils literal notranslate"><span class="pre">VariableTable</span></code></a></li>
 </ul>
 </li>
@@ -1009,6 +1010,37 @@ a file-path, that is then displayed in the LineEdit.</p>
 </section>
 <section id="module-nomad_camels.ui_widgets.variable_table">
 <span id="nomad-camels-ui-widgets-variable-table-module"></span><h2>nomad_camels.ui_widgets.variable_table module<a class="headerlink" href="#module-nomad_camels.ui_widgets.variable_table" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.ui_widgets.variable_table.VariableBox">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.ui_widgets.variable_table.</span></span><span class="sig-name descname"><span class="pre">VariableBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editable_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.ui_widgets.variable_table.VariableBox" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.ui_widgets.variable_table.VariableBox.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtGui.QCloseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.ui_widgets.variable_table.VariableBox.closeEvent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.ui_widgets.variable_table.VariableBox.closing">
+<span class="sig-name descname"><span class="pre">closing</span></span><a class="headerlink" href="#nomad_camels.ui_widgets.variable_table.VariableBox.closing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.ui_widgets.variable_table.VariableBox.new_values_signal">
+<span class="sig-name descname"><span class="pre">new_values_signal</span></span><a class="headerlink" href="#nomad_camels.ui_widgets.variable_table.VariableBox.new_values_signal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.ui_widgets.variable_table.VariableBox.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;VariableBox&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=new_values_signal(QVariantMap),</span> <span class="pre">parameters=QVariantMap</span>&#160;&#160; <span class="pre">#34</span> <span class="pre">type=Signal,</span> <span class="pre">signature=closing()</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.ui_widgets.variable_table.VariableBox.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.ui_widgets.variable_table.VariableBox.update_values">
+<span class="sig-name descname"><span class="pre">update_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.ui_widgets.variable_table.VariableBox.update_values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.ui_widgets.variable_table.VariableTable">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.ui_widgets.variable_table.</span></span><span class="sig-name descname"><span class="pre">VariableTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editable_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.ui_widgets.variable_table.VariableTable" title="Link to this definition"></a></dt>
