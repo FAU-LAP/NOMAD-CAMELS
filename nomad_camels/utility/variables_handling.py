@@ -111,6 +111,26 @@ operator_names = {
 }
 
 
+def open_link(link):
+    """
+    Open a link in the default program. Should work in all operating systems.
+
+    Parameters
+    ----------
+    link : str
+        The link to open.
+    """
+    import os
+    import platform
+    import subprocess
+
+    if platform.system() == "Windows":
+        os.startfile(link)
+    else:
+        opener = "open" if platform.system() == "Darwin" else "xdg-open"
+        subprocess.call([opener, link])
+
+
 def get_non_channel_functions():
     functions = []
     for device in devices.values():

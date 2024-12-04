@@ -275,6 +275,8 @@ def save_dictionary(path, dictionary: dict):
         add_string = get_save_str(val)
         if add_string is not None:
             save_dict[key] = add_string
+    if not os.path.isdir(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
     with open(path, "w", encoding="utf-8") as file:
         json.dump(save_dict, file, indent=2)
 
@@ -605,6 +607,8 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.use_end_protocol = prot_data["use_end_protocol"]
         if "end_protocol" in prot_data:
             prot.end_protocol = prot_data["end_protocol"]
+        if "live_variable_update" in prot_data:
+            prot.live_variable_update = prot_data["live_variable_update"]
         prot_dict.update({key: prot})
 
 

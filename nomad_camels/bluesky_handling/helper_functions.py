@@ -756,19 +756,6 @@ class Value_Box(QDialog):
         self.helper.executor.connect(self.start_execution)
         self.done_flag = False
 
-        channels_label = QLabel("Channels")
-        font = QFont()
-        font.setBold(True)
-        channels_label.setStyleSheet("font-size: 9pt")
-        channels_label.setFont(font)
-        layout.addWidget(channels_label, 1, 0, 1, 2)
-        variables_label = QLabel("Variables")
-        font = QFont()
-        font.setBold(True)
-        variables_label.setStyleSheet("font-size: 9pt")
-        variables_label.setFont(font)
-        layout.addWidget(variables_label, 1, 2, 1, 2)
-
         channels = channels or []
         n_channels = len(channels)
         self.channel_boxes = []
@@ -794,6 +781,19 @@ class Value_Box(QDialog):
             self.variable_boxes.append(variable_box)
             layout.addWidget(variable_label, 2 + i, 2)
             layout.addWidget(variable_box, 2 + i, 3)
+
+        font = QFont()
+        font.setBold(True)
+        if channels:
+            channels_label = QLabel("Channels")
+            channels_label.setStyleSheet("font-size: 9pt")
+            channels_label.setFont(font)
+            layout.addWidget(channels_label, 1, 0, 1, 2)
+        if variables:
+            variables_label = QLabel("Variables")
+            variables_label.setStyleSheet("font-size: 9pt")
+            variables_label.setFont(font)
+            layout.addWidget(variables_label, 1, 2, 1, 2)
 
         devs = devs or {}
         self.channel_devs = {}

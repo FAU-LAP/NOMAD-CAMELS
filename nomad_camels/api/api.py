@@ -112,6 +112,14 @@ def is_valid_path(file_path):
     return os.path.exists(file_path)
 
 
+def cast_or_create_uuid_str(_uuid: uuid.UUID = None) -> str:
+    "Function to cast a given UUID as string or create a new one"
+    if _uuid is None:
+        return str(uuid.uuid4())
+    else:
+        return str(_uuid)
+
+
 # Initialize HTTP Bearer Authentication
 security = HTTPBearer()
 
@@ -216,10 +224,13 @@ class FastapiThread(QThread):
             response_model=ProtocolRunResponse,
         )
         async def run_protocol(
-            protocol_name: str, api_key: str = Depends(validate_credentials)
+            protocol_name: str, 
+            protocol_uuid: uuid.UUID = None,
+            api_key: str = Depends(validate_credentials)
         ):
             """Run a protocol by name"""
-            protocol_uuid = str(uuid.uuid4())
+            # Generate or use the provided syntax checked UUID as casted string
+            protocol_uuid = cast_or_create_uuid_str(_uuid=protocol_uuid)
 
             write_protocol_result_path_to_db(protocol_uuid)
 
@@ -238,6 +249,7 @@ class FastapiThread(QThread):
         async def run_protocol_with_variables(
             protocol_name: str,
             variables: Variables,
+            protocol_uuid: uuid.UUID = None,
             api_key: str = Depends(validate_credentials),
         ):
             """Run a protocol by name and pass variables to it (only already defined variables can be passed)"""
@@ -257,7 +269,8 @@ class FastapiThread(QThread):
                         detail=f"Variable {key} is not accepted by the protocol {protocol_name}",
                     )
 
-            protocol_uuid = str(uuid.uuid4())
+            # Generate or use the provided syntax checked UUID as casted string
+            protocol_uuid = cast_or_create_uuid_str(_uuid=protocol_uuid)
 
             write_protocol_result_path_to_db(protocol_uuid)
 
@@ -366,10 +379,13 @@ class FastapiThread(QThread):
 
         @app.get("/api/v1/actions/queue/protocols/{protocol_name}")
         async def queue_protocol(
-            protocol_name: str, api_key: str = Depends(validate_credentials)
+            protocol_name: str, 
+            protocol_uuid: uuid.UUID = None,
+            api_key: str = Depends(validate_credentials)
         ):
             """Add a protocol to the queue by name"""
-            protocol_uuid = str(uuid.uuid4())
+            # Generate or use the provided syntax checked UUID as casted string
+            protocol_uuid = cast_or_create_uuid_str(_uuid=protocol_uuid)
             write_protocol_result_path_to_db(protocol_uuid, "added to queue")
             try:
                 self.queue_protocol_signal.emit(str(protocol_name), protocol_uuid)
@@ -411,12 +427,14 @@ class FastapiThread(QThread):
         async def queue_protocol_with_variables(
             protocol_name: str,
             variables: Variables,
+            protocol_uuid: uuid.UUID = None,
             api_key: str = Depends(validate_credentials),
         ):
             """Add a protocol to the queue by name and pass variables to it"""
             # Get dictionary from the variables model
             variables = variables.model_dump()
-            protocol_uuid = str(uuid.uuid4())
+            # Generate or use the provided syntax checked UUID as casted string
+            protocol_uuid = cast_or_create_uuid_str(_uuid=protocol_uuid)
             write_protocol_result_path_to_db(protocol_uuid, "added to queue")
 
             try:

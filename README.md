@@ -18,6 +18,23 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.5.1
+Features:
+- Can now live-control the variables of a protocol while it is running
+- Can now skip some datapoints in plotting, useful for long measurements to free up some memory or improve speed
+
+Changes:
+- added a button to the API settings that redirects you to the API documentation
+- session now also creates a sub-folder
+
+Fixes:
+- opening the data path opened several windows in some cases, now fixed
+- samples can now be deleted again
+- "Channels" or "Variables" do not appear in set value popup anymore if None of these are set
+- tree of protocol sequence not scrolling back to the top anymore on every click
+- the button for adding a step now displays the same menu as a right click in the sequence
+- folder with python files might have been missing on first start, now fixed
+
 ## 1.5.0 metadata structuring
 Features:
 There is a new data output structure, making it clearer to understand, mostly consistent with old versions.

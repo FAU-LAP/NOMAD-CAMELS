@@ -160,5 +160,11 @@ class EntrySelector(QDialog):
         self.return_data["full_identifier"] = (
             f'upload/id/{self.return_data["NOMAD_entry_metadata"]["upload_id"]}/entry/id/{self.return_data["NOMAD_entry_metadata"]["entry_id"]}'
         )
-        self.return_data["identifier"] = self.return_data["lab_id"]
+        lab_id = self.return_data.get("lab_id", None)
+        if lab_id:
+            self.return_data["identifier"] = self.return_data["lab_id"]
+        else:
+            self.return_data["identifier"] = (
+                f'upload/id/{self.return_data["NOMAD_entry_metadata"]["upload_id"]}/entry/id/{self.return_data["NOMAD_entry_metadata"]["entry_id"]}'
+            )
         super().accept()
