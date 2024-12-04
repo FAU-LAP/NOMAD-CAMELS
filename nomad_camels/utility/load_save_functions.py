@@ -275,6 +275,8 @@ def save_dictionary(path, dictionary: dict):
         add_string = get_save_str(val)
         if add_string is not None:
             save_dict[key] = add_string
+    if not os.path.isdir(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
     with open(path, "w", encoding="utf-8") as file:
         json.dump(save_dict, file, indent=2)
 
