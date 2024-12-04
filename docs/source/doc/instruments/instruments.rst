@@ -858,8 +858,20 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
+                <td>Aimtti (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Cpxseries</a></td>
+                <td>SMU</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
                 <td>Bkprecision (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>178x</a></td>
+                <td>SMU</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Ea (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Ps2000</a></td>
                 <td>SMU</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
@@ -968,6 +980,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             <tr>
                 <td>Tdklambda (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Genesys</a></td>
+                <td>SMU</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Aspectsystems (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Idsmux</a></td>
                 <td>SMU</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
