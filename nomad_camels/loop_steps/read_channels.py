@@ -121,10 +121,10 @@ class Read_Channels(Loop_Step):
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.split_trigger:
-            protocol_string += f"{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream_name})\n"
+            protocol_string += f"{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream_name}, skip_on_exception={self.skip_failed})\n"
         else:
             protocol_string += self.get_channels_string(tabs)
-            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, stream={stream_name})\n"
+            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, stream={stream_name}, skip_on_exception={self.skip_failed})\n"
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
@@ -188,7 +188,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         # self.comboBox_readType.addItems(['read all', 'read selected'])
         # self.comboBox_readType.currentTextChanged.connect(self.read_type_changed)
         self.load_data()
-        labels = ["read", "channel", "ignore failed"]
+        labels = ["read?", "channel", "ignore failed"]
         info_dict = {
             "channel": self.loop_step.channel_list,
             "ignore failed": self.loop_step.skip_failed,

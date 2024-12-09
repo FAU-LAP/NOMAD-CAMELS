@@ -223,10 +223,18 @@ def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None)
             except Exception as ex:
                 if not skip_on_exception[i]:
                     raise ex
-                print(f"Skipping reading of {obj.name} due to exception: {ex}")
-                reading = (obj.name, {})
+                print(f"Skipping reading of {obj.name} due to exception:\n{ex}")
+                reading = {obj.name: {"value": np.float64(0.0), "timestamp": None}}
             if reading is not None:
                 ret.update(reading)
+        timestamp = None
+        for r in ret:
+            if ret[r]["timestamp"] is not None:
+                timestamp = ret[r]["timestamp"]
+                break
+        for r in ret:
+            if ret[r]["timestamp"] is None:
+                ret[r]["timestamp"] = timestamp
         return ret
 
     def standard_path():
