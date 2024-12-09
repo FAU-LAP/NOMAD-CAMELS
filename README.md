@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.5.2
+Fixes:
+- fixed a bug where in some Qt versions the window could not be loaded anymore
+
 ### 1.5.1
 Features:
 - Can now live-control the variables of a protocol while it is running
