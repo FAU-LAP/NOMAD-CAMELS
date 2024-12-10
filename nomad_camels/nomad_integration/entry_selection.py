@@ -153,18 +153,20 @@ class EntrySelector(QDialog):
         return {}
 
     def accept(self):
+        from nomad_camels.nomad_integration.nomad_communication import nomad_url
+
         self.return_data = self.get_current_entry_data(True)
         if "name" not in self.return_data and "Name" not in self.return_data:
             self.return_data["name"] = self.entry_box.currentText().split(".")[0]
         self.return_data["ELN-service"] = "nomad"
         self.return_data["full_identifier"] = (
-            f'upload/id/{self.return_data["NOMAD_entry_metadata"]["upload_id"]}/entry/id/{self.return_data["NOMAD_entry_metadata"]["entry_id"]}'
+            f'{nomad_url}/upload/id/{self.return_data["NOMAD_entry_metadata"]["upload_id"]}/entry/id/{self.return_data["NOMAD_entry_metadata"]["entry_id"]}'
         )
         lab_id = self.return_data.get("lab_id", None)
         if lab_id:
             self.return_data["identifier"] = self.return_data["lab_id"]
         else:
             self.return_data["identifier"] = (
-                f'upload/id/{self.return_data["NOMAD_entry_metadata"]["upload_id"]}/entry/id/{self.return_data["NOMAD_entry_metadata"]["entry_id"]}'
+                f'{nomad_url}/upload/id/{self.return_data["NOMAD_entry_metadata"]["upload_id"]}/entry/id/{self.return_data["NOMAD_entry_metadata"]["entry_id"]}'
             )
         super().accept()
