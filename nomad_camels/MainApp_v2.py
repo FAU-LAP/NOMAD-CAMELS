@@ -15,6 +15,7 @@ from PySide6.QtCore import Qt, Signal, QThread
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
 from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
+from nomad_camels.gui.tags_ui import TagWidget, FlowLayout
 from importlib import resources
 from nomad_camels import graphics
 
@@ -241,6 +242,21 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
+
+        # Setup measurement tags UI
+        # Setup the flow layout inside the scrollArea's contents
+        self.container = self.scrollAreaWidgetContents
+        self.flow_layout = FlowLayout(self.container)
+        self.container.setLayout(self.flow_layout)
+        # Connect line edit signal
+        self.lineEdit_tags.returnPressed.connect(self.add_tag)
+    
+    def add_tag(self):
+        text = self.lineEdit_tags.text().strip()
+        if text:
+            tag = TagWidget(text)
+            self.flow_layout.addWidget(tag)
+            self.lineEdit_tags.clear()
 
     def start_API_server(self, api_port):
         """
