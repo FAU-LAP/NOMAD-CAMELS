@@ -200,7 +200,7 @@ QPushButton:disabled {
        <item row="0" column="0" colspan="3">
         <layout class="QGridLayout" name="gridLayout_7">
          <item row="1" column="0">
-          <widget class="QTextEdit" name="textEdit"/>
+          <widget class="QTextEdit" name="textEdit_meas_description"/>
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label">
@@ -218,7 +218,7 @@ QPushButton:disabled {
           <widget class="RunQueue" name="run_queue_widget"/>
          </item>
          <item row="0" column="1">
-          <widget class="QLabel" name="label_5">
+          <widget class="QLabel" name="label_queue">
            <property name="font">
             <font>
              <bold>true</bold>

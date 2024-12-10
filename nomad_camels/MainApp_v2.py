@@ -223,6 +223,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.run_queue_widget.protocol_signal.connect(self.next_queued_protocol)
         self.run_queue_widget.variable_table = self.queue_variable_table
         self.queue_variable_table.setHidden(True)
+        self.run_queue_widget.setHidden(True)
+        self.label_queue.setHidden(True)
         self.devices_from_queue = []
 
         # Extension Contexts
@@ -346,6 +348,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         Update the variables of a protocol in the run queue. Called by the API.
         """
+        self.run_queue_widget.setHidden(False)
+        self.label_queue.setHidden(False)
         if protocol_name in self.protocols_dict:
             self.run_queue_widget.add_item(protocol_name, api_uuid)
         protocol_name = list(self.run_queue_widget.protocol_name_variables.keys())[
@@ -356,6 +360,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         )
 
     def change_variables_queued_protocol(self, protocol_name, variables, index):
+        self.run_queue_widget.setHidden(False)
+        self.label_queue.setHidden(False)
         self.run_queue_widget.update_variables_queue(
             protocol_name, variables, index=index
         )
@@ -2055,6 +2061,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.devices_from_queue.append(self.current_protocol_device_list)
         if self.run_queue_widget.check_next_protocol():
             return
+        self.run_queue_widget.setHidden(True)
+        self.label_queue.setHidden(True)
         self.current_protocol_device_list = []
         self.close_old_queue_devices()
         self.pushButton_stop.setEnabled(False)
@@ -2152,6 +2160,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         if protocol_name in self.protocols_dict:
             self.run_queue_widget.add_item(protocol_name, api_uuid=api_uuid)
+            self.run_queue_widget.setHidden(False)
+            self.label_queue.setHidden(False)
 
     def get_user_name_data(self):
         """
