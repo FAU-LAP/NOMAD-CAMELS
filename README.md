@@ -20,7 +20,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 ### 1.5.2
 Fixes:
-- fixed a bug where in some Qt versions the window could not be loaded anymore
+- fixed a bug where in some Qt versions the window could not be loaded anymore by changing requirement of PySide6
 
 ### 1.5.1
 Features:

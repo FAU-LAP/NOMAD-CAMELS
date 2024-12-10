@@ -137,14 +137,11 @@ class Options_Run_Button(QFrame):
     def update_functions(self):
         """ """
         # check if build_asked has anything to disconnect
-        try:
-            self.build_asked.disconnect()
-            self.external_asked.disconnect()
-            self.data_path_asked.disconnect()
-            self.del_asked.disconnect()
-            self.move_asked.disconnect()
-        except:
-            pass
+        self.build_asked.disconnect()
+        self.external_asked.disconnect()
+        self.data_path_asked.disconnect()
+        self.del_asked.disconnect()
+        self.move_asked.disconnect()
         if self.config_function is not None:
             self.button.clicked.connect(self.config_function)
         if self.run_function is not None:
