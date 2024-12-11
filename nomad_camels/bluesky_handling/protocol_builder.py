@@ -96,6 +96,7 @@ standard_start_string += "\tbec = BestEffortCallback()\n"
 standard_start_string += "\tRE.subscribe(bec)\n"
 standard_start_string2 = "\t\tplot_etc = create_plots(RE)\n"
 standard_start_string2 += "\t\tadditional_step_data = steps_add_main(RE, devs)\n"
+standard_start_string2 += "\t\tcreate_live_windows()\n"
 standard_start_string2 += (
     "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md)\n"
 )
@@ -218,6 +219,7 @@ def build_protocol(
     variable_string += "plots = []\n"
     # variable_string += "plot_data = []\n"
     variable_string += "boxes = {}\n"
+    variable_string += "live_windows = []\n"
     variable_string += "app = None\n"
     variable_string += f'save_path = "{save_path}"\n'
     variable_string += f'session_name = "{protocol.session_name}"\n'
@@ -384,6 +386,10 @@ def build_protocol(
     protocol_string += f"\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
     protocol_string += "\tfinally:\n"
     protocol_string += "\t\tRE.unsubscribe(subscription_uid)\n"
+    protocol_string += "\t\tfor window in live_windows:\n"
+    protocol_string += "\t\t\twindow.close()\n"
+    protocol_string += "\t\tfor window in live_windows:\n"
+    protocol_string += "\t\t\twindow.close()\n"
 
     # wait for RunEngine to finish, then save the data
     save_string = "\t\tif uids:\n"

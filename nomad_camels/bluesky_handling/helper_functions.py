@@ -6,6 +6,7 @@ simpler to use these than writing them as a string into the protocol-file.
 
 import numpy as np
 from bluesky import plan_stubs as bps
+from bluesky.utils import Msg
 
 from ophyd import SignalRO, Device
 
@@ -20,12 +21,15 @@ from PySide6.QtWidgets import (
     QProgressBar,
     QPushButton,
     QComboBox,
+    QTextEdit,
+    QCheckBox,
 )
 from PySide6.QtCore import Signal, Qt
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QIcon
 
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
+from nomad_camels import graphics
 
 from suitcase.nomad_camels_hdf5 import Serializer, export
 
@@ -33,6 +37,8 @@ import inspect
 import os
 import sys
 import glob
+
+from importlib import resources
 
 from nomad_camels.bluesky_handling.loop_step_functions_api_call import (
     execute_camels_api_call,
@@ -1203,3 +1209,66 @@ class Waiting_Bar(QWidget):
             self.setter.start_time = dt.datetime.now()
 
         self.show()
+
+
+def close_run(exit_status="success", reason="", metadata=None, **kwargs):
+    """
+    Close a run and emit a RunStop document.
+
+    Parameters
+    ----------
+    exit_status : str, optional
+        The exit status of the run, e.g., 'success', 'abort', 'fail'.
+    reason : str, optional
+        A human-friendly string explaining the reason for the exit status.
+    **kwargs : dict, optional
+        Additional metadata to include in the RunStop document.
+
+    Yields
+    ------
+    msg : Msg
+        Msg('close_run', exit_status=exit_status, reason=reason, **kwargs)
+    """
+    return (
+        yield Msg(
+            "close_run",
+            exit_status=exit_status,
+            reason=reason,
+            metadata=metadata,
+            **kwargs,
+        )
+    )
+
+
+class Commenting_Box(QWidget):
+    """A widget to add comments to the protocol."""
+
+    closing = Signal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = QGridLayout()
+        self.comment_box = QTextEdit()
+        self.finished_box = QCheckBox("commenting finished")
+        self.setWindowTitle("Live Measurement Comments - NOMAD CAMELS")
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+        layout.addWidget(self.comment_box, 0, 0)
+        layout.addWidget(self.finished_box, 1, 0)
+        self.setLayout(layout)
+        self.adjustSize()
+        self._is_finished = False
+        self.finished_box.clicked.connect(self.finish_comment)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
+        self.show()
+
+    def finish_comment(self):
+        """Sets the flag `_is_finished` to True."""
+        self._is_finished = True
+
+    def get_metadata(self):
+        """Get the text of the comment."""
+        return {"measurement_comments": self.comment_box.toPlainText()}
+
+    def closeEvent(self, event):
+        self.closing.emit()
+        return super().closeEvent(event)
