@@ -1768,16 +1768,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
             self.re_subs.append(self.run_engine.subscribe(self.run_router))
 
-        if self.running_protocol.live_variable_update:
-            from nomad_camels.ui_widgets.variable_table import VariableBox
+        # if self.running_protocol.live_variable_update:
+        #     from nomad_camels.ui_widgets.variable_table import VariableBox
 
-            self.live_variable_box = VariableBox(
-                protocol=self.running_protocol, editable_names=False
-            )
-            self.live_variable_box.show()
-            self.live_variable_box.new_values_signal.connect(self.update_live_variables)
-            self.add_to_open_windows(self.live_variable_box)
-            self.protocol_finished_signal.connect(self.live_variable_box.close)
+        #     self.live_variable_box = VariableBox(
+        #         protocol=self.running_protocol, editable_names=False
+        #     )
+        #     self.live_variable_box.show()
+        #     self.live_variable_box.new_values_signal.connect(self.update_live_variables)
+        #     self.add_to_open_windows(self.live_variable_box)
+        #     self.protocol_finished_signal.connect(self.live_variable_box.close)
+        live_windows = self.protocol_module.create_live_windows()
+        for window in live_windows:
+            self.add_to_open_windows(window)
 
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)

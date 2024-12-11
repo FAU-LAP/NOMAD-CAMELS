@@ -331,6 +331,27 @@ class Measurement_Protocol:
         add_main_string += "\treturn returner\n\n\n"
         return add_main_string
 
+    def get_live_interaction_string(self):
+        """Returns the string for the live interaction of the protocol."""
+        live_string = "def create_live_windows():\n"
+        live_string += "\tlive_windows = []\n"
+        if self.live_variable_update:
+            live_string += (
+                "\tfrom nomad_camels.ui_widgets.variable_table import VariableBox\n"
+            )
+            live_string += f"\tvariables = {self.variables}\n"
+            live_string += "\tvariable_box = VariableBox(editable_names=False, variables=variables)\n"
+            live_string += "\n\tdef update_variables(new_variables):\n"
+            live_string += "\t\tglobal namespace\n"
+            live_string += "\t\tnamespace.update(new_variables)\n\n"
+            live_string += (
+                "\tvariable_box.new_values_signal.connect(update_variables)\n"
+            )
+            live_string += "\tlive_windows.append(variable_box)\n"
+            live_string += "\tvariable_box.show()\n"
+        live_string += "\treturn live_windows\n\n\n"
+        return live_string
+
     def get_total_steps(self):
         """Returns the total number of steps (including repetitions for loops)"""
         total = 0

@@ -346,6 +346,7 @@ def build_protocol(
     protocol_string += protocol.get_plan_string()
     protocol_string += plot_string
     protocol_string += protocol.get_add_main_string()
+    protocol_string += protocol.get_live_interaction_string()
     protocol_string += standard_run_string
 
     # setting up the progress bar
