@@ -252,7 +252,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.container.setLayout(self.flow_layout)
         # Connect line edit signal
         self.lineEdit_tags.returnPressed.connect(self.add_tag)
-    
+
     def add_tag(self):
         text = self.lineEdit_tags.text().strip()
         if text:
@@ -1782,14 +1782,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
         self.pushButton_stop.setEnabled(True)
-        protocol = self.running_protocol
         self.protocol_module.run_protocol_main(
             self.run_engine,
             catalog=self.databroker_catalog,
             devices=devs,
             md={
                 "devices": dev_data,
-                "description": protocol.description,
                 "api_uuid": api_uuid,  # Include the uuid in the metadata
             },
         )
@@ -2152,6 +2150,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 return
         else:
             path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
+        protocol.measurement_description = self.textEdit_meas_description.toPlainText()
+        protocol.tags = self.flow_layout.get_all_tags()
         user, userdata = self.get_user_name_data()
         sample, sampledata = self.get_sample_name_data()
         savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.session_name}/{protocol.filename or protocol.session_name or "data"}.nxs'

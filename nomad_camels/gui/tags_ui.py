@@ -78,6 +78,14 @@ class FlowLayout(QLayout):
             self.setContentsMargins(margin, margin, margin, margin)
         self.setSpacing(spacing)
         self.itemList = []
+        self.widgetList = []
+
+    def get_all_tags(self):
+        return [widget.text for widget in self.widgetList]
+
+    def addWidget(self, widget):
+        self.widgetList.append(widget)
+        super().addWidget(widget)
 
     def addItem(self, item):
         self.itemList.append(item)

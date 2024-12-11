@@ -92,6 +92,8 @@ class Measurement_Protocol:
         self.channels = channels
         self.name = name or "Protocol"
         self.use_nexus = use_nexus
+        self.measurement_description = ""
+        self.tags = []
 
     def update_variables(self):
         """Update all the variables provided by loopsteps."""

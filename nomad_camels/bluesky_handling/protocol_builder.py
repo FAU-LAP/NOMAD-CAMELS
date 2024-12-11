@@ -325,7 +325,7 @@ def build_protocol(
 
     # finishing up the device initialization
     devices_string += '\t\tprint("devices connected")\n'
-    devices_string += f'\t\tmd = {{"devices": device_config, "description": "{repr(protocol.description)}"}}\n'
+    devices_string += f'\t\tmd = {{"devices": device_config}}\n'
 
     # the plots are created
     plot_string, plotting = plot_creator(protocol.plots, multi_stream=True)
@@ -358,6 +358,11 @@ def build_protocol(
     protocol_string += user_sample_string(userdata, sampledata)
     protocol_string += f'\tmd["session_name"] = session_name\n'
     protocol_string += f'\tmd["protocol_overview"] = """{protocol.get_short_string().encode("unicode_escape").decode()}"""\n'
+    protocol_string += f'\tmd["description"] = {repr(protocol.description)}\n'
+    protocol_string += f'\tmd["measurement_tags"] = {protocol.tags}\n'
+    protocol_string += (
+        f'\tmd["measurement_description"] = {repr(protocol.measurement_description)}\n'
+    )
 
     protocol_string += f"\ttry:\n"
     protocol_string += f'\t\twith open("{cprot_path}", "r", encoding="utf-8") as f:\n'
