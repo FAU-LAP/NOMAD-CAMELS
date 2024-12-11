@@ -1968,16 +1968,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     self.run_engine,
                     catalog=self.databroker_catalog,
                     devices=devs,
-                    md={
-                        "devices": dev_data,
-                        "description": protocol.description,
-                        # "versions": {
-                        #     "NOMAD CAMELS": "0.1",
-                        #     "EPICS": "7.0.6.2",
-                        #     "bluesky": bluesky.__version__,
-                        #     "ophyd": ophyd.__version__,
-                        # },
-                    },
+                    md={"devices": dev_data},
                 )
         except Exception as e:
             if not isinstance(e, bluesky.utils.RunEngineInterrupted):
