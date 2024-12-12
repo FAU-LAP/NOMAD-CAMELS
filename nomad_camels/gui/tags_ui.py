@@ -1,21 +1,16 @@
-import sys
-from PySide6.QtCore import Qt, QRect, QPoint, QSize
+from PySide6.QtCore import Qt, QRect, QPoint, QSize, Signal
 from PySide6.QtWidgets import (
     QWidget,
-    QLineEdit,
-    QPushButton,
     QLabel,
-    QVBoxLayout,
     QHBoxLayout,
-    QApplication,
     QToolButton,
-    QScrollArea,
-    QFrame,
     QLayout,
 )
 
 
 class TagWidget(QWidget):
+    removing = Signal(QWidget)
+
     def __init__(self, text, parent=None):
         super().__init__(parent)
         self.text = text
@@ -66,6 +61,7 @@ class TagWidget(QWidget):
 
     def remove_self(self):
         self.setParent(None)
+        self.removing.emit(self)
         self.deleteLater()
 
 
@@ -85,7 +81,12 @@ class FlowLayout(QLayout):
 
     def addWidget(self, widget):
         self.widgetList.append(widget)
+        widget.removing.connect(self.remove_widget)
         super().addWidget(widget)
+
+    def remove_widget(self, widget):
+        if widget in self.widgetList:
+            self.widgetList.remove(widget)
 
     def addItem(self, item):
         self.itemList.append(item)
