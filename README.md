@@ -19,6 +19,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.5.2
+Changes:
+- the log-window now has a maximum number of lines (default for the moment at 10000)
+
 Fixes:
 - fixed a bug where in some Qt versions the window could not be loaded anymore by changing requirement of PySide6
 - wrong movement of stage when using buttons after keyboard move fixed
