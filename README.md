@@ -23,7 +23,7 @@ Changes:
 - the log-window now has a maximum number of lines (default for the moment at 10000)
 
 Fixes:
-- fixed a bug where in some Qt versions the window could not be loaded anymore by changing requirement of PySide6
+- fixed a bug where in some Qt versions the window could not be loaded anymore by changing requirement of PySide6, fixed warning that happened in versions where it worked
 - wrong movement of stage when using buttons after keyboard move fixed
 
 ### 1.5.1
