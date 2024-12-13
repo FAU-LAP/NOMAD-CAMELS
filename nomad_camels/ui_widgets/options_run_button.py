@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
 )
 from PySide6.QtGui import QPainter, QColor, QBrush, QAction, QDrag
-from PySide6.QtCore import Qt, QSize, QMimeData, Signal
+from PySide6.QtCore import Qt, QSize, QMimeData, Signal, SIGNAL
 
 from nomad_camels.utility.variables_handling import get_color
 
@@ -137,11 +137,16 @@ class Options_Run_Button(QFrame):
     def update_functions(self):
         """ """
         # check if build_asked has anything to disconnect
-        self.build_asked.disconnect()
-        self.external_asked.disconnect()
-        self.data_path_asked.disconnect()
-        self.del_asked.disconnect()
-        self.move_asked.disconnect()
+        if self.receivers(SIGNAL("build_asked()")) > 0:
+            self.build_asked.disconnect()
+        if self.receivers(SIGNAL("external_asked()")) > 0:
+            self.external_asked.disconnect()
+        if self.receivers(SIGNAL("data_path_asked()")) > 0:
+            self.data_path_asked.disconnect()
+        if self.receivers(SIGNAL("del_asked()")) > 0:
+            self.del_asked.disconnect()
+        if self.receivers(SIGNAL("move_asked()")) > 0:
+            self.move_asked.disconnect()
         if self.config_function is not None:
             self.button.clicked.connect(self.config_function)
         if self.run_function is not None:
