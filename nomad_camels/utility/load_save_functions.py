@@ -147,7 +147,7 @@ standard_pref = {
     "new_file_each_run": True,
     "enable_API": False,
     "API_port": "5000",
-    "show_release_notes": True,
+    "last_shown_notes": "0.0.0",
 }
 
 

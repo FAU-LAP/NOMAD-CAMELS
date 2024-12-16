@@ -198,19 +198,11 @@ def show_release_notes():
             button_box = QDialogButtonBox(QDialogButtonBox.Ok, self)
             button_box.accepted.connect(self.accept)
 
-            more_information = QPushButton("full logs")
-            more_information.clicked.connect(self.show_full_logs)
-
-            layout.addWidget(text_edit, 0, 0, 1, 2)
-            layout.addWidget(more_information, 1, 0)
-            layout.addWidget(button_box, 1, 1)
+            layout.addWidget(text_edit, 0, 0)
+            layout.addWidget(button_box, 1, 0)
 
             self.setLayout(layout)
-
-        def show_full_logs(self):
-            from nomad_camels.utility.variables_handling import open_link
-
-            open_link("https://pypi.org/project/nomad-camels/")
+            self.setMinimumWidth(500)
 
     # read package's readme file
     try:
@@ -229,6 +221,6 @@ def show_release_notes():
     changelog = readme.split("# Changelog\n")[1]
     while changelog.startswith("\n"):
         changelog = changelog[1:]
-    newest_log = changelog.split("\n#")[0]
-    dialog = MarkdownDialog(newest_log)
+    # newest_log = changelog.split("\n#")[0]
+    dialog = MarkdownDialog(changelog)
     dialog.exec_()
