@@ -6,10 +6,18 @@ import os
 import sys
 import subprocess
 import re
+import importlib
 import nomad_camels  # has to be imported for the distribution version number!
 from nomad_camels.ui_widgets import warn_popup
 
-from PySide6.QtWidgets import QMessageBox
+from PySide6.QtWidgets import (
+    QMessageBox,
+    QDialog,
+    QGridLayout,
+    QTextEdit,
+    QDialogButtonBox,
+    QPushButton,
+)
 
 
 def get_version():
@@ -171,3 +179,56 @@ def auto_update(parent):
     """
     if not check_up_to_date():
         question_message_box(parent)
+
+
+def show_release_notes():
+    class MarkdownDialog(QDialog):
+        def __init__(self, markdown_text):
+            super().__init__()
+            self.setWindowTitle("Changelog - NOMAD CAMELS")
+
+            layout = QGridLayout(self)
+
+            # Create a QTextEdit to display the Markdown content
+            text_edit = QTextEdit(self)
+            text_edit.setMarkdown(markdown_text)
+            text_edit.setReadOnly(True)
+
+            # Add OK button
+            button_box = QDialogButtonBox(QDialogButtonBox.Ok, self)
+            button_box.accepted.connect(self.accept)
+
+            more_information = QPushButton("full logs")
+            more_information.clicked.connect(self.show_full_logs)
+
+            layout.addWidget(text_edit, 0, 0, 1, 2)
+            layout.addWidget(more_information, 1, 0)
+            layout.addWidget(button_box, 1, 1)
+
+            self.setLayout(layout)
+
+        def show_full_logs(self):
+            from nomad_camels.utility.variables_handling import open_link
+
+            open_link("https://pypi.org/project/nomad-camels/")
+
+    # read package's readme file
+    try:
+        with importlib.resources.open_text("nomad-camels", "README.md") as f:
+            readme = f.read()
+    except (FileNotFoundError, ModuleNotFoundError):
+        try:
+            with open("README.md", "r") as f:
+                readme = f.read()
+        except FileNotFoundError:
+            try:
+                with open("../README.md", "r") as f:
+                    readme = f.read()
+            except FileNotFoundError:
+                return
+    changelog = readme.split("# Changelog\n")[1]
+    while changelog.startswith("\n"):
+        changelog = changelog[1:]
+    newest_log = changelog.split("\n#")[0]
+    dialog = MarkdownDialog(newest_log)
+    dialog.exec_()

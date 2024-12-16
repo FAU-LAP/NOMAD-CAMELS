@@ -19,6 +19,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.5.2
+Features:
+- now showing the changelog after an update
+
 Changes:
 - the log-window now has a maximum number of lines (default for the moment at 10000)
 - menu of steps renamed from "Additional" to "Advanced"

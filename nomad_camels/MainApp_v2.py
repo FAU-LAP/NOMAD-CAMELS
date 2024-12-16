@@ -253,6 +253,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # Connect line edit signal
         self.lineEdit_tags.returnPressed.connect(self.add_tag)
 
+        if self.preferences["show_release_notes"]:
+            update_camels.show_release_notes()
+            self.preferences["show_release_notes"] = False
+            load_save_functions.save_preferences(self.preferences)
+
     def add_tag(self):
         text = self.lineEdit_tags.text().strip()
         if text:
