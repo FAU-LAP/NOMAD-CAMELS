@@ -115,7 +115,9 @@ class Options_Run_Button(QFrame):
             self.queue_button.setIcon(icon)
             self.queue_button.setIconSize(QSize(int(size / 5), int(size / 5)))
             self.queue_button.setGeometry(5, 10 + size // 4, size - 10, int(size / 4))
-            self.button.setToolTip("open the protocol settings / measurement sequence")
+            self.button.setToolTip(
+                "open the protocol settings / measurement sequence\nright-click for more options"
+            )
             self.small_button.setToolTip("run this protocol right away")
             self.queue_button.setToolTip(
                 "queue this protocol\nyou can set the protocol's variables for this specific run"
@@ -124,7 +126,7 @@ class Options_Run_Button(QFrame):
             self.small_button.setIconSize(QSize(int(size / 4), int(size / 4)))
             self.small_button.setGeometry(5, 5, size - 10, int(size / 3))
             self.queue_button = None
-            self.button.setToolTip("open the settings of the manual control")
+            self.button.setToolTip("open the settings of the manual control\nright-click for more options")
             self.small_button.setToolTip("start the manual control")
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.options_menu)
