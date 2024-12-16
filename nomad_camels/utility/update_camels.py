@@ -26,7 +26,7 @@ def get_version():
         import pkg_resources
 
         return pkg_resources.get_distribution("nomad-camels").version
-    except AttributeError:
+    except (AttributeError, pkg_resources.DistributionNotFound):
         try:
             return nomad_camels.__version__
         except Exception:
