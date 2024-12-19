@@ -27,6 +27,7 @@ Changes:
 - menu of steps renamed from "Additional" to "Advanced"
 
 Fixes:
+- manage instruments could not be opened without internet connection, now fixed
 - fixed a bug where in some Qt versions the window could not be loaded anymore by changing requirement of PySide6, fixed warning that happened in versions where it worked
 - wrong movement of stage when using buttons after keyboard move fixed
 - read only config data (e.g. IDN for some instruments) were not read if they had a default value, now fixed

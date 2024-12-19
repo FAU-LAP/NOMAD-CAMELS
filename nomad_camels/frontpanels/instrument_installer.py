@@ -116,8 +116,11 @@ def getAllDevices():
         url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/driver_list/driver_list.txt"
         devices_str = requests.get(url).text
     except:
-        url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt"
-        devices_str = requests.get(url).text
+        try:
+            url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt"
+            devices_str = requests.get(url).text
+        except:
+            devices_str = ""
     warned = False
     for x in devices_str.splitlines():
         if "==" not in x:
@@ -468,8 +471,10 @@ class Instrument_Installer(Ui_Form, QWidget):
         finally:
             self.setCursor(Qt.ArrowCursor)
 
+
 class CustomTextEdit_new_painter(QTextEdit):
     """Custom QTextEdit that paints custom text when the text is empty."""
+
     def paintEvent(self, event):
         # Call the original paint event to handle the default drawing
         super().paintEvent(event)

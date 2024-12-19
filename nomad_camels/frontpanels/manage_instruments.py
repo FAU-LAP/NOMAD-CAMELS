@@ -47,6 +47,12 @@ class ManageInstruments(QDialog):
         self.show()
         settab = 1 if instrument_installer.getInstalledDevices() else 0
         self.tabs.setCurrentIndex(settab)
+        if not self.installer.all_devs:
+            self.tabs.setTabEnabled(0, False)
+            self.tabs.setTabToolTip(
+                0,
+                'Could not reach the server for list of drivers\ncheck your internet connection and try opening "Manage Instruments" again',
+            )
 
     def accept(self) -> None:
         """ """
