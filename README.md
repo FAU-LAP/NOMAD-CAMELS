@@ -28,6 +28,7 @@ Changes:
 
 Fixes:
 - manage instruments could not be opened without internet connection, now fixed
+- instruments that depend on others sometimes were closed in the wrong order, should now be fixed (example: first de-instantiate the PID, then its read / set channels)
 - fixed a bug where in some Qt versions the window could not be loaded anymore by changing requirement of PySide6, fixed warning that happened in versions where it worked
 - wrong movement of stage when using buttons after keyboard move fixed
 - read only config data (e.g. IDN for some instruments) were not read if they had a default value, now fixed
