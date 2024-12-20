@@ -388,8 +388,6 @@ def build_protocol(
     protocol_string += "\t\tRE.unsubscribe(subscription_uid)\n"
     protocol_string += "\t\tfor window in live_windows:\n"
     protocol_string += "\t\t\twindow.close()\n"
-    protocol_string += "\t\tfor window in live_windows:\n"
-    protocol_string += "\t\t\twindow.close()\n"
 
     # wait for RunEngine to finish, then save the data
     save_string = "\t\tif uids:\n"
