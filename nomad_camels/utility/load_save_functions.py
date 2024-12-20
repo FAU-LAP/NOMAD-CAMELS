@@ -147,6 +147,7 @@ standard_pref = {
     "new_file_each_run": True,
     "enable_API": False,
     "API_port": "5000",
+    "last_shown_notes": "0.0.0",
 }
 
 
@@ -609,6 +610,8 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.end_protocol = prot_data["end_protocol"]
         if "live_variable_update" in prot_data:
             prot.live_variable_update = prot_data["live_variable_update"]
+        if "allow_live_comments" in prot_data:
+            prot.allow_live_comments = prot_data["allow_live_comments"]
         prot_dict.update({key: prot})
 
 

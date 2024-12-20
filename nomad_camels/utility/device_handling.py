@@ -374,18 +374,31 @@ def close_devices(device_list):
     device_list : list[str]
         The devices (as they are named in CAMELS) that should be closed
     """
+    dependent_devices = []
+    for dev in device_list:
+        device = variables_handling.devices[dev]
+        dependent_devices += device.get_necessary_devices()
+    dependent_devices = list(set(dependent_devices))
     for dev in reversed(device_list):
         if dev not in running_devices:
             continue
             raise Warning(f"Trying to close device {dev}, but it is not even running!")
-        ophyd_dev = running_devices[dev]
-        ophyd_dev.device_run_count -= 1
-        if ophyd_dev.device_run_count == 0:
-            running_devices.pop(dev)
-            if hasattr(ophyd_dev, "finalize_steps") and callable(
-                ophyd_dev.finalize_steps
-            ):
-                ophyd_dev.finalize_steps()
-            for watchdog in variables_handling.watchdogs.values():
-                if dev in watchdog.get_device_list():
-                    watchdog.remove_device(dev, ophyd_dev)
+        if dev in dependent_devices:
+            continue
+        close_single_device(dev)
+    for dev in dependent_devices:
+        if dev not in running_devices:
+            continue
+        close_single_device(dev)
+
+
+def close_single_device(dev):
+    ophyd_dev = running_devices[dev]
+    ophyd_dev.device_run_count -= 1
+    if ophyd_dev.device_run_count == 0:
+        running_devices.pop(dev)
+        if hasattr(ophyd_dev, "finalize_steps") and callable(ophyd_dev.finalize_steps):
+            ophyd_dev.finalize_steps()
+        for watchdog in variables_handling.watchdogs.values():
+            if dev in watchdog.get_device_list():
+                watchdog.remove_device(dev, ophyd_dev)

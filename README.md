@@ -18,6 +18,21 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.5.2 The team of NOMAD CAMELS wishes you a measuring christmas and bug-free new year!
+Features:
+- now showing the changelog after an update
+
+Changes:
+- the log-window now has a maximum number of lines (default for the moment at 10000)
+- menu of steps renamed from "Additional" to "Advanced"
+
+Fixes:
+- manage instruments could not be opened without internet connection, now fixed
+- instruments that depend on others sometimes were closed in the wrong order, should now be fixed (example: first de-instantiate the PID, then its read / set channels)
+- fixed a bug where in some Qt versions the window could not be loaded anymore by changing requirement of PySide6, fixed warning that happened in versions where it worked
+- wrong movement of stage manual control when using buttons after keyboard move fixed
+- read only config data (e.g. IDN for some instruments) were not read if they had a default value, now fixed
+
 ### 1.5.1
 Features:
 - Can now live-control the variables of a protocol while it is running

@@ -10,7 +10,7 @@ from nomad_camels import graphics
 class VariableTable(QTableView):
     """ """
 
-    def __init__(self, parent=None, protocol=None, editable_names=True):
+    def __init__(self, parent=None, protocol=None, editable_names=True, variables=None):
         super().__init__(parent)
         self.model = QStandardItemModel()
         self.setModel(self.model)
@@ -18,8 +18,12 @@ class VariableTable(QTableView):
         self.model.itemChanged.connect(self.check_variable)
         self.editable_names = editable_names
         self.protocol = protocol
+        self.variables = variables
         if protocol:
             self.set_protocol(protocol)
+        elif variables:
+            for var in sorted(variables):
+                self.append_variable(var, str(variables[var]), unique=False)
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -38,7 +42,6 @@ class VariableTable(QTableView):
 
     def set_protocol(self, protocol):
         """ """
-
         self.protocol = protocol
         for var in sorted(self.protocol.variables):
             self.append_variable(var, str(self.protocol.variables[var]), unique=False)
@@ -109,14 +112,20 @@ class VariableBox(QWidget):
     new_values_signal = Signal(dict)
     closing = Signal()
 
-    def __init__(self, parent=None, protocol=None, editable_names=True):
+    def __init__(
+        self, parent=None, protocol=None, editable_names=True, variables=None, name=""
+    ):
         super().__init__(parent)
-        self.setWindowTitle(f"Live variable control - {protocol.name} - NOMAD CAMELS")
+        name = name or (protocol.name if protocol else "protocol")
+        self.setWindowTitle(f"Live variable control - {name} - NOMAD CAMELS")
         self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.table = VariableTable(
-            protocol=protocol, editable_names=editable_names, parent=self
+            protocol=protocol,
+            editable_names=editable_names,
+            parent=self,
+            variables=variables,
         )
         self.layout.addWidget(self.table)
         self.button = QPushButton("update values")

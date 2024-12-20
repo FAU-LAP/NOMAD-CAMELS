@@ -15,6 +15,7 @@ from PySide6.QtCore import Qt, Signal, QThread
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
 from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
+from nomad_camels.gui.tags_ui import TagWidget, FlowLayout
 from importlib import resources
 from nomad_camels import graphics
 
@@ -223,6 +224,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.run_queue_widget.protocol_signal.connect(self.next_queued_protocol)
         self.run_queue_widget.variable_table = self.queue_variable_table
         self.queue_variable_table.setHidden(True)
+        self.run_queue_widget.setHidden(True)
+        self.label_queue.setHidden(True)
         self.devices_from_queue = []
 
         # Extension Contexts
@@ -241,6 +244,27 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
         self.importer_thread.start(priority=QThread.LowPriority)
+
+        # Setup measurement tags UI
+        # Setup the flow layout inside the scrollArea's contents
+        self.container = self.scrollAreaWidgetContents
+        self.flow_layout = FlowLayout(self.container)
+        self.container.setLayout(self.flow_layout)
+        # Connect line edit signal
+        self.lineEdit_tags.returnPressed.connect(self.add_tag)
+
+        version = update_camels.get_version()
+        if self.preferences["last_shown_notes"] != version:
+            update_camels.show_release_notes()
+            self.preferences["last_shown_notes"] = version
+            load_save_functions.save_preferences(self.preferences)
+
+    def add_tag(self):
+        text = self.lineEdit_tags.text().strip()
+        if text:
+            tag = TagWidget(text)
+            self.flow_layout.addWidget(tag)
+            self.lineEdit_tags.clear()
 
     def start_API_server(self, api_port):
         """
@@ -346,6 +370,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         Update the variables of a protocol in the run queue. Called by the API.
         """
+        self.run_queue_widget.setHidden(False)
+        self.label_queue.setHidden(False)
         if protocol_name in self.protocols_dict:
             self.run_queue_widget.add_item(protocol_name, api_uuid)
         protocol_name = list(self.run_queue_widget.protocol_name_variables.keys())[
@@ -356,6 +382,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         )
 
     def change_variables_queued_protocol(self, protocol_name, variables, index):
+        self.run_queue_widget.setHidden(False)
+        self.label_queue.setHidden(False)
         self.run_queue_widget.update_variables_queue(
             protocol_name, variables, index=index
         )
@@ -1746,28 +1774,29 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
             self.re_subs.append(self.run_engine.subscribe(self.run_router))
 
-        if self.running_protocol.live_variable_update:
-            from nomad_camels.ui_widgets.variable_table import VariableBox
+        # if self.running_protocol.live_variable_update:
+        #     from nomad_camels.ui_widgets.variable_table import VariableBox
 
-            self.live_variable_box = VariableBox(
-                protocol=self.running_protocol, editable_names=False
-            )
-            self.live_variable_box.show()
-            self.live_variable_box.new_values_signal.connect(self.update_live_variables)
-            self.add_to_open_windows(self.live_variable_box)
-            self.protocol_finished_signal.connect(self.live_variable_box.close)
+        #     self.live_variable_box = VariableBox(
+        #         protocol=self.running_protocol, editable_names=False
+        #     )
+        #     self.live_variable_box.show()
+        #     self.live_variable_box.new_values_signal.connect(self.update_live_variables)
+        #     self.add_to_open_windows(self.live_variable_box)
+        #     self.protocol_finished_signal.connect(self.live_variable_box.close)
+        live_windows = self.protocol_module.create_live_windows()
+        for window in live_windows:
+            self.add_to_open_windows(window)
 
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
         self.pushButton_stop.setEnabled(True)
-        protocol = self.running_protocol
         self.protocol_module.run_protocol_main(
             self.run_engine,
             catalog=self.databroker_catalog,
             devices=devs,
             md={
                 "devices": dev_data,
-                "description": protocol.description,
                 "api_uuid": api_uuid,  # Include the uuid in the metadata
             },
         )
@@ -1948,16 +1977,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     self.run_engine,
                     catalog=self.databroker_catalog,
                     devices=devs,
-                    md={
-                        "devices": dev_data,
-                        "description": protocol.description,
-                        # "versions": {
-                        #     "NOMAD CAMELS": "0.1",
-                        #     "EPICS": "7.0.6.2",
-                        #     "bluesky": bluesky.__version__,
-                        #     "ophyd": ophyd.__version__,
-                        # },
-                    },
+                    md={"devices": dev_data},
                 )
         except Exception as e:
             if not isinstance(e, bluesky.utils.RunEngineInterrupted):
@@ -2055,6 +2075,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.devices_from_queue.append(self.current_protocol_device_list)
         if self.run_queue_widget.check_next_protocol():
             return
+        self.run_queue_widget.setHidden(True)
+        self.label_queue.setHidden(True)
         self.current_protocol_device_list = []
         self.close_old_queue_devices()
         self.pushButton_stop.setEnabled(False)
@@ -2128,6 +2150,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 return
         else:
             path = f"{self.preferences['py_files_path']}/{protocol_name}.py"
+        protocol.measurement_description = self.textEdit_meas_description.toPlainText()
+        protocol.tags = self.flow_layout.get_all_tags()
         user, userdata = self.get_user_name_data()
         sample, sampledata = self.get_sample_name_data()
         savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.session_name}/{protocol.filename or protocol.session_name or "data"}.nxs'
@@ -2152,6 +2176,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         if protocol_name in self.protocols_dict:
             self.run_queue_widget.add_item(protocol_name, api_uuid=api_uuid)
+            self.run_queue_widget.setHidden(False)
+            self.label_queue.setHidden(False)
 
     def get_user_name_data(self):
         """

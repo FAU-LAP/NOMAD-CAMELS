@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
 )
 from PySide6.QtGui import QPainter, QColor, QBrush, QAction, QDrag
-from PySide6.QtCore import Qt, QSize, QMimeData, Signal
+from PySide6.QtCore import Qt, QSize, QMimeData, Signal, SIGNAL
 
 from nomad_camels.utility.variables_handling import get_color
 
@@ -115,10 +115,19 @@ class Options_Run_Button(QFrame):
             self.queue_button.setIcon(icon)
             self.queue_button.setIconSize(QSize(int(size / 5), int(size / 5)))
             self.queue_button.setGeometry(5, 10 + size // 4, size - 10, int(size / 4))
+            self.button.setToolTip(
+                "open the protocol settings / measurement sequence\nright-click for more options"
+            )
+            self.small_button.setToolTip("run this protocol right away")
+            self.queue_button.setToolTip(
+                "queue this protocol\nyou can set the protocol's variables for this specific run"
+            )
         else:
             self.small_button.setIconSize(QSize(int(size / 4), int(size / 4)))
             self.small_button.setGeometry(5, 5, size - 10, int(size / 3))
             self.queue_button = None
+            self.button.setToolTip("open the settings of the manual control\nright-click for more options")
+            self.small_button.setToolTip("start the manual control")
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.options_menu)
         self.config_function = None
@@ -136,11 +145,17 @@ class Options_Run_Button(QFrame):
 
     def update_functions(self):
         """ """
-        self.build_asked.disconnect()
-        self.external_asked.disconnect()
-        self.data_path_asked.disconnect()
-        self.del_asked.disconnect()
-        self.move_asked.disconnect()
+        # check if build_asked has anything to disconnect
+        if self.receivers(SIGNAL("build_asked()")) > 0:
+            self.build_asked.disconnect()
+        if self.receivers(SIGNAL("external_asked()")) > 0:
+            self.external_asked.disconnect()
+        if self.receivers(SIGNAL("data_path_asked()")) > 0:
+            self.data_path_asked.disconnect()
+        if self.receivers(SIGNAL("del_asked()")) > 0:
+            self.del_asked.disconnect()
+        if self.receivers(SIGNAL("move_asked()")) > 0:
+            self.move_asked.disconnect()
         if self.config_function is not None:
             self.button.clicked.connect(self.config_function)
         if self.run_function is not None:

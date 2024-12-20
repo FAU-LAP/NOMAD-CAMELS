@@ -96,6 +96,7 @@ standard_start_string += "\tbec = BestEffortCallback()\n"
 standard_start_string += "\tRE.subscribe(bec)\n"
 standard_start_string2 = "\t\tplot_etc = create_plots(RE)\n"
 standard_start_string2 += "\t\tadditional_step_data = steps_add_main(RE, devs)\n"
+standard_start_string2 += "\t\tcreate_live_windows()\n"
 standard_start_string2 += (
     "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md)\n"
 )
@@ -218,6 +219,7 @@ def build_protocol(
     variable_string += "plots = []\n"
     # variable_string += "plot_data = []\n"
     variable_string += "boxes = {}\n"
+    variable_string += "live_windows = []\n"
     variable_string += "app = None\n"
     variable_string += f'save_path = "{save_path}"\n'
     variable_string += f'session_name = "{protocol.session_name}"\n'
@@ -325,7 +327,7 @@ def build_protocol(
 
     # finishing up the device initialization
     devices_string += '\t\tprint("devices connected")\n'
-    devices_string += f'\t\tmd = {{"devices": device_config, "description": "{repr(protocol.description)}"}}\n'
+    devices_string += f'\t\tmd = {{"devices": device_config}}\n'
 
     # the plots are created
     plot_string, plotting = plot_creator(protocol.plots, multi_stream=True)
@@ -346,6 +348,7 @@ def build_protocol(
     protocol_string += protocol.get_plan_string()
     protocol_string += plot_string
     protocol_string += protocol.get_add_main_string()
+    protocol_string += protocol.get_live_interaction_string()
     protocol_string += standard_run_string
 
     # setting up the progress bar
@@ -358,6 +361,11 @@ def build_protocol(
     protocol_string += user_sample_string(userdata, sampledata)
     protocol_string += f'\tmd["session_name"] = session_name\n'
     protocol_string += f'\tmd["protocol_overview"] = """{protocol.get_short_string().encode("unicode_escape").decode()}"""\n'
+    protocol_string += f'\tmd["description"] = {repr(protocol.description)}\n'
+    protocol_string += f'\tmd["measurement_tags"] = {protocol.tags}\n'
+    protocol_string += (
+        f'\tmd["measurement_description"] = {repr(protocol.measurement_description)}\n'
+    )
 
     protocol_string += f"\ttry:\n"
     protocol_string += f'\t\twith open("{cprot_path}", "r", encoding="utf-8") as f:\n'
@@ -378,6 +386,8 @@ def build_protocol(
     protocol_string += f"\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
     protocol_string += "\tfinally:\n"
     protocol_string += "\t\tRE.unsubscribe(subscription_uid)\n"
+    protocol_string += "\t\tfor window in live_windows:\n"
+    protocol_string += "\t\t\twindow.close()\n"
 
     # wait for RunEngine to finish, then save the data
     save_string = "\t\tif uids:\n"

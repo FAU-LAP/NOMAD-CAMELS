@@ -412,7 +412,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             insert_above_menu = QMenu("Insert Above")
             insert_above_menu_channels = QMenu("Channels")
             insert_above_menu_loops = QMenu("Loops")
-            insert_above_menu_additional = QMenu("Additional")
+            insert_above_menu_additional = QMenu("Advanced")
             # Filter out specific steps with a list of the .text of the QAction and then remove them from the list
             duplicate_actions = above_actions[:]
             for action in above_actions:
@@ -438,7 +438,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             insert_below_menu = QMenu("Insert Below")
             insert_below_menu_channels = QMenu("Channels")
             insert_below_menu_loops = QMenu("Loops")
-            insert_below_menu_additional = QMenu("Additional")
+            insert_below_menu_additional = QMenu("Advanced")
             # Filter out specific steps with a list of the .text of the QAction and then remove them from the list for the below menu
             duplicate_actions = below_actions[:]
             for action in below_actions:
@@ -470,7 +470,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 add_in_menu = QMenu("Add Into")
                 add_in_menu_channels = QMenu("Channels")
                 add_in_menu_loops = QMenu("Loops")
-                add_in_menu_additional = QMenu("Additional")
+                add_in_menu_additional = QMenu("Advanced")
                 # Filter out specific steps with a list of the .text of the QAction and then remove them from the list
                 duplicate_actions = into_actions[:]
                 for action in into_actions:
@@ -575,7 +575,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             # -------------- Above actions -----------------------------
             add_menu_channels = QMenu("Channels")
             add_menu_loops = QMenu("Loops")
-            add_menu_additional = QMenu("Additional")
+            add_menu_additional = QMenu("Advanced")
             # Filter out specific steps with a list of the .text of the QAction and then remove them from the list
             duplicate_actions = add_actions[:]
             for action in add_actions:

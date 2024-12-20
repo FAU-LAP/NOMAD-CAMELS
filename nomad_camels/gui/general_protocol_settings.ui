@@ -26,6 +26,48 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <item row="8" column="1">
+    <widget class="QPushButton" name="pushButton_add_variable">
+     <property name="maximumSize">
+      <size>
+       <width>27</width>
+       <height>27</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+                                background-color:  #4CAF50; 
+                                color: white; 
+                                border: none; 
+                                padding: 0px; 
+                                padding-bottom: 5px;
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 18px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+            QPushButton:hover {
+                background-color: #45a049;
+            }</string>
+     </property>
+     <property name="text">
+      <string>+</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="5">
+    <widget class="QLineEdit" name="lineEdit_filename">
+     <property name="text">
+      <string>Datafile</string>
+     </property>
+     <property name="placeholderText">
+      <string>Filename</string>
+     </property>
+    </widget>
+   </item>
    <item row="2" column="0">
     <widget class="QLabel" name="label">
      <property name="maximumSize">
@@ -44,54 +86,8 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="0" colspan="6">
-    <widget class="VariableTable" name="variable_table">
-     <attribute name="verticalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
-    </widget>
-   </item>
    <item row="1" column="1" colspan="5">
     <widget class="QLineEdit" name="lineEdit_protocol_name"/>
-   </item>
-   <item row="0" column="0" colspan="4">
-    <widget class="QLabel" name="label_title">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>General Configuration</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Variables</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QWidget" name="widget_3" native="true"/>
-   </item>
-   <item row="2" column="1" colspan="5">
-    <widget class="QLineEdit" name="lineEdit_filename">
-     <property name="text">
-      <string>Datafile</string>
-     </property>
-     <property name="placeholderText">
-      <string>Filename</string>
-     </property>
-    </widget>
    </item>
    <item row="8" column="2">
     <widget class="QPushButton" name="pushButton_remove_variable">
@@ -127,59 +123,6 @@ QPushButton:disabled {
       <string>-</string>
      </property>
     </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="maximumSize">
-      <size>
-       <width>85</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Protocol Name:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="1">
-    <widget class="QPushButton" name="pushButton_add_variable">
-     <property name="maximumSize">
-      <size>
-       <width>27</width>
-       <height>27</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-                                background-color:  #4CAF50; 
-                                color: white; 
-                                border: none; 
-                                padding: 0px; 
-                                padding-bottom: 5px;
-                                text-align: center; 
-                                text-decoration: none; 
-                                font-size: 18px; 
-                                margin: 2px 2px; 
-                                border-radius: 6px;
-								font-weight: bold;
-                            }
-
-            QPushButton:hover {
-                background-color: #45a049;
-            }</string>
-     </property>
-     <property name="text">
-      <string>+</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QWidget" name="widget_4" native="true"/>
    </item>
    <item row="4" column="0" colspan="6">
     <widget class="QWidget" name="widget_2" native="true">
@@ -247,10 +190,74 @@ QPushButton:disabled {
      </layout>
     </widget>
    </item>
+   <item row="9" column="0" colspan="6">
+    <widget class="VariableTable" name="variable_table">
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="4">
+    <widget class="QLabel" name="label_title">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>General Configuration</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QWidget" name="widget_3" native="true"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="maximumSize">
+      <size>
+       <width>85</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Protocol Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QWidget" name="widget_4" native="true"/>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Variables</string>
+     </property>
+    </widget>
+   </item>
    <item row="10" column="0" colspan="6">
     <widget class="QCheckBox" name="checkBox_live_variables">
      <property name="text">
       <string>allow for live resetting of variables</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0" colspan="6">
+    <widget class="QCheckBox" name="checkBox_live_comments">
+     <property name="text">
+      <string>allow live comments to protocol</string>
      </property>
     </widget>
    </item>
