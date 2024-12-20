@@ -5,6 +5,8 @@ Drivers
    :maxdepth: 4
 
    nomad_camels_driver_agilent_34401a
+   nomad_camels_driver_agilent_34970
+   nomad_camels_driver_agilent_e363x
    nomad_camels_driver_andor_newton
    nomad_camels_driver_andor_shamrock_500
    nomad_camels_driver_cam_control_pylablib
@@ -19,6 +21,7 @@ Drivers
    nomad_camels_driver_keithley_2400
    nomad_camels_driver_keysight_b2912a
    nomad_camels_driver_keysight_e5270b
+   nomad_camels_driver_leybold_c_move_1250
    nomad_camels_driver_mechonics_cu30cl
    nomad_camels_driver_ni_daq
    nomad_camels_driver_PID
@@ -30,3 +33,4 @@ Drivers
    nomad_camels_driver_thorlabs_TLPM
    nomad_camels_driver_trinamic_tmcm_1110
    nomad_camels_driver_voltcraft_pps
+   nomad_camels_driver_voltcraft_psp

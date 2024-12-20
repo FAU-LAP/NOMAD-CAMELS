@@ -25,7 +25,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Extensions" href="extensions.html" />
+    <link rel="next" title="nomad_camels_driver_voltcraft_psp package" href="nomad_camels_driver_voltcraft_psp.html" />
     <link rel="prev" title="nomad_camels_driver_trinamic_tmcm_1110 package" href="nomad_camels_driver_trinamic_tmcm_1110.html" /> 
 </head>
 
@@ -95,6 +95,8 @@
 <li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="drivers.html">drivers</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_agilent_34401a.html">nomad_camels_driver_agilent_34401a package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_agilent_34970.html">nomad_camels_driver_agilent_34970 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_agilent_e363x.html">nomad_camels_driver_agilent_e363x package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_andor_newton.html">nomad_camels_driver_andor_newton package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_andor_shamrock_500.html">nomad_camels_driver_andor_shamrock_500 package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_cam_control_pylablib.html">nomad_camels_driver_cam_control_pylablib package</a></li>
@@ -109,6 +111,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keithley_2400.html">nomad_camels_driver_keithley_2400 package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keysight_b2912a.html">nomad_camels_driver_keysight_b2912a package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keysight_e5270b.html">nomad_camels_driver_keysight_e5270b package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_leybold_c_move_1250.html">nomad_camels_driver_leybold_c_move_1250 package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_mechonics_cu30cl.html">nomad_camels_driver_mechonics_cu30cl package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_ni_daq.html">nomad_camels_driver_ni_daq package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_PID.html">nomad_camels_driver_PID package</a></li>
@@ -122,13 +125,9 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">nomad_camels_driver_voltcraft_pps package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_voltcraft_pps.voltcraft_pps">nomad_camels_driver_voltcraft_pps.voltcraft_pps module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass"><code class="docutils literal notranslate"><span class="pre">subclass</span></code></a><ul>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass.get_channels"><code class="docutils literal notranslate"><span class="pre">subclass.get_channels()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass"><code class="docutils literal notranslate"><span class="pre">subclass</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass_config"><code class="docutils literal notranslate"><span class="pre">subclass_config</span></code></a><ul>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass_config.get_config"><code class="docutils literal notranslate"><span class="pre">subclass_config.get_config()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass_config.mode_change"><code class="docutils literal notranslate"><span class="pre">subclass_config.mode_change()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass_config.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">subclass_config.staticMetaObject</span></code></a></li>
 </ul>
 </li>
@@ -153,6 +152,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_voltcraft_pps">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_voltcraft_psp.html">nomad_camels_driver_voltcraft_psp package</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
@@ -209,21 +209,6 @@
 <dt class="sig sig-object py" id="nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_voltcraft_pps.voltcraft_pps.</span></span><span class="sig-name descname"><span class="pre">subclass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.device_class.Device" title="nomad_camels.main_classes.device_class.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass.get_channels">
-<span class="sig-name descname"><span class="pre">get_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass.get_channels" title="Link to this definition"></a></dt>
-<dd><p>returns self.channels, should be overwritten for special
-purposes (e.g. leaving out some keys of the dictionary)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>self.channels</strong> – dictionary containing the device’s channels</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -236,11 +221,6 @@ purposes (e.g. leaving out some keys of the dictionary)</p>
 <dd><p>Returns the config_dict of the device. Overwrite this
 function for each device to specify the config.</p>
 </dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass_config.mode_change">
-<span class="sig-name descname"><span class="pre">mode_change</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass_config.mode_change" title="Link to this definition"></a></dt>
-<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels_driver_voltcraft_pps.voltcraft_pps.subclass_config.staticMetaObject">
@@ -451,7 +431,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">('suffi
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="nomad_camels_driver_trinamic_tmcm_1110.html" class="btn btn-neutral float-left" title="nomad_camels_driver_trinamic_tmcm_1110 package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="extensions.html" class="btn btn-neutral float-right" title="Extensions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="nomad_camels_driver_voltcraft_psp.html" class="btn btn-neutral float-right" title="nomad_camels_driver_voltcraft_psp package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -137,6 +137,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#nomad_camels.MainApp_v2.MainWindow.add_measurement_protocol"><code class="docutils literal notranslate"><span class="pre">MainWindow.add_measurement_protocol()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nomad_camels.MainApp_v2.MainWindow.add_prot_to_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.add_prot_to_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nomad_camels.MainApp_v2.MainWindow.add_subs_and_plots_from_dict"><code class="docutils literal notranslate"><span class="pre">MainWindow.add_subs_and_plots_from_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels.MainApp_v2.MainWindow.add_tag"><code class="docutils literal notranslate"><span class="pre">MainWindow.add_tag()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nomad_camels.MainApp_v2.MainWindow.add_to_open_windows"><code class="docutils literal notranslate"><span class="pre">MainWindow.add_to_open_windows()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nomad_camels.MainApp_v2.MainWindow.add_to_plots"><code class="docutils literal notranslate"><span class="pre">MainWindow.add_to_plots()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nomad_camels.MainApp_v2.MainWindow.bluesky_setup"><code class="docutils literal notranslate"><span class="pre">MainWindow.bluesky_setup()</span></code></a></li>
@@ -366,6 +367,14 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.BoxHelper"><code class="docutils literal notranslate"><span class="pre">BoxHelper</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.BoxHelper.executor"><code class="docutils literal notranslate"><span class="pre">BoxHelper.executor</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.BoxHelper.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">BoxHelper.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Commenting_Box"><code class="docutils literal notranslate"><span class="pre">Commenting_Box</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Commenting_Box.closeEvent"><code class="docutils literal notranslate"><span class="pre">Commenting_Box.closeEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Commenting_Box.closing"><code class="docutils literal notranslate"><span class="pre">Commenting_Box.closing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Commenting_Box.finish_comment"><code class="docutils literal notranslate"><span class="pre">Commenting_Box.finish_comment()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Commenting_Box.get_metadata"><code class="docutils literal notranslate"><span class="pre">Commenting_Box.get_metadata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Commenting_Box.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Commenting_Box.staticMetaObject</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Prompt_Box"><code class="docutils literal notranslate"><span class="pre">Prompt_Box</span></code></a><ul>
@@ -911,6 +920,33 @@
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.gui.html#module-nomad_camels.gui.settings_window_resource_rc">nomad_camels.gui.settings_window_resource_rc module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.settings_window_resource_rc.qCleanupResources"><code class="docutils literal notranslate"><span class="pre">qCleanupResources()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.settings_window_resource_rc.qInitResources"><code class="docutils literal notranslate"><span class="pre">qInitResources()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.gui.html#module-nomad_camels.gui.tags_ui">nomad_camels.gui.tags_ui module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout"><code class="docutils literal notranslate"><span class="pre">FlowLayout</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.addItem"><code class="docutils literal notranslate"><span class="pre">FlowLayout.addItem()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.addWidget"><code class="docutils literal notranslate"><span class="pre">FlowLayout.addWidget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.count"><code class="docutils literal notranslate"><span class="pre">FlowLayout.count()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.doLayout"><code class="docutils literal notranslate"><span class="pre">FlowLayout.doLayout()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.expandingDirections"><code class="docutils literal notranslate"><span class="pre">FlowLayout.expandingDirections()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.get_all_tags"><code class="docutils literal notranslate"><span class="pre">FlowLayout.get_all_tags()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.hasHeightForWidth"><code class="docutils literal notranslate"><span class="pre">FlowLayout.hasHeightForWidth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.heightForWidth"><code class="docutils literal notranslate"><span class="pre">FlowLayout.heightForWidth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.itemAt"><code class="docutils literal notranslate"><span class="pre">FlowLayout.itemAt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.minimumSize"><code class="docutils literal notranslate"><span class="pre">FlowLayout.minimumSize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.remove_widget"><code class="docutils literal notranslate"><span class="pre">FlowLayout.remove_widget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.setGeometry"><code class="docutils literal notranslate"><span class="pre">FlowLayout.setGeometry()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.sizeHint"><code class="docutils literal notranslate"><span class="pre">FlowLayout.sizeHint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">FlowLayout.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.FlowLayout.takeAt"><code class="docutils literal notranslate"><span class="pre">FlowLayout.takeAt()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.TagWidget"><code class="docutils literal notranslate"><span class="pre">TagWidget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.TagWidget.remove_self"><code class="docutils literal notranslate"><span class="pre">TagWidget.remove_self()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.TagWidget.removing"><code class="docutils literal notranslate"><span class="pre">TagWidget.removing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.tags_ui.TagWidget.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">TagWidget.staticMetaObject</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.gui.html#module-nomad_camels.gui">Module contents</a></li>
@@ -1845,6 +1881,7 @@
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.protocol_class.Measurement_Protocol.add_loop_step"><code class="docutils literal notranslate"><span class="pre">Measurement_Protocol.add_loop_step()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.protocol_class.Measurement_Protocol.add_loop_step_rec"><code class="docutils literal notranslate"><span class="pre">Measurement_Protocol.add_loop_step_rec()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.protocol_class.Measurement_Protocol.get_add_main_string"><code class="docutils literal notranslate"><span class="pre">Measurement_Protocol.get_add_main_string()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.protocol_class.Measurement_Protocol.get_live_interaction_string"><code class="docutils literal notranslate"><span class="pre">Measurement_Protocol.get_live_interaction_string()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.protocol_class.Measurement_Protocol.get_outer_string"><code class="docutils literal notranslate"><span class="pre">Measurement_Protocol.get_outer_string()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.protocol_class.Measurement_Protocol.get_plan_string"><code class="docutils literal notranslate"><span class="pre">Measurement_Protocol.get_plan_string()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.protocol_class.Measurement_Protocol.get_short_string"><code class="docutils literal notranslate"><span class="pre">Measurement_Protocol.get_short_string()</span></code></a></li>
@@ -2123,6 +2160,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.ui_widgets.html#module-nomad_camels.ui_widgets.console_redirect">nomad_camels.ui_widgets.console_redirect module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.console_redirect.Console_TextEdit"><code class="docutils literal notranslate"><span class="pre">Console_TextEdit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.console_redirect.Console_TextEdit.append"><code class="docutils literal notranslate"><span class="pre">Console_TextEdit.append()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.console_redirect.Console_TextEdit.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Console_TextEdit.staticMetaObject</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.console_redirect.Console_TextEdit.write_error"><code class="docutils literal notranslate"><span class="pre">Console_TextEdit.write_error()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.console_redirect.Console_TextEdit.write_output"><code class="docutils literal notranslate"><span class="pre">Console_TextEdit.write_output()</span></code></a></li>
@@ -2311,6 +2349,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.device_handling.close_devices"><code class="docutils literal notranslate"><span class="pre">close_devices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.device_handling.close_single_device"><code class="docutils literal notranslate"><span class="pre">close_single_device()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.device_handling.get_channel_from_string"><code class="docutils literal notranslate"><span class="pre">get_channel_from_string()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.device_handling.get_channels_from_string_list"><code class="docutils literal notranslate"><span class="pre">get_channels_from_string_list()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.device_handling.get_functions_from_string_list"><code class="docutils literal notranslate"><span class="pre">get_functions_from_string_list()</span></code></a></li>
@@ -2433,6 +2472,7 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.update_camels.get_version"><code class="docutils literal notranslate"><span class="pre">get_version()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.update_camels.question_message_box"><code class="docutils literal notranslate"><span class="pre">question_message_box()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.update_camels.restart_camels"><code class="docutils literal notranslate"><span class="pre">restart_camels()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.update_camels.show_release_notes"><code class="docutils literal notranslate"><span class="pre">show_release_notes()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.update_camels.update_camels"><code class="docutils literal notranslate"><span class="pre">update_camels()</span></code></a></li>
 </ul>
 </li>
@@ -2647,6 +2687,11 @@
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_tag">
+<span class="sig-name descname"><span class="pre">add_tag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_tag" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_to_open_windows">
