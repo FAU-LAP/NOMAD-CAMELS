@@ -1211,35 +1211,6 @@ class Waiting_Bar(QWidget):
         self.show()
 
 
-def close_run(exit_status="success", reason="", metadata=None, **kwargs):
-    """
-    Close a run and emit a RunStop document.
-
-    Parameters
-    ----------
-    exit_status : str, optional
-        The exit status of the run, e.g., 'success', 'abort', 'fail'.
-    reason : str, optional
-        A human-friendly string explaining the reason for the exit status.
-    **kwargs : dict, optional
-        Additional metadata to include in the RunStop document.
-
-    Yields
-    ------
-    msg : Msg
-        Msg('close_run', exit_status=exit_status, reason=reason, **kwargs)
-    """
-    return (
-        yield Msg(
-            "close_run",
-            exit_status=exit_status,
-            reason=reason,
-            metadata=metadata,
-            **kwargs,
-        )
-    )
-
-
 class Commenting_Box(QWidget):
     """A widget to add comments to the protocol."""
 
