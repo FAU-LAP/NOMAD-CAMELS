@@ -218,6 +218,8 @@ class Watchdog_View(QWidget):
             file_extension="*.cprot",
         )
 
+        self.label_condition = QLabel("Condition")
+
         self.read_check = QCheckBox("force periodic read")
         self.read_timer = QSpinBox()
         self.label_name = QLabel("Name")
@@ -238,6 +240,7 @@ class Watchdog_View(QWidget):
             self.read_check,
             self.read_timer,
             self.label_name,
+            self.label_condition,
             self.name_box,
             self.checkbox_active,
         ]
@@ -245,7 +248,8 @@ class Watchdog_View(QWidget):
         self.layout().addWidget(self.label_name, 0, 0)
         self.layout().addWidget(self.name_box, 0, 1)
         self.layout().addWidget(self.checkbox_active, 1, 0, 1, 2)
-        self.layout().addWidget(self.condition_box, 2, 0, 1, 2)
+        self.layout().addWidget(self.label_condition, 2, 0)
+        self.layout().addWidget(self.condition_box, 2, 1)
         self.layout().addWidget(self.read_check, 3, 0)
         self.layout().addWidget(self.read_timer, 3, 1)
         self.layout().addWidget(self.channels_table, 4, 0, 1, 2)
