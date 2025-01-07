@@ -181,6 +181,7 @@ class Live_List(QObject, CallbackBase):
         """
         self.epoch_offset = doc["time"]
         super().start(doc)
+        self.eva.start(doc)
 
     def event(self, doc):
         """

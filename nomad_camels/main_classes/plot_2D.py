@@ -229,6 +229,7 @@ class LivePlot_2D(LiveScatter, QObject):
         self.sc = sc
         self.cb = self.ax.figure.colorbar(sc, ax=self.ax)
         self.cb.set_label(self.zlabel or self.I)
+        self.eva.start(doc)
 
     def descriptor(self, doc):
         """
