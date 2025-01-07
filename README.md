@@ -24,6 +24,7 @@ Fixes:
 - not necessary to read channels when waiting for condition anymore (condition might be due to variable for example)
 - driver builder does not create read-functions for set-channels anymore
 - list-plot can now display other types than numbers and bool again
+- throwing an error when trying to execute python file without specifying a file
 
 ### 1.5.2 The team of NOMAD CAMELS wishes you a measuring christmas and bug-free new year!
 Features:
