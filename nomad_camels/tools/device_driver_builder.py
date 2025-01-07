@@ -410,9 +410,9 @@ def make_custom_component(dic):
     write_names = []
     for i, name in enumerate(dic["Name"]):
         channel_type = dic["Channel-Type"][i]
-        read_names.append(name)
         RO = False
         if "read-only" in channel_type:
+            read_names.append(name)
             RO = True
         else:
             write_names.append(name)

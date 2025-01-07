@@ -18,6 +18,12 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.5.3
+Fixes:
+- ElapsedTime for List and 2D plots fixed
+- not necessary to read channels when waiting for condition anymore (condition might be due to variable for example)
+- driver builder does not create read-functions for set-channels anymore
+
 ### 1.5.2 The team of NOMAD CAMELS wishes you a measuring christmas and bug-free new year!
 Features:
 - now showing the changelog after an update
