@@ -13,3 +13,9 @@ There are three main types of loops that you select with the `Loop-type` drop do
 You can access the value of the loop by using the variable `<For_Loop_name>_Value`. The name is taken why the value you entered into the `name` field of the step. 
 
 You can also access the number of the current iteration (so 0 for the first iteration, 1 for the second and so on) with `<For_Loop_name>_Count`. This allows you to keep track of the number of iterations performed. 
+
+If one of the _Start-Stop_ types is selected, the sweep mode can be selected:
+- _Linear_ means all steps have the same distance
+- _Logarithmic_ means that the steps are on a logarithmic axis (e.g. from 1 to 100 in 3 steps gives `1, 10, 100`).
+- _Exponential_ is the inverse of _logarithmic_
+- _1/x_ selects the steps equidistant on a 1/x axis

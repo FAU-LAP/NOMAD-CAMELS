@@ -8,3 +8,10 @@ If you are using a SweepMe! instrument you can read everything that is in `self.
 
 Simply mark the checkbox to read the desired channels.
 ![Image of the Read Channels protocol step.](images/image.png)
+
+
+## Trigger Channels
+
+Some instruments with long acquisition times may provide splitted functions for triggering the reading process and the actual readout. To make use of this, in the _Read Channels_ step, one needs to select _Split trigger and read_.
+
+In this case, the _Trigger Channels_ step can select the corresponding _Read Channels_. In between those two steps, any other steps can be executed.
