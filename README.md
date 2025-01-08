@@ -26,6 +26,7 @@ Fixes:
 - list-plot can now display other types than numbers and bool again
 - throwing an error when trying to execute python file without specifying a file
 - variables in protocols run by a watchdog should now work
+- replace with menu now looks as the others, cannot replace step with same type anymore
 
 ### 1.5.2 The team of NOMAD CAMELS wishes you a measuring christmas and bug-free new year!
 Features:
