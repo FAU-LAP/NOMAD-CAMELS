@@ -1542,6 +1542,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             return
         from nomad_camels.frontpanels.protocol_config import Protocol_Config
 
+        for dialog in self.open_windows:
+            if isinstance(dialog, Protocol_Config):
+                if dialog.old_name == prot_name:
+                    dialog.raise_()
+                    return
+
         dialog = Protocol_Config(self.protocols_dict[prot_name])
         dialog.show()
         dialog.accepted.connect(lambda x, y=prot_name: self.update_prot_data(x, y))

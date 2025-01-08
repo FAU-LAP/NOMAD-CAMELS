@@ -19,6 +19,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.5.3
+Changes:
+- no more confusion when opening a protocol configuration, cannot open the same twice anymore, but raises the already opened window to the front
+
 Fixes:
 - ElapsedTime for List and 2D plots fixed
 - not necessary to read channels when waiting for condition anymore (condition might be due to variable for example)
