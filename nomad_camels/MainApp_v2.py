@@ -1957,12 +1957,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             if self.run_engine.state == "paused":
 
                 def pause_plan():
+                    namespace = self.eva.namespace.copy()
+                    module.namespace.update(namespace)
+                    self.eva.namespace = module.namespace
                     yield from getattr(module, f"{protocol_name}_plan_inner")(
                         devs, self.eva, stream_name="watchdog_triggered"
                     )
                     yield from bps.checkpoint()
                     yield from bps.pause()
                     yield from bps.checkpoint()
+                    self.eva.namespace = namespace
 
                 self.run_engine._plan_stack.append(pause_plan())
                 self.run_engine._response_stack.append(None)
