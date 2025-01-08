@@ -696,8 +696,20 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
+                <td>Racaldana (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>90x5a</a></td>
+                <td>Logger</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
                 <td>Rigol (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Dm30xx</a></td>
+                <td>Logger</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Rohde&schwarz (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Rtx</a></td>
                 <td>Logger</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
@@ -1008,6 +1020,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
+                <td>Rigol (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Dhoseries</a></td>
+                <td>Scope</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
                 <td>Rohde&schwarz (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Hmo3004</a></td>
                 <td>Scope</td>
@@ -1056,6 +1074,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
+                <td>Rohde&schwarz (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Smb100a</a></td>
+                <td>Signal</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
                 <td>Siglent (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Sdg2000x</a></td>
                 <td>Signal</td>
@@ -1076,6 +1100,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             <tr>
                 <td>Oceanoptics (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Nirquest</a></td>
+                <td>Spectrometer</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Oceanoptics (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Oceandirect</a></td>
                 <td>Spectrometer</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
