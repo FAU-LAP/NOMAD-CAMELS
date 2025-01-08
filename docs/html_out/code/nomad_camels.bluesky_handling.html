@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>nomad_camels.bluesky_handling package &mdash; NOMAD-CAMELS  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=4c64c665" />
@@ -123,6 +123,7 @@
 </li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.bluesky_handling.helper_functions">nomad_camels.bluesky_handling.helper_functions module</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.BoxHelper"><code class="docutils literal notranslate"><span class="pre">BoxHelper</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.Commenting_Box"><code class="docutils literal notranslate"><span class="pre">Commenting_Box</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.Prompt_Box"><code class="docutils literal notranslate"><span class="pre">Prompt_Box</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.Value_Box"><code class="docutils literal notranslate"><span class="pre">Value_Box</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.Value_Setter"><code class="docutils literal notranslate"><span class="pre">Value_Setter</span></code></a></li>
@@ -725,6 +726,40 @@ within the protocol.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.BoxHelper.staticMetaObject">
 <span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;BoxHelper&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=executor()</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.BoxHelper.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.Commenting_Box">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.helper_functions.</span></span><span class="sig-name descname"><span class="pre">Commenting_Box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.Commenting_Box" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>A widget to add comments to the protocol.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.Commenting_Box.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtGui.QCloseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.Commenting_Box.closeEvent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.Commenting_Box.closing">
+<span class="sig-name descname"><span class="pre">closing</span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.Commenting_Box.closing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.Commenting_Box.finish_comment">
+<span class="sig-name descname"><span class="pre">finish_comment</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.Commenting_Box.finish_comment" title="Link to this definition"></a></dt>
+<dd><p>Sets the flag <cite>_is_finished</cite> to True.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.Commenting_Box.get_metadata">
+<span class="sig-name descname"><span class="pre">get_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.Commenting_Box.get_metadata" title="Link to this definition"></a></dt>
+<dd><p>Get the text of the comment.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.Commenting_Box.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Commenting_Box&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=closing()</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.Commenting_Box.staticMetaObject" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

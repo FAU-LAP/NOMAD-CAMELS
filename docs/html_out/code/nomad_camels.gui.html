@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>nomad_camels.gui package &mdash; NOMAD-CAMELS  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=4c64c665" />
@@ -171,6 +171,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.settings_window_resource_rc">nomad_camels.gui.settings_window_resource_rc module</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.settings_window_resource_rc.qCleanupResources"><code class="docutils literal notranslate"><span class="pre">qCleanupResources()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.settings_window_resource_rc.qInitResources"><code class="docutils literal notranslate"><span class="pre">qInitResources()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui.tags_ui">nomad_camels.gui.tags_ui module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.tags_ui.FlowLayout"><code class="docutils literal notranslate"><span class="pre">FlowLayout</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.gui.tags_ui.TagWidget"><code class="docutils literal notranslate"><span class="pre">TagWidget</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.gui">Module contents</a></li>
@@ -637,6 +642,111 @@
 <dt class="sig sig-object py" id="nomad_camels.gui.settings_window_resource_rc.qInitResources">
 <span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.settings_window_resource_rc.</span></span><span class="sig-name descname"><span class="pre">qInitResources</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.settings_window_resource_rc.qInitResources" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+</section>
+<section id="module-nomad_camels.gui.tags_ui">
+<span id="nomad-camels-gui-tags-ui-module"></span><h2>nomad_camels.gui.tags_ui module<a class="headerlink" href="#module-nomad_camels.gui.tags_ui" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.tags_ui.</span></span><span class="sig-name descname"><span class="pre">FlowLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QLayout</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.addItem">
+<span class="sig-name descname"><span class="pre">addItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg__1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtWidgets.QLayoutItem</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.addItem" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.addWidget">
+<span class="sig-name descname"><span class="pre">addWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtWidgets.QWidget</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.addWidget" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.count">
+<span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.doLayout">
+<span class="sig-name descname"><span class="pre">doLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testOnly</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.doLayout" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.expandingDirections">
+<span class="sig-name descname"><span class="pre">expandingDirections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PySide6.QtCore.Qt.Orientation</span></span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.expandingDirections" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.get_all_tags">
+<span class="sig-name descname"><span class="pre">get_all_tags</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.get_all_tags" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.hasHeightForWidth">
+<span class="sig-name descname"><span class="pre">hasHeightForWidth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.hasHeightForWidth" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.heightForWidth">
+<span class="sig-name descname"><span class="pre">heightForWidth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg__1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.heightForWidth" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.itemAt">
+<span class="sig-name descname"><span class="pre">itemAt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PySide6.QtWidgets.QLayoutItem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.itemAt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.minimumSize">
+<span class="sig-name descname"><span class="pre">minimumSize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PySide6.QtCore.QSize</span></span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.minimumSize" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.remove_widget">
+<span class="sig-name descname"><span class="pre">remove_widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.remove_widget" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.setGeometry">
+<span class="sig-name descname"><span class="pre">setGeometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg__1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtCore.QRect</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.setGeometry" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.sizeHint">
+<span class="sig-name descname"><span class="pre">sizeHint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PySide6.QtCore.QSize</span></span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.sizeHint" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;FlowLayout&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QLayout&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.takeAt">
+<span class="sig-name descname"><span class="pre">takeAt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PySide6.QtWidgets.QLayoutItem</span></span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.takeAt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.TagWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.tags_ui.</span></span><span class="sig-name descname"><span class="pre">TagWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.tags_ui.TagWidget" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.TagWidget.remove_self">
+<span class="sig-name descname"><span class="pre">remove_self</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.tags_ui.TagWidget.remove_self" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.TagWidget.removing">
+<span class="sig-name descname"><span class="pre">removing</span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.TagWidget.removing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.TagWidget.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;TagWidget&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=removing(QWidget*),</span> <span class="pre">parameters=QWidget*</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.gui.tags_ui.TagWidget.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
 
 </section>
 <section id="module-nomad_camels.gui">
