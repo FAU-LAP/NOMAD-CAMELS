@@ -77,6 +77,8 @@ class Execute_Python_File(Loop_Step):
         This function runs the python file with the python exe using the subprocess module.
         The the cwd of the subprocess is changed to the python files location.
         """
+        if not self.file_path:
+            raise Exception(f"You need to specify the path of the file for {self.name}")
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         # use subprocess to run the python file

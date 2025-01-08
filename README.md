@@ -18,6 +18,19 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.5.3 Less Confusion!
+Changes:
+- no more confusion when opening a protocol configuration, cannot open the same twice anymore, but raises the already opened window to the front
+
+Fixes:
+- ElapsedTime for List and 2D plots fixed
+- not necessary to read channels when waiting for condition anymore (condition might be due to variable for example)
+- driver builder does not create read-functions for set-channels anymore
+- list-plot can now display other types than numbers and bool again
+- throwing an error when trying to execute python file without specifying a file
+- variables in protocols run by a watchdog should now work
+- replace with menu now looks as the others, cannot replace step with same type anymore
+
 ### 1.5.2 The team of NOMAD CAMELS wishes you a measuring christmas and bug-free new year!
 Features:
 - now showing the changelog after an update

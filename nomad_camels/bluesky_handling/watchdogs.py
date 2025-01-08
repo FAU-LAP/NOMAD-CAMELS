@@ -204,6 +204,7 @@ class Watchdog_Definer(QDialog):
 class Watchdog_View(QWidget):
     def __init__(self, parent=None, watchdogs=None):
         super().__init__(parent)
+        self.setWindowTitle("Watchdogs - NOMAD CAMELS")
         self.watchdog = None
         self.watchdogs = watchdogs
         self.condition_box = Variable_Box()
@@ -211,12 +212,14 @@ class Watchdog_View(QWidget):
             self, ["use", "channel"], title="connected channels"
         )
 
-        self.label_protocol = QLabel("Execute at condition")
+        self.label_protocol = QLabel("Execute at condition:")
         self.protocol_selection = Path_Button_Edit(
             self,
             default_dir=variables_handling.preferences["py_files_path"],
             file_extension="*.cprot",
         )
+
+        self.label_condition = QLabel("Condition")
 
         self.read_check = QCheckBox("force periodic read")
         self.read_timer = QSpinBox()
@@ -238,18 +241,22 @@ class Watchdog_View(QWidget):
             self.read_check,
             self.read_timer,
             self.label_name,
+            self.label_condition,
             self.name_box,
             self.checkbox_active,
+            self.label_protocol,
         ]
 
         self.layout().addWidget(self.label_name, 0, 0)
         self.layout().addWidget(self.name_box, 0, 1)
         self.layout().addWidget(self.checkbox_active, 1, 0, 1, 2)
-        self.layout().addWidget(self.condition_box, 2, 0, 1, 2)
+        self.layout().addWidget(self.label_condition, 2, 0)
+        self.layout().addWidget(self.condition_box, 2, 1)
         self.layout().addWidget(self.read_check, 3, 0)
         self.layout().addWidget(self.read_timer, 3, 1)
         self.layout().addWidget(self.channels_table, 4, 0, 1, 2)
-        self.layout().addWidget(self.protocol_selection, 5, 0, 1, 2)
+        self.layout().addWidget(self.label_protocol, 5, 0, 1, 2)
+        self.layout().addWidget(self.protocol_selection, 6, 0, 1, 2)
 
         self.update_watchdog(None)
 
