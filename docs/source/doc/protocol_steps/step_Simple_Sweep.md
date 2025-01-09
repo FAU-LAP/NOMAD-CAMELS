@@ -4,7 +4,12 @@ The Simple Sweep step is a convenient way to create a sweep for a single channel
 
 ## Defining the Sweep
 
-First select the channel you want to sweep (change). Then like in the For Loop, define the loop-type. Then define the list of values you want. Typically by giving start and stop (and min /max) values. Lastly select the channels you want to read for each value of the sweep channel.
+The sweep is defined as for the [For Loop](step_For_Loop.md#for-loop---protocol-step).
+
+The _Data Output_ field is currently deprecated.
+
+## Channels to set and read
+The sweep's values will be set in the selected _Sweep Channel_. For each iteration the channels selected as _Read Channels_ will be read and saved.
 
 ## Plots and Fits
 
@@ -14,5 +19,5 @@ You can use results from these fits as variables in your protocol. For this make
 
 The entire script can use and also plot the results of fits if you define a plot on the **left** side of the window. This plot *belongs* to the entire protocol run.
 
-In the end it can look something like this:
+In the end it may look like this:
 ![GUI of the simple sweep step with example parameters](images/image-3.png)
