@@ -1,4 +1,7 @@
-# Read Channels
+# Channel Steps
+These protocol steps are used to interact with instruments' channels.
+
+## Read Channels
 
 This protocol step allows you to read data from all the instruments you have installed and also created instances of.
 
@@ -10,13 +13,13 @@ Simply mark the checkbox to read the desired channels.
 ![Image of the Read Channels protocol step.](images/image.png)
 
 
-## Trigger Channels
+### Trigger Channels
 
 Some instruments with long acquisition times may provide splitted functions for triggering the reading process and the actual readout. To make use of this, in the _Read Channels_ step, one needs to select _Split trigger and read_.
 
 In this case, the _Trigger Channels_ step can select the corresponding _Read Channels_. In between those two steps, any other steps can be executed.
 
-# Set Channels
+## Set Channels
 
 This protocol step allows you to set channels of the instruments you have installed and also created instances of.
 
