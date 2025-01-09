@@ -18,6 +18,13 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.5.4
+Changes:
+- order of steps in menu now alphabetically
+
+Fixes:
+- changelog is now actually shown
+
 ### 1.5.3 Less Confusion!
 Changes:
 - no more confusion when opening a protocol configuration, cannot open the same twice anymore, but raises the already opened window to the front
