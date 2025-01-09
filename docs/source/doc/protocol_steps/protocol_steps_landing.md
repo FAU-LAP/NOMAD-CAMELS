@@ -11,6 +11,7 @@ The steps are ordered alphabetically.
 API Call <step_API_Call.md>
 Execute Python File <step_Execute_Python_File.md>
 For Loop <step_For_Loop.md>
+If <step_If.md>
 ND Sweep <step_ND_sweep.md>
 Read Channels <step_Read_Channels.md>
 Set Channels <step_Set_Channels.md>

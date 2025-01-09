@@ -1,6 +1,6 @@
 # While Loop
 The while loop allows to iterate as long as a given condition is True.
-This condition can contain anything and works like [conditions in python](https://www.learnpython.org/en/Conditions).
+This condition can contain anything, including variables and channels, and works like [conditions in python](https://www.learnpython.org/en/Conditions). This is similar to the [If step](step_If.md#if-step) or [waiting for a condition](step_Wait.md#wait-for-condition).
 
 ```{note}
 If you use variables or channels in the condition make sure to update / read them inside the loop!
