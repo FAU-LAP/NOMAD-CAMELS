@@ -7,6 +7,7 @@ Here you can find all the available *protocol steps* and an explanation on what 
 :caption: Available Protocol Steps
 
 Channel-Steps <Channel_Steps.md>
+Loops <loops_steps.md>
 API Call <step_API_Call.md>
 Execute Python File <step_Execute_Python_File.md>
 For Loop <step_For_Loop.md>
