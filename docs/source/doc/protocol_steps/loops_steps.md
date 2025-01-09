@@ -1,4 +1,5 @@
 # Loops
+All these steps may either have sub-steps or iterate over some values.
 
 ## For Loop
 
