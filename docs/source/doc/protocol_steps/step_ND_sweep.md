@@ -10,4 +10,5 @@ The logic of the sweeps loops are as follows:
 - outer loop
     - "middle" loop
         - inner loop
+
 i.e. for each "middle" loop value the complete inner loop is run and for each outer loop value the complete "middle" loop.

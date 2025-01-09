@@ -16,4 +16,5 @@ Read Channels <step_Read_Channels.md>
 Set Channels <step_Set_Channels.md>
 Simple Sweep <step_Simple_Sweep.md>
 Wait <step_Wait.md>
+While Loop <step_While_Loop.md>
 ```
