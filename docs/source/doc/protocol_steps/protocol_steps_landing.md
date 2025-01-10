@@ -10,6 +10,7 @@ Channel-Steps <Channel_Steps.md>
 Loops <loops_steps.md>
 If <step_If.md>
 Run Subprotocol <step_Run_Subprotocol.md>
+Set Variables <step_Set_Variables.md>
 Wait <step_Wait.md>
 Advanced <advanced_steps.md>
 ```

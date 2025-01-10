@@ -155,6 +155,27 @@ As CAMELS can not know what variables it will be getting, it will display all us
 ```
 
 
+## Call Function
+Some instruments have functions that cannot be represented by channels. If the instrument provides such functions, these can be selected in this step.
+
+An example for an instrument with a function is the Mechonics_CU30CL stage which provides a function to do its reference drive.
+
+
+## Change Device Config
+This step allows for changing an instruments configuration during the protocol. After selecting the desired instrument, the same / a similar window as in the "Manage Instruments" menu appears.
+
+```{note}
+CAMELS differentiates between _settings_ and _config_. Only the latter can be changed here, so the window may look a little different. (Settings represent things like for example whether the instrument currently has two or just one output channel connected.)
+```
+
+Besides that, in the drop-down menu below all the instruments is "_advanced configuration_". Here the config of all instruments can be changed at once, like one would normally do in [Set Channels](Channel_Steps.md#set-channels).
+
+```{warning}
+Make sure you completely understand the instrument when you use "_advanced configuration_". As it does not provide any drop-down menus, it is easily prone to errors.
+```
+
+
+
 
 ## Execute Python File - Protocol Step
 
@@ -292,3 +313,19 @@ print(json_dump)
 ```{note}
 Anything that can be serialized with JSON can be returned by your Python file.
 ```
+
+
+
+## Prompt
+This step displays a dialog box on the screen. It may be useful to provide instructions to the user, for example that they need to turn some knob manually at this point.
+
+_Title_ is the window-title of the box.
+
+The _Text_ will be displayed to the user who runs the protocol.
+
+If _can abort protocol_ is selected, besides the "OK" button, the box will also have a "abort protocol" button. That immediately stops the protocol instead of running the next steps.
+
+```{note}
+While the prompt is displayed, you cannot interact with the other windows of CAMELS, so if you want the user to be able to stop the protocol at this step, make sure to check _can abort protocol_~
+```
+
