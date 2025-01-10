@@ -24,6 +24,7 @@ Changes:
 
 Fixes:
 - changelog is now actually shown
+- waiting bars could crash if executed in a fast loop, now fixed
 
 ### 1.5.3 Less Confusion!
 Changes:

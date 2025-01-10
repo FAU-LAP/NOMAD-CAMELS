@@ -1109,17 +1109,26 @@ class Value_Setter(QWidget):
     hide_signal = Signal()
 
     def __init__(self, parent=None):
+        import datetime as dt
+
         super().__init__(parent)
-        self.start_time = 0
-        self.end_time = 0
+        self.start_time = dt.datetime.now()
+        self.end_time = dt.datetime.now()
         self.timer = 0
         self.wait_time = 0
+
+    def set_start_time(self, start_time):
+        """Set the start time for the waiting bar."""
+        self.start_time = start_time
+        self.set_wait_time(self.wait_time)
+        self.update_timer()
 
     def set_wait_time(self, wait_time):
         """Set the wait time for the waiting bar."""
         import datetime as dt
 
         self.wait_time = dt.timedelta(seconds=wait_time).total_seconds()
+        self.update_timer()
 
     def update_timer(self):
         """Update the timer of the waiting bar."""
@@ -1206,7 +1215,7 @@ class Waiting_Bar(QWidget):
         if self.with_timer:
             import datetime as dt
 
-            self.setter.start_time = dt.datetime.now()
+            self.setter.set_start_time(dt.datetime.now())
 
         self.show()
 
