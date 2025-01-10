@@ -21,6 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.5.4
 Changes:
 - order of steps in menu now alphabetically
+- removed checkbox to read variables in "Read Channels", now always reading the variables
 
 Fixes:
 - changelog is now actually shown
