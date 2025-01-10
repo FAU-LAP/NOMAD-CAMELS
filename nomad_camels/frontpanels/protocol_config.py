@@ -26,26 +26,26 @@ from importlib import resources
 from nomad_camels import graphics
 
 
-loop_step_display_order = [
-    "Read Channels",
-    "Set Channels",
-    "For Loop",
-    "Simple Sweep",
-    "Wait",
-    "Run Subprotocol",
-    "If",
-    "Set Variables",
-    "Execute Python File",
-    "ND Sweep",
-    "Change Device Config",
-    "While Loop",
-    "Gradient Descent",
-    "API Call",
-    "Set Value Popup",
-    "Trigger Channels",
-    "Prompt",
-    "Call Function",
-]
+# loop_step_display_order = [
+#     "Read Channels",
+#     "Set Channels",
+#     "For Loop",
+#     "Simple Sweep",
+#     "Wait",
+#     "Run Subprotocol",
+#     "If",
+#     "Set Variables",
+#     "Execute Python File",
+#     "ND Sweep",
+#     "Change Device Config",
+#     "While Loop",
+#     "Gradient Descent",
+#     "API Call",
+#     "Set Value Popup",
+#     "Trigger Channels",
+#     "Prompt",
+#     "Call Function",
+# ]
 
 channel_action_list = [
     "Read Channels",
@@ -196,7 +196,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.device_actions.clear()
         for stp in sorted(
             make_step_of_type.step_type_config.keys(),
-            key=lambda x: loop_step_display_order.index(x),
+            # key=lambda x: loop_step_display_order.index(x),
         ):
             action = QAction(stp)
             action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
@@ -347,7 +347,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 parent = parent.data()
             for stp in sorted(
                 make_step_of_type.step_type_config.keys(),
-                key=lambda x: loop_step_display_order.index(x),
+                # key=lambda x: loop_step_display_order.index(x),
             ):
                 action = QAction(stp)
                 action_a = QAction(stp)
@@ -493,7 +493,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             add_actions = []
             for stp in sorted(
                 make_step_of_type.step_type_config,
-                key=lambda x: loop_step_display_order.index(x),
+                # key=lambda x: loop_step_display_order.index(x),
             ):
                 action = QAction(stp)
                 action.triggered.connect(

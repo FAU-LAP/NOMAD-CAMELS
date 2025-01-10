@@ -9,6 +9,7 @@ import re
 import importlib
 import nomad_camels  # has to be imported for the distribution version number!
 from nomad_camels.ui_widgets import warn_popup
+from nomad_camels import graphics
 
 from PySide6.QtWidgets import (
     QMessageBox,
@@ -18,6 +19,7 @@ from PySide6.QtWidgets import (
     QDialogButtonBox,
     QPushButton,
 )
+from PySide6.QtGui import QIcon
 
 
 def get_version():
@@ -186,6 +188,7 @@ def show_release_notes():
         def __init__(self, markdown_text):
             super().__init__()
             self.setWindowTitle("Changelog - NOMAD CAMELS")
+            self.setWindowIcon(QIcon(str(importlib.resources.files(graphics) / "camels_icon.png")))
 
             layout = QGridLayout(self)
 
@@ -206,21 +209,35 @@ def show_release_notes():
 
     # read package's readme file
     try:
-        with importlib.resources.open_text("nomad-camels", "README.md") as f:
-            readme = f.read()
-    except (FileNotFoundError, ModuleNotFoundError):
+        readme = read_readme_from_metadata('nomad_camels')
+    except:
         try:
-            with open("README.md", "r") as f:
+            with importlib.resources.open_text("nomad_camels", "README.md") as f:
                 readme = f.read()
-        except FileNotFoundError:
+        except (FileNotFoundError, ModuleNotFoundError):
             try:
-                with open("../README.md", "r") as f:
+                with open("README.md", "r") as f:
                     readme = f.read()
             except FileNotFoundError:
-                return
+                try:
+                    with open("../README.md", "r") as f:
+                        readme = f.read()
+                except FileNotFoundError:
+                    return
     changelog = readme.split("# Changelog\n")[1]
     while changelog.startswith("\n"):
         changelog = changelog[1:]
     # newest_log = changelog.split("\n#")[0]
     dialog = MarkdownDialog(changelog)
     dialog.exec_()
+
+
+def read_readme_from_metadata(package_name):
+    try:
+        # Get the metadata for the package
+        metadata = importlib.metadata.metadata(package_name)
+        # Extract the long description (which includes the README content)
+        readme = metadata.get('Description', None)
+        return readme
+    except importlib.metadata.PackageNotFoundError:
+        return None
