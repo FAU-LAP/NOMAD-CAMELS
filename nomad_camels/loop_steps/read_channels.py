@@ -38,6 +38,10 @@ class Read_Channels(Loop_Step):
             self.channel_list = step_info["channel_list"]
         else:
             self.channel_list = []
+        if "read_variables" in step_info:
+            self.read_variables = step_info["read_variables"]
+        else:
+            self.read_variables = True
         self.update_used_devices()
 
     def update_used_devices(self):
@@ -71,15 +75,16 @@ class Read_Channels(Loop_Step):
             A string including the tabs for intendation.
         """
         channel_string = f"{tabs}channels_{self.variable_name()} = ["
-        # if not self.read_all and not self.channel_list:
-        #     raise Exception(f"Trying to read no channel in {self.full_name}!")
+        if not self.read_all and not self.channel_list and not self.read_variables:
+            raise Exception(f"Trying to read no channel in {self.full_name}!")
         if self.read_all:
             for channel in variables_handling.channels:
                 channel_string += get_channel_string(channel)
         else:
             for channel in self.channel_list:
                 channel_string += get_channel_string(channel)
-        channel_string += f"{self.protocol.name}_variable_signal, "
+        if self.read_variables:
+            channel_string += f"{self.protocol.name}_variable_signal, "
         channel_string = channel_string[:-2] + "]\n"
         return channel_string
 
@@ -98,7 +103,7 @@ class Read_Channels(Loop_Step):
         only allows reading the same channels inside one stream."""
         # checking compatibility with other readings
         chan_list = self.get_channels_set()
-        channels_w_variables = set(list(chan_list))
+        channels_w_variables = set(list(chan_list) + [self.read_variables])
         if channels_w_variables in variables_handling.read_channel_sets:
             n = variables_handling.read_channel_sets.index(channels_w_variables)
         else:
@@ -184,7 +189,7 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
             self, labels, info_dict=info_dict, title="Read-Channels"
         )
         self.read_type_changed()
-        self.layout().addWidget(self.read_table, 5, 0, 1, 2)
+        self.layout().addWidget(self.read_table, 5, 0, 1, 3)
 
     def use_trigger(self):
         """ """
@@ -210,11 +215,13 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
     def load_data(self):
         """Putting the data from the loop_step into the widgets."""
         self.checkBox_read_all.setChecked(self.loop_step.read_all)
+        self.checkBox_read_variables.setChecked(self.loop_step.read_variables)
         self.checkBox_split_trigger.setChecked(self.loop_step.split_trigger)
 
     def update_step_config(self):
         """ """
         self.loop_step.channel_list = self.read_table.get_info()["channel"]
+        self.loop_step.read_variables = self.checkBox_read_variables.isChecked()
 
     def table_check_changed(self, pos):
         """If a checkbox inside the table is clicked, the value is

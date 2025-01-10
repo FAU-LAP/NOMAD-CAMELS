@@ -36,6 +36,11 @@ class Ui_read_channels_config(object):
 
         self.gridLayout.addWidget(self.checkBox_split_trigger, 0, 1, 1, 1)
 
+        self.checkBox_read_variables = QCheckBox(read_channels_config)
+        self.checkBox_read_variables.setObjectName(u"checkBox_read_variables")
+
+        self.gridLayout.addWidget(self.checkBox_read_variables, 0, 2, 1, 1)
+
 
         self.retranslateUi(read_channels_config)
 
@@ -46,5 +51,6 @@ class Ui_read_channels_config(object):
         read_channels_config.setWindowTitle(QCoreApplication.translate("read_channels_config", u"Form", None))
         self.checkBox_read_all.setText(QCoreApplication.translate("read_channels_config", u"Read All", None))
         self.checkBox_split_trigger.setText(QCoreApplication.translate("read_channels_config", u"Split trigger and read", None))
+        self.checkBox_read_variables.setText(QCoreApplication.translate("read_channels_config", u"read/save variables", None))
     # retranslateUi
 
