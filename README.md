@@ -18,7 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 1.5.4
+### 1.5.4 Generic Set / Read manual control
+Features:
+- new manual control to generically set / read any kind of channel
+
 Changes:
 - order of steps in menu now alphabetically
 - default value of read variables in "Read Channels" now True
