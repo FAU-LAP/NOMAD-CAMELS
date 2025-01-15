@@ -344,7 +344,7 @@ To understand the step, the employed algorithm is explained:
 The adaptations in comparison to a standard gradient descent (i.e. the step size in a certain range and not too large for the termination criteria) is employed here to work with noisy data.
 
 ```{note}
-If you have problems using this step or the implementation does not fit your requirements, feel free to contact us or open an issue on [GitHub](https://github.com/FAU-LAP/NOMAD-CAMELS/issues).
+If you have problems using this step or the implementation does not meet your requirements, feel free to [contact us](mailto:nomad-camels@fau.de) or open an issue on [GitHub](https://github.com/FAU-LAP/NOMAD-CAMELS/issues).
 ```
 
 

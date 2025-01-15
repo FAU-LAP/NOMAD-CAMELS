@@ -35,6 +35,7 @@ extensions = [
     "myst_parser",
     "sphinx_copybutton",
     "sphinx_tabs.tabs",
+    "sphinx.ext.mathjax",
 ]
 
 templates_path = ["_templates"]
