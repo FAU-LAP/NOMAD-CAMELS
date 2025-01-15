@@ -322,7 +322,7 @@ The Gradient Descent can be used to find an optimum (minimum / maximum) of a use
 - **output channel:** the channel which is changed to find the extremum
 - **optimization function:** a mathematical function that may include any variables or channels that CAMELS knows of
 - **plot steps:** whether to plot the single steps of the gradient descent
-- **starting value:** the first value of the output channel (see below, $s_0$)
+- **starting value:** the first value of the output channel (see below, :math:`s_0`)
 - **minimum value:** the minimum value the output channel should take (could be -inf, $s_{min}$)
 - **maximum value:** the maximum value the output channel should take (could be +inf, $s_{max}$)
 - **learning rate:** a value that controls the step size (see below, $l$)
