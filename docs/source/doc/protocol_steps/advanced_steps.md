@@ -324,24 +324,25 @@ The Gradient Descent can be used to find an optimum (minimum / maximum) of a use
 - **optimization function:** a mathematical function that may include any variables or channels that CAMELS knows of
 - **plot steps:** whether to plot the single steps of the gradient descent
 - **starting value:** the first value of the output channel (see below, :math:`s_0`)
-- **minimum value:** the minimum value the output channel should take (could be -inf, $s_{min}$)
-- **maximum value:** the maximum value the output channel should take (could be +inf, $s_{max}$)
-- **learning rate:** a value that controls the step size (see below, $l$)
-- **threshold:** when to stop the gradient descent (see below, $\Delta f_t$)
-- **momentum:** if several steps are done in the same direction this controls how much larger they become (see below, $m$)
-- **smallest step:** the smallest step size between two values, useful if otherwise the correct range is never reached (see below, $\Delta s_{min}$)
-- **largest step:** the largest step allowed, may help to not jump over the extremum (see below, $\Delta s_{max}$)
-- **max number of steps:** after that number of single steps, the algorithms stops and the best value found up to that point will be used (see below, $n_{max}$)
+- **minimum value:** the minimum value the output channel should take (could be -inf, :math:`s_{min}`)
+- **maximum value:** the maximum value the output channel should take (could be +inf, :math:`s_{max}`)
+- **learning rate:** a value that controls the step size (see below, :math:`l`)
+- **threshold:** when to stop the gradient descent (see below, :math:`\Delta f_t`)
+- **momentum:** if several steps are done in the same direction this controls how much larger they become (see below, :math:`m`)
+- **smallest step:** the smallest step size between two values, useful if otherwise the correct range is never reached (see below, :math:`\Delta s_{min}`)
+- **largest step:** the largest step allowed, may help to not jump over the extremum (see below, :math:`\Delta s_{max}`)
+- **max number of steps:** after that number of single steps, the algorithms stops and the best value found up to that point will be used (see below, :math:`n_{max}`)
 - **read channels:** the channels that are read for each step (**important**: you need to read the channels, that you want to use in the optimization function!)
 
 To understand the step, the employed algorithm is explained:
-- For each step $n$, the output value $s_n$ is set, the given channels are read and the optimization function is evaluated $f_n$, and the difference $\Delta f_n = f_n - f_{n-1}$ is calculated. In the first step $n=0$: $\Delta f_0 = \infty$.
-- After each step, it is checked whether the maximum number of steps is reached or whether the threshold is reached. This however only breaks the loop if the step size $\Delta s_n = s_n - s_{n-1}$ is smaller than $10 \cdot \Delta s_{min}$. I.e. the algorithm runs as long as:
-  .. math:
-  n < n_{max} \land (|\Delta f_n| > \Delta f_t \lor |\Delta s_n| > 10 \cdot \Delta s_{min})
-- The next step $s_{n+1}$ is calculated with the gradient of the function, learning rate $l$ and momentum $m$:
-  $$\Delta s_{n+1} = \pm l \cdot \frac{\Delta f_n}{\Delta s_n} + m \cdot \Delta s_n$$
-  with "$+$" for a maximum and "$-$" for a minimum. $\Delta s_{n+1}$ is coerced into $\Delta s_{min} < |\Delta s_{n+1}| < \Delta s_{max}$. Then :math:`s_{n+1} = s_n + \Delta s_{n+1}` is coerced to $s_{n+1} \in [s_{min}, s_{max}]$
+- For each step :math:`n`, the output value :math:`s_n` is set, the given channels are read and the optimization function is evaluated :math:`f_n`, and the difference :math:`\Delta f_n = f_n - f_{n-1}` is calculated. In the first step :math:`n=0`: :math:`\Delta f_0 = \infty`.
+- After each step, it is checked whether the maximum number of steps is reached or whether the threshold is reached. This however only breaks the loop if the step size :math:`\Delta s_n = s_n - s_{n-1}` is smaller than :math:`10 \cdot \Delta s_{min}`. I.e. the algorithm runs as long as:
+  .. math::
+    n < n_{max} \land (|\Delta f_n| > \Delta f_t \lor |\Delta s_n| > 10 \cdot \Delta s_{min})
+- The next step :math:`s_{n+1}` is calculated with the gradient of the function, learning rate :math:`l` and momentum :math:`m`:
+  .. math::
+    \Delta s_{n+1} = \pm l \cdot \frac{\Delta f_n}{\Delta s_n} + m \cdot \Delta s_n
+  with ":math:`+`" for a maximum and ":math:`-`" for a minimum. :math:`\Delta s_{n+1}` is coerced into :math:`\Delta s_{min} < |\Delta s_{n+1}| < \Delta s_{max}`. Then :math:`s_{n+1} = s_n + \Delta s_{n+1}` is coerced to :math:`s_{n+1} \in [s_{min}, s_{max}]`.
 ```
 
 The adaptations in comparison to a standard gradient descent (i.e. the step size in a certain range and not too large for the termination criteria) is employed here to work with noisy data.
