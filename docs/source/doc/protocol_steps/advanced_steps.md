@@ -341,7 +341,7 @@ To understand the step, the employed algorithm is explained:
   ```
 - The next step $s_{n+1}$ is calculated with the gradient of the function, learning rate $l$ and momentum $m$:
   $$\Delta s_{n+1} = \pm l \cdot \frac{\Delta f_n}{\Delta s_n} + m \cdot \Delta s_n$$
-  with "$+$" for a maximum and "$-$" for a minimum. $\Delta s_{n+1}$ is coerced into $\Delta s_{min} < |\Delta s_{n+1}| < \Delta s_{max}$. Then $s_{n+1} = s_n + \Delta s_{n+1}$ is coerced to $s_{n+1} \in [s_{min}, s_{max}]$
+  with "$+$" for a maximum and "$-$" for a minimum. $\Delta s_{n+1}$ is coerced into $\Delta s_{min} < |\Delta s_{n+1}| < \Delta s_{max}$. Then :math:`s_{n+1} = s_n + \Delta s_{n+1}` is coerced to $s_{n+1} \in [s_{min}, s_{max}]$
 
 The adaptations in comparison to a standard gradient descent (i.e. the step size in a certain range and not too large for the termination criteria) is employed here to work with noisy data.
 
