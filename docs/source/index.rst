@@ -113,7 +113,6 @@ You can also open GitHub Issues:
    :width: 187px
    :height: 50px
 
-.. math::
 CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_.
 
 The source code of CAMELS is hosted on GitHub:
