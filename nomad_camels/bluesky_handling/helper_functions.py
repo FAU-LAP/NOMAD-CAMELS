@@ -890,8 +890,14 @@ class Value_Box(QDialog):
         Sets `self.done_flag` to True, allowing the protocol to go on before
         rejecting the dialog.
         """
-        self.done_flag = True
-        return super().reject()
+        msg = QMessageBox(
+            icon=QMessageBox.Warning,
+            text="If you cancel, no values will be set.\nDo you want to cancel?",
+        )
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        if msg.exec() == QMessageBox.Yes:
+            self.done_flag = True
+            return super().reject()
 
 
 def get_channels(dev):

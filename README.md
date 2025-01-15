@@ -25,6 +25,7 @@ Features:
 Changes:
 - order of steps in menu now alphabetically
 - default value of read variables in "Read Channels" now True
+- in the Set Value Popup, now a messagebox asks, whether the user is sure if they click on "cancel"
 
 Fixes:
 - changelog is now actually shown
