@@ -336,7 +336,9 @@ The Gradient Descent can be used to find an optimum (minimum / maximum) of a use
 To understand the step, the employed algorithm is explained:
 - For each step $n$, the output value $s_n$ is set, the given channels are read and the optimization function is evaluated $f_n$, and the difference $\Delta f_n = f_n - f_{n-1}$ is calculated. In the first step $n=0$: $\Delta f_0 = \infty$.
 - After each step, it is checked whether the maximum number of steps is reached or whether the threshold is reached. This however only breaks the loop if the step size $\Delta s_n = s_n - s_{n-1}$ is smaller than $10 \cdot \Delta s_{min}$. I.e. the algorithm runs as long as:
-  $$n < n_{max} \land (|\Delta f_n| > \Delta f_t \lor |\Delta s_n| > 10 \cdot \Delta s_{min})$$
+  ```math
+  n < n_{max} \land (|\Delta f_n| > \Delta f_t \lor |\Delta s_n| > 10 \cdot \Delta s_{min})
+  ```
 - The next step $s_{n+1}$ is calculated with the gradient of the function, learning rate $l$ and momentum $m$:
   $$\Delta s_{n+1} = \pm l \cdot \frac{\Delta f_n}{\Delta s_n} + m \cdot \Delta s_n$$
   with "$+$" for a maximum and "$-$" for a minimum. $\Delta s_{n+1}$ is coerced into $\Delta s_{min} < |\Delta s_{n+1}| < \Delta s_{max}$. Then $s_{n+1} = s_n + \Delta s_{n+1}$ is coerced to $s_{n+1} \in [s_{min}, s_{max}]$
