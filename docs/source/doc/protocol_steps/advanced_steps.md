@@ -318,6 +318,7 @@ Anything that can be serialized with JSON can be returned by your Python file.
 ## Gradient Descent
 The Gradient Descent can be used to find an optimum (minimum / maximum) of a user-provided function in dependence of one output channel. Several things need to be defined for this step:
 
+```{eval-rst}
 - **extremum type:** whether to look for a maximum or a minimum
 - **output channel:** the channel which is changed to find the extremum
 - **optimization function:** a mathematical function that may include any variables or channels that CAMELS knows of
@@ -336,14 +337,15 @@ The Gradient Descent can be used to find an optimum (minimum / maximum) of a use
 To understand the step, the employed algorithm is explained:
 - For each step $n$, the output value $s_n$ is set, the given channels are read and the optimization function is evaluated $f_n$, and the difference $\Delta f_n = f_n - f_{n-1}$ is calculated. In the first step $n=0$: $\Delta f_0 = \infty$.
 - After each step, it is checked whether the maximum number of steps is reached or whether the threshold is reached. This however only breaks the loop if the step size $\Delta s_n = s_n - s_{n-1}$ is smaller than $10 \cdot \Delta s_{min}$. I.e. the algorithm runs as long as:
-  ```{math}
+  .. math:
   n < n_{max} \land (|\Delta f_n| > \Delta f_t \lor |\Delta s_n| > 10 \cdot \Delta s_{min})
-  ```
 - The next step $s_{n+1}$ is calculated with the gradient of the function, learning rate $l$ and momentum $m$:
   $$\Delta s_{n+1} = \pm l \cdot \frac{\Delta f_n}{\Delta s_n} + m \cdot \Delta s_n$$
   with "$+$" for a maximum and "$-$" for a minimum. $\Delta s_{n+1}$ is coerced into $\Delta s_{min} < |\Delta s_{n+1}| < \Delta s_{max}$. Then :math:`s_{n+1} = s_n + \Delta s_{n+1}` is coerced to $s_{n+1} \in [s_{min}, s_{max}]$
+```
 
 The adaptations in comparison to a standard gradient descent (i.e. the step size in a certain range and not too large for the termination criteria) is employed here to work with noisy data.
+
 
 ```{note}
 If you have problems using this step or the implementation does not meet your requirements, feel free to [contact us](mailto:nomad-camels@fau.de) or open an issue on [GitHub](https://github.com/FAU-LAP/NOMAD-CAMELS/issues).
