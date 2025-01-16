@@ -41,7 +41,7 @@ class Read_Channels(Loop_Step):
         if "skip_failed" in step_info:
             self.skip_failed = step_info["skip_failed"]
         else:
-            self.skip_failed = [] * len(self.channel_list)
+            self.skip_failed = [False] * len(self.channel_list)
         if "read_variables" in step_info:
             self.read_variables = step_info["read_variables"]
         else:

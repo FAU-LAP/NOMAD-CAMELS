@@ -34,7 +34,7 @@ class Wait_Loop_Step(Loop_Step):
         if "skip_failed" in step_info:
             self.skip_failed = step_info["skip_failed"]
         else:
-            self.skip_failed = [] * len(self.read_channels)
+            self.skip_failed = [False] * len(self.read_channels)
 
     def get_add_main_string(self):
         add_main_string = super().get_add_main_string()

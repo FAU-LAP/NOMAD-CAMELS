@@ -53,7 +53,7 @@ class Simple_Sweep(For_Loop_Step):
         if "skip_failed" in step_info:
             self.skip_failed = step_info["skip_failed"]
         else:
-            self.skip_failed = [] * len(self.read_channels)
+            self.skip_failed = [False] * len(self.read_channels)
 
     def update_used_devices(self):
         """Includes the devices from the read_channels and the sweep_channel."""

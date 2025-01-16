@@ -56,7 +56,7 @@ standard_string += "import importlib\n"
 standard_string += "import bluesky\n"
 standard_string += "import ophyd\n"
 standard_string += (
-    "from bluesky_handling.run_engine_overwrite import RunEngineOverwrite\n"
+    "from nomad_camels.bluesky_handling.run_engine_overwrite import RunEngineOverwrite\n"
 )
 standard_string += "from bluesky.callbacks.best_effort import BestEffortCallback\n"
 standard_string += "import bluesky.plan_stubs as bps\n"
