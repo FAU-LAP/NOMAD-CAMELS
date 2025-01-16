@@ -320,7 +320,7 @@ class Additional_Imports_Thread(QThread):
 
     def run(self) -> None:
         """ """
-        from bluesky import RunEngine
+        from bluesky_handling.run_engine_overwrite import RunEngineOverwrite
         from bluesky.callbacks.best_effort import BestEffortCallback
         import databroker
         from nomad_camels.frontpanels.manage_instruments import ManageInstruments
@@ -348,7 +348,7 @@ class Additional_Imports_Thread(QThread):
         from nomad_camels.tools import databroker_exporter
         from nomad_camels.bluesky_handling import helper_functions
 
-        self.imports.append(RunEngine)
+        self.imports.append(RunEngineOverwrite)
         self.imports.append(BestEffortCallback)
         self.imports.append(databroker)
         self.imports.append(ManageInstruments)

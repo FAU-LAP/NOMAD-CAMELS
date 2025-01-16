@@ -217,7 +217,7 @@ class Wait_Loop_Step_Config_Sub(QWidget):
 
         labels = ["read?", "channel", "ignore failed"]
         info_dict = {
-            "channel": self.loop_step.channel_list,
+            "channel": self.loop_step.read_channels,
             "ignore failed": self.loop_step.skip_failed,
         }
         self.read_channels_table = Channels_Check_Table(

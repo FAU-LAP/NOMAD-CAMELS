@@ -174,7 +174,7 @@ class Simple_Sweep_Config(Loop_Step_Config):
         #                                  comboBoxes=in_box)
         labels = ["read?", "channel", "ignore failed"]
         info_dict = {
-            "channel": self.loop_step.channel_list,
+            "channel": self.loop_step.read_channels,
             "ignore failed": self.loop_step.skip_failed,
         }
         info_dict = {"channel": self.loop_step.read_channels}

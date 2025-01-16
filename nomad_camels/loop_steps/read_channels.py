@@ -124,7 +124,7 @@ class Read_Channels(Loop_Step):
             protocol_string += f"{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream_name}, skip_on_exception={self.skip_failed})\n"
         else:
             protocol_string += self.get_channels_string(tabs)
-            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, stream={stream_name}, skip_on_exception={self.skip_failed})\n"
+            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, name={stream_name}, skip_on_exception={self.skip_failed})\n"
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):

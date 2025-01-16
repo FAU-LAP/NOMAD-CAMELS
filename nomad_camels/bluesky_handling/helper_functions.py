@@ -211,30 +211,21 @@ def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None)
         The readings of the devices.
     """
     skip_on_exception = skip_on_exception or [False] * len(devices)
+    for i, obj in enumerate(devices):
+        if skip_on_exception[i]:
+            obj.__read_w_except__ = True
+        else:
+            obj.__read_w_except__ = False
     if grp is not None:
         yield from bps.wait(grp)
     yield from bps.create(stream)
 
     def read_plan():
-        ret = {}
-        for i, obj in enumerate(devices):
-            try:
-                reading = yield from bps.read(obj)
-            except Exception as ex:
-                if not skip_on_exception[i]:
-                    raise ex
-                print(f"Skipping reading of {obj.name} due to exception:\n{ex}")
-                reading = {obj.name: {"value": np.float64(0.0), "timestamp": None}}
+        ret = {}  # collect and return readings to give plan access to them
+        for obj in devices:
+            reading = yield from bps.read(obj)
             if reading is not None:
                 ret.update(reading)
-        timestamp = None
-        for r in ret:
-            if ret[r]["timestamp"] is not None:
-                timestamp = ret[r]["timestamp"]
-                break
-        for r in ret:
-            if ret[r]["timestamp"] is None:
-                ret[r]["timestamp"] = timestamp
         return ret
 
     def standard_path():
@@ -250,13 +241,13 @@ def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None)
     return ret
 
 
-def trigger_and_read(devices, stream="primary", skip_on_exception=None):
+def trigger_and_read(devices, name="primary", skip_on_exception=None):
     rewindable = all_safe_rewind(devices)
 
     def inner_trigger_read():
         grp = short_uid("trigger")
         yield from trigger_multi(devices, grp)
-        return (yield from read_wo_trigger(devices, grp, stream, skip_on_exception))
+        return (yield from read_wo_trigger(devices, grp, name, skip_on_exception))
 
     return (yield from rewindable_wrapper(inner_trigger_read(), rewindable))
 
@@ -314,8 +305,6 @@ def get_fit_results(fits, namespace, yielding=False, stream="primary"):
                 [fit.read_ready], name=f"{stream}_fits_readying_{name}"
             )
             yield from fit.update_fit()
-            # yield from bps.trigger_and_read(fit.ophyd_fit.used_comps,
-            #                                 name=f'{stream}_fits_{name}')
         if not fit.result:
             continue
         for param in fit.params:
