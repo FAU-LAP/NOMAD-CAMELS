@@ -107,6 +107,11 @@ class Read_Channels(Loop_Step):
         only allows reading the same channels inside one stream."""
         # checking compatibility with other readings
         chan_list = self.get_channels_set()
+        skip_failed = list(self.skip_failed)
+        if self.read_all:
+            skip_failed = [False] * len(chan_list)
+        if self.read_variables:
+            skip_failed.append(False)
         channels_w_variables = set(list(chan_list) + [self.read_variables])
         if channels_w_variables in variables_handling.read_channel_sets:
             n = variables_handling.read_channel_sets.index(channels_w_variables)
@@ -121,10 +126,10 @@ class Read_Channels(Loop_Step):
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.split_trigger:
-            protocol_string += f"{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream_name}, skip_on_exception={self.skip_failed})\n"
+            protocol_string += f"{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream_name}, skip_on_exception={skip_failed})\n"
         else:
             protocol_string += self.get_channels_string(tabs)
-            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, name={stream_name}, skip_on_exception={self.skip_failed})\n"
+            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, name={stream_name}, skip_on_exception={skip_failed})\n"
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
@@ -229,62 +234,9 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         """ """
         info = self.read_table.get_info()
         self.loop_step.channel_list = info["channel"]
+        read_variables = self.checkBox_read_variables.isChecked()
         self.loop_step.skip_failed = info["ignore failed"]
-        self.loop_step.read_variables = self.checkBox_read_variables.isChecked()
-
-    def table_check_changed(self, pos):
-        """If a checkbox inside the table is clicked, the value is
-        stored into the loopstep.
-
-        Parameters
-        ----------
-        pos :
-
-
-        Returns
-        -------
-
-        """
-        r = pos.row()
-        c = pos.column()
-        if c == 0:
-            name = self.tableWidget_channels.item(r, 1).text()
-            if (
-                self.tableWidget_channels.item(r, c).checkState()
-                != Qt.CheckState.Unchecked
-            ):
-                self.loop_step.channel_list.append(name)
-                self.loop_step.channel_list = list(set(self.loop_step.channel_list))
-            elif name in self.loop_step.channel_list:
-                self.loop_step.channel_list.remove(name)
-            self.loop_step.update_used_devices()
-
-    def build_channels_table(self):
-        """This creates the table for all channels."""
-        self.tableWidget_channels.clear()
-        self.tableWidget_channels.setColumnCount(2)
-        self.tableWidget_channels.setRowCount(0)
-        self.tableWidget_channels.setHorizontalHeaderLabels(["read", "channel name"])
-        searchtext = self.lineEdit_search.text()
-        n = 0
-        for i, channel in enumerate(
-            sorted(variables_handling.channels, key=lambda x: x.lower())
-        ):
-            if searchtext not in channel:
-                continue
-            self.tableWidget_channels.setRowCount(n + 1)
-            item = QTableWidgetItem()
-            item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-            if channel in self.loop_step.channel_list:
-                item.setCheckState(Qt.CheckState.Checked)
-            else:
-                item.setCheckState(Qt.CheckState.Unchecked)
-            self.tableWidget_channels.setItem(n, 0, item)
-            item = QTableWidgetItem(channel)
-            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
-            self.tableWidget_channels.setItem(n, 1, item)
-            n += 1
-        self.tableWidget_channels.resizeColumnsToContents()
+        self.loop_step.read_variables = read_variables
 
 
 class Trigger_Channels_Step(Loop_Step):
