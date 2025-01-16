@@ -1643,24 +1643,3 @@ class MultiPlot_NoBluesky(QObject):
         self.xdata.clear()
         for y in self.ydata:
             self.ydata[y].clear()
-
-
-# if __name__ == '__main__':
-#     from bluesky import RunEngine
-#     from bluesky.plans import scan
-#     from ophyd.sim import motor, det
-#
-#     motor.delay = 0.1
-#
-#     def plan():
-#         for i in range(4, 5):
-#             yield from scan([det], motor, -5, 5, 3**i)
-#
-#     RE = RunEngine()
-#     app = QApplication(sys.argv)
-#     # myapp = PlotWidget(run_engine=RE, x_name='motor', y_names=['det'], title='test', xlabel='aaaa', ylabel='bbbb')
-#     myapp = PlotWidget('motor', ['det', 'det**2', 'sin(motor)'])
-#     myapp.show()
-#     RE.subscribe(myapp.livePlot)
-#     RE(plan())
-#     sys.exit(app.exec())

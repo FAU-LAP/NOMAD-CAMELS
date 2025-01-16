@@ -50,6 +50,10 @@ class Simple_Sweep(For_Loop_Step):
         self.read_channels = (
             step_info["read_channels"] if "read_channels" in step_info else []
         )
+        if "skip_failed" in step_info:
+            self.skip_failed = step_info["skip_failed"]
+        else:
+            self.skip_failed = [False] * len(self.read_channels)
 
     def update_used_devices(self):
         """Includes the devices from the read_channels and the sweep_channel."""
@@ -126,9 +130,7 @@ class Simple_Sweep(For_Loop_Step):
 
         protocol_string += f'{tabs}\tyield from bps.abs_set({setter}, {self.name.replace(" ", "_")}_Value, group="A")\n'
         protocol_string += f'{tabs}\tyield from bps.wait("A")\n'
-        protocol_string += (
-            f"{tabs}\tyield from bps.trigger_and_read(channels, name={stream})\n"
-        )
+        protocol_string += f"{tabs}\tyield from helper_functions.trigger_and_read(channels, name={stream})\n"
         protocol_string += f"{tabs}yield from helper_functions.get_fit_results(all_fits, namespace, True, {stream})\n"
         self.update_time_weight()
         return protocol_string
@@ -170,10 +172,14 @@ class Simple_Sweep_Config(Loop_Step_Config):
         # self.read_table = AddRemoveTable(title='Read Channels', headerLabels=[],
         #                                  tableData=loop_step.read_channels,
         #                                  comboBoxes=in_box)
-        labels = ["read", "channel"]
+        labels = ["read?", "channel", "ignore failed"]
+        info_dict = {
+            "channel": self.loop_step.read_channels,
+            "ignore failed": self.loop_step.skip_failed,
+        }
         info_dict = {"channel": self.loop_step.read_channels}
         self.read_table = Channels_Check_Table(
-            self, labels, info_dict=info_dict, title="Read-Channels"
+            self, labels, info_dict=info_dict, title="Read-Channels", checkables=[2]
         )
 
         # self.checkBox_use_own_plots = QCheckBox('Use own Plots')
@@ -280,7 +286,9 @@ class Simple_Sweep_Config(Loop_Step_Config):
         # self.loop_step.use_own_plots = self.checkBox_use_own_plots.isChecked()
         self.loop_step.plots = self.plot_widge.plot_data
         # self.loop_step.plots = self.plot_table.update_table_data()
-        self.loop_step.read_channels = self.read_table.get_info()["channel"]
+        info = self.read_table.get_info()
+        self.loop_step.read_channels = info["channel"]
+        self.loop_step.skip_failed = info["ignore failed"]
         self.loop_step.data_output = self.comboBox_data_output.currentText()
         self.loop_step.sweep_channel = self.comboBox_sweep_channel.currentText()
         # self.loop_step.calc_minmax = self.checkBox_minmax.isChecked()

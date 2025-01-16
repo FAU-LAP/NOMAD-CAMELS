@@ -31,6 +31,10 @@ class Wait_Loop_Step(Loop_Step):
         self.read_channels = (
             step_info["read_channels"] if "read_channels" in step_info else []
         )
+        if "skip_failed" in step_info:
+            self.skip_failed = step_info["skip_failed"]
+        else:
+            self.skip_failed = [False] * len(self.read_channels)
 
     def get_add_main_string(self):
         add_main_string = super().get_add_main_string()
@@ -112,7 +116,7 @@ class Wait_Loop_Step(Loop_Step):
             )
         elif self.wait_type == "wait for condition":
             protocol_string += self.get_channels_string(tabs)
-            protocol_string += f"{tabs}yield from bps.trigger_and_read(channels_{self.variable_name()}, name='{self.full_name}')\n"
+            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, name='{self.full_name}')\n"
             protocol_string += (
                 f'{tabs}boxes["bar_{self.name}_0"].helper.executor.emit()\n'
             )
@@ -120,7 +124,7 @@ class Wait_Loop_Step(Loop_Step):
             protocol_string += (
                 f'{tabs}\tyield from bps.sleep(eva.eval("{self.wait_time}"))\n'
             )
-            protocol_string += f"{tabs}\tyield from bps.trigger_and_read(channels_{self.variable_name()}, name='{self.full_name}')\n"
+            protocol_string += f"{tabs}\tyield from helper_functions.trigger_and_read(channels_{self.variable_name()}, name='{self.full_name}')\n"
             protocol_string += (
                 f'{tabs}boxes["bar_{self.name}_0"].setter.hide_signal.emit()\n'
             )
@@ -178,9 +182,9 @@ class Wait_Loop_Step_Config(Loop_Step_Config):
         self.loop_step.wait_type = self.sub_widget.comboBox_type.currentText()
         self.loop_step.skipable = self.sub_widget.checkbox_skipable.isChecked()
         self.loop_step.condition = self.sub_widget.condition_line.text()
-        self.loop_step.read_channels = self.sub_widget.read_channels_table.get_info()[
-            "channel"
-        ]
+        info = self.sub_widget.read_channels_table.get_info()
+        self.loop_step.read_channels = info["channel"]
+        self.loop_step.skip_failed = info["ignore failed"]
 
 
 class Wait_Loop_Step_Config_Sub(QWidget):
@@ -211,12 +215,13 @@ class Wait_Loop_Step_Config_Sub(QWidget):
         self.condition_line.setText(loop_step.condition)
         self.condition_line.setToolTip("Wait until this condition is fulfilled.")
 
-        info_dict = {"channel": loop_step.read_channels}
+        labels = ["read?", "channel", "ignore failed"]
+        info_dict = {
+            "channel": self.loop_step.read_channels,
+            "ignore failed": self.loop_step.skip_failed,
+        }
         self.read_channels_table = Channels_Check_Table(
-            self,
-            ["read?", "channel"],
-            info_dict=info_dict,
-            title="Read channels",
+            self, labels, info_dict=info_dict, title="Read channels", checkables=[2]
         )
 
         layout = QGridLayout()

@@ -63,6 +63,10 @@ class ND_Sweep(Loop_Step):
         self.sweep_values = (
             step_info["sweep_values"] if "sweep_values" in step_info else []
         )
+        if "skip_failed" in step_info:
+            self.skip_failed = step_info["skip_failed"]
+        else:
+            self.skip_failed = [] * len(self.read_channels)
 
     def update_used_devices(self):
         """Includes the devices from the read_channels and the sweep_channels"""
@@ -146,9 +150,7 @@ class ND_Sweep(Loop_Step):
 
         tabs = "\t" * (n_tabs + i)
         protocol_string += f'{tabs}\tyield from bps.wait("A")\n'
-        protocol_string += (
-            f"{tabs}\tyield from bps.trigger_and_read(channels, name={stream})\n"
-        )
+        protocol_string += f"{tabs}\tyield from helper_functions.trigger_and_read(channels, name={stream})\n"
         protocol_string += f"{tabs}yield from helper_functions.get_fit_results(all_fits, namespace, True, {stream})\n"
         self.update_time_weight()
         return protocol_string
@@ -228,10 +230,13 @@ class ND_Sweep_Config(Loop_Step_Config):
         self.comboBox_data_output.addItems(output_types)
         self.comboBox_data_output.setCurrentText(loop_step.data_output)
 
-        labels = ["read", "channel"]
-        info_dict = {"channel": self.loop_step.read_channels}
+        labels = ["read?", "channel", "ignore failed"]
+        info_dict = {
+            "channel": self.loop_step.read_channels,
+            "ignore failed": self.loop_step.skip_failed,
+        }
         self.read_table = Channels_Check_Table(
-            self, labels, info_dict=info_dict, title="Read-Channels"
+            self, labels, info_dict=info_dict, title="Read-Channels", checkables=[2]
         )
 
         self.plot_widge = Plot_Button_Overview(self, self.loop_step.plots)
@@ -330,7 +335,9 @@ class ND_Sweep_Config(Loop_Step_Config):
             self.loop_step.sweep_values.append(info)
         super().update_step_config()
         self.loop_step.plots = self.plot_widge.plot_data
-        self.loop_step.read_channels = self.read_table.get_info()["channel"]
+        info = self.read_table.get_info()
+        self.loop_step.read_channels = info["channel"]
+        self.loop_step.skip_failed = info["ignore failed"]
         self.loop_step.data_output = self.comboBox_data_output.currentText()
 
 

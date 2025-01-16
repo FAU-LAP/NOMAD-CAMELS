@@ -499,11 +499,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         This method is called when the first protocol is run, speeding up the startup to this point.
         """
         # IMPORT bluesky only if it is needed
-        from bluesky import RunEngine
+        from bluesky_handling.run_engine_overwrite import RunEngineOverwrite
         from bluesky.callbacks.best_effort import BestEffortCallback
         import databroker
 
-        self.run_engine = RunEngine()
+        self.run_engine = RunEngineOverwrite()
         self.run_engine.subscribe(self.eva)
         bec = BestEffortCallback()
         self.run_engine.subscribe(bec)
