@@ -343,8 +343,8 @@ To understand the step, the employed algorithm is explained:
 
 - The next step :math:`s_{n+1}` is calculated with the gradient of the function, learning rate :math:`l` and momentum :math:`m`:
 
-.. math::
-      \Delta s_{n+1} = \pm l \cdot \frac{\Delta f_n}{\Delta s_n} + m \cdot \Delta s_n
+  .. math::
+    \Delta s_{n+1} = \pm l \cdot \frac{\Delta f_n}{\Delta s_n} + m \cdot \Delta s_n
     
   with ":math:`+`" for a maximum and ":math:`-`" for a minimum. :math:`\Delta s_{n+1}` is coerced into :math:`\Delta s_{min} < |\Delta s_{n+1}| < \Delta s_{max}`. Then :math:`s_{n+1} = s_n + \Delta s_{n+1}` is coerced to :math:`s_{n+1} \in [s_{min}, s_{max}]`.
 ```
