@@ -181,6 +181,7 @@ class Live_List(QObject, CallbackBase):
         """
         self.epoch_offset = doc["time"]
         super().start(doc)
+        self.eva.start(doc)
 
     def event(self, doc):
         """
@@ -211,10 +212,10 @@ class Live_List(QObject, CallbackBase):
                     if not self.eva.is_to_date(doc["time"]):
                         self.eva.event(doc)
                     new_val = self.eva.eval(val)
-            if isinstance(new_val, bool) or np.issubdtype(type(new_val), np.bool_):
-                self.val_items[i].setText(str(new_val))
-            else:
+            if isinstance(new_val, (int, float)):
                 self.val_items[i].setText(f"{new_val:7e}")
+            else:
+                self.val_items[i].setText(str(new_val))
         if self.plot_all_available:
             for name, value in doc["data"].items():
                 if name in self.value_list:

@@ -18,6 +18,47 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.5.4 Generic Set / Read manual control
+Features:
+- new manual control to generically set / read any kind of channel
+
+Changes:
+- order of steps in menu now alphabetically
+- default value of read variables in "Read Channels" now True
+- in the Set Value Popup, now a messagebox asks, whether the user is sure if they click on "cancel"
+
+Fixes:
+- changelog is now actually shown
+- waiting bars could crash if executed in a fast loop, now fixed
+
+### 1.5.3 Less Confusion!
+Changes:
+- no more confusion when opening a protocol configuration, cannot open the same twice anymore, but raises the already opened window to the front
+
+Fixes:
+- ElapsedTime for List and 2D plots fixed
+- not necessary to read channels when waiting for condition anymore (condition might be due to variable for example)
+- driver builder does not create read-functions for set-channels anymore
+- list-plot can now display other types than numbers and bool again
+- throwing an error when trying to execute python file without specifying a file
+- variables in protocols run by a watchdog should now work
+- replace with menu now looks as the others, cannot replace step with same type anymore
+
+### 1.5.2 The team of NOMAD CAMELS wishes you a measuring christmas and bug-free new year!
+Features:
+- now showing the changelog after an update
+
+Changes:
+- the log-window now has a maximum number of lines (default for the moment at 10000)
+- menu of steps renamed from "Additional" to "Advanced"
+
+Fixes:
+- manage instruments could not be opened without internet connection, now fixed
+- instruments that depend on others sometimes were closed in the wrong order, should now be fixed (example: first de-instantiate the PID, then its read / set channels)
+- fixed a bug where in some Qt versions the window could not be loaded anymore by changing requirement of PySide6, fixed warning that happened in versions where it worked
+- wrong movement of stage manual control when using buttons after keyboard move fixed
+- read only config data (e.g. IDN for some instruments) were not read if they had a default value, now fixed
+
 ### 1.5.1
 Features:
 - Can now live-control the variables of a protocol while it is running
@@ -28,10 +69,12 @@ Changes:
 - session now also creates a sub-folder
 
 Fixes:
+- opening the data path opened several windows in some cases, now fixed
 - samples can now be deleted again
 - "Channels" or "Variables" do not appear in set value popup anymore if None of these are set
 - tree of protocol sequence not scrolling back to the top anymore on every click
 - the button for adding a step now displays the same menu as a right click in the sequence
+- folder with python files might have been missing on first start, now fixed
 
 ## 1.5.0 metadata structuring
 Features:

@@ -305,6 +305,8 @@ class AddRemoveTable(QWidget):
         else:
             while self.table_model.columnCount():
                 self.table_model.removeColumn(0)
+        if isinstance(self.tableData, dict):
+            self.tableData = pd.DataFrame(self.tableData)
         data = np.array(self.tableData)
         for dat in data:
             self.add(dat, change_focus)
@@ -542,7 +544,6 @@ class AddRemoveTable(QWidget):
         else:
             self.added.emit(items[0].column())
         self.check_selection()
-
 
     def remove(self):
         """ """

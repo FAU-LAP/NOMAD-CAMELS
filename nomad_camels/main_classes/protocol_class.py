@@ -81,6 +81,9 @@ class Measurement_Protocol:
             if "live_variable_update" in kwargs
             else False
         )
+        self.allow_live_comments = (
+            kwargs["allow_live_comments"] if "allow_live_comments" in kwargs else False
+        )
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -92,6 +95,8 @@ class Measurement_Protocol:
         self.channels = channels
         self.name = name or "Protocol"
         self.use_nexus = use_nexus
+        self.measurement_description = ""
+        self.tags = []
 
     def update_variables(self):
         """Update all the variables provided by loopsteps."""
@@ -296,6 +301,22 @@ class Measurement_Protocol:
         else:
             plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name, runEngine)\n'
             plan_string += "\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
+        check_live_windows = False
+        if self.allow_live_comments:
+            check_live_windows = True
+        if check_live_windows:
+            plan_string += "\tfinished = False\n"
+            plan_string += "\twhile not finished:\n"
+            plan_string += "\t\tfinished = True\n"
+            plan_string += "\t\tfor window in live_windows:\n"
+            plan_string += "\t\t\tif hasattr(window, '_is_finished') and not window._is_finished:\n"
+            plan_string += "\t\t\t\tfinished = False\n"
+            plan_string += "\tlive_metadata = {}\n"
+            plan_string += "\tfor window in live_windows:\n"
+            plan_string += "\t\tif hasattr(window, 'get_metadata'):\n"
+            plan_string += "\t\t\tlive_metadata.update(window.get_metadata())\n"
+            plan_string += "\tlive_metadata_signal = variable_reading.Variable_Signal(name='live_metadata', variables_dict=live_metadata)\n"
+            plan_string += '\tyield from bps.trigger_and_read([live_metadata_signal], name="_live_metadata_reading_")\n'
         plan_string += "\tyield from bps.close_run()\n"
         plan_string += "\trunEngine.unsubscribe(sub_eva)\n"
         return plan_string
@@ -328,6 +349,30 @@ class Measurement_Protocol:
 
         add_main_string += "\treturn returner\n\n\n"
         return add_main_string
+
+    def get_live_interaction_string(self):
+        """Returns the string for the live interaction of the protocol."""
+        live_string = "def create_live_windows():\n"
+        live_string += "\tglobal live_windows\n"
+        if self.live_variable_update:
+            live_string += (
+                "\tfrom nomad_camels.ui_widgets.variable_table import VariableBox\n"
+            )
+            live_string += f"\tvariables = {self.variables}\n"
+            live_string += f'\tvariable_box = VariableBox(editable_names=False, variables=variables, name="{self.name}")\n'
+            live_string += "\n\tdef update_variables(new_variables):\n"
+            live_string += "\t\tglobal namespace\n"
+            live_string += "\t\tnamespace.update(new_variables)\n\n"
+            live_string += (
+                "\tvariable_box.new_values_signal.connect(update_variables)\n"
+            )
+            live_string += "\tlive_windows.append(variable_box)\n"
+            live_string += "\tvariable_box.show()\n"
+        if self.allow_live_comments:
+            live_string += "\tcommenting_box = helper_functions.Commenting_Box()\n"
+            live_string += "\tlive_windows.append(commenting_box)\n"
+        live_string += "\treturn live_windows\n\n\n"
+        return live_string
 
     def get_total_steps(self):
         """Returns the total number of steps (including repetitions for loops)"""
@@ -489,6 +534,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.adjust_text_edit_size_prot()
 
         self.checkBox_live_variables.setChecked(self.protocol.live_variable_update)
+        self.checkBox_live_comments.setChecked(self.protocol.allow_live_comments)
 
         self.radioButton_h5_during.setChecked(self.protocol.h5_during_run)
         self.radioButton_h5_after.setChecked(not self.protocol.h5_during_run)
@@ -600,6 +646,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.use_end_protocol = self.checkBox_perform_at_end.isChecked()
         self.protocol.end_protocol = self.ending_protocol_selection.get_path()
         self.protocol.live_variable_update = self.checkBox_live_variables.isChecked()
+        self.protocol.allow_live_comments = self.checkBox_live_comments.isChecked()
 
     # def load_variables(self):
     #     """Called when starting, loads the variables from the protocol

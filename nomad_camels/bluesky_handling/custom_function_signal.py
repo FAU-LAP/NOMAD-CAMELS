@@ -1,4 +1,4 @@
-from ophyd import Signal, SignalRO, Device
+from ophyd import Signal, SignalRO, Device, Kind
 import inspect
 import time
 
@@ -340,7 +340,7 @@ class Custom_Function_SignalRO(SignalRO):
         return info
 
     def read_configuration(self):
-        if self._readback is not None:
+        if self._readback is not None and not (self.kind in ['config', Kind.config] and self.read_function) :
             value = self._readback
         else:
             value = self.get()

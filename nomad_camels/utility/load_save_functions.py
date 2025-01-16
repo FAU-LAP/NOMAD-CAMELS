@@ -147,6 +147,7 @@ standard_pref = {
     "new_file_each_run": True,
     "enable_API": False,
     "API_port": "5000",
+    "last_shown_notes": "0.0.0",
 }
 
 
@@ -275,6 +276,8 @@ def save_dictionary(path, dictionary: dict):
         add_string = get_save_str(val)
         if add_string is not None:
             save_dict[key] = add_string
+    if not os.path.isdir(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
     with open(path, "w", encoding="utf-8") as file:
         json.dump(save_dict, file, indent=2)
 
@@ -607,6 +610,8 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.end_protocol = prot_data["end_protocol"]
         if "live_variable_update" in prot_data:
             prot.live_variable_update = prot_data["live_variable_update"]
+        if "allow_live_comments" in prot_data:
+            prot.allow_live_comments = prot_data["allow_live_comments"]
         prot_dict.update({key: prot})
 
 

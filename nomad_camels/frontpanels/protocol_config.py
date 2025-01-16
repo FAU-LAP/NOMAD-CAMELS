@@ -26,26 +26,26 @@ from importlib import resources
 from nomad_camels import graphics
 
 
-loop_step_display_order = [
-    "Read Channels",
-    "Set Channels",
-    "For Loop",
-    "Simple Sweep",
-    "Wait",
-    "Run Subprotocol",
-    "If",
-    "Set Variables",
-    "Execute Python File",
-    "ND Sweep",
-    "Change Device Config",
-    "While Loop",
-    "Gradient Descent",
-    "API Call",
-    "Set Value Popup",
-    "Trigger Channels",
-    "Prompt",
-    "Call Function",
-]
+# loop_step_display_order = [
+#     "Read Channels",
+#     "Set Channels",
+#     "For Loop",
+#     "Simple Sweep",
+#     "Wait",
+#     "Run Subprotocol",
+#     "If",
+#     "Set Variables",
+#     "Execute Python File",
+#     "ND Sweep",
+#     "Change Device Config",
+#     "While Loop",
+#     "Gradient Descent",
+#     "API Call",
+#     "Set Value Popup",
+#     "Trigger Channels",
+#     "Prompt",
+#     "Call Function",
+# ]
 
 channel_action_list = [
     "Read Channels",
@@ -196,7 +196,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.device_actions.clear()
         for stp in sorted(
             make_step_of_type.step_type_config.keys(),
-            key=lambda x: loop_step_display_order.index(x),
+            # key=lambda x: loop_step_display_order.index(x),
         ):
             action = QAction(stp)
             action.triggered.connect(lambda state=None, x=stp: self.add_loop_step(x))
@@ -347,7 +347,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 parent = parent.data()
             for stp in sorted(
                 make_step_of_type.step_type_config.keys(),
-                key=lambda x: loop_step_display_order.index(x),
+                # key=lambda x: loop_step_display_order.index(x),
             ):
                 action = QAction(stp)
                 action_a = QAction(stp)
@@ -381,7 +381,8 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                             x, y, z
                         )
                     )
-                    replace_actions.append(action_replace)
+                    if not item.data().startswith(stp):
+                        replace_actions.append(action_replace)
             device_actions = []
             device_actions_a = []
             device_actions_in = []
@@ -409,56 +410,15 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 device_actions_in.append(action_in)
 
             # -------------- Above actions -----------------------------
-            insert_above_menu = QMenu("Insert Above")
-            insert_above_menu_channels = QMenu("Channels")
-            insert_above_menu_loops = QMenu("Loops")
-            insert_above_menu_additional = QMenu("Additional")
-            # Filter out specific steps with a list of the .text of the QAction and then remove them from the list
-            duplicate_actions = above_actions[:]
-            for action in above_actions:
-                if action.text() in channel_action_list:
-                    insert_above_menu_channels.addAction(action)
-                    # Remove from the list
-                    duplicate_actions.remove(action)
-                elif action.text() in loop_action_list:
-                    insert_above_menu_loops.addAction(action)
-                    # Remove from the list
-                    duplicate_actions.remove(action)
-                elif action.text() in additional_action_list:
-                    insert_above_menu_additional.addAction(action)
-                    # Remove from the list
-                    duplicate_actions.remove(action)
-            insert_above_menu.addMenu(insert_above_menu_channels)
-            insert_above_menu.addMenu(insert_above_menu_loops)
-            if len(duplicate_actions) > 0:
-                insert_above_menu.addActions(duplicate_actions)
-            insert_above_menu.addMenu(insert_above_menu_additional)
+            insert_above_menu = filtered_menu_from_actions(
+                above_actions, "Insert Above"
+            )
 
             # -------------- Below actions -----------------------------
-            insert_below_menu = QMenu("Insert Below")
-            insert_below_menu_channels = QMenu("Channels")
-            insert_below_menu_loops = QMenu("Loops")
-            insert_below_menu_additional = QMenu("Additional")
-            # Filter out specific steps with a list of the .text of the QAction and then remove them from the list for the below menu
-            duplicate_actions = below_actions[:]
-            for action in below_actions:
-                if action.text() in channel_action_list:
-                    insert_below_menu_channels.addAction(action)
-                    # Remove from the list
-                    duplicate_actions.remove(action)
-                elif action.text() in loop_action_list:
-                    insert_below_menu_loops.addAction(action)
-                    # Remove from the list
-                    duplicate_actions.remove(action)
-                elif action.text() in additional_action_list:
-                    insert_below_menu_additional.addAction(action)
-                    # Remove from the list
-                    duplicate_actions.remove(action)
-            insert_below_menu.addMenu(insert_below_menu_channels)
-            insert_below_menu.addMenu(insert_below_menu_loops)
-            if len(duplicate_actions) > 0:
-                insert_below_menu.addActions(duplicate_actions)
-            insert_below_menu.addMenu(insert_below_menu_additional)
+            insert_below_menu = filtered_menu_from_actions(
+                below_actions, "Insert Below"
+            )
+
             # -------------- Add in actions -----------------------------
             # insert_below_menu.addActions(below_actions)
             if device_actions:
@@ -467,36 +427,12 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 insert_below_menu.addSeparator()
                 insert_below_menu.addActions(device_actions)
             if self.protocol.loop_step_dict[item.data()].has_children:
-                add_in_menu = QMenu("Add Into")
-                add_in_menu_channels = QMenu("Channels")
-                add_in_menu_loops = QMenu("Loops")
-                add_in_menu_additional = QMenu("Additional")
-                # Filter out specific steps with a list of the .text of the QAction and then remove them from the list
-                duplicate_actions = into_actions[:]
-                for action in into_actions:
-                    if action.text() in channel_action_list:
-                        add_in_menu_channels.addAction(action)
-                        # Remove from the list
-                        duplicate_actions.remove(action)
-                    elif action.text() in loop_action_list:
-                        add_in_menu_loops.addAction(action)
-                        # Remove from the list
-                        duplicate_actions.remove(action)
-                    elif action.text() in additional_action_list:
-                        add_in_menu_additional.addAction(action)
-                        # Remove from the list
-                        duplicate_actions.remove(action)
-                add_in_menu.addMenu(add_in_menu_channels)
-                add_in_menu.addMenu(add_in_menu_loops)
-                if len(duplicate_actions) > 0:
-                    add_in_menu.addActions(duplicate_actions)
-                add_in_menu.addMenu(add_in_menu_additional)
+                add_in_menu = filtered_menu_from_actions(into_actions, "Add Into")
                 menu.addMenu(add_in_menu)
                 if device_actions:
                     add_in_menu.addSeparator()
                     add_in_menu.addActions(device_actions_in)
-            replace_menu = QMenu("Replace with")
-            replace_menu.addActions(replace_actions)
+            replace_menu = filtered_menu_from_actions(replace_actions, "Replace with")
             menu.addMenu(insert_above_menu)
             menu.addMenu(insert_below_menu)
             menu.addMenu(replace_menu)
@@ -557,7 +493,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             add_actions = []
             for stp in sorted(
                 make_step_of_type.step_type_config,
-                key=lambda x: loop_step_display_order.index(x),
+                # key=lambda x: loop_step_display_order.index(x),
             ):
                 action = QAction(stp)
                 action.triggered.connect(
@@ -571,31 +507,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                     lambda state=None, x=stp: self.add_loop_step(x)
                 )
                 device_actions.append(action)
-            add_menu = QMenu("Add Step")
-            # -------------- Above actions -----------------------------
-            add_menu_channels = QMenu("Channels")
-            add_menu_loops = QMenu("Loops")
-            add_menu_additional = QMenu("Additional")
-            # Filter out specific steps with a list of the .text of the QAction and then remove them from the list
-            duplicate_actions = add_actions[:]
-            for action in add_actions:
-                if action.text() in channel_action_list:
-                    add_menu_channels.addAction(action)
-                    # Remove from the list
-                    duplicate_actions.remove(action)
-                elif action.text() in loop_action_list:
-                    add_menu_loops.addAction(action)
-                    # Remove from the list
-                    duplicate_actions.remove(action)
-                elif action.text() in additional_action_list:
-                    add_menu_additional.addAction(action)
-                    # Remove from the list
-                    duplicate_actions.remove(action)
-            add_menu.addMenu(add_menu_channels)
-            add_menu.addMenu(add_menu_loops)
-            if len(duplicate_actions) > 0:
-                add_menu.addActions(duplicate_actions)
-            add_menu.addMenu(add_menu_additional)
+            add_menu = filtered_menu_from_actions(add_actions, "Add Step")
             if device_actions:
                 add_menu.addSeparator()
                 add_menu.addActions(device_actions)
@@ -969,6 +881,37 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)
+
+
+def filtered_menu_from_actions(actions, menu_name):
+    menu = QMenu(menu_name)
+    menu_channels = QMenu("Channels")
+    menu_loops = QMenu("Loops")
+    menu_additional = QMenu("Advanced")
+    # Filter out specific steps with a list of the .text of the QAction and then remove them from the list
+    duplicate_actions = actions[:]
+    for action in actions:
+        if action.text() in channel_action_list:
+            menu_channels.addAction(action)
+            # Remove from the list
+            duplicate_actions.remove(action)
+        elif action.text() in loop_action_list:
+            menu_loops.addAction(action)
+            # Remove from the list
+            duplicate_actions.remove(action)
+        elif action.text() in additional_action_list:
+            menu_additional.addAction(action)
+            # Remove from the list
+            duplicate_actions.remove(action)
+    if menu_channels.isEmpty() and menu_additional.isEmpty() and not duplicate_actions:
+        menu_loops.setTitle(menu_name)
+        return menu_loops
+    menu.addMenu(menu_channels)
+    menu.addMenu(menu_loops)
+    if len(duplicate_actions) > 0:
+        menu.addActions(duplicate_actions)
+    menu.addMenu(menu_additional)
+    return menu
 
 
 if __name__ == "__main__":

@@ -49,7 +49,7 @@ jobs:
       - uses: tlambert03/setup-qt-libs@v1
       - name: Install dependencies
         run: |
-          sudo apt install libgl1-mesa-glx libegl1-mesa libegl1 libopengl0 libpulse0
+          sudo apt install libgl1 libglx-mesa0 libegl1 libopengl0 libpulse0
           python -m pip install --upgrade pip
           pip install ruff
           pip install -r requirements.txt
@@ -77,6 +77,9 @@ jobs:
           python-version: 3.11
       - name: Install dependencies
         run: |
+          if brew list pkg-config@0.29.2 &>/dev/null; then
+            brew unlink pkg-config@0.29.2
+          fi
           brew install hdf5
           echo "HDF5_DIR=$(brew --prefix hdf5)" >> $GITHUB_ENV
           python -m pip install --upgrade pip

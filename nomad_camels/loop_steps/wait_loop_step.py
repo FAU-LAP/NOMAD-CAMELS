@@ -151,7 +151,7 @@ class Wait_Loop_Step(Loop_Step):
 
         channel_string = f"{tabs}channels_{self.variable_name()} = ["
         if not self.read_channels:
-            raise Exception(f"Trying to read no channel in {self.full_name}!")
+            return channel_string + "]\n"
         for channel in self.read_channels:
             channel_string += get_channel_string(channel)
         channel_string = channel_string[:-2] + "]\n"

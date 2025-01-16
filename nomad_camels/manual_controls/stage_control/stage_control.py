@@ -284,11 +284,11 @@ class Stage_Control(Manual_Control, Ui_Form):
 
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
-        msg.setText("Error in read thread")
+        msg.setText(f"Error in {name} thread")
         msg.setInformativeText(
             f"An error occured in the {name} thread of {self.name}:\n{ex}\nDo you want to restart the read thread?"
         )
-        msg.setWindowTitle("Error in read thread")
+        msg.setWindowTitle(f"Error in {name} thread")
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msg.setDefaultButton(QMessageBox.Yes)
         if msg.exec() == QMessageBox.Yes:
@@ -377,19 +377,22 @@ class Stage_Control(Manual_Control, Ui_Form):
         -------
 
         """
-        ax_names = ["X", "Y", "Z"]
-        step_size = self.control_data[f"stepSize_{ax_names[axis]}"]
         if self.read_thread:
             self.read_thread.paused = True
+        ax_names = ["X", "Y", "Z"]
+        step_size = self.control_data[f"stepSize_{ax_names[axis]}"]
         if not up:
             step_size *= -1
-        if self.read_channels[axis] is not None:
-            before = self.read_channels[axis].get()
-        else:
-            before = self.set_channels[axis].get()
+        move_to = [np.nan] * 3
+        for i in range(3):
+            if self.read_channels[i] is not None:
+                move_to[i] = self.read_channels[i].get()
+            elif self.set_channels[i] is not None:
+                move_to[i] = self.set_channels[i].get()
         if self.read_thread:
             self.read_thread.paused = False
-        self.move_thread.set_absolute[axis] = before + step_size
+        move_to[axis] = move_to[axis] + step_size
+        self.move_thread.set_absolute = move_to
 
     def reference_drive(self):
         """ """
