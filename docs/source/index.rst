@@ -26,6 +26,7 @@ CAMELS provides a graphical user interface (GUI) that can be used to setup instr
 CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_. 
 
 .. image:: https://www.fairmat-nfdi.eu/uploads/newweb/FAIRmat.png
+   :target: https://www.fairmat-nfdi.eu/fairmat
    :width: 200px
    :height: 200px
 
