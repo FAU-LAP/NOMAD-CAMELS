@@ -1,4 +1,5 @@
 from bluesky import run_engine, RunEngine
+import logging
 
 
 def get_nan_value(value):
@@ -35,6 +36,7 @@ class RunEngineOverwrite(RunEngine):
             try:
                 ret = await run_engine.maybe_await(obj.read(*msg.args, **msg.kwargs))
             except Exception as e:
+                logging.warning(f"Error reading object: {obj}, Exception: {e}")
                 print("Error reading object: ", obj)
                 print("Exception: ", e)
                 import time

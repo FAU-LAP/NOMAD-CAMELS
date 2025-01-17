@@ -18,8 +18,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 1.5.4 Generic Set / Read manual control
+### 1.6.0 Ignore failed read, new manual control
 Features:
+- can ignore failed readings of specific channels now, so the protocol does not break if some sensor fails once
 - new manual control to generically set / read any kind of channel
 
 Changes:
