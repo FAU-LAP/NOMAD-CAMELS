@@ -50,6 +50,10 @@ class Plot_Info:
         logX=False,
         logY=False,
         logY2=False,
+        top_left_x=None,
+        top_left_y=None,
+        width=None,
+        height=None,
     ):
         self.plt_type = plt_type
         self.x_axis = x_axis
@@ -486,6 +490,15 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.checkBox_xlog.setChecked(self.plot_data.logX)
         self.checkBox_ylog.setChecked(self.plot_data.logY)
         self.checkBox_ylog2.setChecked(self.plot_data.logY2)
+        # If plot_data has the top_left_x attribute set it as text
+        if hasattr(self.plot_data, "top_left_x"):
+            self.lineEdit_top_left_x.setText(str(self.plot_data.top_left_x))
+        if hasattr(self.plot_data, "top_left_y"):
+            self.lineEdit_top_left_y.setText(str(self.plot_data.top_left_y))
+        if hasattr(self.plot_data, "plot_width"):
+            self.lineEdit_plot_width.setText(str(self.plot_data.plot_width))
+        if hasattr(self.plot_data, "plot_height"):
+            self.lineEdit_plot_height.setText(str(self.plot_data.plot_height))
         self.plot_data.update_name()
 
     def get_data(self):
@@ -521,6 +534,27 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.plot_data.logX = self.checkBox_xlog.isChecked()
         self.plot_data.logY = self.checkBox_ylog.isChecked()
         self.plot_data.logY2 = self.checkBox_ylog2.isChecked()
+        # If the string is empty set empty string
+        if self.lineEdit_top_left_x.text():
+            self.plot_data.top_left_x = int(self.lineEdit_top_left_x.text())
+        else:
+            self.plot_data.top_left_x = ""
+
+        if self.lineEdit_top_left_y.text():
+            self.plot_data.top_left_y = int(self.lineEdit_top_left_y.text())
+        else:
+            self.plot_data.top_left_y = ""
+
+        if self.lineEdit_plot_width.text():
+            self.plot_data.plot_width = int(self.lineEdit_plot_width.text())
+        else:
+            self.plot_data.plot_width = ""
+
+        if self.lineEdit_plot_height.text():
+            self.plot_data.plot_height = int(self.lineEdit_plot_height.text())
+        else:
+            self.plot_data.plot_height = ""
+
         if not isinstance(self.fit_definer, QLabel):
             self.fit_definer.get_data()
         self.plot_data.update_name()
@@ -656,7 +690,6 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
                 par_vals["lower bound"].append("")
                 par_vals["upper bound"].append("")
             self.start_params.change_table_data(par_vals)
-
 
     def load_data(self):
         """ """

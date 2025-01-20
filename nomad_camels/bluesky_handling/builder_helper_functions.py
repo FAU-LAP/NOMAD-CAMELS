@@ -128,7 +128,7 @@ def plot_creator(
                     ylabel2 = f
             xlabel = plot.xlabel if plot.xlabel else plot.x_axis or "time"
             ylabel = plot.ylabel if plot.ylabel else plot.y_axes["formula"][0]
-            plot_string += f'\tplot_info = dict(x_name="{plot.x_axis or "time"}", y_names={plot.y_axes["formula"]}, ylabel="{ylabel}", xlabel="{xlabel}", title="{plot.title}", stream_name=stream, namespace=namespace, fits=fits, multi_stream={multi_stream}, y_axes={y_axes}, ylabel2="{ylabel2}", logX={plot.logX}, logY={plot.logY}, logY2={plot.logY2}, maxlen="{plot.maxlen}")\n'
+            plot_string += f'\tplot_info = dict(x_name="{plot.x_axis or "time"}", y_names={plot.y_axes["formula"]}, ylabel="{ylabel}", xlabel="{xlabel}", title="{plot.title}", stream_name=stream, namespace=namespace, fits=fits, multi_stream={multi_stream}, y_axes={y_axes}, ylabel2="{ylabel2}", logX={plot.logX}, logY={plot.logY}, logY2={plot.logY2}, maxlen="{plot.maxlen}", top_left_x="{plot.top_left_x}", top_left_y="{plot.top_left_y}", plot_width="{plot.plot_width}", plot_height="{plot.plot_height}")\n'
             plot_string += f"\tplot_{i} = plot_pyqtgraph.PlotWidget(**plot_info)\n"
             plot_string += f"\tplots.append(plot_{i})\n"
             # plot_string += f"\tplot_data.append(plot_info)\n"

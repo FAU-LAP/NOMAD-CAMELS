@@ -22,7 +22,6 @@
      <property name="font">
       <font>
        <pointsize>9</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -43,7 +42,6 @@
      <property name="font">
       <font>
        <pointsize>8</pointsize>
-       <weight>50</weight>
        <bold>false</bold>
       </font>
      </property>
@@ -87,7 +85,97 @@
       <item row="1" column="1" colspan="3">
        <widget class="QLineEdit" name="lineEdit_title"/>
       </item>
-      <item row="7" column="0" colspan="4">
+      <item row="6" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkBox_ylog">
+        <property name="text">
+         <string>y logarithmic?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>y-label:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="lineEdit_ylabel"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string># points:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="2">
+       <widget class="QLabel" name="label_plot_height">
+        <property name="toolTip">
+         <string>Set the height of the plot window in pixels</string>
+        </property>
+        <property name="text">
+         <string>Height</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="3">
+       <widget class="QLineEdit" name="lineEdit_plot_height"/>
+      </item>
+      <item row="4" column="2">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>y-label 2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="3">
+       <widget class="QLineEdit" name="lineEdit_ylabel2"/>
+      </item>
+      <item row="9" column="1">
+       <widget class="QLineEdit" name="lineEdit_top_left_y"/>
+      </item>
+      <item row="8" column="2">
+       <widget class="QLabel" name="label_plot_width">
+        <property name="toolTip">
+         <string>Set the width of the plot window in pixels</string>
+        </property>
+        <property name="text">
+         <string>Width</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="4">
+       <widget class="QCheckBox" name="checkBox_xlog">
+        <property name="text">
+         <string>x logarithmic?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="3">
+       <widget class="QLineEdit" name="lineEdit_xlabel"/>
+      </item>
+      <item row="6" column="2" colspan="2">
+       <widget class="QCheckBox" name="checkBox_ylog2">
+        <property name="text">
+         <string>y2 logarithmic?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="3">
+       <widget class="QLineEdit" name="lineEdit_nPoints"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>x-label:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QLineEdit" name="lineEdit_top_left_x"/>
+      </item>
+      <item row="10" column="0" colspan="4">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -100,40 +188,8 @@
         </property>
        </spacer>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>x-label:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="4">
-       <widget class="QCheckBox" name="checkBox_xlog">
-        <property name="text">
-         <string>x logarithmic?</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0" colspan="2">
-       <widget class="QCheckBox" name="checkBox_ylog">
-        <property name="text">
-         <string>y logarithmic?</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="2">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>y-label 2</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="2" colspan="2">
-       <widget class="QCheckBox" name="checkBox_ylog2">
-        <property name="text">
-         <string>y2 logarithmic?</string>
-        </property>
-       </widget>
+      <item row="8" column="3">
+       <widget class="QLineEdit" name="lineEdit_plot_width"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label">
@@ -142,31 +198,32 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_3">
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_top_left_x">
+        <property name="toolTip">
+         <string>Set the exact x coordinate of the top left corner of the plot window in pixels</string>
+        </property>
         <property name="text">
-         <string>y-label:</string>
+         <string>Top left x</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="3">
-       <widget class="QLineEdit" name="lineEdit_ylabel2"/>
-      </item>
-      <item row="2" column="1" colspan="3">
-       <widget class="QLineEdit" name="lineEdit_xlabel"/>
-      </item>
-      <item row="4" column="1">
-       <widget class="QLineEdit" name="lineEdit_ylabel"/>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_6">
+      <item row="9" column="0">
+       <widget class="QLabel" name="label_top_left_y">
+        <property name="toolTip">
+         <string>Set the exact y coordinate of the top left corner of the plot window in pixels</string>
+        </property>
         <property name="text">
-         <string># points:</string>
+         <string>Top  left y</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" colspan="3">
-       <widget class="QLineEdit" name="lineEdit_nPoints"/>
+      <item row="7" column="0" colspan="4">
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

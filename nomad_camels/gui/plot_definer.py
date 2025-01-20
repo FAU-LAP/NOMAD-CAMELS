@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'plot_definer.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.0
+## Created by: Qt User Interface Compiler version 6.7.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -78,8 +78,8 @@ class Ui_Plot_Definer(object):
 
         self.line = QFrame(Plot_Definer)
         self.line.setObjectName("line")
-        self.line.setFrameShape(QFrame.HLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.gridLayout.addWidget(self.line, 3, 0, 1, 4)
 
@@ -104,8 +104,8 @@ class Ui_Plot_Definer(object):
 
         self.line_2 = QFrame(Plot_Definer)
         self.line_2.setObjectName("line_2")
-        self.line_2.setFrameShape(QFrame.VLine)
-        self.line_2.setFrameShadow(QFrame.Sunken)
+        self.line_2.setFrameShape(QFrame.Shape.VLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.gridLayout.addWidget(self.line_2, 4, 2, 5, 1)
 
@@ -119,56 +119,15 @@ class Ui_Plot_Definer(object):
 
         self.gridLayout_2.addWidget(self.lineEdit_title, 1, 1, 1, 3)
 
-        self.verticalSpacer = QSpacerItem(
-            0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding
-        )
-
-        self.gridLayout_2.addItem(self.verticalSpacer, 7, 0, 1, 4)
-
-        self.label_2 = QLabel(self.plotting_group)
-        self.label_2.setObjectName("label_2")
-
-        self.gridLayout_2.addWidget(self.label_2, 2, 0, 1, 1)
-
-        self.checkBox_xlog = QCheckBox(self.plotting_group)
-        self.checkBox_xlog.setObjectName("checkBox_xlog")
-
-        self.gridLayout_2.addWidget(self.checkBox_xlog, 3, 0, 1, 4)
-
         self.checkBox_ylog = QCheckBox(self.plotting_group)
         self.checkBox_ylog.setObjectName("checkBox_ylog")
 
         self.gridLayout_2.addWidget(self.checkBox_ylog, 6, 0, 1, 2)
 
-        self.label_4 = QLabel(self.plotting_group)
-        self.label_4.setObjectName("label_4")
-
-        self.gridLayout_2.addWidget(self.label_4, 4, 2, 1, 1)
-
-        self.checkBox_ylog2 = QCheckBox(self.plotting_group)
-        self.checkBox_ylog2.setObjectName("checkBox_ylog2")
-
-        self.gridLayout_2.addWidget(self.checkBox_ylog2, 6, 2, 1, 2)
-
-        self.label = QLabel(self.plotting_group)
-        self.label.setObjectName("label")
-
-        self.gridLayout_2.addWidget(self.label, 1, 0, 1, 1)
-
         self.label_3 = QLabel(self.plotting_group)
         self.label_3.setObjectName("label_3")
 
         self.gridLayout_2.addWidget(self.label_3, 4, 0, 1, 1)
-
-        self.lineEdit_ylabel2 = QLineEdit(self.plotting_group)
-        self.lineEdit_ylabel2.setObjectName("lineEdit_ylabel2")
-
-        self.gridLayout_2.addWidget(self.lineEdit_ylabel2, 4, 3, 1, 1)
-
-        self.lineEdit_xlabel = QLineEdit(self.plotting_group)
-        self.lineEdit_xlabel.setObjectName("lineEdit_xlabel")
-
-        self.gridLayout_2.addWidget(self.lineEdit_xlabel, 2, 1, 1, 3)
 
         self.lineEdit_ylabel = QLineEdit(self.plotting_group)
         self.lineEdit_ylabel.setObjectName("lineEdit_ylabel")
@@ -180,10 +139,98 @@ class Ui_Plot_Definer(object):
 
         self.gridLayout_2.addWidget(self.label_6, 0, 0, 1, 1)
 
+        self.label_plot_height = QLabel(self.plotting_group)
+        self.label_plot_height.setObjectName("label_plot_height")
+
+        self.gridLayout_2.addWidget(self.label_plot_height, 9, 2, 1, 1)
+
+        self.lineEdit_plot_height = QLineEdit(self.plotting_group)
+        self.lineEdit_plot_height.setObjectName("lineEdit_plot_height")
+
+        self.gridLayout_2.addWidget(self.lineEdit_plot_height, 9, 3, 1, 1)
+
+        self.label_4 = QLabel(self.plotting_group)
+        self.label_4.setObjectName("label_4")
+
+        self.gridLayout_2.addWidget(self.label_4, 4, 2, 1, 1)
+
+        self.lineEdit_ylabel2 = QLineEdit(self.plotting_group)
+        self.lineEdit_ylabel2.setObjectName("lineEdit_ylabel2")
+
+        self.gridLayout_2.addWidget(self.lineEdit_ylabel2, 4, 3, 1, 1)
+
+        self.lineEdit_top_left_y = QLineEdit(self.plotting_group)
+        self.lineEdit_top_left_y.setObjectName("lineEdit_top_left_y")
+
+        self.gridLayout_2.addWidget(self.lineEdit_top_left_y, 9, 1, 1, 1)
+
+        self.label_plot_width = QLabel(self.plotting_group)
+        self.label_plot_width.setObjectName("label_plot_width")
+
+        self.gridLayout_2.addWidget(self.label_plot_width, 8, 2, 1, 1)
+
+        self.checkBox_xlog = QCheckBox(self.plotting_group)
+        self.checkBox_xlog.setObjectName("checkBox_xlog")
+
+        self.gridLayout_2.addWidget(self.checkBox_xlog, 3, 0, 1, 4)
+
+        self.lineEdit_xlabel = QLineEdit(self.plotting_group)
+        self.lineEdit_xlabel.setObjectName("lineEdit_xlabel")
+
+        self.gridLayout_2.addWidget(self.lineEdit_xlabel, 2, 1, 1, 3)
+
+        self.checkBox_ylog2 = QCheckBox(self.plotting_group)
+        self.checkBox_ylog2.setObjectName("checkBox_ylog2")
+
+        self.gridLayout_2.addWidget(self.checkBox_ylog2, 6, 2, 1, 2)
+
         self.lineEdit_nPoints = QLineEdit(self.plotting_group)
         self.lineEdit_nPoints.setObjectName("lineEdit_nPoints")
 
         self.gridLayout_2.addWidget(self.lineEdit_nPoints, 0, 1, 1, 3)
+
+        self.label_2 = QLabel(self.plotting_group)
+        self.label_2.setObjectName("label_2")
+
+        self.gridLayout_2.addWidget(self.label_2, 2, 0, 1, 1)
+
+        self.lineEdit_top_left_x = QLineEdit(self.plotting_group)
+        self.lineEdit_top_left_x.setObjectName("lineEdit_top_left_x")
+
+        self.gridLayout_2.addWidget(self.lineEdit_top_left_x, 8, 1, 1, 1)
+
+        self.verticalSpacer = QSpacerItem(
+            0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
+        )
+
+        self.gridLayout_2.addItem(self.verticalSpacer, 10, 0, 1, 4)
+
+        self.lineEdit_plot_width = QLineEdit(self.plotting_group)
+        self.lineEdit_plot_width.setObjectName("lineEdit_plot_width")
+
+        self.gridLayout_2.addWidget(self.lineEdit_plot_width, 8, 3, 1, 1)
+
+        self.label = QLabel(self.plotting_group)
+        self.label.setObjectName("label")
+
+        self.gridLayout_2.addWidget(self.label, 1, 0, 1, 1)
+
+        self.label_top_left_x = QLabel(self.plotting_group)
+        self.label_top_left_x.setObjectName("label_top_left_x")
+
+        self.gridLayout_2.addWidget(self.label_top_left_x, 8, 0, 1, 1)
+
+        self.label_top_left_y = QLabel(self.plotting_group)
+        self.label_top_left_y.setObjectName("label_top_left_y")
+
+        self.gridLayout_2.addWidget(self.label_top_left_y, 9, 0, 1, 1)
+
+        self.line_3 = QFrame(self.plotting_group)
+        self.line_3.setObjectName("line_3")
+        self.line_3.setFrameShape(QFrame.Shape.HLine)
+        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.gridLayout_2.addWidget(self.line_3, 7, 0, 1, 4)
 
         self.gridLayout.addWidget(self.plotting_group, 4, 0, 5, 2)
 
@@ -206,27 +253,71 @@ class Ui_Plot_Definer(object):
         self.checkBox_same_fit.setText(
             QCoreApplication.translate("Plot_Definer", "same fit for all ", None)
         )
-        self.label_2.setText(
-            QCoreApplication.translate("Plot_Definer", "x-label:", None)
-        )
-        self.checkBox_xlog.setText(
-            QCoreApplication.translate("Plot_Definer", "x logarithmic?", None)
-        )
         self.checkBox_ylog.setText(
             QCoreApplication.translate("Plot_Definer", "y logarithmic?", None)
         )
-        self.label_4.setText(
-            QCoreApplication.translate("Plot_Definer", "y-label 2", None)
-        )
-        self.checkBox_ylog2.setText(
-            QCoreApplication.translate("Plot_Definer", "y2 logarithmic?", None)
-        )
-        self.label.setText(QCoreApplication.translate("Plot_Definer", "title:", None))
         self.label_3.setText(
             QCoreApplication.translate("Plot_Definer", "y-label:", None)
         )
         self.label_6.setText(
             QCoreApplication.translate("Plot_Definer", "# points:", None)
+        )
+        # if QT_CONFIG(tooltip)
+        self.label_plot_height.setToolTip(
+            QCoreApplication.translate(
+                "Plot_Definer", "Set the height of the plot window in pixels", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.label_plot_height.setText(
+            QCoreApplication.translate("Plot_Definer", "Height", None)
+        )
+        self.label_4.setText(
+            QCoreApplication.translate("Plot_Definer", "y-label 2", None)
+        )
+        # if QT_CONFIG(tooltip)
+        self.label_plot_width.setToolTip(
+            QCoreApplication.translate(
+                "Plot_Definer", "Set the width of the plot window in pixels", None
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.label_plot_width.setText(
+            QCoreApplication.translate("Plot_Definer", "Width", None)
+        )
+        self.checkBox_xlog.setText(
+            QCoreApplication.translate("Plot_Definer", "x logarithmic?", None)
+        )
+        self.checkBox_ylog2.setText(
+            QCoreApplication.translate("Plot_Definer", "y2 logarithmic?", None)
+        )
+        self.label_2.setText(
+            QCoreApplication.translate("Plot_Definer", "x-label:", None)
+        )
+        self.label.setText(QCoreApplication.translate("Plot_Definer", "title:", None))
+        # if QT_CONFIG(tooltip)
+        self.label_top_left_x.setToolTip(
+            QCoreApplication.translate(
+                "Plot_Definer",
+                "Set the exact x coordinate of the top left corner of the plot window in pixels",
+                None,
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.label_top_left_x.setText(
+            QCoreApplication.translate("Plot_Definer", "Top left x", None)
+        )
+        # if QT_CONFIG(tooltip)
+        self.label_top_left_y.setToolTip(
+            QCoreApplication.translate(
+                "Plot_Definer",
+                "Set the exact y coordinate of the top left corner of the plot window in pixels",
+                None,
+            )
+        )
+        # endif // QT_CONFIG(tooltip)
+        self.label_top_left_y.setText(
+            QCoreApplication.translate("Plot_Definer", "Top  left y", None)
         )
 
     # retranslateUi

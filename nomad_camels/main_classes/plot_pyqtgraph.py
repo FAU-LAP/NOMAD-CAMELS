@@ -229,6 +229,14 @@ class PlotWidget(QWidget):
         Whether to use a logarithmic y-axis, by default False
     logY2 : bool
         Whether to use a logarithmic y-axis for the right axis, by default False
+    top_left_x : int, optional
+        The x-coordinate of the top left corner of the plot widget, by default None
+    top_left_y : int, optional
+        The y-coordinate of the top left corner of the plot widget, by default None
+    plot_width : int, optional
+        The width of the plot widget, by default None
+    plot_height : int, optional
+        The height of the plot widget, by default None
     maxlen : int
         The maximum number of data points to show, by default np.inf
     use_bluesky : bool
@@ -262,6 +270,10 @@ class PlotWidget(QWidget):
         logX=False,
         logY=False,
         logY2=False,
+        top_left_x=None,
+        top_left_y=None,
+        plot_width=None,
+        plot_height=None,
         maxlen=np.inf,
         use_bluesky=True,
         labels=(),
@@ -419,7 +431,7 @@ class PlotWidget(QWidget):
         self.plot_options.hide()
         self.setMinimumSize(500, 400)
         self.adjustSize()
-        place_widget(self)
+        place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
         self.change_maxlen()
 
     def show_again(self):
