@@ -18,12 +18,19 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 1.5.4
+### 1.6.0 Ignore failed read, new manual control
+Features:
+- can ignore failed readings of specific channels now, so the protocol does not break if some sensor fails once
+- new manual control to generically set / read any kind of channel
+
 Changes:
 - order of steps in menu now alphabetically
+- default value of read variables in "Read Channels" now True
+- in the Set Value Popup, now a messagebox asks, whether the user is sure if they click on "cancel"
 
 Fixes:
 - changelog is now actually shown
+- waiting bars could crash if executed in a fast loop, now fixed
 
 ### 1.5.3 Less Confusion!
 Changes:

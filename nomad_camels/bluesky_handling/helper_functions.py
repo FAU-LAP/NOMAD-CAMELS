@@ -6,7 +6,8 @@ simpler to use these than writing them as a string into the protocol-file.
 
 import numpy as np
 from bluesky import plan_stubs as bps
-from bluesky.utils import Msg
+from bluesky.preprocessors import contingency_wrapper, rewindable_wrapper
+from bluesky.utils import all_safe_rewind, short_uid
 
 from ophyd import SignalRO, Device
 
@@ -195,7 +196,7 @@ def trigger_multi(devices, grp=None):
             yield from bps.trigger(obj, group=grp)
 
 
-def read_wo_trigger(devices, grp=None, stream="primary"):
+def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None):
     """
     Used if not reading by trigger_and_read, but splitting both. This function only reads, without triggering.
 
@@ -214,16 +215,46 @@ def read_wo_trigger(devices, grp=None, stream="primary"):
     ret : dict
         The readings of the devices.
     """
+    skip_on_exception = skip_on_exception or [False] * len(devices)
+    for i, obj in enumerate(devices):
+        if skip_on_exception[i]:
+            obj.__read_w_except__ = True
+        else:
+            obj.__read_w_except__ = False
     if grp is not None:
         yield from bps.wait(grp)
     yield from bps.create(stream)
-    ret = {}  # collect and return readings to give plan access to them
-    for obj in devices:
-        reading = yield from bps.read(obj)
-        if reading is not None:
-            ret.update(reading)
-    yield from bps.save()
+
+    def read_plan():
+        ret = {}  # collect and return readings to give plan access to them
+        for obj in devices:
+            reading = yield from bps.read(obj)
+            if reading is not None:
+                ret.update(reading)
+        return ret
+
+    def standard_path():
+        yield from bps.save()
+
+    def exception_path(ex):
+        yield from bps.drop()
+        raise ex
+
+    ret = yield from contingency_wrapper(
+        read_plan(), except_plan=exception_path, else_plan=standard_path
+    )
     return ret
+
+
+def trigger_and_read(devices, name="primary", skip_on_exception=None):
+    rewindable = all_safe_rewind(devices)
+
+    def inner_trigger_read():
+        grp = short_uid("trigger")
+        yield from trigger_multi(devices, grp)
+        return (yield from read_wo_trigger(devices, grp, name, skip_on_exception))
+
+    return (yield from rewindable_wrapper(inner_trigger_read(), rewindable))
 
 
 def simplify_configs_dict(configs):
@@ -279,8 +310,6 @@ def get_fit_results(fits, namespace, yielding=False, stream="primary"):
                 [fit.read_ready], name=f"{stream}_fits_readying_{name}"
             )
             yield from fit.update_fit()
-            # yield from bps.trigger_and_read(fit.ophyd_fit.used_comps,
-            #                                 name=f'{stream}_fits_{name}')
         if not fit.result:
             continue
         for param in fit.params:
@@ -890,8 +919,14 @@ class Value_Box(QDialog):
         Sets `self.done_flag` to True, allowing the protocol to go on before
         rejecting the dialog.
         """
-        self.done_flag = True
-        return super().reject()
+        msg = QMessageBox(
+            icon=QMessageBox.Warning,
+            text="If you cancel, no values will be set.\nDo you want to cancel?",
+        )
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        if msg.exec() == QMessageBox.Yes:
+            self.done_flag = True
+            return super().reject()
 
 
 def get_channels(dev):
@@ -1109,17 +1144,26 @@ class Value_Setter(QWidget):
     hide_signal = Signal()
 
     def __init__(self, parent=None):
+        import datetime as dt
+
         super().__init__(parent)
-        self.start_time = 0
-        self.end_time = 0
+        self.start_time = dt.datetime.now()
+        self.end_time = dt.datetime.now()
         self.timer = 0
         self.wait_time = 0
+
+    def set_start_time(self, start_time):
+        """Set the start time for the waiting bar."""
+        self.start_time = start_time
+        self.set_wait_time(self.wait_time)
+        self.update_timer()
 
     def set_wait_time(self, wait_time):
         """Set the wait time for the waiting bar."""
         import datetime as dt
 
         self.wait_time = dt.timedelta(seconds=wait_time).total_seconds()
+        self.update_timer()
 
     def update_timer(self):
         """Update the timer of the waiting bar."""
@@ -1206,7 +1250,7 @@ class Waiting_Bar(QWidget):
         if self.with_timer:
             import datetime as dt
 
-            self.setter.start_time = dt.datetime.now()
+            self.setter.set_start_time(dt.datetime.now())
 
         self.show()
 
