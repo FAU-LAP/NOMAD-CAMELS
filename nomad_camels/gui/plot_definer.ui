@@ -112,15 +112,19 @@
       <item row="9" column="2">
        <widget class="QLabel" name="label_plot_height">
         <property name="toolTip">
-         <string>Set the height of the plot window in pixels</string>
+         <string>Set the height of the plot window in pixels (min 126)</string>
         </property>
         <property name="text">
-         <string>Height</string>
+         <string>Plot Height</string>
         </property>
        </widget>
       </item>
       <item row="9" column="3">
-       <widget class="QLineEdit" name="lineEdit_plot_height"/>
+       <widget class="QLineEdit" name="lineEdit_plot_height">
+        <property name="toolTip">
+         <string>Minimum is 126 pixels</string>
+        </property>
+       </widget>
       </item>
       <item row="4" column="2">
        <widget class="QLabel" name="label_4">
@@ -133,15 +137,19 @@
        <widget class="QLineEdit" name="lineEdit_ylabel2"/>
       </item>
       <item row="9" column="1">
-       <widget class="QLineEdit" name="lineEdit_top_left_y"/>
+       <widget class="QLineEdit" name="lineEdit_top_left_y">
+        <property name="toolTip">
+         <string>Minimum is 0 pixels</string>
+        </property>
+       </widget>
       </item>
       <item row="8" column="2">
        <widget class="QLabel" name="label_plot_width">
         <property name="toolTip">
-         <string>Set the width of the plot window in pixels</string>
+         <string>Set the width of the plot window in pixels (min 430)</string>
         </property>
         <property name="text">
-         <string>Width</string>
+         <string>Plot Width</string>
         </property>
        </widget>
       </item>
@@ -173,7 +181,11 @@
        </widget>
       </item>
       <item row="8" column="1">
-       <widget class="QLineEdit" name="lineEdit_top_left_x"/>
+       <widget class="QLineEdit" name="lineEdit_top_left_x">
+        <property name="toolTip">
+         <string>Minimum is 0 pixels</string>
+        </property>
+       </widget>
       </item>
       <item row="10" column="0" colspan="4">
        <spacer name="verticalSpacer">
@@ -189,7 +201,11 @@
        </spacer>
       </item>
       <item row="8" column="3">
-       <widget class="QLineEdit" name="lineEdit_plot_width"/>
+       <widget class="QLineEdit" name="lineEdit_plot_width">
+        <property name="toolTip">
+         <string>Minimum is 430 pixels</string>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label">
@@ -201,20 +217,20 @@
       <item row="8" column="0">
        <widget class="QLabel" name="label_top_left_x">
         <property name="toolTip">
-         <string>Set the exact x coordinate of the top left corner of the plot window in pixels</string>
+         <string>Set the exact x coordinate of the top left corner of the plot window in pixels (min 0)</string>
         </property>
         <property name="text">
-         <string>Top left x</string>
+         <string>Top Left X</string>
         </property>
        </widget>
       </item>
       <item row="9" column="0">
        <widget class="QLabel" name="label_top_left_y">
         <property name="toolTip">
-         <string>Set the exact y coordinate of the top left corner of the plot window in pixels</string>
+         <string>Set the exact y coordinate of the top left corner of the plot window in pixels (min 0)</string>
         </property>
         <property name="text">
-         <string>Top  left y</string>
+         <string>Top  Left Y</string>
         </property>
        </widget>
       </item>
@@ -237,6 +253,22 @@
    <header>nomad_camels.ui_widgets.variable_tool_tip_box</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>lineEdit_x_axis</tabstop>
+  <tabstop>lineEdit_nPoints</tabstop>
+  <tabstop>lineEdit_title</tabstop>
+  <tabstop>lineEdit_xlabel</tabstop>
+  <tabstop>lineEdit_ylabel</tabstop>
+  <tabstop>lineEdit_ylabel2</tabstop>
+  <tabstop>lineEdit_top_left_x</tabstop>
+  <tabstop>lineEdit_top_left_y</tabstop>
+  <tabstop>lineEdit_plot_width</tabstop>
+  <tabstop>lineEdit_plot_height</tabstop>
+  <tabstop>checkBox_xlog</tabstop>
+  <tabstop>checkBox_ylog</tabstop>
+  <tabstop>checkBox_ylog2</tabstop>
+  <tabstop>checkBox_same_fit</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

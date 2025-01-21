@@ -31,6 +31,10 @@ class Values_List_Plot(QWidget):
         stream_name="primary",
         parent=None,
         plot_all_available=True,
+        top_left_x=None,
+        top_left_y=None,
+        plot_width=None,
+        plot_height=None,
         **kwargs,
     ):
         super().__init__(parent=parent)
@@ -58,7 +62,7 @@ class Values_List_Plot(QWidget):
             self.setWindowTitle("Current Value List")
         self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
         self.stream_name = stream_name
-        place_widget(self)
+        place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
 
     def show_again(self):
         if not self.isVisible():

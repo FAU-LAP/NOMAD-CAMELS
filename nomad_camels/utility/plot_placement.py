@@ -50,10 +50,10 @@ def reset_variables():
 
 def place_widget(
     widget: QWidget,
-    top_left_x: int = None,
-    top_left_y: int = None,
-    plot_width: int = None,
-    plot_height: int = None,
+    top_left_x: str = "",
+    top_left_y: str = "",
+    plot_width: str = "",
+    plot_height: str = "",
 ):
     """
     This function places the given `widget` on the next free spot on the screen.
@@ -72,17 +72,23 @@ def place_widget(
     widget.show()
 
     # If specific coordinates and dimensions are provided, use them
+    if plot_width not in (None, "") and plot_height not in (None, ""):
+        widget.setMinimumSize(0, 0)
+        if hasattr(widget, "plot_widget"):
+            widget.plot_widget.setMinimumSize(0, 0)
+        widget.resize(int(plot_width), int(plot_height))
     if (
         top_left_x is not None
         and top_left_y is not None
         and top_left_x != ""
         and top_left_y != ""
     ):
-        widget.move(int(top_left_x), int(top_left_y))
-
-        if plot_width not in (None, "") and plot_height not in (None, ""):
-            widget.resize(int(plot_width), int(plot_height))
-
+        # Get current screen geometry for offsets
+        screen_geometry = screens[current_screen].availableGeometry()
+        widget.move(
+            int(top_left_x) + screen_geometry.x(),
+            int(top_left_y) + screen_geometry.y()
+        )
         return
 
     s = widget.size()

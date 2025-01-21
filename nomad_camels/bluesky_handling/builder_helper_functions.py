@@ -140,13 +140,13 @@ def plot_creator(
             # plot_string += f'\t\tsubs.append(RE.subscribe(lfp))\n'
         elif plot.plt_type == "Value-List":
             plotting = True
-            plot_string += f'\tplot_{i} = list_plot.Values_List_Plot({plot.y_axes["formula"]}, title="{plot.title}", stream_name=stream, namespace=namespace, plot_all_available={plot.plot_all_available})\n'
+            plot_string += f'\tplot_{i} = list_plot.Values_List_Plot({plot.y_axes["formula"]}, title="{plot.title}", stream_name=stream, namespace=namespace, plot_all_available={plot.plot_all_available}, top_left_x="{plot.top_left_x}", top_left_y="{plot.top_left_y}", plot_width="{plot.plot_width}", plot_height="{plot.plot_height}")\n'
             plot_string += f"\tplots.append(plot_{i})\n"
             plot_string += f"\tplot_{i}.show()\n"
             plot_string += f"\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n"
         elif plot.plt_type == "2D plot":
             plotting = True
-            plot_string += f'\tplot_{i} = plot_pyqtgraph.PlotWidget_2D("{plot.x_axis}", "{plot.y_axes["formula"][0]}", "{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", title="{plot.title}", maxlen="{plot.maxlen}", stream_name=stream, namespace=namespace)\n'
+            plot_string += f'\tplot_{i} = plot_pyqtgraph.PlotWidget_2D("{plot.x_axis}", "{plot.y_axes["formula"][0]}", "{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", title="{plot.title}", maxlen="{plot.maxlen}", stream_name=stream, namespace=namespace, top_left_x="{plot.top_left_x}", top_left_y="{plot.top_left_y}", plot_width="{plot.plot_width}", plot_height="{plot.plot_height}")\n'
             plot_string += f"\tplots.append(plot_{i})\n"
             plot_string += f"\tplot_{i}.show()\n"
             plot_string += f"\tsubs.append(RE.subscribe(plot_{i}.livePlot))\n"
