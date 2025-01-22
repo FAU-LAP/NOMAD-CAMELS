@@ -7,8 +7,13 @@ from PySide6.QtCore import Qt
 from nomad_camels.utility import variables_handling
 from nomad_camels.manual_controls.stage_control import stage_control
 from nomad_camels.manual_controls.set_panel import set_panel
+from nomad_camels.manual_controls.generic_set_read import generic_set_read
 
 manual_controls = {
+    "Generic_Set_Read": [
+        generic_set_read.Generic_Set_Read,
+        generic_set_read.Generic_Set_Read_Config,
+    ],
     "Stage_Control": [stage_control.Stage_Control, stage_control.Stage_Control_Config],
     "Set_Panel": [set_panel.Set_Panel, set_panel.Set_Panel_Config],
 }

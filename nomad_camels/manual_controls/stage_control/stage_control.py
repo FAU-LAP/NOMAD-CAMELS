@@ -284,11 +284,11 @@ class Stage_Control(Manual_Control, Ui_Form):
 
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
-        msg.setText("Error in read thread")
+        msg.setText(f"Error in {name} thread")
         msg.setInformativeText(
             f"An error occured in the {name} thread of {self.name}:\n{ex}\nDo you want to restart the read thread?"
         )
-        msg.setWindowTitle("Error in read thread")
+        msg.setWindowTitle(f"Error in {name} thread")
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msg.setDefaultButton(QMessageBox.Yes)
         if msg.exec() == QMessageBox.Yes:

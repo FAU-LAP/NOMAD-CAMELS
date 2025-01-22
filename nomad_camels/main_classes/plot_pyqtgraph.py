@@ -229,6 +229,14 @@ class PlotWidget(QWidget):
         Whether to use a logarithmic y-axis, by default False
     logY2 : bool
         Whether to use a logarithmic y-axis for the right axis, by default False
+    top_left_x : int, optional
+        The x-coordinate of the top left corner of the plot widget, by default None
+    top_left_y : int, optional
+        The y-coordinate of the top left corner of the plot widget, by default None
+    plot_width : int, optional
+        The width of the plot widget, by default None
+    plot_height : int, optional
+        The height of the plot widget, by default None
     maxlen : int
         The maximum number of data points to show, by default np.inf
     use_bluesky : bool
@@ -262,6 +270,10 @@ class PlotWidget(QWidget):
         logX=False,
         logY=False,
         logY2=False,
+        top_left_x="",
+        top_left_y="",
+        plot_width="",
+        plot_height="",
         maxlen=np.inf,
         use_bluesky=True,
         labels=(),
@@ -417,9 +429,9 @@ class PlotWidget(QWidget):
         self.layout().addWidget(self.lineEdit_skip_n_points, 2, 4)
         self.layout().addWidget(self.plot_options, 0, 0, 3, 1)
         self.plot_options.hide()
-        self.setMinimumSize(500, 400)
-        self.adjustSize()
-        place_widget(self)
+        # self.setMinimumSize(500, 400)
+        place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
+        # self.adjustSize()
         self.change_maxlen()
 
     def show_again(self):
@@ -1163,6 +1175,10 @@ class PlotWidget_2D(QWidget):
         title="",
         maxlen=np.inf,
         stream_name="primary",
+        top_left_x="",
+        top_left_y="",
+        plot_width="",
+        plot_height="",
         **kwargs,
     ):
         super().__init__(parent=parent)
@@ -1205,8 +1221,8 @@ class PlotWidget_2D(QWidget):
         self.layout().addWidget(label_n_data, 2, 1)
         self.layout().addWidget(self.lineEdit_n_data, 2, 2)
         self.make_toolbar()
+        place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
         self.adjustSize()
-        place_widget(self)
         self.change_maxlen()
 
     def change_maxlen(self):

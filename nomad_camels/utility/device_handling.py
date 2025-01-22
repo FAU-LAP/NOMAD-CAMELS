@@ -54,44 +54,77 @@ def load_local_packages(tell_local=False):
     """
     global local_packages, last_path
     local_instr_path = variables_handling.device_driver_path
+
+    # If path hasn't changed since last time and we have packages, just return them
     if local_instr_path == last_path:
         if local_packages:
             return local_packages
     else:
         last_path = local_instr_path
         local_packages.clear()
+
+    # If the local driver path doesn’t exist or isn’t a directory, return empty
     if not os.path.isdir(local_instr_path):
         return local_packages
+
+    # Ensure we can import from this path
     sys.path.append(local_instr_path)
-    for f in pathlib.Path(local_instr_path).rglob("*"):
-        match = re.match(r"^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$", f.name)
-        if match:
-            try:
-                sys.path.append(str(f.parent))
-                package = importlib.import_module(f".{match.group(2)}", match.group(0))
-                device = package.subclass()
-                if tell_local:
-                    local_packages[f"local {device.name}"] = package
-                else:
-                    local_packages[device.name] = package
-                local_package_paths[device.name] = str(f.parent)
-            except Exception as e:
-                print(f, e)
-    for f in pathlib.Path("manual_controls").resolve().rglob("*"):
-        match = re.match(r"^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$", f.name)
-        if match:
-            try:
-                sys.path.append(str(f.parent))
-                package = importlib.import_module(f".{match.group(2)}", match.group(0))
-                device = package.subclass()
-                if tell_local:
-                    local_packages[f"local {device.name}"] = package
-                else:
-                    local_packages[device.name] = package
-                local_package_paths[device.name] = str(f.parent)
-                from_manual_controls.append(device.name)
-            except Exception as e:
-                print(f, e)
+
+    # 1) Walk the local_instr_path, following symlinks
+    for root, dirs, files in os.walk(local_instr_path, followlinks=True):
+        # We’ll check *both* dirs and files to cover all cases:
+        # (e.g., in case your symbolic link is a directory containing an __init__.py,
+        # or if you have driver files directly in subfolders)
+        for name in dirs + files:
+            path_obj = pathlib.Path(root) / name
+            match = re.match(
+                r"^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$", path_obj.name
+            )
+            if match:
+                try:
+                    # Typically, the parent folder is where we need to add to sys.path
+                    sys.path.append(str(path_obj.parent))
+                    # For an import like: importlib.import_module(".driver_foo", "nomad_camels_driver_foo")
+                    # match.group(2) => "driver_foo"
+                    # match.group(0) => "nomad_camels_driver_foo"
+                    package = importlib.import_module(
+                        f".{match.group(2)}", match.group(0)
+                    )
+                    device = package.subclass()
+                    # Decide how we label them in local_packages
+                    if tell_local:
+                        local_packages[f"local {device.name}"] = package
+                    else:
+                        local_packages[device.name] = package
+
+                    local_package_paths[device.name] = str(path_obj.parent)
+                except Exception as e:
+                    print(path_obj, e)
+
+    # 2) Do the same for the manual_controls folder
+    manual_path = pathlib.Path("manual_controls").resolve()
+    for root, dirs, files in os.walk(manual_path, followlinks=True):
+        for name in dirs + files:
+            path_obj = pathlib.Path(root) / name
+            match = re.match(
+                r"^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$", path_obj.name
+            )
+            if match:
+                try:
+                    sys.path.append(str(path_obj.parent))
+                    package = importlib.import_module(
+                        f".{match.group(2)}", match.group(0)
+                    )
+                    device = package.subclass()
+                    if tell_local:
+                        local_packages[f"local {device.name}"] = package
+                    else:
+                        local_packages[device.name] = package
+                    local_package_paths[device.name] = str(path_obj.parent)
+                    from_manual_controls.append(device.name)
+                except Exception as e:
+                    print(path_obj, e)
+
     return local_packages
 
 

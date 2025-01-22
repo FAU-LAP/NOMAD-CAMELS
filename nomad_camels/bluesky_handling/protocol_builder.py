@@ -55,7 +55,9 @@ standard_string = "import numpy as np\n"
 standard_string += "import importlib\n"
 standard_string += "import bluesky\n"
 standard_string += "import ophyd\n"
-standard_string += "from bluesky import RunEngine\n"
+standard_string += (
+    "from nomad_camels.bluesky_handling.run_engine_overwrite import RunEngineOverwrite\n"
+)
 standard_string += "from bluesky.callbacks.best_effort import BestEffortCallback\n"
 standard_string += "import bluesky.plan_stubs as bps\n"
 standard_string += "import databroker\n"
@@ -91,7 +93,7 @@ standard_run_string += "\tdarkmode, theme = dark, used_theme\n"
 # and also the if branch, whether it is the main script to execute everything
 # without importing
 standard_start_string = "\n\n\ndef main():\n"
-standard_start_string += "\tRE = RunEngine()\n"
+standard_start_string += "\tRE = RunEngineOverwrite()\n"
 standard_start_string += "\tbec = BestEffortCallback()\n"
 standard_start_string += "\tRE.subscribe(bec)\n"
 standard_start_string2 = "\t\tplot_etc = create_plots(RE)\n"

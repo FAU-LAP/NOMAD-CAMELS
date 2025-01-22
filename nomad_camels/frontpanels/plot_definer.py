@@ -11,6 +11,8 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QPushButton,
     QCheckBox,
+    QLineEdit,
+    QFrame,
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QKeyEvent
@@ -50,6 +52,10 @@ class Plot_Info:
         logX=False,
         logY=False,
         logY2=False,
+        top_left_x="",
+        top_left_y="",
+        plot_width="",
+        plot_height="",
     ):
         self.plt_type = plt_type
         self.x_axis = x_axis
@@ -70,6 +76,10 @@ class Plot_Info:
         self.all_fit = all_fit or Fit_Info()
         self.name = ""
         self.maxlen = np.inf
+        self.top_left_x = top_left_x
+        self.top_left_y = top_left_y
+        self.plot_width = plot_width
+        self.plot_height = plot_width
         self.update_name()
 
     def update_name(self):
@@ -80,7 +90,7 @@ class Plot_Info:
             if self.xlabel and self.ylabel:
                 self.name = f"{self.ylabel} vs. {self.xlabel}"
             elif self.x_axis and self.y_axes["formula"]:
-                self.name = f'{self.y_axes["formula"][0]} vs. {self.x_axis}'
+                self.name = f"{self.y_axes['formula'][0]} vs. {self.x_axis}"
             elif self.y_axes["formula"]:
                 self.name = self.y_axes["formula"][0]
             else:
@@ -94,7 +104,7 @@ class Plot_Info:
                 self.name = f"{self.zlabel} 2D"
             if self.z_axis and self.x_axis and self.y_axes["formula"]:
                 self.name = (
-                    f'{self.z_axis} vs. ({self.x_axis}; {self.y_axes["formula"][0]})'
+                    f"{self.z_axis} vs. ({self.x_axis}; {self.y_axes['formula'][0]})"
                 )
             elif self.z_axis:
                 self.name = f"{self.z_axis} 2D"
@@ -366,13 +376,17 @@ class Single_Plot_Definer(QWidget):
 
 
 class Single_Plot_Definer_List(Single_Plot_Definer):
-    """ """
+    """Class to define a list of plots with position and size attributes and other parameters"""
 
     def __init__(self, plot_data: Plot_Info, parent=None):
         super().__init__(plot_data, parent)
         self.plot_data = plot_data
-        self.checkBox_plot_all = QCheckBox("plot all available channels")
+
+        # CheckBox for plotting all available channels
+        self.checkBox_plot_all = QCheckBox("Plot all available channels")
         self.checkBox_plot_all.setChecked(plot_data.plot_all_available)
+
+        # Table for formula data
         self.table = AddRemoveTable(
             title="Values",
             headerLabels=[],
@@ -381,10 +395,49 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
         )
         self.table.added.connect(self.add_y)
         self.table.removed.connect(self.remove_y)
-        self.layout = QGridLayout()
-        self.layout.addWidget(self.checkBox_plot_all)
-        self.layout.addWidget(self.table)
+
+        # Layout for the widget
+        self.layout: QGridLayout = QGridLayout()
+
+        # Add the checkBox and table to the layout
+        self.layout.addWidget(self.checkBox_plot_all, 0, 0, 1, 4)
+        self.layout.addWidget(self.table, 1, 0, 1, 4)
+
+        self.line = QFrame(self)
+        self.line.setObjectName("line")
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
+        self.layout.addWidget(self.line, 3, 0, 1, 4)
+
+        # Line Edit and Label for top_left_x
+        self.label_top_left_x = QLabel("Top Left X:", self)
+        self.lineEdit_top_left_x = QLineEdit(self)
+        self.layout.addWidget(self.label_top_left_x, 11, 0)
+        self.layout.addWidget(self.lineEdit_top_left_x, 11, 1)
+
+        # Line Edit and Label for top_left_y
+        self.label_top_left_y = QLabel("Top Left Y:", self)
+        self.lineEdit_top_left_y = QLineEdit(self)
+        self.layout.addWidget(self.label_top_left_y, 12, 0)
+        self.layout.addWidget(self.lineEdit_top_left_y, 12, 1)
+
+        # Line Edit and Label for plot_width
+        self.label_plot_width = QLabel("Plot Width:", self)
+        self.lineEdit_plot_width = QLineEdit(self)
+        self.layout.addWidget(self.label_plot_width, 11, 2, 1, 1)
+        self.layout.addWidget(self.lineEdit_plot_width, 11, 3, 1, 1)
+
+        # Line Edit and Label for plot_height
+        self.label_plot_height = QLabel("Plot Height:", self)
+        self.lineEdit_plot_height = QLineEdit(self)
+        self.layout.addWidget(self.label_plot_height, 12, 2, 1, 1)
+        self.layout.addWidget(self.lineEdit_plot_height, 12, 3, 1, 1)
+
+        # Set the layout of the widget
         self.setLayout(self.layout)
+        self.load_data()
+
+        # Update the plot data name after layout setup
         self.plot_data.update_name()
 
     def get_data(self):
@@ -392,8 +445,53 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
         self.plot_data.plot_all_available = self.checkBox_plot_all.isChecked()
         self.plot_data.y_axes["formula"] = self.table.update_table_data()
         self.plot_data.y_axes["axis"] = [1] * len(self.plot_data.y_axes["formula"])
+        # If the string is empty set empty string
+        if self.lineEdit_top_left_x.text():
+            self.plot_data.top_left_x = max(int(self.lineEdit_top_left_x.text()), 0)
+        else:
+            self.plot_data.top_left_x = ""
+
+        if self.lineEdit_top_left_y.text():
+            self.plot_data.top_left_y = max(int(self.lineEdit_top_left_y.text()), 0)
+
+        else:
+            self.plot_data.top_left_y = ""
+
+        if self.lineEdit_plot_width.text():
+            self.plot_data.plot_width = max(int(self.lineEdit_plot_width.text()), 0)
+        else:
+            self.plot_data.plot_width = ""
+
+        if self.lineEdit_plot_height.text():
+            self.plot_data.plot_height = max(int(self.lineEdit_plot_height.text()), 0)
+        else:
+            self.plot_data.plot_height = ""
+
+        # Check to see if only x or y is set and raise error
+        if self.lineEdit_top_left_x.text() and not self.lineEdit_top_left_y.text():
+            raise ValueError("Plot y position is not set")
+        if self.lineEdit_top_left_y.text() and not self.lineEdit_top_left_x.text():
+            raise ValueError("Plot x position is not set")
+        # Check to see if only height or width is set and raise error
+        if self.lineEdit_plot_width.text() and not self.lineEdit_plot_height.text():
+            raise ValueError("Plot height is not set")
+        if self.lineEdit_plot_height.text() and not self.lineEdit_plot_width.text():
+            raise ValueError("Plot width is not set")
+
         self.plot_data.update_name()
         return super().get_data()
+
+    def load_data(self):
+        """ """
+        # If plot_data has the top_left_x attribute set it as text
+        if hasattr(self.plot_data, "top_left_x"):
+            self.lineEdit_top_left_x.setText(str(self.plot_data.top_left_x))
+        if hasattr(self.plot_data, "top_left_y"):
+            self.lineEdit_top_left_y.setText(str(self.plot_data.top_left_y))
+        if hasattr(self.plot_data, "plot_width"):
+            self.lineEdit_plot_width.setText(str(self.plot_data.plot_width))
+        if hasattr(self.plot_data, "plot_height"):
+            self.lineEdit_plot_height.setText(str(self.plot_data.plot_height))
 
 
 class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
@@ -413,6 +511,7 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.lineEdit_zlabel.setText(self.plot_data.zlabel)
         self.lineEdit_title.setText(self.plot_data.title)
         self.lineEdit_n_data_points.setText(str(self.plot_data.maxlen))
+        self.load_data()
         self.plot_data.update_name()
 
     def get_data(self):
@@ -437,8 +536,52 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.plot_data.z_axis = self.lineEdit_z_axis.text()
         self.plot_data.title = self.lineEdit_title.text()
         self.plot_data.maxlen = self.lineEdit_n_data_points.text() or "inf"
+        # If the string is empty set empty string
+        if self.lineEdit_top_left_x.text():
+            self.plot_data.top_left_x = max(int(self.lineEdit_top_left_x.text()), 0)
+        else:
+            self.plot_data.top_left_x = ""
+
+        if self.lineEdit_top_left_y.text():
+            self.plot_data.top_left_y = max(int(self.lineEdit_top_left_y.text()), 0)
+
+        else:
+            self.plot_data.top_left_y = ""
+
+        if self.lineEdit_plot_width.text():
+            self.plot_data.plot_width = max(int(self.lineEdit_plot_width.text()), 430)
+        else:
+            self.plot_data.plot_width = ""
+
+        if self.lineEdit_plot_height.text():
+            self.plot_data.plot_height = max(int(self.lineEdit_plot_height.text()), 126)
+        else:
+            self.plot_data.plot_height = ""
+
+        # Check to see if only x or y is set and raise error
+        if self.lineEdit_top_left_x.text() and not self.lineEdit_top_left_y.text():
+            raise ValueError("Plot y position is not set")
+        if self.lineEdit_top_left_y.text() and not self.lineEdit_top_left_x.text():
+            raise ValueError("Plot x position is not set")
+        # Check to see if only height or width is set and raise error
+        if self.lineEdit_plot_width.text() and not self.lineEdit_plot_height.text():
+            raise ValueError("Plot height is not set")
+        if self.lineEdit_plot_height.text() and not self.lineEdit_plot_width.text():
+            raise ValueError("Plot width is not set")
+
         self.plot_data.update_name()
         return super().get_data()
+
+    def load_data(self):
+        """ """
+        if hasattr(self.plot_data, "top_left_x"):
+            self.lineEdit_top_left_x.setText(str(self.plot_data.top_left_x))
+        if hasattr(self.plot_data, "top_left_y"):
+            self.lineEdit_top_left_y.setText(str(self.plot_data.top_left_y))
+        if hasattr(self.plot_data, "plot_width"):
+            self.lineEdit_plot_width.setText(str(self.plot_data.plot_width))
+        if hasattr(self.plot_data, "plot_height"):
+            self.lineEdit_plot_height.setText(str(self.plot_data.plot_height))
 
 
 class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
@@ -486,6 +629,15 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.checkBox_xlog.setChecked(self.plot_data.logX)
         self.checkBox_ylog.setChecked(self.plot_data.logY)
         self.checkBox_ylog2.setChecked(self.plot_data.logY2)
+        # If plot_data has the top_left_x attribute set it as text
+        if hasattr(self.plot_data, "top_left_x"):
+            self.lineEdit_top_left_x.setText(str(self.plot_data.top_left_x))
+        if hasattr(self.plot_data, "top_left_y"):
+            self.lineEdit_top_left_y.setText(str(self.plot_data.top_left_y))
+        if hasattr(self.plot_data, "plot_width"):
+            self.lineEdit_plot_width.setText(str(self.plot_data.plot_width))
+        if hasattr(self.plot_data, "plot_height"):
+            self.lineEdit_plot_height.setText(str(self.plot_data.plot_height))
         self.plot_data.update_name()
 
     def get_data(self):
@@ -521,6 +673,43 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.plot_data.logX = self.checkBox_xlog.isChecked()
         self.plot_data.logY = self.checkBox_ylog.isChecked()
         self.plot_data.logY2 = self.checkBox_ylog2.isChecked()
+        # If the string is empty set empty string
+        if self.lineEdit_top_left_x.text():
+            self.plot_data.top_left_x = max(int(self.lineEdit_top_left_x.text()), 0)
+            
+        else:
+            self.plot_data.top_left_x = ""
+
+        if self.lineEdit_top_left_y.text():
+            self.plot_data.top_left_y = max(int(self.lineEdit_top_left_y.text()), 0)
+            
+
+        else:
+            self.plot_data.top_left_y = ""
+
+        if self.lineEdit_plot_width.text():
+            self.plot_data.plot_width = max(int(self.lineEdit_plot_width.text()), 430)
+            
+        else:
+            self.plot_data.plot_width = ""
+
+        if self.lineEdit_plot_height.text():
+            self.plot_data.plot_height = max(int(self.lineEdit_plot_height.text()), 126)
+            
+        else:
+            self.plot_data.plot_height = ""
+
+        # Check to see if only x or y is set and raise error
+        if self.lineEdit_top_left_x.text() and not self.lineEdit_top_left_y.text():
+            raise ValueError("Plot y position is not set")
+        if self.lineEdit_top_left_y.text() and not self.lineEdit_top_left_x.text():
+            raise ValueError("Plot x position is not set")
+        # Check to see if only height or width is set and raise error
+        if self.lineEdit_plot_width.text() and not self.lineEdit_plot_height.text():
+            raise ValueError("Plot height is not set")
+        if self.lineEdit_plot_height.text() and not self.lineEdit_plot_width.text():
+            raise ValueError("Plot width is not set")
+
         if not isinstance(self.fit_definer, QLabel):
             self.fit_definer.get_data()
         self.plot_data.update_name()
@@ -619,11 +808,11 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
                     mod = models.ExpressionModel(self.lineEdit_custom_func.text())
                 except (ValueError, SyntaxError):
                     self.lineEdit_custom_func.setStyleSheet(
-                        f'background-color: rgb{variables_handling.get_color("red", True)}'
+                        f"background-color: rgb{variables_handling.get_color('red', True)}"
                     )
                     return
                 self.lineEdit_custom_func.setStyleSheet(
-                    f'background-color: rgb{variables_handling.get_color("green", True)}'
+                    f"background-color: rgb{variables_handling.get_color('green', True)}"
                 )
             else:
                 mod = models_names[func]()
@@ -656,7 +845,6 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
                 par_vals["lower bound"].append("")
                 par_vals["upper bound"].append("")
             self.start_params.change_table_data(par_vals)
-
 
     def load_data(self):
         """ """
