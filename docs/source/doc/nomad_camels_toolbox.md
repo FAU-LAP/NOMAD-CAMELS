@@ -4,7 +4,7 @@ To assist with the evaluation of data, we provide the package [`nomad_camels_too
 
 Currently, it only helps with reading the data from the hdf5 file. More functionality is planned for the future.
 
-Instead of using this toolbox, you could also read the data directly. You find how to do this and more information about hdf5-files in general under [Handling HDF5 files](handling_hdf5.md#users-guide)
+Instead of using this toolbox, you could also read the data directly. You find how to do this and more information about hdf5-files in general under [Handling HDF5 files](handling_hdf5.md).
 
 ## Installation
 
@@ -26,6 +26,6 @@ import nomad_camels_toolbox as ntc
 
 data = ntc.read_camels_file(file_path)
 ```
-If there is only one entry in the hdf5 file, it will automatically read the main dataset with this code. For more information, see the [code reference](../code/nomad_camels_toolbox.html#nomad_camels_toolbox.data_reader.read_camels_file).
+If there is only one entry in the hdf5 file, it will automatically read the main dataset with this code. For more information, see the [code reference](https://fau-lap.github.io/NOMAD-CAMELS/code/nomad_camels_toolbox.html).
 
 
