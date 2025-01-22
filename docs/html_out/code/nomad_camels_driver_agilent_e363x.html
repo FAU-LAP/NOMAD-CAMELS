@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>nomad_camels_driver_cryovac_tic_500 package &mdash; NOMAD-CAMELS  documentation</title>
+  <title>nomad_camels_driver_agilent_e363x package &mdash; NOMAD-CAMELS  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -28,8 +28,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="nomad_camels_driver_demo_digital_multimeter package" href="nomad_camels_driver_demo_digital_multimeter.html" />
-    <link rel="prev" title="nomad_camels_driver_cam_control_pylablib package" href="nomad_camels_driver_cam_control_pylablib.html" /> 
+    <link rel="next" title="nomad_camels_driver_andor_newton package" href="nomad_camels_driver_andor_newton.html" />
+    <link rel="prev" title="nomad_camels_driver_agilent_34970 package" href="nomad_camels_driver_agilent_34970.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -101,59 +101,43 @@
 <li class="toctree-l1 current"><a class="reference internal" href="drivers.html">drivers</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_agilent_34401a.html">nomad_camels_driver_agilent_34401a package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_agilent_34970.html">nomad_camels_driver_agilent_34970 package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_agilent_e363x.html">nomad_camels_driver_agilent_e363x package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">nomad_camels_driver_agilent_e363x package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_agilent_e363x.agilent_e363x">nomad_camels_driver_agilent_e363x.agilent_e363x module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x.subclass"><code class="docutils literal notranslate"><span class="pre">subclass</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x.subclass_config"><code class="docutils literal notranslate"><span class="pre">subclass_config</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x.subclass_config.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">subclass_config.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd">nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.component_names"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.component_names</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.current_limit_1"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.current_limit_1</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.current_limit_2"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.current_limit_2</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.current_limit_3"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.current_limit_3</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.enable_disable_output"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.enable_disable_output()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.error"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.error</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.idn"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.idn</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.output_1"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.output_1</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.output_2"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.output_2</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.output_3"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.output_3</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.subscriptions"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.subscriptions</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.voltage_1"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.voltage_1</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.voltage_2"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.voltage_2</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.voltage_3"><code class="docutils literal notranslate"><span class="pre">Agilent_E363X.voltage_3</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_agilent_e363x">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_andor_newton.html">nomad_camels_driver_andor_newton package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_andor_shamrock_500.html">nomad_camels_driver_andor_shamrock_500 package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_cam_control_pylablib.html">nomad_camels_driver_cam_control_pylablib package</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">nomad_camels_driver_cryovac_tic_500 package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_cryovac_tic_500.cryovac_tic_500">nomad_camels_driver_cryovac_tic_500.cryovac_tic_500 module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.Channel_Config"><code class="docutils literal notranslate"><span class="pre">Channel_Config</span></code></a><ul>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.Channel_Config.get_config"><code class="docutils literal notranslate"><span class="pre">Channel_Config.get_config()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.Channel_Config.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Channel_Config.staticMetaObject</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.Channel_Config.use_changed"><code class="docutils literal notranslate"><span class="pre">Channel_Config.use_changed()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass"><code class="docutils literal notranslate"><span class="pre">subclass</span></code></a><ul>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass.get_channels"><code class="docutils literal notranslate"><span class="pre">subclass.get_channels()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass.get_settings"><code class="docutils literal notranslate"><span class="pre">subclass.get_settings()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass_config"><code class="docutils literal notranslate"><span class="pre">subclass_config</span></code></a><ul>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass_config.get_settings"><code class="docutils literal notranslate"><span class="pre">subclass_config.get_settings()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass_config.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">subclass_config.staticMetaObject</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd">nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500</span></code></a><ul>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.component_names"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.component_names</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_output_func"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.enable_output_func()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_outputs"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.enable_outputs</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_1"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.enable_pid_1</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_2"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.enable_pid_2</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_3"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.enable_pid_3</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_4"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.enable_pid_4</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_func"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.enable_pid_func()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.input_1"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.input_1</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.input_2"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.input_2</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.input_3"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.input_3</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.input_4"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.input_4</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.output_1"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.output_1</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.output_2"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.output_2</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.output_3"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.output_3</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.output_4"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.output_4</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.query_text"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.query_text()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.set_output"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.set_output()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.subscriptions"><code class="docutils literal notranslate"><span class="pre">Cryovac_TIC_500.subscriptions</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_cryovac_tic_500">Module contents</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_cryovac_tic_500.html">nomad_camels_driver_cryovac_tic_500 package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_demo_digital_multimeter.html">nomad_camels_driver_demo_digital_multimeter package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_demo_instrument.html">nomad_camels_driver_demo_instrument package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_demo_source_measure_unit.html">nomad_camels_driver_demo_source_measure_unit package</a></li>
@@ -213,9 +197,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="drivers.html">Drivers</a></li>
-      <li class="breadcrumb-item active">nomad_camels_driver_cryovac_tic_500 package</li>
+      <li class="breadcrumb-item active">nomad_camels_driver_agilent_e363x package</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/code/nomad_camels_driver_cryovac_tic_500.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/code/nomad_camels_driver_agilent_e363x.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -223,110 +207,45 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="nomad-camels-driver-cryovac-tic-500-package">
-<h1>nomad_camels_driver_cryovac_tic_500 package<a class="headerlink" href="#nomad-camels-driver-cryovac-tic-500-package" title="Link to this heading"></a></h1>
+  <section id="nomad-camels-driver-agilent-e363x-package">
+<h1>nomad_camels_driver_agilent_e363x package<a class="headerlink" href="#nomad-camels-driver-agilent-e363x-package" title="Link to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="module-nomad_camels_driver_cryovac_tic_500.cryovac_tic_500">
-<span id="nomad-camels-driver-cryovac-tic-500-cryovac-tic-500-module"></span><h2>nomad_camels_driver_cryovac_tic_500.cryovac_tic_500 module<a class="headerlink" href="#module-nomad_camels_driver_cryovac_tic_500.cryovac_tic_500" title="Link to this heading"></a></h2>
+<section id="module-nomad_camels_driver_agilent_e363x.agilent_e363x">
+<span id="nomad-camels-driver-agilent-e363x-agilent-e363x-module"></span><h2>nomad_camels_driver_agilent_e363x.agilent_e363x module<a class="headerlink" href="#module-nomad_camels_driver_agilent_e363x.agilent_e363x" title="Link to this heading"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.Channel_Config">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.</span></span><span class="sig-name descname"><span class="pre">Channel_Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.Channel_Config" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.Channel_Config.get_config">
-<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.Channel_Config.get_config" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.Channel_Config.staticMetaObject">
-<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Channel_Config&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.Channel_Config.staticMetaObject" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.Channel_Config.use_changed">
-<span class="sig-name descname"><span class="pre">use_changed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.Channel_Config.use_changed" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.</span></span><span class="sig-name descname"><span class="pre">subclass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x.subclass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_agilent_e363x.agilent_e363x.</span></span><span class="sig-name descname"><span class="pre">subclass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x.subclass" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.device_class.Device" title="nomad_camels.main_classes.device_class.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass.get_channels">
-<span class="sig-name descname"><span class="pre">get_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass.get_channels" title="Link to this definition"></a></dt>
-<dd><p>returns self.channels, should be overwritten for special
-purposes (e.g. leaving out some keys of the dictionary)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>self.channels</strong> – dictionary containing the device’s channels</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass.get_settings">
-<span class="sig-name descname"><span class="pre">get_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass.get_settings" title="Link to this definition"></a></dt>
-<dd><p>returns self.settings, should be overwritten for special
-purposes (e.g. leaving out some keys of the dictionary)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>self.settings</strong></p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass_config">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.</span></span><span class="sig-name descname"><span class="pre">subclass_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass_config" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.device_class.Device_Config" title="nomad_camels.main_classes.device_class.Device_Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device_Config</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass_config.get_settings">
-<span class="sig-name descname"><span class="pre">get_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass_config.get_settings" title="Link to this definition"></a></dt>
-<dd><p>Updates the settings_dict with the current settings.
-Overwrite this function for each device to specify the settings.
-It is recommended to still call the super() method for the
-connection-settings.</p>
-</dd></dl>
-
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x.subclass_config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_agilent_e363x.agilent_e363x.</span></span><span class="sig-name descname"><span class="pre">subclass_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x.subclass_config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.device_class.Simple_Config" title="nomad_camels.main_classes.device_class.Simple_Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simple_Config</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass_config.staticMetaObject">
-<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;subclass_config&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Device_Config&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500.subclass_config.staticMetaObject" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x.subclass_config.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;subclass_config&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;Simple_Config&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x.subclass_config.staticMetaObject" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
-<section id="module-nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd">
-<span id="nomad-camels-driver-cryovac-tic-500-cryovac-tic-500-ophyd-module"></span><h2>nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd module<a class="headerlink" href="#module-nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd" title="Link to this heading"></a></h2>
+<section id="module-nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd">
+<span id="nomad-camels-driver-agilent-e363x-agilent-e363x-ophyd-module"></span><h2>nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd module<a class="headerlink" href="#module-nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd" title="Link to this heading"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.</span></span><span class="sig-name descname"><span class="pre">Cryovac_TIC_500</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration_attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_termination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\r\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_termination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\r\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baud_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.</span></span><span class="sig-name descname"><span class="pre">Agilent_E363X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration_attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_termination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\r\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_termination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\r\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baud_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_on_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.visa_signal.VISA_Device" title="nomad_camels.bluesky_handling.visa_signal.VISA_Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">VISA_Device</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.component_names">
-<span class="sig-name descname"><span class="pre">component_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('input_1',</span> <span class="pre">'input_2',</span> <span class="pre">'input_3',</span> <span class="pre">'input_4',</span> <span class="pre">'output_1',</span> <span class="pre">'output_2',</span> <span class="pre">'output_3',</span> <span class="pre">'output_4',</span> <span class="pre">'enable_pid_1',</span> <span class="pre">'enable_pid_2',</span> <span class="pre">'enable_pid_3',</span> <span class="pre">'enable_pid_4',</span> <span class="pre">'enable_outputs')</span></em><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.component_names" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_output_func">
-<span class="sig-name descname"><span class="pre">enable_output_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_output_func" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.component_names">
+<span class="sig-name descname"><span class="pre">component_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('current_limit_1',</span> <span class="pre">'current_limit_2',</span> <span class="pre">'current_limit_3',</span> <span class="pre">'idn',</span> <span class="pre">'voltage_1',</span> <span class="pre">'voltage_2',</span> <span class="pre">'voltage_3',</span> <span class="pre">'output_1',</span> <span class="pre">'output_2',</span> <span class="pre">'output_3',</span> <span class="pre">'error')</span></em><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.component_names" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_outputs">
-<span class="sig-name descname"><span class="pre">enable_outputs</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_outputs" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.current_limit_1">
+<span class="sig-name descname"><span class="pre">current_limit_1</span></span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.current_limit_1" title="Link to this definition"></a></dt>
 <dd><p>A descriptor representing a device component (or signal)</p>
 <p>Unrecognized keyword arguments will be passed directly to the component
 class initializer.</p>
@@ -363,8 +282,8 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">('suffi
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_1">
-<span class="sig-name descname"><span class="pre">enable_pid_1</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_1" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.current_limit_2">
+<span class="sig-name descname"><span class="pre">current_limit_2</span></span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.current_limit_2" title="Link to this definition"></a></dt>
 <dd><p>A descriptor representing a device component (or signal)</p>
 <p>Unrecognized keyword arguments will be passed directly to the component
 class initializer.</p>
@@ -401,84 +320,8 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">('suffi
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_2">
-<span class="sig-name descname"><span class="pre">enable_pid_2</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_2" title="Link to this definition"></a></dt>
-<dd><p>A descriptor representing a device component (or signal)</p>
-<p>Unrecognized keyword arguments will be passed directly to the component
-class initializer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
-(if <cite>suffix</cite> is given):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</pre></div>
-</div>
-<p>or (if suffix is None)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</pre></div>
-</div>
-<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
-component instance creation.</p>
-</p></li>
-<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
-the final PV that the instance component will bind to.
-Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
-<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
-instantiated upon component instantiation.  Defaults to
-<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
-<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
-at trigger time.</p></li>
-<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
-of the component instance.
-Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
-<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_3">
-<span class="sig-name descname"><span class="pre">enable_pid_3</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_3" title="Link to this definition"></a></dt>
-<dd><p>A descriptor representing a device component (or signal)</p>
-<p>Unrecognized keyword arguments will be passed directly to the component
-class initializer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
-(if <cite>suffix</cite> is given):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</pre></div>
-</div>
-<p>or (if suffix is None)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</pre></div>
-</div>
-<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
-component instance creation.</p>
-</p></li>
-<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
-the final PV that the instance component will bind to.
-Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
-<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
-instantiated upon component instantiation.  Defaults to
-<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
-<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
-at trigger time.</p></li>
-<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
-of the component instance.
-Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
-<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_4">
-<span class="sig-name descname"><span class="pre">enable_pid_4</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_4" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.current_limit_3">
+<span class="sig-name descname"><span class="pre">current_limit_3</span></span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.current_limit_3" title="Link to this definition"></a></dt>
 <dd><p>A descriptor representing a device component (or signal)</p>
 <p>Unrecognized keyword arguments will be passed directly to the component
 class initializer.</p>
@@ -515,13 +358,13 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">('suffi
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_func">
-<span class="sig-name descname"><span class="pre">enable_pid_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_number</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.enable_pid_func" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.enable_disable_output">
+<span class="sig-name descname"><span class="pre">enable_disable_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.enable_disable_output" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.input_1">
-<span class="sig-name descname"><span class="pre">input_1</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.input_1" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.error">
+<span class="sig-name descname"><span class="pre">error</span></span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.error" title="Link to this definition"></a></dt>
 <dd><p>A descriptor representing a device component (or signal)</p>
 <p>Unrecognized keyword arguments will be passed directly to the component
 class initializer.</p>
@@ -558,8 +401,8 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">('suffi
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.input_2">
-<span class="sig-name descname"><span class="pre">input_2</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.input_2" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.idn">
+<span class="sig-name descname"><span class="pre">idn</span></span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.idn" title="Link to this definition"></a></dt>
 <dd><p>A descriptor representing a device component (or signal)</p>
 <p>Unrecognized keyword arguments will be passed directly to the component
 class initializer.</p>
@@ -596,8 +439,8 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">('suffi
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.input_3">
-<span class="sig-name descname"><span class="pre">input_3</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.input_3" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.output_1">
+<span class="sig-name descname"><span class="pre">output_1</span></span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.output_1" title="Link to this definition"></a></dt>
 <dd><p>A descriptor representing a device component (or signal)</p>
 <p>Unrecognized keyword arguments will be passed directly to the component
 class initializer.</p>
@@ -634,8 +477,8 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">('suffi
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.input_4">
-<span class="sig-name descname"><span class="pre">input_4</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.input_4" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.output_2">
+<span class="sig-name descname"><span class="pre">output_2</span></span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.output_2" title="Link to this definition"></a></dt>
 <dd><p>A descriptor representing a device component (or signal)</p>
 <p>Unrecognized keyword arguments will be passed directly to the component
 class initializer.</p>
@@ -672,8 +515,8 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">('suffi
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.output_1">
-<span class="sig-name descname"><span class="pre">output_1</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.output_1" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.output_3">
+<span class="sig-name descname"><span class="pre">output_3</span></span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.output_3" title="Link to this definition"></a></dt>
 <dd><p>A descriptor representing a device component (or signal)</p>
 <p>Unrecognized keyword arguments will be passed directly to the component
 class initializer.</p>
@@ -710,139 +553,129 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">('suffi
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.output_2">
-<span class="sig-name descname"><span class="pre">output_2</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.output_2" title="Link to this definition"></a></dt>
-<dd><p>A descriptor representing a device component (or signal)</p>
-<p>Unrecognized keyword arguments will be passed directly to the component
-class initializer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
-(if <cite>suffix</cite> is given):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</pre></div>
-</div>
-<p>or (if suffix is None)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</pre></div>
-</div>
-<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
-component instance creation.</p>
-</p></li>
-<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
-the final PV that the instance component will bind to.
-Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
-<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
-instantiated upon component instantiation.  Defaults to
-<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
-<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
-at trigger time.</p></li>
-<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
-of the component instance.
-Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
-<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.output_3">
-<span class="sig-name descname"><span class="pre">output_3</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.output_3" title="Link to this definition"></a></dt>
-<dd><p>A descriptor representing a device component (or signal)</p>
-<p>Unrecognized keyword arguments will be passed directly to the component
-class initializer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
-(if <cite>suffix</cite> is given):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</pre></div>
-</div>
-<p>or (if suffix is None)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</pre></div>
-</div>
-<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
-component instance creation.</p>
-</p></li>
-<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
-the final PV that the instance component will bind to.
-Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
-<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
-instantiated upon component instantiation.  Defaults to
-<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
-<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
-at trigger time.</p></li>
-<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
-of the component instance.
-Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
-<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.output_4">
-<span class="sig-name descname"><span class="pre">output_4</span></span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.output_4" title="Link to this definition"></a></dt>
-<dd><p>A descriptor representing a device component (or signal)</p>
-<p>Unrecognized keyword arguments will be passed directly to the component
-class initializer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
-(if <cite>suffix</cite> is given):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</pre></div>
-</div>
-<p>or (if suffix is None)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</pre></div>
-</div>
-<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
-component instance creation.</p>
-</p></li>
-<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
-the final PV that the instance component will bind to.
-Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
-<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
-instantiated upon component instantiation.  Defaults to
-<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
-<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
-at trigger time.</p></li>
-<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
-of the component instance.
-Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
-<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.query_text">
-<span class="sig-name descname"><span class="pre">query_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel_number</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.query_text" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.set_output">
-<span class="sig-name descname"><span class="pre">set_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_number</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.set_output" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.subscriptions">
+<span class="sig-name descname"><span class="pre">subscriptions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">FrozenSet</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'acq_done'})</span></em><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.subscriptions" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.subscriptions">
-<span class="sig-name descname"><span class="pre">subscriptions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">FrozenSet</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'acq_done'})</span></em><a class="headerlink" href="#nomad_camels_driver_cryovac_tic_500.cryovac_tic_500_ophyd.Cryovac_TIC_500.subscriptions" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.voltage_1">
+<span class="sig-name descname"><span class="pre">voltage_1</span></span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.voltage_1" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.voltage_2">
+<span class="sig-name descname"><span class="pre">voltage_2</span></span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.voltage_2" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.voltage_3">
+<span class="sig-name descname"><span class="pre">voltage_3</span></span><a class="headerlink" href="#nomad_camels_driver_agilent_e363x.agilent_e363x_ophyd.Agilent_E363X.voltage_3" title="Link to this definition"></a></dt>
+<dd><p>A descriptor representing a device component (or signal)</p>
+<p>Unrecognized keyword arguments will be passed directly to the component
+class initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>class</em>) – <p>Class of signal to create.  The required signature of <cite>cls.__init__</cite> is
+(if <cite>suffix</cite> is given):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pv_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>or (if suffix is None)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The class may have a <cite>wait_for_connection()</cite> which is called during the
+component instance creation.</p>
+</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – The PV suffix, which gets appended onto <code class="docutils literal notranslate"><span class="pre">parent.prefix</span></code> to generate
+the final PV that the instance component will bind to.
+Also see <code class="docutils literal notranslate"><span class="pre">add_prefix</span></code></p></li>
+<li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Lazily instantiate the signal. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the signal will be
+instantiated upon component instantiation.  Defaults to
+<code class="docutils literal notranslate"><span class="pre">component.lazy_default</span></code>.</p></li>
+<li><p><strong>trigger_value</strong> (<em>any</em><em>, </em><em>optional</em>) – Mark as a signal to be set on trigger. The value is sent to the signal
+at trigger time.</p></li>
+<li><p><strong>add_prefix</strong> (<em>sequence</em><em>, </em><em>optional</em>) – Keys in the kwargs to prefix with the Device PV prefix during creation
+of the component instance.
+Defaults to <code class="docutils literal notranslate"><span class="pre">('suffix',</span> <span class="pre">'write_pv',</span> <span class="pre">)</span></code></p></li>
+<li><p><strong>doc</strong> (<em>str</em><em>, </em><em>optional</em>) – string to attach to component DvcClass.component.__doc__</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
 </section>
-<section id="module-nomad_camels_driver_cryovac_tic_500">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels_driver_cryovac_tic_500" title="Link to this heading"></a></h2>
+<section id="module-nomad_camels_driver_agilent_e363x">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels_driver_agilent_e363x" title="Link to this heading"></a></h2>
 </section>
 </section>
 
@@ -850,8 +683,8 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">('suffi
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="nomad_camels_driver_cam_control_pylablib.html" class="btn btn-neutral float-left" title="nomad_camels_driver_cam_control_pylablib package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="nomad_camels_driver_demo_digital_multimeter.html" class="btn btn-neutral float-right" title="nomad_camels_driver_demo_digital_multimeter package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="nomad_camels_driver_agilent_34970.html" class="btn btn-neutral float-left" title="nomad_camels_driver_agilent_34970 package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nomad_camels_driver_andor_newton.html" class="btn btn-neutral float-right" title="nomad_camels_driver_andor_newton package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

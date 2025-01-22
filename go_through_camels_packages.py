@@ -53,6 +53,8 @@ for package in camels_packages:
         if res.returncode != 0:
             logging.error(f"Failed to install {package}")
             continue
+    else:
+        res = subprocess.run(["pip", "install", "-U", package])
     # import the package
     importlib.import_module(package)
     # get the package path

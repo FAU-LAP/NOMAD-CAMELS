@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>nomad_camels_driver_swabianinstruments_timetagger package &mdash; NOMAD-CAMELS  documentation</title>
+  <title>nomad_camels_toolbox package &mdash; NOMAD-CAMELS  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -28,8 +28,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="nomad_camels_driver_SweepMe_device package" href="nomad_camels_driver_SweepMe_device.html" />
-    <link rel="prev" title="nomad_camels_driver_pi_stage_e709 package" href="nomad_camels_driver_pi_stage_e709.html" /> 
+    <link rel="next" title="Helping Packages" href="helping_packages.html" />
+    <link rel="prev" title="nomad_camels.utility package" href="nomad_camels.utility.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -96,48 +96,17 @@
 <p class="caption" role="heading"><span class="caption-text">Code Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="nomad_camels.html">nomad-camels</a></li>
-<li class="toctree-l1"><a class="reference internal" href="nomad_camels_toolbox.html">nomad-camels-toolbox</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">nomad-camels-toolbox</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nomad_camels_toolbox.data_reader">nomad_camels_toolbox.data_reader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nomad_camels_toolbox.data_reader.read_camels_file"><code class="docutils literal notranslate"><span class="pre">read_camels_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nomad_camels_toolbox">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="drivers.html">drivers</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_agilent_34401a.html">nomad_camels_driver_agilent_34401a package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_agilent_34970.html">nomad_camels_driver_agilent_34970 package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_agilent_e363x.html">nomad_camels_driver_agilent_e363x package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_andor_newton.html">nomad_camels_driver_andor_newton package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_andor_shamrock_500.html">nomad_camels_driver_andor_shamrock_500 package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_cam_control_pylablib.html">nomad_camels_driver_cam_control_pylablib package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_cryovac_tic_500.html">nomad_camels_driver_cryovac_tic_500 package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_demo_digital_multimeter.html">nomad_camels_driver_demo_digital_multimeter package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_demo_instrument.html">nomad_camels_driver_demo_instrument package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_demo_source_measure_unit.html">nomad_camels_driver_demo_source_measure_unit package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_eurotherm_bisynch.html">nomad_camels_driver_eurotherm_bisynch package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_iBeam_smart.html">nomad_camels_driver_iBeam_smart package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keithley_2000.html">nomad_camels_driver_keithley_2000 package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keithley_237.html">nomad_camels_driver_keithley_237 package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keithley_2400.html">nomad_camels_driver_keithley_2400 package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keysight_b2912a.html">nomad_camels_driver_keysight_b2912a package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_keysight_e5270b.html">nomad_camels_driver_keysight_e5270b package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_leybold_c_move_1250.html">nomad_camels_driver_leybold_c_move_1250 package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_mechonics_cu30cl.html">nomad_camels_driver_mechonics_cu30cl package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_ni_daq.html">nomad_camels_driver_ni_daq package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_opc_ua_instrument.html">nomad_camels_driver_opc_ua_instrument package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_PID.html">nomad_camels_driver_PID package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_pi_stage_e709.html">nomad_camels_driver_pi_stage_e709 package</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">nomad_camels_driver_swabianinstruments_timetagger package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#nomad-camels-driver-swabianinstruments-timetagger-swabianinstruments-timetagger-module">nomad_camels_driver_swabianinstruments_timetagger.swabianinstruments_timetagger module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#nomad-camels-driver-swabianinstruments-timetagger-swabianinstruments-timetagger-ophyd-module">nomad_camels_driver_swabianinstruments_timetagger.swabianinstruments_timetagger_ophyd module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_swabianinstruments_timetagger">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_SweepMe_device.html">nomad_camels_driver_SweepMe_device package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_thorlabs_K10CR1.html">nomad_camels_driver_thorlabs_K10CR1 package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_thorlabs_MFF.html">nomad_camels_driver_thorlabs_MFF package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_thorlabs_TLPM.html">nomad_camels_driver_thorlabs_TLPM package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_trinamic_tmcm_1110.html">nomad_camels_driver_trinamic_tmcm_1110 package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_voltcraft_pps.html">nomad_camels_driver_voltcraft_pps package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_voltcraft_psp.html">nomad_camels_driver_voltcraft_psp package</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
 </ul>
@@ -170,10 +139,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="drivers.html">Drivers</a></li>
-      <li class="breadcrumb-item active">nomad_camels_driver_swabianinstruments_timetagger package</li>
+      <li class="breadcrumb-item active">nomad_camels_toolbox package</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/code/nomad_camels_driver_swabianinstruments_timetagger.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/code/nomad_camels_toolbox.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -181,19 +149,41 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="nomad-camels-driver-swabianinstruments-timetagger-package">
-<h1>nomad_camels_driver_swabianinstruments_timetagger package<a class="headerlink" href="#nomad-camels-driver-swabianinstruments-timetagger-package" title="Link to this heading"></a></h1>
+  <section id="nomad-camels-toolbox-package">
+<h1>nomad_camels_toolbox package<a class="headerlink" href="#nomad-camels-toolbox-package" title="Link to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="nomad-camels-driver-swabianinstruments-timetagger-swabianinstruments-timetagger-module">
-<h2>nomad_camels_driver_swabianinstruments_timetagger.swabianinstruments_timetagger module<a class="headerlink" href="#nomad-camels-driver-swabianinstruments-timetagger-swabianinstruments-timetagger-module" title="Link to this heading"></a></h2>
+<section id="module-nomad_camels_toolbox.data_reader">
+<span id="nomad-camels-toolbox-data-reader-module"></span><h2>nomad_camels_toolbox.data_reader module<a class="headerlink" href="#module-nomad_camels_toolbox.data_reader" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_toolbox.data_reader.read_camels_file">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_toolbox.data_reader.</span></span><span class="sig-name descname"><span class="pre">read_camels_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_set_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dataframe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_fits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_toolbox.data_reader.read_camels_file" title="Link to this definition"></a></dt>
+<dd><p>Read data from a CAMELS file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – Path to the CAMELS file.</p></li>
+<li><p><strong>data_set_key</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: &quot;&quot;</em><em>)</em>) – Key of the data set to read. If not specified, the main data set is read.</p></li>
+<li><p><strong>entry_key</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: &quot;&quot;</em><em>)</em>) – Key of the entry to read. If not specified and there is more than one entry, the user is asked to select one.</p></li>
+<li><p><strong>return_dataframe</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default: True</em><em>)</em>) – Whether to return the data as a pandas DataFrame. Requires pandas to be installed if pandas is not installed, this parameter is ignored.</p></li>
+<li><p><strong>read_variables</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default: True</em><em>)</em>) – Whether to read the variables from the data set.</p></li>
+<li><p><strong>return_fits</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default: False</em><em>)</em>) – Whether to return the fits of the data set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>data</strong> (<em>dict or pd.DataFrame</em>) – The data from the data set.</p></li>
+<li><p><strong>fit_dict</strong> (<em>dict</em>) – The fits of the data set, only returned if return_fits is True.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="nomad-camels-driver-swabianinstruments-timetagger-swabianinstruments-timetagger-ophyd-module">
-<h2>nomad_camels_driver_swabianinstruments_timetagger.swabianinstruments_timetagger_ophyd module<a class="headerlink" href="#nomad-camels-driver-swabianinstruments-timetagger-swabianinstruments-timetagger-ophyd-module" title="Link to this heading"></a></h2>
-</section>
-<section id="module-nomad_camels_driver_swabianinstruments_timetagger">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels_driver_swabianinstruments_timetagger" title="Link to this heading"></a></h2>
+<section id="module-nomad_camels_toolbox">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels_toolbox" title="Link to this heading"></a></h2>
 </section>
 </section>
 
@@ -201,8 +191,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="nomad_camels_driver_pi_stage_e709.html" class="btn btn-neutral float-left" title="nomad_camels_driver_pi_stage_e709 package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="nomad_camels_driver_SweepMe_device.html" class="btn btn-neutral float-right" title="nomad_camels_driver_SweepMe_device package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="nomad_camels.utility.html" class="btn btn-neutral float-left" title="nomad_camels.utility package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="helping_packages.html" class="btn btn-neutral float-right" title="Helping Packages" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

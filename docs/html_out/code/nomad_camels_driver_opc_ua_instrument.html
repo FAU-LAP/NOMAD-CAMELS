@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>nomad_camels_driver_swabianinstruments_timetagger package &mdash; NOMAD-CAMELS  documentation</title>
+  <title>nomad_camels_driver_opc_ua_instrument package &mdash; NOMAD-CAMELS  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -28,8 +28,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="nomad_camels_driver_SweepMe_device package" href="nomad_camels_driver_SweepMe_device.html" />
-    <link rel="prev" title="nomad_camels_driver_pi_stage_e709 package" href="nomad_camels_driver_pi_stage_e709.html" /> 
+    <link rel="next" title="nomad_camels_driver_PID package" href="nomad_camels_driver_PID.html" />
+    <link rel="prev" title="nomad_camels_driver_ni_daq package" href="nomad_camels_driver_ni_daq.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -119,16 +119,16 @@
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_leybold_c_move_1250.html">nomad_camels_driver_leybold_c_move_1250 package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_mechonics_cu30cl.html">nomad_camels_driver_mechonics_cu30cl package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_ni_daq.html">nomad_camels_driver_ni_daq package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_opc_ua_instrument.html">nomad_camels_driver_opc_ua_instrument package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_PID.html">nomad_camels_driver_PID package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_pi_stage_e709.html">nomad_camels_driver_pi_stage_e709 package</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">nomad_camels_driver_swabianinstruments_timetagger package</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">nomad_camels_driver_opc_ua_instrument package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#nomad-camels-driver-swabianinstruments-timetagger-swabianinstruments-timetagger-module">nomad_camels_driver_swabianinstruments_timetagger.swabianinstruments_timetagger module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#nomad-camels-driver-swabianinstruments-timetagger-swabianinstruments-timetagger-ophyd-module">nomad_camels_driver_swabianinstruments_timetagger.swabianinstruments_timetagger_ophyd module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_swabianinstruments_timetagger">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nomad-camels-driver-opc-ua-instrument-opc-ua-instrument-module">nomad_camels_driver_opc_ua_instrument.opc_ua_instrument module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nomad-camels-driver-opc-ua-instrument-opc-ua-instrument-ophyd-module">nomad_camels_driver_opc_ua_instrument.opc_ua_instrument_ophyd module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-nomad_camels_driver_opc_ua_instrument">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_PID.html">nomad_camels_driver_PID package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_pi_stage_e709.html">nomad_camels_driver_pi_stage_e709 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_swabianinstruments_timetagger.html">nomad_camels_driver_swabianinstruments_timetagger package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_SweepMe_device.html">nomad_camels_driver_SweepMe_device package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_thorlabs_K10CR1.html">nomad_camels_driver_thorlabs_K10CR1 package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_driver_thorlabs_MFF.html">nomad_camels_driver_thorlabs_MFF package</a></li>
@@ -171,9 +171,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="drivers.html">Drivers</a></li>
-      <li class="breadcrumb-item active">nomad_camels_driver_swabianinstruments_timetagger package</li>
+      <li class="breadcrumb-item active">nomad_camels_driver_opc_ua_instrument package</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/code/nomad_camels_driver_swabianinstruments_timetagger.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/code/nomad_camels_driver_opc_ua_instrument.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -181,19 +181,19 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="nomad-camels-driver-swabianinstruments-timetagger-package">
-<h1>nomad_camels_driver_swabianinstruments_timetagger package<a class="headerlink" href="#nomad-camels-driver-swabianinstruments-timetagger-package" title="Link to this heading"></a></h1>
+  <section id="nomad-camels-driver-opc-ua-instrument-package">
+<h1>nomad_camels_driver_opc_ua_instrument package<a class="headerlink" href="#nomad-camels-driver-opc-ua-instrument-package" title="Link to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="nomad-camels-driver-swabianinstruments-timetagger-swabianinstruments-timetagger-module">
-<h2>nomad_camels_driver_swabianinstruments_timetagger.swabianinstruments_timetagger module<a class="headerlink" href="#nomad-camels-driver-swabianinstruments-timetagger-swabianinstruments-timetagger-module" title="Link to this heading"></a></h2>
+<section id="nomad-camels-driver-opc-ua-instrument-opc-ua-instrument-module">
+<h2>nomad_camels_driver_opc_ua_instrument.opc_ua_instrument module<a class="headerlink" href="#nomad-camels-driver-opc-ua-instrument-opc-ua-instrument-module" title="Link to this heading"></a></h2>
 </section>
-<section id="nomad-camels-driver-swabianinstruments-timetagger-swabianinstruments-timetagger-ophyd-module">
-<h2>nomad_camels_driver_swabianinstruments_timetagger.swabianinstruments_timetagger_ophyd module<a class="headerlink" href="#nomad-camels-driver-swabianinstruments-timetagger-swabianinstruments-timetagger-ophyd-module" title="Link to this heading"></a></h2>
+<section id="nomad-camels-driver-opc-ua-instrument-opc-ua-instrument-ophyd-module">
+<h2>nomad_camels_driver_opc_ua_instrument.opc_ua_instrument_ophyd module<a class="headerlink" href="#nomad-camels-driver-opc-ua-instrument-opc-ua-instrument-ophyd-module" title="Link to this heading"></a></h2>
 </section>
-<section id="module-nomad_camels_driver_swabianinstruments_timetagger">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels_driver_swabianinstruments_timetagger" title="Link to this heading"></a></h2>
+<section id="module-nomad_camels_driver_opc_ua_instrument">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels_driver_opc_ua_instrument" title="Link to this heading"></a></h2>
 </section>
 </section>
 
@@ -201,8 +201,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="nomad_camels_driver_pi_stage_e709.html" class="btn btn-neutral float-left" title="nomad_camels_driver_pi_stage_e709 package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="nomad_camels_driver_SweepMe_device.html" class="btn btn-neutral float-right" title="nomad_camels_driver_SweepMe_device package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="nomad_camels_driver_ni_daq.html" class="btn btn-neutral float-left" title="nomad_camels_driver_ni_daq package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nomad_camels_driver_PID.html" class="btn btn-neutral float-right" title="nomad_camels_driver_PID package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

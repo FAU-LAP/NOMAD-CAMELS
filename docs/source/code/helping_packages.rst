@@ -7,4 +7,3 @@ Helping Packages
    suitcase.nomad_camels_hdf5
    nomad_camels
    nomad_camels_sandbox
-   nomad_camels_toolbox
