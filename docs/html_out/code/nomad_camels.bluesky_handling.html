@@ -144,6 +144,7 @@
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.read_wo_trigger"><code class="docutils literal notranslate"><span class="pre">read_wo_trigger()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.saving_function"><code class="docutils literal notranslate"><span class="pre">saving_function()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.simplify_configs_dict"><code class="docutils literal notranslate"><span class="pre">simplify_configs_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.trigger_and_read"><code class="docutils literal notranslate"><span class="pre">trigger_and_read()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.trigger_multi"><code class="docutils literal notranslate"><span class="pre">trigger_multi()</span></code></a></li>
 </ul>
 </li>
@@ -168,8 +169,9 @@
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.protocol_builder.user_sample_string"><code class="docutils literal notranslate"><span class="pre">user_sample_string()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.bluesky_handling.special_plan_stubs">nomad_camels.bluesky_handling.special_plan_stubs module</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.special_plan_stubs.trigger_and_read_devices"><code class="docutils literal notranslate"><span class="pre">trigger_and_read_devices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.bluesky_handling.run_engine_overwrite">nomad_camels.bluesky_handling.run_engine_overwrite module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.run_engine_overwrite.RunEngineOverwrite"><code class="docutils literal notranslate"><span class="pre">RunEngineOverwrite</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.run_engine_overwrite.get_nan_value"><code class="docutils literal notranslate"><span class="pre">get_nan_value()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.bluesky_handling.variable_reading">nomad_camels.bluesky_handling.variable_reading module</a><ul>
@@ -872,6 +874,12 @@ rejecting the dialog.</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.Value_Setter.set_start_time">
+<span class="sig-name descname"><span class="pre">set_start_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.Value_Setter.set_start_time" title="Link to this definition"></a></dt>
+<dd><p>Set the start time for the waiting bar.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.Value_Setter.set_wait_time">
 <span class="sig-name descname"><span class="pre">set_wait_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait_time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.Value_Setter.set_wait_time" title="Link to this definition"></a></dt>
 <dd><p>Set the wait time for the waiting bar.</p>
@@ -1197,7 +1205,7 @@ algorithm breaks if the threshold is reached.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.read_wo_trigger">
-<span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.helper_functions.</span></span><span class="sig-name descname"><span class="pre">read_wo_trigger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">devices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'primary'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.read_wo_trigger" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.helper_functions.</span></span><span class="sig-name descname"><span class="pre">read_wo_trigger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">devices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'primary'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_on_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.read_wo_trigger" title="Link to this definition"></a></dt>
 <dd><p>Used if not reading by trigger_and_read, but splitting both. This function only reads, without triggering.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1262,6 +1270,11 @@ The data to be plotted.</p></li>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.trigger_and_read">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.helper_functions.</span></span><span class="sig-name descname"><span class="pre">trigger_and_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">devices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'primary'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_on_exception</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.trigger_and_read" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.trigger_multi">
@@ -1472,24 +1485,18 @@ main namespace.</p>
 </dd></dl>
 
 </section>
-<section id="module-nomad_camels.bluesky_handling.special_plan_stubs">
-<span id="nomad-camels-bluesky-handling-special-plan-stubs-module"></span><h2>nomad_camels.bluesky_handling.special_plan_stubs module<a class="headerlink" href="#module-nomad_camels.bluesky_handling.special_plan_stubs" title="Link to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.special_plan_stubs.trigger_and_read_devices">
-<span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.special_plan_stubs.</span></span><span class="sig-name descname"><span class="pre">trigger_and_read_devices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">devices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'primary'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.special_plan_stubs.trigger_and_read_devices" title="Link to this definition"></a></dt>
-<dd><p>A wrapper for the plan stup <cite>trigger_and_read</cite> that implements
-trigger/read for a device with several components by simply splitting
-up the device and using a list of its components.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>devices</strong> (<em>list</em><em>[</em><em>ophyd.Device</em><em>]</em>) – List of the devices that should be triggered and read</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – (Default value = ‘primary’)
-Name of the stream where to save the data</p></li>
-</ul>
-</dd>
-</dl>
+<section id="module-nomad_camels.bluesky_handling.run_engine_overwrite">
+<span id="nomad-camels-bluesky-handling-run-engine-overwrite-module"></span><h2>nomad_camels.bluesky_handling.run_engine_overwrite module<a class="headerlink" href="#module-nomad_camels.bluesky_handling.run_engine_overwrite" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.run_engine_overwrite.RunEngineOverwrite">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.run_engine_overwrite.</span></span><span class="sig-name descname"><span class="pre">RunEngineOverwrite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">md=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocessors=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_managers=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">md_validator=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">md_normalizer=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scan_id_source=&lt;function</span> <span class="pre">default_scan_id_source&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">during_task=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_returns_result=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.run_engine_overwrite.RunEngineOverwrite" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RunEngine</span></code></p>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.run_engine_overwrite.get_nan_value">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.run_engine_overwrite.</span></span><span class="sig-name descname"><span class="pre">get_nan_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.run_engine_overwrite.get_nan_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-nomad_camels.bluesky_handling.variable_reading">
