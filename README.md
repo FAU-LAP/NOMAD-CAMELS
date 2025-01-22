@@ -22,6 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Features:
 - can ignore failed readings of specific channels now, so the protocol does not break if some sensor fails once
 - new manual control to generically set / read any kind of channel
+- can now manually adjust size and position of plots in protocol configuration
 
 Changes:
 - order of steps in menu now alphabetically
