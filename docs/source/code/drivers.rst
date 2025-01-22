@@ -24,6 +24,7 @@ Drivers
    nomad_camels_driver_leybold_c_move_1250
    nomad_camels_driver_mechonics_cu30cl
    nomad_camels_driver_ni_daq
+   nomad_camels_driver_opc_ua_instrument
    nomad_camels_driver_PID
    nomad_camels_driver_pi_stage_e709
    nomad_camels_driver_swabianinstruments_timetagger

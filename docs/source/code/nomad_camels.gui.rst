@@ -148,14 +148,6 @@ nomad\_camels.gui.settings\_window\_resource\_rc module
    :undoc-members:
    :show-inheritance:
 
-nomad\_camels.gui.tags\_ui module
----------------------------------
-
-.. automodule:: nomad_camels.gui.tags_ui
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
