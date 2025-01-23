@@ -21,6 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.6.1
 Fixes:
 - fits now have at least the number of data points in the plot view
+- could insert variables at channel names in set channels and similar, now only possible for the value
 
 ## 1.6.0 Ignore failed read, new manual control
 Features:

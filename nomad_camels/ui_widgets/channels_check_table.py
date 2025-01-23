@@ -90,6 +90,9 @@ class Channels_Check_Table(QWidget):
         -------
 
         """
+        ind = self.tableWidget_channels.selectedIndexes()[0]
+        if ind.column() < 2 or ind.column() in self.checkables:
+            return
         if self.parent() and hasattr(self.parent(), "loop_step"):
             prot = self.parent().loop_step.protocol
             variables_handling.protocol_variables = prot.variables
