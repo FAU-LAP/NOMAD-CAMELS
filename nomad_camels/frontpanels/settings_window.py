@@ -1,7 +1,12 @@
 from PySide6.QtWidgets import QDialog, QStyleFactory, QMessageBox, QApplication
 from PySide6.QtCore import Qt, QCoreApplication
 from PySide6.QtGui import QKeyEvent
-import qt_material
+try:
+    import qt_material
+
+    QT_MATERIAL = True
+except ImportError:
+    QT_MATERIAL = False
 
 from nomad_camels.gui.settings_window import Ui_settings_window
 from nomad_camels.utility import load_save_functions
@@ -35,9 +40,10 @@ class Settings_Window(Ui_settings_window, QDialog):
             app = QCoreApplication.instance()
             self.comboBox_theme.setCurrentText(app.style().objectName())
         material_themes = []
-        for t in qt_material.list_themes():
-            if t.startswith("light_"):
-                material_themes.append(t[6:-4])
+        if QT_MATERIAL:
+            for t in qt_material.list_themes():
+                if t.startswith("light_"):
+                    material_themes.append(t[6:-4])
         self.comboBox_material_theme.addItems(material_themes)
         if (
             "material_theme" in settings

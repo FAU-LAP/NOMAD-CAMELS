@@ -3,7 +3,12 @@ default color palettes `light_palette` and `dark_palette`."""
 
 from PySide6.QtWidgets import QApplication, QMainWindow, QStyleFactory
 from PySide6.QtGui import QPalette, QColor, QColorConstants
-from qt_material import apply_stylesheet
+try:
+    from qt_material import apply_stylesheet
+    QT_MATERIAL = True
+except ImportError:
+    QT_MATERIAL = False
+
 
 
 light_palette = QPalette(QColor(225, 225, 225), QColor(238, 238, 238))
@@ -62,7 +67,7 @@ def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
         main_app.setStyle(QStyleFactory.create(theme))
         if palette:
             main_app.setPalette(palette)
-    elif theme == "qt-material":
+    elif theme == "qt-material" and QT_MATERIAL:
         if not isinstance(material_theme, str):
             return
         if dark_mode:
@@ -72,3 +77,6 @@ def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
         else:
             xml = f"light_{material_theme}.xml"
         apply_stylesheet(main_app, theme=xml)
+    elif theme == "qt-material" and not QT_MATERIAL:
+        # TODO: Add a message box to inform the user that qt-material is not installed, make optional
+        raise ImportError("qt-material is not installed!")
