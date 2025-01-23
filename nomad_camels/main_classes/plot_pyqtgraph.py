@@ -1094,7 +1094,9 @@ class LiveFitPlot(CallbackBase):
     def fit_has_result(self):
         if self.livefit.result is not None:
             x_data = self.livefit.independent_vars_data[self.__x_key]
-            x_points = np.linspace(np.min(x_data), np.max(x_data), self.num_points)
+            x_points = np.linspace(
+                np.min(x_data), np.max(x_data), max(self.num_points, len(x_data))
+            )
             kwargs = {self.__x_key: x_points}
             kwargs.update(self.livefit.result.values)
             self.y_data = self.livefit.result.model.eval(**kwargs)

@@ -18,7 +18,11 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 1.6.0 Ignore failed read, new manual control
+### 1.6.1
+Fixes:
+- fits now have at least the number of data points in the plot view
+
+## 1.6.0 Ignore failed read, new manual control
 Features:
 - can ignore failed readings of specific channels now, so the protocol does not break if some sensor fails once
 - new manual control to generically set / read any kind of channel
