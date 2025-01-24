@@ -2586,7 +2586,7 @@ description = "Material inspired stylesheet for PySide2, PySide6, PyQt5 and PyQt
 optional = true
 python-versions = ">=3.7"
 groups = ["main"]
-markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+markers = "(python_version <= \"3.11\" or python_version >= \"3.12\") and extra == \"material\""
 files = [
     {file = "qt-material-2.14.tar.gz", hash = "sha256:b5dbb5ade97217cf7ae336bb7c047c90beb39dc7f2048a498c916ad5f2f7ae23"},
     {file = "qt_material-2.14-py3-none-any.whl", hash = "sha256:ceddd9b3aca167e5d620644ce350c3df4c0220c5df457ab6059f634d7ac747e3"},
@@ -3364,6 +3364,7 @@ type = ["pytest-mypy"]
 [extras]
 api = ["fastapi", "httpx", "uvicorn"]
 dev = ["pytest", "pytest-mock", "pytest-order", "pytest-qt", "pytest-timeout", "pyvisa"]
+material = ["qt-material"]
 
 [metadata]
 lock-version = "2.1"

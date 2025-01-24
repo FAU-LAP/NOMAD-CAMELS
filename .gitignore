@@ -15,3 +15,4 @@ startup_packages.txt
 /.42c
 nomad_camels/api/api_testing.py
 .venv/
+.tox/
