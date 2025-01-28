@@ -29,8 +29,9 @@ dependencies = [
 
 [project.optional-dependencies]
 api = ["fastapi (>=0.110.1)", "uvicorn (>=0.19.0)", "httpx (>=0.28.1)"]
-dev = ["pytest (>=7.3.2)", "pytest-qt (>=4.2.0)", "pytest-order (>=0.7.1)", "pytest-mock (>=1.2)", "pytest-timeout (>=2.3.1,<3.0.0)", "pyvisa (>=1.14.1,<2.0.0)"]
+dev = ["pytest (>=7.3.2)", "pytest-qt (>=4.2.0)", "pytest-order (>=0.7.1)", "pytest-mock (>=0.4.0)", "pytest-timeout (>=1.3.1)"]
 material = ["qt-material (>=2.12)"]
+visa = ["pyvisa (>=1.6.0)", "pyvisa-py (>=0.1)"]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
