@@ -10,6 +10,7 @@ from packaging.version import Version
 from packaging.specifiers import SpecifierSet
 import logging
 import time
+import select
 
 # set log file
 logging.basicConfig(filename="test_log.txt", level=logging.INFO)
@@ -176,15 +177,15 @@ def test_dependency_version(
 
     # Finally, run tests
     for i in range(3):
-        run_test(test_command, test_exe)
-        if ret.returncode != 3221225477:
+        ret = run_test(test_command, test_exe)
+        if ret != 3221225477:
             break
         logging.info("retrying test, got 3221225477")
     with open("test_output.txt", "a") as f:
-        f.write(f"{dependency}=={version} - {ret.returncode}\n")
-    if ret.returncode != 0:
+        f.write(f"{dependency}=={version} - {ret}\n")
+    if ret != 0:
         logging.info("forcing new try with reinstalled packages")
-        if ret.returncode == 3221225477:
+        if ret == 3221225477:
             last_python = None
         try:
             test_exe = update_venv(
@@ -200,48 +201,35 @@ def test_dependency_version(
             with open("test_output.txt", "a") as f:
                 f.write(f"{dependency}=={version} - Reinstall failed\n")
             return False
-        if len(test_command) == 1:
-            ret = subprocess.run([test_exe] + ["--timeout=100"], cwd=os.getcwd())
-        else:
-            ret = subprocess.run(
-                [test_exe] + test_command[1:] + ["--timeout=100"], cwd=os.getcwd()
-            )
-        if ret.returncode != 0:
+        ret = run_test(test_command, test_exe)
+        if ret != 0:
             logging.error(f"Tests failed for {dependency}=={version}.")
         with open("test_output.txt", "a") as f:
-            f.write(f"{dependency}=={version} - {ret.returncode}\n")
-    return ret.returncode == 0
+            f.write(f"{dependency}=={version} - {ret}\n")
+    return ret == 0
 
 
 def run_test(test_command, test_exe):
-    overall_timeout = 300
+    overall_timeout = 600
     if len(test_command) == 1:
-        command = [test_exe] + ["--timeout=100"]
+        command = [test_exe]
     else:
-        command = [test_exe] + test_command[1:] + ["--timeout=100"]
+        command = [test_exe] + test_command[1:]
     process = subprocess.Popen(
         command,
         cwd=os.getcwd(),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
         text=True,
     )
     start_time = time.time()
     while ret := process.poll() is None:
-        output = process.stdout.readline()
-        if output:
-            print(output, end="")
-        error = process.stderr.readline()
-        if error:
-            print(error, end="")
-
         # Check if the overall timeout has been exceeded
         if time.time() - start_time > overall_timeout:
             # Kill the process if it exceeds the overall timeout
             process.kill()
             print("Overall timeout exceeded. Tests were terminated.")
             break
-
+        time.sleep(0.1)
+    ret = process.wait()
     return ret
 
 
@@ -404,40 +392,39 @@ def main():
     check the min and max supported versions of each dependency in `dependencies`.
     """
     python_versions = [
+        r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.11.9\python.exe",
+        r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.12.4\python.exe",
         r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.10.11\python.exe",
-        # r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.11.9\python.exe",
-        # r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.12.4\python.exe",
     ]  # Adjust for your environment
     # Suppose we want to discover min/max for 'requests' and 'pydantic'
     # under the broad constraints below:
     dependencies = {
-        # "PySide6": "<=6.7.0",
-        # "numpy": "<=1.22.4",
-        # "bluesky": "<=1.11",
-        # "ophyd": "<=1.6.4",
-        # "lmfit": "<=1.0.3",
-        # "pyyaml": "<=6.0",
-        # "requests": "<=2.28.0",
-        # "databroker": "<=1.2.5",
-        # "setuptools": "<=57.0.0",
-        # "fastapi": "<=0.111.0",
-        # "uvicorn": "<=0.30.1",
-        # "httpx": "<=0.28.1",
-        # "pytest": "<=8.0.2",
-        # "pytest-qt": "<=4.2.0",
-        # "pytest-order": "<=1.2.0",
-        # "pytest-mock": "<1.2.0",
-        # "pytest-timeout": "<=2.3.1",
-        # "matplotlib": "<=3.9.4",
-        # "pyqtgraph": "<=0.13.7",
-        "pyvisa": "<=1.11.0",
-        "pyvisa-py": "<=0.5.2",
+        "PySide6": ">=6.6.0",
+        "numpy": ">=1.22.0",
+        "bluesky": ">=1.9.0",
+        "ophyd": ">=1.6.2",
+        "lmfit": ">=1.0.2",
+        "pyyaml": ">=6.0",
+        "requests": ">=2.26.0",
+        "databroker": ">=1.2.0",
+        "setuptools": ">=54.2.0",
+        "matplotlib": ">=3.6.2",
+        "pyqtgraph": ">=0.13.3",
+        "fastapi": ">=0.110.1",
+        "uvicorn": ">=0.19.0",
+        "httpx": ">=0.28.1",
+        "pytest": ">=7.3.2",
+        "pytest-qt": ">=4.2.0",
+        "pytest-order": ">=0.7.1",
+        "pytest-mock": ">=0.4.0",
+        "pytest-timeout": ">=1.3.1",
+        "pyvisa": ">=1.6.0",
+        "pyvisa-py": ">=0.1",
     }
 
     # You might also have a broad constraint for your other dependencies,
     # so that they get installed in each environment as well. For instance:
     other_constraints = [
-        "pyvisa",
         "suitcase-nomad-camels-hdf5>=0.4.4",
         "pyside6",
         "numpy",
@@ -458,33 +445,46 @@ def main():
         "pytest-order",
         "pytest-mock",
         "pytest-timeout",
+        "pyvisa",
+        "pyvisa-py",
     ]
     # In a real scenario, you might want to exclude the package you're testing from `other_constraints`
     # or maintain a more granular matrix. This is just an example for demonstration.
 
     # A test command, e.g. "pytest" on a 'tests' folder:
-    test_command = ["pytest"]
+    test_command = ["pytest", "--timeout=60"]
 
     results = {}
 
     for py_exe in python_versions:
+        logging.info(f"Testing on {py_exe}")
         print(f"\n===== Testing on {py_exe} =====\n")
         for dep, broad_spec in dependencies.items():
-            min_v = find_min_version_going_down(
+            min_v = find_min_version_going_up(
                 python_executable=py_exe,
                 dependency=dep,
                 broad_spec=broad_spec,
                 other_constraints=other_constraints,
                 test_command=test_command,
             )
-            results[(py_exe, dep)] = min_v
             print(f"\nResult for {dep} on {py_exe}:")
             print(f"  Minimum passing version: {min_v}")
+            max_v = find_max_version_going_down(
+                python_executable=py_exe,
+                dependency=dep,
+                broad_spec=broad_spec,
+                other_constraints=other_constraints,
+                test_command=test_command,
+            )
+            print(f"\nResult for {dep} on {py_exe}:")
+            print(f"  Maximum passing version: {max_v}")
+            results[(py_exe, dep)] = (min_v, max_v)
+        logging.info(f"Finished testing on {py_exe}\n\n")
 
     # After the loop, you could print a summary or write the results to a file
     print("\n===== FINAL RESULTS =====")
-    for (py_exe, dep), mn in results.items():
-        print(f"{py_exe} - {dep}: min={mn}")
+    for (py_exe, dep), (mn, mx) in results.items():
+        print(f"{py_exe} - {dep}: min={mn}, max={mx}")
 
 
 if __name__ == "__main__":
