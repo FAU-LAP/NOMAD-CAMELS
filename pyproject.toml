@@ -13,25 +13,35 @@ classifiers = [
 ]
 dependencies = [
     "PySide6 (>=6.6.0)",
-    "numpy (>=1.22.0)",
     "bluesky (>=1.9.0)",
     "ophyd (>=1.6.2)",
     "lmfit (>=1.0.2)",
-    "pyyaml (>=6.0)",
     "requests (>=2.26.0)",
     "suitcase-nomad-camels-hdf5 (>=0.4.4)",
     "databroker (>=1.2.0)",
-    "setuptools (>=54.2.0)",
     "matplotlib (>=3.6.2)",
     "pyqtgraph (>=0.13.3)"
 ]
 
+[tool.poetry.dependencies]
+pyyaml = [
+    {version = ">=6.0", python = ">=3.10,<3.12"},
+    {version = ">=6.0.1", python = ">=3.12"}
+]
+setuptools = [
+    {version = ">=54.2.0", python = ">=3.10,<3.12"},
+    {version = ">=66.1.0", python = ">=3.12"}
+]
+numpy = [
+    {version = ">=1.23.0", python = ">=3.10,<3.12"},
+    {version = ">=1.26.0", python = ">=3.12"}
+]
 
 [project.optional-dependencies]
 api = ["fastapi (>=0.110.1)", "uvicorn (>=0.19.0)", "httpx (>=0.28.1)"]
 dev = ["pytest (>=7.3.2)", "pytest-qt (>=4.2.0)", "pytest-order (>=0.7.1)", "pytest-mock (>=0.4.0)", "pytest-timeout (>=1.3.1)"]
 material = ["qt-material (>=2.12)"]
-visa = ["pyvisa (>=1.6.0)", "pyvisa-py (>=0.1)"]
+visa = ["pyvisa (>=1.6.3)", "pyvisa-py (>=0.1)"]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
