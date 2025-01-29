@@ -25,16 +25,22 @@ dependencies = [
 
 [tool.poetry.dependencies]
 pyyaml = [
-    {version = ">=6.0", python = ">=3.9,<3.12"},
+    {version = ">=6.0", python = ">=3.10,<3.12"},
     {version = ">=6.0.1", python = ">=3.12"}
 ]
 setuptools = [
-    {version = ">=54.2.0", python = ">=3.9,<3.12"},
-    {version = ">=66.1.0", python = ">=3.12"}
+    {version = ">=54.2.0", python = ">=3.10,<3.12"},
+    {version = ">=66.1.0", python = ">=3.12"},
+    {version = ">=36.0.1", python = ">=3.9,<3.10"}
 ]
 numpy = [
-    {version = ">=1.23.0", python = ">=3.9,<3.12"},
-    {version = ">=1.26.0", python = ">=3.12"}
+    {version = ">=1.23.0", python = ">=3.10,<3.12"},
+    {version = ">=1.26.0", python = ">=3.12"},
+    {version = ">=1.22.0,<2.1.0", python = ">=3.9,<3.10"}
+]
+requests = [
+    {version = ">=2.26.0", python = ">=3.10"},
+    {version = ">=2.0.0", python = ">=3.9,<3.10"}
 ]
 
 [project.optional-dependencies]
