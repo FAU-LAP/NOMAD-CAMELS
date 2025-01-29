@@ -10,7 +10,6 @@ from packaging.version import Version
 from packaging.specifiers import SpecifierSet
 import logging
 import time
-import select
 
 # set log file
 logging.basicConfig(filename="test_log.txt", level=logging.INFO)
@@ -76,6 +75,14 @@ def update_venv(
     global last_package, last_dir, last_python
     if other_constraints is None:
         other_constraints = []
+    constraints = [x.split(">=")[0] if ">=" in x else x for x in other_constraints]
+    if dependency in constraints:
+        index = constraints.index(dependency)
+        new_other_constraints = (
+            other_constraints[:index] + other_constraints[index + 1 :]
+        )
+    else:
+        new_other_constraints = other_constraints
     if test_command is None:
         # Example: run pytest on a 'tests' directory
         test_command = ["pytest", "tests"]
@@ -128,7 +135,7 @@ def update_venv(
     # 4) (Optionally) install your actual project
     install_cmd = [pip_exe, "install", f"{dependency}=={version}"]
     if last_package != dependency or force_new:
-        install_cmd += other_constraints
+        install_cmd += new_other_constraints
         install_cmd += ["--no-cache-dir"]
     last_package = dependency
     subprocess.run(install_cmd, check=True)
@@ -157,6 +164,7 @@ def test_dependency_version(
     except Exception as e:
         logging.error(f"Could not set up venv for {dependency}=={version}.\n\t{e}")
         logging.info("forcing new try with reinstalled packages")
+        last_python = None
         try:
             test_exe = update_venv(
                 python_executable=python_executable,
@@ -168,12 +176,35 @@ def test_dependency_version(
             )
         except Exception as e:
             logging.error(f"Could not set up venv for {dependency}=={version}.\n\t{e}")
+            last_python = None
             with open("test_output.txt", "a") as f:
                 f.write(f"{dependency}=={version} - Install failed\n")
             return False
 
     # Optionally install your project:
     # subprocess.run([pip_exe, "install", "-e", "."], check=True)
+    if not os.path.exists(test_exe):
+        last_python = None
+        try:
+            test_exe = update_venv(
+                python_executable=python_executable,
+                dependency=dependency,
+                version=version,
+                other_constraints=other_constraints,
+                test_command=test_command,
+                force_new=True,
+            )
+        except Exception as e:
+            logging.error(f"Could not set up venv for {dependency}=={version}.")
+            last_python = None
+            with open("test_output.txt", "a") as f:
+                f.write(f"{dependency}=={version} - Install failed\n")
+            return False
+        if not os.path.exists(test_exe):
+            logging.error(f"Test executable not found for {dependency}=={version}.")
+            with open("test_output.txt", "a") as f:
+                f.write(f"{dependency}=={version} - Executable not found\n")
+            return False
 
     # Finally, run tests
     for i in range(3):
@@ -198,10 +229,30 @@ def test_dependency_version(
             )
         except Exception as e:
             logging.error(f"Could not set up venv for {dependency}=={version}.")
+            last_python = None
             with open("test_output.txt", "a") as f:
                 f.write(f"{dependency}=={version} - Reinstall failed\n")
             return False
-        ret = run_test(test_command, test_exe)
+        for i in range(2):
+            ret = run_test(test_command, test_exe)
+            if ret != 3221225477:
+                break
+            last_python = None
+            try:
+                test_exe = update_venv(
+                    python_executable=python_executable,
+                    dependency=dependency,
+                    version=version,
+                    other_constraints=other_constraints,
+                    test_command=test_command,
+                    force_new=True,
+                )
+            except Exception as e:
+                logging.error(f"Could not set up venv for {dependency}=={version}.")
+                last_python = None
+                with open("test_output.txt", "a") as f:
+                    f.write(f"{dependency}=={version} - Reinstall failed\n")
+                return False
         if ret != 0:
             logging.error(f"Tests failed for {dependency}=={version}.")
         with open("test_output.txt", "a") as f:
@@ -245,10 +296,6 @@ def find_min_version_going_down(
     3) From oldest to newest, find the first that passes (min).
     4) From newest to oldest, find the first that passes (max).
     """
-    if other_constraints is None:
-        other_constraints = []
-    if dependency in other_constraints:
-        other_constraints = [c for c in other_constraints if c != dependency]
 
     all_versions = get_available_versions(dependency)
     if not all_versions:
@@ -296,11 +343,6 @@ def find_max_version_going_down(
     3) From oldest to newest, find the first that passes (min).
     4) From newest to oldest, find the first that passes (max).
     """
-    if other_constraints is None:
-        other_constraints = []
-    if dependency in other_constraints:
-        other_constraints = [c for c in other_constraints if c != dependency]
-
     all_versions = get_available_versions(dependency)
     if not all_versions:
         return None
@@ -344,11 +386,6 @@ def find_min_version_going_up(
     3) From oldest to newest, find the first that passes (min).
     4) From newest to oldest, find the first that passes (max).
     """
-    if other_constraints is None:
-        other_constraints = []
-    if dependency in other_constraints:
-        other_constraints = [c for c in other_constraints if c != dependency]
-
     all_versions = get_available_versions(dependency)
     if not all_versions:
         return None
@@ -375,7 +412,7 @@ def find_min_version_going_up(
         logging.info(
             f"Testing {dependency}=={v} on {python_executable} ... (min candidate)"
         )
-        if not test_dependency_version(
+        if test_dependency_version(
             python_executable, dependency, v, other_constraints, test_command
         ):
             logging.info(f"  --> WORKED at {v}")
@@ -400,7 +437,7 @@ def main():
     # under the broad constraints below:
     dependencies = {
         "PySide6": ">=6.6.0",
-        "numpy": ">=1.22.0",
+        "numpy": ">=1.23.0",
         "bluesky": ">=1.9.0",
         "ophyd": ">=1.6.2",
         "lmfit": ">=1.0.2",
@@ -426,27 +463,27 @@ def main():
     # so that they get installed in each environment as well. For instance:
     other_constraints = [
         "suitcase-nomad-camels-hdf5>=0.4.4",
-        "pyside6",
-        "numpy",
-        "bluesky",
-        "ophyd",
-        "lmfit",
-        "pyyaml",
-        "requests",
-        "databroker",
-        "setuptools",
-        "matplotlib",
-        "pyqtgraph",
-        "fastapi",
-        "uvicorn",
-        "httpx",
-        "pytest",
-        "pytest-qt",
-        "pytest-order",
-        "pytest-mock",
-        "pytest-timeout",
-        "pyvisa",
-        "pyvisa-py",
+        "PySide6>=6.6.0",
+        "numpy>=1.23.0",
+        "bluesky>=1.9.0",
+        "ophyd>=1.6.2",
+        "lmfit>=1.0.2",
+        "pyyaml>=6.0",
+        "requests>=2.26.0",
+        "databroker>=1.2.0",
+        "setuptools>=54.2.0",
+        "matplotlib>=3.6.2",
+        "pyqtgraph>=0.13.3",
+        "fastapi>=0.110.1",
+        "uvicorn>=0.19.0",
+        "httpx>=0.28.1",
+        "pytest>=7.3.2",
+        "pytest-qt>=4.2.0",
+        "pytest-order>=0.7.1",
+        "pytest-mock>=0.4.0",
+        "pytest-timeout>=1.3.1",
+        "pyvisa>=1.6.0",
+        "pyvisa-py>=0.1",
     ]
     # In a real scenario, you might want to exclude the package you're testing from `other_constraints`
     # or maintain a more granular matrix. This is just an example for demonstration.
