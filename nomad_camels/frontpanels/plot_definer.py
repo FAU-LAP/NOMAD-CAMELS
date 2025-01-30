@@ -452,23 +452,37 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
         self.plot_data.y_axes["axis"] = [1] * len(self.plot_data.y_axes["formula"])
         # If the string is empty set empty string
         if self.lineEdit_top_left_x.text():
-            self.plot_data.top_left_x = max(int(self.lineEdit_top_left_x.text()), 0)
+            try:
+                self.plot_data.top_left_x = max(int(self.lineEdit_top_left_x.text()), 0)
+            except ValueError:
+                self.plot_data.top_left_x = ""
+            
         else:
             self.plot_data.top_left_x = ""
 
         if self.lineEdit_top_left_y.text():
-            self.plot_data.top_left_y = max(int(self.lineEdit_top_left_y.text()), 0)
-
+            try:
+                self.plot_data.top_left_y = max(int(self.lineEdit_top_left_y.text()), 0)
+            except ValueError:
+                self.plot_data.top_left_y = ""
         else:
             self.plot_data.top_left_y = ""
 
         if self.lineEdit_plot_width.text():
-            self.plot_data.plot_width = max(int(self.lineEdit_plot_width.text()), 0)
+            try:
+                self.plot_data.plot_width = max(int(self.lineEdit_plot_width.text()), 430)
+            except ValueError:
+                self.plot_data.plot_width = ""
+            
         else:
             self.plot_data.plot_width = ""
 
         if self.lineEdit_plot_height.text():
-            self.plot_data.plot_height = max(int(self.lineEdit_plot_height.text()), 0)
+            try:
+                self.plot_data.plot_height = max(int(self.lineEdit_plot_height.text()), 126)
+            except ValueError:
+                self.plot_data.plot_height = ""
+            
         else:
             self.plot_data.plot_height = ""
 
@@ -547,23 +561,37 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.plot_data.maxlen = self.lineEdit_n_data_points.text() or "inf"
         # If the string is empty set empty string
         if self.lineEdit_top_left_x.text():
-            self.plot_data.top_left_x = max(int(self.lineEdit_top_left_x.text()), 0)
+            try:
+                self.plot_data.top_left_x = max(int(self.lineEdit_top_left_x.text()), 0)
+            except ValueError:
+                self.plot_data.top_left_x = ""
+            
         else:
             self.plot_data.top_left_x = ""
 
         if self.lineEdit_top_left_y.text():
-            self.plot_data.top_left_y = max(int(self.lineEdit_top_left_y.text()), 0)
-
+            try:
+                self.plot_data.top_left_y = max(int(self.lineEdit_top_left_y.text()), 0)
+            except ValueError:
+                self.plot_data.top_left_y = ""
         else:
             self.plot_data.top_left_y = ""
 
         if self.lineEdit_plot_width.text():
-            self.plot_data.plot_width = max(int(self.lineEdit_plot_width.text()), 430)
+            try:
+                self.plot_data.plot_width = max(int(self.lineEdit_plot_width.text()), 430)
+            except ValueError:
+                self.plot_data.plot_width = ""
+            
         else:
             self.plot_data.plot_width = ""
 
         if self.lineEdit_plot_height.text():
-            self.plot_data.plot_height = max(int(self.lineEdit_plot_height.text()), 126)
+            try:
+                self.plot_data.plot_height = max(int(self.lineEdit_plot_height.text()), 126)
+            except ValueError:
+                self.plot_data.plot_height = ""
+            
         else:
             self.plot_data.plot_height = ""
 
@@ -769,24 +797,36 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.plot_data.logY2 = self.checkBox_ylog2.isChecked()
         # If the string is empty set empty string
         if self.lineEdit_top_left_x.text():
-            self.plot_data.top_left_x = max(int(self.lineEdit_top_left_x.text()), 0)
+            try:
+                self.plot_data.top_left_x = max(int(self.lineEdit_top_left_x.text()), 0)
+            except ValueError:
+                self.plot_data.top_left_x = ""
             
         else:
             self.plot_data.top_left_x = ""
 
         if self.lineEdit_top_left_y.text():
-            self.plot_data.top_left_y = max(int(self.lineEdit_top_left_y.text()), 0)
+            try:
+                self.plot_data.top_left_y = max(int(self.lineEdit_top_left_y.text()), 0)
+            except ValueError:
+                self.plot_data.top_left_y = ""
         else:
             self.plot_data.top_left_y = ""
 
         if self.lineEdit_plot_width.text():
-            self.plot_data.plot_width = max(int(self.lineEdit_plot_width.text()), 430)
+            try:
+                self.plot_data.plot_width = max(int(self.lineEdit_plot_width.text()), 430)
+            except ValueError:
+                self.plot_data.plot_width = ""
             
         else:
             self.plot_data.plot_width = ""
 
         if self.lineEdit_plot_height.text():
-            self.plot_data.plot_height = max(int(self.lineEdit_plot_height.text()), 126)
+            try:
+                self.plot_data.plot_height = max(int(self.lineEdit_plot_height.text()), 126)
+            except ValueError:
+                self.plot_data.plot_height = ""
             
         else:
             self.plot_data.plot_height = ""
