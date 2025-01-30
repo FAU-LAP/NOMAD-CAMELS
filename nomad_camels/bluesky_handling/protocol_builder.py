@@ -511,7 +511,7 @@ def sub_protocol_string(
     stream = prot_name
     if data_output == "main stream":
         stream = "primary"
-    protocol_string += f'{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, {prot_name}_eva, "{stream}", runEngine)\n'
+    protocol_string += f'{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, "{stream}", runEngine)\n'
     for i, var in enumerate(variables_out["Variable"]):
         protocol_string += f'{tabs}namespace["{variables_out["Write to name"][i]}"] = {prot_name}_mod.namespace["{var}"]\n'
     protocol_string += f"{tabs}runEngine.unsubscribe(sub_eva_{prot_name})\n"

@@ -51,10 +51,10 @@ def get_plot_add_string(name, stream, subprotocol=False, n_tabs=1):
     add_main_string += f'{tabs}\treturner["plots"] = []\n'
     if subprotocol:
         add_main_string += (
-            f"{tabs}plots, subs, _ = {name}_mod.create_plots(RE, {stream})\n"
+            f"{tabs}plots, subs, _, _ = {name}_mod.create_plots(RE, {stream})\n"
         )
     else:
-        add_main_string += f"{tabs}plots, subs, _ = create_plots_{name}(RE, {stream})\n"
+        add_main_string += f"{tabs}plots, subs, _, _ = create_plots_{name}(RE, {stream})\n"
     add_main_string += f'{tabs}returner["subs"] += subs\n'
     add_main_string += f'{tabs}returner["plots"] += plots\n'
     return add_main_string
