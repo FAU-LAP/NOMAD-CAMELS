@@ -98,7 +98,7 @@ def plot_creator(
     """
     plot_string = f'\ndef {func_name}(RE, stream="primary"):\n'
     if not plot_data:
-        plot_string += "\treturn [], [], None\n\n"
+        plot_string += "\treturn [], [], None, None\n\n"
         return plot_string, False
     plot_string += standard_plot_string
     plot_string += "\tplot_evaluator=eva\n"
