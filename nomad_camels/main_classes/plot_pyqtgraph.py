@@ -270,6 +270,7 @@ class PlotWidget(QWidget):
         logX=False,
         logY=False,
         logY2=False,
+        manual_plot_position=False,
         top_left_x="",
         top_left_y="",
         plot_width="",
@@ -278,6 +279,9 @@ class PlotWidget(QWidget):
         use_bluesky=True,
         labels=(),
         first_hidden=None,
+        show_in_browser=False,
+        web_port=None,
+        evaluator=None,
         **kwargs,
     ):
         super().__init__(parent=parent)
@@ -286,7 +290,7 @@ class PlotWidget(QWidget):
         self.y_names = y_names or y_axes.keys()
         self.stream_name = stream_name
         self.fits = fits or []
-        self.eva = Evaluator(namespace=namespace)
+        self.eva = evaluator
         self.liveFits = []
         self.liveFitPlots = []
         self.ax2_viewbox = None
@@ -354,6 +358,8 @@ class PlotWidget(QWidget):
                 additional_data=add_data,
                 params=params,
                 stream_name=stream_name,
+                show_in_browser=show_in_browser,
+                web_port=web_port,
             )
             self.liveFits.append(livefit)
             if y_axes and y_axes[fit["y"]] == 2:
@@ -430,7 +436,10 @@ class PlotWidget(QWidget):
         self.layout().addWidget(self.plot_options, 0, 0, 3, 1)
         self.plot_options.hide()
         # self.setMinimumSize(500, 400)
-        place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
+        if manual_plot_position:
+            place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
+        else:
+            place_widget(self)
         # self.adjustSize()
         self.change_maxlen()
 
@@ -1168,13 +1177,14 @@ class PlotWidget_2D(QWidget):
         y_name,
         z_name,
         parent=None,
-        namespace=None,
+        evaluator=None,
         xlabel="",
         ylabel="",
         zlabel="",
         title="",
         maxlen=np.inf,
         stream_name="primary",
+        manual_plot_position=False,
         top_left_x="",
         top_left_y="",
         plot_width="",
@@ -1196,7 +1206,7 @@ class PlotWidget_2D(QWidget):
         self.stream_name = stream_name
 
         self.toolbar = None
-        eva = Evaluator(namespace=namespace)
+        eva = evaluator
         self.livePlot = LivePlot_2D(
             x_name,
             y_name,
@@ -1221,7 +1231,10 @@ class PlotWidget_2D(QWidget):
         self.layout().addWidget(label_n_data, 2, 1)
         self.layout().addWidget(self.lineEdit_n_data, 2, 2)
         self.make_toolbar()
-        place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
+        if manual_plot_position:
+            place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
+        else:
+            place_widget(self)
         self.adjustSize()
         self.change_maxlen()
 
