@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>470</width>
-    <height>350</height>
+    <height>435</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -82,13 +82,20 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item row="1" column="1" colspan="3">
-       <widget class="QLineEdit" name="lineEdit_title"/>
+      <item row="4" column="3">
+       <widget class="QLineEdit" name="lineEdit_ylabel2"/>
       </item>
-      <item row="6" column="0" colspan="2">
-       <widget class="QCheckBox" name="checkBox_ylog">
+      <item row="3" column="0" colspan="4">
+       <widget class="QCheckBox" name="checkBox_xlog">
         <property name="text">
-         <string>y logarithmic?</string>
+         <string>x logarithmic?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string># points:</string>
         </property>
        </widget>
       </item>
@@ -99,17 +106,55 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
-       <widget class="QLineEdit" name="lineEdit_ylabel"/>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_6">
+      <item row="9" column="0">
+       <widget class="QLabel" name="label_top_left_x">
+        <property name="toolTip">
+         <string>Set the exact x coordinate of the top left corner of the plot window in pixels (min 0)</string>
+        </property>
         <property name="text">
-         <string># points:</string>
+         <string>Top Left X</string>
         </property>
        </widget>
       </item>
-      <item row="9" column="2">
+      <item row="9" column="1">
+       <widget class="QLineEdit" name="lineEdit_top_left_x">
+        <property name="toolTip">
+         <string>Minimum is 0 pixels</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="3">
+       <widget class="QLineEdit" name="lineEdit_plot_width">
+        <property name="toolTip">
+         <string>Minimum is 430 pixels</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0">
+       <widget class="QLabel" name="label_top_left_y">
+        <property name="toolTip">
+         <string>Set the exact y coordinate of the top left corner of the plot window in pixels (min 0)</string>
+        </property>
+        <property name="text">
+         <string>Top  Left Y</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="3">
+       <widget class="QLineEdit" name="lineEdit_plot_height">
+        <property name="toolTip">
+         <string>Minimum is 126 pixels</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkBox_ylog">
+        <property name="text">
+         <string>y logarithmic?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="2">
        <widget class="QLabel" name="label_plot_height">
         <property name="toolTip">
          <string>Set the height of the plot window in pixels (min 126)</string>
@@ -119,10 +164,72 @@
         </property>
        </widget>
       </item>
-      <item row="9" column="3">
-       <widget class="QLineEdit" name="lineEdit_plot_height">
+      <item row="0" column="1" colspan="3">
+       <widget class="QLineEdit" name="lineEdit_nPoints"/>
+      </item>
+      <item row="7" column="0" colspan="4">
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="3">
+       <widget class="QLineEdit" name="lineEdit_xlabel"/>
+      </item>
+      <item row="1" column="1" colspan="3">
+       <widget class="QLineEdit" name="lineEdit_title"/>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="lineEdit_ylabel"/>
+      </item>
+      <item row="10" column="1">
+       <widget class="QLineEdit" name="lineEdit_top_left_y">
         <property name="toolTip">
-         <string>Minimum is 126 pixels</string>
+         <string>Minimum is 0 pixels</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>x-label:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0">
+       <widget class="QCheckBox" name="checkBox_show_in_browser">
+        <property name="toolTip">
+         <string>Check this to make the plot available via the browser.
+This will significantly increase the protocol startup time!
+Reachable under 127.0.0.1:Port</string>
+        </property>
+        <property name="text">
+         <string>Show plot in browser</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="2">
+       <widget class="QLabel" name="label_plot_width">
+        <property name="toolTip">
+         <string>Set the width of the plot window in pixels (min 430)</string>
+        </property>
+        <property name="text">
+         <string>Plot Width</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2" colspan="2">
+       <widget class="QCheckBox" name="checkBox_ylog2">
+        <property name="text">
+         <string>y2 logarithmic?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>title:</string>
         </property>
        </widget>
       </item>
@@ -133,61 +240,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="3">
-       <widget class="QLineEdit" name="lineEdit_ylabel2"/>
-      </item>
-      <item row="9" column="1">
-       <widget class="QLineEdit" name="lineEdit_top_left_y">
-        <property name="toolTip">
-         <string>Minimum is 0 pixels</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="2">
-       <widget class="QLabel" name="label_plot_width">
-        <property name="toolTip">
-         <string>Set the width of the plot window in pixels (min 430)</string>
-        </property>
-        <property name="text">
-         <string>Plot Width</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="4">
-       <widget class="QCheckBox" name="checkBox_xlog">
-        <property name="text">
-         <string>x logarithmic?</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" colspan="3">
-       <widget class="QLineEdit" name="lineEdit_xlabel"/>
-      </item>
-      <item row="6" column="2" colspan="2">
-       <widget class="QCheckBox" name="checkBox_ylog2">
-        <property name="text">
-         <string>y2 logarithmic?</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" colspan="3">
-       <widget class="QLineEdit" name="lineEdit_nPoints"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>x-label:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="1">
-       <widget class="QLineEdit" name="lineEdit_top_left_x">
-        <property name="toolTip">
-         <string>Minimum is 0 pixels</string>
-        </property>
-       </widget>
-      </item>
-      <item row="10" column="0" colspan="4">
+      <item row="13" column="0" colspan="4">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -200,44 +253,36 @@
         </property>
        </spacer>
       </item>
-      <item row="8" column="3">
-       <widget class="QLineEdit" name="lineEdit_plot_width">
-        <property name="toolTip">
-         <string>Minimum is 430 pixels</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>title:</string>
-        </property>
-       </widget>
-      </item>
       <item row="8" column="0">
-       <widget class="QLabel" name="label_top_left_x">
+       <widget class="QCheckBox" name="checkBox_manual_plot_position">
         <property name="toolTip">
-         <string>Set the exact x coordinate of the top left corner of the plot window in pixels (min 0)</string>
+         <string>Check this to set the manual x&amp;y coordinates and the size of the plot window.</string>
         </property>
         <property name="text">
-         <string>Top Left X</string>
+         <string>Manual plot position</string>
         </property>
        </widget>
       </item>
-      <item row="9" column="0">
-       <widget class="QLabel" name="label_top_left_y">
+      <item row="12" column="0">
+       <widget class="QLabel" name="label_port">
         <property name="toolTip">
-         <string>Set the exact y coordinate of the top left corner of the plot window in pixels (min 0)</string>
+         <string>Port of the localhost to display the plot</string>
         </property>
         <property name="text">
-         <string>Top  Left Y</string>
+         <string>Port</string>
         </property>
        </widget>
       </item>
-      <item row="7" column="0" colspan="4">
-       <widget class="Line" name="line_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+      <item row="12" column="1">
+       <widget class="QSpinBox" name="spinBox_port">
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
+        <property name="maximum">
+         <number>65536</number>
+        </property>
+        <property name="value">
+         <number>8050</number>
         </property>
        </widget>
       </item>

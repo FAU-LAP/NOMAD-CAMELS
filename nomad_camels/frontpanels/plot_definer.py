@@ -56,6 +56,8 @@ class Plot_Info:
         top_left_y="",
         plot_width="",
         plot_height="",
+        checkbox_manual_plot_position = False,
+        checkbox_show_in_browser = False,
     ):
         self.plt_type = plt_type
         self.x_axis = x_axis
@@ -80,6 +82,9 @@ class Plot_Info:
         self.top_left_y = top_left_y
         self.plot_width = plot_width
         self.plot_height = plot_width
+        self.checkbox_manual_plot_position = checkbox_manual_plot_position
+        self.checkbox_show_in_browser = checkbox_show_in_browser
+        self.browser_port = None
         self.update_name()
 
     def update_name(self):
@@ -477,7 +482,7 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
             raise ValueError("Plot height is not set")
         if self.lineEdit_plot_height.text() and not self.lineEdit_plot_width.text():
             raise ValueError("Plot width is not set")
-
+        
         self.plot_data.update_name()
         return super().get_data()
 
@@ -513,6 +518,10 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.lineEdit_n_data_points.setText(str(self.plot_data.maxlen))
         self.load_data()
         self.plot_data.update_name()
+        # Connect on set event of the checkbox to hide the manual position elements
+        self.checkBox_manual_plot_position_2d.stateChanged.connect(self.hide_show_manual_position)
+        # Connect on set event of the checkbox to hide the show in plot elements
+        self.checkBox_show_in_browser.stateChanged.connect(self.hide_show_show_in_browser)
 
     def get_data(self):
         """ """
@@ -558,6 +567,10 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         else:
             self.plot_data.plot_height = ""
 
+        self.plot_data.checkbox_manual_plot_position = self.checkBox_manual_plot_position_2d.isChecked()
+        self.plot_data.checkbox_show_in_browser = self.checkBox_show_in_browser.isChecked()
+        self.plot_data.browser_port = self.spinBox_port.value()
+
         # Check to see if only x or y is set and raise error
         if self.lineEdit_top_left_x.text() and not self.lineEdit_top_left_y.text():
             raise ValueError("Plot y position is not set")
@@ -568,10 +581,39 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
             raise ValueError("Plot height is not set")
         if self.lineEdit_plot_height.text() and not self.lineEdit_plot_width.text():
             raise ValueError("Plot width is not set")
-
+        
         self.plot_data.update_name()
         return super().get_data()
 
+    def hide_show_manual_position(self):
+        if self.checkBox_manual_plot_position_2d.isChecked():
+            self.label_top_left_x.setHidden(False)
+            self.lineEdit_top_left_x.setHidden(False)
+            self.label_top_left_y.setHidden(False)
+            self.lineEdit_top_left_y.setHidden(False)
+            self.label_plot_width.setHidden(False)
+            self.lineEdit_plot_width.setHidden(False)
+            self.label_plot_height.setHidden(False)
+            self.lineEdit_plot_height.setHidden(False)
+        else:
+            self.label_top_left_x.setHidden(True)
+            self.lineEdit_top_left_x.setHidden(True)
+            self.label_top_left_y.setHidden(True)
+            self.lineEdit_top_left_y.setHidden(True)
+            self.label_plot_width.setHidden(True)
+            self.lineEdit_plot_width.setHidden(True)
+            self.label_plot_height.setHidden(True)
+            self.lineEdit_plot_height.setHidden(True)
+
+    def hide_show_show_in_browser(self):
+        if self.checkBox_show_in_browser.isChecked():
+            self.label_port.setHidden(False)
+            self.spinBox_port.setHidden(False)
+        else:
+            self.label_port.setHidden(True)
+            self.spinBox_port.setHidden(True)
+    
+    
     def load_data(self):
         """ """
         if hasattr(self.plot_data, "top_left_x"):
@@ -582,6 +624,29 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
             self.lineEdit_plot_width.setText(str(self.plot_data.plot_width))
         if hasattr(self.plot_data, "plot_height"):
             self.lineEdit_plot_height.setText(str(self.plot_data.plot_height))
+        if hasattr(self.plot_data, "checkbox_manual_plot_position"):
+            self.checkBox_manual_plot_position_2d.setChecked(
+                self.plot_data.checkbox_manual_plot_position
+            )
+        else:
+            self.checkBox_manual_plot_position_2d.setChecked(False)
+        if hasattr(self.plot_data, "checkbox_show_in_browser"):
+            self.checkBox_show_in_browser.setChecked(
+                self.plot_data.checkbox_show_in_browser
+            )
+        else:
+            self.checkBox_show_in_browser.setChecked(False)
+
+        if hasattr(self.plot_data, "browser_port") and self.plot_data.browser_port:
+            try:
+                port = int(self.plot_data.browser_port)
+            except ValueError:
+                port = 8050
+            self.spinBox_port.setValue(port)
+        else:
+            self.spinBox_port.setValue(8050)
+        self.hide_show_manual_position()
+        self.hide_show_show_in_browser()
 
 
 class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
@@ -612,6 +677,12 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         # self.plot_change()
         self.fit_change()
 
+        # Connect on set event of the checkbox to hide the manual position elements
+        self.checkBox_manual_plot_position.stateChanged.connect(self.hide_show_manual_position)
+        # Connect on set event of the checkbox to hide the show in browser elements
+        self.checkBox_show_in_browser.stateChanged.connect(self.hide_show_show_in_browser)
+
+
     # def plot_change(self):
     #     """ """
     #     self.plotting_group.setEnabled(self.checkBox_plot.isChecked())
@@ -638,6 +709,29 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
             self.lineEdit_plot_width.setText(str(self.plot_data.plot_width))
         if hasattr(self.plot_data, "plot_height"):
             self.lineEdit_plot_height.setText(str(self.plot_data.plot_height))
+        if hasattr(self.plot_data, "checkbox_manual_plot_position"):
+            self.checkBox_manual_plot_position.setChecked(
+                self.plot_data.checkbox_manual_plot_position
+            )
+        else:
+            self.checkBox_manual_plot_position.setChecked(False)
+        if hasattr(self.plot_data, "checkbox_show_in_browser"):
+            self.checkBox_show_in_browser.setChecked(
+                self.plot_data.checkbox_show_in_browser
+            )
+        else:
+            self.checkBox_show_in_browser.setChecked(False)
+
+        if hasattr(self.plot_data, "browser_port") and self.plot_data.browser_port:
+            try:
+                port = int(self.plot_data.browser_port)
+            except ValueError:
+                port = 8050
+            self.spinBox_port.setValue(port)
+        else:
+            self.spinBox_port.setValue(8050)
+        self.hide_show_manual_position()
+        self.hide_show_show_in_browser()
         self.plot_data.update_name()
 
     def get_data(self):
@@ -682,8 +776,6 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
 
         if self.lineEdit_top_left_y.text():
             self.plot_data.top_left_y = max(int(self.lineEdit_top_left_y.text()), 0)
-            
-
         else:
             self.plot_data.top_left_y = ""
 
@@ -710,6 +802,13 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         if self.lineEdit_plot_height.text() and not self.lineEdit_plot_width.text():
             raise ValueError("Plot width is not set")
 
+        # Get the checkBox_manual_plot_position value
+        self.plot_data.checkbox_manual_plot_position = self.checkBox_manual_plot_position.isChecked()
+        self.plot_data.checkbox_show_in_browser = self.checkBox_show_in_browser.isChecked()
+        self.plot_data.browser_port = self.spinBox_port.value()
+
+
+        
         if not isinstance(self.fit_definer, QLabel):
             self.fit_definer.get_data()
         self.plot_data.update_name()
@@ -720,6 +819,35 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
             fit.x = self.plot_data.x_axis
         return super().get_data()
 
+    def hide_show_manual_position(self):
+        if self.checkBox_manual_plot_position.isChecked():
+            self.label_top_left_x.setHidden(False)
+            self.lineEdit_top_left_x.setHidden(False)
+            self.label_top_left_y.setHidden(False)
+            self.lineEdit_top_left_y.setHidden(False)
+            self.label_plot_width.setHidden(False)
+            self.lineEdit_plot_width.setHidden(False)
+            self.label_plot_height.setHidden(False)
+            self.lineEdit_plot_height.setHidden(False)
+        else:
+            self.label_top_left_x.setHidden(True)
+            self.lineEdit_top_left_x.setHidden(True)
+            self.label_top_left_y.setHidden(True)
+            self.lineEdit_top_left_y.setHidden(True)
+            self.label_plot_width.setHidden(True)
+            self.lineEdit_plot_width.setHidden(True)
+            self.label_plot_height.setHidden(True)
+            self.lineEdit_plot_height.setHidden(True)
+
+    def hide_show_show_in_browser(self):
+        if self.checkBox_show_in_browser.isChecked():
+            self.label_port.setHidden(False)
+            self.spinBox_port.setHidden(False)
+        else:
+            self.label_port.setHidden(True)
+            self.spinBox_port.setHidden(True)
+
+    
     def fit_change(self):
         """ """
         if not isinstance(self.fit_definer, QLabel):
