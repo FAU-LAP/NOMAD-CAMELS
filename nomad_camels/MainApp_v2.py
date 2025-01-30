@@ -1609,7 +1609,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         user = self.get_user_name_data()[0]
         sample = self.get_sample_name_data()[0]
         protocol = self.protocols_dict[protocol_name]
-        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.filename or "data"}.nxs'
+        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.filename or 'data'}.nxs"
         savepath = os.path.normpath(savepath)
         while not os.path.exists(savepath):
             savepath = os.path.dirname(savepath)
@@ -1697,7 +1697,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_module.protocol_step_information[
                 "protocol_stepper_signal"
             ] = self.protocol_stepper_signal
-            plots, subs, _ = self.protocol_module.create_plots(self.run_engine)
+            plots, subs, _, _ = self.protocol_module.create_plots(self.run_engine)
             for plot in plots:
                 self.add_to_plots(plot)
             device_list = protocol.get_used_devices()
@@ -1925,7 +1925,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
             user, userdata = self.get_user_name_data()
             sample, sampledata = self.get_sample_name_data()
-            savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/watchdog_execution.nxs'
+            savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/watchdog_execution.nxs"
             build_from_path(
                 watchdog.execute_at_condition,
                 save_path=savepath,
@@ -2164,7 +2164,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol.tags = self.flow_layout.get_all_tags()
         user, userdata = self.get_user_name_data()
         sample, sampledata = self.get_sample_name_data()
-        savepath = f'{self.preferences["meas_files_path"]}/{user}/{sample}/{protocol.session_name}/{protocol.filename or protocol.session_name or "data"}.nxs'
+        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.session_name}/{protocol.filename or protocol.session_name or 'data'}.nxs"
         self.protocol_savepath = savepath
         # IMPORT protocol_builder only if needed
         from nomad_camels.bluesky_handling import protocol_builder
