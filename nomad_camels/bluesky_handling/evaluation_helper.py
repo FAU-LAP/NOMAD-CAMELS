@@ -98,7 +98,7 @@ class Evaluator(CallbackBase):
         namespace.
         See bluesky's documentation for more information.
         """
-        self.namespace["StartTime"] = time.time()
+        self.namespace["StartTime"] = doc["time"]
         super().start(doc)
 
     def event(self, doc):
@@ -110,10 +110,9 @@ class Evaluator(CallbackBase):
         """
         self.namespace["time"] = doc["time"]
         self.namespace.update(doc["data"])
-        # self.update_namespace()
         self.last_update = doc["time"]
 
-    def update_namespace(self):
+    def update_namespace(self,):
         """
         Updates the namespace with the `add_namespace` dictionary. Since this is
         exactly the given namespace from __init__, it can be easily updated from
@@ -121,7 +120,9 @@ class Evaluator(CallbackBase):
         Also the variable 'ElapsedTime' is added to the namespace.
         """
         self.namespace.update(self.add_namespace)
-        self.namespace["ElapsedTime"] = time.time() - self.namespace["StartTime"]
+        self.namespace["ElapsedTime"] = (
+            self.namespace["time"] - self.namespace["StartTime"]
+        )
 
     def is_to_date(self, t):
         """
