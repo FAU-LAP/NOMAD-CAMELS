@@ -55,9 +55,9 @@ standard_string = "import numpy as np\n"
 standard_string += "import importlib\n"
 standard_string += "import bluesky\n"
 standard_string += "import ophyd\n"
-standard_string += (
-    "from nomad_camels.bluesky_handling.run_engine_overwrite import RunEngineOverwrite\n"
-)
+standard_string += "import dash\n"
+standard_string += "import requests\n"
+standard_string += "from nomad_camels.bluesky_handling.run_engine_overwrite import RunEngineOverwrite\n"
 standard_string += "from bluesky.callbacks.best_effort import BestEffortCallback\n"
 standard_string += "import bluesky.plan_stubs as bps\n"
 standard_string += "import databroker\n"
@@ -66,6 +66,7 @@ standard_string += "from PySide6.QtCore import QCoreApplication, QThread\n"
 standard_string += "import datetime\n"
 standard_string += "import subprocess\n"
 standard_string += "from nomad_camels.main_classes import plot_pyqtgraph, list_plot\n"
+standard_string += "from nomad_camels.main_classes import plot_plotly\n"
 standard_string += "from nomad_camels.utility import theme_changing\n"
 standard_string += (
     "from nomad_camels.bluesky_handling.evaluation_helper import Evaluator\n"
@@ -219,7 +220,7 @@ def build_protocol(
     variable_string = "\nnamespace = {}\n"
     variable_string += "all_fits = {}\n"
     variable_string += "plots = []\n"
-    # variable_string += "plot_data = []\n"
+    variable_string += "plots_plotly = []\n"
     variable_string += "boxes = {}\n"
     variable_string += "live_windows = []\n"
     variable_string += "app = None\n"
@@ -254,6 +255,7 @@ def build_protocol(
         variable_string += f"{var} = {val}\n"
         variable_string += f'namespace["{var}"] = {var}\n'
     variable_string += f'\n{protocol.name}_variable_signal = variable_reading.Variable_Signal(name="{protocol.name}_variable_signal", variables_dict=namespace)\n'
+    variable_string += 'eva = Evaluator(namespace=namespace)\n'
     # this handles all the used devices
     for dev in protocol.get_used_devices():
         device = variables_handling.devices[dev]
