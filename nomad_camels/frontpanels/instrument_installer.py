@@ -2,8 +2,6 @@ import re
 import subprocess
 import importlib
 
-import pkg_resources
-
 from nomad_camels.gui.device_installer import Ui_Form
 from PySide6.QtWidgets import (
     QWidget,
@@ -202,14 +200,14 @@ class Info_Widget(QSplitter):
             self.license_text.clear()
             try:
                 text = ""
-                for p in pkg_resources.working_set:
-                    if not p.key.startswith(
+                for dist in importlib_metadata.distributions():
+                    if not dist.metadata["Name"].startswith(
                         f'nomad-camels-driver-{instr.replace("_", "-")}'
                     ):
                         continue
-                    lic = p.get_metadata_lines("LICENSE.txt")
-                    for l in lic:
-                        text += f"{l}\n"
+                    lic = dist.read_text("LICENSE.txt")
+                    if lic:
+                        text += f"{lic}\n"
                     break
                 if not text:
                     raise Exception("")

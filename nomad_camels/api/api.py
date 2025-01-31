@@ -140,6 +140,8 @@ async def validate_credentials(
 
 
 class FastapiThread(QThread):
+    """Runs FastAPI inside a PySide6 QThread to avoid blocking the GUI."""
+
     # Define signals for communicating with the main window
     # Signal to start a protocol
     start_protocol_signal = Signal(str, str, object)
@@ -170,49 +172,50 @@ class FastapiThread(QThread):
         self.protocol_runs = {}  # Dictionary to store the protocol runs
         self.app = None
         self.server = None
-        self.loop = None
-
-    async def start_server_async(self, app):
-        """Asynchronously start the Uvicorn server"""
-        self.server = uvicorn.Server(
-            config=uvicorn.Config(
-                app=app,
-                host="0.0.0.0",
-                port=int(self.api_port),
-                log_level="info",
-                reload=False,
-                loop="asyncio",
-                workers=1,
-                lifespan="on",
-                install_signal_handlers=False,  # Prevent Uvicorn from handling signals
-            )
-        )
-        await self.server.serve()
+        self.loop = None  # Custom asyncio loop
 
     def run(self):
-        """Run the FastAPI server within an asyncio event loop"""
+        """Start FastAPI inside an asyncio event loop running in a separate thread."""
+        self.app = FastAPI()  # Initialize FastAPI app
+        self.define_routes(self.app)  # Define the API routes
+
+        self.loop = (
+            asyncio.new_event_loop()
+        )  # Create a new asyncio loop for this thread
+        asyncio.set_event_loop(self.loop)
+
+        # Start Uvicorn as an asyncio task
+        self.loop.run_until_complete(self.start_server())
+
+    async def start_server(self):
+        """Starts the FastAPI server using Uvicorn inside an async loop."""
+        config = uvicorn.Config(
+            self.app,
+            host="127.0.0.1",
+            port=self.api_port,
+            log_level="info",
+            reload=False,
+            workers=1,  # Ensure only one worker to avoid multi-thread issues
+        )
+        self.server = uvicorn.Server(config)
+
         try:
-            self.app = FastAPI()  # Initialize the FastAPI app
-            self.define_routes(self.app)  # Define API routes
-            self.loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(self.loop)
-            self.loop.run_until_complete(self.start_server_async(self.app))
+            await self.server.serve()
         except Exception as e:
-            print(f"Error in FastapiThread: {e}")
+            print(f"Error starting FastAPI: {e}")
             self.port_error_signal.emit(f"Failed to start server: {e}")
 
     def stop_server(self):
-        """Gracefully stop the Uvicorn server and the event loop"""
-        if self.server:
-            # Signal Uvicorn to shut down
-            self.server.should_exit = True
-            # Stop the asyncio event loop
-            if self.loop:
-                self.loop.call_soon_threadsafe(self.loop.stop)
-        # Quit the QThread
-        self.quit()
-        # Wait for the thread to finish
-        self.wait()
+        """Safely shuts down the FastAPI server running inside the QThread."""
+        if self.server is not None:
+            print("Stopping FastAPI server...")
+            self.server.should_exit = True  # Signals Uvicorn to stop
+
+        # if self.loop is not None:
+        #     self.loop.call_soon_threadsafe(self.loop.stop)  # Stop the event loop safely
+
+        self.quit()  # Quit the QThread
+        self.wait()  # Ensure the thread has fully stopped
 
     def define_routes(self, app: FastAPI):
         """Define all FastAPI routes within the server thread"""
