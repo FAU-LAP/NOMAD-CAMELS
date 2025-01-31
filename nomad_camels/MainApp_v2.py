@@ -2300,18 +2300,3 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "The FastAPI server failed to start.\nMake sure the Port you entered is correct.",
                 "FastAPI Server Error",
             )
-
-
-if __name__ == "__main__":
-    from PySide6.QtCore import QCoreApplication
-    from PySide6.QtWidgets import QApplication
-    from nomad_camels.utility import exception_hook
-
-    app = QCoreApplication.instance()
-    if app is None:
-        # sys.argv += ['-platform', 'windows:darkmode=1']
-        app = QApplication(sys.argv)
-    sys.excepthook = exception_hook.exception_hook
-    main_window = MainWindow()
-    main_window.show()
-    app.exec()
