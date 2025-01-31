@@ -94,6 +94,7 @@ class Plot_Info:
         plot_height="",
         checkbox_manual_plot_position=False,
         checkbox_show_in_browser=False,
+        browser_port=8050,
     ):
         self.plt_type = plt_type
         self.x_axis = x_axis
@@ -120,7 +121,7 @@ class Plot_Info:
         self.plot_height = plot_height
         self.checkbox_manual_plot_position = checkbox_manual_plot_position
         self.checkbox_show_in_browser = checkbox_show_in_browser
-        self.browser_port = None
+        self.browser_port = browser_port
 
         self.update_name()
 
