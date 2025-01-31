@@ -535,7 +535,6 @@ def run_dash_app_2d(
       with subprocess execution.
     """
     import plotly.express as px
-    import pandas as pd
 
     # Store x, y, z data in a dictionary of lists.
     data = {x_name: [], y_name: [], z_name: []}
