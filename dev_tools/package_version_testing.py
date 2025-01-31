@@ -288,7 +288,12 @@ def run_test(test_command, test_exe):
 # 3. Find the actual min & max versions that pass
 ###############################################################################
 def find_min_version_going_down(
-    python_executable, dependency, broad_spec, other_constraints=None, test_command=None
+    python_executable,
+    dependency,
+    broad_spec,
+    other_constraints=None,
+    test_command=None,
+    check_below_valid=False,
 ):
     """
     1) Get all available versions of `dependency`.
@@ -320,7 +325,19 @@ def find_min_version_going_down(
 
     # Find min: earliest version that passes
     min_version = None
-    for v in valid_versions[::-1]:
+    if not check_below_valid:
+        for v in valid_versions[::-1]:
+            logging.info(
+                f"Testing {dependency}=={v} on {python_executable} ... (min candidate)"
+            )
+            if not test_dependency_version(
+                python_executable, dependency, v, other_constraints, test_command
+            ):
+                logging.info(f"  --> FAILED at {v}")
+                break
+            min_version = v
+    else:
+        v = valid_versions[0]
         logging.info(
             f"Testing {dependency}=={v} on {python_executable} ... (min candidate)"
         )
@@ -328,14 +345,45 @@ def find_min_version_going_down(
             python_executable, dependency, v, other_constraints, test_command
         ):
             logging.info(f"  --> FAILED at {v}")
-            break
+            return find_min_version_going_up(
+                python_executable,
+                dependency,
+                broad_spec,
+                other_constraints,
+                test_command,
+            )
         min_version = v
+        broad_spec = f"<{v}"
+        spec = SpecifierSet(broad_spec)
+        # Filter only those that are valid and in the broad spec
+        valid_versions = []
+        for v_str in all_versions:
+            try:
+                v_obj = Version(v_str)
+                if v_obj in spec:
+                    valid_versions.append(v_str)
+            except:
+                pass
+        for v in valid_versions:
+            logging.info(
+                f"Testing {dependency}=={v} on {python_executable} ... (min candidate)"
+            )
+            if not test_dependency_version(
+                python_executable, dependency, v, other_constraints, test_command
+            ):
+                logging.info(f"  --> FAILED at {v}")
+                break
+            min_version = v
 
     return min_version
 
 
 def find_max_version_going_down(
-    python_executable, dependency, broad_spec, other_constraints=None, test_command=None
+    python_executable,
+    dependency,
+    broad_spec,
+    other_constraints=None,
+    test_command=None,
 ):
     """
     1) Get all available versions of `dependency`.
@@ -429,33 +477,34 @@ def main():
     check the min and max supported versions of each dependency in `dependencies`.
     """
     python_versions = [
-        r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.11.9\python.exe",
-        r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.12.4\python.exe",
-        r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.10.11\python.exe",
+        # r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.11.9\python.exe",
+        # r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.12.4\python.exe",
+        # r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.10.11\python.exe",
+        r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.9.13\python.exe"
     ]  # Adjust for your environment
     # Suppose we want to discover min/max for 'requests' and 'pydantic'
     # under the broad constraints below:
     dependencies = {
-        "PySide6": ">=6.6.0",
-        "numpy": ">=1.23.0",
-        "bluesky": ">=1.9.0",
-        "ophyd": ">=1.6.2",
-        "lmfit": ">=1.0.2",
-        "pyyaml": ">=6.0",
-        "requests": ">=2.26.0",
-        "databroker": ">=1.2.0",
-        "setuptools": ">=54.2.0",
-        "matplotlib": ">=3.6.2",
-        "pyqtgraph": ">=0.13.3",
-        "fastapi": ">=0.110.1",
-        "uvicorn": ">=0.19.0",
-        "httpx": ">=0.28.1",
-        "pytest": ">=7.3.2",
-        "pytest-qt": ">=4.2.0",
-        "pytest-order": ">=0.7.1",
-        "pytest-mock": ">=0.4.0",
-        "pytest-timeout": ">=1.3.1",
-        "pyvisa": ">=1.6.0",
+        # "PySide6": ">=6.6.0",
+        # "numpy": ">=1.23.0",
+        # "bluesky": ">=1.9.0",
+        # "ophyd": ">=1.6.2",
+        # "lmfit": ">=1.0.2",
+        # "pyyaml": ">=6.0",
+        # "requests": ">=2.26.0",
+        # "databroker": ">=1.2.0",
+        # "setuptools": ">=54.2.0",
+        # "matplotlib": ">=3.6.2",
+        # "pyqtgraph": ">=0.13.3",
+        # "fastapi": ">=0.110.1",
+        # "uvicorn": ">=0.19.0",
+        # "httpx": ">=0.28.1",
+        # "pytest": ">=7.3.2",
+        # "pytest-qt": ">=4.2.0",
+        # "pytest-order": ">=0.7.1",
+        # "pytest-mock": ">=0.4.0",
+        # "pytest-timeout": ">=1.3.1",
+        "pyvisa": ">=1.6.2",
         "pyvisa-py": ">=0.1",
     }
 
@@ -463,27 +512,27 @@ def main():
     # so that they get installed in each environment as well. For instance:
     other_constraints = [
         "suitcase-nomad-camels-hdf5>=0.4.4",
-        "PySide6>=6.6.0",
-        "numpy>=1.23.0",
-        "bluesky>=1.9.0",
-        "ophyd>=1.6.2",
-        "lmfit>=1.0.2",
-        "pyyaml>=6.0",
-        "requests>=2.26.0",
-        "databroker>=1.2.0",
-        "setuptools>=54.2.0",
-        "matplotlib>=3.6.2",
-        "pyqtgraph>=0.13.3",
-        "fastapi>=0.110.1",
-        "uvicorn>=0.19.0",
-        "httpx>=0.28.1",
-        "pytest>=7.3.2",
-        "pytest-qt>=4.2.0",
-        "pytest-order>=0.7.1",
-        "pytest-mock>=0.4.0",
-        "pytest-timeout>=1.3.1",
-        "pyvisa>=1.6.0",
-        "pyvisa-py>=0.1",
+        "PySide6",
+        "numpy",
+        "bluesky",
+        "ophyd",
+        "lmfit",
+        "pyyaml",
+        "requests",
+        "databroker",
+        "setuptools",
+        "matplotlib",
+        "pyqtgraph",
+        "fastapi",
+        "uvicorn",
+        "httpx",
+        "pytest",
+        "pytest-qt",
+        "pytest-order",
+        "pytest-mock",
+        "pytest-timeout",
+        "pyvisa",
+        "pyvisa-py",
     ]
     # In a real scenario, you might want to exclude the package you're testing from `other_constraints`
     # or maintain a more granular matrix. This is just an example for demonstration.
@@ -497,12 +546,13 @@ def main():
         logging.info(f"Testing on {py_exe}")
         print(f"\n===== Testing on {py_exe} =====\n")
         for dep, broad_spec in dependencies.items():
-            min_v = find_min_version_going_up(
+            min_v = find_min_version_going_down(
                 python_executable=py_exe,
                 dependency=dep,
                 broad_spec=broad_spec,
                 other_constraints=other_constraints,
                 test_command=test_command,
+                check_below_valid=True,
             )
             print(f"\nResult for {dep} on {py_exe}:")
             print(f"  Minimum passing version: {min_v}")
