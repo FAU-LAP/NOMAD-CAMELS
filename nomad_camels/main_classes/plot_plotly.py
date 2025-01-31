@@ -1,62 +1,34 @@
+import sys
+import os
+import threading
+import json
+import requests
+import numpy as np
+import lmfit
+
+# For running the Dash app in a separate process.
+from multiprocessing import Process, Event
+
+# Flask request is used to receive query parameters or JSON from POST/GET in the Dash server.
+from flask import request as flask_request
+
 # Import necessary Plotly components for creating and manipulating plots.
 from plotly import graph_objs as go
 # Subplots allow multiple traces with secondary y-axes, etc.
 from plotly.subplots import make_subplots
+
 # Core components for building Dash layout and interactive elements.
 from dash import dcc, html, Dash
 # For reactive callbacks in Dash (linking outputs to inputs).
 from dash.dependencies import Input, Output
 
-import sys
-import os
-import threading
-# For running the Dash app in a separate process.
-from multiprocessing import Process, Event, Manager
-import json
-# For substituting variable names in the fit model.
-from nomad_camels.utility.fit_variable_renaming import replace_name
-
 # Extend Python's module search path for the current file location.
 sys.path.append(os.path.dirname(__file__).split("nomad_camels")[0])
 
-import numpy as np
-# PySide6 is for Qt-based GUI components.
-from PySide6.QtCore import QThread
-from collections import deque
-
-from PySide6.QtWidgets import (
-    QWidget,
-    QGridLayout,
-    QPushButton,
-    QLabel,
-    QLineEdit,
-    QMenuBar,
-    QGraphicsSceneMouseEvent,
-    QTableWidgetItem,
-    QComboBox,
-    QColorDialog,
-    QApplication,
-)
-from PySide6.QtCore import Signal, QObject, QEvent, Qt, QCoreApplication
-from PySide6.QtGui import QIcon, QColor
-import PySide6
-import pyqtgraph as pg
-from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
-
-import lmfit
-from importlib import resources
-from nomad_camels import graphics
-from bluesky.callbacks.core import get_obj_fields, CallbackBase
-
-from nomad_camels.gui.plot_options import Ui_Plot_Options
+# For substituting variable names in the fit model.
 from nomad_camels.utility.fit_variable_renaming import replace_name
-from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
-from nomad_camels.main_classes.plot_widget import LiveFit_Eva
-from nomad_camels.utility.plot_placement import place_widget
 
-import requests
-# Flask request is used to receive query parameters or JSON from POST/GET in the Dash server.
-from flask import request as flask_request
+from bluesky.callbacks.core import CallbackBase
 
 # A predefined set of colors used for the plotly traces.
 default_colors = [
