@@ -4,7 +4,10 @@ from ophyd import Signal, SignalRO, Device
 import pyvisa
 import re
 
-rm = pyvisa.ResourceManager()
+try:
+    rm = pyvisa.ResourceManager()
+except OSError:
+    rm = pyvisa.ResourceManager("@py")
 open_resources = {}
 
 
