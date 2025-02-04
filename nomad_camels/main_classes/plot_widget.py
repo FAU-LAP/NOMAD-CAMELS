@@ -6,6 +6,7 @@ import lmfit
 from collections import deque
 
 import matplotlib
+import requests
 
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
@@ -409,10 +410,14 @@ class LiveFit_Eva(LiveFit):
         name="",
         params=None,
         stream_name="primary",
+        show_in_browser=False,
+        web_port=None,
     ):
         super().__init__(
             model=model, y=y, independent_vars=independent_vars, init_guess=init_guess
         )
+        self.web_port = web_port
+        self.show_in_browser = show_in_browser
         self.eva = evaluator
         self.name = f"{name}_{stream_name}"
         self.params = params
@@ -519,6 +524,13 @@ class LiveFit_Eva(LiveFit):
         for d in self.additional_data:
             self.additional_data[d].append(self.eva.eval(d))
         self.__stale = False
+        if self.show_in_browser:
+            try:
+                request = requests.post(f"http://127.0.0.1:{self.web_port}/fit_result", json={"best_fit": self.result.best_fit.tolist(), "name": self.name, "fit_params": self.result.best_values, "model_name":self.model.name, "y_axis_name":self.y})
+                if request.status_code != 200:
+                    print(f"Error: {request.status_code}")
+            except requests.exceptions.ConnectionError:
+                print("ConnectionError. Failed to send fit result to browser.")
         # self.ophyd_fit.update_data(self.result, self.timestamp)
         self.parent_plot.fit_has_result()
 

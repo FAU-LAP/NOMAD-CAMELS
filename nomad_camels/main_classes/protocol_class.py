@@ -272,7 +272,7 @@ class Measurement_Protocol:
     def get_plan_string(self):
         """Get the string for the protocol-plan, including the loopsteps."""
         variables_handling.current_protocol = self
-        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, eva=None, stream_name="primary", runEngine=None):\n'
+        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, stream_name="primary", runEngine=None):\n'
         prot_vars = dict(variables_handling.protocol_variables)
         if "StartTime" in prot_vars:
             prot_vars.pop("StartTime")
@@ -289,17 +289,16 @@ class Measurement_Protocol:
                 continue
             plan_string += step.get_protocol_string(n_tabs=1)
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
-        plan_string += "\teva = Evaluator(namespace=namespace)\n"
         plan_string += "\tsub_eva = runEngine.subscribe(eva)\n"
         plan_string += "\tyield from bps.open_run(md=md)\n"
         if self.use_end_protocol:
             plan_string += "\ttry:\n"
-            plan_string += f'\t\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name, runEngine)\n'
+            plan_string += f'\t\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, stream_name, runEngine)\n'
             plan_string += "\t\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
             plan_string += "\tfinally:\n"
             plan_string += "\t\tyield from ending_steps(runEngine, devs)\n"
         else:
-            plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name, runEngine)\n'
+            plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, stream_name, runEngine)\n'
             plan_string += "\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
         check_live_windows = False
         if self.allow_live_comments:
