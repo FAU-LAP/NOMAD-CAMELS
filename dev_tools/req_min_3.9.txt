@@ -21,3 +21,5 @@ pytest-timeout==1.3.1
 qt-material==2.12
 pyvisa==1.12.0
 pyvisa-py==0.5.3
+plotly==5.0.0
+dash==2.0.0
