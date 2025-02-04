@@ -25,7 +25,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Helping Packages" href="helping_packages.html" />
+    <link rel="next" title="nomad_camels_toolbox package" href="nomad_camels_toolbox.html" />
     <link rel="prev" title="nomad_camels.ui_widgets package" href="nomad_camels.ui_widgets.html" /> 
 </head>
 
@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/nomad_camels_toolbox.html">Evaluation of the Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/faq/faq.html">FAQ</a></li>
 </ul>
@@ -231,6 +232,7 @@
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.utility.update_camels.get_latest_version"><code class="docutils literal notranslate"><span class="pre">get_latest_version()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.utility.update_camels.get_version"><code class="docutils literal notranslate"><span class="pre">get_version()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.utility.update_camels.question_message_box"><code class="docutils literal notranslate"><span class="pre">question_message_box()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.utility.update_camels.read_readme_from_metadata"><code class="docutils literal notranslate"><span class="pre">read_readme_from_metadata()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.utility.update_camels.restart_camels"><code class="docutils literal notranslate"><span class="pre">restart_camels()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.utility.update_camels.show_release_notes"><code class="docutils literal notranslate"><span class="pre">show_release_notes()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.utility.update_camels.update_camels"><code class="docutils literal notranslate"><span class="pre">update_camels()</span></code></a></li>
@@ -278,6 +280,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels_toolbox.html">nomad-camels-toolbox</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
 <li class="toctree-l1"><a class="reference internal" href="drivers.html">drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
@@ -1269,7 +1272,7 @@ slightly shifted</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.utility.plot_placement.place_widget">
-<span class="sig-prename descclassname"><span class="pre">nomad_camels.utility.plot_placement.</span></span><span class="sig-name descname"><span class="pre">place_widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.utility.plot_placement.place_widget" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.utility.plot_placement.</span></span><span class="sig-name descname"><span class="pre">place_widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_left_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_left_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.utility.plot_placement.place_widget" title="Link to this definition"></a></dt>
 <dd><p>This function places the given <cite>widget</cite> on the next free spot on the screen.
 First all widgets are placed next to each other in a row, until one would be
 outside the screen, then the next row is started. If it would “flow out” the
@@ -1508,6 +1511,11 @@ The parent widget to be used for the message boxes.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.utility.update_camels.read_readme_from_metadata">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.utility.update_camels.</span></span><span class="sig-name descname"><span class="pre">read_readme_from_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">package_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.utility.update_camels.read_readme_from_metadata" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.utility.update_camels.restart_camels">
@@ -1900,7 +1908,7 @@ will be added around the value, otherwise nothing is done.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="nomad_camels.ui_widgets.html" class="btn btn-neutral float-left" title="nomad_camels.ui_widgets package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="helping_packages.html" class="btn btn-neutral float-right" title="Helping Packages" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="nomad_camels_toolbox.html" class="btn btn-neutral float-right" title="nomad_camels_toolbox package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

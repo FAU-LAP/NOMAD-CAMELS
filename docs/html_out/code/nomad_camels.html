@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/nomad_camels_toolbox.html">Evaluation of the Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/faq/faq.html">FAQ</a></li>
 </ul>
@@ -238,6 +239,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-nomad_camels">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels_toolbox.html">nomad-camels-toolbox</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
 <li class="toctree-l1"><a class="reference internal" href="drivers.html">drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
@@ -394,6 +396,7 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Value_Setter"><code class="docutils literal notranslate"><span class="pre">Value_Setter</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Value_Setter.hide_signal"><code class="docutils literal notranslate"><span class="pre">Value_Setter.hide_signal</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Value_Setter.set_signal"><code class="docutils literal notranslate"><span class="pre">Value_Setter.set_signal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Value_Setter.set_start_time"><code class="docutils literal notranslate"><span class="pre">Value_Setter.set_start_time()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Value_Setter.set_wait_time"><code class="docutils literal notranslate"><span class="pre">Value_Setter.set_wait_time()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Value_Setter.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Value_Setter.staticMetaObject</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Value_Setter.update_timer"><code class="docutils literal notranslate"><span class="pre">Value_Setter.update_timer()</span></code></a></li>
@@ -421,6 +424,7 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.read_wo_trigger"><code class="docutils literal notranslate"><span class="pre">read_wo_trigger()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.saving_function"><code class="docutils literal notranslate"><span class="pre">saving_function()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.simplify_configs_dict"><code class="docutils literal notranslate"><span class="pre">simplify_configs_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.trigger_and_read"><code class="docutils literal notranslate"><span class="pre">trigger_and_read()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.trigger_multi"><code class="docutils literal notranslate"><span class="pre">trigger_multi()</span></code></a></li>
 </ul>
 </li>
@@ -445,8 +449,9 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.protocol_builder.user_sample_string"><code class="docutils literal notranslate"><span class="pre">user_sample_string()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels.bluesky_handling.html#module-nomad_camels.bluesky_handling.special_plan_stubs">nomad_camels.bluesky_handling.special_plan_stubs module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.special_plan_stubs.trigger_and_read_devices"><code class="docutils literal notranslate"><span class="pre">trigger_and_read_devices()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.bluesky_handling.html#module-nomad_camels.bluesky_handling.run_engine_overwrite">nomad_camels.bluesky_handling.run_engine_overwrite module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.run_engine_overwrite.RunEngineOverwrite"><code class="docutils literal notranslate"><span class="pre">RunEngineOverwrite</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.run_engine_overwrite.get_nan_value"><code class="docutils literal notranslate"><span class="pre">get_nan_value()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.bluesky_handling.html#module-nomad_camels.bluesky_handling.variable_reading">nomad_camels.bluesky_handling.variable_reading module</a><ul>
@@ -698,11 +703,13 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_2D</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.get_data"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_2D.get_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.load_data"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_2D.load_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_2D.staticMetaObject</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_List</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List.get_data"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_List.get_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List.load_data"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_List.load_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_List.staticMetaObject</span></code></a></li>
 </ul>
 </li>
@@ -750,6 +757,7 @@
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.protocol_config.Protocol_Config.update_loop_step_order"><code class="docutils literal notranslate"><span class="pre">Protocol_Config.update_loop_step_order()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.protocol_config.filtered_menu_from_actions"><code class="docutils literal notranslate"><span class="pre">filtered_menu_from_actions()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.frontpanels.html#module-nomad_camels.frontpanels.settings_window">nomad_camels.frontpanels.settings_window module</a><ul>
@@ -1272,11 +1280,9 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.loop_steps.html#nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub"><code class="docutils literal notranslate"><span class="pre">Read_Channels_Config_Sub</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="nomad_camels.loop_steps.html#nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.build_channels_table"><code class="docutils literal notranslate"><span class="pre">Read_Channels_Config_Sub.build_channels_table()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.loop_steps.html#nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.load_data"><code class="docutils literal notranslate"><span class="pre">Read_Channels_Config_Sub.load_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.loop_steps.html#nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.read_type_changed"><code class="docutils literal notranslate"><span class="pre">Read_Channels_Config_Sub.read_type_changed()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.loop_steps.html#nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Read_Channels_Config_Sub.staticMetaObject</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="nomad_camels.loop_steps.html#nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.table_check_changed"><code class="docutils literal notranslate"><span class="pre">Read_Channels_Config_Sub.table_check_changed()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.loop_steps.html#nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.update_step_config"><code class="docutils literal notranslate"><span class="pre">Read_Channels_Config_Sub.update_step_config()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.loop_steps.html#nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.use_trigger"><code class="docutils literal notranslate"><span class="pre">Read_Channels_Config_Sub.use_trigger()</span></code></a></li>
 </ul>
@@ -2471,6 +2477,7 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.update_camels.get_latest_version"><code class="docutils literal notranslate"><span class="pre">get_latest_version()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.update_camels.get_version"><code class="docutils literal notranslate"><span class="pre">get_version()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.update_camels.question_message_box"><code class="docutils literal notranslate"><span class="pre">question_message_box()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.update_camels.read_readme_from_metadata"><code class="docutils literal notranslate"><span class="pre">read_readme_from_metadata()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.update_camels.restart_camels"><code class="docutils literal notranslate"><span class="pre">restart_camels()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.update_camels.show_release_notes"><code class="docutils literal notranslate"><span class="pre">show_release_notes()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.utility.html#nomad_camels.utility.update_camels.update_camels"><code class="docutils literal notranslate"><span class="pre">update_camels()</span></code></a></li>

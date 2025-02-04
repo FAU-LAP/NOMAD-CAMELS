@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/nomad_camels_toolbox.html">Evaluation of the Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/faq/faq.html">FAQ</a></li>
 </ul>
@@ -229,6 +230,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels_toolbox.html">nomad-camels-toolbox</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
 <li class="toctree-l1"><a class="reference internal" href="drivers.html">drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
@@ -1982,12 +1984,6 @@ the channels for this read.</p>
 a checkbox, whether to read them. Also there is a checkbox whether
 to simply read all available channels.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.build_channels_table">
-<span class="sig-name descname"><span class="pre">build_channels_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.build_channels_table" title="Link to this definition"></a></dt>
-<dd><p>This creates the table for all channels.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.load_data">
 <span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.load_data" title="Link to this definition"></a></dt>
 <dd><p>Putting the data from the loop_step into the widgets.</p>
@@ -2004,18 +2000,6 @@ not, enables it.</p>
 <dt class="sig sig-object py" id="nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.staticMetaObject">
 <span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Read_Channels_Config_Sub&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.staticMetaObject" title="Link to this definition"></a></dt>
 <dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.table_check_changed">
-<span class="sig-name descname"><span class="pre">table_check_changed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.table_check_changed" title="Link to this definition"></a></dt>
-<dd><p>If a checkbox inside the table is clicked, the value is
-stored into the loopstep.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>pos</strong></p>
-</dd>
-</dl>
-</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.loop_steps.read_channels.Read_Channels_Config_Sub.update_step_config">

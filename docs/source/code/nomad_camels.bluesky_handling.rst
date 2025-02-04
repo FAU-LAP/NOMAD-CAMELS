@@ -76,10 +76,10 @@ nomad\_camels.bluesky\_handling.protocol\_builder module
    :undoc-members:
    :show-inheritance:
 
-nomad\_camels.bluesky\_handling.special\_plan\_stubs module
------------------------------------------------------------
+nomad\_camels.bluesky\_handling.run\_engine\_overwrite module
+-------------------------------------------------------------
 
-.. automodule:: nomad_camels.bluesky_handling.special_plan_stubs
+.. automodule:: nomad_camels.bluesky_handling.run_engine_overwrite
    :members:
    :undoc-members:
    :show-inheritance:

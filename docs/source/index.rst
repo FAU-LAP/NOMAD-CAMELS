@@ -145,6 +145,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    Installing CAMELS <doc/installation/installation.md>
    Getting Started <doc/tutorials/quick_start.md>
    Protocol Steps Explained <doc/protocol_steps/protocol_steps_landing.md>
+   Evaluation of the Data <doc/nomad_camels_toolbox.md>
    Handling HDF5 Files <doc/handling_hdf5.md>
    FAQ <doc/faq/faq.md>
 
@@ -198,6 +199,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    :caption: Code Reference
 
    nomad-camels <code/nomad_camels.rst>
+   nomad-camels-toolbox <code/nomad_camels_toolbox.rst>
    helping packages <code/helping_packages.rst>
    drivers <code/drivers.rst>
    extensions <code/extensions.rst>

@@ -53,6 +53,8 @@ for package in camels_packages:
         if res.returncode != 0:
             logging.error(f"Failed to install {package}")
             continue
+    else:
+        res = subprocess.run(["pip", "install", "-U", package])
     # import the package
     importlib.import_module(package)
     # get the package path
@@ -76,6 +78,9 @@ for package in camels_packages:
         driver_str += f"   {package}\n"
     elif package.startswith("nomad_camels_extension"):
         extension_str += f"   {package}\n"
+    elif package == "nomad_camels_toolbox":
+        logging.info(f"{package} successful")
+        continue
     else:
         helping_str += f"   {package}\n"
     logging.info(f"{package} successful")

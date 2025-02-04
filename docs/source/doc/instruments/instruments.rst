@@ -117,7 +117,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Keithley</td>
                 <td>2400</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-keithley-2400'>0.1.1</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-keithley-2400'>0.1.2</a></td>
             </tr>
             <tr>
                 <td>Keithley</td>
@@ -154,6 +154,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Daq</td>
                 <td></td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-ni-daq'>0.1.1</a></td>
+            </tr>
+            <tr>
+                <td>Opc</td>
+                <td>Ua_instrument</td>
+                <td></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-opc-ua-instrument'>0.1.0</a></td>
             </tr>
             <tr>
                 <td></td>
