@@ -622,6 +622,7 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         # Connect checkboxes that show/hide manual positioning and browser port
         self.checkBox_manual_plot_position_2d.stateChanged.connect(self.hide_show_manual_position)
         self.checkBox_show_in_browser.stateChanged.connect(self.hide_show_show_in_browser)
+        self.checkBox_show_in_browser.clicked.connect(self.hide_show_show_in_browser)
 
     def load_data(self):
         """
@@ -761,11 +762,17 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
     def hide_show_show_in_browser(self):
         """
         Show or hide the browser port selection based on 
-        the checkbox_show_in_browser state.
+        the checkbox_show_in_browser state. 
+        Executed when the state is changed or if the checkbox is clicked.
         """
         is_checked = self.checkBox_show_in_browser.isChecked()
         self.label_port.setHidden(not is_checked)
         self.spinBox_port.setHidden(not is_checked)
+        if is_checked:
+            check_if_plotly_modules_are_available(self)
+
+    
+                    
 
 
 class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
@@ -806,6 +813,7 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         # Connect checkboxes that show/hide manual positioning and browser port
         self.checkBox_manual_plot_position.stateChanged.connect(self.hide_show_manual_position)
         self.checkBox_show_in_browser.stateChanged.connect(self.hide_show_show_in_browser)
+        self.checkBox_show_in_browser.clicked.connect(self.hide_show_show_in_browser)
 
     def load_data(self):
         """
@@ -985,6 +993,8 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         is_checked = self.checkBox_show_in_browser.isChecked()
         self.label_port.setHidden(not is_checked)
         self.spinBox_port.setHidden(not is_checked)
+        if is_checked:
+            check_if_plotly_modules_are_available(self)
 
     def fit_change(self):
         """
@@ -1338,3 +1348,74 @@ class Plot_Button_Overview(QWidget):
         if event.key() in (Qt.Key_Enter, Qt.Key_Return):
             return
         super().keyPressEvent(event)
+
+def is_module_available(module_name):
+    try:
+        __import__(module_name)
+        return True
+    except ImportError:
+        return False
+    
+def check_if_plotly_modules_are_available(self):
+    # Function to check if a module is available.
+    # List the required modules.
+    required_modules = ['flask', 'dash', 'plotly']
+
+    # Determine which modules are missing.
+    missing_modules = [mod for mod in required_modules if not is_module_available(mod)]
+
+    if missing_modules:
+        # Create the message to warn the user.
+        msg = (
+            f"The following modules are required: {', '.join(missing_modules)}.\n\n"
+            "These modules are fairly large and may take several minutes to install. You only need to do this once.\n"
+            "Do you want to install them now?"
+        )
+
+        # Show a question message box.
+        reply_update_modules = QMessageBox.question(
+            None,
+            "Install Required Modules",
+            msg,
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+
+        if reply_update_modules == QMessageBox.Yes:
+            try:
+                import sys
+                import subprocess
+                # Build the pip install command.
+                try:
+                    command = [sys.executable, "-m", "pip", "install", "nomad-camels[plotly]"]
+                    missing_modules = [mod for mod in required_modules if not is_module_available(mod)]
+                    if missing_modules:
+                        raise Exception("Failed to install nomad-camels[plotly]")
+
+                except Exception as e:
+                    print(e)
+                    command = [sys.executable, "-m", "pip", "install"] + missing_modules
+                # Optionally, you might show another popup or a console message indicating progress.
+                subprocess.check_call(command)
+                QMessageBox.information(
+                    None,
+                    "Installation Complete",
+                    "The required modules have been installed.\nYou can now view your plots from a web browser."
+                )
+            except Exception as e:
+                QMessageBox.critical(
+                    None,
+                    "Installation Failed",
+                    f"An error occurred during installation:\n{str(e)}"
+                )
+                self.checkBox_show_in_browser.setChecked(False)
+                self.plot_data.checkbox_show_in_browser = self.checkBox_show_in_browser.isChecked()
+            # Exit the application (or you could try to continue, if that makes sense in your context).
+        else:
+            QMessageBox.warning(
+                None,
+                "Modules Missing",
+                "You can not display the plots in the browser without the required modules."
+            )
+            self.checkBox_show_in_browser.setChecked(False)
+            self.plot_data.checkbox_show_in_browser = self.checkBox_show_in_browser.isChecked()
