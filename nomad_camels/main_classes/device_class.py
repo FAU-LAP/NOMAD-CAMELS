@@ -659,7 +659,10 @@ class Local_VISA(Connection_Config):
         self.comboBox_port = QComboBox()
         import pyvisa
 
-        rm = pyvisa.ResourceManager()
+        try:
+            rm = pyvisa.ResourceManager()
+        except OSError:
+            rm = pyvisa.ResourceManager("@py")
         self.ports = rm.list_resources()
         self.comboBox_port.addItems(self.ports)
 

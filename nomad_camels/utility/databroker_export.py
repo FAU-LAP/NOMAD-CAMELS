@@ -104,8 +104,6 @@ def broker_to_hdf5(runs, filename, additional_data=None):
             recourse_entry_dict(entry, additional_data)
             for stream in run:
                 dataset = run[stream].read()
-                # entry[stream] = dataset.to_pandas()
-                # return
                 group = entry.create_group(stream)
                 for coord in dataset.coords:
                     if coord == "time":

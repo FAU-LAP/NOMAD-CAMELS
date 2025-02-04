@@ -26,25 +26,26 @@ def is_port_available(port):
         return s.connect_ex(("127.0.0.1", port)) != 0
 
 
+def get_available_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
+
 # Fixture to set up the TestClient and FastapiThread for testing
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def client_and_thread():
     # Mock the main_window with a predefined protocols_dict
     main_window_mock = MagicMock()
     main_window_mock.protocols_dict = {"protocol1": "details1", "protocol2": "details2"}
 
-    port = 1235
-    while not is_port_available(port):
-        port += 1
-        print(port)
-        if port > 9999:
-            raise Exception("No available port found")
+    port = get_available_port()
     # Create and start a FastapiThread instance with the mocked main_window
     thread = FastapiThread(main_window_mock, api_port=port)
     thread.start()
-
     # Get the FastAPI app and set up the TestClient
-    app = thread.app
+    while (app := thread.app) is None:
+        time.sleep(0.1)
     client = TestClient(app)
     # Wait for the server to start
     timeout = 10  # seconds

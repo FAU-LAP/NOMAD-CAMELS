@@ -1,5 +1,4 @@
 import sys
-
 from fastapi import FastAPI, HTTPException, Depends, status, Response
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
@@ -16,6 +15,7 @@ import json
 import uuid
 from pydantic import BaseModel, Field
 import math
+import asyncio
 
 
 def sanitize_dict(d):
@@ -71,7 +71,7 @@ def validate_api_key(api_key: str) -> bool:
             conn.close()
             return False
         else:
-            raise e # Re-raise the exception if it's not the specific one we're looking for
+            raise e  # Re-raise the exception if it's not the specific one we're looking for
     result = c.fetchone()
     conn.close()
     return result is not None
@@ -125,7 +125,9 @@ security = HTTPBearer()
 
 
 # Define the dependency for API key validation
-async def validate_credentials(credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def validate_credentials(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
     api_key = credentials.credentials
     # The api_key is directly taken from credentials.password
     if api_key and validate_api_key(api_key):
@@ -138,6 +140,8 @@ async def validate_credentials(credentials: HTTPAuthorizationCredentials = Depen
 
 
 class FastapiThread(QThread):
+    """Runs FastAPI inside a PySide6 QThread to avoid blocking the GUI."""
+
     # Define signals for communicating with the main window
     # Signal to start a protocol
     start_protocol_signal = Signal(str, str, object)
@@ -165,15 +169,59 @@ class FastapiThread(QThread):
         # get the main window so that we have access to all the settings and dictionaries
         self.main_window = main_window
         self.api_port = api_port
-        self._stop_event = threading.Event()
-        self.app = FastAPI()  # Initialize the FastAPI app
         self.protocol_runs = {}  # Dictionary to store the protocol runs
+        self.app = None
+        self.server = None
+        self.loop = None  # Custom asyncio loop
 
     def run(self):
-        app = self.app
-        # Define the API endpoints
+        """Start FastAPI inside an asyncio event loop running in a separate thread."""
+        self.app = FastAPI()  # Initialize FastAPI app
+        self.define_routes(self.app)  # Define the API routes
 
-        # Get the list of available protocols
+        self.loop = (
+            asyncio.new_event_loop()
+        )  # Create a new asyncio loop for this thread
+        asyncio.set_event_loop(self.loop)
+
+        # Start Uvicorn as an asyncio task
+        self.loop.run_until_complete(self.start_server())
+
+    async def start_server(self):
+        """Starts the FastAPI server using Uvicorn inside an async loop."""
+        config = uvicorn.Config(
+            self.app,
+            host="127.0.0.1",
+            port=self.api_port,
+            log_level="info",
+            reload=False,
+            workers=1,  # Ensure only one worker to avoid multi-thread issues
+        )
+        self.server = uvicorn.Server(config)
+
+        try:
+            await self.server.serve()
+        except Exception as e:
+            print(f"Error starting FastAPI: {e}")
+            self.port_error_signal.emit(f"Failed to start server: {e}")
+
+    def stop_server(self):
+        """Safely shuts down the FastAPI server running inside the QThread."""
+        if self.server is not None:
+            print("Stopping FastAPI server...")
+            self.server.should_exit = True  # Signals Uvicorn to stop
+
+        # if self.loop is not None:
+        #     self.loop.call_soon_threadsafe(self.loop.stop)  # Stop the event loop safely
+
+        self.quit()  # Quit the QThread
+        self.wait()  # Ensure the thread has fully stopped
+
+    def define_routes(self, app: FastAPI):
+        """Define all FastAPI routes within the server thread"""
+
+        # [Your route definitions remain unchanged]
+        # Example:
         @app.get("/api/v1/protocols")
         async def get_protocols(api_key: str = Depends(validate_credentials)):
             """Get the list of available protocols"""
@@ -224,9 +272,9 @@ class FastapiThread(QThread):
             response_model=ProtocolRunResponse,
         )
         async def run_protocol(
-            protocol_name: str, 
+            protocol_name: str,
             protocol_uuid: uuid.UUID = None,
-            api_key: str = Depends(validate_credentials)
+            api_key: str = Depends(validate_credentials),
         ):
             """Run a protocol by name"""
             # Generate or use the provided syntax checked UUID as casted string
@@ -379,9 +427,9 @@ class FastapiThread(QThread):
 
         @app.get("/api/v1/actions/queue/protocols/{protocol_name}")
         async def queue_protocol(
-            protocol_name: str, 
+            protocol_name: str,
             protocol_uuid: uuid.UUID = None,
-            api_key: str = Depends(validate_credentials)
+            api_key: str = Depends(validate_credentials),
         ):
             """Add a protocol to the queue by name"""
             # Generate or use the provided syntax checked UUID as casted string
@@ -394,7 +442,7 @@ class FastapiThread(QThread):
                     status_code=500,
                     detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.\n{e}",
                 ) from e
-            time.sleep(0.05)
+            await asyncio.sleep(0.05)
             protocol_values = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
             )
@@ -449,7 +497,7 @@ class FastapiThread(QThread):
                     status_code=500,
                     detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.\n{e}",
                 ) from e
-            time.sleep(0.05)
+            await asyncio.sleep(0.05)
             protocol_values = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
             )
@@ -512,7 +560,7 @@ class FastapiThread(QThread):
                             status_code=500,
                             detail=f"Failed to update protocol {protocol_name} in queue as the protocol was not found.\n{e}",
                         ) from e
-            time.sleep(0.05)
+            await asyncio.sleep(0.05)
             protocol_values = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
             )
@@ -601,7 +649,7 @@ class FastapiThread(QThread):
         ):
             """Set the active sample"""
             self.set_sample_signal.emit(str(sample_name))
-            time.sleep(0.01)
+            await asyncio.sleep(0.01)
             if self.main_window.active_sample == sample_name:
                 return JSONResponse(content={"status": "success setting sample name"})
             else:
@@ -618,7 +666,7 @@ class FastapiThread(QThread):
         ):
             """Set the active user"""
             self.set_user_signal.emit(str(user_name))
-            time.sleep(0.01)
+            await asyncio.sleep(0.01)
             if self.main_window.active_user == user_name:
                 return JSONResponse(content={"status": "success setting user name"})
             else:
@@ -635,7 +683,7 @@ class FastapiThread(QThread):
         ):
             """Set the active session name"""
             self.set_session_signal.emit(str(session_name))
-            time.sleep(0.01)
+            await asyncio.sleep(0.01)
             if self.main_window.lineEdit_session.text() == session_name:
                 return JSONResponse(content={"status": "success setting session name"})
             else:
@@ -659,56 +707,3 @@ class FastapiThread(QThread):
         async def logout():
             """Logout the user"""
             raise HTTPException(status_code=401, detail="Successful Logout completed")
-
-        # Start the uvicorn server
-        try:
-            self.server_config = uvicorn.Config(
-                app,
-                host="0.0.0.0",
-                port=int(self.api_port),
-                log_level="info",
-                reload=False,
-            )
-            self.server = uvicorn.Server(self.server_config)
-
-            # Run the server
-            self.server.run()
-        except ValueError:  # Catching ValueError for invalid port conversion
-            print(f"Invalid port number: {self.api_port}")
-            self.port_error_signal.emit("Invalid port number")
-        except Exception as e:
-            print(f"Error starting server: {e}")
-            self.port_error_signal.emit("Failed to start server")
-
-    def stop_server(self):  #  Method to trigger shutdown
-        if self.server is not None:
-            self.server.should_exit = True
-            self._stop_event.set()
-            self.quit()
-            self.wait()
-
-
-if __name__ == "__main__":
-
-    class fake_run_queue_widget:
-        protocol_name_variables = {
-            "key1": ["execute", {"factor": 3, "results": 0}],
-            "key2": ["execute2", {"factor": 3, "results": 0}],
-            "key3": ["execute3", {"factor": 3, "results": 0}],
-        }
-
-    # Create a fake main window for testing
-    class fake_main_window:
-        def __init__(self):
-            self.protocols_dict = {"test_protocol": "test_protocol"}
-            self.run_queue_widget = None
-            self.sampledata = {"sample1": "sample1"}
-            self.userdata = {"user1": "user1"}
-            self.lineEdit_session = None
-            self.active_sample = None
-            self.active_user = None
-            self.run_queue_widget = fake_run_queue_widget()
-
-    api_thread = FastapiThread(main_window=fake_main_window(), api_port=12345)
-    api_thread.start()
-    api_thread.wait()  # Ensure the main thread waits for the server thread to finish
