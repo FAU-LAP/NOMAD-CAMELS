@@ -183,6 +183,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    :caption: Maintaining CAMELS Project
 
    Maintain CAMELS <doc/programmers_guide/programmers_guide.md>
+   Core Component Descriptions <doc/programmers_guide/components/components.md>
 
 .. toctree::
    :maxdepth: 1
