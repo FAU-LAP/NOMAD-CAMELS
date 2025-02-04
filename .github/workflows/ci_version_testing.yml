@@ -24,6 +24,7 @@ jobs:
                 python-version: ${{ matrix.python-version }}
             - name: Install dependencies
               run: |
+                pip install poetry
                 poetry lock -q
                 poetry install -q --all-extras
             - name: Run tests
@@ -44,7 +45,7 @@ jobs:
                 python-version: ${{ matrix.python-version }}
             - name: Install dependencies
               run: |
-                pip install -q -r dev_tools/req_min${{ matrix.python-version }}.txt
+                pip install -q -r ./dev_tools/req_min_${{ matrix.python-version }}.txt
             - name: Run tests
               run: |
                 pytest --timeout=60
