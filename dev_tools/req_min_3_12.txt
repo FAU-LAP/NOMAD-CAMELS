@@ -6,10 +6,10 @@ suitcase-nomad-camels-hdf5==0.4.4
 databroker==1.2.5
 matplotlib==3.6.2
 pyqtgraph==0.13.3
+requests==2.26.0
 pyyaml==6.0.1
 setuptools==66.1.0
 numpy==1.26.0
-requests==2.26.0
 fastapi==0.110.1
 httpx==0.28.1
 uvicorn==0.22.0
