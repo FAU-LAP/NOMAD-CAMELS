@@ -3,5 +3,5 @@
 ```{toctree}
 :maxdepth: 2
 
-MainWindow <doc/programmers_guideE/components/mainWindow_docs.md>
+MainWindow <mainWindow_docs.md>
 ```
