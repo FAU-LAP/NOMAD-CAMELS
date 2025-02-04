@@ -23,6 +23,7 @@ Fixes:
 - fits now have at least the number of data points in the plot view
 - could insert variables at channel names in set channels and similar, now only possible for the value
 - improved exception handling for instrument (un-)install
+- When selecting an upload for automatic upload to NOMAD, the *Uploads* drop-down list is now automatically updated. 
 
 ## 1.6.0 Ignore failed read, new manual control
 Features:
