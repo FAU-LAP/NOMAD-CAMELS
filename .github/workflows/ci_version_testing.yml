@@ -27,6 +27,7 @@ jobs:
                 pip install poetry
                 poetry lock -q
                 poetry install -q --all-extras
+                pip list
             - name: Run tests
               run: |
                 pytest --timeout=60
@@ -46,6 +47,7 @@ jobs:
             - name: Install dependencies
               run: |
                 pip install -q -r ./dev_tools/req_min_${{ matrix.python-version }}.txt
+                pip list
             - name: Run tests
               run: |
                 pytest --timeout=60
