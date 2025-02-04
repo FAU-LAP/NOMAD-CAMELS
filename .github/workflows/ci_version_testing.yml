@@ -25,8 +25,8 @@ jobs:
             - name: Install dependencies
               run: |
                 pip install poetry
-                poetry lock -q
-                poetry install --all-extras
+                poetry lock
+                poetry install --all-extras --with-dev
                 pip list
             - name: Run tests
               run: |
