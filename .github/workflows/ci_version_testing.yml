@@ -26,7 +26,7 @@ jobs:
               run: |
                 pip install poetry
                 poetry lock -q
-                poetry install -q --all-extras
+                poetry install --all-extras
                 pip list
             - name: Run tests
               run: |
