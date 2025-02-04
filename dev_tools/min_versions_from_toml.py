@@ -87,6 +87,9 @@ def extract_min_versions(pyproject_path="pyproject.toml", python_versions=None):
             if min_version:
                 for py_ver in python_versions:
                     min_versions_by_python[py_ver][package] = str(min_version)
+            else:
+                for py_ver in python_versions:
+                    min_versions_by_python[py_ver][package] = ""
 
     return min_versions_by_python
 
@@ -101,7 +104,10 @@ def print_requirements_txt(min_versions_by_python):
             "w",
         ) as f:
             for package, version in min_versions.items():
-                f.write(f"{package}=={version}\n")
+                if version:
+                    f.write(f"{package}=={version}\n")
+                else:
+                    f.write(f"{package}\n")
 
 
 if __name__ == "__main__":
