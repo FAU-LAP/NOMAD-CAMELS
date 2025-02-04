@@ -11,6 +11,7 @@ standard_plot_string += "\tapp = QCoreApplication.instance()\n"
 standard_plot_string += "\tif app is None:\n"
 standard_plot_string += "\t\tapp = QApplication(sys.argv)\n"
 # standard_plot_string += '\tapp.aboutToQuit.connect(wait_for_workers_to_quit)\n'
+standard_plot_string += "\tfrom nomad_camels.main_classes import plot_pyqtgraph, list_plot\n"
 standard_plot_string += "\tif darkmode:\n"
 standard_plot_string += "\t\tplot_pyqtgraph.activate_dark_mode()\n"
 # standard_plot_string += '\ttheme_changing.change_theme(theme, app)\n'
@@ -105,6 +106,8 @@ def plot_creator(
     plot_string += "\tsubs = []\n"
     plotting = False
     for i, plot in enumerate(plot_data):
+        if plot.checkbox_show_in_browser and "from nomad_camels.main_classes import plot_plotly" not in plot_string:
+            plot_string += "\tfrom nomad_camels.main_classes import plot_plotly\n"
         if plot.plt_type == "X-Y plot":
             plotting = True
             fits = []
