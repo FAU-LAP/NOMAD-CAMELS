@@ -76,7 +76,7 @@ QPushButton:disabled {
           </size>
          </property>
          <property name="textInteractionFlags">
-          <set>Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
+          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
        </item>
@@ -256,7 +256,7 @@ QPushButton:disabled {
        <pixmap>../graphics/camels_horizontal.png</pixmap>
       </property>
       <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -324,14 +324,14 @@ Instruments</string>
        <item row="0" column="13">
         <widget class="Line" name="line_2">
          <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
+          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </item>
        <item row="0" column="8">
         <widget class="Line" name="line">
          <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
+          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </item>
@@ -537,7 +537,7 @@ Instruments</string>
               <widget class="QComboBox" name="comboBox_upload_type"/>
              </item>
              <item>
-              <widget class="QComboBox" name="comboBox_upload_choice"/>
+              <widget class="DynamicUploadComboBox" name="comboBox_upload_choice"/>
              </item>
             </layout>
            </widget>
@@ -575,7 +575,7 @@ Instruments</string>
                 <string>Session:</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -617,8 +617,8 @@ adds a sub-folder for the data</string>
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>138</width>
-                  <height>24</height>
+                  <width>139</width>
+                  <height>25</height>
                  </rect>
                 </property>
                </widget>
@@ -792,7 +792,7 @@ adds a sub-folder for the data</string>
           <string>Sample:</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -836,21 +836,21 @@ adds a sub-folder for the data</string>
           <string/>
          </property>
          <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
        <item row="1" column="0" colspan="2">
         <widget class="QSplitter" name="main_splitter">
          <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
+          <enum>Qt::Vertical</enum>
          </property>
          <widget class="QWidget" name="manual_widget" native="true">
           <layout class="QGridLayout" name="gridLayout">
            <item row="1" column="2">
             <spacer name="horizontalSpacer">
              <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
+              <enum>Qt::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -943,7 +943,7 @@ adds a sub-folder for the data</string>
            <item row="1" column="3">
             <spacer name="horizontalSpacer_2">
              <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
+              <enum>Qt::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -1087,7 +1087,7 @@ adds a sub-folder for the data</string>
      <x>0</x>
      <y>0</y>
      <width>1322</width>
-     <height>33</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1298,6 +1298,11 @@ adds a sub-folder for the data</string>
    <class>VariableTable</class>
    <extends>QTableView</extends>
    <header>nomad_camels.ui_widgets.variable_table</header>
+  </customwidget>
+  <customwidget>
+   <class>DynamicUploadComboBox</class>
+   <extends>QComboBox</extends>
+   <header>dynamicuploadcombobox</header>
   </customwidget>
  </customwidgets>
  <resources/>

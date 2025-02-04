@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
     QSizePolicy, QSpacerItem, QSplitter, QStatusBar,
     QTextEdit, QVBoxLayout, QWidget)
 
+from dynamicuploadcombobox import DynamicUploadComboBox
 from nomad_camels.ui_widgets.console_redirect import Console_TextEdit
 from nomad_camels.ui_widgets.run_queue import RunQueue
 from nomad_camels.ui_widgets.variable_table import VariableTable
@@ -130,7 +131,7 @@ class Ui_MainWindow(object):
         self.textEdit_console_output = Console_TextEdit(self.widget)
         self.textEdit_console_output.setObjectName(u"textEdit_console_output")
         self.textEdit_console_output.setMaximumSize(QSize(16777215, 16777215))
-        self.textEdit_console_output.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByKeyboard|Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.textEdit_console_output.setTextInteractionFlags(Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
 
         self.gridLayout_4.addWidget(self.textEdit_console_output, 0, 4, 3, 1)
 
@@ -251,7 +252,7 @@ class Ui_MainWindow(object):
         self.label_logo.setObjectName(u"label_logo")
         self.label_logo.setMaximumSize(QSize(16777215, 70))
         self.label_logo.setPixmap(QPixmap(u"../graphics/camels_horizontal.png"))
-        self.label_logo.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
+        self.label_logo.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.gridLayout_5.addWidget(self.label_logo, 5, 9, 1, 2)
 
@@ -415,7 +416,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6.addWidget(self.comboBox_upload_type)
 
-        self.comboBox_upload_choice = QComboBox(self.nomad_upload_widget)
+        self.comboBox_upload_choice = DynamicUploadComboBox(self.nomad_upload_widget)
         self.comboBox_upload_choice.setObjectName(u"comboBox_upload_choice")
 
         self.horizontalLayout_6.addWidget(self.comboBox_upload_choice)
@@ -432,7 +433,7 @@ class Ui_MainWindow(object):
         self.label_4.setObjectName(u"label_4")
         self.label_4.setMaximumSize(QSize(1500000, 16777215))
         self.label_4.setFont(font3)
-        self.label_4.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
+        self.label_4.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout_5.addWidget(self.label_4)
 
@@ -457,7 +458,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 138, 24))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 139, 25))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
         self.horizontalLayout_5.addWidget(self.scrollArea)
@@ -553,7 +554,7 @@ class Ui_MainWindow(object):
         self.label_8.setObjectName(u"label_8")
         self.label_8.setMaximumSize(QSize(70, 16777215))
         self.label_8.setFont(font3)
-        self.label_8.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
+        self.label_8.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.gridLayout_6.addWidget(self.label_8, 0, 9, 1, 1)
 
@@ -574,13 +575,13 @@ class Ui_MainWindow(object):
         self.label_arrow = QLabel(self.widget_2)
         self.label_arrow.setObjectName(u"label_arrow")
         self.label_arrow.setMaximumSize(QSize(120, 16777215))
-        self.label_arrow.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label_arrow.setAlignment(Qt.AlignCenter)
 
         self.gridLayout_3.addWidget(self.label_arrow, 0, 0, 1, 1)
 
         self.main_splitter = QSplitter(self.widget_2)
         self.main_splitter.setObjectName(u"main_splitter")
-        self.main_splitter.setOrientation(Qt.Orientation.Vertical)
+        self.main_splitter.setOrientation(Qt.Vertical)
         self.manual_widget = QWidget(self.main_splitter)
         self.manual_widget.setObjectName(u"manual_widget")
         self.gridLayout = QGridLayout(self.manual_widget)
@@ -716,7 +717,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1322, 33))
+        self.menubar.setGeometry(QRect(0, 0, 1322, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuHelp = QMenu(self.menubar)
