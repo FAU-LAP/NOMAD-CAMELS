@@ -98,9 +98,7 @@ def print_requirements_txt(min_versions_by_python):
     """Prints the minimum dependency versions in a requirements.txt format for each Python version."""
     for py_ver, min_versions in min_versions_by_python.items():
         with open(
-            os.path.join(
-                os.path.dirname(file_path), f"req_min_{py_ver.replace('.', '_')}.txt"
-            ),
+            os.path.join(os.path.dirname(file_path), f"req_min_{py_ver}.txt"),
             "w",
         ) as f:
             for package, version in min_versions.items():
