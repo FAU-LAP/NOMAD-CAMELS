@@ -29,7 +29,7 @@ jobs:
                 pip list
             - name: Run tests
               run: |
-                pytest --timeout=60
+                poetry run pytest --timeout=60
     run_low_tests:
         runs-on: windows-latest
         env:
