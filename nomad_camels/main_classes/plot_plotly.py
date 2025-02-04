@@ -451,7 +451,7 @@ class PlotlyLiveCallback(CallbackBase):
             self.dash_process.terminate()
             self.dash_process.join()
             self.dash_process = None
-            print("Terminated the dash app process.")
+            print("Terminated the web plot app process.")
 
     def clear_data(self):
         """
@@ -794,7 +794,7 @@ class PlotlyLiveCallback_2d(CallbackBase):
             self.dash_process.terminate()
             self.dash_process.join()
             self.dash_process = None
-            print("Terminated the dash app process.")
+            print("Terminated the web plot app process.")
 
     def clear_data(self):
         """
