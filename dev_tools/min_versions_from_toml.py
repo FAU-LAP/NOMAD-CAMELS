@@ -105,6 +105,6 @@ def print_requirements_txt(min_versions_by_python):
 
 
 if __name__ == "__main__":
-    python_versions = ["3.9", "3.10", "3.11", "3.12"]
+    python_versions = ["3.9", "3.10", "3.11", "3.12", "3.13"]
     min_versions_by_python = extract_min_versions(python_versions=python_versions)
     print_requirements_txt(min_versions_by_python)
