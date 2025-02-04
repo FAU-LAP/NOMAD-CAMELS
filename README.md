@@ -22,6 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Fixes:
 - fits now have at least the number of data points in the plot view
 - could insert variables at channel names in set channels and similar, now only possible for the value
+- improved exception handling for instrument (un-)install
 
 ## 1.6.0 Ignore failed read, new manual control
 Features:
