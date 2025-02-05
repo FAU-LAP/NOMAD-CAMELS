@@ -2,8 +2,6 @@ import re
 import subprocess
 import importlib
 
-import pkg_resources
-
 from nomad_camels.gui.device_installer import Ui_Form
 from PySide6.QtWidgets import (
     QWidget,
@@ -202,14 +200,14 @@ class Info_Widget(QSplitter):
             self.license_text.clear()
             try:
                 text = ""
-                for p in pkg_resources.working_set:
-                    if not p.key.startswith(
+                for dist in importlib_metadata.distributions():
+                    if not dist.metadata["Name"].startswith(
                         f'nomad-camels-driver-{instr.replace("_", "-")}'
                     ):
                         continue
-                    lic = p.get_metadata_lines("LICENSE.txt")
-                    for l in lic:
-                        text += f"{l}\n"
+                    lic = dist.read_text("LICENSE.txt")
+                    if lic:
+                        text += f"{lic}\n"
                     break
                 if not text:
                     raise Exception("")
@@ -360,6 +358,7 @@ class Instrument_Installer(Ui_Form, QWidget):
             if version != self.all_devs[dev]:
                 devs.append(dev)
         self.install_thread = Install_Thread(devs, False, self)
+        self.install_thread.error_signal.connect(self.propagate_exception)
         self.install_thread.info_step.connect(self.textEdit_device_info.append)
         self.install_thread.val_step.connect(self.progressBar.setValue)
         self.install_thread.finished.connect(self.thread_done)
@@ -386,6 +385,7 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.textEdit_device_info.clear()
         devs = self.get_checked_devs(uninstall)
         self.install_thread = Install_Thread(devs, uninstall, self)
+        self.install_thread.error_signal.connect(self.propagate_exception)
         self.install_thread.info_step.connect(self.textEdit_device_info.append)
         self.install_thread.val_step.connect(self.progressBar.setValue)
         self.install_thread.finished.connect(self.thread_done)
@@ -471,6 +471,10 @@ class Instrument_Installer(Ui_Form, QWidget):
         finally:
             self.setCursor(Qt.ArrowCursor)
 
+    def propagate_exception(self, e: BaseException):
+        """ """
+        raise e
+
 
 class CustomTextEdit_new_painter(QTextEdit):
     """Custom QTextEdit that paints custom text when the text is empty."""
@@ -498,6 +502,7 @@ class CustomTextEdit_new_painter(QTextEdit):
 class Install_Thread(QThread):
     """ """
 
+    error_signal = Signal(BaseException)
     info_step = Signal(str)
     val_step = Signal(int)
 
@@ -531,9 +536,12 @@ class Install_Thread(QThread):
                     creationflags=flags,
                 )
                 if ret.returncode:
-                    raise OSError(
-                        f"Failed to uninstall nomad-camels-driver-{device_name}"
+                    self.error_signal.emit(
+                        OSError(
+                            f"Failed to uninstall nomad-camels-driver-{device_name}"
+                        )
                     )
+                    return
             else:
                 device_name = dev.replace("_", "-")
                 ret = install_instrument(device_name)
@@ -543,12 +551,12 @@ class Install_Thread(QThread):
         getInstalledDevices(True)
         for i, dev in enumerate(self.devs):
             if self.uninstall and dev in installed_instr:
-                raise Warning(f"Uninstall of {dev} failed!")
+                self.error_signal.emit(Warning(f"Uninstall of {dev} failed!"))
                 # WarnPopup(self.parent(),
                 #           f'Uninstall of {dev} failed!',
                 #           f'Uninstall of {dev} failed!')
             elif not self.uninstall and dev not in installed_instr:
-                raise Warning(f"Installation of {dev} failed!")
+                self.error_signal.emit(Warning(f"Installation of {dev} failed!"))
                 # WarnPopup(self.parent(),
                 #           f'Installation of {dev} failed!',
                 #           f'Installation of {dev} failed!')

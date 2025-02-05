@@ -18,7 +18,26 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 1.6.0 Ignore failed read, new manual control
+## 1.7.0 Browser plots and improved install
+Features:
+- can now show plots in the browser
+- support of Python 3.9 is back!
+- Live comments now come with timestamps
+
+Changes:
+- Cleaned up the protocol builder to only import modules when necessary
+- When selecting an upload for automatic upload to NOMAD, the *Uploads* drop-down list is now automatically updated.
+- Added warning and option to install flask, dash and plotly when selecting "Show plot in browser"
+- installation and dependency management now via poetry to keep dependencies clean
+
+Fixes:
+- fits now have at least the number of data points in the plot view
+- could insert variables at channel names in set channels and similar, now only possible for the value
+- improved exception handling for instrument (un-)install
+
+
+
+## 1.6.0 Ignore failed read, new manual control
 Features:
 - can ignore failed readings of specific channels now, so the protocol does not break if some sensor fails once
 - new manual control to generically set / read any kind of channel

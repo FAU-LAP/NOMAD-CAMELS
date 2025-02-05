@@ -25,8 +25,8 @@ from PySide6.QtWidgets import (
     QTextEdit,
     QCheckBox,
 )
-from PySide6.QtCore import Signal, Qt
-from PySide6.QtGui import QFont, QIcon
+from PySide6.QtCore import Signal, Qt, QDateTime
+from PySide6.QtGui import QFont, QIcon, QKeyEvent
 
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
@@ -1254,6 +1254,34 @@ class Waiting_Bar(QWidget):
 
         self.show()
 
+class TimestampTextEdit(QTextEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        # Flag to track if the first keystroke has been handled.
+        self.first_key_pressed = False
+
+    def insertTimestamp(self):
+        """
+        Inserts the current timestamp followed by a space at the current cursor position.
+        The timestamp is in ISO 8601 format (e.g. "2025-02-05T14:30:00").
+        """
+        timestamp = QDateTime.currentDateTime().toString(Qt.ISODate)
+        self.insertPlainText(timestamp + " ")
+
+    def keyPressEvent(self, event: QKeyEvent):
+        # If this is the very first key press in the widget,
+        # prepend a timestamp.
+        if not self.first_key_pressed:
+            self.insertTimestamp()
+            self.first_key_pressed = True
+
+        # Process the key event normally.
+        super().keyPressEvent(event)
+
+        # If the key pressed is Return or Enter, then insert a new timestamp
+        # on the new line.
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            self.insertTimestamp()
 
 class Commenting_Box(QWidget):
     """A widget to add comments to the protocol."""
@@ -1263,7 +1291,7 @@ class Commenting_Box(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = QGridLayout()
-        self.comment_box = QTextEdit()
+        self.comment_box = TimestampTextEdit()
         self.finished_box = QCheckBox("commenting finished")
         self.setWindowTitle("Live Measurement Comments - NOMAD CAMELS")
         self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))

@@ -72,8 +72,12 @@ def test_check_output():
 
 def test_get_outputs(mocker):
     mock_device = MagicMock()
+    # Create mock channel with specific attributes
+    mock_channel = MagicMock()
+    mock_channel.attr = "signal1"
+    mock_channel.cls = MagicMock()
     mock_device.walk_components.return_value = [
-        MagicMock(item=MagicMock(attr="signal1", cls=MagicMock()))
+        MagicMock(item=mock_channel)
     ]
     mocker.patch(
         "nomad_camels.main_classes.device_class.check_output", return_value=True
@@ -85,8 +89,12 @@ def test_get_outputs(mocker):
 
 def test_get_channels(mocker):
     mock_device = MagicMock()
+    # Create mock channel with specific attributes
+    mock_channel = MagicMock()
+    mock_channel.attr = "channel1"
+    mock_channel.cls = MagicMock()
     mock_device.walk_components.return_value = [
-        MagicMock(item=MagicMock(attr="channel1", cls=MagicMock()))
+        MagicMock(item=mock_channel)
     ]
     mock_device.configuration_attrs = []
 

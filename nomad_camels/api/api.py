@@ -1,24 +1,33 @@
-import sys
-
-from fastapi import FastAPI, HTTPException, Depends, status, Response
-from fastapi.encoders import jsonable_encoder
+from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from PySide6.QtCore import QThread, Signal
 from nomad_camels.frontpanels.settings_window import hash_api_key
-from nomad_camels.utility import load_save_functions, variables_handling
+from nomad_camels.utility import load_save_functions
 import uvicorn
 import sqlite3
 import os
-import threading
-import time
 import json
 import uuid
 from pydantic import BaseModel, Field
 import math
+import asyncio
 
 
 def sanitize_dict(d):
+    """
+    Recursively sanitize a dictionary by replacing infinite and NaN float values.
+
+    This function iterates over the provided dictionary and its nested dictionaries or lists.
+    If a float value is found that is infinite or NaN, it is replaced with a string
+    ("inf" or "nan", respectively).
+
+    Args:
+        d (dict): The dictionary to sanitize.
+
+    Returns:
+        dict: The sanitized dictionary with infinite or NaN floats replaced by string representations.
+    """
     for key, value in d.items():
         if isinstance(value, float):
             if math.isinf(value):
@@ -40,6 +49,13 @@ def sanitize_dict(d):
 
 
 class Variables(BaseModel):
+    """
+    Pydantic model for passing variables to a protocol.
+
+    Attributes:
+        variables (dict): A dictionary containing key-value pairs to be passed to the protocol.
+    """
+
     variables: dict = Field(
         ...,
         json_schema_extra={
@@ -49,15 +65,34 @@ class Variables(BaseModel):
     )
 
 
-# Define the response model
 class ProtocolRunResponse(BaseModel):
+    """
+    Pydantic model for the protocol run response.
+
+    Attributes:
+        check_protocol_status_here (str): A URL endpoint to check the status of the protocol run.
+    """
     check_protocol_status_here: str = Field(
         ..., description="A URL to check the protocol status"
     )
 
 
-# Define the validate_api_key function
 def validate_api_key(api_key: str) -> bool:
+    """
+    Validate the given API key by checking its hashed value in the database.
+
+    This function connects to the SQLite database, hashes the provided API key, and then
+    queries the `api_keys` table to verify if the key exists.
+
+    Args:
+        api_key (str): The API key to validate.
+
+    Returns:
+        bool: True if the API key is valid, False otherwise.
+
+    Raises:
+        sqlite3.OperationalError: If an unexpected database error occurs.
+    """
     # Establish the SQLite connection and cursor
     data_base_path = os.path.join(load_save_functions.appdata_path, "CAMELS_API.db")
     conn = sqlite3.connect(data_base_path)
@@ -71,13 +106,23 @@ def validate_api_key(api_key: str) -> bool:
             conn.close()
             return False
         else:
-            raise e # Re-raise the exception if it's not the specific one we're looking for
+            raise e  # Re-raise the exception if it's not the specific one we're looking for
     result = c.fetchone()
     conn.close()
     return result is not None
 
 
 def write_protocol_result_path_to_db(api_uuid, message="currently running"):
+    """
+    Write or update the protocol run status in the database.
+
+    This function ensures that the table exists, then inserts or replaces a record
+    with the provided UUID and status message.
+
+    Args:
+        api_uuid (str): The unique identifier for the protocol run.
+        message (str, optional): The status message. Defaults to "currently running".
+    """
     # Database setup
     data_base_path = os.path.join(load_save_functions.appdata_path, "CAMELS_API.db")
     conn = sqlite3.connect(data_base_path, check_same_thread=False)
@@ -109,11 +154,28 @@ def write_protocol_result_path_to_db(api_uuid, message="currently running"):
 
 
 def is_valid_path(file_path):
+    """
+    Check if the provided file path exists.
+
+    Args:
+        file_path (str): The file path to check.
+
+    Returns:
+        bool: True if the file exists, False otherwise.
+    """
     return os.path.exists(file_path)
 
 
 def cast_or_create_uuid_str(_uuid: uuid.UUID = None) -> str:
-    "Function to cast a given UUID as string or create a new one"
+    """
+    Cast a UUID to a string or create a new one if not provided.
+
+    Args:
+        _uuid (uuid.UUID, optional): The UUID to cast. If None, a new UUID is created. Defaults to None.
+
+    Returns:
+        str: The string representation of the UUID.
+    """
     if _uuid is None:
         return str(uuid.uuid4())
     else:
@@ -124,8 +186,24 @@ def cast_or_create_uuid_str(_uuid: uuid.UUID = None) -> str:
 security = HTTPBearer()
 
 
-# Define the dependency for API key validation
-async def validate_credentials(credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def validate_credentials(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    """
+    Validate the API credentials provided via HTTP Bearer authentication.
+
+    This function checks the provided credentials against the stored API keys. If the key
+    is valid, it returns True; otherwise, it raises an HTTPException with a 401 status code.
+
+    Args:
+        credentials (HTTPAuthorizationCredentials): The credentials extracted from the request.
+
+    Returns:
+        bool: True if credentials are valid.
+
+    Raises:
+        HTTPException: If the API key is invalid.
+    """
     api_key = credentials.credentials
     # The api_key is directly taken from credentials.password
     if api_key and validate_api_key(api_key):
@@ -138,55 +216,146 @@ async def validate_credentials(credentials: HTTPAuthorizationCredentials = Depen
 
 
 class FastapiThread(QThread):
+    """
+    QThread subclass to run a FastAPI server in a separate thread to avoid blocking the GUI.
+
+    Signals:
+        start_protocol_signal (Signal): Signal to start a protocol.
+        port_error_signal (Signal): Signal to send error messages related to the API port.
+        set_user_signal (Signal): Signal to update the active user.
+        set_sample_signal (Signal): Signal to update the active sample.
+        set_session_signal (Signal): Signal to update the active session.
+        queue_protocol_signal (Signal): Signal to queue a protocol without variables.
+        remove_queue_protocol_signal (Signal): Signal to remove a protocol from the queue.
+        set_checkbox_signal (Signal): Signal to check the next protocol in the queue.
+        queue_protocol_with_variables_signal (Signal): Signal to queue a protocol with variables.
+        change_variables_queued_protocol_signal (Signal): Signal to update variables of a queued protocol.
+    """
+
     # Define signals for communicating with the main window
-    # Signal to start a protocol
     start_protocol_signal = Signal(str, str, object)
-    # Signal to send error message to main window, clears the fastapi_thread variable
     port_error_signal = Signal(str)
-    # Signal to set the available user names
     set_user_signal = Signal(str)
-    # Signal to set the sample in the main window
     set_sample_signal = Signal(str)
-    # Signal to set the session name in the main window
     set_session_signal = Signal(str)
-    # Signal to queue a protocol
     queue_protocol_signal = Signal(str, str)
-    # Signal to remove a protocol from the queue
     remove_queue_protocol_signal = Signal(str)
-    # Signal to check the checkbox of the next protocol in the queue
     set_checkbox_signal = Signal(str)
-    # Signal to change the variables when adding a protocol to the queue
     queue_protocol_with_variables_signal = Signal(str, dict, int, str)
-    # Signal to update the variables of a protocol that is already in the queue
     change_variables_queued_protocol_signal = Signal(str, dict, int)
 
     def __init__(self, main_window, api_port):
+        """
+        Initialize the FastapiThread with the main window and API port.
+
+        Args:
+            main_window: Reference to the main application window for accessing settings and protocol data.
+            api_port (int or str): The port number on which the FastAPI server will run.
+        """
         super().__init__()
         # get the main window so that we have access to all the settings and dictionaries
         self.main_window = main_window
         self.api_port = api_port
-        self._stop_event = threading.Event()
-        self.app = FastAPI()  # Initialize the FastAPI app
         self.protocol_runs = {}  # Dictionary to store the protocol runs
+        self.app = None
+        self.server = None
+        self.loop = None  # Custom asyncio loop
 
     def run(self):
-        app = self.app
-        # Define the API endpoints
+        """
+        Run the FastAPI server in this thread.
 
-        # Get the list of available protocols
+        This method initializes the FastAPI application, defines all the API routes, creates a new
+        asyncio event loop, and starts the Uvicorn server until completion.
+        """
+        self.app = FastAPI()  # Initialize FastAPI app
+        self.define_routes(self.app)  # Define the API routes
+
+        self.loop = (
+            asyncio.new_event_loop()
+        )  # Create a new asyncio loop for this thread
+        asyncio.set_event_loop(self.loop)
+
+        # Start Uvicorn as an asyncio task
+        self.loop.run_until_complete(self.start_server())
+
+    async def start_server(self):
+        """
+        Start the FastAPI server using Uvicorn within the asyncio event loop.
+
+        This asynchronous method configures Uvicorn with the FastAPI application and attempts to
+        serve the API. In case of an error, it emits a port error signal.
+        """
+        config = uvicorn.Config(
+            self.app,
+            host="127.0.0.1",
+            port=int(self.api_port),
+            log_level="info",
+            reload=False,
+            workers=1,  # Ensure only one worker to avoid multi-thread issues
+        )
+        self.server = uvicorn.Server(config)
+
+        try:
+            await self.server.serve()
+        except Exception as e:
+            print(f"Error starting FastAPI: {e}")
+            self.port_error_signal.emit(f"Failed to start server: {e}")
+
+    def stop_server(self):
+        """
+        Safely shut down the FastAPI server.
+
+        This method signals the Uvicorn server to exit and stops the QThread.
+        """
+        if self.server is not None:
+            print("Stopping FastAPI server...")
+            self.server.should_exit = True  # Signals Uvicorn to stop
+        self.quit()  # Quit the QThread
+        self.wait()  # Ensure the thread has fully stopped
+
+    def define_routes(self, app: FastAPI):
+        """
+        Define all API routes for the FastAPI server.
+
+        Args:
+            app (FastAPI): The FastAPI application instance on which routes are defined.
+
+        Note:
+            The following route definitions include endpoints for retrieving protocols,
+            settings, running protocols (with and without variables), managing the protocol queue,
+            and various helper endpoints (e.g., for user and sample management).
+        """
+        
         @app.get("/api/v1/protocols")
         async def get_protocols(api_key: str = Depends(validate_credentials)):
-            """Get the list of available protocols"""
+            """
+            Retrieve the list of available protocols.
+
+            Args:
+                api_key (str): API key for authentication (validated via dependency).
+
+            Returns:
+                JSONResponse: A JSON response containing the list of protocol names.
+            """
             return JSONResponse(
                 content={"Protocols": list(self.main_window.protocols_dict.keys())}
             )
 
-        # Get the available variables of a protocol
         @app.get("/api/v1/protocols/variables/{protocol_name}")
         async def get_protocol_variables(
             protocol_name: str, api_key: str = Depends(validate_credentials)
         ):
-            """Get the available variables of a protocol"""
+            """
+            Retrieve the available variables for a specific protocol.
+
+            Args:
+                protocol_name (str): The name of the protocol.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response containing a list of acceptable variables for the protocol.
+            """
             return JSONResponse(
                 content={
                     "Variables": list(
@@ -195,12 +364,20 @@ class FastapiThread(QThread):
                 }
             )
 
-        # Get a JSON representation of the protocol
         @app.get("/api/v1/protocols/{protocol_name}/JSON")
         async def get_protocol_json(
             protocol_name: str, api_key: str = Depends(validate_credentials)
         ):
-            """Get a JSON representation of the protocol"""
+            """
+            Retrieve a JSON representation of the specified protocol.
+
+            Args:
+                protocol_name (str): The name of the protocol.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response containing the sanitized protocol details.
+            """
             protocol_class_instance = self.main_window.protocols_dict[protocol_name]
             protocol = load_save_functions.get_save_str(protocol_class_instance)
             cleaned_protocol = sanitize_dict(protocol)
@@ -208,27 +385,46 @@ class FastapiThread(QThread):
                 content=cleaned_protocol,
             )
 
-        # Get JSON representation of the current CAMELS settings (also called preferences)
         @app.get("/api/v1/settings/JSON")
         async def get_settings_json(api_key: str = Depends(validate_credentials)):
-            """Get a JSON representation of the current CAMELS settings"""
+            """
+            Retrieve a JSON representation of the current CAMELS settings.
+
+            Args:
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response containing the sanitized settings.
+            """
             settings = self.main_window.preferences
             cleaned_settings = sanitize_dict(settings)
             return JSONResponse(
                 content=cleaned_settings,
             )
 
-        # Run a protocol by name
         @app.get(
             "/api/v1/actions/run/protocols/{protocol_name}",
             response_model=ProtocolRunResponse,
         )
         async def run_protocol(
-            protocol_name: str, 
+            protocol_name: str,
             protocol_uuid: uuid.UUID = None,
-            api_key: str = Depends(validate_credentials)
+            api_key: str = Depends(validate_credentials),
         ):
-            """Run a protocol by name"""
+            """
+            Run a protocol by its name.
+
+            This endpoint initiates a protocol run by generating (or using) a UUID, storing the run status
+            in the database, and emitting a signal to start the protocol.
+
+            Args:
+                protocol_name (str): The name of the protocol to run.
+                protocol_uuid (uuid.UUID, optional): An optional UUID for the run. Defaults to None.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response with a URL to check the protocol run status.
+            """
             # Generate or use the provided syntax checked UUID as casted string
             protocol_uuid = cast_or_create_uuid_str(_uuid=protocol_uuid)
 
@@ -241,7 +437,6 @@ class FastapiThread(QThread):
                 }
             )
 
-        # Run a protocol by name and pass variables to it (only already defined variables can be passed)
         @app.post(
             "/api/v1/actions/run/protocols/{protocol_name}",
             response_model=ProtocolRunResponse,
@@ -252,7 +447,24 @@ class FastapiThread(QThread):
             protocol_uuid: uuid.UUID = None,
             api_key: str = Depends(validate_credentials),
         ):
-            """Run a protocol by name and pass variables to it (only already defined variables can be passed)"""
+            """
+            Run a protocol with provided variables.
+
+            This endpoint checks that the provided variables are accepted by the protocol,
+            stores the run status in the database, and emits a signal to start the protocol with variables.
+
+            Args:
+                protocol_name (str): The name of the protocol.
+                variables (Variables): A Pydantic model containing the variables to pass.
+                protocol_uuid (uuid.UUID, optional): An optional UUID for the run. Defaults to None.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response with a URL to check the protocol run status.
+
+            Raises:
+                HTTPException: If any variable provided is not accepted by the protocol.
+            """
             # Get dictionary from the variables model
             variables = variables.model_dump()
             response = await get_protocol_variables(protocol_name)
@@ -283,12 +495,22 @@ class FastapiThread(QThread):
                 }
             )
 
-        # Get the status of a protocol run by UUID
         @app.get("/api/v1/protocols/results/{protocol_uuid}")
         async def get_protocol_status(
             protocol_uuid: str, api_key: str = Depends(validate_credentials)
         ):
-            """Get the status of a protocol run by UUID"""
+            """
+            Retrieve the status of a protocol run by its UUID.
+
+            This endpoint queries the database for the protocol run status.
+
+            Args:
+                protocol_uuid (str): The UUID of the protocol run.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response containing the protocol run status or an error if not found.
+            """
             # Database setup
             data_base_path = os.path.join(
                 load_save_functions.appdata_path, "CAMELS_API.db"
@@ -315,12 +537,23 @@ class FastapiThread(QThread):
                     content={"error": "UUID not found"}, status_code=404
                 )
 
-        # Get the literal hdf5 file of a successful protocol run by UUID
         @app.get("/api/v1/protocols/results/{protocol_uuid}/file")
         async def get_protocol_hdf5(
             protocol_uuid: str, api_key: str = Depends(validate_credentials)
         ):
-            """Get the literal hdf5 file of a successful protocol run by UUID"""
+            """
+            Retrieve the HDF5 file generated by a successful protocol run.
+
+            This endpoint checks the status in the database and returns the file if the protocol has finished.
+
+            Args:
+                protocol_uuid (str): The UUID of the protocol run.
+                api_key (str): API key for authentication.
+
+            Returns:
+                FileResponse or JSONResponse: The HDF5 file as a FileResponse if available,
+                otherwise a JSON error message with an appropriate status code.
+            """
             # Database setup
             data_base_path = os.path.join(
                 load_save_functions.appdata_path, "CAMELS_API.db"
@@ -365,10 +598,17 @@ class FastapiThread(QThread):
                     content={"error": "UUID not found"}, status_code=404
                 )
 
-        # Get the current protocol queue
         @app.get("/api/v1/queue")
         async def get_queue(api_key: str = Depends(validate_credentials)):
-            """Get the current protocol queue"""
+            """
+            Retrieve the current protocol queue.
+
+            Args:
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response containing the list of queued protocols with their indexes.
+            """
             protocols = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
             )
@@ -379,11 +619,27 @@ class FastapiThread(QThread):
 
         @app.get("/api/v1/actions/queue/protocols/{protocol_name}")
         async def queue_protocol(
-            protocol_name: str, 
+            protocol_name: str,
             protocol_uuid: uuid.UUID = None,
-            api_key: str = Depends(validate_credentials)
+            api_key: str = Depends(validate_credentials),
         ):
-            """Add a protocol to the queue by name"""
+            """
+            Add a protocol to the queue by its name.
+
+            This endpoint generates (or uses) a UUID, writes the status "added to queue" to the database,
+            and emits a signal to add the protocol to the queue.
+
+            Args:
+                protocol_name (str): The name of the protocol.
+                protocol_uuid (uuid.UUID, optional): An optional UUID for the run. Defaults to None.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response indicating success along with the UUID of the queued protocol.
+
+            Raises:
+                HTTPException: If the protocol could not be added to the queue.
+            """
             # Generate or use the provided syntax checked UUID as casted string
             protocol_uuid = cast_or_create_uuid_str(_uuid=protocol_uuid)
             write_protocol_result_path_to_db(protocol_uuid, "added to queue")
@@ -394,7 +650,7 @@ class FastapiThread(QThread):
                     status_code=500,
                     detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.\n{e}",
                 ) from e
-            time.sleep(0.05)
+            await asyncio.sleep(0.05)
             protocol_values = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
             )
@@ -422,7 +678,6 @@ class FastapiThread(QThread):
                     detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.",
                 )
 
-        # Add protocol to queue with variables
         @app.post("/api/v1/actions/queue/protocols/{protocol_name}")
         async def queue_protocol_with_variables(
             protocol_name: str,
@@ -430,7 +685,24 @@ class FastapiThread(QThread):
             protocol_uuid: uuid.UUID = None,
             api_key: str = Depends(validate_credentials),
         ):
-            """Add a protocol to the queue by name and pass variables to it"""
+            """
+            Add a protocol with variables to the queue.
+
+            This endpoint validates the provided variables, writes the status "added to queue" to the database,
+            and emits a signal to add the protocol along with its variables to the queue.
+
+            Args:
+                protocol_name (str): The name of the protocol.
+                variables (Variables): The variables to pass to the protocol.
+                protocol_uuid (uuid.UUID, optional): An optional UUID for the run. Defaults to None.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response indicating success along with the UUID of the queued protocol.
+
+            Raises:
+                HTTPException: If the protocol could not be added to the queue.
+            """
             # Get dictionary from the variables model
             variables = variables.model_dump()
             # Generate or use the provided syntax checked UUID as casted string
@@ -449,7 +721,7 @@ class FastapiThread(QThread):
                     status_code=500,
                     detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.\n{e}",
                 ) from e
-            time.sleep(0.05)
+            await asyncio.sleep(0.05)
             protocol_values = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
             )
@@ -477,7 +749,6 @@ class FastapiThread(QThread):
                     detail=f"Failed to add protocol {protocol_name} to queue as the protocol was not found.",
                 )
 
-        # Change variables of a protocol already in the queue
         @app.post("/api/v1/actions/queue/variables/protocols/{protocol_name}_{index}")
         async def change_variables_queued_protocol(
             protocol_name: str,
@@ -485,7 +756,24 @@ class FastapiThread(QThread):
             variables: Variables,
             api_key: str = Depends(validate_credentials),
         ):
-            """Change the variables of a protocol already in the queue"""
+            """
+            Change the variables for a protocol that is already in the queue.
+
+            This endpoint validates and updates the variables for a protocol present in the queue,
+            emitting a signal to update the variables in the user interface.
+
+            Args:
+                protocol_name (str): The name of the protocol.
+                index (int): The index position of the protocol in the queue.
+                variables (Variables): The new variables to set.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response indicating whether the update was successful.
+
+            Raises:
+                HTTPException: If the protocol is not found in the queue.
+            """
             # Get dictionary from the variables model
             variables = variables.model_dump()
             # Get the current queue
@@ -512,7 +800,7 @@ class FastapiThread(QThread):
                             status_code=500,
                             detail=f"Failed to update protocol {protocol_name} in queue as the protocol was not found.\n{e}",
                         ) from e
-            time.sleep(0.05)
+            await asyncio.sleep(0.05)
             protocol_values = list(
                 self.main_window.run_queue_widget.protocol_name_variables.values()
             )
@@ -537,12 +825,24 @@ class FastapiThread(QThread):
                     detail=f"Failed to update protocol {protocol_name} in queue as the protocol was not found.",
                 )
 
-        # Remove protocol from queue
         @app.get("/api/v1/actions/queue/remove/protocols/{protocol_name}_{index}")
         async def remove_protocol(
             protocol_name: str, index: int, api_key: str = Depends(validate_credentials)
         ):
-            """Remove a protocol from the queue by name"""
+            """
+            Remove a protocol from the queue based on its name and position.
+
+            Args:
+                protocol_name (str): The name of the protocol.
+                index (int): The index position of the protocol in the queue.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response indicating the success of the removal.
+
+            Raises:
+                HTTPException: If the protocol is not found at the given position.
+            """
             # Get the current queue
             queue_response = await get_queue(api_key)
             # Extract the queue content from the JSON response
@@ -565,12 +865,24 @@ class FastapiThread(QThread):
                 detail=f"Failed to remove protocol {protocol_name} with index {index} from queue as the protocol was not found at that position.",
             )
 
-        # Check the ready checkbox of protocols in the queue
         @app.get("/api/v1/actions/queue/ready/protocols/{protocol_name}_{index}")
         async def protocol_ready(
             protocol_name: str, index: int, api_key: str = Depends(validate_credentials)
         ):
-            """Check the ready checkbox of protocols in the queue"""
+            """
+            Mark a protocol in the queue as ready by checking its checkbox.
+
+            Args:
+                protocol_name (str): The name of the protocol.
+                index (int): The index position of the protocol in the queue.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response indicating the success of the operation.
+
+            Raises:
+                HTTPException: If the protocol is not found at the specified position.
+            """
             # Get the current queue
             queue_response = await get_queue(api_key)
             # Extract the queue content from the JSON response
@@ -592,16 +904,33 @@ class FastapiThread(QThread):
 
         @app.get("/api/v1/samples")
         async def get_samples(api_key: str = Depends(validate_credentials)):
-            """Get the list of available samples"""
+            """
+            Retrieve the list of available samples.
+
+            Args:
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response containing the sample data.
+            """
             return JSONResponse(content=self.main_window.sampledata)
 
         @app.get("/api/v1/actions/set/samples/{sample_name}")
         async def set_samples(
             sample_name: str, api_key: str = Depends(validate_credentials)
         ):
-            """Set the active sample"""
+            """
+            Set the active sample for the application.
+
+            Args:
+                sample_name (str): The name of the sample to activate.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response indicating whether the sample was successfully set.
+            """
             self.set_sample_signal.emit(str(sample_name))
-            time.sleep(0.01)
+            await asyncio.sleep(0.01)
             if self.main_window.active_sample == sample_name:
                 return JSONResponse(content={"status": "success setting sample name"})
             else:
@@ -609,16 +938,33 @@ class FastapiThread(QThread):
 
         @app.get("/api/v1/users")
         async def get_users(api_key: str = Depends(validate_credentials)):
-            """Get the list of available users"""
+            """
+            Retrieve the list of available users.
+
+            Args:
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response containing the user data.
+            """
             return JSONResponse(content=self.main_window.userdata)
 
         @app.get("/api/v1/actions/set/users/{user_name}")
         async def set_users(
             user_name: str, api_key: str = Depends(validate_credentials)
         ):
-            """Set the active user"""
+            """
+            Set the active user for the application.
+
+            Args:
+                user_name (str): The name of the user to activate.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response indicating whether the user was successfully set.
+            """
             self.set_user_signal.emit(str(user_name))
-            time.sleep(0.01)
+            await asyncio.sleep(0.01)
             if self.main_window.active_user == user_name:
                 return JSONResponse(content={"status": "success setting user name"})
             else:
@@ -626,29 +972,56 @@ class FastapiThread(QThread):
 
         @app.get("/api/v1/session")
         async def get_session(api_key: str = Depends(validate_credentials)):
-            """Get the current session name"""
+            """
+            Retrieve the current session name.
+
+            Args:
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response containing the current session name.
+            """
             return JSONResponse(content=self.main_window.lineEdit_session.text())
 
         @app.get("/api/v1/actions/set/session/{session_name}")
         async def set_session(
             session_name: str, api_key: str = Depends(validate_credentials)
         ):
-            """Set the active session name"""
+            """
+            Set the active session name for the application.
+
+            Args:
+                session_name (str): The name of the session to activate.
+                api_key (str): API key for authentication.
+
+            Returns:
+                JSONResponse: A JSON response indicating whether the session name was successfully set.
+            """
             self.set_session_signal.emit(str(session_name))
-            time.sleep(0.01)
+            await asyncio.sleep(0.01)
             if self.main_window.lineEdit_session.text() == session_name:
                 return JSONResponse(content={"status": "success setting session name"})
             else:
                 return JSONResponse(content={"status": "failed setting session name"})
 
-        # Root redirects to the API documentation
         @app.get("/")
         async def root():
+            """
+            Redirect to the API documentation.
+
+            Returns:
+                RedirectResponse: A redirect to the API docs.
+            """
             return RedirectResponse(url="/docs", status_code=302)
 
-        # Define a favicon endpoint
         @app.get("/favicon.ico")
         async def favicon():
+            """
+            Serve the favicon for the API.
+
+            Returns:
+                FileResponse: The favicon file.
+            """
             icon_path = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
                 "../graphics/camels_icon_high_res.ico",
@@ -657,58 +1030,10 @@ class FastapiThread(QThread):
 
         @app.get("/logout")
         async def logout():
-            """Logout the user"""
+            """
+            Logout the current user.
+
+            Raises:
+                HTTPException: Always raises a 401 HTTPException to indicate logout.
+            """
             raise HTTPException(status_code=401, detail="Successful Logout completed")
-
-        # Start the uvicorn server
-        try:
-            self.server_config = uvicorn.Config(
-                app,
-                host="0.0.0.0",
-                port=int(self.api_port),
-                log_level="info",
-                reload=False,
-            )
-            self.server = uvicorn.Server(self.server_config)
-
-            # Run the server
-            self.server.run()
-        except ValueError:  # Catching ValueError for invalid port conversion
-            print(f"Invalid port number: {self.api_port}")
-            self.port_error_signal.emit("Invalid port number")
-        except Exception as e:
-            print(f"Error starting server: {e}")
-            self.port_error_signal.emit("Failed to start server")
-
-    def stop_server(self):  #  Method to trigger shutdown
-        if self.server is not None:
-            self.server.should_exit = True
-            self._stop_event.set()
-            self.quit()
-            self.wait()
-
-
-if __name__ == "__main__":
-
-    class fake_run_queue_widget:
-        protocol_name_variables = {
-            "key1": ["execute", {"factor": 3, "results": 0}],
-            "key2": ["execute2", {"factor": 3, "results": 0}],
-            "key3": ["execute3", {"factor": 3, "results": 0}],
-        }
-
-    # Create a fake main window for testing
-    class fake_main_window:
-        def __init__(self):
-            self.protocols_dict = {"test_protocol": "test_protocol"}
-            self.run_queue_widget = None
-            self.sampledata = {"sample1": "sample1"}
-            self.userdata = {"user1": "user1"}
-            self.lineEdit_session = None
-            self.active_sample = None
-            self.active_user = None
-            self.run_queue_widget = fake_run_queue_widget()
-
-    api_thread = FastapiThread(main_window=fake_main_window(), api_port=12345)
-    api_thread.start()
-    api_thread.wait()  # Ensure the main thread waits for the server thread to finish
