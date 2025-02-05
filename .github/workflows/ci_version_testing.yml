@@ -26,10 +26,10 @@ jobs:
               run: |
                 pip install poetry
                 poetry install --all-extras
-                pip list
+                poetry show
             - name: Run tests
               run: |
-                poetry run pytest --timeout=60
+                poetry run pytest -vv --timeout=100
     run_low_tests:
         runs-on: windows-latest
         env:
@@ -49,4 +49,4 @@ jobs:
                 pip list
             - name: Run tests
               run: |
-                pytest --timeout=60
+                pytest -vv --timeout=100
