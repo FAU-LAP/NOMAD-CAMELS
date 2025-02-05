@@ -49,9 +49,9 @@ jobs:
           sudo apt install libgl1 libglx-mesa0 libegl1 libopengl0 libpulse0
           python -m pip install --upgrade pip
           pip install ruff poetry
-          poetry install --all-extras
+          poetry export -f requirements.txt --output requirements.txt --without-hashes
+          pip install -r requirements.txt
           export QT_DEBUG_PLUGINS=1
-          export MPLBACKEND=Agg
       - name: List packages
         run: |
           pip list
@@ -62,7 +62,8 @@ jobs:
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
       - name: Run tests with pytest
         run: |
-          poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+          cd nomad_camels
+          pytest -vv --timeout=100 --cov-config=./tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels tests/
   macos_test:
     runs-on: macos-latest
     steps:
