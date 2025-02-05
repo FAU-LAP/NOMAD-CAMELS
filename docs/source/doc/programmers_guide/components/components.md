@@ -1,7 +1,7 @@
 # Core Component Explanations
 
 ```{toctree}
-:maxdepth: 2
+:maxdepth: 1
 
 MainWindow <mainWindow_docs.md>
 ```
