@@ -18,16 +18,17 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-## 1.7.0 Browser plots and new install
+## 1.7.0 Browser plots and improved install
 Features:
 - can now show plots in the browser!
+- support of Python 3.9 is back!
+- Live comments now come with timestamps!
 
 Changes:
 - Cleaned up the protocol builder to only import modules when necessary
 - When selecting an upload for automatic upload to NOMAD, the *Uploads* drop-down list is now automatically updated.
 - Added warning and option to install flask, dash and plotly when selecting "Show plot in browser"
 - installation and dependency management now via poetry to keep dependencies clean
-- support of Python 3.9 is back!
 
 Fixes:
 - fits now have at least the number of data points in the plot view
