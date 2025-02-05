@@ -51,25 +51,42 @@ from nomad_camels.bluesky_handling.loop_step_functions_api_call import (
 
 def get_newest_file(directory):
     """
-    Return the newest file in the given directory.
+    Return the newest '.nxs' file in the specified directory, if one exists.
+
+    This function searches the given directory for files ending with the '.nxs' 
+    extension and returns the one with the most recent modification time.
+    
+    If the input 'directory' is a file, its parent directory is used for the search.
+    If no '.nxs' files are found, the function returns None.
 
     Parameters
     ----------
     directory : str
-        The directory where the newest file should be found.
+        The directory to search for '.nxs' files. If a file path is provided,
+        the search is performed in the file's parent directory.
 
     Returns
     -------
-    newest_file : str
-        The path to the newest file in the directory.
+    str or None
+        The full path to the newest '.nxs' file found in the directory, or None 
+        if no such file exists.
     """
-    # If the given directory is a file, take the directory of the file
+    # If the given path is a file, use its directory
     if os.path.isfile(directory):
         directory = os.path.dirname(directory)
-    # List all files in the directory
-    files = glob.glob(os.path.join(directory, "*"))
-    # Find the newest file
-    newest_file = max(files, key=os.path.getmtime)
+    
+    # Define the search pattern for '.nxs' files
+    pattern = os.path.join(directory, "*.nxs")
+    
+    # Retrieve a list of all '.nxs' files in the directory
+    nxs_files = glob.glob(pattern)
+    
+    # If no '.nxs' files are found, return None
+    if not nxs_files:
+        return None
+    
+    # Return the newest file based on its modification time
+    newest_file = max(nxs_files, key=os.path.getmtime)
     return newest_file
 
 
