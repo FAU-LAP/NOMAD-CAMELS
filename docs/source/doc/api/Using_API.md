@@ -102,8 +102,8 @@ and the protocol is finished you will be able to get the path to the measurement
 
 There are two ways you can directly **execute** a protocol you defined in CAMELS via the API:
 
-- [GET Protocols](#get-run-protocols)
-- [POST Protocols](#post-run-protocols-with-variables).
+- [Using GET: Run Protocols](#get-run-protocols)
+- [Using POST: Run Protocols](#post-run-protocols-with-variables).
 
 If you want to queue protocols see [here](#protocol-queue) for more information.
 
