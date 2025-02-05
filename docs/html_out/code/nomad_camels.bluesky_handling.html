@@ -97,11 +97,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="nomad_camels.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">nomad_camels.bluesky_handling package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.bluesky_handling.EpicsFieldSignal">nomad_camels.bluesky_handling.EpicsFieldSignal module</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal"><code class="docutils literal notranslate"><span class="pre">EpicsFieldSignal</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignalRO"><code class="docutils literal notranslate"><span class="pre">EpicsFieldSignalRO</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l4"><a class="reference internal" href="#nomad-camels-bluesky-handling-epicsfieldsignal-module">nomad_camels.bluesky_handling.EpicsFieldSignal module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.bluesky_handling.TriggerEpicsSignalRO">nomad_camels.bluesky_handling.TriggerEpicsSignalRO module</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.TriggerEpicsSignalRO.TriggerEpicsSignalRO"><code class="docutils literal notranslate"><span class="pre">TriggerEpicsSignalRO</span></code></a></li>
 </ul>
@@ -271,82 +267,8 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="module-nomad_camels.bluesky_handling.EpicsFieldSignal">
-<span id="nomad-camels-bluesky-handling-epicsfieldsignal-module"></span><h2>nomad_camels.bluesky_handling.EpicsFieldSignal module<a class="headerlink" href="#module-nomad_camels.bluesky_handling.EpicsFieldSignal" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.EpicsFieldSignal.</span></span><span class="sig-name descname"><span class="pre">EpicsFieldSignal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_pv_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hinted'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversion_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_conversion_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">putFunc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Signal</span></code></p>
-<p>A Signal used to address a single field of an EPICS PV.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal.get" title="Link to this definition"></a></dt>
-<dd><p>Reads the Signals value. If there is a <cite>conversion_function</cite>,
-the value is transformed by it.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal.just_readback">
-<span class="sig-name descname"><span class="pre">just_readback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal.just_readback" title="Link to this definition"></a></dt>
-<dd><p>Only returns the currently stored readback-value.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal.put">
-<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal.put" title="Link to this definition"></a></dt>
-<dd><p>Puts the Signals value. If there is a <cite>set_conversion_function</cite>,
-the value is transformed by it. Also calls <cite>self.putFunc</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong></p></li>
-<li><p><strong>*</strong></p></li>
-<li><p><strong>timestamp</strong> – (Default value = None)</p></li>
-<li><p><strong>force</strong> – (Default value = False)</p></li>
-<li><p><strong>metadata</strong> – (Default value = None)</p></li>
-<li><p><strong>**kwargs</strong></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal.subscriptions">
-<span class="sig-name descname"><span class="pre">subscriptions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">FrozenSet</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'meta',</span> <span class="pre">'value'})</span></em><a class="headerlink" href="#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal.subscriptions" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignalRO">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.EpicsFieldSignal.</span></span><span class="sig-name descname"><span class="pre">EpicsFieldSignalRO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_pv_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hinted'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversion_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_conversion_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">putFunc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignalRO" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal" title="nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal"><code class="xref py py-class docutils literal notranslate"><span class="pre">EpicsFieldSignal</span></code></a></p>
-<p>The read-only implementation of EpicsFieldSignal. The only
-difference is that it raises an error, when one tries to put a value.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignalRO.put">
-<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignalRO.put" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong></p></li>
-<li><p><strong>*</strong></p></li>
-<li><p><strong>timestamp</strong> – (Default value = None)</p></li>
-<li><p><strong>force</strong> – (Default value = False)</p></li>
-<li><p><strong>metadata</strong> – (Default value = None)</p></li>
-<li><p><strong>**kwargs</strong></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignalRO.subscriptions">
-<span class="sig-name descname"><span class="pre">subscriptions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">FrozenSet</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'meta',</span> <span class="pre">'value'})</span></em><a class="headerlink" href="#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignalRO.subscriptions" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<section id="nomad-camels-bluesky-handling-epicsfieldsignal-module">
+<h2>nomad_camels.bluesky_handling.EpicsFieldSignal module<a class="headerlink" href="#nomad-camels-bluesky-handling-epicsfieldsignal-module" title="Link to this heading"></a></h2>
 </section>
 <section id="module-nomad_camels.bluesky_handling.TriggerEpicsSignalRO">
 <span id="nomad-camels-bluesky-handling-triggerepicssignalro-module"></span><h2>nomad_camels.bluesky_handling.TriggerEpicsSignalRO module<a class="headerlink" href="#module-nomad_camels.bluesky_handling.TriggerEpicsSignalRO" title="Link to this heading"></a></h2>
@@ -1286,16 +1208,22 @@ Whether to include the endpoint into the range.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.get_newest_file">
 <span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.helper_functions.</span></span><span class="sig-name descname"><span class="pre">get_newest_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.get_newest_file" title="Link to this definition"></a></dt>
-<dd><p>Return the newest file in the given directory.</p>
+<dd><p>Return the newest ‘.nxs’ file in the specified directory, if one exists.</p>
+<p>This function searches the given directory for files ending with the ‘.nxs’
+extension and returns the one with the most recent modification time.</p>
+<p>If the input ‘directory’ is a file, its parent directory is used for the search.
+If no ‘.nxs’ files are found, the function returns None.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>directory</strong> (<em>str</em>) – The directory where the newest file should be found.</p>
+<dd class="field-odd"><p><strong>directory</strong> (<em>str</em>) – The directory to search for ‘.nxs’ files. If a file path is provided,
+the search is performed in the file’s parent directory.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>newest_file</strong> – The path to the newest file in the directory.</p>
+<dd class="field-even"><p>The full path to the newest ‘.nxs’ file found in the directory, or None
+if no such file exists.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p>str or None</p>
 </dd>
 </dl>
 </dd></dl>
