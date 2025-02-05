@@ -308,7 +308,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if hasattr(self, "fastapi_thread") and self.fastapi_thread is not None:
             pass
         else:
-            from nomad_camels.api.api import FastapiThread
+            try:
+                from nomad_camels.api.api import FastapiThread
+            except ImportError:
+                warn_popup.WarnPopup(
+                    self,
+                    "The FastAPI server could not be started. The required packages are not installed.",
+                    "FastAPI server error",
+                    info_icon=True,
+                )
+                return
 
             self.current_api_port = api_port
             # Initialize the FastAPI server thread
@@ -748,8 +757,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if nomad:
             # IMPORT nomad_communication only if it is needed
             from nomad_camels.nomad_integration import nomad_communication
+
             # The get_user_upload_names function is a lambda function that is called when the combobox is clicked. It fetches the available uploads from NOMAD.
-            self.comboBox_upload_choice.getDynamicItems = lambda: nomad_communication.get_user_upload_names(self)
+            self.comboBox_upload_choice.getDynamicItems = (
+                lambda: nomad_communication.get_user_upload_names(self)
+            )
 
     def change_user_type(self):
         """

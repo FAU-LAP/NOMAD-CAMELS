@@ -384,9 +384,12 @@ class Settings_Window(Ui_settings_window, QDialog):
 
     def change_enable_API(self):
         if self.checkBox_enable_Api.isChecked():
-            self.pushButton_generate_Api_key.setEnabled(True)
-            self.pushButton_delete_Api_keys.setEnabled(True)
-            self.pushButton_API_docu.setEnabled(True)
+            if self.check_if_api_modules_are_available():
+                self.pushButton_generate_Api_key.setEnabled(True)
+                self.pushButton_delete_Api_keys.setEnabled(True)
+                self.pushButton_API_docu.setEnabled(True)
+            else:
+                self.checkBox_enable_Api.setChecked(False)
         else:
             self.pushButton_generate_Api_key.setEnabled(False)
             self.pushButton_copy_Api_key_clipboard.setEnabled(False)
@@ -400,6 +403,81 @@ class Settings_Window(Ui_settings_window, QDialog):
         link = f"http://127.0.0.1:{self.lineEdit_api_port.text()}/docs"
         variables_handling.open_link(link)
 
+    def check_if_api_modules_are_available(self):
+        # Function to check if a module is installed.
+        # List the required modules.
+        required_modules = ["fastapi", "uvicorn", "httpx"]
+
+        # Determine which modules are missing.
+        missing_modules = [mod for mod in required_modules if not is_module_available(mod)]
+
+        if missing_modules:
+            # Create the message to warn the user.
+            msg = (
+                f"The following modules are required: {', '.join(missing_modules)}.\n\n"
+                "These modules may take a few seconds to install. You only need to do this once.\n"
+                "Do you want to install them now?"
+            )
+
+            # Show a question message box.
+            reply_update_modules = QMessageBox.question(
+                None,
+                "Install Required Modules",
+                msg,
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No,
+            )
+
+            if reply_update_modules == QMessageBox.Yes:
+                try:
+                    import sys
+                    import subprocess
+
+                    # Build the pip install command.
+                    try:
+                        command = [
+                            sys.executable,
+                            "-m",
+                            "pip",
+                            "install",
+                            "nomad-camels[api]",
+                        ]
+                        subprocess.check_call(command)
+                        missing_modules = [
+                            mod for mod in required_modules if not is_module_available(mod)
+                        ]
+                        if missing_modules:
+                            raise Exception("Failed to install nomad-camels[api]")
+                        return True
+
+                    except Exception as e:
+                        print(e)
+                        command = [sys.executable, "-m", "pip", "install"] + missing_modules
+                    # Optionally, you might show another popup or a console message indicating progress.
+                    subprocess.check_call(command)
+                    QMessageBox.information(
+                        None,
+                        "Installation Complete",
+                        "The required modules have been installed.\nYou can now start the API server and use the API.",
+                    )
+                    return True
+                except Exception as e:
+                    QMessageBox.critical(
+                        None,
+                        "Installation Failed",
+                        f"An error occurred during installation:\n{str(e)}",
+                    )
+                    return False
+                # Exit the application (or you could try to continue, if that makes sense in your context).
+            else:
+                QMessageBox.warning(
+                    None,
+                    "Modules Missing",
+                    "You can not use the API without the required modules!",
+                )
+                return False
+
+
 
 def hash_api_key(api_key):
     return hashlib.sha256(api_key.encode()).hexdigest()
@@ -411,3 +489,12 @@ def store_api_key(api_key, conn):
     c = conn.cursor()
     c.execute("INSERT INTO api_keys (key) VALUES (?)", (hashed_key,))
     conn.commit()
+
+def is_module_available(module_name):
+    try:
+        __import__(module_name)
+        return True
+    except ImportError:
+        return False
+
+
