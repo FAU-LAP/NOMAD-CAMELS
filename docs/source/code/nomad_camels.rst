@@ -11,6 +11,7 @@ Subpackages
    nomad_camels.commands
    nomad_camels.extensions
    nomad_camels.frontpanels
+   nomad_camels.graphics
    nomad_camels.gui
    nomad_camels.loop_steps
    nomad_camels.main_classes

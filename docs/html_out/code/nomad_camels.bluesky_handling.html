@@ -83,6 +83,7 @@
 <p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/programmers_guide.html">Maintain CAMELS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/components/components.html">Core Component Descriptions</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contribute to CAMELS</span></p>
 <ul>
@@ -126,6 +127,7 @@
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.BoxHelper"><code class="docutils literal notranslate"><span class="pre">BoxHelper</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.Commenting_Box"><code class="docutils literal notranslate"><span class="pre">Commenting_Box</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.Prompt_Box"><code class="docutils literal notranslate"><span class="pre">Prompt_Box</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit"><code class="docutils literal notranslate"><span class="pre">TimestampTextEdit</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.Value_Box"><code class="docutils literal notranslate"><span class="pre">Value_Box</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.Value_Setter"><code class="docutils literal notranslate"><span class="pre">Value_Setter</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.bluesky_handling.helper_functions.Waiting_Bar"><code class="docutils literal notranslate"><span class="pre">Waiting_Bar</span></code></a></li>
@@ -200,6 +202,7 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.commands.html">nomad_camels.commands package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.extensions.html">nomad_camels.extensions package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html">nomad_camels.frontpanels package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.graphics.html">nomad_camels.graphics package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html">nomad_camels.gui package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.loop_steps.html">nomad_camels.loop_steps package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.main_classes.html">nomad_camels.main_classes package</a></li>
@@ -447,12 +450,12 @@ created in the script at all.</p></li>
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.custom_function_signal.</span></span><span class="sig-name descname"><span class="pre">Custom_Function_Signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hinted'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">put_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trigger_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_on_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_retry_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_sequential</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Signal</span></code></p>
-<p>Overwrites ophyd’s Signal to add a simple python function that’s called
-when calling <cite>put</cite>, <cite>trigger</cite> or <cite>get</cite>.</p>
+<p>A custom signal class that extends ophyd’s Signal by allowing the user to specify
+custom functions that are executed when putting, reading, or triggering the signal.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.put_function">
 <span class="sig-name descname"><span class="pre">put_function</span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.put_function" title="Link to this definition"></a></dt>
-<dd><p>Called when the Signal’s <cite>put</cite> method is called.</p>
+<dd><p>Function called when the signal’s put() method is invoked.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>callable</p>
@@ -463,7 +466,7 @@ when calling <cite>put</cite>, <cite>trigger</cite> or <cite>get</cite>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.read_function">
 <span class="sig-name descname"><span class="pre">read_function</span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.read_function" title="Link to this definition"></a></dt>
-<dd><p>Called when the Signal’s <cite>get</cite> method is called.</p>
+<dd><p>Function called when the signal’s get() method is invoked.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>callable</p>
@@ -474,7 +477,7 @@ when calling <cite>put</cite>, <cite>trigger</cite> or <cite>get</cite>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.trigger_function">
 <span class="sig-name descname"><span class="pre">trigger_function</span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.trigger_function" title="Link to this definition"></a></dt>
-<dd><p>Called when the Signal’s <cite>trigger</cite> method is called.</p>
+<dd><p>Function called when the signal’s trigger() method is invoked.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>callable</p>
@@ -482,30 +485,105 @@ when calling <cite>put</cite>, <cite>trigger</cite> or <cite>get</cite>.</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.retry_on_error">
+<span class="sig-name descname"><span class="pre">retry_on_error</span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.retry_on_error" title="Link to this definition"></a></dt>
+<dd><p>Number of retry attempts in case of failure when calling custom functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.error_retry_function">
+<span class="sig-name descname"><span class="pre">error_retry_function</span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.error_retry_function" title="Link to this definition"></a></dt>
+<dd><p>Optional function to be called if a custom function raises an error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.force_sequential">
+<span class="sig-name descname"><span class="pre">force_sequential</span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.force_sequential" title="Link to this definition"></a></dt>
+<dd><p>Flag to force sequential execution; if True, operations may wait for the parent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.describe">
 <span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.describe" title="Link to this definition"></a></dt>
-<dd><p>Overwrites describe to add ‘Custom Function’ as ‘source’.</p>
+<dd><p>Return a description of the signal with a custom source identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary describing the signal, with the ‘source’ set to “Custom Function”.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.get" title="Link to this definition"></a></dt>
-<dd><p>Overwrites Signal’s <cite>get</cite> to add the defined <cite>read_function</cite>.
-For further information see ophyd’s documentation.</p>
+<dd><p>Read the value from the signal. If a read_function is defined, it is used to obtain the value.
+The function is retried upon error based on the retry_on_error setting.</p>
+<p>This method updates the internal _readback attribute and notifies subscribers of the change.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The value obtained from the parent get() method.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.put">
 <span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.put" title="Link to this definition"></a></dt>
-<dd><p>Overwrites Signal’s <cite>put</cite> to add the defined <cite>put_function</cite>.
-For further information see ophyd’s documentation.</p>
+<dd><p>Write a value to the signal. If a put_function is defined, it is called to process the value.
+The function is retried upon error based on the retry_on_error setting.</p>
+<p>This method first checks if a put_function is provided and if it needs the instance reference.
+If the put_function’s first parameter is named “_self_instance”, the instance (self) is passed.
+Otherwise, the function is executed without the instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> – The value to be written to the signal.</p></li>
+<li><p><strong>timestamp</strong> (<em>optional</em>) – Timestamp for the put operation.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – Force the put operation even if the value is the same. Defaults to False.</p></li>
+<li><p><strong>metadata</strong> (<em>optional</em>) – Additional metadata for the put operation.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.read_configuration">
 <span class="sig-name descname"><span class="pre">read_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.read_configuration" title="Link to this definition"></a></dt>
-<dd><p>Dictionary mapping names to value dicts with keys: value, timestamp</p>
+<dd><p>Read the current configuration of the signal.</p>
+<p>If _readback is already set, that value is used; otherwise, get() is called.
+The returned configuration is a dictionary with the signal’s name as the key and a dictionary
+containing the value and timestamp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary in the format {signal_name: {“value”: value, “timestamp”: timestamp}}.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -516,8 +594,12 @@ For further information see ophyd’s documentation.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.trigger">
 <span class="sig-name descname"><span class="pre">trigger</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.trigger" title="Link to this definition"></a></dt>
-<dd><p>Overwrites Signal’s <cite>trigger</cite> to add the defined <cite>trigger_function</cite>.
-For further information see ophyd’s documentation.</p>
+<dd><p>Trigger the signal. If a trigger_function is defined, it is executed with retries upon failure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The result of the parent trigger() method.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -526,12 +608,12 @@ For further information see ophyd’s documentation.</p>
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.custom_function_signal.</span></span><span class="sig-name descname"><span class="pre">Custom_Function_SignalRO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hinted'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trigger_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_on_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_retry_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_sequential</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SignalRO</span></code></p>
-<p>Overwrites ophyd’s SignalRO to add a simple python function that’s called
-when calling, <cite>trigger</cite> or <cite>get</cite>.</p>
+<p>A custom read-only signal class that extends ophyd’s SignalRO by allowing the user to specify
+functions that are executed when reading or triggering the signal.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.read_function">
 <span class="sig-name descname"><span class="pre">read_function</span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.read_function" title="Link to this definition"></a></dt>
-<dd><p>Called when the Signal’s <cite>get</cite> method is called.</p>
+<dd><p>Function called when the signal’s get() method is invoked.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>callable</p>
@@ -542,7 +624,7 @@ when calling, <cite>trigger</cite> or <cite>get</cite>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.trigger_function">
 <span class="sig-name descname"><span class="pre">trigger_function</span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.trigger_function" title="Link to this definition"></a></dt>
-<dd><p>Called when the Signal’s <cite>trigger</cite> method is called.</p>
+<dd><p>Function called when the signal’s trigger() method is invoked.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>callable</p>
@@ -550,23 +632,82 @@ when calling, <cite>trigger</cite> or <cite>get</cite>.</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.retry_on_error">
+<span class="sig-name descname"><span class="pre">retry_on_error</span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.retry_on_error" title="Link to this definition"></a></dt>
+<dd><p>Number of retry attempts in case of failure when calling custom functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.error_retry_function">
+<span class="sig-name descname"><span class="pre">error_retry_function</span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.error_retry_function" title="Link to this definition"></a></dt>
+<dd><p>Optional function to be called if a custom function raises an error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.force_sequential">
+<span class="sig-name descname"><span class="pre">force_sequential</span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.force_sequential" title="Link to this definition"></a></dt>
+<dd><p>Flag to force sequential execution; if True, operations may wait for the parent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.describe">
 <span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.describe" title="Link to this definition"></a></dt>
-<dd><p>Overwrites describe to add ‘Custom Function’ as ‘source’.</p>
+<dd><p>Return a description of the read-only signal with a custom source identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary describing the signal, with the ‘source’ set to “Custom Function”.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.get" title="Link to this definition"></a></dt>
-<dd><p>Overwrites SignalRO’s <cite>get</cite> to add the defined <cite>read_function</cite>.
-For further information see ophyd’s documentation.</p>
+<dd><p>Read the value from the read-only signal. If a read_function is defined, it is used to obtain the value.
+The function is retried upon error based on the retry_on_error setting.</p>
+<p>The internal _readback attribute is updated and subscribers are notified of the change.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The value obtained from the parent get() method.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.read_configuration">
 <span class="sig-name descname"><span class="pre">read_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.read_configuration" title="Link to this definition"></a></dt>
-<dd><p>Dictionary mapping names to value dicts with keys: value, timestamp</p>
+<dd><p>Read the current configuration of the read-only signal.</p>
+<p>If _readback is set and the signal is not a configuration signal with an associated read_function,
+the existing value is used; otherwise, get() is called to obtain the value.
+The returned configuration is a dictionary with the signal’s name as the key and a dictionary
+containing the value and timestamp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary in the format {signal_name: {“value”: value, “timestamp”: timestamp}}.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -577,8 +718,12 @@ For further information see ophyd’s documentation.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.trigger">
 <span class="sig-name descname"><span class="pre">trigger</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.trigger" title="Link to this definition"></a></dt>
-<dd><p>Overwrites SignalRO’s <cite>trigger</cite> to add the defined <cite>trigger_function</cite>.
-For further information see ophyd’s documentation.</p>
+<dd><p>Trigger the read-only signal. If a trigger_function is defined, it is executed with retries upon failure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The result of the parent trigger() method.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -587,6 +732,8 @@ For further information see ophyd’s documentation.</p>
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Sequential_Device">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.custom_function_signal.</span></span><span class="sig-name descname"><span class="pre">Sequential_Device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force_sequential</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">currently_reading</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Sequential_Device" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></p>
+<p>A custom device class that supports sequential operations.
+It provides flags to force sequential execution and to indicate whether a reading operation is in progress.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.Sequential_Device.component_names">
 <span class="sig-name descname"><span class="pre">component_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.Sequential_Device.component_names" title="Link to this definition"></a></dt>
@@ -602,19 +749,28 @@ For further information see ophyd’s documentation.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.custom_function_signal.retry_function">
 <span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.custom_function_signal.</span></span><span class="sig-name descname"><span class="pre">retry_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_retry_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.custom_function_signal.retry_function" title="Link to this definition"></a></dt>
-<dd><p>This function attempts to execute a given function multiple times until it succeeds or the maximum number of retries is reached.
-If a parent object is provided and it is currently reading, the function waits until the parent is no longer reading before attempting to execute the function.</p>
-<p>Parameters:
-func (callable): The function to be executed.
-retries (int): The maximum number of times to retry executing the function.
-<a href="#id1"><span class="problematic" id="id2">*</span></a>args: Variable length argument list for the function to be executed.
-error_retry_function (callable, optional): A function to be called when an error occurs. Defaults to None.
-parent (object, optional): An object (the instrument class) that the function checks for a currently_reading attribute. If currently_reading is True, the function waits until it is False before executing. Defaults to None.
-<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: Arbitrary keyword arguments for the function to be executed.</p>
-<p>Returns:
-The return value of the function to be executed.</p>
-<p>Raises:
-Exception: If the function fails to execute after the specified number of retries, an exception is raised with details of the last exception encountered.</p>
+<dd><p>Attempt to execute a function multiple times until it succeeds or the maximum number of retries is reached.</p>
+<p>If a parent object is provided and it is currently reading (i.e., parent.currently_reading is True),
+the function waits until the parent is no longer reading before executing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>callable</em>) – The function to be executed.</p></li>
+<li><p><strong>retries</strong> (<em>int</em>) – Maximum number of retries upon failure.</p></li>
+<li><p><strong>*args</strong> – Variable length argument list for the function.</p></li>
+<li><p><strong>error_retry_function</strong> (<em>callable</em><em>, </em><em>optional</em>) – Function to call when an error occurs. Defaults to None.</p></li>
+<li><p><strong>parent</strong> (<em>object</em><em>, </em><em>optional</em>) – An object (e.g., an instrument) that may enforce sequential access. Defaults to None.</p></li>
+<li><p><strong>**kwargs</strong> – Arbitrary keyword arguments for the function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the function call if successful.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the function fails after the specified number of retries, an exception is raised
+    with details of the last and first encountered exceptions.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -625,7 +781,8 @@ Exception: If the function fails to execute after the specified number of retrie
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.evaluation_helper.</span></span><span class="sig-name descname"><span class="pre">Evaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.evaluation_helper.Evaluator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CallbackBase</span></code></p>
 <p>This class can be used to evaluate strings with names known in bluesky at
-any point, as well inside the run itself.</p>
+any point, as well inside the run itself. It provides methods to evaluate
+strings and update the namespace dynamically.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.evaluation_helper.Evaluator.eval">
 <span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eval_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_not_reraise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.evaluation_helper.Evaluator.eval" title="Link to this definition"></a></dt>
@@ -633,7 +790,10 @@ any point, as well inside the run itself.</p>
 Checks if the namespace is up to date before evaluating.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>eval_str</strong> (<em>str</em>) – The string to be evaluated.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eval_str</strong> (<em>str</em>) – The string to be evaluated.</p></li>
+<li><p><strong>do_not_reraise</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, exceptions are not re-raised, and NaN is returned instead.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The evaluated value.</p>
@@ -646,11 +806,10 @@ Checks if the namespace is up to date before evaluating.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.evaluation_helper.Evaluator.eval_string">
-<span class="sig-name descname"><span class="pre">eval_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eval_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.evaluation_helper.Evaluator.eval_string" title="Link to this definition"></a></dt>
-<dd><p>Evaluates the given string through the provided namespace to another
-string. The string is split at quotation marks and the parts of the
-string are tried to be evaluated. If that is not possible, they are just
-added back to the string as is.
+<span class="sig-name descname"><span class="pre">eval_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eval_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.evaluation_helper.Evaluator.eval_string" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the given string through the provided namespace to another string.
+The string is split at quotation marks and the parts of the string are tried
+to be evaluated. If that is not possible, they are just added back to the string as is.
 Checks if the namespace is up to date before evaluating.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -660,10 +819,10 @@ Checks if the namespace is up to date before evaluating.</p>
 <dd class="field-even"><p>The evaluated string.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>return_str</p>
+<dd class="field-odd"><p>str</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If there is a bigger problem.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If there is a bigger problem during evaluation.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -671,25 +830,43 @@ Checks if the namespace is up to date before evaluating.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.evaluation_helper.Evaluator.event">
 <span class="sig-name descname"><span class="pre">event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.evaluation_helper.Evaluator.event" title="Link to this definition"></a></dt>
-<dd><p>Overwrites the <cite>event</cite> method to add the variable ‘time’ to the
-namespace and update the <cite>last_update</cite> attribute for checking before
-evaluation.
+<dd><p>Overwrites the <cite>event</cite> method to add the variable ‘time’ to the namespace and
+update the <cite>last_update</cite> attribute for checking before evaluation.
 See bluesky’s documentation for more information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>doc</strong> (<em>dict</em>) – The event document provided by bluesky.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.evaluation_helper.Evaluator.is_to_date">
-<span class="sig-name descname"><span class="pre">is_to_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.evaluation_helper.Evaluator.is_to_date" title="Link to this definition"></a></dt>
-<dd><p>Compares whether the given <cite>t</cite> is the same as the Evaluator’s
-last_update.</p>
+<span class="sig-name descname"><span class="pre">is_to_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.evaluation_helper.Evaluator.is_to_date" title="Link to this definition"></a></dt>
+<dd><p>Compares whether the given <cite>t</cite> is the same as the Evaluator’s last_update.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – The time to compare with the last update time.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the given time is the same as the last update time, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.evaluation_helper.Evaluator.start">
 <span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.evaluation_helper.Evaluator.start" title="Link to this definition"></a></dt>
-<dd><p>Overwrites the <cite>start</cite> method to add the variable ‘StartTime’ to the
-namespace.
+<dd><p>Overwrites the <cite>start</cite> method to add the variable ‘StartTime’ to the namespace.
 See bluesky’s documentation for more information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>doc</strong> (<em>dict</em>) – The start document provided by bluesky.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -697,17 +874,36 @@ See bluesky’s documentation for more information.</p>
 <span class="sig-name descname"><span class="pre">update_namespace</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.evaluation_helper.Evaluator.update_namespace" title="Link to this definition"></a></dt>
 <dd><p>Updates the namespace with the <cite>add_namespace</cite> dictionary. Since this is
 exactly the given namespace from __init__, it can be easily updated from
-outside the class.
-Also the variable ‘ElapsedTime’ is added to the namespace.</p>
+outside the class. Also, the variable ‘ElapsedTime’ is added to the namespace.</p>
+<p>This method ensures that the namespace is always up-to-date with the latest
+additions and changes.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.evaluation_helper.get_eval">
-<span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.evaluation_helper.</span></span><span class="sig-name descname"><span class="pre">get_eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eval_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.evaluation_helper.get_eval" title="Link to this definition"></a></dt>
-<dd><p>This evaluates the given string within the given namespace.
-Most functionality is taken from bluesky.utils.call_or_eval_one.</p>
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.evaluation_helper.</span></span><span class="sig-name descname"><span class="pre">get_eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eval_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.bluesky_handling.evaluation_helper.Evaluator" title="nomad_camels.bluesky_handling.evaluation_helper.Evaluator"><span class="pre">Evaluator</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.evaluation_helper.get_eval" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the given string within the given namespace. Most functionality is
+taken from bluesky.utils.call_or_eval_one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eval_str</strong> (<em>str</em>) – The string to be evaluated.</p></li>
+<li><p><strong>namespace</strong> (<em>dict</em>) – The namespace in which to evaluate the string.</p></li>
+<li><p><strong>evaluator</strong> (<a class="reference internal" href="#nomad_camels.bluesky_handling.evaluation_helper.Evaluator" title="nomad_camels.bluesky_handling.evaluation_helper.Evaluator"><em>Evaluator</em></a><em>, </em><em>optional</em>) – The Evaluator instance to use for tracking raised exceptions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The evaluated value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Value</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the string cannot be found in the namespace or evaluated as a Python expression.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -741,7 +937,7 @@ within the protocol.</p>
 <p>A widget to add comments to the protocol.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.Commenting_Box.closeEvent">
-<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtGui.QCloseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.Commenting_Box.closeEvent" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtGui.QCloseEvent</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.Commenting_Box.closeEvent" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -805,6 +1001,29 @@ then <cite>QMessagebox.Warning</cite> is used, otherwise <cite>QMessagebox.Infor
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.Prompt_Box.staticMetaObject">
 <span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Prompt_Box&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QMessageBox&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.Prompt_Box.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.bluesky_handling.helper_functions.</span></span><span class="sig-name descname"><span class="pre">TimestampTextEdit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QTextEdit</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit.insertTimestamp">
+<span class="sig-name descname"><span class="pre">insertTimestamp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit.insertTimestamp" title="Link to this definition"></a></dt>
+<dd><p>Inserts the current timestamp followed by a space at the current cursor position.
+The timestamp is in ISO 8601 format (e.g. “2025-02-05T14:30:00”).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit.keyPressEvent">
+<span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtGui.QKeyEvent</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit.keyPressEvent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;TimestampTextEdit&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QTextEdit&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit.staticMetaObject" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1722,7 +1941,7 @@ the datatype specified by <cite>self.parse_return_type</cite>.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.bluesky_handling.watchdogs.Watchdog_Definer.accept">
-<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.watchdogs.Watchdog_Definer.accept" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.bluesky_handling.watchdogs.Watchdog_Definer.accept" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

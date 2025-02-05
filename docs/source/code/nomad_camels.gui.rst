@@ -12,6 +12,14 @@ nomad\_camels.gui.device\_installer module
    :undoc-members:
    :show-inheritance:
 
+nomad\_camels.gui.dynamicuploadcombobox module
+----------------------------------------------
+
+.. automodule:: nomad_camels.gui.dynamicuploadcombobox
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 nomad\_camels.gui.enterTextDialog module
 ----------------------------------------
 
