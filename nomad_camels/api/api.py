@@ -189,7 +189,7 @@ class FastapiThread(QThread):
         config = uvicorn.Config(
             self.app,
             host="127.0.0.1",
-            port=self.api_port,
+            port=int(self.api_port),
             log_level="info",
             reload=False,
             workers=1,  # Ensure only one worker to avoid multi-thread issues
