@@ -19,9 +19,13 @@ The CAMELS API works by sending HTTP requests to its web server.
 To use any request other than the home path of the web server you need to authenticate your request using the API key (see [Creating API Keys](Creating_API_Keys.md)).
 
 If you are using a regular browser and want to use the API manually it is best to navigate to `<host>:<port>`. You can then select the request you want to perform and click on *Try it out* and then *Execute*.
+
 ![Example image of how to manually use the API via the browser](images/image-2.png)
+
 You will be need to authenticate yourself to send any API requests. Simply enter the API key in the password section. The username can be anything or empty. This will look something like this
+
 ![Example image of the authentication pop up in the browser](images/image-4.png)
+
 Once authorized in the browser you will stay authenticated when using further requests until you close the browser.
 
 
