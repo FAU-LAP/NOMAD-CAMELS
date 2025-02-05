@@ -51,7 +51,6 @@ jobs:
           pip install ruff poetry
           poetry install --all-extras
           export QT_DEBUG_PLUGINS=1
-          export QT_QPA_PLATFORM=offscreen
       - name: List packages
         run: |
           pip list
