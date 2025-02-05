@@ -1,16 +1,13 @@
-import sys
-from fastapi import FastAPI, HTTPException, Depends, status, Response
-from fastapi.encoders import jsonable_encoder
+
+from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from PySide6.QtCore import QThread, Signal
 from nomad_camels.frontpanels.settings_window import hash_api_key
-from nomad_camels.utility import load_save_functions, variables_handling
+from nomad_camels.utility import load_save_functions
 import uvicorn
 import sqlite3
 import os
-import threading
-import time
 import json
 import uuid
 from pydantic import BaseModel, Field
