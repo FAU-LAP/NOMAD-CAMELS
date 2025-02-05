@@ -1,7 +1,34 @@
 import time
 
 from ophyd import Signal, SignalRO, Device
-import pyvisa
+
+try:
+    import pyvisa
+except ImportError:
+    from PySide6.QtWidgets import QMessageBox
+
+    msg = (
+        f"You need PyVISA for VISA communication.\n\n" "Do you want to install it now?"
+    )
+
+    # Show a question message box.
+    reply_update_modules = QMessageBox.question(
+        None, "Install PyVISA?", msg, QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+    )
+
+    if reply_update_modules == QMessageBox.Yes:
+        import sys
+        import subprocess
+
+        # Build the pip install command.
+        command = [sys.executable, "-m", "pip", "install", "nomad-camels[visa]"]
+        # Optionally, you might show another popup or a console message indicating progress.
+        subprocess.check_call(command)
+        QMessageBox.information(
+            None,
+            "Installation Complete",
+            "The required modules have been installed.\nYou might need to restart CAMELS for the changes to take effect.",
+        )
 import re
 
 try:
