@@ -48,7 +48,7 @@ jobs:
         run: |
           sudo apt install libgl1 libglx-mesa0 libegl1 libopengl0 libpulse0
           python -m pip install --upgrade pip
-          pip install ruff poetry
+          pip install ruff poetry QtPy
           poetry self add poetry-plugin-export
           poetry export -f requirements.txt --output requirements.txt --without-hashes --all-extras
           pip install -r requirements.txt
