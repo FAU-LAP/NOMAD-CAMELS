@@ -25,16 +25,10 @@ from PySide6.QtWidgets import QWidget, QApplication
 from PySide6.QtCore import QCoreApplication
 
 
-app = None
-screens = None
-
-
-def make_app_and_screens():
-    global app, screens
-    app = QCoreApplication.instance()
-    if app is None:
-        app = QApplication(sys.argv)
-    screens = app.screens()
+app = QCoreApplication.instance()
+if app is None:
+    app = QApplication(sys.argv)
+screens = app.screens()
 
 
 current_screen = 0
@@ -48,8 +42,6 @@ vertical_margin = 5
 
 def reset_variables():
     global current_screen, current_pos, max_height_in_row, iteration, screens, app
-    if app is None:
-        make_app_and_screens()
     screens = app.screens()
     current_screen = 0
     current_pos = [0, 0]
@@ -79,8 +71,6 @@ def place_widget(
         the widget that should be placed
     """
     global max_height_in_row, current_screen, current_pos, iteration, screens, app
-    if app is None:
-        make_app_and_screens()
     widget.show()
 
     # If specific coordinates and dimensions are provided, use them
