@@ -1388,6 +1388,7 @@ def check_if_plotly_modules_are_available(self):
                 # Build the pip install command.
                 try:
                     command = [sys.executable, "-m", "pip", "install", "nomad-camels[dash]"]
+                    subprocess.check_call(command)
                     missing_modules = [mod for mod in required_modules if not is_module_available(mod)]
                     if missing_modules:
                         raise Exception("Failed to install nomad-camels[dash]")
