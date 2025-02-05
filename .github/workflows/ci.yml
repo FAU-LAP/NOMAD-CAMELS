@@ -51,6 +51,7 @@ jobs:
           pip install ruff poetry
           poetry install --all-extras
           export QT_DEBUG_PLUGINS=1
+          export MPLBACKEND=Agg
       - name: List packages
         run: |
           pip list
