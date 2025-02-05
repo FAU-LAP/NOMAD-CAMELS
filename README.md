@@ -18,6 +18,11 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.7.1
+
+Fixes:
+- Automatic upload to NOMAD fixed when also exporting to CSV
+
 ## 1.7.0 Browser plots and improved install
 Features:
 - can now show plots in the browser
