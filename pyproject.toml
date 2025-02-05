@@ -1,6 +1,6 @@
 [project]
 name = "nomad_camels"
-version = "1.6.1"
+version = "1.7.0"
 description = "CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics."
 authors = [
     {name = "FAIRmat - HU Berlin",email = "nomad-camels@fau.de"}
@@ -67,7 +67,6 @@ qt-material = { version = ">=2.12",   optional = true }
 pyvisa      = { version = ">=1.12.0",  optional = true }
 pyvisa-py   = { version = ">=0.5.3",    optional = true }
 
-plotly = ">=5.0.0"
 dash = ">=2.6.0"
 
 [tool.poetry.extras]
@@ -75,7 +74,7 @@ api = ["fastapi", "uvicorn", "httpx"]
 dev = ["pytest", "pytest-qt", "pytest-order", "pytest-mock", "pytest-timeout"]
 material = ["qt-material"]
 visa = ["pyvisa", "pyvisa-py"]
-plotly = ["plotly", "dash"]
+dash = ["dash"]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
