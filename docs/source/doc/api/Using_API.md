@@ -31,7 +31,7 @@ Once authorized in the browser you will stay authenticated when using further re
 
 ## Most Useful Commands
 
-Bellow are descriptions for the most useful commands.
+Below are descriptions for the most useful commands.
 
 ```{attention}
 In the following all paths are given als relative paths from `//localhost:<port>/`.
@@ -299,7 +299,7 @@ Again give the name of the protocol (for example `demo`) and the index of where 
 
 ## Protocol Results
 
-Every protocol run will generate data. Either into a single file or individual HDF5 files for each measurement. You can check the current status of the measurement using the command found [bellow](#protocol-results-file-path).
+Every protocol run will generate data. Either into a single file or individual HDF5 files for each measurement. You can check the current status of the measurement using the command found [below](#protocol-results-file-path).
 
 To be able to retrieve the results of a protocol run via the API you can either get the [file path](#protocol-results-file-path) for the data file created or get the [actual file](#protocol-results-file).
 
