@@ -37,10 +37,6 @@ Bellow are descriptions for the most useful commands.
 In the following all paths are given als relative paths from `//localhost:<port>/`.
 ```
 
-```{note}
-All `GET` API calls (requests) can also be performed using a browser. `POST` requests can not be performed using a browser, as you need to pass information in the body of the request.
-```
-
 ## Get Protocol Parameters
 
 Use these requests to find out which protocols exists and what variables each protocol has.
@@ -57,8 +53,13 @@ You can also use Python to perform the http request. This could look something l
 
 ```python
 import requests
-api_key = 123 # Enter the actual API key you got from CAMELS here
-result = requests.get("http://localhost:5000//api/v1/protocols", auth=("", f"{api_key}"))
+api_key = "123abc" # Enter the actual API key you got from CAMELS here
+# Create the headers with the Bearer token
+headers = {
+    "Authorization": f"Bearer {api_key}"
+}
+port = 5000 # Change this to the port you are acutally using
+result = requests.get(f"http://localhost:{port}/api/v1/protocols", headers=headers)
 ```
 
 The API will return a JSON string of the form:
