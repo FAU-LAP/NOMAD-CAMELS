@@ -1257,37 +1257,31 @@ class Waiting_Bar(QWidget):
 class TimestampTextEdit(QTextEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
-        # Optionally, start with an initial timestamp.
-        self.insertTimestamp()
+        # Flag to track if the first keystroke has been handled.
+        self.first_key_pressed = False
 
     def insertTimestamp(self):
         """
         Inserts the current timestamp followed by a space at the current cursor position.
         The timestamp is in ISO 8601 format (e.g. "2025-02-05T14:30:00").
         """
-        # You can change the format by replacing Qt.ISODate with a custom format string.
-        dt = QDateTime.currentDateTime()
-        timestamp = dt.toString(Qt.ISODate)
-        offset_sec = dt.offsetFromUtc()  # offset in seconds
-        hours = offset_sec // 3600
-        mins = (abs(offset_sec) % 3600) // 60
-        timezone = f"{'+' if hours >= 0 else '-'}{abs(hours):02d}:{mins:02d}"
-        timestamp = f"{timestamp}{timezone}"
+        timestamp = QDateTime.currentDateTime().toString(Qt.ISODate)
         self.insertPlainText(timestamp + " ")
 
     def keyPressEvent(self, event: QKeyEvent):
-        """
-        Reimplemented to intercept the Return/Enter key press. After the user inserts a newline,
-        automatically insert a timestamp at the beginning of the new line.
-        """
-        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
-            # Call the base class method to insert the newline.
-            super().keyPressEvent(event)
-            # Insert the timestamp after the newline.
+        # If this is the very first key press in the widget,
+        # prepend a timestamp.
+        if not self.first_key_pressed:
             self.insertTimestamp()
-        else:
-            # For all other keys, use the default behavior.
-            super().keyPressEvent(event)
+            self.first_key_pressed = True
+
+        # Process the key event normally.
+        super().keyPressEvent(event)
+
+        # If the key pressed is Return or Enter, then insert a new timestamp
+        # on the new line.
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            self.insertTimestamp()
 
 class Commenting_Box(QWidget):
     """A widget to add comments to the protocol."""
