@@ -18,18 +18,23 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 1.6.1
+## 1.7.0 Browser plots and new install
+Features:
+- can now show plots in the browser!
+
+Changes:
+- Cleaned up the protocol builder to only import modules when necessary
+- When selecting an upload for automatic upload to NOMAD, the *Uploads* drop-down list is now automatically updated.
+- Added warning and option to install flask, dash and plotly when selecting "Show plot in browser"
+- installation and dependency management now via poetry to keep dependencies clean
+- support of Python 3.9 is back!
+
 Fixes:
 - fits now have at least the number of data points in the plot view
 - could insert variables at channel names in set channels and similar, now only possible for the value
 - improved exception handling for instrument (un-)install
 
 
-Changes:
-
-- Cleaned up the protocol builder to only import modules when necessary
-- When selecting an upload for automatic upload to NOMAD, the *Uploads* drop-down list is now automatically updated.
-- Added warning and option to install flask, dash and plotly when selecting "Show plot in browser" 
 
 ## 1.6.0 Ignore failed read, new manual control
 Features:
