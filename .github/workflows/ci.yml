@@ -61,7 +61,6 @@ jobs:
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
       - name: Run tests with pytest
         run: |
-          cd nomad_camels
           poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
   macos_test:
     runs-on: macos-latest
