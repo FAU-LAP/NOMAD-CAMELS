@@ -25,8 +25,8 @@ from PySide6.QtWidgets import (
     QTextEdit,
     QCheckBox,
 )
-from PySide6.QtCore import Signal, Qt
-from PySide6.QtGui import QFont, QIcon
+from PySide6.QtCore import Signal, Qt, QDateTime
+from PySide6.QtGui import QFont, QIcon, QKeyEvent
 
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
@@ -1254,6 +1254,40 @@ class Waiting_Bar(QWidget):
 
         self.show()
 
+class TimestampTextEdit(QTextEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        # Optionally, start with an initial timestamp.
+        self.insertTimestamp()
+
+    def insertTimestamp(self):
+        """
+        Inserts the current timestamp followed by a space at the current cursor position.
+        The timestamp is in ISO 8601 format (e.g. "2025-02-05T14:30:00").
+        """
+        # You can change the format by replacing Qt.ISODate with a custom format string.
+        dt = QDateTime.currentDateTime()
+        timestamp = dt.toString(Qt.ISODate)
+        offset_sec = dt.offsetFromUtc()  # offset in seconds
+        hours = offset_sec // 3600
+        mins = (abs(offset_sec) % 3600) // 60
+        timezone = f"{'+' if hours >= 0 else '-'}{abs(hours):02d}:{mins:02d}"
+        timestamp = f"{timestamp}{timezone}"
+        self.insertPlainText(timestamp + " ")
+
+    def keyPressEvent(self, event: QKeyEvent):
+        """
+        Reimplemented to intercept the Return/Enter key press. After the user inserts a newline,
+        automatically insert a timestamp at the beginning of the new line.
+        """
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            # Call the base class method to insert the newline.
+            super().keyPressEvent(event)
+            # Insert the timestamp after the newline.
+            self.insertTimestamp()
+        else:
+            # For all other keys, use the default behavior.
+            super().keyPressEvent(event)
 
 class Commenting_Box(QWidget):
     """A widget to add comments to the protocol."""
@@ -1263,7 +1297,7 @@ class Commenting_Box(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = QGridLayout()
-        self.comment_box = QTextEdit()
+        self.comment_box = TimestampTextEdit()
         self.finished_box = QCheckBox("commenting finished")
         self.setWindowTitle("Live Measurement Comments - NOMAD CAMELS")
         self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
