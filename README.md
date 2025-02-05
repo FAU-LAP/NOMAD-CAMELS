@@ -21,7 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ## 1.7.0 Browser plots and improved install
 Features:
 - can now show plots in the browser
-- support of Python 3.9 is back
+- support of Python 3.9 is back!
 - Live comments now come with timestamps
 
 Changes:
