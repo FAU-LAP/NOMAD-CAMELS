@@ -48,7 +48,8 @@ jobs:
         run: |
           sudo apt install libgl1 libglx-mesa0 libegl1 libopengl0 libpulse0
           python -m pip install --upgrade pip
-          pip install ruff poetry poetry-export
+          pip install ruff poetry
+          poetry self add poetry-plugin-export
           poetry export -f requirements.txt --output requirements.txt --without-hashes
           pip install -r requirements.txt
           export QT_DEBUG_PLUGINS=1
