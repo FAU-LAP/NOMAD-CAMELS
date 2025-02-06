@@ -29,7 +29,7 @@ Use `homebrew` to install pyenv ([see here](https://brew.sh/) for more informati
 
 ## 3. Install CAMELS
 - Create a folder where you want to install CAMELS (e.g. `NOMAD-CAMELS/`)
-- Type in your powershell 
+- Type in your terminal 
    ```bash
    cd NOMAD-CAMELS
    pyenv local <python_version>
