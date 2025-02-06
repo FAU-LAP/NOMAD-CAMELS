@@ -83,6 +83,7 @@
 <p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/programmers_guide.html">Maintain CAMELS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/components/components.html">Core Component Descriptions</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contribute to CAMELS</span></p>
 <ul>
@@ -98,6 +99,7 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.commands.html">nomad_camels.commands package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.extensions.html">nomad_camels.extensions package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html">nomad_camels.frontpanels package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.graphics.html">nomad_camels.graphics package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html">nomad_camels.gui package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.loop_steps.html">nomad_camels.loop_steps package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.main_classes.html">nomad_camels.main_classes package</a></li>
@@ -292,21 +294,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="nomad_camels.bluesky_handling.html">nomad_camels.bluesky_handling package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.bluesky_handling.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels.bluesky_handling.html#module-nomad_camels.bluesky_handling.EpicsFieldSignal">nomad_camels.bluesky_handling.EpicsFieldSignal module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal"><code class="docutils literal notranslate"><span class="pre">EpicsFieldSignal</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal.get"><code class="docutils literal notranslate"><span class="pre">EpicsFieldSignal.get()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal.just_readback"><code class="docutils literal notranslate"><span class="pre">EpicsFieldSignal.just_readback()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal.put"><code class="docutils literal notranslate"><span class="pre">EpicsFieldSignal.put()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignal.subscriptions"><code class="docutils literal notranslate"><span class="pre">EpicsFieldSignal.subscriptions</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignalRO"><code class="docutils literal notranslate"><span class="pre">EpicsFieldSignalRO</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignalRO.put"><code class="docutils literal notranslate"><span class="pre">EpicsFieldSignalRO.put()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.EpicsFieldSignal.EpicsFieldSignalRO.subscriptions"><code class="docutils literal notranslate"><span class="pre">EpicsFieldSignalRO.subscriptions</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad-camels-bluesky-handling-epicsfieldsignal-module">nomad_camels.bluesky_handling.EpicsFieldSignal module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.bluesky_handling.html#module-nomad_camels.bluesky_handling.TriggerEpicsSignalRO">nomad_camels.bluesky_handling.TriggerEpicsSignalRO module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.TriggerEpicsSignalRO.TriggerEpicsSignalRO"><code class="docutils literal notranslate"><span class="pre">TriggerEpicsSignalRO</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.TriggerEpicsSignalRO.TriggerEpicsSignalRO.callback_method"><code class="docutils literal notranslate"><span class="pre">TriggerEpicsSignalRO.callback_method()</span></code></a></li>
@@ -326,6 +314,9 @@
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.put_function"><code class="docutils literal notranslate"><span class="pre">Custom_Function_Signal.put_function</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.read_function"><code class="docutils literal notranslate"><span class="pre">Custom_Function_Signal.read_function</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.trigger_function"><code class="docutils literal notranslate"><span class="pre">Custom_Function_Signal.trigger_function</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.retry_on_error"><code class="docutils literal notranslate"><span class="pre">Custom_Function_Signal.retry_on_error</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.error_retry_function"><code class="docutils literal notranslate"><span class="pre">Custom_Function_Signal.error_retry_function</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.force_sequential"><code class="docutils literal notranslate"><span class="pre">Custom_Function_Signal.force_sequential</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.describe"><code class="docutils literal notranslate"><span class="pre">Custom_Function_Signal.describe()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.get"><code class="docutils literal notranslate"><span class="pre">Custom_Function_Signal.get()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_Signal.put"><code class="docutils literal notranslate"><span class="pre">Custom_Function_Signal.put()</span></code></a></li>
@@ -337,6 +328,9 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO"><code class="docutils literal notranslate"><span class="pre">Custom_Function_SignalRO</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.read_function"><code class="docutils literal notranslate"><span class="pre">Custom_Function_SignalRO.read_function</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.trigger_function"><code class="docutils literal notranslate"><span class="pre">Custom_Function_SignalRO.trigger_function</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.retry_on_error"><code class="docutils literal notranslate"><span class="pre">Custom_Function_SignalRO.retry_on_error</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.error_retry_function"><code class="docutils literal notranslate"><span class="pre">Custom_Function_SignalRO.error_retry_function</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.force_sequential"><code class="docutils literal notranslate"><span class="pre">Custom_Function_SignalRO.force_sequential</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.describe"><code class="docutils literal notranslate"><span class="pre">Custom_Function_SignalRO.describe()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.get"><code class="docutils literal notranslate"><span class="pre">Custom_Function_SignalRO.get()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.custom_function_signal.Custom_Function_SignalRO.read_configuration"><code class="docutils literal notranslate"><span class="pre">Custom_Function_SignalRO.read_configuration()</span></code></a></li>
@@ -384,6 +378,12 @@
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Prompt_Box.set_done"><code class="docutils literal notranslate"><span class="pre">Prompt_Box.set_done()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Prompt_Box.start_execution"><code class="docutils literal notranslate"><span class="pre">Prompt_Box.start_execution()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Prompt_Box.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Prompt_Box.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit"><code class="docutils literal notranslate"><span class="pre">TimestampTextEdit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit.insertTimestamp"><code class="docutils literal notranslate"><span class="pre">TimestampTextEdit.insertTimestamp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">TimestampTextEdit.keyPressEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.TimestampTextEdit.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">TimestampTextEdit.staticMetaObject</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.Value_Box"><code class="docutils literal notranslate"><span class="pre">Value_Box</span></code></a><ul>
@@ -622,6 +622,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.instrument_installer.Install_Thread"><code class="docutils literal notranslate"><span class="pre">Install_Thread</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.instrument_installer.Install_Thread.error_signal"><code class="docutils literal notranslate"><span class="pre">Install_Thread.error_signal</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.instrument_installer.Install_Thread.info_step"><code class="docutils literal notranslate"><span class="pre">Install_Thread.info_step</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.instrument_installer.Install_Thread.run"><code class="docutils literal notranslate"><span class="pre">Install_Thread.run()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.instrument_installer.Install_Thread.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Install_Thread.staticMetaObject</span></code></a></li>
@@ -634,6 +635,7 @@
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.get_checked_devs"><code class="docutils literal notranslate"><span class="pre">Instrument_Installer.get_checked_devs()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.install_selected"><code class="docutils literal notranslate"><span class="pre">Instrument_Installer.install_selected()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.instruments_updated"><code class="docutils literal notranslate"><span class="pre">Instrument_Installer.instruments_updated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.propagate_exception"><code class="docutils literal notranslate"><span class="pre">Instrument_Installer.propagate_exception()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.select_all"><code class="docutils literal notranslate"><span class="pre">Instrument_Installer.select_all()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.select_none"><code class="docutils literal notranslate"><span class="pre">Instrument_Installer.select_none()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.instrument_installer.Instrument_Installer.show_hide_info"><code class="docutils literal notranslate"><span class="pre">Instrument_Installer.show_hide_info()</span></code></a></li>
@@ -670,6 +672,17 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info"><code class="docutils literal notranslate"><span class="pre">Fit_Info</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.do_fit"><code class="docutils literal notranslate"><span class="pre">Fit_Info.do_fit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.predef_func"><code class="docutils literal notranslate"><span class="pre">Fit_Info.predef_func</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.custom_func"><code class="docutils literal notranslate"><span class="pre">Fit_Info.custom_func</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.use_custom_func"><code class="docutils literal notranslate"><span class="pre">Fit_Info.use_custom_func</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.guess_params"><code class="docutils literal notranslate"><span class="pre">Fit_Info.guess_params</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.initial_params"><code class="docutils literal notranslate"><span class="pre">Fit_Info.initial_params</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.display_values"><code class="docutils literal notranslate"><span class="pre">Fit_Info.display_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.y"><code class="docutils literal notranslate"><span class="pre">Fit_Info.y</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.x"><code class="docutils literal notranslate"><span class="pre">Fit_Info.x</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.additional_data"><code class="docutils literal notranslate"><span class="pre">Fit_Info.additional_data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.name"><code class="docutils literal notranslate"><span class="pre">Fit_Info.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.get_name"><code class="docutils literal notranslate"><span class="pre">Fit_Info.get_name()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Fit_Info.get_variables"><code class="docutils literal notranslate"><span class="pre">Fit_Info.get_variables()</span></code></a></li>
 </ul>
@@ -690,6 +703,29 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info"><code class="docutils literal notranslate"><span class="pre">Plot_Info</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.plt_type"><code class="docutils literal notranslate"><span class="pre">Plot_Info.plt_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.x_axis"><code class="docutils literal notranslate"><span class="pre">Plot_Info.x_axis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.y_axes"><code class="docutils literal notranslate"><span class="pre">Plot_Info.y_axes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.z_axis"><code class="docutils literal notranslate"><span class="pre">Plot_Info.z_axis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.title"><code class="docutils literal notranslate"><span class="pre">Plot_Info.title</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.xlabel"><code class="docutils literal notranslate"><span class="pre">Plot_Info.xlabel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.ylabel"><code class="docutils literal notranslate"><span class="pre">Plot_Info.ylabel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.ylabel2"><code class="docutils literal notranslate"><span class="pre">Plot_Info.ylabel2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.zlabel"><code class="docutils literal notranslate"><span class="pre">Plot_Info.zlabel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.do_plot"><code class="docutils literal notranslate"><span class="pre">Plot_Info.do_plot</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.same_fit"><code class="docutils literal notranslate"><span class="pre">Plot_Info.same_fit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.fits"><code class="docutils literal notranslate"><span class="pre">Plot_Info.fits</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.all_fit"><code class="docutils literal notranslate"><span class="pre">Plot_Info.all_fit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.plot_all_available"><code class="docutils literal notranslate"><span class="pre">Plot_Info.plot_all_available</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.maxlen"><code class="docutils literal notranslate"><span class="pre">Plot_Info.maxlen</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.top_left_x"><code class="docutils literal notranslate"><span class="pre">Plot_Info.top_left_x</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.top_left_y"><code class="docutils literal notranslate"><span class="pre">Plot_Info.top_left_y</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.plot_width"><code class="docutils literal notranslate"><span class="pre">Plot_Info.plot_width</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.plot_height"><code class="docutils literal notranslate"><span class="pre">Plot_Info.plot_height</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.checkbox_manual_plot_position"><code class="docutils literal notranslate"><span class="pre">Plot_Info.checkbox_manual_plot_position</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.checkbox_show_in_browser"><code class="docutils literal notranslate"><span class="pre">Plot_Info.checkbox_show_in_browser</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.browser_port"><code class="docutils literal notranslate"><span class="pre">Plot_Info.browser_port</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.name"><code class="docutils literal notranslate"><span class="pre">Plot_Info.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.get_fit_vars"><code class="docutils literal notranslate"><span class="pre">Plot_Info.get_fit_vars()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Plot_Info.update_name"><code class="docutils literal notranslate"><span class="pre">Plot_Info.update_name()</span></code></a></li>
 </ul>
@@ -703,6 +739,8 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_2D</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.get_data"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_2D.get_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.hide_show_manual_position"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_2D.hide_show_manual_position()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.hide_show_show_in_browser"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_2D.hide_show_show_in_browser()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.load_data"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_2D.load_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_2D.staticMetaObject</span></code></a></li>
 </ul>
@@ -716,11 +754,15 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_XY</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.fit_change"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_XY.fit_change()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.get_data"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_XY.get_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.hide_show_manual_position"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_XY.hide_show_manual_position()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.hide_show_show_in_browser"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_XY.hide_show_show_in_browser()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.load_data"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_XY.load_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Single_Plot_Definer_XY.staticMetaObject</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.add_fit"><code class="docutils literal notranslate"><span class="pre">add_fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.check_if_plotly_modules_are_available"><code class="docutils literal notranslate"><span class="pre">check_if_plotly_modules_are_available()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.is_module_available"><code class="docutils literal notranslate"><span class="pre">is_module_available()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.plot_definer.make_table_data"><code class="docutils literal notranslate"><span class="pre">make_table_data()</span></code></a></li>
 </ul>
 </li>
@@ -766,6 +808,7 @@
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.settings_window.Settings_Window.autosave_run_change"><code class="docutils literal notranslate"><span class="pre">Settings_Window.autosave_run_change()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.settings_window.Settings_Window.change_enable_API"><code class="docutils literal notranslate"><span class="pre">Settings_Window.change_enable_API()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.settings_window.Settings_Window.change_theme"><code class="docutils literal notranslate"><span class="pre">Settings_Window.change_theme()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.settings_window.Settings_Window.check_if_api_modules_are_available"><code class="docutils literal notranslate"><span class="pre">Settings_Window.check_if_api_modules_are_available()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.settings_window.Settings_Window.confirm_delete_api_keys"><code class="docutils literal notranslate"><span class="pre">Settings_Window.confirm_delete_api_keys()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.settings_window.Settings_Window.copy_to_clipboard"><code class="docutils literal notranslate"><span class="pre">Settings_Window.copy_to_clipboard()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.settings_window.Settings_Window.generate_api_key"><code class="docutils literal notranslate"><span class="pre">Settings_Window.generate_api_key()</span></code></a></li>
@@ -777,10 +820,21 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.settings_window.hash_api_key"><code class="docutils literal notranslate"><span class="pre">hash_api_key()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.settings_window.is_module_available"><code class="docutils literal notranslate"><span class="pre">is_module_available()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.settings_window.store_api_key"><code class="docutils literal notranslate"><span class="pre">store_api_key()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.frontpanels.html#module-nomad_camels.frontpanels">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels.graphics.html">nomad_camels.graphics package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.graphics.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.graphics.html#module-nomad_camels.graphics.settings_window_resource_rc">nomad_camels.graphics.settings_window_resource_rc module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.graphics.html#nomad_camels.graphics.settings_window_resource_rc.qCleanupResources"><code class="docutils literal notranslate"><span class="pre">qCleanupResources()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.graphics.html#nomad_camels.graphics.settings_window_resource_rc.qInitResources"><code class="docutils literal notranslate"><span class="pre">qInitResources()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.graphics.html#module-nomad_camels.graphics">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nomad_camels.gui.html">nomad_camels.gui package</a><ul>
@@ -793,6 +847,16 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.device_installer.Ui_Form"><code class="docutils literal notranslate"><span class="pre">Ui_Form</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.device_installer.Ui_Form.retranslateUi"><code class="docutils literal notranslate"><span class="pre">Ui_Form.retranslateUi()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.device_installer.Ui_Form.setupUi"><code class="docutils literal notranslate"><span class="pre">Ui_Form.setupUi()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.gui.html#module-nomad_camels.gui.dynamicuploadcombobox">nomad_camels.gui.dynamicuploadcombobox module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.dynamicuploadcombobox.DynamicUploadComboBox"><code class="docutils literal notranslate"><span class="pre">DynamicUploadComboBox</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.dynamicuploadcombobox.DynamicUploadComboBox.getDynamicItems"><code class="docutils literal notranslate"><span class="pre">DynamicUploadComboBox.getDynamicItems()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.dynamicuploadcombobox.DynamicUploadComboBox.refreshItems"><code class="docutils literal notranslate"><span class="pre">DynamicUploadComboBox.refreshItems()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.dynamicuploadcombobox.DynamicUploadComboBox.showPopup"><code class="docutils literal notranslate"><span class="pre">DynamicUploadComboBox.showPopup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.dynamicuploadcombobox.DynamicUploadComboBox.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">DynamicUploadComboBox.staticMetaObject</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1632,6 +1696,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.main_classes.html#nomad-camels-main-classes-plot-plotly-module">nomad_camels.main_classes.plot_plotly module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.main_classes.html#module-nomad_camels.main_classes.plot_pyqtgraph">nomad_camels.main_classes.plot_pyqtgraph module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip"><code class="docutils literal notranslate"><span class="pre">ListDeque_skip</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip.append"><code class="docutils literal notranslate"><span class="pre">ListDeque_skip.append()</span></code></a></li>
@@ -1990,17 +2055,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nomad_camels.tests.html">nomad_camels.tests package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.tests.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels.tests.html#module-nomad_camels.tests.api_test">nomad_camels.tests.api_test module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.api_test.client_and_thread"><code class="docutils literal notranslate"><span class="pre">client_and_thread()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.api_test.is_port_available"><code class="docutils literal notranslate"><span class="pre">is_port_available()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.api_test.mock_validate_credentials"><code class="docutils literal notranslate"><span class="pre">mock_validate_credentials()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.api_test.test_favicon"><code class="docutils literal notranslate"><span class="pre">test_favicon()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.api_test.test_get_protocols"><code class="docutils literal notranslate"><span class="pre">test_get_protocols()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.api_test.test_invalid_api_key"><code class="docutils literal notranslate"><span class="pre">test_invalid_api_key()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.api_test.test_root_redirect"><code class="docutils literal notranslate"><span class="pre">test_root_redirect()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.api_test.test_run_protocol"><code class="docutils literal notranslate"><span class="pre">test_run_protocol()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels.tests.html#nomad-camels-tests-api-test-module">nomad_camels.tests.api_test module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.tests.html#module-nomad_camels.tests.instrument_management_test">nomad_camels.tests.instrument_management_test module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.instrument_management_test.install_demo"><code class="docutils literal notranslate"><span class="pre">install_demo()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.instrument_management_test.test_add_device"><code class="docutils literal notranslate"><span class="pre">test_add_device()</span></code></a></li>
@@ -2529,11 +2584,16 @@
 <dt class="sig sig-object py" id="nomad_camels.CAMELS_start.ImportThread">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.CAMELS_start.</span></span><span class="sig-name descname"><span class="pre">ImportThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">package_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.CAMELS_start.ImportThread" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QThread</span></code></p>
-<p>This thread imports the necessary packages for the main application to run.</p>
+<p>A thread dedicated to importing packages required by the main application.</p>
+<p>This thread emits progress updates and loading messages via signals while importing each package.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.CAMELS_start.ImportThread.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.CAMELS_start.ImportThread.run" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Execute the thread to import the specified packages.</p>
+<p>This method iterates over the package list, emitting progress updates and messages.
+If an import error occurs (ModuleNotFoundError or AttributeError), it is silently ignored.
+Finally, it imports the main application module.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.CAMELS_start.ImportThread.staticMetaObject">
@@ -2556,19 +2616,27 @@
 <dt class="sig sig-object py" id="nomad_camels.CAMELS_start.LoadingScreen">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.CAMELS_start.</span></span><span class="sig-name descname"><span class="pre">LoadingScreen</span></span><a class="headerlink" href="#nomad_camels.CAMELS_start.LoadingScreen" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
-<p>A loading screen that appears when the application is starting up.</p>
+<p>A loading screen dialog that is displayed while the main application is starting up.</p>
+<p>This screen shows an image, a loading text label, and a progress bar that updates as packages
+are imported and the application loads.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.CAMELS_start.LoadingScreen.set_progress">
 <span class="sig-name descname"><span class="pre">set_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.CAMELS_start.LoadingScreen.set_progress" title="Link to this definition"></a></dt>
-<dd><p>Set the progress bar value</p>
+<dd><p>Update the progress bar with the given value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>int</em>) – The new value for the progress bar (typically 0 to 100).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.CAMELS_start.LoadingScreen.set_text">
 <span class="sig-name descname"><span class="pre">set_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.CAMELS_start.LoadingScreen.set_text" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Update the loading text displayed on the screen.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>text</strong></p>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – The new text to display in the label.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2583,7 +2651,21 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.CAMELS_start.start_camels">
 <span class="sig-prename descclassname"><span class="pre">nomad_camels.CAMELS_start.</span></span><span class="sig-name descname"><span class="pre">start_camels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.CAMELS_start.start_camels" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Launch the NOMAD CAMELS application with a loading screen.</p>
+<dl class="simple">
+<dt>This function performs the following steps:</dt><dd><ol class="arabic simple">
+<li><p>Checks if a QCoreApplication instance exists and creates one if needed.</p></li>
+<li><p>Displays the loading screen.</p></li>
+<li><p>Reads the list of startup packages from a file (if available).</p></li>
+<li><p>Starts a separate thread to import the packages with progress updates.</p></li>
+<li><p>Processes application events until the import thread completes.</p></li>
+<li><p>Saves the currently loaded modules to the startup package file.</p></li>
+<li><p>Sets up the main window and exception hook.</p></li>
+<li><p>Launches the main application event loop.</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-nomad_camels.MainApp_v2">
@@ -2593,16 +2675,18 @@
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.MainApp_v2.</span></span><span class="sig-name descname"><span class="pre">MainWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.mainWindow_v2.Ui_MainWindow" title="nomad_camels.gui.mainWindow_v2.Ui_MainWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_MainWindow</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QMainWindow</span></code></p>
-<p>Main Window for the program. Connects to all the other classes.</p>
+<p>Main window for the NOMAD CAMELS application.</p>
+<p>This class connects to all the other components and handles user interactions,
+protocol execution, device management, and various settings/preferences.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_button_to_manuals">
 <span class="sig-name descname"><span class="pre">add_button_to_manuals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_button_to_manuals" title="Link to this definition"></a></dt>
-<dd><p>Add a button to the manual controls area.</p>
+<dd><p>Add a button for a manual control in the manual controls area.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – The name of the manual control to add.</p></li>
-<li><p><strong>tab</strong> (<em>str</em>) – The tab to add the button to. If not given, the button is added to the active tab.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the manual control.</p></li>
+<li><p><strong>tab</strong> (<em>str</em><em>, </em><em>optional</em>) – The tab where the button should be added. Defaults to the active tab.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2611,12 +2695,12 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_button_to_meas">
 <span class="sig-name descname"><span class="pre">add_button_to_meas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_button_to_meas" title="Link to this definition"></a></dt>
-<dd><p>Add a button to the protocols area.</p>
+<dd><p>Add a button for a measurement protocol to the measurement controls area.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – The name of the protocol to add.</p></li>
-<li><p><strong>tab</strong> (<em>str</em>) – The tab to add the button to. If not given, the button is added to the active tab.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the protocol.</p></li>
+<li><p><strong>tab</strong> (<em>str</em><em>, </em><em>optional</em>) – The tab to add the button to; defaults to the active tab.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2625,12 +2709,13 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_functions_to_manual_button">
 <span class="sig-name descname"><span class="pre">add_functions_to_manual_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">button</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_functions_to_manual_button" title="Link to this definition"></a></dt>
-<dd><p>Connect the functions of the manual control button. The functions are to open the configuration dialog, to start the manual control, and to remove the manual control.</p>
+<dd><p>Connect functions to a manual control button.</p>
+<p>Functions include opening configuration, starting, deleting, and moving the manual control.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>button</strong> (<a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.options_run_button.Options_Run_Button" title="nomad_camels.ui_widgets.options_run_button.Options_Run_Button"><em>options_run_button.Options_Run_Button</em></a>) – The button to connect the functions to.</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – The name of the manual control to connect the functions to.</p></li>
+<li><p><strong>button</strong> (<a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.options_run_button.Options_Run_Button" title="nomad_camels.ui_widgets.options_run_button.Options_Run_Button"><em>Options_Run_Button</em></a>) – The button to update.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the manual control.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2639,12 +2724,14 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_functions_to_meas_button">
 <span class="sig-name descname"><span class="pre">add_functions_to_meas_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">button</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_functions_to_meas_button" title="Link to this definition"></a></dt>
-<dd><p>Connect the functions of the protocol button. The functions are to open the configuration dialog, to run the protocol, to build the protocol, to open the protocol file, to open the data path, to remove the protocol, to move the protocol, and to queue the protocol.</p>
+<dd><p>Connect functions to a measurement protocol button.</p>
+<p>Functions include configuration, running, building, opening, data path access,
+deletion, moving, and queuing the protocol.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>button</strong> (<a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.options_run_button.Options_Run_Button" title="nomad_camels.ui_widgets.options_run_button.Options_Run_Button"><em>options_run_button.Options_Run_Button</em></a>) – The button to connect the functions to.</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – The name of the protocol / button.</p></li>
+<li><p><strong>button</strong> (<a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.options_run_button.Options_Run_Button" title="nomad_camels.ui_widgets.options_run_button.Options_Run_Button"><em>Options_Run_Button</em></a>) – The protocol button to update.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the protocol.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2653,16 +2740,17 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_manual_control">
 <span class="sig-name descname"><span class="pre">add_manual_control</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_manual_control" title="Link to this definition"></a></dt>
-<dd><p>Opens a dialog to add a new manual control.</p>
+<dd><p>Open a dialog to add a new manual control.</p>
+<p>On acceptance, adds the control data to the manual controls.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_manual_control_to_data">
 <span class="sig-name descname"><span class="pre">add_manual_control_to_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_manual_control_to_data" title="Link to this definition"></a></dt>
-<dd><p>Add a manual control to the manual controls.</p>
+<dd><p>Add a manual control using the provided control data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>control_data</strong> (<em>dict</em>) – The data of the manual control to add.</p>
+<dd class="field-odd"><p><strong>control_data</strong> (<em>dict</em>) – Data for the manual control to add.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2670,16 +2758,18 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_measurement_protocol">
 <span class="sig-name descname"><span class="pre">add_measurement_protocol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_measurement_protocol" title="Link to this definition"></a></dt>
-<dd><p>Open an empty protocol configuration dialog. When the dialog is accepted, the protocol is added to the protocols.</p>
+<dd><p>Open an empty protocol configuration dialog.</p>
+<p>On acceptance, the protocol is added to the protocols data.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_prot_to_data">
 <span class="sig-name descname"><span class="pre">add_prot_to_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_prot_to_data" title="Link to this definition"></a></dt>
-<dd><p>Add a protocol to the protocols_dict. The protocol is added to the button area and the functions are connected to the buttons.</p>
+<dd><p>Add a measurement protocol to the protocols dictionary.</p>
+<p>Also adds a corresponding button to the measurement controls area.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>protocol</strong> (<a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.protocol_class.Measurement_Protocol" title="nomad_camels.main_classes.protocol_class.Measurement_Protocol"><em>main_classes.protocol_class.Measurement_Protocol</em></a>) – The protocol to add.</p>
+<dd class="field-odd"><p><strong>protocol</strong> (<a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.protocol_class.Measurement_Protocol" title="nomad_camels.main_classes.protocol_class.Measurement_Protocol"><em>Measurement_Protocol</em></a>) – The protocol to add.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2687,10 +2777,11 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_subs_and_plots_from_dict">
 <span class="sig-name descname"><span class="pre">add_subs_and_plots_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_subs_and_plots_from_dict" title="Link to this definition"></a></dt>
-<dd><p>Add subscriptions and plots from a dictionary to the current subscriptions and plots.</p>
+<dd><p>Recursively add subscriptions and plots from a dictionary.</p>
+<p>The dictionary may contain keys ‘subs’ and ‘plots’ or nested dictionaries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dictionary</strong> (<em>dict{&quot;subs&quot;: list</em><em>, </em><em>&quot;plots&quot;: list}</em>) – The dictionary containing the subscriptions and plots to add.</p>
+<dd class="field-odd"><p><strong>dictionary</strong> (<em>dict</em>) – Dictionary containing subscriptions and plots.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2698,15 +2789,19 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_tag">
 <span class="sig-name descname"><span class="pre">add_tag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_tag" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Add a tag from the line edit to the flow layout.</p>
+<p>Reads the text from the tag line edit, creates a TagWidget if the text is not empty,
+adds it to the layout, and clears the line edit.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_to_open_windows">
 <span class="sig-name descname"><span class="pre">add_to_open_windows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_to_open_windows" title="Link to this definition"></a></dt>
-<dd><p>Add a window to the list of open windows and connect the closing signal to remove the window from the list when it is closed.</p>
+<dd><p>Add a window to the list of open windows.</p>
+<p>Connects the window’s closing signal to remove it from the list when closed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>window</strong> (<em>QWidget</em>) – The window to add to the list of open windows</p>
+<dd class="field-odd"><p><strong>window</strong> (<em>QWidget</em>) – The window to add.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2714,10 +2809,11 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.add_to_plots">
 <span class="sig-name descname"><span class="pre">add_to_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.add_to_plots" title="Link to this definition"></a></dt>
-<dd><p>Add a plot to the list of open plots and connect the closing signal to remove the plot from the list when it is closed. Also add the plot to the list of open windows. The plots are in an additional list, so one can close all plots at once.</p>
+<dd><p>Add a plot to the list of open plots and to the list of open windows.</p>
+<p>Connects signals so that when the plot is closed or reopened, the lists are updated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>plot</strong> (<em>QWidget</em>) – The plot to add to the list of open plots</p>
+<dd class="field-odd"><p><strong>plot</strong> (<em>QWidget</em>) – The plot to add.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2725,21 +2821,22 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.bluesky_setup">
 <span class="sig-name descname"><span class="pre">bluesky_setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.bluesky_setup" title="Link to this definition"></a></dt>
-<dd><p>Set up the bluesky RunEngine and the databroker catalog.
-This method is called when the first protocol is run, speeding up the startup to this point.</p>
+<dd><p>Set up the Bluesky RunEngine and databroker catalog.</p>
+<p>This method is called when the first protocol is run and configures
+the run engine with callbacks, loads the databroker catalog, and subscribes to events.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.build_protocol">
 <span class="sig-name descname"><span class="pre">build_protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ask_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.build_protocol" title="Link to this definition"></a></dt>
-<dd><p>Calls the build_protocol from nomad_camels.bluesky_handling.protocol_builder
-for the selected protocol and provides it with a savepath and
-user- and sample-data.</p>
+<dd><p>Build the protocol file for the specified protocol.</p>
+<p>Calls the protocol builder to export the protocol as a Python file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol to build.</p></li>
-<li><p><strong>ask_file</strong> (<em>bool</em>) – (Default value = True) If True, a file dialog is opened to select where the protocol should be exported to. If False, the protocol is written to the default path.</p></li>
+<li><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol.</p></li>
+<li><p><strong>ask_file</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to prompt for a file location. Defaults to True.</p></li>
+<li><p><strong>variables</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em><em>, </em><em>optional</em>) – Optional variables to override protocol defaults. Defaults to None.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2748,55 +2845,70 @@ user- and sample-data.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.change_catalog_name">
 <span class="sig-name descname"><span class="pre">change_catalog_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.change_catalog_name" title="Link to this definition"></a></dt>
-<dd><p>Changes the name of the databroker catalog. If the catalog does not exist, a temporary catalog is used.</p>
+<dd><p>Change the name of the databroker catalog.</p>
+<p>If the catalog does not exist, a temporary catalog is used.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.change_preferences">
 <span class="sig-name descname"><span class="pre">change_preferences</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.change_preferences" title="Link to this definition"></a></dt>
-<dd><p>Called when any preferences are changed. Makes the dictionary
-of preferences and calls save_preferences from the
-load_save_functions module.</p>
+<dd><p>Open the settings dialog to change preferences.</p>
+<p>On acceptance, updates the preferences dictionary, saves it, and updates the dependent settings.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.change_preset">
 <span class="sig-name descname"><span class="pre">change_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.change_preset" title="Link to this definition"></a></dt>
-<dd><p>saves the old device preset,
-then changes to / loads the new preset.</p>
+<dd><p>Save the current preset and load a new one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>preset</strong> (<em>str</em>) – The name of the new preset to load.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.change_theme">
 <span class="sig-name descname"><span class="pre">change_theme</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.change_theme" title="Link to this definition"></a></dt>
-<dd><p>Changes the graphic theme of the program according to the preferences.</p>
+<dd><p>Change the graphic theme of the application based on the current preferences.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.change_user">
 <span class="sig-name descname"><span class="pre">change_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.change_user" title="Link to this definition"></a></dt>
-<dd><p>Changes the active user to the selected user in the comboBox_user.</p>
+<dd><p>Update the active user when the user selection changes.</p>
+<p>Also refreshes the samples shown.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.change_user_type">
 <span class="sig-name descname"><span class="pre">change_user_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.change_user_type" title="Link to this definition"></a></dt>
-<dd><p>Shows / hides the ui-elements depending on the type of user,
-e.g. the NOMAD login button is only shown if NOMAD user is selected.</p>
+<dd><p>Adjust UI elements based on the selected user type.</p>
+<p>For example, shows NOMAD login button if NOMAD user is selected.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.change_variables_queued_protocol">
 <span class="sig-name descname"><span class="pre">change_variables_queued_protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.change_variables_queued_protocol" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Update variables of an already queued protocol (called by the API).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protocol_name</strong> (<em>str</em>) – The protocol name.</p></li>
+<li><p><strong>variables</strong> (<em>dict</em>) – The updated variables.</p></li>
+<li><p><strong>index</strong> (<em>int</em>) – The index of the protocol in the queue.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.check_password_protection">
 <span class="sig-name descname"><span class="pre">check_password_protection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.check_password_protection" title="Link to this definition"></a></dt>
-<dd><p>Check if the program is password protected and if so, ask for the password.</p>
+<dd><p>Check for password protection and prompt for a password if enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>True if no password protection or if the password is correct, False otherwise</p>
+<dd class="field-odd"><p>True if there is no password protection or if the entered password is correct, False otherwise.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
@@ -2807,22 +2919,32 @@ e.g. the NOMAD login button is only shown if NOMAD user is selected.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.clear_fastapi_thread">
 <span class="sig-name descname"><span class="pre">clear_fastapi_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.clear_fastapi_thread" title="Link to this definition"></a></dt>
-<dd><p>Clear the fastapi thread.</p>
+<dd><p>Clear the FastAPI server thread if an error occurs.</p>
+<p>Also displays a warning popup indicating the server failed to start.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.close">
 <span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.close" title="Link to this definition"></a></dt>
-<dd><p>Calling the save_state method when closing the window.</p>
+<dd><p>Overwrite the close method to save state when closing the window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The result of the parent’s close() method.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.closeEvent">
 <span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.closeEvent" title="Link to this definition"></a></dt>
-<dd><p>Calling the save_state method when closing the window.</p>
+<dd><p>Handle the close event by closing all open windows, stopping the API server,
+and saving the state if autosave is enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>a0</strong> (<em>QCloseEvent</em>) – The close event</p>
+<dd class="field-odd"><p><strong>a0</strong> (<em>QCloseEvent</em>) – The close event.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2830,12 +2952,13 @@ e.g. the NOMAD login button is only shown if NOMAD user is selected.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.close_manual_control">
 <span class="sig-name descname"><span class="pre">close_manual_control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.close_manual_control" title="Link to this definition"></a></dt>
-<dd><p>Triggered when a manual control is closed. The control is removed from the list of open windows and the button is re-enabled.</p>
+<dd><p>Handle the closing of a manual control.</p>
+<p>Removes the control from the list of open windows and re-enables its button.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>control</strong> (<a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.manual_control.Manual_Control" title="nomad_camels.main_classes.manual_control.Manual_Control"><em>main_classes.manual_control.Manual_Control</em></a>) – The control that was closed.</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – The name of the manual control that was closed.</p></li>
+<li><p><strong>control</strong> (<a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.manual_control.Manual_Control" title="nomad_camels.main_classes.manual_control.Manual_Control"><em>Manual_Control</em></a>) – The control that is closing.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the manual control.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2844,40 +2967,36 @@ e.g. the NOMAD login button is only shown if NOMAD user is selected.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.close_old_queue_devices">
 <span class="sig-name descname"><span class="pre">close_old_queue_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.close_old_queue_devices" title="Link to this definition"></a></dt>
-<dd><p>Close devices that are not used in the currently running protocol but are still open from protocols run in the queue before.</p>
+<dd><p>Close devices from previously queued protocols that are not used in the current protocol.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.close_plots">
 <span class="sig-name descname"><span class="pre">close_plots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.close_plots" title="Link to this definition"></a></dt>
-<dd><p>Close all plots that are currently open.</p>
+<dd><p>Close all currently open plots and reset plot placement variables.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.close_unused_instantiated_devices">
 <span class="sig-name descname"><span class="pre">close_unused_instantiated_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.close_unused_instantiated_devices" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Close devices that were instantiated but are no longer in use.</p>
+<p>Called after stopping protocols that were queued.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.edit_sample_info">
 <span class="sig-name descname"><span class="pre">edit_sample_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.edit_sample_info" title="Link to this definition"></a></dt>
-<dd><p>Calls dialog for user-information when
-pushButton_editSampleInfo is clicked.</p>
-<p>The opened AddRemoveDialoge contains columns for Name,
-Identifier, and Preparation-Info.
-If the dialog is canceled, nothing is changed, otherwise the new
-data will be written into self.userdata.</p>
+<dd><p>Open a dialog to edit sample information.</p>
+<p>The dialog displays sample data such as name, identifier, and description.
+On acceptance, updates the sample data.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.edit_user_info">
 <span class="sig-name descname"><span class="pre">edit_user_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.edit_user_info" title="Link to this definition"></a></dt>
-<dd><p>Calls dialog for user-information when
-pushButton_editUserInfo is clicked.</p>
-<p>The opened AddRemoveDialoge contains columns for Name, E-Mail,
-Affiliation, Address, ORCID and Phone of the user.
-If the dialog is canceled, nothing is changed, otherwise the new
-data will be written into self.userdata.</p>
+<dd><p>Open a dialog to edit user information.</p>
+<p>The dialog displays user data such as name, email, affiliation, ORCID, phone number etc.
+On acceptance, updates the user data.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2888,64 +3007,85 @@ data will be written into self.userdata.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.get_sample_name_data">
 <span class="sig-name descname"><span class="pre">get_sample_name_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.get_sample_name_data" title="Link to this definition"></a></dt>
-<dd><p>Get the sample name and data. If a nomad sample is selected and the nomad sample checkbox is checked, the sample name and data are taken from the nomad sample. If an extension sample is selected, the sample name and data are taken from the extension sample. If a local sample is selected, the sample name and data are taken from the sample data. If no sample is selected, the sample name is set to “default_sample” and no further data is available.</p>
+<dd><p>Retrieve the current sample name and associated data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing the sample name and sample data dictionary.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.get_user_name_data">
 <span class="sig-name descname"><span class="pre">get_user_name_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.get_user_name_data" title="Link to this definition"></a></dt>
-<dd><p>Get the user name and data. If a nomad user is selected, the user name and data are taken from the nomad user. If an extension user is selected, the user data is taken from the extension user. If a local user is selected, the user data is taken from the user data. If no user is selected, the user name is set to “default_user” and no further data is available.</p>
+<dd><p>Retrieve the current user name and associated data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing the user name and user data dictionary.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.import_measurement_protocol">
 <span class="sig-name descname"><span class="pre">import_measurement_protocol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.import_measurement_protocol" title="Link to this definition"></a></dt>
-<dd><p>Open a dialog to select a protocol file to import. When the dialog is accepted, the protocol is loaded and a configuration dialog is opened. When the configuration dialog is accepted, the protocol is added to the protocols.</p>
+<dd><p>Import a protocol from a file.</p>
+<p>Opens a file dialog to select a protocol file (.cprot), then loads and opens its configuration dialog.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.launch_data_exporter">
 <span class="sig-name descname"><span class="pre">launch_data_exporter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.launch_data_exporter" title="Link to this definition"></a></dt>
-<dd><p>Launch the data exporter dialog. See <cite>utility.databroker_export.ExportData_dialog</cite>.</p>
+<dd><p>Launch the data exporter dialog.</p>
+<p>Opens a dialog to assist in exporting data from the databroker.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.launch_device_builder">
 <span class="sig-name descname"><span class="pre">launch_device_builder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.launch_device_builder" title="Link to this definition"></a></dt>
-<dd><p>Launch the device driver builder dialog. See <cite>tools.device_driver_builder.Driver_Builder</cite>.</p>
+<dd><p>Launch the device driver builder dialog.</p>
+<p>Opens a dialog to assist in building device drivers.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.launch_epics_builder">
 <span class="sig-name descname"><span class="pre">launch_epics_builder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.launch_epics_builder" title="Link to this definition"></a></dt>
-<dd><p>Launch the EPICS driver builder dialog. See <cite>tools.EPICS_driver_builder.EPICS_Driver_Builder</cite>.</p>
+<dd><p>Launch the EPICS driver builder dialog.</p>
+<p>Opens a dialog to assist in building EPICS drivers.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.launch_hdf5_exporter">
 <span class="sig-name descname"><span class="pre">launch_hdf5_exporter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.launch_hdf5_exporter" title="Link to this definition"></a></dt>
-<dd><p>Launch the HDF5 exporter dialog. See <cite>utility.databroker_export.ExportH5_dialog</cite>.</p>
+<dd><p>Launch the HDF5 exporter dialog.</p>
+<p>Opens a dialog to assist in exporting HDF5 files.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.load_backup_preset">
 <span class="sig-name descname"><span class="pre">load_backup_preset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.load_backup_preset" title="Link to this definition"></a></dt>
-<dd><p>Opens a QFileDialog in the Backup-folder of the presets.
-If a backup is selected, the current preset is put into backup.</p>
+<dd><p>Load a preset from the backup folder via a file dialog.</p>
+<p>If a backup is selected, the current preset is first saved, then the backup is loaded.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.load_extensions">
 <span class="sig-name descname"><span class="pre">load_extensions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.load_extensions" title="Link to this definition"></a></dt>
-<dd><p>Load the extensions specified in the preferences.
-If an extension cannot be loaded, print an error message and continue.
-If extensions are not yet part of the preferences, add the <cite>standard_pref</cite> extensions.</p>
+<dd><p>Load extensions as specified in the preferences.</p>
+<p>If no extensions are specified, defaults are added. Paths are added to sys.path
+and each extension is imported and instantiated with the required contexts.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.load_preferences">
 <span class="sig-name descname"><span class="pre">load_preferences</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.load_preferences" title="Link to this definition"></a></dt>
-<dd><p>Loads the preferences.</p>
+<dd><p>Load application preferences.</p>
 <p>Those may contain:
 - autosave: turn on / off autosave on closing the program.
 - dark_mode: turning dark-mode on / off.
@@ -2955,17 +3095,18 @@ If extensions are not yet part of the preferences, add the <cite>standard_pref</
 - py_files_path: the path, where python files (e.g. protocols) are created.
 - meas_files_path: the path, where measurement data is stored.
 - device_driver_path: the path, where NOMAD CAMELS can find the installed devices.
-- databroker_catalog_name: the name of the databroker catalog</p>
+- databroker_catalog_name: the name of the databroker catalog
+After loading, the dependent settings are updated.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.load_preset">
 <span class="sig-name descname"><span class="pre">load_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.load_preset" title="Link to this definition"></a></dt>
-<dd><p>Called when loading a preset (e.g. when loading the last state).
-Opens the given preset.</p>
+<dd><p>Load the specified preset from file.</p>
+<p>Resets active instruments, protocols, manual controls, and updates the UI accordingly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>preset</strong> (<em>str</em>) – The name of the preset to load.</p>
+<dd class="field-odd"><p><strong>preset</strong> (<em>str</em>) – The name or path of the preset to load.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2973,58 +3114,65 @@ Opens the given preset.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.load_sample_data">
 <span class="sig-name descname"><span class="pre">load_sample_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.load_sample_data" title="Link to this definition"></a></dt>
-<dd><p>Loading the dictionary from %localappdata%/sampledata.json,
-selecting the active sample and saving the rest into self.sampledata.</p>
+<dd><p>Load sample data from a JSON file.</p>
+<p>Sets the active sample and updates the sample data dictionary.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.load_state">
 <span class="sig-name descname"><span class="pre">load_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.load_state" title="Link to this definition"></a></dt>
-<dd><p>Loads the most recent preset.</p>
+<dd><p>Load the most recent preset.</p>
+<p>If the most recent preset fails to load, attempts to load the second most recent preset.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.load_user_data">
 <span class="sig-name descname"><span class="pre">load_user_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.load_user_data" title="Link to this definition"></a></dt>
-<dd><p>Loading the dictionary from %localappdata%/userdata.json,
-selecting the active user and saving the rest into self.userdata.</p>
+<dd><p>Load user data from a JSON file.</p>
+<p>Sets the active user and updates the user data dictionary.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.login_logout_nomad">
 <span class="sig-name descname"><span class="pre">login_logout_nomad</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.login_logout_nomad" title="Link to this definition"></a></dt>
-<dd><p>Handles logging in / out of NOMAD when the respective button is pushed</p>
+<dd><p>Handle logging in/out of NOMAD when the corresponding button is clicked.</p>
+<p>Depending on the current state, either logs out or initiates the login process.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.login_nomad">
 <span class="sig-name descname"><span class="pre">login_nomad</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.login_nomad" title="Link to this definition"></a></dt>
-<dd><p>Handles the login to NOMAD. If the login is successful, the UI is
-adapted to show all the NOMAD-related buttons.</p>
+<dd><p>Handle the login process to NOMAD.</p>
+<p>If login is successful, updates the UI to reflect NOMAD-related controls.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.make_save_dict">
 <span class="sig-name descname"><span class="pre">make_save_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.make_save_dict" title="Link to this definition"></a></dt>
-<dd><p>Creates the save dictionary for the current preset. It includes the current preset, the active instruments, the protocols, the manual controls, the protocol tabs and the manual tabs.</p>
+<dd><p>Create the dictionary to be saved for the current preset.</p>
+<p>This includes active instruments, protocols, manual controls, and tabs.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.manage_extensions">
 <span class="sig-name descname"><span class="pre">manage_extensions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.manage_extensions" title="Link to this definition"></a></dt>
 <dd><p>Open the extension manager dialog.</p>
+<p>Requires password protection if enabled. On successful changes, prompts for a restart.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.manage_instruments">
 <span class="sig-name descname"><span class="pre">manage_instruments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.manage_instruments" title="Link to this definition"></a></dt>
 <dd><p>Open the instrument manager dialog.</p>
+<p>Allows users to add or remove instruments. After the dialog, the active instruments are updated.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.move_manual_control">
 <span class="sig-name descname"><span class="pre">move_manual_control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.move_manual_control" title="Link to this definition"></a></dt>
 <dd><p>Move a manual control to another tab.</p>
+<p>Opens a dialog to select a new tab, and if different from the current tab,
+moves the control.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>control_name</strong> (<em>str</em>) – The name of the manual control to move.</p>
@@ -3035,7 +3183,8 @@ adapted to show all the NOMAD-related buttons.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.move_protocol">
 <span class="sig-name descname"><span class="pre">move_protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.move_protocol" title="Link to this definition"></a></dt>
-<dd><p>Move a protocol to another tab.</p>
+<dd><p>Move a protocol to a different tab.</p>
+<p>Opens a move dialog to choose a new tab and moves the protocol button accordingly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol to move.</p>
@@ -3046,22 +3195,32 @@ adapted to show all the NOMAD-related buttons.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.new_preset">
 <span class="sig-name descname"><span class="pre">new_preset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.new_preset" title="Link to this definition"></a></dt>
-<dd><p>Create a new, empty device-preset via a QFileDialog.</p>
+<dd><p>Create a new, empty device preset via a file dialog.</p>
+<p>Saves the new preset and reloads the state.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.next_queued_protocol">
 <span class="sig-name descname"><span class="pre">next_queued_protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_uuid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.next_queued_protocol" title="Link to this definition"></a></dt>
-<dd><p>Checks whether the run engine is idle and if so, runs the next protocol in the queue.</p>
+<dd><p>Run the next queued protocol if the run engine is idle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol.</p></li>
+<li><p><strong>variables</strong> (<em>dict</em>) – The variables for the protocol.</p></li>
+<li><p><strong>api_uuid</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The API unique identifier, defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.open_data_path">
 <span class="sig-name descname"><span class="pre">open_data_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.open_data_path" title="Link to this definition"></a></dt>
-<dd><p>Open the data path of a protocol in the file explorer.</p>
+<dd><p>Open the data path for a protocol in the file explorer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol to open the data path of.</p>
+<dd class="field-odd"><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3069,7 +3228,8 @@ adapted to show all the NOMAD-related buttons.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.open_manual_control_config">
 <span class="sig-name descname"><span class="pre">open_manual_control_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.open_manual_control_config" title="Link to this definition"></a></dt>
-<dd><p>Open the configuration dialog of a manual control. If the dialog is accepted, the data of the control is updated using the <cite>update_man_cont_data</cite> method.</p>
+<dd><p>Open the configuration dialog for a manual control.</p>
+<p>If the dialog is accepted, updates the manual control data accordingly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>control_name</strong> (<em>str</em>) – The name of the manual control to configure.</p>
@@ -3080,7 +3240,8 @@ adapted to show all the NOMAD-related buttons.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.open_protocol">
 <span class="sig-name descname"><span class="pre">open_protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.open_protocol" title="Link to this definition"></a></dt>
-<dd><p>Open the protocol file in the default editor. If the file does not exist, the protocol is built first.</p>
+<dd><p>Open the protocol file in the default editor.</p>
+<p>If the protocol file does not exist, it is built first.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol to open.</p>
@@ -3091,7 +3252,8 @@ adapted to show all the NOMAD-related buttons.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.open_protocol_config">
 <span class="sig-name descname"><span class="pre">open_protocol_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prot_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.open_protocol_config" title="Link to this definition"></a></dt>
-<dd><p>Open the configuration dialog of a protocol. If the dialog is accepted, the data of the protocol is updated using the <cite>update_prot_data</cite> method.</p>
+<dd><p>Open the configuration dialog for a protocol.</p>
+<p>If the dialog is accepted, updates the protocol data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>prot_name</strong> (<em>str</em>) – The name of the protocol to configure.</p>
@@ -3102,39 +3264,49 @@ adapted to show all the NOMAD-related buttons.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.open_watchdog_definition">
 <span class="sig-name descname"><span class="pre">open_watchdog_definition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.open_watchdog_definition" title="Link to this definition"></a></dt>
-<dd><p>Opens the Watchdog_Definer dialog.</p>
+<dd><p>Open the watchdog definition dialog.</p>
+<p>Disconnects active watchdog signals, shows the dialog, and then updates watchdogs.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.pause_protocol">
 <span class="sig-name descname"><span class="pre">pause_protocol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.pause_protocol" title="Link to this definition"></a></dt>
-<dd><p>Pause the protocol if the run engine is running. The run engine is requested to pause and the buttons are updated.</p>
+<dd><p>Pause the currently running protocol.</p>
+<p>Requests the run engine to pause and updates the UI buttons accordingly.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.populate_manuals_buttons">
 <span class="sig-name descname"><span class="pre">populate_manuals_buttons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.populate_manuals_buttons" title="Link to this definition"></a></dt>
-<dd><p>Clears the manual controls area and adds the buttons for all manual controls.</p>
+<dd><p>Populate the manual controls area with buttons for each manual control.</p>
+<p>Clears the area and then adds buttons according to the current manual controls data.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.populate_meas_buttons">
 <span class="sig-name descname"><span class="pre">populate_meas_buttons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.populate_meas_buttons" title="Link to this definition"></a></dt>
-<dd><p>Clear the protocols area and adds the buttons for all protocols.</p>
+<dd><p>Populate the measurement protocols area with buttons.</p>
+<p>Clears the area and then adds buttons for each protocol.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.propagate_exception">
 <span class="sig-name descname"><span class="pre">propagate_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exception</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.propagate_exception" title="Link to this definition"></a></dt>
-<dd><p>Called when an exception is raised during the instantiation of the devices.
-First the protocol is finished and then the exception is raised.</p>
+<dd><p>Handle exceptions raised during device instantiation.</p>
+<p>Calls protocol_finished and then raises the exception.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>exception</strong> (<em>Exception</em>) – The exception that was raised.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.protocol_finished">
 <span class="sig-name descname"><span class="pre">protocol_finished</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.protocol_finished" title="Link to this definition"></a></dt>
-<dd><p>Called when the protocol is finished. The subscriptions are removed.
-Checks if the next protocol in the queue should be run, if not, the protocol is finished and the devices are closed. If yes, the next protocol is run and the currently used devices are added to the list of devices from the queue.</p>
+<dd><p>Handle the end of protocol execution.</p>
+<p>Removes subscriptions, cleans up devices, checks if a queued protocol should be run next,
+and performs final UI updates.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -3150,10 +3322,14 @@ Checks if the next protocol in the queue should be run, if not, the protocol is 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.queue_protocol">
 <span class="sig-name descname"><span class="pre">queue_protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_uuid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.queue_protocol" title="Link to this definition"></a></dt>
-<dd><p>Add a protocol to the queue. The protocol is added to the queue widget and the next protocol is checked. See <cite>ui_widgets.run_queue.RunQueue.add_item</cite>.</p>
+<dd><p>Add a protocol to the execution queue.</p>
+<p>Updates the run queue widget and makes it visible.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol to add to the queue.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol to queue.</p></li>
+<li><p><strong>api_uuid</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – The API unique identifier, defaults to None.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -3161,13 +3337,23 @@ Checks if the next protocol in the queue should be run, if not, the protocol is 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.queue_protocol_with_variables_signal">
 <span class="sig-name descname"><span class="pre">queue_protocol_with_variables_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_uuid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.queue_protocol_with_variables_signal" title="Link to this definition"></a></dt>
-<dd><p>Update the variables of a protocol in the run queue. Called by the API.</p>
+<dd><p>Update variables for a queued protocol (called by the API).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol.</p></li>
+<li><p><strong>variables</strong> (<em>dict</em>) – The variables to update.</p></li>
+<li><p><strong>index</strong> (<em>int</em>) – The index in the queue.</p></li>
+<li><p><strong>api_uuid</strong> (<em>str</em>) – The API unique identifier.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.remove_manual_control">
 <span class="sig-name descname"><span class="pre">remove_manual_control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.remove_manual_control" title="Link to this definition"></a></dt>
-<dd><p>Remove a manual control from the manual controls. Also remove the button from the button area.</p>
+<dd><p>Remove a manual control from the manual controls list and update the UI.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>control_name</strong> (<em>str</em>) – The name of the manual control to remove.</p>
@@ -3178,7 +3364,7 @@ Checks if the next protocol in the queue should be run, if not, the protocol is 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.remove_protocol">
 <span class="sig-name descname"><span class="pre">remove_protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prot_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.remove_protocol" title="Link to this definition"></a></dt>
-<dd><p>Remove a protocol from the protocols_dict. Also remove the button from the button area.</p>
+<dd><p>Remove a protocol from the protocols dictionary and update the UI.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>prot_name</strong> (<em>str</em>) – The name of the protocol to remove.</p>
@@ -3189,13 +3375,19 @@ Checks if the next protocol in the queue should be run, if not, the protocol is 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.remove_queue_protocol">
 <span class="sig-name descname"><span class="pre">remove_queue_protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.remove_queue_protocol" title="Link to this definition"></a></dt>
-<dd><p>Remove a protocol from the run queue. Called by the API.</p>
+<dd><p>Remove a protocol from the run queue (called by the API).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol to remove.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.resume_protocol">
 <span class="sig-name descname"><span class="pre">resume_protocol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.resume_protocol" title="Link to this definition"></a></dt>
-<dd><p>Resume the protocol if the run engine is paused. The run engine is resumed and the buttons are updated.</p>
+<dd><p>Resume a paused protocol.</p>
+<p>Updates the UI buttons and instructs the run engine to resume.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -3206,47 +3398,57 @@ Checks if the next protocol in the queue should be run, if not, the protocol is 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.run_protocol">
 <span class="sig-name descname"><span class="pre">run_protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_uuid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.run_protocol" title="Link to this definition"></a></dt>
-<dd><p>This function runs the given protocol <cite>protocol_name</cite>.
-First the protocol is built, then imported. The used instruments are
-instantiated with <cite>device_handling.instantiate_devices</cite> and functions
-from the protocol like creating plots are called.</p>
-<p>If everything runs correctly and a nomad upload should be done, after
-<cite>protocol_finished</cite> is called, this function will wait for it and then
-handle the upload.</p>
-<p>Closing devices not used in the protocol is done in <cite>close_old_queue_devices</cite>.</p>
+<dd><p>Run a measurement protocol.</p>
+<p>Builds and imports the protocol file, instantiates required devices,
+and executes the protocol. Manages UI updates and handles NOMAD uploads if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol to run.</p></li>
+<li><p><strong>api_uuid</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The API unique identifier, defaults to None.</p></li>
+<li><p><strong>variables</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em>) – Variables for the protocol, defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.run_protocol_part2">
 <span class="sig-name descname"><span class="pre">run_protocol_part2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_uuid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.run_protocol_part2" title="Link to this definition"></a></dt>
-<dd><p>This function is called after the devices are instantiated.
-The protocol is run using the <cite>run_protocol_main</cite> function of the protocol module.
-After the protocol is finished, the <cite>protocol_finished</cite> function is called, the data is saved and uploaded to NOMAD if selected.</p>
+<dd><p>Continue running the protocol after devices are instantiated.</p>
+<p>Executes the main protocol steps, sets up live windows and subscriptions,
+and handles NOMAD uploads if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>api_uuid</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The API unique identifier, defaults to None.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.save_preset_as">
 <span class="sig-name descname"><span class="pre">save_preset_as</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.save_preset_as" title="Link to this definition"></a></dt>
-<dd><p>Opens a QFileDialog to save the preset.
-A backup / autosave of the preset is made automatically.</p>
+<dd><p>Save the current preset under a new name via a file dialog.</p>
+<p>A backup/autosave is performed automatically.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.save_sample_data">
 <span class="sig-name descname"><span class="pre">save_sample_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.save_sample_data" title="Link to this definition"></a></dt>
-<dd><p>Calling the save_dictionary function with the savefile as
-%localappdata%/sampledata.json and self.sampledata as dictionary.</p>
+<dd><p>Save the current sample data to a JSON file.</p>
+<p>The active sample is saved along with the complete sample data dictionary.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.save_state">
 <span class="sig-name descname"><span class="pre">save_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fromload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_backup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.save_state" title="Link to this definition"></a></dt>
-<dd><p>Saves the current states of the preset.</p>
+<dd><p>Save the current application state.</p>
+<p>Saves the device preset along with user and sample data. Optionally creates a backup.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fromload</strong> – (Default value = False)</p></li>
-<li><p><strong>do_backup</strong> – (Default value = True)</p></li>
+<li><p><strong>fromload</strong> (<em>bool</em><em>, </em><em>optional</em>) – Indicates if the save is triggered from a load operation. Defaults to False.</p></li>
+<li><p><strong>do_backup</strong> (<em>bool</em><em>, </em><em>optional</em>) – Indicates whether to perform a backup. Defaults to True.</p></li>
 </ul>
 </dd>
 </dl>
@@ -3255,65 +3457,97 @@ A backup / autosave of the preset is made automatically.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.save_user_data">
 <span class="sig-name descname"><span class="pre">save_user_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.save_user_data" title="Link to this definition"></a></dt>
-<dd><p>Calling the save_dictionary function with the savefile as
-%localappdata%/userdata.json and self.userdata as dictionary.</p>
+<dd><p>Save the current user data to a JSON file.</p>
+<p>The active user is saved along with the complete user data dictionary.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.select_nomad_sample">
 <span class="sig-name descname"><span class="pre">select_nomad_sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.select_nomad_sample" title="Link to this definition"></a></dt>
-<dd><p>Opens a dialog to select a sample from NOMAD.</p>
+<dd><p>Open a dialog to select a sample from NOMAD.</p>
+<p>Updates the NOMAD sample and updates the corresponding UI elements.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.set_checkbox">
 <span class="sig-name descname"><span class="pre">set_checkbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.set_checkbox" title="Link to this definition"></a></dt>
-<dd><p>Set the checkbox of a protocol in the run queue. Called by the API.</p>
+<dd><p>Check the checkbox of a protocol in the run queue (called by the API).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>protocol_name</strong> (<em>str</em>) – The name of the protocol whose checkbox is to be set.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.set_sample">
 <span class="sig-name descname"><span class="pre">set_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.set_sample" title="Link to this definition"></a></dt>
-<dd><p>Set the active sample to the given sample name. Called by the API.</p>
+<dd><p>Set the active sample to the specified sample name (called by the API).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample_name</strong> (<em>str</em>) – The name of the sample to set.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the given sample does not exist in the sample data.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.set_session">
 <span class="sig-name descname"><span class="pre">set_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.set_session" title="Link to this definition"></a></dt>
-<dd><p>Set the active session to the given session name. Called by the API.</p>
+<dd><p>Set the active session name (called by the API).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>session_name</strong> (<em>str</em>) – The session name to set.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.set_user">
 <span class="sig-name descname"><span class="pre">set_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.set_user" title="Link to this definition"></a></dt>
-<dd><p>”
-Set the active user to the given user name. Called by the API.</p>
+<dd><p>Set the active user to the specified user name (called by the API).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_name</strong> (<em>str</em>) – The name of the user to set.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the given user does not exist in the user data.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.show_hide_log">
 <span class="sig-name descname"><span class="pre">show_hide_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.show_hide_log" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Toggle the visibility of the console log and clear log button.</p>
+<p>If the log is hidden, it becomes visible, and vice versa. Also updates the text of the show/hide button.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.show_nomad_sample">
 <span class="sig-name descname"><span class="pre">show_nomad_sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.show_nomad_sample" title="Link to this definition"></a></dt>
-<dd><p>Shows / hides the settings for the NOMAD sample.</p>
+<dd><p>Show or hide NOMAD sample settings based on user selection and NOMAD login status.</p>
+<p>Updates the sample widget display and enables/disables the NOMAD sample selection button.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.show_nomad_upload">
 <span class="sig-name descname"><span class="pre">show_nomad_upload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.show_nomad_upload" title="Link to this definition"></a></dt>
-<dd><p>Shows / hides the settings for directly uploading data to NOMAD.</p>
+<dd><p>Show or hide NOMAD upload settings based on whether a NOMAD user is logged in.</p>
+<p>Updates UI elements related to uploading data to NOMAD.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.start_API_server">
 <span class="sig-name descname"><span class="pre">start_API_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.start_API_server" title="Link to this definition"></a></dt>
-<dd><p>Start the FastAPI server on the given port.</p>
+<dd><p>Start the FastAPI server on the specified port.</p>
+<p>This method initializes and starts a FastAPI thread for remote API control,
+and connects its signals to various slot functions in the main window. The API emits signals to the main app to perform most of the tasks like queuing and starting protocols. You can enable the API and set the port in the Settings Window of CAMELS.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>api_port</strong> (<em>int</em>) – The port on which the FastAPI server should be started.</p>
+<dd class="field-odd"><p><strong>api_port</strong> (<em>int</em>) – The port number on which to start the API server.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3321,7 +3555,8 @@ Set the active user to the given user name. Called by the API.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.start_manual_control">
 <span class="sig-name descname"><span class="pre">start_manual_control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.start_manual_control" title="Link to this definition"></a></dt>
-<dd><p>Start a manual control by instantiating the control class and adding it to the list of open windows. The control is also connected to the <cite>close_manual_control</cite> method.</p>
+<dd><p>Start a manual control.</p>
+<p>Instantiates the control class and opens it in a new window. Also disables the single-run button.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The name of the manual control to start.</p>
@@ -3337,36 +3572,37 @@ Set the active user to the given user name. Called by the API.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.stop_API_server">
 <span class="sig-name descname"><span class="pre">stop_API_server</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.stop_API_server" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Stop the FastAPI server if it is running.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.stop_protocol">
 <span class="sig-name descname"><span class="pre">stop_protocol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.stop_protocol" title="Link to this definition"></a></dt>
-<dd><p>Stop the protocol if the run engine is not idle. The run engine is aborted.</p>
+<dd><p>Stop the currently running protocol.</p>
+<p>Aborts the run engine, and if necessary, runs the end protocol.
+Also handles cleanup of device threads.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.toggle_dark_mode">
 <span class="sig-name descname"><span class="pre">toggle_dark_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.toggle_dark_mode" title="Link to this definition"></a></dt>
-<dd><p>Turning dark mode on / off, called whenever the settings are
-changed. Using qdarkstyle to provide the stylesheets.</p>
+<dd><p>Toggle dark mode on or off based on the preferences.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.update_channels">
 <span class="sig-name descname"><span class="pre">update_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.update_channels" title="Link to this definition"></a></dt>
-<dd><p>Called when the active devices change.
-The channels in variables_handling are updated with the ones
-provided by the active devices.</p>
+<dd><p>Update the channels information from the active instruments.</p>
+<p>Clears existing channels in variables_handling and updates with channels from each active device.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.update_live_variables">
 <span class="sig-name descname"><span class="pre">update_live_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.update_live_variables" title="Link to this definition"></a></dt>
-<dd><p>Live update the variables in the protocol module.</p>
+<dd><p>Update live variables during protocol execution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>variables</strong> (<em>dict</em>) – The new values of the variables.</p>
+<dd class="field-odd"><p><strong>variables</strong> (<em>dict</em>) – The new values for the live variables.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3374,12 +3610,13 @@ provided by the active devices.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.update_man_cont_data">
 <span class="sig-name descname"><span class="pre">update_man_cont_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.update_man_cont_data" title="Link to this definition"></a></dt>
-<dd><p>Update the data of a manual control. The old name is used to remove the old control from the manual controls. The new name is used to add the updated control to the manual controls.</p>
+<dd><p>Update data for a manual control.</p>
+<p>Removes the old entry and updates it with the new control data, renaming buttons accordingly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>control_data</strong> (<em>dict</em>) – The updated data of the manual control.</p></li>
-<li><p><strong>old_name</strong> (<em>str</em>) – The old name of the manual control.</p></li>
+<li><p><strong>control_data</strong> (<em>dict</em>) – The updated manual control data.</p></li>
+<li><p><strong>old_name</strong> (<em>str</em>) – The previous name of the manual control.</p></li>
 </ul>
 </dd>
 </dl>
@@ -3388,17 +3625,19 @@ provided by the active devices.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.update_preference_settings">
 <span class="sig-name descname"><span class="pre">update_preference_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.update_preference_settings" title="Link to this definition"></a></dt>
-<dd><p>Updates the settings that are dependent on the preferences. This includes the number formatting, the device driver path and the databroker catalog name, as well as the graphic theme.</p>
+<dd><p>Update settings that depend on the preferences.</p>
+<p>This includes number formatting, device driver path, databroker catalog name, and graphic theme.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.update_prot_data">
 <span class="sig-name descname"><span class="pre">update_prot_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.update_prot_data" title="Link to this definition"></a></dt>
-<dd><p>Update the data of a protocol. The old name is used to remove the old protocol from the protocols_dict. The new name is used to add the updated protocol to the protocols_dict.</p>
+<dd><p>Update the data of a protocol.</p>
+<p>Removes the old protocol entry and replaces it with the updated one, renaming buttons accordingly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>protocol</strong> (<a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.protocol_class.Measurement_Protocol" title="nomad_camels.main_classes.protocol_class.Measurement_Protocol"><em>main_classes.protocol_class.Measurement_Protocol</em></a>) – The updated protocol.</p></li>
+<li><p><strong>protocol</strong> (<a class="reference internal" href="nomad_camels.main_classes.html#nomad_camels.main_classes.protocol_class.Measurement_Protocol" title="nomad_camels.main_classes.protocol_class.Measurement_Protocol"><em>Measurement_Protocol</em></a>) – The updated protocol.</p></li>
 <li><p><strong>old_name</strong> (<em>str</em>) – The old name of the protocol.</p></li>
 </ul>
 </dd>
@@ -3408,21 +3647,23 @@ provided by the active devices.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.update_shown_samples">
 <span class="sig-name descname"><span class="pre">update_shown_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.update_shown_samples" title="Link to this definition"></a></dt>
-<dd><p>Updates the comboBox_sample with the samples that are owned by the active user or have no owner.</p>
+<dd><p>Refresh the sample combobox with samples that are owned by the active user or have no owner.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.update_watchdogs">
 <span class="sig-name descname"><span class="pre">update_watchdogs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.update_watchdogs" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Update watchdogs by connecting their condition_met signals to the watchdog_triggered slot.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.watchdog_triggered">
 <span class="sig-name descname"><span class="pre">watchdog_triggered</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">watchdog</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.watchdog_triggered" title="Link to this definition"></a></dt>
-<dd><p>Called when a watchdog is triggered. The protocol is paused and the watchdog is reset.</p>
+<dd><p>Handle a triggered watchdog condition.</p>
+<p>Pauses the protocol, executes the watchdog protocol if defined, and shows a warning popup.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>watchdog</strong> (<em>str</em>) – The name of the watchdog that was triggered.</p>
+<dd class="field-odd"><p><strong>watchdog</strong> (<a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.watchdogs.Watchdog" title="nomad_camels.bluesky_handling.watchdogs.Watchdog"><em>Watchdog</em></a>) – The triggered watchdog object.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3430,7 +3671,8 @@ provided by the active devices.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.MainApp_v2.MainWindow.with_or_without_instruments">
 <span class="sig-name descname"><span class="pre">with_or_without_instruments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.MainApp_v2.MainWindow.with_or_without_instruments" title="Link to this definition"></a></dt>
-<dd><p>Check if there are active instruments and hide the protocols and manual controls if no instruments are being used.</p>
+<dd><p>Check if active instruments are available and update the UI accordingly.</p>
+<p>Hides protocol and manual controls if no instruments are active.</p>
 </dd></dl>
 
 </dd></dl>

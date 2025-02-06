@@ -52,6 +52,14 @@ nomad\_camels.main\_classes.plot\_2D module
    :undoc-members:
    :show-inheritance:
 
+nomad\_camels.main\_classes.plot\_plotly module
+-----------------------------------------------
+
+.. automodule:: nomad_camels.main_classes.plot_plotly
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 nomad\_camels.main\_classes.plot\_pyqtgraph module
 --------------------------------------------------
 
