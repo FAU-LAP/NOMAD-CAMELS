@@ -44,7 +44,10 @@ def test_get_channels(mocker):
 
 def test_get_additional_info():
     device = Device(additional_info={"info_key": "info_value"})
-    assert device.get_additional_info() == {"info_key": "info_value"}
+    assert device.get_additional_info() == {
+        "info_key": "info_value",
+        "config_channel_metadata": {},
+    }
 
 
 def test_get_finalize_steps():
@@ -76,9 +79,7 @@ def test_get_outputs(mocker):
     mock_channel = MagicMock()
     mock_channel.attr = "signal1"
     mock_channel.cls = MagicMock()
-    mock_device.walk_components.return_value = [
-        MagicMock(item=mock_channel)
-    ]
+    mock_device.walk_components.return_value = [MagicMock(item=mock_channel)]
     mocker.patch(
         "nomad_camels.main_classes.device_class.check_output", return_value=True
     )
@@ -93,9 +94,7 @@ def test_get_channels(mocker):
     mock_channel = MagicMock()
     mock_channel.attr = "channel1"
     mock_channel.cls = MagicMock()
-    mock_device.walk_components.return_value = [
-        MagicMock(item=mock_channel)
-    ]
+    mock_device.walk_components.return_value = [MagicMock(item=mock_channel)]
     mock_device.configuration_attrs = []
 
     channels, config_channels = get_channels(
