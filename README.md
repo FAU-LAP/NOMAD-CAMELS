@@ -18,8 +18,11 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 1.7.1
+### 1.7.2
+Fixes:
+- changing plot color now does not always affect the first item anymore
 
+### 1.7.1
 Fixes:
 - Automatic upload to NOMAD fixed when also exporting to CSV
 

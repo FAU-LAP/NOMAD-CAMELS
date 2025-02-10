@@ -622,7 +622,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
 
             color = item.opts["pen"].color()
             colorwidge = QPushButton(color.name())
-            colorwidge.clicked.connect(lambda n=i: self.change_color(n))
+            colorwidge.clicked.connect(lambda state, n=i: self.change_color(n))
             self.tableWidget.setCellWidget(i, 3, colorwidge)
 
     def change_symbol(self, symbol, row):
