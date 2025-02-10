@@ -1,8 +1,31 @@
-# macOS - Installation Using Pyenv
+# macOS - Installation
 
-## 1. Pyenv and Python Installation
+## 1. Python Installation
 
-Use `homebrew` to install pyenv ([see here](https://brew.sh/) for more information on how to install `homebrew`).
+There are two ways to install Python on your mac:
+
+1. Direct Python installtion using homebrew
+2. Installation using Pyenv
+
+```{note}
+Use Pyenv if you want to be abl to easily manage different Python versions (for example 3.9 and 3.11) on your system at the same time.
+```
+
+### 1.1 Install homebrew
+
+[See here](https://brew.sh/) for information on how to install `homebrew`.
+
+### 1.2 Direct Installation
+
+After you installed `homebrew` and simply want a single Python version to run on your system run this command in the terminal:
+
+```
+brew install python
+```
+
+### 1.3 Using Pyenv
+
+Use `homebrew` to install [pyenv](https://github.com/pyenv/pyenv). 
 
 - Run
   ```bash
@@ -18,7 +41,7 @@ Use `homebrew` to install pyenv ([see here](https://brew.sh/) for more informati
   ```bash
   brew install openssl readline sqlite3 xz zlib
   ```  
-## 2. Python Installation
+#### 1.3.1 Python Installation
 - Restart terminal
 - Type in to the terminal 
   ```
@@ -27,9 +50,20 @@ Use `homebrew` to install pyenv ([see here](https://brew.sh/) for more informati
   for example `pyenv install 3.9`.\
 `<python_version>` is the Python version you want to install (3.9 or higher is suggested for NOMAD-CAMELS).  
 
-## 3. Install CAMELS
+## 2. Install CAMELS
+
+### 2.1 Using Direct Install
+
+You can simply run
+
+```bash
+pip3 install nomad-camels
+```
+
+### 2.2 Using Pyenv
+
 - Create a folder where you want to install CAMELS (e.g. `NOMAD-CAMELS/`)
-- Type in your terminal 
+- Type in your terminal
    ```bash
    cd NOMAD-CAMELS
    pyenv local <python_version>
@@ -51,7 +85,7 @@ Use `homebrew` to install pyenv ([see here](https://brew.sh/) for more informati
 
   to install CAMELS.
 
-## 4. Run CAMELS
+## 3. Run CAMELS
 
 You can then run
 
