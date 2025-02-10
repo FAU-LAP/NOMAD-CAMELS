@@ -1,5 +1,9 @@
 # macOS - Installation
 
+```{warning}
+NOMAD CAMELS might not work on Apple Silicon devices like the M1, M2, etc.
+```
+
 ## 1. Python Installation
 
 There are two ways to install Python on your mac:
