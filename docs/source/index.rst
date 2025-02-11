@@ -147,7 +147,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    Protocol Steps Explained <doc/protocol_steps/protocol_steps_landing.md>
    Evaluation of the Data <doc/nomad_camels_toolbox.md>
    Handling HDF5 Files <doc/handling_hdf5.md>
-   FAQ <doc/faq/faq.md>
+   FAQ / Troubleshooting <doc/faq/faq.md>
 
 .. toctree::
    :maxdepth: 2
