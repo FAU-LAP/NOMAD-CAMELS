@@ -110,6 +110,10 @@ class Device:
                 else:
                     self.passive_config.update({f"{name}": value})
         self.controls = {}
+        config_channel_metadata = {}
+        for chan in self.config_channels:
+            config_channel_metadata[chan] = self.config_channels[chan].get_meta_str()
+        self.additional_info["config_channel_metadata"] = config_channel_metadata
 
     def get_necessary_devices(self):
         """Returns a list of the devices that this device needs to function
@@ -695,6 +699,8 @@ class Local_VISA(Connection_Config):
         except OSError:
             rm = pyvisa.ResourceManager("@py")
         self.ports = rm.list_resources()
+        if not self.ports:
+            WarnPopup(text="No VISA resources found!\nYou might need to install a VISA library.", title="No VISA resources!")
         self.comboBox_port.addItems(self.ports)
 
         self.layout().addWidget(label_port, 0, 0)
@@ -820,6 +826,8 @@ class Simple_Config(Device_Config):
         config_types=None,
         labels=None,
     ):
+        if "config_channel_metadata" in additional_info:
+            config_channel_metadata = additional_info["config_channel_metadata"]
         super().__init__(
             parent,
             device_name=device_name,
@@ -835,6 +843,8 @@ class Simple_Config(Device_Config):
             comboBoxes=comboBoxes,
             config_types=config_types,
             labels=labels,
+            config_channel_metadata=config_channel_metadata,
+            device_name=device_name,
         )
         self.layout().addWidget(self.sub_widget, 10, 0, 1, 5)
         self.load_settings()
@@ -863,12 +873,15 @@ class Simple_Config_Sub(Device_Config_Sub):
         comboBoxes=None,
         config_types=None,
         labels=None,
+        config_channel_metadata=None,
+        device_name="",
     ):
         super().__init__(
             settings_dict=settings_dict, parent=parent, config_dict=config_dict
         )
         settings_dict = settings_dict or {}
         config_dict = config_dict or {}
+        config_channel_metadata = config_channel_metadata or {}
         self.setLayout(QGridLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         comboBoxes = comboBoxes or {}
@@ -1010,36 +1023,51 @@ class Simple_Config_Sub(Device_Config_Sub):
                 row += 1
         for name, widge in self.config_checks.items():
             self.layout().addWidget(widge, row, col, 1, 2)
+            add_tooltip_from_name(
+                [widge], f"{device_name}_{name}", config_channel_metadata
+            )
             col += 2
             if col == 4:
                 col = 0
                 row += 1
         for name, widge in self.config_floats.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
             self.layout().addWidget(widge, row, col + 1)
+            add_tooltip_from_name(
+                [widge, label], f"{device_name}_{name}", config_channel_metadata
+            )
             col += 2
             if col == 4:
                 col = 0
                 row += 1
         for name, widge in self.config_strings.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
             self.layout().addWidget(widge, row, col + 1)
+            add_tooltip_from_name(
+                [widge, label], f"{device_name}_{name}", config_channel_metadata
+            )
             col += 2
             if col == 4:
                 col = 0
                 row += 1
         for name, widge in self.config_combos.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
             self.layout().addWidget(widge, row, col + 1)
+            add_tooltip_from_name(
+                [widge, label], f"{device_name}_{name}", config_channel_metadata
+            )
             col += 2
             if col == 4:
                 col = 0
@@ -1085,3 +1113,9 @@ def check_logged_in():
     ):
         return "ELN"
     return False
+
+
+def add_tooltip_from_name(widgets, name, metadata_dict):
+    if widgets and name in metadata_dict and metadata_dict[name]:
+        for widge in widgets:
+            widge.setToolTip(metadata_dict[name])

@@ -19,6 +19,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.7.2
+Features:
+- Simple_Config of instruments now supports tool tips for config channels
+- Stage control manual control with ctrl + arrow keys now also if some part of the control is selected
+
 Fixes:
 - changing plot color now does not always affect the first item anymore
 
