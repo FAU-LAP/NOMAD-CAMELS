@@ -1,4 +1,6 @@
-# Instrument not recognized
+# Troubleshooting
+
+## Instrument not recognized
 
 When CAMELS does not recognize your instrument being connected, this may come from missing libraries on your computer.
 
