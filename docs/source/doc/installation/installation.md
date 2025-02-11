@@ -59,3 +59,16 @@ python .\CAMELS_start.py
 ```{warning}
 Some of the drivers do not support Python 3.12 yet, so we suggest to stay with Python 3.11.
 ```
+
+```{eval-rst}
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+
+   Windows Installer <installation_installer.md>
+   Install on Linux <installation_custom_unix.md>
+   Install on macOS <installation_custom_macos.md>
+   Installation with Anaconda <installation_custom_anaconda.md>
+   Custom Installation on Windows <installation_custom_windows.md>
+   Uninstall CAMELS <installation_uninstall.md>
+   
