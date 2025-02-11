@@ -700,7 +700,11 @@ class Local_VISA(Connection_Config):
             rm = pyvisa.ResourceManager("@py")
         self.ports = rm.list_resources()
         if not self.ports:
-            WarnPopup(text="No VISA resources found!\nYou might need to install a VISA library.", title="No VISA resources!")
+            WarnPopup(
+                text="No VISA resources found!\nYou might need to install a VISA library.",
+                title="No VISA resources!",
+                do_not_pause=True,
+            )
         self.comboBox_port.addItems(self.ports)
 
         self.layout().addWidget(label_port, 0, 0)
