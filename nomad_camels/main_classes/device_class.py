@@ -8,6 +8,9 @@ from PySide6.QtWidgets import (
     QCheckBox,
     QTextEdit,
     QPushButton,
+    QSpacerItem,
+    QSizePolicy,
+    QScrollArea,
 )
 from PySide6.QtGui import QFont
 from PySide6.QtCore import Signal
@@ -850,7 +853,16 @@ class Simple_Config(Device_Config):
             config_channel_metadata=config_channel_metadata,
             device_name=device_name,
         )
-        self.layout().addWidget(self.sub_widget, 10, 0, 1, 5)
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setWidget(self.sub_widget)
+        self.extra_line = QFrame()
+        self.extra_line.setFrameShape(QFrame.HLine)
+        self.extra_line.setFrameShadow(QFrame.Sunken)
+        self.layout().addWidget(self.extra_line, 10, 0, 1, 5)
+        self.layout().addWidget(self.scroll_area, 11, 0, 1, 5)
+        self.spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.layout().addItem(self.spacer, 12, 0, 1, 5)
         self.load_settings()
 
     def get_settings(self):
@@ -987,44 +999,54 @@ class Simple_Config_Sub(Device_Config_Sub):
 
         col = 0
         row = 0
+        self.setting_widgets = []
         for name, widge in self.setting_checks.items():
             self.layout().addWidget(widge, row, col, 1, 2)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.setting_widgets.append(widge)
         for name, widge in self.setting_floats.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
 
             self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.setting_widgets.append([label, widge])
         for name, widge in self.setting_strings.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
 
             self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.setting_widgets.append([label, widge])
         for name, widge in self.setting_combos.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
             self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.setting_widgets.append([label, widge])
+
+        self.config_widgets = []
         for name, widge in self.config_checks.items():
             self.layout().addWidget(widge, row, col, 1, 2)
             add_tooltip_from_name(
@@ -1034,6 +1056,7 @@ class Simple_Config_Sub(Device_Config_Sub):
             if col == 4:
                 col = 0
                 row += 1
+            self.config_widgets.append(widge)
         for name, widge in self.config_floats.items():
             if name in labels:
                 label = QLabel(labels[name])
@@ -1048,6 +1071,7 @@ class Simple_Config_Sub(Device_Config_Sub):
             if col == 4:
                 col = 0
                 row += 1
+            self.config_widgets.append([label, widge])
         for name, widge in self.config_strings.items():
             if name in labels:
                 label = QLabel(labels[name])
@@ -1062,6 +1086,7 @@ class Simple_Config_Sub(Device_Config_Sub):
             if col == 4:
                 col = 0
                 row += 1
+            self.config_widgets.append([label, widge])
         for name, widge in self.config_combos.items():
             if name in labels:
                 label = QLabel(labels[name])
@@ -1076,6 +1101,68 @@ class Simple_Config_Sub(Device_Config_Sub):
             if col == 4:
                 col = 0
                 row += 1
+            self.config_widgets.append([label, widge])
+        self.line_frame = QFrame(self)
+        self.line_frame.setFrameShape(QFrame.HLine)
+        self.line_frame.setFrameShadow(QFrame.Sunken)
+        self.line_frame.setObjectName("line_frame")
+        self.spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.resize(max(self.width(), self.get_min_width_column() * 2), self.height())
+        self.update_layout()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.update_layout()
+
+    def get_min_width_column(self):
+        """ """
+        min_width = 0
+        for widge in self.setting_widgets + self.config_widgets:
+            if isinstance(widge, list):
+                width = sum([x.sizeHint().width() for x in widge])
+            else:
+                width = widge.sizeHint().width()
+            min_width = max(min_width, width)
+        return min_width
+
+    def update_layout(self):
+        width = self.width()
+        column_width = self.get_min_width_column()
+        columns = width // column_width
+        columns = max(1, columns)
+        positions = [
+            (i // columns, i % columns) for i in range(len(self.setting_widgets))
+        ]
+        row = 0
+        for i, widge in enumerate(self.setting_widgets):
+            row, col = positions[i]
+            if isinstance(widge, list):
+                for j, widge in enumerate(widge):
+                    self.layout().addWidget(widge, row, 2 * col + j)
+            else:
+                self.layout().addWidget(widge, row, 2 * col, 1, 2)
+        # add a line if there was a row before
+        if row:
+            row += 1
+            self.layout().addWidget(self.line_frame, row, 0, 1, columns * 2)
+            self.line_frame.setHidden(False)
+            offset = row + 1
+        else:
+            offset = 0
+            self.line_frame.setHidden(True)
+
+        positions = [
+            (i // columns, i % columns) for i in range(len(self.config_widgets))
+        ]
+        row = 0
+        for i, widge in enumerate(self.config_widgets):
+            row, col = positions[i]
+            if isinstance(widge, list):
+                for j, widge in enumerate(widge):
+                    self.layout().addWidget(widge, row + offset, 2 * col + j)
+            else:
+                self.layout().addWidget(widge, row + offset, 2 * col, 1, 2)
+        self.layout().addItem(self.spacer, offset + row + 1, 0)
 
     def get_settings(self):
         """ """

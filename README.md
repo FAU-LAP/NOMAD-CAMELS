@@ -21,6 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.7.2
 Features:
 - Simple_Config of instruments now supports tool tips for config channels
+- Layout of Simple_Config now scrollable and can support more / less columns
 - Stage control manual control with ctrl + arrow keys now also if some part of the control is selected
 
 Fixes:
