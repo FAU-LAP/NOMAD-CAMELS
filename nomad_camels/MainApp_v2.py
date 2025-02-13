@@ -276,6 +276,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.container.setLayout(self.flow_layout)
         self.lineEdit_tags.returnPressed.connect(self.add_tag)
 
+        self.protocol_finished_signal.connect(self.play_finished_sound)
+
         version = update_camels.get_version()
         if self.preferences["last_shown_notes"] != version:
             update_camels.show_release_notes()
@@ -2250,6 +2252,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                             os.remove(f"{catalog_dir}/{file}")
         self.still_running = False
         self.protocol_finished_signal.emit()
+
+    def play_finished_sound(self):
+        if variables_handling.preferences["finished_sound"]:
+            try:
+                from PySide6.QtMultimedia import QSoundEffect
+                from PySide6.QtCore import QUrl
+
+                self.sound_effect = QSoundEffect()
+                self.sound_effect.setSource(
+                    QUrl.fromLocalFile(str(resources.files(graphics) / "done.wav"))
+                )
+                self.sound_effect.play()
+            except Exception as e:
+                print(e)
 
     def close_old_queue_devices(self):
         """

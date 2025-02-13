@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QDialog, QStyleFactory, QMessageBox, QApplication
 from PySide6.QtCore import Qt, QCoreApplication
 from PySide6.QtGui import QKeyEvent
+
 try:
     import qt_material
 
@@ -138,6 +139,9 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.checkBox_play_camel_on_error.setChecked(
                 standard_pref["play_camel_on_error"]
             )
+        self.checkBox_finished_sound.setChecked(
+            settings.get("finished_sound", standard_pref["finished_sound"])
+        )
 
         for level in log_levels:
             self.comboBox_log_level.addItem(level)
@@ -290,6 +294,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             "databroker_catalog_name": self.lineEdit_catalog_name.text(),
             "number_databroker_files": self.spinBox_n_databroker_files.value(),
             "play_camel_on_error": self.checkBox_play_camel_on_error.isChecked(),
+            "finished_sound": self.checkBox_finished_sound.isChecked(),
             "log_level": self.comboBox_log_level.currentText(),
             "logfile_size": self.spinBox_logfile_size.value(),
             "logfile_backups": self.spinBox_logfile_number.value(),
@@ -409,7 +414,9 @@ class Settings_Window(Ui_settings_window, QDialog):
         required_modules = ["fastapi", "uvicorn", "httpx"]
 
         # Determine which modules are missing.
-        missing_modules = [mod for mod in required_modules if not is_module_available(mod)]
+        missing_modules = [
+            mod for mod in required_modules if not is_module_available(mod)
+        ]
 
         if missing_modules:
             # Create the message to warn the user.
@@ -444,7 +451,9 @@ class Settings_Window(Ui_settings_window, QDialog):
                         ]
                         subprocess.check_call(command)
                         missing_modules = [
-                            mod for mod in required_modules if not is_module_available(mod)
+                            mod
+                            for mod in required_modules
+                            if not is_module_available(mod)
                         ]
                         if missing_modules:
                             raise Exception("Failed to install nomad-camels[api]")
@@ -452,7 +461,12 @@ class Settings_Window(Ui_settings_window, QDialog):
 
                     except Exception as e:
                         print(e)
-                        command = [sys.executable, "-m", "pip", "install"] + missing_modules
+                        command = [
+                            sys.executable,
+                            "-m",
+                            "pip",
+                            "install",
+                        ] + missing_modules
                     # Optionally, you might show another popup or a console message indicating progress.
                     subprocess.check_call(command)
                     QMessageBox.information(
@@ -478,7 +492,6 @@ class Settings_Window(Ui_settings_window, QDialog):
                 return False
 
 
-
 def hash_api_key(api_key):
     return hashlib.sha256(api_key.encode()).hexdigest()
 
@@ -490,11 +503,10 @@ def store_api_key(api_key, conn):
     c.execute("INSERT INTO api_keys (key) VALUES (?)", (hashed_key,))
     conn.commit()
 
+
 def is_module_available(module_name):
     try:
         __import__(module_name)
         return True
     except ImportError:
         return False
-
-

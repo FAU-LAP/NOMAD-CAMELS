@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'settings_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.2
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -195,16 +195,16 @@ class Ui_settings_window(object):
         self.gridLayout_8 = QGridLayout(self.sounds)
         self.gridLayout_8.setObjectName(u"gridLayout_8")
         self.gridLayout_8.setContentsMargins(0, 0, 0, 0)
-        self.checkBox_play_camel_on_error = QCheckBox(self.sounds)
-        self.checkBox_play_camel_on_error.setObjectName(u"checkBox_play_camel_on_error")
-
-        self.gridLayout_8.addWidget(self.checkBox_play_camel_on_error, 1, 0, 1, 1)
-
         self.label_11 = QLabel(self.sounds)
         self.label_11.setObjectName(u"label_11")
         self.label_11.setFont(font)
 
         self.gridLayout_8.addWidget(self.label_11, 0, 0, 1, 1)
+
+        self.checkBox_play_camel_on_error = QCheckBox(self.sounds)
+        self.checkBox_play_camel_on_error.setObjectName(u"checkBox_play_camel_on_error")
+
+        self.gridLayout_8.addWidget(self.checkBox_play_camel_on_error, 1, 0, 1, 1)
 
         self.line = QFrame(self.sounds)
         self.line.setObjectName(u"line")
@@ -213,6 +213,11 @@ class Ui_settings_window(object):
         self.line.setFrameShape(QFrame.Shape.HLine)
 
         self.gridLayout_8.addWidget(self.line, 2, 0, 1, 1)
+
+        self.checkBox_finished_sound = QCheckBox(self.sounds)
+        self.checkBox_finished_sound.setObjectName(u"checkBox_finished_sound")
+
+        self.gridLayout_8.addWidget(self.checkBox_finished_sound, 1, 1, 1, 1)
 
 
         self.gridLayout_3.addWidget(self.sounds, 3, 0, 1, 1)
@@ -643,8 +648,9 @@ class Ui_settings_window(object):
         self.radioButton_all_backups.setText(QCoreApplication.translate("settings_window", u"keep all backups", None))
         self.radioButton_n_backups.setText(QCoreApplication.translate("settings_window", u"keep only...", None))
         self.label_12.setText(QCoreApplication.translate("settings_window", u"path for configuration files:", None))
-        self.checkBox_play_camel_on_error.setText(QCoreApplication.translate("settings_window", u"Play Camel-Roar on error", None))
         self.label_11.setText(QCoreApplication.translate("settings_window", u"Sounds", None))
+        self.checkBox_play_camel_on_error.setText(QCoreApplication.translate("settings_window", u"Play Camel-Roar on error", None))
+        self.checkBox_finished_sound.setText(QCoreApplication.translate("settings_window", u"Sound on finished protocol", None))
         self.label_3.setText(QCoreApplication.translate("settings_window", u"Number-Formatting (only visual)", None))
         self.radioButton_mixed.setText(QCoreApplication.translate("settings_window", u"Scientific from 1e...", None))
         self.radioButton_plain_numbers.setText(QCoreApplication.translate("settings_window", u"Plain", None))

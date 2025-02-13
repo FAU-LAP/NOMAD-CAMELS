@@ -23,6 +23,7 @@ Features:
 - Simple_Config of instruments now supports tool tips for config channels
 - Layout of Simple_Config now scrollable and can support more / less columns
 - Stage control manual control with ctrl + arrow keys now also if some part of the control is selected
+- can now play a sound effect (select checkbox in settings) when protocol is doen
 
 Fixes:
 - changing plot color now does not always affect the first item anymore
