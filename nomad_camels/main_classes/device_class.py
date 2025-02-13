@@ -1126,6 +1126,9 @@ class Simple_Config_Sub(Device_Config_Sub):
         return min_width
 
     def update_layout(self):
+        while self.layout().count():
+            item = self.layout().takeAt(0)
+            self.layout().removeItem(item)
         width = self.width()
         column_width = self.get_min_width_column()
         columns = width // column_width
@@ -1133,7 +1136,7 @@ class Simple_Config_Sub(Device_Config_Sub):
         positions = [
             (i // columns, i % columns) for i in range(len(self.setting_widgets))
         ]
-        row = 0
+        row = -1
         for i, widge in enumerate(self.setting_widgets):
             row, col = positions[i]
             if isinstance(widge, list):
@@ -1142,7 +1145,7 @@ class Simple_Config_Sub(Device_Config_Sub):
             else:
                 self.layout().addWidget(widge, row, 2 * col, 1, 2)
         # add a line if there was a row before
-        if row:
+        if row >= 0:
             row += 1
             self.layout().addWidget(self.line_frame, row, 0, 1, columns * 2)
             self.line_frame.setHidden(False)
