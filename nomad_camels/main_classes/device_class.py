@@ -833,8 +833,7 @@ class Simple_Config(Device_Config):
         config_types=None,
         labels=None,
     ):
-        if "config_channel_metadata" in additional_info:
-            config_channel_metadata = additional_info["config_channel_metadata"]
+        config_channel_metadata = additional_info.get("config_channel_metadata", None)
         super().__init__(
             parent,
             device_name=device_name,
