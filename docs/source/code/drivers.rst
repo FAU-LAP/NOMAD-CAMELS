@@ -4,6 +4,7 @@ Drivers
 .. toctree::
    :maxdepth: 4
 
+   nomad_camels_driver_agilent_33220a
    nomad_camels_driver_agilent_34401a
    nomad_camels_driver_agilent_34970
    nomad_camels_driver_agilent_e363x
@@ -14,6 +15,7 @@ Drivers
    nomad_camels_driver_demo_digital_multimeter
    nomad_camels_driver_demo_instrument
    nomad_camels_driver_demo_source_measure_unit
+   nomad_camels_driver_epics_instrument
    nomad_camels_driver_eurotherm_bisynch
    nomad_camels_driver_iBeam_smart
    nomad_camels_driver_keithley_2000
@@ -25,6 +27,7 @@ Drivers
    nomad_camels_driver_mechonics_cu30cl
    nomad_camels_driver_ni_daq
    nomad_camels_driver_opc_ua_instrument
+   nomad_camels_driver_openCV_instrument
    nomad_camels_driver_PID
    nomad_camels_driver_pi_stage_e709
    nomad_camels_driver_swabianinstruments_timetagger
