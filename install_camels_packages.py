@@ -21,9 +21,8 @@ if res.returncode != 0:
         print(f"Processing package: {package}")
         # install the package if not yet installed
         if not importlib.util.find_spec(package):
+            res = subprocess.run(["pip", "install", "-U", package])
             print(f"Installing {package}...")
             if res.returncode != 0:
                 print(f"Failed to install {package}")
                 continue
-        else:
-            res = subprocess.run(["pip", "install", "-U", package])
