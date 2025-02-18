@@ -15,7 +15,7 @@ def get_user_packages(username):
 
 
 camels_packages = get_user_packages("NOMAD-CAMELS")
-res = subprocess.run(["pip", "install", "-U"] + camels_packages)
+res = subprocess.run(["pip", "install"] + camels_packages)
 if res.returncode != 0:
     for package in camels_packages:
         print(f"Processing package: {package}")
