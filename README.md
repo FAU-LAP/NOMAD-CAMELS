@@ -31,7 +31,8 @@ UI:
 Fixes:
 - changing plot color now does not always affect the first item anymore
 - setting a number of plot points in the definition window now works again
-- progress bar in wait sometimes crashed, should now be fixed
+- progress bar in wait sometimes crashed, now fixed
+- updated custom function signal to better support list / tuple ... setting-types by handling kwargs from bluesky
 
 ### 1.7.1
 Fixes:
