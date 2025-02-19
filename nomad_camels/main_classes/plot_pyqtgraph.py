@@ -115,6 +115,8 @@ class ListDeque_skip:
         ):
             self.data = list(iterable)
         else:
+            if not isinstance(maxlen, int):
+                maxlen = int(maxlen)
             self.data = deque(iterable, maxlen=maxlen)
 
     def append(self, item):

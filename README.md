@@ -30,6 +30,7 @@ UI:
 
 Fixes:
 - changing plot color now does not always affect the first item anymore
+- setting a number of plot points in the definition window now works again
 
 ### 1.7.1
 Fixes:
