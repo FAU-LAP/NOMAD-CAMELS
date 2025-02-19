@@ -507,7 +507,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             file_extension="*.cprot",
         )
         self.checkBox_perform_at_end.setToolTip(
-            "Select a protocol to be performed at the end of this protocol or when it is aborted by the user.\nThis may be useful e.g. to turn something of in a controlled way.\nThis is NOT executed, when the protocol is run as a subprotocol."
+            "Select a protocol to always be performed at the end of this protocol, no matter whether it runs smoothly or fails or is stopped by the user.\nThis may be useful e.g. to turn something off in a controlled way.\nThis is NOT executed, when the protocol is run as a subprotocol."
         )
         self.ending_protocol_selection.setToolTip(
             "Select a protocol to be performed at the end of this protocol or when it is aborted by the user.\nThis may be useful e.g. to turn something of in a controlled way.\nThis is NOT executed, when the protocol is run as a subprotocol."
@@ -535,8 +535,10 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.checkBox_live_variables.setChecked(self.protocol.live_variable_update)
         self.checkBox_live_comments.setChecked(self.protocol.allow_live_comments)
 
-        self.radioButton_h5_during.setChecked(self.protocol.h5_during_run)
-        self.radioButton_h5_after.setChecked(not self.protocol.h5_during_run)
+        if self.protocol.h5_during_run:
+            self.comboBox_h5.setCurrentIndex(0)
+        else:
+            self.comboBox_h5.setCurrentIndex(1)
 
         self.layout().addWidget(self.textEdit_desc_protocol, 5, 0, 1, 6)
 
@@ -641,7 +643,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.skip_config = self.checkBox_no_config.isChecked()
         self.variable_table.update_variables()
         self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
-        self.protocol.h5_during_run = self.radioButton_h5_during.isChecked()
+        self.protocol.h5_during_run = self.comboBox_h5.currentIndex() == 0
         self.protocol.use_end_protocol = self.checkBox_perform_at_end.isChecked()
         self.protocol.end_protocol = self.ending_protocol_selection.get_path()
         self.protocol.live_variable_update = self.checkBox_live_variables.isChecked()
