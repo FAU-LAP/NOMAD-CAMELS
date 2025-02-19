@@ -23,10 +23,11 @@ Features:
 - Simple_Config of instruments now supports tool tips for config channels
 - Layout of Simple_Config now scrollable and can support more / less columns
 - Stage control manual control with ctrl + arrow keys now also if some part of the control is selected
-- can now play a sound effect (select checkbox in settings) when protocol is doen
+- Can now play a sound effect (select checkbox in settings) when protocol is done
 
 Fixes:
-- changing plot color now does not always affect the first item anymore
+- Changing plot color now does not always affect the first item anymore
+- Made plotting much more robust. You can now define multiple plots and read at multiple points in your protocol. The plots are only updated if data concerning the y-axis of your plot is actually read.
 
 ### 1.7.1
 Fixes:

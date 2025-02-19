@@ -922,6 +922,10 @@ class LivePlot(QObject, CallbackBase):
             if doc["descriptor"] in self.descs_fit_readying:
                 self.descs_fit_readying[doc["descriptor"]].get_ready()
             return
+        # Check to see if doc["data"] contains keys matching any on the self.ys strings or self.x
+        if not (any(key in s for key in doc["data"] for s in self.ys)): #or self.x in doc["data"]):
+            print("The data of the event does not match the data ")
+            return
         try:
             new_x = doc["data"][self.x]
         except KeyError:
@@ -941,7 +945,11 @@ class LivePlot(QObject, CallbackBase):
             except KeyError:
                 if not self.eva.is_to_date(doc["time"]):
                     self.eva.event(doc)
-                new_y[y] = self.eva.eval(y, do_not_reraise=True)
+                try:
+                    new_y[y] = self.eva.eval(y, do_not_reraise=True)
+                except ValueError as e:
+                    print("Error getting data for plot", e)
+                    return
         self.update_caches(new_x, new_y)
         for fit in self.fitPlots:
             fit.event(doc)
