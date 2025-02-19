@@ -403,6 +403,10 @@ class PlotlyLiveCallback(CallbackBase):
         elif doc["uid"] in self.ignore_fit_docs:
             return
 
+        # Check to see if doc["data"] contains keys matching any on the self.ys strings or self.x
+        if not (any(key in s for key in doc["data"] for s in self.y_names)): #or self.x in doc["data"]):
+            print("The data of the event does not match the data ")
+            return
         # Try to retrieve x value from doc["data"], or fallback to evaluator if missing.
         try:
             new_x = doc["data"][self.x_name]
