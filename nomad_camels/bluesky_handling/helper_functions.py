@@ -53,9 +53,9 @@ def get_newest_file(directory):
     """
     Return the newest '.nxs' file in the specified directory, if one exists.
 
-    This function searches the given directory for files ending with the '.nxs' 
+    This function searches the given directory for files ending with the '.nxs'
     extension and returns the one with the most recent modification time.
-    
+
     If the input 'directory' is a file, its parent directory is used for the search.
     If no '.nxs' files are found, the function returns None.
 
@@ -68,23 +68,23 @@ def get_newest_file(directory):
     Returns
     -------
     str or None
-        The full path to the newest '.nxs' file found in the directory, or None 
+        The full path to the newest '.nxs' file found in the directory, or None
         if no such file exists.
     """
     # If the given path is a file, use its directory
     if os.path.isfile(directory):
         directory = os.path.dirname(directory)
-    
+
     # Define the search pattern for '.nxs' files
     pattern = os.path.join(directory, "*.nxs")
-    
+
     # Retrieve a list of all '.nxs' files in the directory
     nxs_files = glob.glob(pattern)
-    
+
     # If no '.nxs' files are found, return None
     if not nxs_files:
         return None
-    
+
     # Return the newest file based on its modification time
     newest_file = max(nxs_files, key=os.path.getmtime)
     return newest_file
@@ -1167,7 +1167,7 @@ class Value_Setter(QWidget):
         self.start_time = dt.datetime.now()
         self.end_time = dt.datetime.now()
         self.timer = 0
-        self.wait_time = 0
+        self.wait_time = 1
 
     def set_start_time(self, start_time):
         """Set the start time for the waiting bar."""
@@ -1187,7 +1187,9 @@ class Value_Setter(QWidget):
         import datetime as dt
 
         self.timer = (dt.datetime.now() - self.start_time).total_seconds()
-        self.set_signal.emit(self.timer / self.wait_time * 100)
+        self.set_signal.emit(
+            self.timer / (self.wait_time or 1) * 100
+        )  # Prevent division by zero
 
 
 class Waiting_Bar(QWidget):
@@ -1271,6 +1273,7 @@ class Waiting_Bar(QWidget):
 
         self.show()
 
+
 class TimestampTextEdit(QTextEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -1299,6 +1302,7 @@ class TimestampTextEdit(QTextEdit):
         # on the new line.
         if event.key() in (Qt.Key_Return, Qt.Key_Enter):
             self.insertTimestamp()
+
 
 class Commenting_Box(QWidget):
     """A widget to add comments to the protocol."""

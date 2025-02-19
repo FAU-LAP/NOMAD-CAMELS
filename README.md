@@ -20,14 +20,21 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 ### 1.7.2
 Features:
+- Can now break loops in the if-step
+- can now play a sound effect (select checkbox in settings) when protocol is doen
+
+UI:
 - Simple_Config of instruments now supports tool tips for config channels
 - Layout of Simple_Config now scrollable and can support more / less columns
 - Stage control manual control with ctrl + arrow keys now also if some part of the control is selected
-- Can now play a sound effect (select checkbox in settings) when protocol is done
 
 Fixes:
 - Changing plot color now does not always affect the first item anymore
+- setting a number of plot points in the definition window now works again
+- progress bar in wait sometimes crashed, now fixed
+- updated custom function signal to better support list / tuple ... setting-types by handling kwargs from bluesky
 - Made plotting much more robust. You can now define multiple plots and read at multiple points in your protocol. The plots are only updated if data concerning the y-axis of your plot is actually read.
+
 
 ### 1.7.1
 Fixes:

@@ -110,7 +110,8 @@ class Custom_Function_Signal(Signal):
             if (
                 self.put_function
                 and inspect.getfullargspec(self.put_function).args
-                and inspect.getfullargspec(self.put_function).args[0] == "_self_instance"
+                and inspect.getfullargspec(self.put_function).args[0]
+                == "_self_instance"
             ):
                 retry_function(
                     self.put_function(self, value),
@@ -128,9 +129,11 @@ class Custom_Function_Signal(Signal):
                 )
 
         # Call the parent class put() method after processing.
-        super().put(value, timestamp=timestamp, force=force, metadata=metadata, **kwargs)
+        super().put(
+            value, timestamp=timestamp, force=force, metadata=metadata, **kwargs
+        )
 
-    def get(self):
+    def get(self, **kwargs):
         """
         Read the value from the signal. If a read_function is defined, it is used to obtain the value.
         The function is retried upon error based on the retry_on_error setting.
@@ -153,7 +156,8 @@ class Custom_Function_Signal(Signal):
             if (
                 self.read_function
                 and inspect.getfullargspec(self.read_function).args
-                and inspect.getfullargspec(self.read_function).args[0] == "_self_instance"
+                and inspect.getfullargspec(self.read_function).args[0]
+                == "_self_instance"
             ):
                 self._readback = retry_function(
                     self.read_function(self),
@@ -176,7 +180,7 @@ class Custom_Function_Signal(Signal):
             value=self._readback,
             timestamp=time.time(),
         )
-        return super().get()
+        return super().get(**kwargs)
 
     def trigger(self):
         """
@@ -343,7 +347,7 @@ class Custom_Function_SignalRO(SignalRO):
         self.error_retry_function = error_retry_function
         self.force_sequential = force_sequential
 
-    def get(self):
+    def get(self, **kwargs):  # kwargs might come from bluesky!
         """
         Read the value from the read-only signal. If a read_function is defined, it is used to obtain the value.
         The function is retried upon error based on the retry_on_error setting.
@@ -366,7 +370,8 @@ class Custom_Function_SignalRO(SignalRO):
             if (
                 self.read_function
                 and inspect.getfullargspec(self.read_function).args
-                and inspect.getfullargspec(self.read_function).args[0] == "_self_instance"
+                and inspect.getfullargspec(self.read_function).args[0]
+                == "_self_instance"
             ):
                 self._readback = retry_function(
                     self.read_function(self),
@@ -389,7 +394,7 @@ class Custom_Function_SignalRO(SignalRO):
             value=self._readback,
             timestamp=time.time(),
         )
-        return super().get()
+        return super().get(**kwargs)
 
     def trigger(self):
         """
@@ -429,7 +434,9 @@ class Custom_Function_SignalRO(SignalRO):
         Returns:
             dict: A dictionary in the format {signal_name: {"value": value, "timestamp": timestamp}}.
         """
-        if self._readback is not None and not (self.kind in ['config', Kind.config] and self.read_function):
+        if self._readback is not None and not (
+            self.kind in ["config", Kind.config] and self.read_function
+        ):
             value = self._readback
         else:
             value = self.get()

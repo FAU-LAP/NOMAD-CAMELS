@@ -139,24 +139,10 @@ QPushButton:disabled {
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item row="0" column="1">
-       <widget class="QRadioButton" name="radioButton_h5_after">
-        <property name="text">
-         <string>write hdf5 after run</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
        <widget class="QCheckBox" name="checkBox_json_exp">
         <property name="text">
          <string>Export metadata to json</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" colspan="2">
-       <widget class="QCheckBox" name="checkBox_no_config">
-        <property name="text">
-         <string>do not reconfigure instruments at start</string>
         </property>
        </widget>
       </item>
@@ -167,23 +153,34 @@ QPushButton:disabled {
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="2">
+      <item row="0" column="0">
+       <widget class="QComboBox" name="comboBox_h5">
+        <item>
+         <property name="text">
+          <string>write hdf5 during run</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>write hdf5 after run</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="1">
        <widget class="QCheckBox" name="checkBox_NeXus">
         <property name="text">
          <string>also write NeXus entry to data</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QRadioButton" name="radioButton_h5_during">
+      <item row="2" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkBox_no_config">
         <property name="text">
-         <string>write hdf5 during run</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
+         <string>do not reconfigure instruments at start</string>
         </property>
        </widget>
       </item>
