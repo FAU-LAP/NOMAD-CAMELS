@@ -1115,7 +1115,7 @@ class Simple_Config_Sub(Device_Config_Sub):
 
     def get_min_width_column(self):
         """ """
-        min_width = 0
+        min_width = 1
         for widge in self.setting_widgets + self.config_widgets:
             if isinstance(widge, list):
                 width = sum([x.sizeHint().width() for x in widge])
