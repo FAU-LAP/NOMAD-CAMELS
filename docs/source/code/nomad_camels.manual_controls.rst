@@ -18,13 +18,13 @@ nomad\_camels.manual\_controls.get\_manual\_controls module
 
 .. automodule:: nomad_camels.manual_controls.get_manual_controls
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: nomad_camels.manual_controls
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

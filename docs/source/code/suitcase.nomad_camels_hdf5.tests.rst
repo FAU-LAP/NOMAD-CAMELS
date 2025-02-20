@@ -9,21 +9,21 @@ nomad\_camels\_hdf5.tests.conftest module
 
 .. automodule:: suitcase.nomad_camels_hdf5.tests.conftest
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 nomad\_camels\_hdf5.tests.tests module
 --------------------------------------
 
 .. automodule:: suitcase.nomad_camels_hdf5.tests.tests
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: suitcase.nomad_camels_hdf5.tests
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
