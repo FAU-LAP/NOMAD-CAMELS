@@ -132,6 +132,7 @@ standard_pref = {
     "repo_branch": "main",
     "repo_directory": "",
     "play_camel_on_error": False,
+    "finished_sound": False,
     "auto_check_updates": False,
     "log_level": "Warning",
     "logfile_size": 1,

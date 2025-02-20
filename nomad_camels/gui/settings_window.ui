@@ -273,13 +273,6 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item row="1" column="0">
-          <widget class="QCheckBox" name="checkBox_play_camel_on_error">
-           <property name="text">
-            <string>Play Camel-Roar on error</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_11">
            <property name="font">
@@ -289,6 +282,13 @@
            </property>
            <property name="text">
             <string>Sounds</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="checkBox_play_camel_on_error">
+           <property name="text">
+            <string>Play Camel-Roar on error</string>
            </property>
           </widget>
          </item>
@@ -302,6 +302,13 @@
            </property>
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="checkBox_finished_sound">
+           <property name="text">
+            <string>Sound on finished protocol</string>
            </property>
           </widget>
          </item>

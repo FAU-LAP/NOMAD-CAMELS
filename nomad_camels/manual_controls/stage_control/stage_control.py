@@ -188,6 +188,9 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.move_thread = None
         self.start_multiple_devices(channels, True)
 
+        for child in self.findChildren(QWidget):
+            child.installEventFilter(self)
+
     def device_ready(self):
         """
         Overwrites the `device_ready` method from the `Manual_Control` class. This method is called when the device is ready. It sets the channels, read channels, reference functions, stop functions, and manual functions from the instantiated devices. It also starts the readback thread and the move thread.
@@ -425,6 +428,24 @@ class Stage_Control(Manual_Control, Ui_Form):
             if self.set_channels[i]:
                 positions[i] = self.control_data[f"go_to_{axes[i]}"]
         self.move_thread.set_absolute = positions
+
+    def eventFilter(self, obj, event):
+        if (
+            isinstance(event, QKeyEvent)
+            and event.modifiers() == Qt.ControlModifier
+            and event.key()
+            in [
+                Qt.Key_Left,
+                Qt.Key_Right,
+                Qt.Key_Up,
+                Qt.Key_Down,
+                Qt.Key_PageUp,
+                Qt.Key_PageDown,
+            ]
+        ):
+            self.keyPressEvent(event)
+            return True
+        return super().eventFilter(obj, event)
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
         """

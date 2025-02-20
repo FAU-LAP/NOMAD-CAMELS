@@ -8,6 +8,9 @@ from PySide6.QtWidgets import (
     QCheckBox,
     QTextEdit,
     QPushButton,
+    QSpacerItem,
+    QSizePolicy,
+    QScrollArea,
 )
 from PySide6.QtGui import QFont
 from PySide6.QtCore import Signal
@@ -110,6 +113,10 @@ class Device:
                 else:
                     self.passive_config.update({f"{name}": value})
         self.controls = {}
+        config_channel_metadata = {}
+        for chan in self.config_channels:
+            config_channel_metadata[chan] = self.config_channels[chan].get_meta_str()
+        self.additional_info["config_channel_metadata"] = config_channel_metadata
 
     def get_necessary_devices(self):
         """Returns a list of the devices that this device needs to function
@@ -695,6 +702,12 @@ class Local_VISA(Connection_Config):
         except OSError:
             rm = pyvisa.ResourceManager("@py")
         self.ports = rm.list_resources()
+        if not self.ports:
+            WarnPopup(
+                text="No VISA resources found!\nYou might need to install a VISA library.",
+                title="No VISA resources!",
+                do_not_pause=True,
+            )
         self.comboBox_port.addItems(self.ports)
 
         self.layout().addWidget(label_port, 0, 0)
@@ -820,6 +833,7 @@ class Simple_Config(Device_Config):
         config_types=None,
         labels=None,
     ):
+        config_channel_metadata = additional_info.get("config_channel_metadata", None)
         super().__init__(
             parent,
             device_name=device_name,
@@ -835,8 +849,19 @@ class Simple_Config(Device_Config):
             comboBoxes=comboBoxes,
             config_types=config_types,
             labels=labels,
+            config_channel_metadata=config_channel_metadata,
+            device_name=device_name,
         )
-        self.layout().addWidget(self.sub_widget, 10, 0, 1, 5)
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setWidget(self.sub_widget)
+        self.extra_line = QFrame()
+        self.extra_line.setFrameShape(QFrame.HLine)
+        self.extra_line.setFrameShadow(QFrame.Sunken)
+        self.layout().addWidget(self.extra_line, 10, 0, 1, 5)
+        self.layout().addWidget(self.scroll_area, 11, 0, 1, 5)
+        self.spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.layout().addItem(self.spacer, 12, 0, 1, 5)
         self.load_settings()
 
     def get_settings(self):
@@ -863,12 +888,15 @@ class Simple_Config_Sub(Device_Config_Sub):
         comboBoxes=None,
         config_types=None,
         labels=None,
+        config_channel_metadata=None,
+        device_name="",
     ):
         super().__init__(
             settings_dict=settings_dict, parent=parent, config_dict=config_dict
         )
         settings_dict = settings_dict or {}
         config_dict = config_dict or {}
+        config_channel_metadata = config_channel_metadata or {}
         self.setLayout(QGridLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         comboBoxes = comboBoxes or {}
@@ -970,80 +998,173 @@ class Simple_Config_Sub(Device_Config_Sub):
 
         col = 0
         row = 0
+        self.setting_widgets = []
         for name, widge in self.setting_checks.items():
             self.layout().addWidget(widge, row, col, 1, 2)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.setting_widgets.append(widge)
         for name, widge in self.setting_floats.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
 
             self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.setting_widgets.append([label, widge])
         for name, widge in self.setting_strings.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
 
             self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.setting_widgets.append([label, widge])
         for name, widge in self.setting_combos.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
             self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.setting_widgets.append([label, widge])
+
+        self.config_widgets = []
         for name, widge in self.config_checks.items():
             self.layout().addWidget(widge, row, col, 1, 2)
+            add_tooltip_from_name(
+                [widge], f"{device_name}_{name}", config_channel_metadata
+            )
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.config_widgets.append(widge)
         for name, widge in self.config_floats.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
             self.layout().addWidget(widge, row, col + 1)
+            add_tooltip_from_name(
+                [widge, label], f"{device_name}_{name}", config_channel_metadata
+            )
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.config_widgets.append([label, widge])
         for name, widge in self.config_strings.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
             self.layout().addWidget(widge, row, col + 1)
+            add_tooltip_from_name(
+                [widge, label], f"{device_name}_{name}", config_channel_metadata
+            )
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.config_widgets.append([label, widge])
         for name, widge in self.config_combos.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
             self.layout().addWidget(widge, row, col + 1)
+            add_tooltip_from_name(
+                [widge, label], f"{device_name}_{name}", config_channel_metadata
+            )
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.config_widgets.append([label, widge])
+        self.line_frame = QFrame(self)
+        self.line_frame.setFrameShape(QFrame.HLine)
+        self.line_frame.setFrameShadow(QFrame.Sunken)
+        self.line_frame.setObjectName("line_frame")
+        self.spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.resize(max(self.width(), self.get_min_width_column() * 2), self.height())
+        self.update_layout()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.update_layout()
+
+    def get_min_width_column(self):
+        """ """
+        min_width = 1
+        for widge in self.setting_widgets + self.config_widgets:
+            if isinstance(widge, list):
+                width = sum([x.sizeHint().width() for x in widge])
+            else:
+                width = widge.sizeHint().width()
+            min_width = max(min_width, width)
+        return min_width
+
+    def update_layout(self):
+        while self.layout().count():
+            item = self.layout().takeAt(0)
+            self.layout().removeItem(item)
+        width = self.width()
+        column_width = self.get_min_width_column()
+        columns = width // column_width
+        columns = max(1, columns)
+        positions = [
+            (i // columns, i % columns) for i in range(len(self.setting_widgets))
+        ]
+        row = -1
+        for i, widge in enumerate(self.setting_widgets):
+            row, col = positions[i]
+            if isinstance(widge, list):
+                for j, widge in enumerate(widge):
+                    self.layout().addWidget(widge, row, 2 * col + j)
+            else:
+                self.layout().addWidget(widge, row, 2 * col, 1, 2)
+        # add a line if there was a row before
+        if row >= 0:
+            row += 1
+            self.layout().addWidget(self.line_frame, row, 0, 1, columns * 2)
+            self.line_frame.setHidden(False)
+            offset = row + 1
+        else:
+            offset = 0
+            self.line_frame.setHidden(True)
+
+        positions = [
+            (i // columns, i % columns) for i in range(len(self.config_widgets))
+        ]
+        row = 0
+        for i, widge in enumerate(self.config_widgets):
+            row, col = positions[i]
+            if isinstance(widge, list):
+                for j, widge in enumerate(widge):
+                    self.layout().addWidget(widge, row + offset, 2 * col + j)
+            else:
+                self.layout().addWidget(widge, row + offset, 2 * col, 1, 2)
+        self.layout().addItem(self.spacer, offset + row + 1, 0)
 
     def get_settings(self):
         """ """
@@ -1085,3 +1206,9 @@ def check_logged_in():
     ):
         return "ELN"
     return False
+
+
+def add_tooltip_from_name(widgets, name, metadata_dict):
+    if widgets and name in metadata_dict and metadata_dict[name]:
+        for widge in widgets:
+            widge.setToolTip(metadata_dict[name])
