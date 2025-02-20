@@ -585,6 +585,7 @@ def install_instrument(device_name):
             "-m",
             "pip",
             "install",
+            "--upgrade",
             # '--no-cache-dir',
             # '--index-url', pypi_url,
             # '--extra-index-url',
