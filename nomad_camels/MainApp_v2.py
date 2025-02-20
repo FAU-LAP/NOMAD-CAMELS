@@ -943,8 +943,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 [
                     key
                     for key in self.sampledata.keys()
-                    if self.sampledata[key]["owner"] == self.active_user
-                    or not self.sampledata[key]["owner"]
+                    if self.sampledata[key].get("owner", "") == self.active_user
+                    or not self.sampledata[key].get("owner", "")
                 ],
                 key=lambda x: x.lower(),
             )
