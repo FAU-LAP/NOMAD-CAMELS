@@ -34,8 +34,8 @@ Fixes:
 - progress bar in wait sometimes crashed, now fixed
 - updated custom function signal to better support list / tuple ... setting-types by handling kwargs from bluesky
 - Made plotting much more robust. You can now define multiple plots and read at multiple points in your protocol. The plots are only updated if data concerning the y-axis of your plot is actually read.
-- upgrading instrument never worked, only installing, now fixed
-
+- updating instrument never worked, only installing, now fixed
+- update all instruments now skips local drivers
 
 ### 1.7.1
 Fixes:
