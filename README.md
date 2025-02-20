@@ -36,6 +36,7 @@ Fixes:
 - Made plotting much more robust. You can now define multiple plots and read at multiple points in your protocol. The plots are only updated if data concerning the y-axis of your plot is actually read.
 - updating instrument never worked, only installing, now fixed
 - update all instruments now skips local drivers
+- users and samples are now saved in a more robust way
 
 ### 1.7.1
 Fixes:

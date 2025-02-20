@@ -183,6 +183,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.comboBox_user.currentTextChanged.connect(self.change_user)
         self.comboBox_user_type.addItems(["local user", "NOMAD user"])
         self.comboBox_user_type.currentTextChanged.connect(self.change_user_type)
+        self.change_user()
         self.change_user_type()
 
         self.pushButton_login_nomad.clicked.connect(self.login_logout_nomad)
@@ -825,10 +826,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             data = pd.DataFrame(dat)
             data.set_index("Name2", inplace=True)
             self.userdata = data.to_dict("index")
-        self.comboBox_user.clear()
-        self.comboBox_user.addItems(self.userdata.keys())
-        if self.active_user in self.userdata:
-            self.comboBox_user.setCurrentText(self.active_user)
+            self.comboBox_user.currentTextChanged.disconnect(self.change_user)
+            self.comboBox_user.clear()
+            self.comboBox_user.addItems(
+                sorted(self.userdata.keys(), key=lambda x: x.lower())
+            )
+            if self.active_user in self.userdata:
+                self.comboBox_user.setCurrentText(self.active_user)
+            self.comboBox_user.currentTextChanged.connect(self.change_user)
+            self.save_user_data()
 
     def save_user_data(self):
         """
@@ -925,6 +931,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 self.sampledata.pop(key)
             self.sampledata.update(data.to_dict("index"))
             self.update_shown_samples()
+            self.save_sample_data()
 
     def update_shown_samples(self):
         """
@@ -938,7 +945,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     for key in self.sampledata.keys()
                     if self.sampledata[key]["owner"] == self.active_user
                     or not self.sampledata[key]["owner"]
-                ]
+                ],
+                key=lambda x: x.lower(),
             )
         )
         if self.active_sample in self.sampledata.keys():
