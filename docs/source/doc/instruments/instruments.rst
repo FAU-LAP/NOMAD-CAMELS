@@ -49,6 +49,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
         <tbody>
             <tr>
                 <td>Keysight / Agilent</td>
+                <td>33220a</td>
+                <td></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-agilent-33220a'>0.1.1</a></td>
+            </tr>
+            <tr>
+                <td>Keysight / Agilent</td>
                 <td><a href='agilent_34401a/agilent_34401a'>34401a</a></td>
                 <td></td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-agilent-34401a'>0.1.1</a></td>
@@ -106,6 +112,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Source_measure_unit</td>
                 <td></td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-demo-source-measure-unit'>0.1.6</a></td>
+            </tr>
+            <tr>
+                <td>Epics</td>
+                <td>Instrument</td>
+                <td></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-epics-instrument'>0.1.0</a></td>
             </tr>
             <tr>
                 <td>Eurotherm</td>
