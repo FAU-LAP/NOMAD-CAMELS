@@ -17,13 +17,13 @@ nomad\_camels.manual\_controls.set\_panel.set\_panel module
 
 .. automodule:: nomad_camels.manual_controls.set_panel.set_panel
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: nomad_camels.manual_controls.set_panel
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

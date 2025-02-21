@@ -138,6 +138,7 @@
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.check_if_plotly_modules_are_available"><code class="docutils literal notranslate"><span class="pre">check_if_plotly_modules_are_available()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.is_module_available"><code class="docutils literal notranslate"><span class="pre">is_module_available()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.make_table_data"><code class="docutils literal notranslate"><span class="pre">make_table_data()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.parse_int_field"><code class="docutils literal notranslate"><span class="pre">parse_int_field()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.frontpanels.protocol_config">nomad_camels.frontpanels.protocol_config module</a><ul>
@@ -330,7 +331,7 @@
 <span id="nomad-camels-frontpanels-instrument-config-module"></span><h2>nomad_camels.frontpanels.instrument_config module<a class="headerlink" href="#module-nomad_camels.frontpanels.instrument_config" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_config.</span></span><span class="sig-name descname"><span class="pre">Instrument_Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active_instruments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_config.</span></span><span class="sig-name descname"><span class="pre">Instrument_Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active_instruments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_config.Instrument_Config" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.instrument_config.Ui_Form" title="nomad_camels.gui.instrument_config.Ui_Form"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_Form</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_config.Instrument_Config.add_instance">
@@ -407,12 +408,12 @@ provided by the active devices.</p>
 <span id="nomad-camels-frontpanels-instrument-installer-module"></span><h2>nomad_camels.frontpanels.instrument_installer module<a class="headerlink" href="#module-nomad_camels.frontpanels.instrument_installer" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">CustomTextEdit_new_painter</span></span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">CustomTextEdit_new_painter</span></span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QTextEdit</span></code></p>
 <p>Custom QTextEdit that paints custom text when the text is empty.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter.paintEvent">
-<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtGui.QPaintEvent</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter.paintEvent" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtGui.QPaintEvent</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.CustomTextEdit_new_painter.paintEvent" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -424,7 +425,7 @@ provided by the active devices.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Info_Widget">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">Info_Widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Info_Widget" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">Info_Widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Info_Widget" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSplitter</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Info_Widget.staticMetaObject">
@@ -440,7 +441,7 @@ provided by the active devices.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Install_Thread">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">Install_Thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">devs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uninstall</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Install_Thread" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">Install_Thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">devs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uninstall</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Install_Thread" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QThread</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Install_Thread.error_signal">
@@ -471,7 +472,7 @@ provided by the active devices.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">Instrument_Installer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active_instruments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.instrument_installer.</span></span><span class="sig-name descname"><span class="pre">Instrument_Installer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active_instruments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.instrument_installer.Instrument_Installer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.device_installer.Ui_Form" title="nomad_camels.gui.device_installer.Ui_Form"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_Form</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.instrument_installer.Instrument_Installer.build_table">
@@ -609,7 +610,7 @@ the available devices.</p>
 <span id="nomad-camels-frontpanels-manage-instruments-module"></span><h2>nomad_camels.frontpanels.manage_instruments module<a class="headerlink" href="#module-nomad_camels.frontpanels.manage_instruments" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.manage_instruments.ManageInstruments">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.manage_instruments.</span></span><span class="sig-name descname"><span class="pre">ManageInstruments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active_instruments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.manage_instruments.ManageInstruments" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.manage_instruments.</span></span><span class="sig-name descname"><span class="pre">ManageInstruments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active_instruments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.manage_instruments.ManageInstruments" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.manage_instruments.ManageInstruments.accept">
@@ -648,31 +649,37 @@ not close when pressing Enter/Return.</p>
 </section>
 <section id="module-nomad_camels.frontpanels.plot_definer">
 <span id="nomad-camels-frontpanels-plot-definer-module"></span><h2>nomad_camels.frontpanels.plot_definer module<a class="headerlink" href="#module-nomad_camels.frontpanels.plot_definer" title="Link to this heading"></a></h2>
+<p>This module provides GUI dialogs and widgets for defining plot configurations
+and fit settings for NOMAD CAMELS. It uses PySide6 for the GUI and lmfit for
+fitting functions. The code defines several classes to store metadata (Plot_Info,
+Fit_Info) and multiple widgets for configuring different plot types (X-Y, Value-List,
+2D) as well as fit definitions.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Definer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Fit_Definer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Fit_Info" title="nomad_camels.frontpanels.plot_definer.Fit_Info"><span class="pre">Fit_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_to</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Definer" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Fit_Definer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Fit_Info" title="nomad_camels.frontpanels.plot_definer.Fit_Info"><span class="pre">Fit_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_to</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Definer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.fit_definer.Ui_Fit_Definer" title="nomad_camels.gui.fit_definer.Ui_Fit_Definer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_Fit_Definer</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
-<p>Widget for configuring a Fit_Info object (choosing a predefined or
-custom function, setting initial parameters, bounds, etc.).
-Driven by the Qt Designer form <cite>fit_definer.ui</cite>.</p>
+<p>Widget for configuring a Fit_Info object.</p>
+<p>Users can choose between a predefined or custom function, set initial parameters,
+and adjust bounds. This widget is based on the Qt Designer form compiled into
+Ui_Fit_Definer.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Definer.change_func">
 <span class="sig-name descname"><span class="pre">change_func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Definer.change_func" title="Link to this definition"></a></dt>
-<dd><p>Enable or disable various fields depending on the user’s choice
-of “fit”, “custom function”, and “guess parameters.”</p>
+<dd><p>Enable or disable various fields depending on the user’s fit selections.</p>
+<p>This method dynamically updates the UI elements based on whether the fit is
+enabled, if a custom function is chosen, and whether parameter guessing is enabled.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Definer.get_data">
 <span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Definer.get_data" title="Link to this definition"></a></dt>
-<dd><p>Store the final user configuration into the Fit_Info object
-(parameters, function choice, etc.).</p>
+<dd><p>Store the current UI configuration into the Fit_Info object.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Definer.load_data">
 <span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Definer.load_data" title="Link to this definition"></a></dt>
-<dd><p>Load the Fit_Info object into the UI elements.</p>
+<dd><p>Load the Fit_Info configuration into the UI elements.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -684,14 +691,13 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Fit_Info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">do_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predef_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_custom_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Fit_Info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">do_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predef_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_custom_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Stores all relevant fit settings, including which function to fit
-(custom or predefined), parameters, and bounds.</p>
+<p>Stores all relevant settings for performing a curve fit.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.do_fit">
 <span class="sig-name descname"><span class="pre">do_fit</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.do_fit" title="Link to this definition"></a></dt>
-<dd><p>Whether to perform the fit.</p>
+<dd><p>Flag indicating if a fit should be performed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -702,7 +708,7 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.predef_func">
 <span class="sig-name descname"><span class="pre">predef_func</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.predef_func" title="Link to this definition"></a></dt>
-<dd><p>Name of a predefined lmfit model (e.g., “Gaussian”, “Linear”).</p>
+<dd><p>Name of a predefined lmfit model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -713,7 +719,7 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.custom_func">
 <span class="sig-name descname"><span class="pre">custom_func</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.custom_func" title="Link to this definition"></a></dt>
-<dd><p>A custom expression to fit if use_custom_func is True.</p>
+<dd><p>Custom function expression (if using a custom fit).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -724,7 +730,7 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.use_custom_func">
 <span class="sig-name descname"><span class="pre">use_custom_func</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.use_custom_func" title="Link to this definition"></a></dt>
-<dd><p>Whether to use a custom function or a predefined one.</p>
+<dd><p>Flag to choose between custom and predefined fit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -735,7 +741,7 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.guess_params">
 <span class="sig-name descname"><span class="pre">guess_params</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.guess_params" title="Link to this definition"></a></dt>
-<dd><p>Whether to guess parameter values automatically.</p>
+<dd><p>Flag to enable automatic parameter guessing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -746,7 +752,8 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.initial_params">
 <span class="sig-name descname"><span class="pre">initial_params</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.initial_params" title="Link to this definition"></a></dt>
-<dd><p>Parameter names, initial values, and bounds.</p>
+<dd><p>Dictionary with keys “name”, “initial value”,
+“lower bound”, “upper bound” for parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
@@ -755,20 +762,9 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.display_values">
-<span class="sig-name descname"><span class="pre">display_values</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.display_values" title="Link to this definition"></a></dt>
-<dd><p>Whether to display fit values on the final plot.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.y">
 <span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.y" title="Link to this definition"></a></dt>
-<dd><p>The expression or channel name for the y-axis.</p>
+<dd><p>Expression or variable representing the dependent data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -779,7 +775,7 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.x">
 <span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.x" title="Link to this definition"></a></dt>
-<dd><p>The expression or channel name for the x-axis.</p>
+<dd><p>Expression or variable representing the independent data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -790,7 +786,7 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.additional_data">
 <span class="sig-name descname"><span class="pre">additional_data</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.additional_data" title="Link to this definition"></a></dt>
-<dd><p>Additional data used in the fit (if any).</p>
+<dd><p>Extra data used for the fit (if any).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
@@ -799,9 +795,20 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.display_values">
+<span class="sig-name descname"><span class="pre">display_values</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.display_values" title="Link to this definition"></a></dt>
+<dd><p>Whether to display the fit parameter values on the plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.name">
 <span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.name" title="Link to this definition"></a></dt>
-<dd><p>A generated name for the fit.</p>
+<dd><p>Auto-generated name for the fit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -815,10 +822,10 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 <dd><p>Generate a unique name for this fit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>stream</strong> (<em>str</em>) – An identifier or suffix (e.g., data stream name).</p>
+<dd class="field-odd"><p><strong>stream</strong> (<em>str</em>) – An identifier (e.g., a data stream name) to append.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Generated fit name (e.g., “Gaussian_channelY_v_channelX_stream”).</p>
+<dd class="field-even"><p>A generated fit name (e.g., “Gaussian_channelY_v_channelX_stream”).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -829,11 +836,11 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Fit_Info.get_variables">
 <span class="sig-name descname"><span class="pre">get_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Fit_Info.get_variables" title="Link to this definition"></a></dt>
-<dd><p>Build a dictionary of parameter names required by this fit
-(with underscore-separated prefixes).</p>
+<dd><p>Build a dictionary of parameter variable names for this fit.</p>
+<p>Each parameter name is prefixed by the unique fit name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>stream</strong> (<em>str</em>) – An identifier or suffix for parameter names.</p>
+<dd class="field-odd"><p><strong>stream</strong> (<em>str</em>) – An identifier to append to parameter names.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A mapping {param_name: 1} for each parameter in initial_params.</p>
@@ -848,12 +855,10 @@ of “fit”, “custom function”, and “guess parameters.”</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Button_Overview">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Plot_Button_Overview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Button_Overview" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Plot_Button_Overview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Button_Overview" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
-<p>A small overview widget that shows an AddRemoveTable (read-only)
-summarizing the plot types, plot names, and the associated fit.
-Also provides a single button to open the Plot_Definer dialog
-for editing those plots.</p>
+<p>Overview widget displaying a read-only table summarizing plot configurations
+and associated fits, along with a button to open the Plot_Definer dialog.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Button_Overview.define_plots">
 <span class="sig-name descname"><span class="pre">define_plots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Button_Overview.define_plots" title="Link to this definition"></a></dt>
@@ -863,9 +868,7 @@ for editing those plots.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Button_Overview.keyPressEvent">
 <span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QKeyEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Button_Overview.keyPressEvent" title="Link to this definition"></a></dt>
-<dd><p>Overridden to ignore the Enter/Return key, preventing the
-dialog from closing prematurely when embedded in a context
-that might intercept these keys.</p>
+<dd><p>Overridden to ignore the Enter/Return key to prevent premature dialog closure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>event</strong> (<em>QKeyEvent</em>) – The key press event.</p>
@@ -882,28 +885,27 @@ that might intercept these keys.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Plot_Definer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Plot_Definer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
-<p>A dialog for defining or editing multiple Plot_Info objects.</p>
-<p>Displays an Add/Remove table of existing plots and, for the selected
-plot, a child widget for configuring plot-specific options (e.g.,
-X-Y plot specifics, 2D plot specifics, Value-List specifics).</p>
+<p>Dialog for defining or editing multiple Plot_Info objects.</p>
+<p>It displays a table (AddRemoveTable) with existing plots and a child widget
+on the right for configuring details of the selected plot.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer.accept">
 <span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer.accept" title="Link to this definition"></a></dt>
-<dd><p>Overridden accept method to ensure that the last selected
-plot configuration is saved before closing.</p>
+<dd><p>Overridden accept method to ensure that the current plot configuration
+is saved before closing the dialog.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer.change_plot_def">
 <span class="sig-name descname"><span class="pre">change_plot_def</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer.change_plot_def" title="Link to this definition"></a></dt>
-<dd><p>Called when the user selects a plot in the table. Replaces
-the right-hand widget with the correct sub-definer
-(XY, Value-List, or 2D).</p>
+<dd><p>Called when the user selects a plot in the table.</p>
+<p>Replaces the right-hand widget with the appropriate sub-definer
+based on the selected plot type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex</em>) – The index of the selected row in the table.</p>
+<dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex</em>) – Index of the selected row.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -911,7 +913,7 @@ the right-hand widget with the correct sub-definer
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer.plot_added">
 <span class="sig-name descname"><span class="pre">plot_added</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer.plot_added" title="Link to this definition"></a></dt>
-<dd><p>Called when a new plot row is added in the table.</p>
+<dd><p>Slot called when a new plot row is added.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – The index of the newly added row.</p>
@@ -922,7 +924,7 @@ the right-hand widget with the correct sub-definer
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer.plot_removed">
 <span class="sig-name descname"><span class="pre">plot_removed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer.plot_removed" title="Link to this definition"></a></dt>
-<dd><p>Called when a plot row is removed from the table.</p>
+<dd><p>Slot called when a plot row is removed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – The index of the removed row.</p>
@@ -933,7 +935,7 @@ the right-hand widget with the correct sub-definer
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Definer.reject">
 <span class="sig-name descname"><span class="pre">reject</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Definer.reject" title="Link to this definition"></a></dt>
-<dd><p>Confirm with the user before discarding changes.</p>
+<dd><p>Overridden reject method that asks for confirmation before discarding changes.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -945,11 +947,11 @@ the right-hand widget with the correct sub-definer
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Plot_Info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plt_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'X-Y</span> <span class="pre">plot'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">same_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logX</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logY2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_left_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_left_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkbox_manual_plot_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkbox_show_in_browser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">browser_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8050</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Plot_Info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plt_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'X-Y</span> <span class="pre">plot'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">same_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logX</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logY2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_left_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_left_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkbox_manual_plot_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkbox_show_in_browser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">browser_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8050</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Holds all relevant metadata about a single plot configuration,
-including axes labels, plot type, fit information, and display
-options such as position, size, and logging.</p>
+<p>Holds all relevant metadata about a single plot configuration.</p>
+<p>This includes information such as the type of plot, axis definitions,
+fit settings, manual positioning options, and display options.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.plt_type">
 <span class="sig-name descname"><span class="pre">plt_type</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.plt_type" title="Link to this definition"></a></dt>
@@ -964,7 +966,7 @@ options such as position, size, and logging.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.x_axis">
 <span class="sig-name descname"><span class="pre">x_axis</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.x_axis" title="Link to this definition"></a></dt>
-<dd><p>Variable name or expression for the x-axis.</p>
+<dd><p>Expression or variable for the x-axis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -975,8 +977,7 @@ options such as position, size, and logging.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.y_axes">
 <span class="sig-name descname"><span class="pre">y_axes</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.y_axes" title="Link to this definition"></a></dt>
-<dd><p>Contains lists for ‘formula’ and ‘axis’ specifying
-y-axis expressions and whether they go on the left or right axis.</p>
+<dd><p>Contains lists for ‘formula’ (expressions) and ‘axis’ (left/right assignment).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
@@ -987,7 +988,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.z_axis">
 <span class="sig-name descname"><span class="pre">z_axis</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.z_axis" title="Link to this definition"></a></dt>
-<dd><p>Variable name or expression for the z-axis (if applicable).</p>
+<dd><p>Expression or variable for the z-axis (used in 2D plots).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -998,7 +999,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.title">
 <span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.title" title="Link to this definition"></a></dt>
-<dd><p>The plot title.</p>
+<dd><p>Plot title.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -1009,7 +1010,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.xlabel">
 <span class="sig-name descname"><span class="pre">xlabel</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.xlabel" title="Link to this definition"></a></dt>
-<dd><p>The x-axis label.</p>
+<dd><p>Label for the x-axis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -1020,7 +1021,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.ylabel">
 <span class="sig-name descname"><span class="pre">ylabel</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.ylabel" title="Link to this definition"></a></dt>
-<dd><p>The y-axis label (for the left axis in XY plots).</p>
+<dd><p>Label for the left y-axis (in XY plots).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -1031,7 +1032,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.ylabel2">
 <span class="sig-name descname"><span class="pre">ylabel2</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.ylabel2" title="Link to this definition"></a></dt>
-<dd><p>The label for the right y-axis in XY plots (if used).</p>
+<dd><p>Label for the right y-axis (if used).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -1042,7 +1043,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.zlabel">
 <span class="sig-name descname"><span class="pre">zlabel</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.zlabel" title="Link to this definition"></a></dt>
-<dd><p>The z-axis label in 2D plots.</p>
+<dd><p>Label for the z-axis (in 2D plots).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -1051,9 +1052,42 @@ y-axis expressions and whether they go on the left or right axis.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.logX">
+<span class="sig-name descname"><span class="pre">logX</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.logX" title="Link to this definition"></a></dt>
+<dd><p>Whether to use logarithmic scaling for the x-axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.logY">
+<span class="sig-name descname"><span class="pre">logY</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.logY" title="Link to this definition"></a></dt>
+<dd><p>Whether to use logarithmic scaling for the y-axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.logY2">
+<span class="sig-name descname"><span class="pre">logY2</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.logY2" title="Link to this definition"></a></dt>
+<dd><p>Whether to use logarithmic scaling for the second y-axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.do_plot">
 <span class="sig-name descname"><span class="pre">do_plot</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.do_plot" title="Link to this definition"></a></dt>
-<dd><p>Whether or not to actually show the plot.</p>
+<dd><p>Whether the plot should be rendered.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -1064,7 +1098,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.same_fit">
 <span class="sig-name descname"><span class="pre">same_fit</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.same_fit" title="Link to this definition"></a></dt>
-<dd><p>Whether to use the same fit parameters for all y-axes.</p>
+<dd><p>If True, the same fit settings apply to all y-axes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -1075,7 +1109,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.fits">
 <span class="sig-name descname"><span class="pre">fits</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.fits" title="Link to this definition"></a></dt>
-<dd><p>Fit_Info objects for each y-axis.</p>
+<dd><p>Fit configuration for each y-axis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of <a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Fit_Info" title="nomad_camels.frontpanels.plot_definer.Fit_Info">Fit_Info</a></p>
@@ -1086,7 +1120,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.all_fit">
 <span class="sig-name descname"><span class="pre">all_fit</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.all_fit" title="Link to this definition"></a></dt>
-<dd><p>A single Fit_Info object if same_fit is used.</p>
+<dd><p>Single fit configuration if same_fit is True.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Fit_Info" title="nomad_camels.frontpanels.plot_definer.Fit_Info">Fit_Info</a></p>
@@ -1119,7 +1153,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.top_left_x">
 <span class="sig-name descname"><span class="pre">top_left_x</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.top_left_x" title="Link to this definition"></a></dt>
-<dd><p>The x-coordinate for the plot if placed manually.</p>
+<dd><p>Manual x-coordinate for plot placement.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str/int</p>
@@ -1130,7 +1164,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.top_left_y">
 <span class="sig-name descname"><span class="pre">top_left_y</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.top_left_y" title="Link to this definition"></a></dt>
-<dd><p>The y-coordinate for the plot if placed manually.</p>
+<dd><p>Manual y-coordinate for plot placement.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str/int</p>
@@ -1141,7 +1175,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.plot_width">
 <span class="sig-name descname"><span class="pre">plot_width</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.plot_width" title="Link to this definition"></a></dt>
-<dd><p>The width of the plot (if manually placed).</p>
+<dd><p>Manual width for the plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str/int</p>
@@ -1152,7 +1186,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.plot_height">
 <span class="sig-name descname"><span class="pre">plot_height</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.plot_height" title="Link to this definition"></a></dt>
-<dd><p>The height of the plot (if manually placed).</p>
+<dd><p>Manual height for the plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str/int</p>
@@ -1163,7 +1197,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.checkbox_manual_plot_position">
 <span class="sig-name descname"><span class="pre">checkbox_manual_plot_position</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.checkbox_manual_plot_position" title="Link to this definition"></a></dt>
-<dd><p>Whether the user opted for manual plotting position.</p>
+<dd><p>Flag indicating if manual positioning is enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -1174,7 +1208,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.checkbox_show_in_browser">
 <span class="sig-name descname"><span class="pre">checkbox_show_in_browser</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.checkbox_show_in_browser" title="Link to this definition"></a></dt>
-<dd><p>Whether the user wants to render the plot in a browser (for interactive dashboards).</p>
+<dd><p>Flag for showing the plot in a browser.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -1185,7 +1219,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.browser_port">
 <span class="sig-name descname"><span class="pre">browser_port</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.browser_port" title="Link to this definition"></a></dt>
-<dd><p>The port to be used for a browser-based plot.</p>
+<dd><p>Port number for the browser-based plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
@@ -1196,7 +1230,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.name">
 <span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.name" title="Link to this definition"></a></dt>
-<dd><p>A short name auto-generated from other properties (e.g., “y vs x”).</p>
+<dd><p>A short name auto-generated from the plot properties.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -1210,8 +1244,7 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dd><p>Collect all fit variable names needed for this plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>stream</strong> (<em>str</em>) – An identifier or suffix for the variable names
-(e.g., the name of the data stream).</p>
+<dd class="field-odd"><p><strong>stream</strong> (<em>str</em>) – An identifier or suffix to append to variable names.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A dictionary mapping variable names to an initial value (1).</p>
@@ -1226,25 +1259,24 @@ y-axis expressions and whether they go on the left or right axis.</p>
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Plot_Info.update_name">
 <span class="sig-name descname"><span class="pre">update_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Plot_Info.update_name" title="Link to this definition"></a></dt>
 <dd><p>Update the plot’s <cite>name</cite> attribute to a short descriptive string
-based on the current plot type, axis labels, and titles.</p>
+based on the current plot configuration.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Single_Plot_Definer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><span class="pre">Plot_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Single_Plot_Definer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><span class="pre">Plot_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
-<p>Base class for a single plot definer widget. Extended by
-Single_Plot_Definer_XY, Single_Plot_Definer_List, and Single_Plot_Definer_2D.</p>
+<p>Base class for a widget that defines a single plot.</p>
+<p>Extended by subclasses for specific plot types (e.g., X-Y, Value-List, 2D).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.add_y">
 <span class="sig-name descname"><span class="pre">add_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.add_y" title="Link to this definition"></a></dt>
-<dd><p>Called when a new row (y-axis or formula) is added in the table
-that displays plot data (like y_axes or fits).</p>
+<dd><p>Called when a new y-axis (or formula) row is added.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – The row index just added.</p>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – The index of the newly added row.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1252,17 +1284,25 @@ that displays plot data (like y_axes or fits).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.get_data">
 <span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.get_data" title="Link to this definition"></a></dt>
-<dd><p>Returns the <cite>Plot_Info</cite> object. Child classes should override
-this to do additional updates.</p>
+<dd><p>Retrieve the current plot configuration.</p>
+<p>Child classes should override this method to update additional data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The current plot configuration.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info">Plot_Info</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.remove_y">
 <span class="sig-name descname"><span class="pre">remove_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer.remove_y" title="Link to this definition"></a></dt>
-<dd><p>Called when a row (y-axis or formula) is removed from the table.</p>
+<dd><p>Called when a y-axis (or formula) row is removed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – The row index just removed.</p>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – The index of the removed row.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1276,14 +1316,14 @@ this to do additional updates.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Single_Plot_Definer_2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><span class="pre">Plot_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Single_Plot_Definer_2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><span class="pre">Plot_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D" title="nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_Plot_Definer_2D</span></code></a>, <a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer" title="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Single_Plot_Definer</span></code></a></p>
-<p>Widget to configure a “2D plot”. This is driven by the Qt Designer
-form <cite>plot_definer_2d.ui</cite> compiled into <cite>Ui_Plot_Definer_2D</cite>.</p>
+<p>Widget to configure a “2D plot”.</p>
+<p>This widget is based on the Qt Designer form compiled into Ui_Plot_Definer_2D.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.get_data">
 <span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.get_data" title="Link to this definition"></a></dt>
-<dd><p>Validate and retrieve all data from the UI elements for a 2D plot.</p>
+<dd><p>Validate and retrieve data from the UI for the 2D plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The updated plot configuration.</p>
@@ -1291,29 +1331,29 @@ form <cite>plot_definer_2d.ui</cite> compiled into <cite>Ui_Plot_Definer_2D</cit
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info">Plot_Info</a></p>
 </dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If any axis label contains invalid characters or if manual
+    positioning/sizing is partially defined.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.hide_show_manual_position">
 <span class="sig-name descname"><span class="pre">hide_show_manual_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.hide_show_manual_position" title="Link to this definition"></a></dt>
-<dd><p>Show or hide manual positioning fields (top-left x/y, plot width/height)
-based on the checkbox_manual_plot_position checkbox state.</p>
+<dd><p>Toggle visibility of manual positioning fields based on the checkbox state.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.hide_show_show_in_browser">
 <span class="sig-name descname"><span class="pre">hide_show_show_in_browser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.hide_show_show_in_browser" title="Link to this definition"></a></dt>
-<dd><p>Show or hide the browser port selection based on
-the checkbox_show_in_browser state.
-Executed when the state is changed or if the checkbox is clicked.</p>
+<dd><p>Toggle visibility of the browser port selection based on the checkbox state.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.load_data">
 <span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_2D.load_data" title="Link to this definition"></a></dt>
-<dd><p>Populate manual position, size, and browser rendering UI
-with the existing Plot_Info data.</p>
+<dd><p>Load manual positioning, sizing, and browser rendering options from Plot_Info.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1325,14 +1365,15 @@ with the existing Plot_Info data.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Single_Plot_Definer_List</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><span class="pre">Plot_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Single_Plot_Definer_List</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><span class="pre">Plot_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer" title="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Single_Plot_Definer</span></code></a></p>
-<p>Widget to configure a “Value-List” type plot. Displays a list of
-channels/expressions to plot as well as optional position/size overrides.</p>
+<p>Widget to configure a “Value-List” plot.</p>
+<p>This widget displays a checkbox to plot all available channels, a table for
+custom expressions, and fields for manual positioning and sizing.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List.get_data">
 <span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List.get_data" title="Link to this definition"></a></dt>
-<dd><p>Validate and retrieve all data for the Value-List plot from the UI elements.</p>
+<dd><p>Validate and retrieve data from the UI elements for the Value-List plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The updated plot configuration.</p>
@@ -1340,13 +1381,16 @@ channels/expressions to plot as well as optional position/size overrides.</p>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info">Plot_Info</a></p>
 </dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If manual position/size is partially defined.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List.load_data">
 <span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_List.load_data" title="Link to this definition"></a></dt>
-<dd><p>Populate the line edits with existing data from the Plot_Info object.</p>
+<dd><p>Load existing manual positioning and sizing data into the line edits.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1358,22 +1402,22 @@ channels/expressions to plot as well as optional position/size overrides.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Single_Plot_Definer_XY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><span class="pre">Plot_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Single_Plot_Definer_XY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><span class="pre">Plot_Info</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.plot_definer.Ui_Plot_Definer" title="nomad_camels.gui.plot_definer.Ui_Plot_Definer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_Plot_Definer</span></code></a>, <a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer" title="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Single_Plot_Definer</span></code></a></p>
-<p>Widget to configure a classic “X-Y plot”. This is driven by the
-Qt Designer form <cite>plot_definer.ui</cite> compiled into <cite>Ui_Plot_Definer</cite>.</p>
+<p>Widget to configure a classic “X-Y plot”.</p>
+<p>This widget is based on the Qt Designer form compiled into Ui_Plot_Definer.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.fit_change">
 <span class="sig-name descname"><span class="pre">fit_change</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.fit_change" title="Link to this definition"></a></dt>
-<dd><p>Switch the fit-defining widget to either a single, shared
-Fit_Definer (if same_fit is checked) or a Fit_Definer for the
-currently selected y-axis row in the table.</p>
+<dd><p>Switch the fit-defining widget based on the user’s selection.</p>
+<p>Uses a single shared Fit_Definer if “same fit” is checked, or an individual
+Fit_Definer for the selected y-axis row otherwise.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.get_data">
 <span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.get_data" title="Link to this definition"></a></dt>
-<dd><p>Validate and retrieve all data for an X-Y plot from the UI elements.</p>
+<dd><p>Validate and retrieve data from the UI for the X-Y plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The updated plot configuration.</p>
@@ -1381,27 +1425,29 @@ currently selected y-axis row in the table.</p>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info">Plot_Info</a></p>
 </dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If any label contains invalid characters or if manual
+    position/size is partially defined.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.hide_show_manual_position">
 <span class="sig-name descname"><span class="pre">hide_show_manual_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.hide_show_manual_position" title="Link to this definition"></a></dt>
-<dd><p>Show or hide manual positioning fields (top-left x/y, plot width/height)
-based on the checkbox_manual_plot_position state.</p>
+<dd><p>Toggle visibility of manual positioning fields based on the checkbox state.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.hide_show_show_in_browser">
 <span class="sig-name descname"><span class="pre">hide_show_show_in_browser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.hide_show_show_in_browser" title="Link to this definition"></a></dt>
-<dd><p>Show or hide the browser port spinbox based on
-the checkbox_show_in_browser state.</p>
+<dd><p>Toggle visibility of the browser port spinbox based on the checkbox state.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.load_data">
 <span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.Single_Plot_Definer_XY.load_data" title="Link to this definition"></a></dt>
-<dd><p>Populate all fields from the Plot_Info object.</p>
+<dd><p>Populate UI fields with data from the Plot_Info object.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1414,14 +1460,12 @@ the checkbox_show_in_browser state.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.add_fit">
 <span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">add_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.add_fit" title="Link to this definition"></a></dt>
-<dd><p>Helper function to insert the appropriate fit function name
-(custom expression or predefined name) into table_data[“fit”].</p>
+<dd><p>Helper function to add the appropriate fit function name into the table data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>table_data</strong> (<em>dict</em>) – The dictionary used by an AddRemoveTable object
-with keys like “plot-type”, “name”, and “fit”.</p></li>
-<li><p><strong>fit</strong> (<a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Fit_Info" title="nomad_camels.frontpanels.plot_definer.Fit_Info"><em>Fit_Info</em></a>) – The fit data to be appended to the “fit” column.</p></li>
+<li><p><strong>table_data</strong> (<em>dict</em>) – Dictionary used by an AddRemoveTable (keys include “fit”).</p></li>
+<li><p><strong>fit</strong> (<a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Fit_Info" title="nomad_camels.frontpanels.plot_definer.Fit_Info"><em>Fit_Info</em></a>) – The fit data object.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1430,31 +1474,66 @@ with keys like “plot-type”, “name”, and “fit”.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.check_if_plotly_modules_are_available">
 <span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">check_if_plotly_modules_are_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.check_if_plotly_modules_are_available" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check for the availability of required modules for browser-based plotting.</p>
+<p>If any required modules are missing, prompt the user to install them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>self</strong> – The calling widget instance (used to update UI elements based on the outcome).</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.is_module_available">
 <span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">is_module_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.is_module_available" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if a module is available for import.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>module_name</strong> (<em>str</em>) – The name of the module.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the module can be imported, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.make_table_data">
 <span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">make_table_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.make_table_data" title="Link to this definition"></a></dt>
-<dd><p>Build a table-data dictionary for a quick overview of the plots and
-their fits, used by Plot_Button_Overview.</p>
+<dd><p>Build a summary table data dictionary for an overview of plots and their fits.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>plot_data</strong> (<em>list</em><em> of </em><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><em>Plot_Info</em></a>) – List of Plot_Info objects.</p>
+<dd class="field-odd"><p><strong>plot_data</strong> (<em>list</em><em> of </em><a class="reference internal" href="#nomad_camels.frontpanels.plot_definer.Plot_Info" title="nomad_camels.frontpanels.plot_definer.Plot_Info"><em>Plot_Info</em></a>) – List of plot configurations.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>A dict with keys [“plot-type”, “name”, “fit”], each a list</dt><dd><p>to show in the overview table.</p>
-</dd>
-</dl>
-</p>
+<dd class="field-even"><p>A dictionary with keys “plot-type”, “name”, and “fit” for the overview table.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.frontpanels.plot_definer.parse_int_field">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.plot_definer.</span></span><span class="sig-name descname"><span class="pre">parse_int_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.plot_definer.parse_int_field" title="Link to this definition"></a></dt>
+<dd><p>Parse an integer from the provided text while enforcing a minimum value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – The string to parse.</p></li>
+<li><p><strong>min_value</strong> (<em>int</em>) – The minimum allowed value.</p></li>
+<li><p><strong>fallback</strong> (<em>str</em>) – The value to return if parsing fails.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The parsed integer (if successful) or the fallback.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int or str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1464,7 +1543,7 @@ their fits, used by Plot_Button_Overview.</p>
 <span id="nomad-camels-frontpanels-protocol-config-module"></span><h2>nomad_camels.frontpanels.protocol_config module<a class="headerlink" href="#module-nomad_camels.frontpanels.protocol_config" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.protocol_config.</span></span><span class="sig-name descname"><span class="pre">Protocol_Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.protocol_config.</span></span><span class="sig-name descname"><span class="pre">Protocol_Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.protocol_config.Protocol_Config" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.protocol_view.Ui_Protocol_View" title="nomad_camels.gui.protocol_view.Ui_Protocol_View"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_Protocol_View</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.protocol_config.Protocol_Config.accept">
@@ -1707,12 +1786,12 @@ rearranges them in the protocol.</p>
 <span id="nomad-camels-frontpanels-settings-window-module"></span><h2>nomad_camels.frontpanels.settings_window module<a class="headerlink" href="#module-nomad_camels.frontpanels.settings_window" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.settings_window.</span></span><span class="sig-name descname"><span class="pre">Settings_Window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.frontpanels.settings_window.</span></span><span class="sig-name descname"><span class="pre">Settings_Window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="nomad_camels.gui.html#nomad_camels.gui.settings_window.Ui_settings_window" title="nomad_camels.gui.settings_window.Ui_settings_window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_settings_window</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
 <p>Dialog to change the settings used in CAMELS.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.frontpanels.settings_window.Settings_Window.accept">
-<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.accept" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">accept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.frontpanels.settings_window.Settings_Window.accept" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">

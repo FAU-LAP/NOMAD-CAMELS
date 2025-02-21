@@ -17,21 +17,21 @@ nomad\_camels\_sandbox.CAMELS\_sandbox module
 
 .. automodule:: nomad_camels_sandbox.CAMELS_sandbox
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 nomad\_camels\_sandbox.server\_signals module
 ---------------------------------------------
 
 .. automodule:: nomad_camels_sandbox.server_signals
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: nomad_camels_sandbox
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
