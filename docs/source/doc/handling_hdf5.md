@@ -1,10 +1,20 @@
-# User's Guide
+# Handling HDF5 Files
 
 ## Display HDF5 File
 
 You can  display the HDF5 file you obtained from CAMELS by dragging-and-dropping it into the following [webpage](https://h5web.panosc.eu/h5wasm) or any other HDF5-viewer.
 
-## Reading HDF5 Files from CAMELS
+## Using h5py
+
+```{note}
+For most data, we provide a more convinient way to handle the data, see the [NOMAD CAMELS toolbox](#nomad-camels-toolbox) below.
+```
+
+```{warning}
+This section uses older versions of the CAMELS data structure and may be deprecated in some parts. The concepts about Using h5py are still valid.
+```
+
+### Reading HDF5 Files from CAMELS
 
 You can read a measurement file using the Python **h5py** package.
 
@@ -20,7 +30,7 @@ You can access the contents of the HDF5 file just like a dictionary.
 
 
 
-## Navigate the File
+### Navigate the File
 
 Here is an example how you can navigate the HDF5 file.
 
@@ -47,7 +57,7 @@ motory_data = data['demo_instrument_motorY']
 
 
 
-## Create Data Plots
+### Create Data Plots
 
 This is how you can create a 2D-plot from a detector where the motor was moved in x and y direction and for each position the detector was read
 
@@ -87,11 +97,11 @@ for index, detector_data_point in enumerate(detector_data):
 ![Alt text](image.png)
 
 
-## Get Metadata
+### Get Metadata
 
-Simply navigate the file to get the desired metadata.
+Navigate the file like a Python dictionary to get the desired metadata:
 
-### Protocol Overview and Python Script
+#### Protocol Overview and Python Script
 
 To get the protocol overview of the performed measurement run 
 
@@ -117,7 +127,7 @@ python_script = measurement['python_script'][()].decode('utf-8')
 print(python_script)
 ```
 
-### Instrument Settings
+#### Instrument Settings
 
 All instrument settings are found in `measurement/instrument/environment/<instrument_name>`. You can then list the saved meta data of a single instrument if you run
 
@@ -148,7 +158,7 @@ meta_data_demo_instrument['settings']['sigmas'][()]
 
 
 
-## Convert HDF5 File to Python Dictionary
+### Convert the full HDF5 File to Python Dictionary
 You can use this Python script to read your HDF5 recursively and convert it to a nested dictionary.
 
 ```{note}
@@ -177,3 +187,42 @@ data = h5_to_dict(r'C:\Users\file.h5')
 ```
 
 Then  access the relevant data by navigating through the dictionary.
+
+
+
+# NOMAD CAMELS toolbox
+
+To assist with the evaluation of data, we provide the package [`nomad_camels_toolbox`](https://pypi.org/project/nomad-camels-toolbox/).
+
+Currently, it only helps with reading the data from the hdf5 file. More functionality is planned for the future.
+
+## Installation
+
+To install the NOMAD CAMELS toolbox, run
+```
+pip install nomad-camels-toolbox[pandas]
+```
+in the Python environment you use for your evaluation.
+This installs `pandas` as a powerful package for data evaluation along with the toolbox, so the data can be read directly as a [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html).
+
+```{note}
+If you do not want to install the functionalities that come along with pandas, you can run `pip install nomad-camels-toolbox` instead. However, we recommend using pandas.
+```
+
+## Reading Data
+The main usage is to read the data from files produced by CAMELS. To read the file at `file_path`, you can run:
+```python
+import nomad_camels_toolbox as nct
+
+data = nct.read_camels_file(file_path)
+```
+If there is only one entry in the hdf5 file, it will automatically read the main dataset with this code. For more information, see the [code reference](https://fau-lap.github.io/NOMAD-CAMELS/code/nomad_camels_toolbox.html).
+
+
+Your data will then be in a pandas DataFrame and can be accessed like:
+```python
+detector_data = data['demo_instrument_detectorComm']
+motorx_data = data['demo_instrument_motorX']
+motory_data = data['demo_instrument_motorY']
+```
+
