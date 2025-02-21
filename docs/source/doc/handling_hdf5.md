@@ -31,8 +31,11 @@ import nomad_camels_toolbox as nct
 
 data = nct.read_camels_file(file_path)
 ```
-If there is only one entry in the hdf5 file, it will automatically read the main dataset with this code. For more information, see the [code reference](https://fau-lap.github.io/NOMAD-CAMELS/code/nomad_camels_toolbox.html).
+If there is only one entry in the hdf5 file, it will automatically read the main dataset with this code.
 
+```{note}
+For more information, see the [code reference](https://fau-lap.github.io/NOMAD-CAMELS/code/nomad_camels_toolbox.html).
+```
 
 Your data will then be in a pandas DataFrame and can be accessed like:
 ```python
@@ -61,7 +64,6 @@ To work with your data in Python run
 ```python
 import h5py
 f = h5py.File('mytestfile.hdf5', 'r')
-
 ```
 
 You can access the contents of the HDF5 file just like a dictionary.
