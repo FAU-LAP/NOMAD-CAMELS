@@ -11,7 +11,7 @@ import json
 import pathlib
 
 from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog
-from PySide6.QtCore import Qt, Signal, QThread
+from PySide6.QtCore import Qt, Signal, QThread, QTimer
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
 from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
@@ -57,6 +57,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     run_done_file_signal = Signal(str)
     fake_signal = Signal(int)
     protocol_finished_signal = Signal()
+    start_timer_signal = Signal()
 
     def __init__(self, parent=None):
         """
@@ -277,6 +278,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.container.setLayout(self.flow_layout)
         self.lineEdit_tags.returnPressed.connect(self.add_tag)
 
+        self._was_aborted = False
+        self._timer = QTimer()
+        self._timer.timeout.connect(self._check_RE_done)
+        self.start_timer_signal.connect(self._start_timer)
         self.protocol_finished_signal.connect(self.play_finished_sound)
 
         version = update_camels.get_version()
@@ -2149,22 +2154,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Also handles cleanup of device threads.
         """
         if self.run_engine.state != "idle":
+            self._was_aborted = True
+            self.pushButton_resume.setEnabled(False)
+            self.pushButton_pause.setEnabled(False)
+            self.pushButton_stop.setEnabled(False)
+            self.setWindowTitle(
+                "Protocol aborted, waiting for cleanup... - NOMAD CAMELS"
+            )
             self.run_engine.abort("Aborted by user")
-            if self.running_protocol.use_end_protocol:
-                for i in range(10):
-                    if self.run_engine.state == "idle":
-                        break
-                    import time
-
-                    time.sleep(0.5)
-                try:
-                    self.run_engine(
-                        self.protocol_module.ending_steps(
-                            self.run_engine, self.current_protocol_devices
-                        )
-                    )
-                except Exception as e:
-                    print(e)
         if self.instantiate_devices_thread.isRunning():
             self.instantiate_devices_thread.successful.disconnect()
             self.instantiate_devices_thread.exception_raised.disconnect()
@@ -2205,8 +2202,34 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         and performs final UI updates.
         """
         # IMPORT databroker_export and device_handling only if needed
-        from nomad_camels.utility import databroker_export, device_handling
+        if self._was_aborted:
+            if not self.run_engine.state == "idle":
+                self.start_timer_signal.emit()
+                return
+        self.protocol_finished_part_2()
 
+    def _start_timer(self):
+        self._timer.start(1000)
+
+    def _check_RE_done(self):
+        if self.run_engine.state == "idle":
+            self._timer.stop()
+            self.protocol_finished_part_2()
+
+    def protocol_finished_part_2(self):
+        if self._was_aborted and self.running_protocol.use_end_protocol:
+            try:
+                self.run_engine(
+                    self.protocol_module.ending_steps(
+                        self.run_engine, self.current_protocol_devices
+                    )
+                )
+            except Exception as e:
+                print(e)
+        self._was_aborted = False
+        self.setWindowTitle(
+            "NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems"
+        )
         if (
             self.protocol_module
             and hasattr(self.protocol_module, "uids")

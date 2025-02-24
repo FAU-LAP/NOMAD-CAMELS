@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.7.3
+Fixes:
+- made aborting a protocol more stable
+
 ### 1.7.2
 Features:
 - Can now break loops in the if-step
