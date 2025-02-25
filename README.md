@@ -21,6 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.7.3
 Fixes:
 - made aborting a protocol more stable
+- generic set and read manual control now closes its thread more stabily
 
 ### 1.7.2
 Features:
