@@ -1344,6 +1344,12 @@ class LivePlot_2D(QObject, CallbackBase):
         self.z_data.clear()
         self.scatter_plot = pg.ScatterPlotItem(self.x_data, self.y_data)
         self.dummy_image = pg.ImageItem()
+        # Remove the old colorbar if it exists
+        if hasattr(self, "color_bar") and self.color_bar is not None:
+            self.graphics_layout.removeItem(self.color_bar)
+        # Remove the old hist if it exists
+        if hasattr(self, "hist") and self.hist is not None:
+            self.graphics_layout.removeItem(self.hist)
         self.color_bar = pg.ColorBarItem(label=self.z, interactive=False)
         self.color_bar.setColorMap(self.cmap)
         self.color_bar.setImageItem(self.dummy_image)
@@ -1356,6 +1362,8 @@ class LivePlot_2D(QObject, CallbackBase):
         self.hist.gradient.setColorMap(self.cmap)
         self.hist.axis.setLabel(self.z)
         self.graphics_layout.addItem(self.hist, row=0, col=1)
+        self.hist.hide()
+        self.color_bar.hide()
         self.graphics_layout.addItem(self.color_bar, row=0, col=2)
         self.plotItem.addItem(self.image)
         self._epoch_offset = None
@@ -1431,6 +1439,7 @@ class LivePlot_2D(QObject, CallbackBase):
         x_shape = len(set(self.x_data))
         y_shape = len(set(self.y_data))
         mesh = self.make_colormesh(x_shape, y_shape)
+        
         if mesh:
             x, y, z = mesh
             if not self.x_data:
@@ -1444,9 +1453,13 @@ class LivePlot_2D(QObject, CallbackBase):
             self.image.show()
             self.hist.show()
         else:
-            self.z_normed = (self.z_data - np.min(self.z_data)) / (
-                np.max(self.z_data) - np.min(self.z_data)
-            )
+            # Check for case that all z values are 0
+            if np.all(np.array(self.z_data) == 0):
+                self.z_normed = np.zeros(len(self.z_data))
+            else:
+                self.z_normed = (self.z_data - np.min(self.z_data)) / (
+                    np.max(self.z_data) - np.min(self.z_data)
+                )
             self.dummy_image.setImage(np.array([self.z_data]))
             self.color_bar.setLevels((np.min(self.z_data), np.max(self.z_data)))
             colors = self.cmap.map(self.z_normed)
