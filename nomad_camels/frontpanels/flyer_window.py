@@ -23,6 +23,7 @@ class FlyerButton(QPushButton):
         self.setToolTip(
             "Set channels that should be read asynchronously during the protocol with a defined frequency.\nWarning: If you use read the same channel in the protocol, it might cause a conflict."
         )
+        self._update_icon()
 
     def _update_icon(self):
         # set checkmark as icon if data, otherwise remove icon
@@ -35,6 +36,7 @@ class FlyerButton(QPushButton):
         flyer_window = FlyerWindow(self, flyer_data=self.flyer_data)
         if flyer_window.exec_():
             self.flyer_data = flyer_window.flyer_data
+            self._update_icon()
 
 
 class FlyerWindow(QDialog):
@@ -44,11 +46,11 @@ class FlyerWindow(QDialog):
 
         self.flyer_data = flyer_data or []
 
-        table_data = {"Name": [], "Reading Rate": []}
+        table_data = {"Name": [], "Reading Rate (s)": []}
         if flyer_data is not None:
             for data in flyer_data:
                 table_data["Name"].append(data["name"])
-                table_data["Reading Rate"].append(data["read_rate"])
+                table_data["Reading Rate (s)"].append(data["read_rate"])
 
         self.flyer_table = AddRemoveTable(
             parent=self,

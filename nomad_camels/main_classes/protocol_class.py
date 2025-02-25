@@ -646,6 +646,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.name = self.lineEdit_protocol_name.text()
         self.protocol.description = self.textEdit_desc_protocol.toPlainText()
         self.protocol.plots = self.plot_widge.plot_data
+        self.protocol.flyer_data = self.flyer_button.flyer_data
         self.protocol.export_csv = self.checkBox_csv_exp.isChecked()
         self.protocol.export_json = self.checkBox_json_exp.isChecked()
         self.protocol.skip_config = self.checkBox_no_config.isChecked()
