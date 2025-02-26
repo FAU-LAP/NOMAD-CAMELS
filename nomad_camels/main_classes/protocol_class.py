@@ -507,7 +507,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.ending_protocol_selection = Path_Button_Edit(
             self,
             self.protocol.end_protocol,
-            default_dir=variables_handling.preferences["py_files_path"],
+            default_dir=variables_handling.preferences.get("py_files_path", "."),
             file_extension="*.cprot",
         )
         self.checkBox_perform_at_end.setToolTip(
