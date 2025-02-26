@@ -31,8 +31,14 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
-      - name: Run tests with pytest (excluding protocol_test.py)
-        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels #--ignore=nomad_camels/tests/protocol_test.py
+
+      # Run all async-safe tests in parallel
+      - name: Run async tests (excluding protocol_test.py)
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels --ignore=nomad_camels/tests/protocol_test.py -n auto
+
+      # Run protocol_test.py synchronously
+      - name: Run protocol_test.py synchronously
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels nomad_camels/tests/protocol_test.py -n 1
 
   ubuntu_test:
     runs-on: ubuntu-latest
@@ -56,10 +62,15 @@ jobs:
         run: pip list
       - name: Lint with ruff
         run: |
-          # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
-      - name: Run tests with pytest (excluding protocol_test.py)
-        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels #--ignore=nomad_camels/tests/protocol_test.py
+
+      # Run all async-safe tests in parallel
+      - name: Run async tests (excluding protocol_test.py)
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels --ignore=nomad_camels/tests/protocol_test.py -n auto
+
+      # Run protocol_test.py synchronously
+      - name: Run protocol_test.py synchronously
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels nomad_camels/tests/protocol_test.py -n 1
 
   macos_test:
     runs-on: macos-latest
@@ -83,73 +94,12 @@ jobs:
         run: pip list
       - name: Lint with ruff
         run: |
-          # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
-      - name: Run tests with pytest (excluding protocol_test.py)
-        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels #--ignore=nomad_camels/tests/protocol_test.py
 
-  # protocol_test_windows:
-  #   runs-on: windows-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Install Python 3
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.11
-  #     - name: Install dependencies
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install ruff poetry
-  #         poetry install --all-extras
-  #         poetry add nomad-camels-driver-demo-instrument
-  #     - name: List packages
-  #       run: pip list
-  #     - name: Run protocol_test.py separately
-  #       run: poetry run pytest -vv --timeout=100 nomad_camels/tests/protocol_test.py
+      # Run all async-safe tests in parallel
+      - name: Run async tests (excluding protocol_test.py)
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels --ignore=nomad_camels/tests/protocol_test.py -n auto
 
-  # protocol_test_ubuntu:
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     DISPLAY: ':99.0'
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Install Python 3
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.11
-  #     - uses: tlambert03/setup-qt-libs@v1
-  #     - name: Install dependencies
-  #       run: |
-  #         sudo apt install libgl1 libglx-mesa0 libegl1 libopengl0 libpulse0
-  #         python -m pip install --upgrade pip
-  #         pip install ruff poetry
-  #         poetry install --all-extras
-  #         poetry add nomad-camels-driver-demo-instrument
-  #     - name: List packages
-  #       run: pip list
-  #     - name: Run protocol_test.py separately
-  #       run: poetry run pytest -vv --timeout=100 nomad_camels/tests/protocol_test.py
-
-  # protocol_test_macos:
-  #   runs-on: macos-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Install Python 3
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.11
-  #     - name: Install dependencies
-  #       run: |
-  #         if brew list pkg-config@0.29.2 &>/dev/null; then
-  #           brew unlink pkg-config@0.29.2
-  #         fi
-  #         brew install hdf5
-  #         echo "HDF5_DIR=$(brew --prefix hdf5)" >> $GITHUB_ENV
-  #         python -m pip install --upgrade pip
-  #         pip install ruff poetry
-  #         poetry install --all-extras
-  #         poetry add nomad-camels-driver-demo-instrument
-  #     - name: List packages
-  #       run: pip list
-  #     - name: Run protocol_test.py separately
-  #       run: poetry run pytest -vv --timeout=100 nomad_camels/tests/protocol_test.py
+      # Run protocol_test.py synchronously
+      - name: Run protocol_test.py synchronously
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels nomad_camels/tests/protocol_test.py -n 1
