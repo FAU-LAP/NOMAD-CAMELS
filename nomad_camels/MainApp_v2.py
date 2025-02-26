@@ -11,7 +11,7 @@ import json
 import pathlib
 
 from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog
-from PySide6.QtCore import Qt, Signal, QThread
+from PySide6.QtCore import Qt, Signal, QThread, QTimer
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
 from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
@@ -57,6 +57,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     run_done_file_signal = Signal(str)
     fake_signal = Signal(int)
     protocol_finished_signal = Signal()
+    start_timer_signal = Signal()
 
     def __init__(self, parent=None):
         """
@@ -183,6 +184,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.comboBox_user.currentTextChanged.connect(self.change_user)
         self.comboBox_user_type.addItems(["local user", "NOMAD user"])
         self.comboBox_user_type.currentTextChanged.connect(self.change_user_type)
+        self.change_user()
         self.change_user_type()
 
         self.pushButton_login_nomad.clicked.connect(self.login_logout_nomad)
@@ -276,6 +278,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.container.setLayout(self.flow_layout)
         self.lineEdit_tags.returnPressed.connect(self.add_tag)
 
+        self._was_aborted = False
+        self._timer = QTimer()
+        self._timer.timeout.connect(self._check_RE_done)
+        self.start_timer_signal.connect(self._start_timer)
         self.protocol_finished_signal.connect(self.play_finished_sound)
 
         version = update_camels.get_version()
@@ -825,10 +831,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             data = pd.DataFrame(dat)
             data.set_index("Name2", inplace=True)
             self.userdata = data.to_dict("index")
-        self.comboBox_user.clear()
-        self.comboBox_user.addItems(self.userdata.keys())
-        if self.active_user in self.userdata:
-            self.comboBox_user.setCurrentText(self.active_user)
+            self.comboBox_user.currentTextChanged.disconnect(self.change_user)
+            self.comboBox_user.clear()
+            self.comboBox_user.addItems(
+                sorted(self.userdata.keys(), key=lambda x: x.lower())
+            )
+            if self.active_user in self.userdata:
+                self.comboBox_user.setCurrentText(self.active_user)
+            self.comboBox_user.currentTextChanged.connect(self.change_user)
+            self.save_user_data()
 
     def save_user_data(self):
         """
@@ -925,6 +936,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 self.sampledata.pop(key)
             self.sampledata.update(data.to_dict("index"))
             self.update_shown_samples()
+            self.save_sample_data()
 
     def update_shown_samples(self):
         """
@@ -936,9 +948,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 [
                     key
                     for key in self.sampledata.keys()
-                    if self.sampledata[key]["owner"] == self.active_user
-                    or not self.sampledata[key]["owner"]
-                ]
+                    if self.sampledata[key].get("owner", "") == self.active_user
+                    or not self.sampledata[key].get("owner", "")
+                ],
+                key=lambda x: x.lower(),
             )
         )
         if self.active_sample in self.sampledata.keys():
@@ -1831,7 +1844,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_module.protocol_step_information[
                 "protocol_stepper_signal"
             ] = self.protocol_stepper_signal
-            plots, subs, _, _ = self.protocol_module.create_plots(self.run_engine)
+            plots, subs, app, plots_plotly, proxy, dispatcher, publisher_subscription  = self.protocol_module.create_plots(self.run_engine)
             for plot in plots:
                 self.add_to_plots(plot)
             device_list = protocol.get_used_devices()
@@ -1842,11 +1855,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
             if api_uuid is not None:
                 self.instantiate_devices_thread.successful.connect(
-                    lambda: self.run_protocol_part2(api_uuid)
+                    lambda: self.run_protocol_part2(api_uuid, proxy=proxy, dispatcher=dispatcher, publisher_subscription=publisher_subscription)
                 )
             else:
                 self.instantiate_devices_thread.successful.connect(
-                    self.run_protocol_part2
+                    lambda: self.run_protocol_part2(proxy=proxy, dispatcher=dispatcher, publisher_subscription=publisher_subscription)
                 )
             self.instantiate_devices_thread.exception_raised.connect(
                 self.propagate_exception
@@ -1873,7 +1886,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_finished()
         raise exception
 
-    def run_protocol_part2(self, api_uuid=None):
+    def run_protocol_part2(self, api_uuid=None, proxy=None, dispatcher=None, publisher_subscription=None):
         """
         Continue running the protocol after devices are instantiated.
 
@@ -1936,6 +1949,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "devices": dev_data,
                 "api_uuid": api_uuid,  # Include the uuid in the metadata
             },
+            proxy=proxy,
+            dispatcher=dispatcher,
+            publisher_subscription=publisher_subscription,
         )
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(False)
@@ -2072,7 +2088,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             sys.modules[spec.name] = module
             spec.loader.exec_module(module)
             if not watchdog.plots:
-                plots, subs, _ = module.create_plots(
+                plots, subs, app, plots_plotly, proxy, dispatcher, publisher_subscription = module.create_plots(
                     self.run_engine, stream="watchdog_triggered"
                 )
                 watchdog.plots = plots
@@ -2141,22 +2157,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Also handles cleanup of device threads.
         """
         if self.run_engine.state != "idle":
+            self._was_aborted = True
+            self.pushButton_resume.setEnabled(False)
+            self.pushButton_pause.setEnabled(False)
+            self.pushButton_stop.setEnabled(False)
+            self.setWindowTitle(
+                "Protocol aborted, waiting for cleanup... - NOMAD CAMELS"
+            )
             self.run_engine.abort("Aborted by user")
-            if self.running_protocol.use_end_protocol:
-                for i in range(10):
-                    if self.run_engine.state == "idle":
-                        break
-                    import time
-
-                    time.sleep(0.5)
-                try:
-                    self.run_engine(
-                        self.protocol_module.ending_steps(
-                            self.run_engine, self.current_protocol_devices
-                        )
-                    )
-                except Exception as e:
-                    print(e)
         if self.instantiate_devices_thread.isRunning():
             self.instantiate_devices_thread.successful.disconnect()
             self.instantiate_devices_thread.exception_raised.disconnect()
@@ -2197,8 +2205,34 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         and performs final UI updates.
         """
         # IMPORT databroker_export and device_handling only if needed
-        from nomad_camels.utility import databroker_export, device_handling
+        if self._was_aborted:
+            if not self.run_engine.state == "idle":
+                self.start_timer_signal.emit()
+                return
+        self.protocol_finished_part_2()
 
+    def _start_timer(self):
+        self._timer.start(1000)
+
+    def _check_RE_done(self):
+        if self.run_engine.state == "idle":
+            self._timer.stop()
+            self.protocol_finished_part_2()
+
+    def protocol_finished_part_2(self):
+        if self._was_aborted and self.running_protocol.use_end_protocol:
+            try:
+                self.run_engine(
+                    self.protocol_module.ending_steps(
+                        self.run_engine, self.current_protocol_devices
+                    )
+                )
+            except Exception as e:
+                print(e)
+        self._was_aborted = False
+        self.setWindowTitle(
+            "NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems"
+        )
         if (
             self.protocol_module
             and hasattr(self.protocol_module, "uids")

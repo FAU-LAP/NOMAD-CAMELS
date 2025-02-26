@@ -18,6 +18,12 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.7.3
+Fixes:
+- manual controls could not work with channels that need to call trigger, now fixed
+- made aborting a protocol more stable
+- generic set and read manual control now closes its thread more stabily
+
 ### 1.7.2
 Features:
 - Can now break loops in the if-step
@@ -34,7 +40,9 @@ Fixes:
 - progress bar in wait sometimes crashed, now fixed
 - updated custom function signal to better support list / tuple ... setting-types by handling kwargs from bluesky
 - Made plotting much more robust. You can now define multiple plots and read at multiple points in your protocol. The plots are only updated if data concerning the y-axis of your plot is actually read.
-
+- updating instrument never worked, only installing, now fixed
+- update all instruments now skips local drivers
+- users and samples are now saved in a more robust way
 
 ### 1.7.1
 Fixes:

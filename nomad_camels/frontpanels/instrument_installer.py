@@ -355,7 +355,7 @@ class Instrument_Installer(Ui_Form, QWidget):
         """ """
         devs = []
         for dev, version in self.installed_devs.items():
-            if version != self.all_devs[dev]:
+            if version != "local" and self.all_devs[dev]:
                 devs.append(dev)
         self.install_thread = Install_Thread(devs, False, self)
         self.install_thread.error_signal.connect(self.propagate_exception)
@@ -585,6 +585,7 @@ def install_instrument(device_name):
             "-m",
             "pip",
             "install",
+            "--upgrade",
             # '--no-cache-dir',
             # '--index-url', pypi_url,
             # '--extra-index-url',

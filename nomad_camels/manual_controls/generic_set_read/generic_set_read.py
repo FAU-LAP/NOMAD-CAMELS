@@ -120,6 +120,15 @@ class Generic_Set_Read(Manual_Control):
         self.work_thread.data_signal.connect(self.update_read_table)
         self.work_thread.start()
 
+    def close(self):
+        self.work_thread.still_running = False
+        return super().close()
+
+    def closeEvent(self, a0):
+        self.work_thread.still_running = False
+        return super().closeEvent(a0)
+
+
 
 class Work_Thread(QThread):
 
@@ -164,6 +173,9 @@ class Work_Thread(QThread):
 
     def do_reading(self):
         results = {"channel": [], "value": []}
+        for channel in self.channels:
+            if hasattr(channel, "trigger"):
+                channel.trigger()
         for channel in self.channels:
             name = channel.name
             value = channel.get()

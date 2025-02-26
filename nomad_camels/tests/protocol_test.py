@@ -15,6 +15,10 @@ from nomad_camels.utility.treeView_functions import getItemIndex
 
 
 @pytest.fixture(autouse=True)
+def reset_protocols():
+    variables_handling.protocols.clear()
+
+@pytest.fixture(autouse=True)
 def mock_message_box(monkeypatch):
     """If a messagebox, e.g. asking whether to discard all changes to the
     protocol, pops up, it is automatically accepted"""

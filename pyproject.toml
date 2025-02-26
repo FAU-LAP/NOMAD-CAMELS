@@ -18,11 +18,12 @@ pyside6 = ">=6.6.0"
 bluesky = ">=1.9.0"
 ophyd = ">=1.6.4"
 lmfit = ">=1.0.2"
-suitcase-nomad-camels-hdf5 = ">=0.4.4"
+suitcase-nomad-camels-hdf5 = ">=0.4.6"
 databroker = ">=1.2.5"
 matplotlib = ">=3.6.2"
 pyqtgraph = ">=0.13.3"
 requests = ">=2.26.0"
+pyzmq = ">=26.2.0"
 
 # == With Python-specific constraints ==
 pyyaml = [

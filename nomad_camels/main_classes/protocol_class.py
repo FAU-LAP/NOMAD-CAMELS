@@ -294,6 +294,10 @@ class Measurement_Protocol:
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
         plan_string += "\tsub_eva = runEngine.subscribe(eva)\n"
         plan_string += "\tyield from bps.open_run(md=md)\n"
+        plan_string += """
+    if web_ports:
+        yield from wait_for_dash_ready_plan(web_ports)
+"""
         if self.use_end_protocol:
             plan_string += "\ttry:\n"
             plan_string += f'\t\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, stream_name, runEngine)\n'
@@ -506,7 +510,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.ending_protocol_selection = Path_Button_Edit(
             self,
             self.protocol.end_protocol,
-            default_dir=variables_handling.preferences["py_files_path"],
+            default_dir=variables_handling.preferences.get("py_files_path", "."),
             file_extension="*.cprot",
         )
         self.checkBox_perform_at_end.setToolTip(
