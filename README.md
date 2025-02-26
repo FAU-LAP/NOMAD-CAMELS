@@ -20,6 +20,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 ### 1.7.3
 Fixes:
+- manual controls could not work with channels that need to call trigger, now fixed
 - made aborting a protocol more stable
 - generic set and read manual control now closes its thread more stabily
 

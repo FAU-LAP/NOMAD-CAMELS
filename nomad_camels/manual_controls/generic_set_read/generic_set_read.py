@@ -174,6 +174,9 @@ class Work_Thread(QThread):
     def do_reading(self):
         results = {"channel": [], "value": []}
         for channel in self.channels:
+            if hasattr(channel, "trigger"):
+                channel.trigger()
+        for channel in self.channels:
             name = channel.name
             value = channel.get()
             results["channel"].append(name)
