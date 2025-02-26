@@ -86,8 +86,48 @@ standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "to
 standard_run_string = "uids = []\n"
 standard_run_string += "def uid_collector(name, doc):\n"
 standard_run_string += '\tuids.append(doc["uid"])\n\n\n'
-standard_run_string += 'def run_protocol_main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None, proxy=None, dispatcher=None, publisher=None):\n'
+standard_run_string += 'def run_protocol_main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None, dispatcher=None, publisher=None):\n'
 standard_run_string += """
+    if (dispatcher and publisher):
+        for plot in plots:
+            dispatcher.subscribe(plot.livePlot)
+        for plotly_plot in plots_plotly:
+            dispatcher.subscribe(plotly_plot)
+"""
+standard_run_string += "\tdevs = devices or {}\n"
+standard_run_string += "\tmd = md or {}\n"
+standard_run_string += "\tglobal darkmode, theme, protocol_step_information\n"
+standard_run_string += "\tdarkmode, theme = dark, used_theme\n"
+
+# this is the string with the main function of the protocol, starting everything
+# and also the if branch, whether it is the main script to execute everything
+# without importing
+standard_start_string = """
+def wait_for_dash_ready_plan(web_ports, check_interval=0.1, timeout=30):
+    start_time = time.time()
+    while True:
+        all_ready = True
+        for web_port in web_ports:
+            try:
+                response = requests.get(f"http://127.0.0.1:{web_port}/status")
+                if response.status_code != 200:
+                    all_ready = False
+                    break
+            except requests.ConnectionError:
+                all_ready = False
+                break
+        if all_ready:
+            # All ports are ready; optionally return the list of ports or simply exit.
+            return web_ports
+        if time.time() - start_time > timeout:
+            raise TimeoutError("Not all Dash servers started in time")
+        yield from bps.sleep(check_interval)
+"""
+standard_start_string += "\n\n\ndef main(dispatcher=None, publisher=None):\n"
+standard_start_string += "\tRE = RunEngineOverwrite()\n"
+standard_start_string += "\tbec = BestEffortCallback()\n"
+standard_start_string += "\tRE.subscribe(bec)\n"
+standard_start_string += """
     if not (dispatcher and publisher):
         from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
         from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
@@ -130,50 +170,12 @@ standard_run_string += """
         proxy_thread.start()
         dispatcher_thread.start()
         time.sleep(0.5)
-    else:
-        for plot in plots:
-            dispatcher.subscribe(plot.livePlot)
-        for plotly_plot in plots_plotly:
-            dispatcher.subscribe(plotly_plot)
 """
-standard_run_string += "\tdevs = devices or {}\n"
-standard_run_string += "\tmd = md or {}\n"
-standard_run_string += "\tglobal darkmode, theme, protocol_step_information\n"
-standard_run_string += "\tdarkmode, theme = dark, used_theme\n"
-
-# this is the string with the main function of the protocol, starting everything
-# and also the if branch, whether it is the main script to execute everything
-# without importing
-standard_start_string = """
-def wait_for_dash_ready_plan(web_ports, check_interval=0.1, timeout=30):
-    start_time = time.time()
-    while True:
-        all_ready = True
-        for web_port in web_ports:
-            try:
-                response = requests.get(f"http://127.0.0.1:{web_port}/status")
-                if response.status_code != 200:
-                    all_ready = False
-                    break
-            except requests.ConnectionError:
-                all_ready = False
-                break
-        if all_ready:
-            # All ports are ready; optionally return the list of ports or simply exit.
-            return web_ports
-        if time.time() - start_time > timeout:
-            raise TimeoutError("Not all Dash servers started in time")
-        yield from bps.sleep(check_interval)
-"""
-standard_start_string += "\n\n\ndef main():\n"
-standard_start_string += "\tRE = RunEngineOverwrite()\n"
-standard_start_string += "\tbec = BestEffortCallback()\n"
-standard_start_string += "\tRE.subscribe(bec)\n"
 standard_start_string2 = "\t\tplot_etc = create_plots(RE)\n"
 standard_start_string2 += "\t\tadditional_step_data = steps_add_main(RE, devs)\n"
 standard_start_string2 += "\t\tcreate_live_windows()\n"
 standard_start_string2 += (
-    "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md)\n"
+    "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md, dispatcher=dispatcher, publisher=publisher)\n"
 )
 standard_start_string3 = '\n\n\nif __name__ == "__main__":\n'
 standard_start_string3 += "\tmain()\n"
