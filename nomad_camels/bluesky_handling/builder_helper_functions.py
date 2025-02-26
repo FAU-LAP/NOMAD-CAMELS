@@ -103,8 +103,42 @@ def plot_creator(
     """
     plot_string = f'\ndef {func_name}(RE, stream="primary"):\n'
     if not plot_data:
-        plot_string += "\treturn [], [], None, None\n\n"
+        plot_string += "\treturn [], [], None, None, None, None, None\n\n"
         return plot_string, False
+    plot_string +="""
+    from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
+    from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
+    from threading import Thread
+    from zmq.error import ZMQError
+    import asyncio
+
+    def setup_threads():
+        try:
+            proxy = Proxy(5577, 5578)
+            proxy_created = True
+        except ZMQError as e:
+            # If the proxy is already running, a ZMQError will be raised.
+            proxy = None  # We will use the already running proxy.
+            proxy_created = False
+        dispatcher = RemoteDispatcher("localhost:5578")
+
+        def start_proxy():
+            if proxy_created and proxy is not None:
+                proxy.start()
+        
+        def start_dispatcher(plots, plots_plotly):
+            for plot in plots:
+                dispatcher.subscribe(plot.livePlot)
+            for plotly_plot in plots_plotly:
+                dispatcher.subscribe(plotly_plot)
+            try:
+                dispatcher.start()
+            except asyncio.exceptions.CancelledError:
+                # This error is raised when the dispatcher is stopped. It can therefore be ignored
+                pass
+
+        return proxy, dispatcher, start_proxy, start_dispatcher
+"""
     plot_string += standard_plot_string
     plot_string += "\tplot_evaluator=eva\n"
     plot_string += "\tsubs = []\n"
@@ -169,5 +203,15 @@ def plot_creator(
                 plot_string += f"\tplots_plotly.append(plot_plotly_{i})\n"
         if plot_is_box:
             plot_string += f"\tboxes['{box_names}_{i}'] = helper_functions.Waiting_Bar(title='{plot.title}', skipable={skip_box}, display_bar=False, plot=plot_{i})\n"
-    plot_string += "\treturn plots, subs, app, plots_plotly\n\n"
+    plot_string += """
+    publisher = Publisher('localhost:5577')
+    publisher_subscription = RE.subscribe(publisher)
+    proxy, dispatcher, start_proxy, start_dispatcher = setup_threads()
+    proxy_thread = Thread(target=start_proxy, daemon=True)
+    dispatcher_thread = Thread(target=start_dispatcher, args=(plots, plots_plotly,), daemon=True)#
+    proxy_thread.start()
+    dispatcher_thread.start()
+    time.sleep(0.5)
+"""
+    plot_string += "\treturn plots, subs, app, plots_plotly, proxy, dispatcher, publisher_subscription\n\n"
     return plot_string, plotting
