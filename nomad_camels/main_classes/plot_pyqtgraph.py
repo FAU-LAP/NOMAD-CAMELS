@@ -924,9 +924,8 @@ class LivePlot(QObject, CallbackBase):
             if doc["descriptor"] in self.descs_fit_readying:
                 self.descs_fit_readying[doc["descriptor"]].get_ready()
             return
-        # Check to see if doc["data"] contains keys matching any on the self.ys strings or self.x
-        if not (any(key in s for key in doc["data"] for s in self.ys)): #or self.x in doc["data"]):
-            print("The data of the event does not match the data ")
+        # Check to see if doc["data"] contains keys matching any on the self.ys strings
+        if not (any(key in s for key in doc["data"] for s in self.ys)):
             return
         try:
             new_x = doc["data"][self.x]
