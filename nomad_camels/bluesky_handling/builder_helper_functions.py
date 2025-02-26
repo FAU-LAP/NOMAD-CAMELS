@@ -5,13 +5,16 @@ called by the classes of the single protocol-steps.
 """
 
 import copy
+from nomad_camels.loop_steps.read_channels import get_channel_string
 
 standard_plot_string = "\tglobal app\n"
 standard_plot_string += "\tapp = QCoreApplication.instance()\n"
 standard_plot_string += "\tif app is None:\n"
 standard_plot_string += "\t\tapp = QApplication(sys.argv)\n"
 # standard_plot_string += '\tapp.aboutToQuit.connect(wait_for_workers_to_quit)\n'
-standard_plot_string += "\tfrom nomad_camels.main_classes import plot_pyqtgraph, list_plot\n"
+standard_plot_string += (
+    "\tfrom nomad_camels.main_classes import plot_pyqtgraph, list_plot\n"
+)
 standard_plot_string += "\tif darkmode:\n"
 standard_plot_string += "\t\tplot_pyqtgraph.activate_dark_mode()\n"
 # standard_plot_string += '\ttheme_changing.change_theme(theme, app)\n'
@@ -55,10 +58,47 @@ def get_plot_add_string(name, stream, subprotocol=False, n_tabs=1):
             f"{tabs}plots, subs, _, _ = {name}_mod.create_plots(RE, {stream})\n"
         )
     else:
-        add_main_string += f"{tabs}plots, subs, _, _ = create_plots_{name}(RE, {stream})\n"
+        add_main_string += (
+            f"{tabs}plots, subs, _, _ = create_plots_{name}(RE, {stream})\n"
+        )
     add_main_string += f'{tabs}returner["subs"] += subs\n'
     add_main_string += f'{tabs}returner["plots"] += plots\n'
     return add_main_string
+
+
+def flyer_creator(flyer_data, func_name="create_flyers"):
+    """
+    Creates the `create_flyers` function for the protocol if asynchronous acquisition is used.
+
+    Parameters
+    ----------
+    flyer_data : list[dict]
+        A list of dictionaries with all information for the flyers.
+
+    func_name : str
+         (Default value = 'create_flyers')
+         The name of the function in the protocol-script.
+
+    Returns
+    -------
+    flyer_string
+        The string containing the function for the protocol-script.
+
+    """
+    flyer_string = f"\ndef {func_name}(RE, devs):\n"
+    if not flyer_data:
+        flyer_string += "\treturn [], []\n\n"
+        return flyer_string
+    flyer_string += (
+        "\tfrom nomad_camels.bluesky_handling.flyer_interface import CAMELS_Flyer\n"
+    )
+    for i, flyer in enumerate(flyer_data):
+        detectors = []
+        for c in flyer["channels"]:
+            detectors.append(get_channel_string(c))
+        flyer_string += f'\tflyer_{i} = CAMELS_Flyer(name="{flyer["name"]}", read_time={flyer["read_rate"]}, detectors={detectors})\n'
+    flyer_string += "\treturn subs\n\n"
+    return flyer_string
 
 
 def plot_creator(
@@ -106,7 +146,10 @@ def plot_creator(
     plot_string += "\tsubs = []\n"
     plotting = False
     for i, plot in enumerate(plot_data):
-        if plot.checkbox_show_in_browser and "from nomad_camels.main_classes import plot_plotly" not in plot_string:
+        if (
+            plot.checkbox_show_in_browser
+            and "from nomad_camels.main_classes import plot_plotly" not in plot_string
+        ):
             plot_string += "\tfrom nomad_camels.main_classes import plot_plotly\n"
         if plot.plt_type == "X-Y plot":
             plotting = True
