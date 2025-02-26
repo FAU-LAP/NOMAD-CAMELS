@@ -64,6 +64,7 @@ standard_string += "from PySide6.QtWidgets import QApplication, QMessageBox\n"
 standard_string += "from PySide6.QtCore import QCoreApplication, QThread\n"
 standard_string += "import datetime\n"
 standard_string += "import subprocess\n"
+standard_string += "import time\n"
 standard_string += "from nomad_camels.utility import theme_changing\n"
 standard_string += (
     "from nomad_camels.bluesky_handling.evaluation_helper import Evaluator\n"
@@ -81,7 +82,7 @@ standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "to
 standard_run_string = "uids = []\n"
 standard_run_string += "def uid_collector(name, doc):\n"
 standard_run_string += '\tuids.append(doc["uid"])\n\n\n'
-standard_run_string += 'def run_protocol_main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None):\n'
+standard_run_string += 'def run_protocol_main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None, proxy=None, dispatcher=None, publisher_subscription=None):\n'
 standard_run_string += "\tdevs = devices or {}\n"
 standard_run_string += "\tmd = md or {}\n"
 standard_run_string += "\tglobal darkmode, theme, protocol_step_information\n"
@@ -90,7 +91,28 @@ standard_run_string += "\tdarkmode, theme = dark, used_theme\n"
 # this is the string with the main function of the protocol, starting everything
 # and also the if branch, whether it is the main script to execute everything
 # without importing
-standard_start_string = "\n\n\ndef main():\n"
+standard_start_string = """
+def wait_for_dash_ready_plan(web_ports, check_interval=0.1, timeout=30):
+    start_time = time.time()
+    while True:
+        all_ready = True
+        for web_port in web_ports:
+            try:
+                response = requests.get(f"http://127.0.0.1:{web_port}/status")
+                if response.status_code != 200:
+                    all_ready = False
+                    break
+            except requests.ConnectionError:
+                all_ready = False
+                break
+        if all_ready:
+            # All ports are ready; optionally return the list of ports or simply exit.
+            return web_ports
+        if time.time() - start_time > timeout:
+            raise TimeoutError("Not all Dash servers started in time")
+        yield from bps.sleep(check_interval)
+"""
+standard_start_string += "\n\n\ndef main():\n"
 standard_start_string += "\tRE = RunEngineOverwrite()\n"
 standard_start_string += "\tbec = BestEffortCallback()\n"
 standard_start_string += "\tRE.subscribe(bec)\n"
@@ -98,7 +120,7 @@ standard_start_string2 = "\t\tplot_etc = create_plots(RE)\n"
 standard_start_string2 += "\t\tadditional_step_data = steps_add_main(RE, devs)\n"
 standard_start_string2 += "\t\tcreate_live_windows()\n"
 standard_start_string2 += (
-    "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md)\n"
+    "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md, proxy=plot_etc[4], dispatcher=plot_etc[5], publisher_subscription=plot_etc[6])\n"
 )
 standard_start_string3 = '\n\n\nif __name__ == "__main__":\n'
 standard_start_string3 += "\tmain()\n"
@@ -109,25 +131,7 @@ standard_start_string3 += "\t\tsys.exit(app.exec())\n"
 # standard_start_string += '\treturn plot_dat, additional_step_data\n'
 standard_final_string = "\tfinally:\n"
 standard_final_string += '\t\twhile RE.state not in ["idle", "panicked"]:\n'
-standard_final_string += "\t\t\timport time\n"
 standard_final_string += "\t\t\ttime.sleep(0.5)\n"
-
-standard_nexus_dict = {
-    "/ENTRY[entry]/operator/address": "metadata_start/user/Address (affiliation)",
-    "/ENTRY[entry]/operator/affiliation": "metadata_start/user/Affiliation",
-    "/ENTRY[entry]/operator/email": "metadata_start/user/E-Mail",
-    "/ENTRY[entry]/operator/name": "metadata_start/user/Name",
-    "/ENTRY[entry]/operator/orcid": "metadata_start/user/ORCID",
-    "/ENTRY[entry]/operator/telephone_number": "metadata_start/user/Phone",
-    "/ENTRY[entry]/start_time": "metadata_start/time",
-    "/ENTRY[entry]/SAMPLE[sample]/data_identifier": "metadata_start/sample/Identifier",
-    "/ENTRY[entry]/SAMPLE[sample]/sample_name": "metadata_start/sample/Name",
-    "/ENTRY[entry]/SAMPLE[sample]/sample_history": "metadata_start/sample/Preparation-Info",
-    "/ENTRY[entry]/PROCESS[process]/program": "metadata_start/program",
-    "/ENTRY[entry]/PROCESS[process]/version": "metadata_start/version",
-    "/ENTRY[entry]/SAMPLE[sample]/measured_data": "data",
-}
-
 
 def build_from_path(
     path, save_path="test.nxs", catalog="CAMELS_CATALOG", userdata=None, sampledata=None
@@ -218,6 +222,7 @@ def build_protocol(
     variable_string += "all_fits = {}\n"
     variable_string += "plots = []\n"
     variable_string += "plots_plotly = []\n"
+    variable_string += "web_ports = []\n"
     variable_string += "boxes = {}\n"
     variable_string += "live_windows = []\n"
     variable_string += "app = None\n"
@@ -252,7 +257,7 @@ def build_protocol(
         variable_string += f"{var} = {val}\n"
         variable_string += f'namespace["{var}"] = {var}\n'
     variable_string += f'\n{protocol.name}_variable_signal = variable_reading.Variable_Signal(name="{protocol.name}_variable_signal", variables_dict=namespace)\n'
-    variable_string += 'eva = Evaluator(namespace=namespace)\n'
+    variable_string += "eva = Evaluator(namespace=namespace)\n"
     # this handles all the used devices
     for dev in protocol.get_used_devices():
         device = variables_handling.devices[dev]
@@ -386,6 +391,13 @@ def build_protocol(
     protocol_string += f"\ttry:\n"
     protocol_string += f"\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
     protocol_string += "\tfinally:\n"
+    protocol_string += """
+        if proxy:
+            proxy.stop()  
+        if dispatcher:
+            dispatcher.unsubscribe_all()
+        if publisher_subscription:
+            RE.unsubscribe(publisher_subscription)\n"""
     protocol_string += "\t\tRE.unsubscribe(subscription_uid)\n"
     protocol_string += "\t\tfor window in live_windows:\n"
     protocol_string += "\t\t\twindow.close()\n"
@@ -394,13 +406,6 @@ def build_protocol(
     save_string = "\t\tif uids:\n"
     save_string += "\t\t\truns = catalog[tuple(uids)]\n"
     save_string += f"\t\t\thelper_functions.export_function(runs, save_path, {not protocol.h5_during_run}, new_file_each=new_file_each_run, plot_data=plots, do_nexus_output=do_nexus_output)\n"
-    # save_string += (
-    #     "\t\t\tbroker_to_NX(runs, save_path, plots,"
-    #     "session_name=session_name,"
-    #     "export_to_csv=export_to_csv,"
-    #     "export_to_json=export_to_json,"
-    #     "new_file_each_run=new_file_each_run)\n\n"
-    # )
     if protocol.h5_during_run:
         save_string += "\t\tRE.unsubscribe(subscription_rr)\n"
 

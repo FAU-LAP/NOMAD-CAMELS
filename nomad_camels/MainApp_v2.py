@@ -1844,7 +1844,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_module.protocol_step_information[
                 "protocol_stepper_signal"
             ] = self.protocol_stepper_signal
-            plots, subs, _, _ = self.protocol_module.create_plots(self.run_engine)
+            plots, subs, app, plots_plotly, proxy, dispatcher, publisher_subscription  = self.protocol_module.create_plots(self.run_engine)
             for plot in plots:
                 self.add_to_plots(plot)
             device_list = protocol.get_used_devices()
@@ -1855,11 +1855,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
             if api_uuid is not None:
                 self.instantiate_devices_thread.successful.connect(
-                    lambda: self.run_protocol_part2(api_uuid)
+                    lambda: self.run_protocol_part2(api_uuid, proxy=proxy, dispatcher=dispatcher, publisher_subscription=publisher_subscription)
                 )
             else:
                 self.instantiate_devices_thread.successful.connect(
-                    self.run_protocol_part2
+                    lambda: self.run_protocol_part2(proxy=proxy, dispatcher=dispatcher, publisher_subscription=publisher_subscription)
                 )
             self.instantiate_devices_thread.exception_raised.connect(
                 self.propagate_exception
@@ -1886,7 +1886,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_finished()
         raise exception
 
-    def run_protocol_part2(self, api_uuid=None):
+    def run_protocol_part2(self, api_uuid=None, proxy=None, dispatcher=None, publisher_subscription=None):
         """
         Continue running the protocol after devices are instantiated.
 
@@ -1949,6 +1949,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "devices": dev_data,
                 "api_uuid": api_uuid,  # Include the uuid in the metadata
             },
+            proxy=proxy,
+            dispatcher=dispatcher,
+            publisher_subscription=publisher_subscription,
         )
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(False)
