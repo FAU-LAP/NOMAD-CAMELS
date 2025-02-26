@@ -101,7 +101,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff poetry
           poetry install --all-extras
-          pip install nomad-camels-driver-demo-instrument
+          poetry install nomad-camels-driver-demo-instrument
       - name: List packages
         run: pip list
       - name: Run protocol_test.py separately
@@ -124,7 +124,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff poetry
           poetry install --all-extras
-          pip install nomad-camels-driver-demo-instrument
+          poetry install nomad-camels-driver-demo-instrument
       - name: List packages
         run: pip list
       - name: Run protocol_test.py separately
@@ -148,7 +148,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff poetry
           poetry install --all-extras
-          pip install nomad-camels-driver-demo-instrument
+          poetry install nomad-camels-driver-demo-instrument
       - name: List packages
         run: pip list
       - name: Run protocol_test.py separately
