@@ -82,17 +82,7 @@ standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "to
 standard_run_string = "uids = []\n"
 standard_run_string += "def uid_collector(name, doc):\n"
 standard_run_string += '\tuids.append(doc["uid"])\n\n\n'
-standard_run_string += 'def run_protocol_main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None):\n'
-standard_run_string += """
-    publisher = Publisher('localhost:5577')
-    publisher_subscription = RE.subscribe(publisher)
-    proxy, dispatcher, start_proxy, start_dispatcher = setup_threads()
-    proxy_thread = Thread(target=start_proxy, daemon=True)
-    dispatcher_thread = Thread(target=start_dispatcher, args=(plots, plots_plotly,), daemon=True)#
-    proxy_thread.start()
-    dispatcher_thread.start()
-    time.sleep(0.5)
-"""
+standard_run_string += 'def run_protocol_main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None, proxy=None, dispatcher=None, publisher_subscription=None):\n'
 standard_run_string += "\tdevs = devices or {}\n"
 standard_run_string += "\tmd = md or {}\n"
 standard_run_string += "\tglobal darkmode, theme, protocol_step_information\n"
@@ -130,7 +120,7 @@ standard_start_string2 = "\t\tplot_etc = create_plots(RE)\n"
 standard_start_string2 += "\t\tadditional_step_data = steps_add_main(RE, devs)\n"
 standard_start_string2 += "\t\tcreate_live_windows()\n"
 standard_start_string2 += (
-    "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md)\n"
+    "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md, proxy=plot_etc[4], dispatcher=plot_etc[5], publisher_subscription=plot_etc[6])\n"
 )
 standard_start_string3 = '\n\n\nif __name__ == "__main__":\n'
 standard_start_string3 += "\tmain()\n"
@@ -268,39 +258,6 @@ def build_protocol(
         variable_string += f'namespace["{var}"] = {var}\n'
     variable_string += f'\n{protocol.name}_variable_signal = variable_reading.Variable_Signal(name="{protocol.name}_variable_signal", variables_dict=namespace)\n'
     variable_string += "eva = Evaluator(namespace=namespace)\n"
-    variable_string += """
-from bluesky.callbacks.zmq import Proxy, RemoteDispatcher, Publisher
-from threading import Thread
-from zmq.error import ZMQError
-import asyncio
-
-def setup_threads():
-    try:
-        proxy = Proxy(5577, 5578)
-        proxy_created = True
-    except ZMQError as e:
-        # If the proxy is already running, a ZMQError will be raised.
-        proxy = None  # We will use the already running proxy.
-        proxy_created = False
-    dispatcher = RemoteDispatcher("localhost:5578")
-
-    def start_proxy():
-        if proxy_created and proxy is not None:
-            proxy.start()
-    
-    def start_dispatcher(plots, plots_plotly):
-        for plot in plots:
-            dispatcher.subscribe(plot.livePlot)
-        for plotly_plot in plots_plotly:
-            dispatcher.subscribe(plotly_plot)
-        try:
-            dispatcher.start()
-        except asyncio.exceptions.CancelledError:
-            # This error is raised when the dispatcher is stopped. It can therefore be ignored
-            pass
-
-    return proxy, dispatcher, start_proxy, start_dispatcher
-"""
     # this handles all the used devices
     for dev in protocol.get_used_devices():
         device = variables_handling.devices[dev]
@@ -435,8 +392,12 @@ def setup_threads():
     protocol_string += f"\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
     protocol_string += "\tfinally:\n"
     protocol_string += """
-        dispatcher.unsubscribe_all()
-        RE.unsubscribe(publisher_subscription)\n"""
+        if proxy:
+            proxy.stop()  
+        if dispatcher:
+            dispatcher.unsubscribe_all()
+        if publisher_subscription:
+            RE.unsubscribe(publisher_subscription)\n"""
     protocol_string += "\t\tRE.unsubscribe(subscription_uid)\n"
     protocol_string += "\t\tfor window in live_windows:\n"
     protocol_string += "\t\t\twindow.close()\n"
