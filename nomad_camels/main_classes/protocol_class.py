@@ -8,6 +8,7 @@ from nomad_camels.gui.general_protocol_settings import Ui_Protocol_Settings
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.utility import variables_handling
+from nomad_camels.frontpanels.flyer_window import FlyerButton
 
 
 class Measurement_Protocol:
@@ -84,6 +85,8 @@ class Measurement_Protocol:
         self.allow_live_comments = (
             kwargs["allow_live_comments"] if "allow_live_comments" in kwargs else False
         )
+        self.flyer_data = kwargs.get("flyer_data", [])
+
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -544,9 +547,14 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         else:
             self.comboBox_h5.setCurrentIndex(1)
 
+        self.flyer_button = FlyerButton(
+            parent=self, flyer_data=self.protocol.flyer_data
+        )
+
         self.layout().addWidget(self.textEdit_desc_protocol, 5, 0, 1, 6)
 
         self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
+        self.layout().addWidget(self.flyer_button, 7, 0, 1, 6)
         self.layout().addWidget(self.checkBox_perform_at_end, 20, 0, 1, 6)
         self.layout().addWidget(self.ending_protocol_selection, 21, 0, 1, 6)
         # ! Ui_Protocol_Settings.ui file adds the Variables Table at position 8 and 9 !!!
@@ -642,6 +650,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.name = self.lineEdit_protocol_name.text()
         self.protocol.description = self.textEdit_desc_protocol.toPlainText()
         self.protocol.plots = self.plot_widge.plot_data
+        self.protocol.flyer_data = self.flyer_button.flyer_data
         self.protocol.export_csv = self.checkBox_csv_exp.isChecked()
         self.protocol.export_json = self.checkBox_json_exp.isChecked()
         self.protocol.skip_config = self.checkBox_no_config.isChecked()

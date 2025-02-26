@@ -46,7 +46,10 @@ import pathlib
 
 from nomad_camels.utility import variables_handling, load_save_functions
 
-from nomad_camels.bluesky_handling.builder_helper_functions import plot_creator
+from nomad_camels.bluesky_handling.builder_helper_functions import (
+    plot_creator,
+    flyer_creator,
+)
 from nomad_camels.utility import device_handling
 
 
@@ -58,6 +61,7 @@ standard_string += "import ophyd\n"
 standard_string += "import requests\n"
 standard_string += "from nomad_camels.bluesky_handling.run_engine_overwrite import RunEngineOverwrite\n"
 standard_string += "from bluesky.callbacks.best_effort import BestEffortCallback\n"
+standard_string += "from bluesky.preprocessors import fly_during_wrapper\n"
 standard_string += "import bluesky.plan_stubs as bps\n"
 standard_string += "import databroker\n"
 standard_string += "from PySide6.QtWidgets import QApplication, QMessageBox\n"
@@ -222,6 +226,7 @@ def build_protocol(
     variable_string += "all_fits = {}\n"
     variable_string += "plots = []\n"
     variable_string += "plots_plotly = []\n"
+    variable_string += "flyers = []\n"
     variable_string += "web_ports = []\n"
     variable_string += "boxes = {}\n"
     variable_string += "live_windows = []\n"
@@ -337,6 +342,9 @@ def build_protocol(
 
     # the plots are created
     plot_string, plotting = plot_creator(protocol.plots, multi_stream=True)
+    if protocol.flyer_data:
+        plot_string += "\n\n"
+        plot_string += flyer_creator(protocol.flyer_data)
 
     # everything is put together for the complete protocol-string
     protocol_string: str = "import sys\n"
@@ -389,7 +397,11 @@ def build_protocol(
     # adding uid to RunEngine, calling the plan
     protocol_string += '\tsubscription_uid = RE.subscribe(uid_collector, "start")\n'
     protocol_string += f"\ttry:\n"
-    protocol_string += f"\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
+    if protocol.flyer_data:
+        protocol_string += f"\t\tflyers = create_flyers(devs)\n"
+        protocol_string += f"\t\tRE(fly_during_wrapper({protocol.name}_plan(devs, md=md, runEngine=RE), flyers))\n"
+    else:
+        protocol_string += f"\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
     protocol_string += "\tfinally:\n"
     protocol_string += """
         if proxy:
