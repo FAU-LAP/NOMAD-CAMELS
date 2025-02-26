@@ -2,7 +2,7 @@
 
 This module provides classes for managing asynchronous data collection from multiple detectors using a threaded approach. The primary class is CAMELS_Flyer."""
 
-from PySide6.QtCore import QMutex, QMutexLocker, QThread, QTimer
+from PySide6.QtCore import QMutex, QMutexLocker, QThread, QTimer, Signal
 from collections import deque
 from ophyd import DeviceStatus
 import time
@@ -64,6 +64,8 @@ class CAMELS_Flyer:
             mutex=self.mutex,
         )
         self.flyer_thread.finished.connect(self._thread_finished)
+        self.flyer_thread.exception_signal.connect(self.propagate_exceptions)
+        self._raised_exceptions = []
 
     def _thread_finished(self):
         """
@@ -71,6 +73,12 @@ class CAMELS_Flyer:
         Marks the data collection as finished.
         """
         self._completion_status.set_finished()
+
+    def propagate_exceptions(self, ex):
+        """Raise an exception from the flyer thread in the main thread."""
+        if not ex.args in self._raised_exceptions:
+            self._raised_exceptions.append(ex.args)
+            raise ex
 
     def describe_collect(self):
         """
@@ -175,6 +183,8 @@ class Flyer_Thread(QThread):
         Flag indicating if a read operation is currently in progress.
     """
 
+    exception_signal = Signal(Exception)
+
     def __init__(
         self,
         parent=None,
@@ -220,37 +230,41 @@ class Flyer_Thread(QThread):
         and then constructs an event dictionary with the collected data.
         The event is appended to the shared data object in a thread-safe manner.
         """
-        self._currently_reading = True
-        stats = []
-        # Trigger all detectors and collect their statuses
-        for det in self.detectors:
-            stats.append(det.trigger())
-        # Wait for all detectors to complete triggering
-        for stat in stats:
-            stat.wait()
-        # Create an event with the current time and empty data containers
-        event = {"time": time.time(), "data": {}, "timestamps": {}}
-        for i, det in enumerate(self.detectors):
-            if self.can_fail[i]:
-                try:
+        try:
+            self._currently_reading = True
+            stats = []
+            # Trigger all detectors and collect their statuses
+            for det in self.detectors:
+                stats.append(det.trigger())
+            # Wait for all detectors to complete triggering
+            for stat in stats:
+                stat.wait()
+            # Create an event with the current time and empty data containers
+            event = {"time": time.time(), "data": {}, "timestamps": {}}
+            for i, det in enumerate(self.detectors):
+                if self.can_fail[i]:
+                    try:
+                        det.trigger()
+                        d = det.read()
+                    except Exception as e:
+                        # If the detector fails, use a NaN value for the detector reading
+                        d = {
+                            det.name: {
+                                "value": get_nan_value(det.value),
+                                "timestamp": time.time(),
+                            }
+                        }
+                else:
                     det.trigger()
                     d = det.read()
-                except Exception as e:
-                    # If the detector fails, use a NaN value for the detector reading
-                    d = {
-                        det.name: {
-                            "value": get_nan_value(det.value),
-                            "timestamp": time.time(),
-                        }
-                    }
-            else:
-                det.trigger()
-                d = det.read()
-            # Populate the event with detector data and corresponding timestamps
-            for k, v in d.items():
-                event["data"][k] = v["value"]
-                event["timestamps"][k] = event["time"]
-        # Safely append the event to the shared data object
-        with QMutexLocker(self.mutex):
-            self.data_object.append(event)
-        self._currently_reading = False
+                # Populate the event with detector data and corresponding timestamps
+                for k, v in d.items():
+                    event["data"][k] = v["value"]
+                    event["timestamps"][k] = event["time"]
+            # Safely append the event to the shared data object
+            with QMutexLocker(self.mutex):
+                self.data_object.append(event)
+        except Exception as ex:
+            self.exception_signal.emit(ex)
+        finally:
+            self._currently_reading = False
