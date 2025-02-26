@@ -12,11 +12,56 @@ from nomad_camels.bluesky_handling import make_catalog
 from nomad_camels.frontpanels import instrument_installer
 from nomad_camels.utility import variables_handling
 from nomad_camels.utility.treeView_functions import getItemIndex
+from threading import Thread
+import asyncio
+from zmq.error import ZMQError
+from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
+from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
 
 
-@pytest.fixture(autouse=True)
-def reset_protocols():
-    variables_handling.protocols.clear()
+@pytest.fixture(scope="session", autouse=True)
+def zmq_setup():
+    """
+    Sets up a single ZMQ proxy, dispatcher, and publisher for all tests.
+    Yields a tuple (publisher, dispatcher) for use in tests.
+    Stops the proxy at the end of the session.
+    """
+    try:
+        proxy = Proxy(5577, 5578)
+        proxy_created = True
+    except ZMQError:
+        proxy = None  # Use already running proxy.
+        proxy_created = False
+
+    def start_proxy():
+        if proxy_created and proxy is not None:
+            proxy.start()
+
+    # Setup dispatcher and its thread.
+    dispatcher = RemoteDispatcher("localhost:5578")
+
+    def start_dispatcher():
+        try:
+            dispatcher.start()
+        except asyncio.exceptions.CancelledError:
+            pass  # Ignore cancellation errors on shutdown.
+
+    # Setup publisher.
+    publisher = Publisher("localhost:5577")
+
+    # Start proxy and dispatcher in daemon threads.
+    proxy_thread = Thread(target=start_proxy, daemon=True)
+    dispatcher_thread = Thread(target=start_dispatcher, daemon=True)
+    proxy_thread.start()
+    dispatcher_thread.start()
+
+    # Yield the shared objects for tests.
+    yield publisher, dispatcher
+
+    # Teardown: stop the proxy once all tests have finished.
+    if proxy_created and proxy is not None:
+        proxy.stop()
+
 
 @pytest.fixture(autouse=True)
 def mock_message_box(monkeypatch):
@@ -29,7 +74,7 @@ def mock_message_box(monkeypatch):
     monkeypatch.setattr(QMessageBox, "question", mock_question)
 
 
-def test_change_dev_config(qtbot, tmp_path):
+def test_change_dev_config(qtbot, tmp_path, zmq_setup):
     """Opens the config for "change device config" tries to configure it for the
     demo instrument and tries to run a protocol with this step."""
     ensure_demo_in_devices()
@@ -49,10 +94,11 @@ def test_change_dev_config(qtbot, tmp_path):
     assert "Change Device Config (Change_Device_Config)" in prot.loop_step_dict
     assert prot.loop_steps[0].device == "demo_instrument"
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_for_loop(qtbot, tmp_path):
+def test_for_loop(qtbot, tmp_path, zmq_setup):
     """Opens the config for a "For Loop" tries to configure it looping over a
     wait-step and tries to run a protocol with this step."""
     # ensure_demo_in_devices()
@@ -87,10 +133,11 @@ def test_for_loop(qtbot, tmp_path):
     assert prot.loop_steps[0].has_children
     assert prot.loop_steps[0].children[0].full_name == "Wait (Wait)"
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_gradient_descent(qtbot, tmp_path):
+def test_gradient_descent(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Gradient Descent" tries to configure it for the
     demo instrument and tries to run a protocol with this step."""
     ensure_demo_in_devices()
@@ -123,10 +170,11 @@ def test_gradient_descent(qtbot, tmp_path):
     prot.name = "test_gradient_descent_protocol"
     assert "Gradient Descent (Gradient_Descent)" in prot.loop_step_dict
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_if_and_set_variables(qtbot, tmp_path):
+def test_if_and_set_variables(qtbot, tmp_path, zmq_setup):
     """Opens the config for "If" tries to configure to run the correct way if
     the variables have the correct value, which is done by a "Set Variables" step."""
     from nomad_camels.loop_steps import set_variables
@@ -167,7 +215,8 @@ def test_if_and_set_variables(qtbot, tmp_path):
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
 def test_nd_sweep():
@@ -175,7 +224,7 @@ def test_nd_sweep():
     pass
 
 
-def test_read_channels(qtbot, tmp_path):
+def test_read_channels(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Read Channels" tries to configure it for the
     demo instrument and tries to run a protocol with this step."""
     ensure_demo_in_devices()
@@ -197,7 +246,8 @@ def test_read_channels(qtbot, tmp_path):
     assert "Read Channels (Read_Channels)" in prot.loop_step_dict
     assert prot.loop_steps[0].channel_list == ["demo_instrument_detectorX"]
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
 def test_run_subprotocol():
@@ -205,7 +255,7 @@ def test_run_subprotocol():
     pass
 
 
-def test_set_channels(qtbot, tmp_path):
+def test_set_channels(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Set Channels" tries to configure it for the
     demo instrument and tries to run a protocol with this step."""
     ensure_demo_in_devices()
@@ -231,10 +281,11 @@ def test_set_channels(qtbot, tmp_path):
         "Values": ["1"],
     }
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
+def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Simple Sweep" tries to configure it for the
     demo instrument. Further it adds a plot and a fit to the sweep and tries to
     run a protocol with this step."""
@@ -275,10 +326,11 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
     prot.name = "test_simple_sweep_protocol"
     assert "Simple Sweep (Simple_Sweep)" in prot.loop_step_dict
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_trigger_and_read_channels(qtbot, tmp_path):
+def test_trigger_and_read_channels(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Read Channels" tries to configure it with a split
     triggering of the channels, then configures the trigger-step and tries to
     run a protocol with these steps."""
@@ -319,10 +371,11 @@ def test_trigger_and_read_channels(qtbot, tmp_path):
     assert prot.loop_steps[0].read_step == "Read Channels (Read_Channels)"
 
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_while_loop(qtbot, tmp_path):
+def test_while_loop(qtbot, tmp_path, zmq_setup):
     """Opens the config for a "While Loop" and tries to configure it with the
     condition being `While_Loop_Count < 5`. Into the loop, a wait-step is added.
     Tries to run a protocol with this step."""
@@ -355,10 +408,11 @@ def test_while_loop(qtbot, tmp_path):
     assert prot.loop_steps[0].has_children
     assert prot.loop_steps[0].children[0].full_name == "Wait (Wait)"
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_wait(qtbot, tmp_path):
+def test_wait(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Wait" tries to configure it to a wait time of
     1.0 second and tries to run a protocol with this step."""
     from nomad_camels.loop_steps import wait_loop_step
@@ -377,7 +431,8 @@ def test_wait(qtbot, tmp_path):
     assert "Wait (Wait)" in prot.loop_step_dict
     assert prot.loop_steps[0].wait_time == "1.0"
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
 def single_variable_if(qtbot, conf, wait_in=1, n_prompt=0, n_if=0, len_prot=0):
@@ -557,7 +612,7 @@ def catalog_maker(tmp_path):
         make_catalog.make_yml(tmp_path, "test_catalog")
 
 
-def run_test_protocol(tmp_path, protocol):
+def run_test_protocol(tmp_path, protocol, publisher, dispatcher):
     """
 
     Parameters
@@ -578,7 +633,7 @@ def run_test_protocol(tmp_path, protocol):
     protocol_builder.build_protocol(protocol, file, savepath, "test_catalog")
     sys.path.append(str(tmp_path))
     py_package = importlib.import_module(protocol.name)
-    py_package.main()
+    py_package.main(dispatcher=dispatcher, publisher=publisher)
     assert os.path.isfile(savepath)
 
 
