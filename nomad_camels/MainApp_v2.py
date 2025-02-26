@@ -2088,7 +2088,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             sys.modules[spec.name] = module
             spec.loader.exec_module(module)
             if not watchdog.plots:
-                plots, subs, _ = module.create_plots(
+                plots, subs, app, plots_plotly, proxy, dispatcher, publisher_subscription = module.create_plots(
                     self.run_engine, stream="watchdog_triggered"
                 )
                 watchdog.plots = plots
