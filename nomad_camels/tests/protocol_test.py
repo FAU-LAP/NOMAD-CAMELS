@@ -81,6 +81,7 @@ def test_change_dev_config(qtbot, tmp_path, zmq_setup):
     from nomad_camels.loop_steps import change_device_config
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_change_dev_config_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Change Device Config")
     action.trigger()
@@ -105,6 +106,7 @@ def test_for_loop(qtbot, tmp_path, zmq_setup):
     from nomad_camels.loop_steps import for_while_loops
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_for_loop_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "For Loop")
     action.trigger()
@@ -144,6 +146,7 @@ def test_gradient_descent(qtbot, tmp_path, zmq_setup):
     from nomad_camels.loop_steps import gradient_descent
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_gradient_descent_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Gradient Descent")
     action.trigger()
@@ -180,6 +183,7 @@ def test_if_and_set_variables(qtbot, tmp_path, zmq_setup):
     from nomad_camels.loop_steps import set_variables
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_if_and_set_variables_protocol")
     prot = conf.protocol
     qtbot.addWidget(conf)
     qtbot.mouseClick(
@@ -231,6 +235,7 @@ def test_read_channels(qtbot, tmp_path, zmq_setup):
     from nomad_camels.loop_steps import read_channels
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_read_channels_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Read Channels")
     action.trigger()
@@ -262,6 +267,7 @@ def test_set_channels(qtbot, tmp_path, zmq_setup):
     from nomad_camels.loop_steps import set_channels
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_set_channels_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Set Channels")
     action.trigger()
@@ -294,6 +300,7 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path, zmq_setup):
     from nomad_camels.frontpanels import plot_definer
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_simple_sweep_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Simple Sweep")
     action.trigger()
@@ -338,6 +345,7 @@ def test_trigger_and_read_channels(qtbot, tmp_path, zmq_setup):
     from nomad_camels.loop_steps import read_channels
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_trigger_protocol")
     qtbot.addWidget(conf)
     prot = conf.protocol
     variables_handling.current_protocol = prot
@@ -382,6 +390,7 @@ def test_while_loop(qtbot, tmp_path, zmq_setup):
     from nomad_camels.loop_steps import for_while_loops
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_while_loop_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "While Loop")
     action.trigger()
@@ -418,6 +427,7 @@ def test_wait(qtbot, tmp_path, zmq_setup):
     from nomad_camels.loop_steps import wait_loop_step
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_wait_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Wait")
     action.trigger()

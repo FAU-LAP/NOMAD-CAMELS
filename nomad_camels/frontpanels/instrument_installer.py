@@ -57,8 +57,6 @@ def getInstalledDevices(force=False, return_packages=False):
     installed_instr.clear()
     for x in importlib_metadata.distributions():
         name = x.metadata["Name"]
-        print("Module name:\n")
-        print(name)
         version = x.version
         camels_driver_regex = r"^(nomad[-_]{1}camels[-_]{1}driver[-_]{1})(.*)$"
         if re.match(camels_driver_regex, name):
