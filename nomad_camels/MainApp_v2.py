@@ -735,6 +735,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Args:
             a0 (QCloseEvent): The close event.
         """
+        self.proxy.stop()
         for window in list(self.open_windows):
             window.close()
         if self.open_windows:
@@ -1987,7 +1988,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "devices": dev_data,
                 "api_uuid": api_uuid,  # Include the uuid in the metadata
             },
-            proxy=self.proxy,
             dispatcher=self.dispatcher,
             publisher=self.publisher,
         )
