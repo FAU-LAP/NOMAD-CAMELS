@@ -19,6 +19,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.7.3
+Features:
+- can now asynchronously read channels during a running protocol
+
 Fixes:
 - manual controls could not work with channels that need to call trigger, now fixed
 - made aborting a protocol more stable
