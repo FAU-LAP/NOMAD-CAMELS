@@ -3,17 +3,21 @@ from collections import deque
 from ophyd import DeviceStatus
 import time
 
+from nomad_camels.bluesky_handling.run_engine_overwrite import get_nan_value
+
 
 class CAMELS_Flyer:
-    def __init__(self, name, detectors, read_time, **kwargs):
+    def __init__(self, name, detectors, read_time, can_fail, **kwargs):
         self.name = name
         self.detectors = detectors
+        self.can_fail = can_fail
         self.read_time = read_time
         self.mutex = QMutex()
         self._data = deque()
         self._completion_status = None
         self.flyer_thread = Flyer_Thread(
             detectors=detectors,
+            can_fail=can_fail,
             read_time=read_time,
             flyer_name=name,
             data_object=self._data,
@@ -57,6 +61,7 @@ class Flyer_Thread(QThread):
         self,
         parent=None,
         detectors=None,
+        can_fail=None,
         read_time=0,
         flyer_name="camels_flyer",
         data_object=None,
@@ -64,6 +69,7 @@ class Flyer_Thread(QThread):
     ):
         super().__init__(parent)
         self.detectors = detectors or []
+        self.can_fail = can_fail or [False] * len(self.detectors)
         self.read_time = read_time
         self.flyer_name = flyer_name
         self.data_object = data_object
@@ -90,11 +96,24 @@ class Flyer_Thread(QThread):
         for stat in stats:
             stat.wait()
         event = {"time": time.time(), "data": {}, "timestamps": {}}
-        for det in self.detectors:
-            d = det.read()
+        for i, det in enumerate(self.detectors):
+            if self.can_fail[i]:
+                try:
+                    det.trigger()
+                    d = det.read()
+                except Exception as e:
+                    d = {
+                        det.name: {
+                            "value": get_nan_value(det.value),
+                            "timestamp": time.time(),
+                        }
+                    }
+            else:
+                det.trigger()
+                d = det.read()
             for k, v in d.items():
                 event["data"][k] = v["value"]
-                event["timestamps"][k] = v["timestamp"]
+                event["timestamps"][k] = event["time"]
         with QMutexLocker(self.mutex):
             self.data_object.append(event)
         self._currently_reading = False

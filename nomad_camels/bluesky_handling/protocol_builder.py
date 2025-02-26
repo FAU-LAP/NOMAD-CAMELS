@@ -392,7 +392,11 @@ def build_protocol(
     # adding uid to RunEngine, calling the plan
     protocol_string += '\tsubscription_uid = RE.subscribe(uid_collector, "start")\n'
     protocol_string += f"\ttry:\n"
-    protocol_string += f"\t\tRE(fly_during_wrapper({protocol.name}_plan(devs, md=md, runEngine=RE), flyers))\n"
+    if protocol.flyer_data:
+        protocol_string += f"\t\tflyers = create_flyers(devs)\n"
+        protocol_string += f"\t\tRE(fly_during_wrapper({protocol.name}_plan(devs, md=md, runEngine=RE), flyers))\n"
+    else:
+        protocol_string += f"\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
     protocol_string += "\tfinally:\n"
     protocol_string += "\t\tRE.unsubscribe(subscription_uid)\n"
     protocol_string += "\t\tfor window in live_windows:\n"

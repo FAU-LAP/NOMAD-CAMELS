@@ -85,19 +85,24 @@ def flyer_creator(flyer_data, func_name="create_flyers"):
         The string containing the function for the protocol-script.
 
     """
-    flyer_string = f"\ndef {func_name}(RE, devs):\n"
+    flyer_string = f"\ndef {func_name}(devs):\n"
     if not flyer_data:
-        flyer_string += "\treturn [], []\n\n"
+        flyer_string += "\treturn []\n\n"
         return flyer_string
     flyer_string += (
         "\tfrom nomad_camels.bluesky_handling.flyer_interface import CAMELS_Flyer\n"
     )
     for i, flyer in enumerate(flyer_data):
         detectors = []
-        for c in flyer["channels"]:
+        for c in flyer["channels"]["channel"]:
             detectors.append(get_channel_string(c))
-        flyer_string += f'\tflyer_{i} = CAMELS_Flyer(name="{flyer["name"]}", read_time={flyer["read_rate"]}, detectors={detectors})\n'
-    flyer_string += "\treturn subs\n\n"
+        flyer_string += f'\tflyer_{i} = CAMELS_Flyer(name="{flyer["name"]}", read_time={flyer["read_rate"]}, detectors=['
+        for j, det in enumerate(detectors):
+            flyer_string += f"{det}"
+        flyer_string += "], "
+        flyer_string += f"can_fail={flyer['channels']['ignore failed']})\n"
+        flyer_string += f"\tflyers.append(flyer_{i})\n"
+    flyer_string += "\treturn flyers\n\n"
     return flyer_string
 
 
