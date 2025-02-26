@@ -418,6 +418,13 @@ class Measurement_Protocol:
         for dev in devices:
             adds += variables_handling.devices[dev].get_necessary_devices()
         devices += adds
+        if self.flyer_data:
+            for channel in variables_handling.channels:
+                for flyer in self.flyer_data:
+                    if channel in flyer["channels"]["channel"]:
+                        device = variables_handling.channels[channel].device
+                        if device not in devices:
+                            devices.append(device)
         if self.use_end_protocol:
             from nomad_camels.utility import load_save_functions
 
