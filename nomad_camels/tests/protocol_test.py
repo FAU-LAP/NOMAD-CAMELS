@@ -17,7 +17,8 @@ import asyncio
 from zmq.error import ZMQError
 from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
 from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
-
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 @pytest.fixture(scope="session", autouse=True)
 def zmq_setup():
