@@ -86,7 +86,56 @@ standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "to
 standard_run_string = "uids = []\n"
 standard_run_string += "def uid_collector(name, doc):\n"
 standard_run_string += '\tuids.append(doc["uid"])\n\n\n'
-standard_run_string += 'def run_protocol_main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None, proxy=None, dispatcher=None, publisher_subscription=None):\n'
+standard_run_string += 'def run_protocol_main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None, proxy=None, dispatcher=None, publisher=None):\n'
+standard_run_string += """
+    if not (dispatcher and publisher):
+        from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
+        from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
+        from threading import Thread
+        from zmq.error import ZMQError
+        import asyncio
+        if sys.platform == "win32":
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        def setup_threads():
+            try:
+                proxy = Proxy(5577, 5578)
+                proxy_created = True
+            except ZMQError as e:
+                # If the proxy is already running, a ZMQError will be raised.
+                proxy = None  # We will use the already running proxy.
+                proxy_created = False
+            dispatcher = RemoteDispatcher("localhost:5578")
+
+            def start_proxy():
+                if proxy_created and proxy is not None:
+                    proxy.start()
+            
+            def start_dispatcher(plots, plots_plotly):
+                for plot in plots:
+                    dispatcher.subscribe(plot.livePlot)
+                for plotly_plot in plots_plotly:
+                    dispatcher.subscribe(plotly_plot)
+                try:
+                    dispatcher.start()
+                except asyncio.exceptions.CancelledError:
+                    # This error is raised when the dispatcher is stopped. It can therefore be ignored
+                    pass
+
+            return proxy, dispatcher, start_proxy, start_dispatcher
+        publisher = Publisher('localhost:5577')
+        publisher_subscription = RE.subscribe(publisher)
+        proxy, dispatcher, start_proxy, start_dispatcher = setup_threads()
+        proxy_thread = Thread(target=start_proxy, daemon=True)
+        dispatcher_thread = Thread(target=start_dispatcher, args=(plots, plots_plotly,), daemon=True)#
+        proxy_thread.start()
+        dispatcher_thread.start()
+        time.sleep(0.5)
+    else:
+        for plot in plots:
+            dispatcher.subscribe(plot.livePlot)
+        for plotly_plot in plots_plotly:
+            dispatcher.subscribe(plotly_plot)
+"""
 standard_run_string += "\tdevs = devices or {}\n"
 standard_run_string += "\tmd = md or {}\n"
 standard_run_string += "\tglobal darkmode, theme, protocol_step_information\n"
@@ -124,7 +173,7 @@ standard_start_string2 = "\t\tplot_etc = create_plots(RE)\n"
 standard_start_string2 += "\t\tadditional_step_data = steps_add_main(RE, devs)\n"
 standard_start_string2 += "\t\tcreate_live_windows()\n"
 standard_start_string2 += (
-    "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md, proxy=plot_etc[4], dispatcher=plot_etc[5], publisher_subscription=plot_etc[6])\n"
+    "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md)\n"
 )
 standard_start_string3 = '\n\n\nif __name__ == "__main__":\n'
 standard_start_string3 += "\tmain()\n"
@@ -396,6 +445,7 @@ def build_protocol(
 
     # adding uid to RunEngine, calling the plan
     protocol_string += '\tsubscription_uid = RE.subscribe(uid_collector, "start")\n'
+    protocol_string += '\tpublisher_subscription = RE.subscribe(publisher)\n'
     protocol_string += f"\ttry:\n"
     if protocol.flyer_data:
         protocol_string += f"\t\tflyers = create_flyers(devs)\n"
@@ -403,9 +453,7 @@ def build_protocol(
     else:
         protocol_string += f"\t\tRE({protocol.name}_plan(devs, md=md, runEngine=RE))\n"
     protocol_string += "\tfinally:\n"
-    protocol_string += """
-        if proxy:
-            proxy.stop()  
+    protocol_string += """  
         if dispatcher:
             dispatcher.unsubscribe_all()
         if publisher_subscription:

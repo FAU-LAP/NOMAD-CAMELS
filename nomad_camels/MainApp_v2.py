@@ -290,6 +290,44 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.preferences["last_shown_notes"] = version
             load_save_functions.save_preferences(self.preferences)
 
+
+        # Setup a single ZMQ proxy, dispatcher and publisher for all plots
+        from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
+        from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
+        from threading import Thread
+        from zmq.error import ZMQError
+        import asyncio
+        # if sys.platform == "win32":
+        #     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        def setup_threads():
+            try:
+                proxy = Proxy(5577, 5578)
+                proxy_created = True
+            except ZMQError as e:
+                # If the proxy is already running, a ZMQError will be raised.
+                proxy = None  # We will use the already running proxy.
+                proxy_created = False
+
+            def start_proxy():
+                if proxy_created and proxy is not None:
+                    proxy.start()
+            
+            dispatcher = RemoteDispatcher("localhost:5578")
+            def start_dispatcher():
+                try:
+                    dispatcher.start()
+                except asyncio.exceptions.CancelledError:
+                    # This error is raised when the dispatcher is stopped. It can therefore be ignored
+                    pass
+
+            return proxy, dispatcher, start_proxy, start_dispatcher
+        self.publisher = Publisher('localhost:5577')
+        self.proxy, self.dispatcher, start_proxy, start_dispatcher = setup_threads()
+        proxy_thread = Thread(target=start_proxy, daemon=True)
+        dispatcher_thread = Thread(target=start_dispatcher, daemon=True)
+        proxy_thread.start()
+        dispatcher_thread.start()
+
     def add_tag(self):
         """
         Add a tag from the line edit to the flow layout.
@@ -1844,7 +1882,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_module.protocol_step_information[
                 "protocol_stepper_signal"
             ] = self.protocol_stepper_signal
-            plots, subs, app, plots_plotly, proxy, dispatcher, publisher_subscription  = self.protocol_module.create_plots(self.run_engine)
+            plots, subs, app, plots_plotly  = self.protocol_module.create_plots(self.run_engine)
             for plot in plots:
                 self.add_to_plots(plot)
             device_list = protocol.get_used_devices()
@@ -1855,11 +1893,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
             if api_uuid is not None:
                 self.instantiate_devices_thread.successful.connect(
-                    lambda: self.run_protocol_part2(api_uuid, proxy=proxy, dispatcher=dispatcher, publisher_subscription=publisher_subscription)
+                    lambda: self.run_protocol_part2(api_uuid,)
                 )
             else:
                 self.instantiate_devices_thread.successful.connect(
-                    lambda: self.run_protocol_part2(proxy=proxy, dispatcher=dispatcher, publisher_subscription=publisher_subscription)
+                    lambda: self.run_protocol_part2()
                 )
             self.instantiate_devices_thread.exception_raised.connect(
                 self.propagate_exception
@@ -1886,7 +1924,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocol_finished()
         raise exception
 
-    def run_protocol_part2(self, api_uuid=None, proxy=None, dispatcher=None, publisher_subscription=None):
+    def run_protocol_part2(self, api_uuid=None):
         """
         Continue running the protocol after devices are instantiated.
 
@@ -1949,9 +1987,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "devices": dev_data,
                 "api_uuid": api_uuid,  # Include the uuid in the metadata
             },
-            proxy=proxy,
-            dispatcher=dispatcher,
-            publisher_subscription=publisher_subscription,
+            proxy=self.proxy,
+            dispatcher=self.dispatcher,
+            publisher=self.publisher,
         )
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(False)
@@ -2088,7 +2126,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             sys.modules[spec.name] = module
             spec.loader.exec_module(module)
             if not watchdog.plots:
-                plots, subs, app, plots_plotly, proxy, dispatcher, publisher_subscription = module.create_plots(
+                plots, subs, app, plots_plotly = module.create_plots(
                     self.run_engine, stream="watchdog_triggered"
                 )
                 watchdog.plots = plots
