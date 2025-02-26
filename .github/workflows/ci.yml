@@ -31,8 +31,9 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
-      - name: Run tests with pytest
-        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+      - name: Run tests with pytest (excluding protocol_test.py)
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels --ignore=nomad_camels/tests/protocol_test.py
+
   ubuntu_test:
     runs-on: ubuntu-latest
     env:
@@ -52,14 +53,14 @@ jobs:
           poetry install --all-extras
           export QT_DEBUG_PLUGINS=1
       - name: List packages
-        run: |
-          pip list
+        run: pip list
       - name: Lint with ruff
         run: |
           # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
-      - name: Run tests with pytest
-        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+      - name: Run tests with pytest (excluding protocol_test.py)
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels --ignore=nomad_camels/tests/protocol_test.py
+
   macos_test:
     runs-on: macos-latest
     steps:
@@ -84,28 +85,25 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
-      - name: Run tests with pytest
-        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
-#  changelog:
-#    needs: [ubuntu_test, macos_test, windows_test]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v4
-#      - name: Install Python 3
-#        uses: actions/setup-python@v4
-#        with:
-#          python-version: 3.11
-#      - name: Install dependency
-#        run: pip install git-changelog
-#      - name: add to log and commit
-#        run: |
-#          previous_content="$(cat changelog.md 2>/dev/null)"
-#          git-changelog -Tio changelog.md -s add,fix,change,remove,merge,doc
-#          updated_content="$(cat changelog.md 2>/dev/null)"
-#          if [ "$updated_content" != "$previous_content" ]; then
-#            git config user.name "NOMAD CAMELS Team"
-#            git config user.email "lap-nomad-camels@fau.de"
-#            git add changelog.md
-#            git commit -m "Update changelog"
-#            git push
-#          fi
+      - name: Run tests with pytest (excluding protocol_test.py)
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels --ignore=nomad_camels/tests/protocol_test.py
+
+  protocol_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+      - uses: tlambert03/setup-qt-libs@v1
+      - name: Install dependencies
+        run: |
+          sudo apt install libgl1 libglx-mesa0 libegl1 libopengl0 libpulse0
+          python -m pip install --upgrade pip
+          pip install ruff poetry
+          poetry install --all-extras
+      - name: List packages
+        run: pip list
+      - name: Run protocol_test.py separately
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels nomad_camels/tests/protocol_test.py
