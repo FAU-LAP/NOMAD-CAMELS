@@ -88,15 +88,16 @@ standard_run_string += "def uid_collector(name, doc):\n"
 standard_run_string += '\tuids.append(doc["uid"])\n\n\n'
 standard_run_string += """
 def subscribe_plots_from_dict(plot_dict, dispatcher):
-    for k, v in plot_dict.items():
-        if k == "plots":
-            for plot in v:
-                dispatcher.subscribe(plot.livePlot)
-        elif k == "plots_plotly":
-            for plotly_plot in v:
-                dispatcher.subscribe(plotly_plot)
-        elif isinstance(v, dict):
-            subscribe_plots_from_dict(v, dispatcher)
+    if plot_dict and dispatcher:
+        for k, v in plot_dict.items():
+            if k == "plots":
+                for plot in v:
+                    dispatcher.subscribe(plot.livePlot)
+            elif k == "plots_plotly":
+                for plotly_plot in v:
+                    dispatcher.subscribe(plotly_plot)
+            elif isinstance(v, dict):
+                subscribe_plots_from_dict(v, dispatcher)
 """
 standard_run_string += 'def run_protocol_main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None, dispatcher=None, publisher=None, additionals=None):\n'
 standard_run_string += """
@@ -187,9 +188,7 @@ standard_start_string += """
 standard_start_string2 = "\t\tplot_etc = create_plots(RE)\n"
 standard_start_string2 += "\t\tadditional_step_data = steps_add_main(RE, devs)\n"
 standard_start_string2 += "\t\tcreate_live_windows()\n"
-standard_start_string2 += (
-    "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md, dispatcher=dispatcher, publisher=publisher)\n"
-)
+standard_start_string2 += "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md, dispatcher=dispatcher, publisher=publisher)\n"
 standard_start_string3 = '\n\n\nif __name__ == "__main__":\n'
 standard_start_string3 += "\tmain()\n"
 # standard_start_string3 += '\tapp = QCoreApplication.instance()\n'
@@ -200,6 +199,7 @@ standard_start_string3 += "\t\tsys.exit(app.exec())\n"
 standard_final_string = "\tfinally:\n"
 standard_final_string += '\t\twhile RE.state not in ["idle", "panicked"]:\n'
 standard_final_string += "\t\t\ttime.sleep(0.5)\n"
+
 
 def build_from_path(
     path, save_path="test.nxs", catalog="CAMELS_CATALOG", userdata=None, sampledata=None
@@ -460,7 +460,7 @@ def build_protocol(
 
     # adding uid to RunEngine, calling the plan
     protocol_string += '\tsubscription_uid = RE.subscribe(uid_collector, "start")\n'
-    protocol_string += '\tpublisher_subscription = RE.subscribe(publisher)\n'
+    protocol_string += "\tpublisher_subscription = RE.subscribe(publisher)\n"
     protocol_string += f"\ttry:\n"
     if protocol.flyer_data:
         protocol_string += f"\t\tflyers = create_flyers(devs)\n"
