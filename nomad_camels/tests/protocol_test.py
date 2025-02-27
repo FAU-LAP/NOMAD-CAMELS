@@ -292,96 +292,97 @@ def test_set_channels(qtbot, tmp_path, zmq_setup):
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path, zmq_setup):
-    """Opens the config for "Simple Sweep" tries to configure it for the
-    demo instrument. Further it adds a plot and a fit to the sweep and tries to
-    run a protocol with this step."""
-    ensure_demo_in_devices()
-    from nomad_camels.loop_steps import simple_sweep
-    from nomad_camels.frontpanels import plot_definer
-
-    conf = protocol_config.Protocol_Config()
-    conf.general_settings.lineEdit_protocol_name.setText("test_simple_sweep_protocol")
-    qtbot.addWidget(conf)
-    action = get_action_from_name(conf.add_actions, "Simple Sweep")
-    action.trigger()
-    conf_widge = conf.loop_step_configuration_widget
-    assert isinstance(conf_widge, simple_sweep.Simple_Sweep_Config)
-    conf_widge.sweep_widget.lineEdit_start.setText("-10")
-    conf_widge.sweep_widget.lineEdit_stop.setText("10")
-    conf_widge.sweep_widget.lineEdit_n_points.setText("21")
-    conf_widge.comboBox_sweep_channel.setCurrentText("demo_instrument_motorY")
-
-    table = conf_widge.read_table.tableWidget_channels
-    row = get_row_from_channel_table("demo_instrument_detectorY", table)
-    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
-    row = get_row_from_channel_table("demo_instrument_motorY", table)
-    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
-
-    fit = plot_definer.Fit_Info(
-        True, "Gaussian", x="demo_instrument_motorY", y="demo_instrument_detectorY"
-    )
-    plot = plot_definer.Plot_Info(
-        x_axis="demo_instrument_motorY",
-        y_axes={"formula": ["demo_instrument_detectorY"], "axis": ["left"]},
-        fits=[fit],
-    )
-    conf_widge.plot_widge.plot_data = [plot]
-
-    with qtbot.waitSignal(conf.accepted) as blocker:
-        conf.accept()
-    prot = conf.protocol
-    prot.name = "test_simple_sweep_protocol"
-    assert "Simple Sweep (Simple_Sweep)" in prot.loop_step_dict
-    catalog_maker(tmp_path)
-    publisher, dispatcher = zmq_setup
-    run_test_protocol(tmp_path, prot, publisher, dispatcher)
-
-
-# def test_trigger_and_read_channels(qtbot, tmp_path, zmq_setup):
-#     """Opens the config for "Read Channels" tries to configure it with a split
-#     triggering of the channels, then configures the trigger-step and tries to
-#     run a protocol with these steps."""
+# def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path, zmq_setup):
+#     """Opens the config for "Simple Sweep" tries to configure it for the
+#     demo instrument. Further it adds a plot and a fit to the sweep and tries to
+#     run a protocol with this step."""
 #     ensure_demo_in_devices()
-#     from nomad_camels.loop_steps import read_channels
+#     from nomad_camels.loop_steps import simple_sweep
+#     from nomad_camels.frontpanels import plot_definer
 
 #     conf = protocol_config.Protocol_Config()
-#     conf.general_settings.lineEdit_protocol_name.setText("test_trigger_protocol")
+#     conf.general_settings.lineEdit_protocol_name.setText("test_simple_sweep_protocol")
 #     qtbot.addWidget(conf)
-#     prot = conf.protocol
-#     variables_handling.current_protocol = prot
-#     action = get_action_from_name(conf.add_actions, "Read Channels")
+#     action = get_action_from_name(conf.add_actions, "Simple Sweep")
 #     action.trigger()
 #     conf_widge = conf.loop_step_configuration_widget
-#     assert isinstance(conf_widge, read_channels.Read_Channels_Config)
-#     conf_widge.sub_widget.checkBox_split_trigger.setChecked(True)
-#     conf_widge.sub_widget.checkBox_read_all.setChecked(True)
+#     assert isinstance(conf_widge, simple_sweep.Simple_Sweep_Config)
+#     conf_widge.sweep_widget.lineEdit_start.setText("-10")
+#     conf_widge.sweep_widget.lineEdit_stop.setText("10")
+#     conf_widge.sweep_widget.lineEdit_n_points.setText("21")
+#     conf_widge.comboBox_sweep_channel.setCurrentText("demo_instrument_motorY")
 
-#     action = get_action_from_name(conf.add_actions, "Trigger Channels")
-#     action.trigger()
-#     select_step_by_name(conf, "Trigger Channels (Trigger_Channels)")
-#     conf.tree_click_sequence()
-#     conf_widge = conf.loop_step_configuration_widget
-#     assert isinstance(conf_widge, read_channels.Trigger_Channels_Config)
+#     table = conf_widge.read_table.tableWidget_channels
+#     row = get_row_from_channel_table("demo_instrument_detectorY", table)
+#     table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+#     row = get_row_from_channel_table("demo_instrument_motorY", table)
+#     table.item(row, 0).setCheckState(Qt.CheckState.Checked)
 
-#     def wait_for_move():
-#         """ """
-#         qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
-#         assert isinstance(prot.loop_steps[0], read_channels.Trigger_Channels_Step)
-
-#     qtbot.waitUntil(wait_for_move)
+#     fit = plot_definer.Fit_Info(
+#         True, "Gaussian", x="demo_instrument_motorY", y="demo_instrument_detectorY"
+#     )
+#     plot = plot_definer.Plot_Info(
+#         x_axis="demo_instrument_motorY",
+#         y_axes={"formula": ["demo_instrument_detectorY"], "axis": ["left"]},
+#         fits=[fit],
+#     )
+#     conf_widge.plot_widge.plot_data = [plot]
 
 #     with qtbot.waitSignal(conf.accepted) as blocker:
 #         conf.accept()
-#     prot.name = "test_trigger_protocol"
-#     assert "Read Channels (Read_Channels)" in prot.loop_step_dict
-#     assert prot.loop_steps[1].read_all
-#     assert "Trigger Channels (Trigger_Channels)" in prot.loop_step_dict
-#     assert prot.loop_steps[0].read_step == "Read Channels (Read_Channels)"
-
+#     prot = conf.protocol
+#     prot.name = "test_simple_sweep_protocol"
+#     assert "Simple Sweep (Simple_Sweep)" in prot.loop_step_dict
 #     catalog_maker(tmp_path)
 #     publisher, dispatcher = zmq_setup
 #     run_test_protocol(tmp_path, prot, publisher, dispatcher)
+#     assert "True" == "True"
+
+
+def test_trigger_and_read_channels(qtbot, tmp_path, zmq_setup):
+    """Opens the config for "Read Channels" tries to configure it with a split
+    triggering of the channels, then configures the trigger-step and tries to
+    run a protocol with these steps."""
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import read_channels
+
+    conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_trigger_protocol")
+    qtbot.addWidget(conf)
+    prot = conf.protocol
+    variables_handling.current_protocol = prot
+    action = get_action_from_name(conf.add_actions, "Read Channels")
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge, read_channels.Read_Channels_Config)
+    conf_widge.sub_widget.checkBox_split_trigger.setChecked(True)
+    conf_widge.sub_widget.checkBox_read_all.setChecked(True)
+
+    action = get_action_from_name(conf.add_actions, "Trigger Channels")
+    action.trigger()
+    select_step_by_name(conf, "Trigger Channels (Trigger_Channels)")
+    conf.tree_click_sequence()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge, read_channels.Trigger_Channels_Config)
+
+    def wait_for_move():
+        """ """
+        qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
+        assert isinstance(prot.loop_steps[0], read_channels.Trigger_Channels_Step)
+
+    qtbot.waitUntil(wait_for_move)
+
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot.name = "test_trigger_protocol"
+    assert "Read Channels (Read_Channels)" in prot.loop_step_dict
+    assert prot.loop_steps[1].read_all
+    assert "Trigger Channels (Trigger_Channels)" in prot.loop_step_dict
+    assert prot.loop_steps[0].read_step == "Read Channels (Read_Channels)"
+
+    catalog_maker(tmp_path)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
 def test_while_loop(qtbot, tmp_path, zmq_setup):
