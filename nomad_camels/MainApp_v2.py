@@ -59,7 +59,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     protocol_finished_signal = Signal()
     start_timer_signal = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, start_proxy_bool=True):
         """
         Initialize the MainWindow.
 
@@ -69,6 +69,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         Args:
             parent (Optional[QWidget]): Parent widget, defaults to None.
+            start_proxy_bool (bool): Flag to start proxy, defaults to True.
         """
         super().__init__(parent=parent)
         self.setupUi(self)
@@ -289,47 +290,47 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             update_camels.show_release_notes()
             self.preferences["last_shown_notes"] = version
             load_save_functions.save_preferences(self.preferences)
+        if start_proxy_bool:
+            # Setup a single ZMQ proxy, dispatcher and publisher for all plots
+            from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
+            from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
+            from threading import Thread
+            from zmq.error import ZMQError
+            import asyncio
 
-        # Setup a single ZMQ proxy, dispatcher and publisher for all plots
-        from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
-        from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
-        from threading import Thread
-        from zmq.error import ZMQError
-        import asyncio
+            if sys.platform == "win32":
+                asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-        if sys.platform == "win32":
-            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
-        def setup_threads():
-            try:
-                proxy = Proxy(5577, 5578)
-                proxy_created = True
-            except ZMQError as e:
-                # If the proxy is already running, a ZMQError will be raised.
-                proxy = None  # We will use the already running proxy.
-                proxy_created = False
-
-            def start_proxy():
-                if proxy_created and proxy is not None:
-                    proxy.start()
-
-            dispatcher = RemoteDispatcher("localhost:5578")
-
-            def start_dispatcher():
+            def setup_threads():
                 try:
-                    dispatcher.start()
-                except asyncio.exceptions.CancelledError:
-                    # This error is raised when the dispatcher is stopped. It can therefore be ignored
-                    pass
+                    proxy = Proxy(5577, 5578)
+                    proxy_created = True
+                except ZMQError as e:
+                    # If the proxy is already running, a ZMQError will be raised.
+                    proxy = None  # We will use the already running proxy.
+                    proxy_created = False
 
-            return proxy, dispatcher, start_proxy, start_dispatcher
+                def start_proxy():
+                    if proxy_created and proxy is not None:
+                        proxy.start()
 
-        self.publisher = Publisher("localhost:5577")
-        self.proxy, self.dispatcher, start_proxy, start_dispatcher = setup_threads()
-        proxy_thread = Thread(target=start_proxy, daemon=True)
-        dispatcher_thread = Thread(target=start_dispatcher, daemon=True)
-        proxy_thread.start()
-        dispatcher_thread.start()
+                dispatcher = RemoteDispatcher("localhost:5578")
+
+                def start_dispatcher():
+                    try:
+                        dispatcher.start()
+                    except asyncio.exceptions.CancelledError:
+                        # This error is raised when the dispatcher is stopped. It can therefore be ignored
+                        pass
+
+                return proxy, dispatcher, start_proxy, start_dispatcher
+
+            self.publisher = Publisher("localhost:5577")
+            self.proxy, self.dispatcher, start_proxy, start_dispatcher = setup_threads()
+            proxy_thread = Thread(target=start_proxy, daemon=True)
+            dispatcher_thread = Thread(target=start_dispatcher, daemon=True)
+            proxy_thread.start()
+            dispatcher_thread.start()
 
     def add_tag(self):
         """
@@ -1998,6 +1999,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             },
             dispatcher=self.dispatcher,
             publisher=self.publisher,
+            additionals=additionals,
         )
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(False)
