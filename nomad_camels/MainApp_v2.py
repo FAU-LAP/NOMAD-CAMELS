@@ -297,8 +297,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         from threading import Thread
         from zmq.error import ZMQError
         import asyncio
-        # if sys.platform == "win32":
-        #     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        if sys.platform == "win32":
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         def setup_threads():
             try:
                 proxy = Proxy(5577, 5578)
