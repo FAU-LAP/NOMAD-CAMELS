@@ -290,15 +290,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.preferences["last_shown_notes"] = version
             load_save_functions.save_preferences(self.preferences)
 
-
         # Setup a single ZMQ proxy, dispatcher and publisher for all plots
         from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
         from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
         from threading import Thread
         from zmq.error import ZMQError
         import asyncio
+
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
         def setup_threads():
             try:
                 proxy = Proxy(5577, 5578)
@@ -311,8 +312,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             def start_proxy():
                 if proxy_created and proxy is not None:
                     proxy.start()
-            
+
             dispatcher = RemoteDispatcher("localhost:5578")
+
             def start_dispatcher():
                 try:
                     dispatcher.start()
@@ -321,7 +323,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     pass
 
             return proxy, dispatcher, start_proxy, start_dispatcher
-        self.publisher = Publisher('localhost:5577')
+
+        self.publisher = Publisher("localhost:5577")
         self.proxy, self.dispatcher, start_proxy, start_dispatcher = setup_threads()
         proxy_thread = Thread(target=start_proxy, daemon=True)
         dispatcher_thread = Thread(target=start_dispatcher, daemon=True)
@@ -735,7 +738,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Args:
             a0 (QCloseEvent): The close event.
         """
-        self.proxy.stop()
+        if hasattr(self, "proxy") and self.proxy is not None:
+            self.proxy.stop()
         for window in list(self.open_windows):
             window.close()
         if self.open_windows:
@@ -1883,7 +1887,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_module.protocol_step_information[
                 "protocol_stepper_signal"
             ] = self.protocol_stepper_signal
-            plots, subs, app, plots_plotly  = self.protocol_module.create_plots(self.run_engine)
+            plots, subs, app, plots_plotly = self.protocol_module.create_plots(
+                self.run_engine
+            )
             for plot in plots:
                 self.add_to_plots(plot)
             device_list = protocol.get_used_devices()
@@ -1894,7 +1900,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
             if api_uuid is not None:
                 self.instantiate_devices_thread.successful.connect(
-                    lambda: self.run_protocol_part2(api_uuid,)
+                    lambda: self.run_protocol_part2(
+                        api_uuid,
+                    )
                 )
             else:
                 self.instantiate_devices_thread.successful.connect(
