@@ -31,8 +31,9 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
-      - name: Run tests with pytest (excluding protocol_test.py)
-        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+      - name: Run tests with pytest
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels 
+
 
   ubuntu_test:
     runs-on: ubuntu-latest
@@ -58,8 +59,12 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
-      - name: Run tests with pytest (excluding protocol_test.py)
-        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+      - name: Run tests with pytest
+        run: |
+          poetry run pytest -vv --timeout=100 \
+            --cov-config=./nomad_camels/tests/.coveragerc \
+            --cov-report term-missing:skip-covered \
+            --cov=nomad_camels 
 
   macos_test:
     runs-on: macos-latest
@@ -85,5 +90,9 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
-      - name: Run tests with pytest (excluding protocol_test.py)
-        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+      - name: Run tests with pytest
+        run: |
+          poetry run pytest -vv --timeout=100 \
+            --cov-config=./nomad_camels/tests/.coveragerc \
+            --cov-report term-missing:skip-covered \
+            --cov=nomad_camels 
