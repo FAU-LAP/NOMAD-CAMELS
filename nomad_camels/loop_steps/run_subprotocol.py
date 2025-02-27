@@ -89,8 +89,12 @@ class Run_Subprotocol(Loop_Step):
     def get_add_main_string(self):
         """If using its own plots, adds them to the steps. In any case, the
         added steps from the subprotocol are added here as well."""
+        if self.step_type == 'Run Subprotocol':
+            return protocol_builder.make_plots_string_of_protocol(
+                self.prot_path, self.own_plots, self.data_output, 1, self.name
+            )
         return protocol_builder.make_plots_string_of_protocol(
-            self.prot_path, self.own_plots, self.data_output, 1
+            self.prot_path, self.own_plots, self.data_output, 1, self.name
         )
         # prot_name = os.path.basename(self.prot_path)[:-6]
         # add_main_string = ""

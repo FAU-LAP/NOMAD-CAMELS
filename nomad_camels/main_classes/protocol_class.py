@@ -291,9 +291,7 @@ class Measurement_Protocol:
             if not step.is_active:
                 continue
             if step.step_type == "Run Subprotocol":
-                step_get_string = step.get_protocol_string(n_tabs=1)
-                if step_get_string.strip().splitlines()[-4:] == plan_string.strip().splitlines()[-4:]:
-                    step_get_string = step.get_protocol_string(n_tabs=1, name=step.name)
+                step_get_string = step.get_protocol_string(n_tabs=1, name=step.name)
                 plan_string += step_get_string
             else:
                 plan_string += step.get_protocol_string(n_tabs=1)

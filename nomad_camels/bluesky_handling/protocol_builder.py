@@ -614,7 +614,7 @@ def import_protocol_string(protocol_path, n_tabs=0):
 
 
 def make_plots_string_of_protocol(
-    protocol_path, use_own_plots=True, data_output="sub-stream", n_tabs=1
+    protocol_path, use_own_plots=True, data_output="sub-stream", n_tabs=1, name=None
 ):
     """Creates the string to add the plots of the protocol to the main protocol.
 
@@ -622,6 +622,8 @@ def make_plots_string_of_protocol(
     ----------
     protocol_path : str
         The path to the protocol that should be built.
+    name : str
+        The name of the subprotocol. Only passed if it is a subprotocol. 
     Returns
     -------
     plot_string : str
@@ -636,8 +638,13 @@ def make_plots_string_of_protocol(
         stream = f'"{prot_name}"'
         if data_output == "main stream":
             stream = '"primary"'
+        if name:
+            stream = f'"{name}"'
         plot_string += builder_helper_functions.get_plot_add_string(
             prot_name, stream, True, n_tabs
         )
-    plot_string += f'{tabs}returner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs)\n'
+    if name:
+        plot_string += f'{tabs}returner["{name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs)\n'
+    else:
+        plot_string += f'{tabs}returner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs)\n'
     return plot_string
