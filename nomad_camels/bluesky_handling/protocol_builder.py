@@ -117,7 +117,7 @@ standard_run_string += "\tdarkmode, theme = dark, used_theme\n"
 # and also the if branch, whether it is the main script to execute everything
 # without importing
 standard_start_string = """
-def wait_for_dash_ready_plan(web_ports, check_interval=0.1, timeout=30):
+def wait_for_dash_ready_plan(web_ports, check_interval=0.1, timeout=60):
     start_time = time.time()
     while True:
         all_ready = True
@@ -188,7 +188,7 @@ standard_start_string += """
 standard_start_string2 = "\t\tplot_etc = create_plots(RE)\n"
 standard_start_string2 += "\t\tadditional_step_data = steps_add_main(RE, devs)\n"
 standard_start_string2 += "\t\tcreate_live_windows()\n"
-standard_start_string2 += "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md, dispatcher=dispatcher, publisher=publisher)\n"
+standard_start_string2 += "\t\trun_protocol_main(RE=RE, catalog=catalog, devices=devs, md=md, dispatcher=dispatcher, publisher=publisher, additionals=additional_step_data)\n"
 standard_start_string3 = '\n\n\nif __name__ == "__main__":\n'
 standard_start_string3 += "\tmain()\n"
 # standard_start_string3 += '\tapp = QCoreApplication.instance()\n'
@@ -560,6 +560,7 @@ def sub_protocol_string(
     variables_in=None,
     variables_out=None,
     data_output="sub-stream",
+    new_stream=None,
 ):
     """Overwrites the signal for the progressbar and the number of steps in
     the subprotocol's module. Evaluates the input variables, then writes
@@ -588,6 +589,8 @@ def sub_protocol_string(
     stream = prot_name
     if data_output == "main stream":
         stream = "primary"
+    if new_stream:
+        stream = new_stream
     protocol_string += f'{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, "{stream}", runEngine)\n'
     for i, var in enumerate(variables_out["Variable"]):
         protocol_string += f'{tabs}namespace["{variables_out["Write to name"][i]}"] = {prot_name}_mod.namespace["{var}"]\n'
