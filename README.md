@@ -23,6 +23,7 @@ Features:
 - can now asynchronously read channels during a running protocol
 
 Fixes:
+- cannot drop a step in a simple sweep anymore
 - manual controls could not work with channels that need to call trigger, now fixed
 - made aborting a protocol more stable
 - generic set and read manual control now closes its thread more stabily
