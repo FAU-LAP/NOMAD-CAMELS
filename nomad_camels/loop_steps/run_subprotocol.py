@@ -52,6 +52,9 @@ class Run_Subprotocol(Loop_Step):
         them into the subprotocol's namespace and starts the subprotocol's
         _plan_inner function. Afterwards the output variables are written to the
         main namespace."""
+        protocol = load_save_functions.load_protocol(self.prot_path)
+        if protocol.description and protocol.description not in self.description:
+            self.description += f"\n\t{protocol.description}"
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += protocol_builder.sub_protocol_string(
             protocol_path=self.prot_path,
@@ -65,7 +68,7 @@ class Run_Subprotocol(Loop_Step):
     def get_protocol_short_string(self, n_tabs=0):
         """Specifies the name / path of the subprotocol."""
         short_string = super().get_protocol_short_string(n_tabs)
-        short_string = f"{short_string[:-1]} - {self.prot_path}"
+        short_string = f"{short_string[:-1]} - {self.prot_path} - {self.description}\n"
         return short_string
 
     def get_outer_string(self):
