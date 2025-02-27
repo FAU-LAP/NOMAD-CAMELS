@@ -21,7 +21,7 @@ class FlyerButton(QPushButton):
         self.flyer_data = flyer_data
         self.clicked.connect(self.open_flyer_window)
         self.setToolTip(
-            "Set channels that should be read asynchronously during the protocol with a defined frequency.\nWarning: If you use read the same channel in the protocol, it might cause a conflict."
+            "Set channels that should be read asynchronously during the protocol with a defined frequency.\nWarning: If you use read the same channel in the protocol, it might cause a conflict.\nWarning: If you run this as sub-protocol, the asynchronous acquisition will NOT be started."
         )
         self._update_icon()
 
