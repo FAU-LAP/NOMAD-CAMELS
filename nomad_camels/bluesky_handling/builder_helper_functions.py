@@ -53,16 +53,16 @@ def get_plot_add_string(name, stream, subprotocol=False, n_tabs=1):
     add_main_string += f'{tabs}\treturner["subs"] = []\n'
     add_main_string += f'{tabs}if "plots" not in returner:\n'
     add_main_string += f'{tabs}\treturner["plots"] = []\n'
+    add_main_string += f'{tabs}if "plots_plotly" not in returner:\n'
+    add_main_string += f'{tabs}\treturner["plots_plotly"] = []\n'
     if subprotocol:
-        add_main_string += (
-            f"{tabs}plots, subs, app, plots_plotly = {name}_mod.create_plots(RE, {stream})\n"
-        )
+        add_main_string += f"{tabs}plots, subs, app, plots_plotly = {name}_mod.create_plots(RE, {stream})\n"
     else:
-        add_main_string += (
-            f"{tabs}plots, subs, app, plots_plotly = create_plots_{name}(RE, {stream})\n"
-        )
+        add_main_string += f"{tabs}plots, subs, app, plots_plotly = create_plots_{name}(RE, {stream})\n"
     add_main_string += f'{tabs}returner["subs"] += subs\n'
     add_main_string += f'{tabs}returner["plots"] += plots\n'
+    add_main_string += f"{tabs}if plots_plotly:\n"
+    add_main_string += f'{tabs}\treturner["plots_plotly"] += plots_plotly\n'
     return add_main_string
 
 
@@ -185,7 +185,7 @@ def plot_creator(
             plot_string += f"\tplots.append(plot_{i})\n"
             plot_string += f"\tplot_{i}.show()\n"
             if plot.checkbox_show_in_browser:
-                plot_string += f'\tweb_ports.append({plot.browser_port})\n'
+                plot_string += f"\tweb_ports.append({plot.browser_port})\n"
                 plot_string += f"\tplot_info_dash_{i}=plot_info\n"
                 plot_string += (
                     f"\tplot_info_dash_{i}['web_port'] = {plot.browser_port}\n"
@@ -205,7 +205,7 @@ def plot_creator(
             plot_string += f"\tplots.append(plot_{i})\n"
             plot_string += f"\tplot_{i}.show()\n"
             if plot.checkbox_show_in_browser:
-                plot_string += f'\tweb_ports.append({plot.browser_port})\n'
+                plot_string += f"\tweb_ports.append({plot.browser_port})\n"
                 plot_string += f'\tplot_plotly_{i} = plot_plotly.PlotlyLiveCallback_2d(x_name="{plot.x_axis}", y_name="{plot.y_axes["formula"][0]}", z_name="{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", web_port={plot.browser_port}, evaluator=eva, title="{plot.title}", maxlen="{plot.maxlen}", stream_name=stream, namespace=namespace, top_left_x="{plot.top_left_x}", top_left_y="{plot.top_left_y}", plot_width="{plot.plot_width}", plot_height="{plot.plot_height}")\n'
                 plot_string += f"\tplots_plotly.append(plot_plotly_{i})\n"
         if plot_is_box:
