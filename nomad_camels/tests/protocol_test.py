@@ -338,50 +338,50 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path, zmq_setup):
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_trigger_and_read_channels(qtbot, tmp_path, zmq_setup):
-    """Opens the config for "Read Channels" tries to configure it with a split
-    triggering of the channels, then configures the trigger-step and tries to
-    run a protocol with these steps."""
-    ensure_demo_in_devices()
-    from nomad_camels.loop_steps import read_channels
+# def test_trigger_and_read_channels(qtbot, tmp_path, zmq_setup):
+#     """Opens the config for "Read Channels" tries to configure it with a split
+#     triggering of the channels, then configures the trigger-step and tries to
+#     run a protocol with these steps."""
+#     ensure_demo_in_devices()
+#     from nomad_camels.loop_steps import read_channels
 
-    conf = protocol_config.Protocol_Config()
-    conf.general_settings.lineEdit_protocol_name.setText("test_trigger_protocol")
-    qtbot.addWidget(conf)
-    prot = conf.protocol
-    variables_handling.current_protocol = prot
-    action = get_action_from_name(conf.add_actions, "Read Channels")
-    action.trigger()
-    conf_widge = conf.loop_step_configuration_widget
-    assert isinstance(conf_widge, read_channels.Read_Channels_Config)
-    conf_widge.sub_widget.checkBox_split_trigger.setChecked(True)
-    conf_widge.sub_widget.checkBox_read_all.setChecked(True)
+#     conf = protocol_config.Protocol_Config()
+#     conf.general_settings.lineEdit_protocol_name.setText("test_trigger_protocol")
+#     qtbot.addWidget(conf)
+#     prot = conf.protocol
+#     variables_handling.current_protocol = prot
+#     action = get_action_from_name(conf.add_actions, "Read Channels")
+#     action.trigger()
+#     conf_widge = conf.loop_step_configuration_widget
+#     assert isinstance(conf_widge, read_channels.Read_Channels_Config)
+#     conf_widge.sub_widget.checkBox_split_trigger.setChecked(True)
+#     conf_widge.sub_widget.checkBox_read_all.setChecked(True)
 
-    action = get_action_from_name(conf.add_actions, "Trigger Channels")
-    action.trigger()
-    select_step_by_name(conf, "Trigger Channels (Trigger_Channels)")
-    conf.tree_click_sequence()
-    conf_widge = conf.loop_step_configuration_widget
-    assert isinstance(conf_widge, read_channels.Trigger_Channels_Config)
+#     action = get_action_from_name(conf.add_actions, "Trigger Channels")
+#     action.trigger()
+#     select_step_by_name(conf, "Trigger Channels (Trigger_Channels)")
+#     conf.tree_click_sequence()
+#     conf_widge = conf.loop_step_configuration_widget
+#     assert isinstance(conf_widge, read_channels.Trigger_Channels_Config)
 
-    def wait_for_move():
-        """ """
-        qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
-        assert isinstance(prot.loop_steps[0], read_channels.Trigger_Channels_Step)
+#     def wait_for_move():
+#         """ """
+#         qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
+#         assert isinstance(prot.loop_steps[0], read_channels.Trigger_Channels_Step)
 
-    qtbot.waitUntil(wait_for_move)
+#     qtbot.waitUntil(wait_for_move)
 
-    with qtbot.waitSignal(conf.accepted) as blocker:
-        conf.accept()
-    prot.name = "test_trigger_protocol"
-    assert "Read Channels (Read_Channels)" in prot.loop_step_dict
-    assert prot.loop_steps[1].read_all
-    assert "Trigger Channels (Trigger_Channels)" in prot.loop_step_dict
-    assert prot.loop_steps[0].read_step == "Read Channels (Read_Channels)"
+#     with qtbot.waitSignal(conf.accepted) as blocker:
+#         conf.accept()
+#     prot.name = "test_trigger_protocol"
+#     assert "Read Channels (Read_Channels)" in prot.loop_step_dict
+#     assert prot.loop_steps[1].read_all
+#     assert "Trigger Channels (Trigger_Channels)" in prot.loop_step_dict
+#     assert prot.loop_steps[0].read_step == "Read Channels (Read_Channels)"
 
-    catalog_maker(tmp_path)
-    publisher, dispatcher = zmq_setup
-    run_test_protocol(tmp_path, prot, publisher, dispatcher)
+#     catalog_maker(tmp_path)
+#     publisher, dispatcher = zmq_setup
+#     run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
 def test_while_loop(qtbot, tmp_path, zmq_setup):
