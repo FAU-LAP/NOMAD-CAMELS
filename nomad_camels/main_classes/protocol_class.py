@@ -290,7 +290,14 @@ class Measurement_Protocol:
         for step in self.loop_steps:
             if not step.is_active:
                 continue
-            plan_string += step.get_protocol_string(n_tabs=1)
+            if step.step_type == "Run Subprotocol":
+                step_get_string = step.get_protocol_string(n_tabs=1)
+                if step_get_string.strip().splitlines()[-4:] == plan_string.strip().splitlines()[-4:]:
+                    step_get_string = step.get_protocol_string(n_tabs=1, name=step.name)
+                plan_string += step_get_string
+            else:
+                plan_string += step.get_protocol_string(n_tabs=1)
+            
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
         plan_string += "\tsub_eva = runEngine.subscribe(eva)\n"
         plan_string += "\tyield from bps.open_run(md=md)\n"
