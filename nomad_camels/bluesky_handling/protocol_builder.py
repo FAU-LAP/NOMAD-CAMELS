@@ -86,13 +86,26 @@ standard_string += 'protocol_step_information = {"protocol_step_counter": 0, "to
 standard_run_string = "uids = []\n"
 standard_run_string += "def uid_collector(name, doc):\n"
 standard_run_string += '\tuids.append(doc["uid"])\n\n\n'
-standard_run_string += 'def run_protocol_main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None, dispatcher=None, publisher=None):\n'
+standard_run_string += """
+def subscribe_plots_from_dict(plot_dict, dispatcher):
+    for k, v in plot_dict.items():
+        if k == "plots":
+            for plot in v:
+                dispatcher.subscribe(plot.livePlot)
+        elif k == "plots_plotly":
+            for plotly_plot in v:
+                dispatcher.subscribe(plotly_plot)
+        elif isinstance(v, dict):
+            subscribe_plots_from_dict(v, dispatcher)
+"""
+standard_run_string += 'def run_protocol_main(RE, dark=False, used_theme="default", catalog=None, devices=None, md=None, dispatcher=None, publisher=None, additionals=None):\n'
 standard_run_string += """
     if (dispatcher and publisher):
         for plot in plots:
             dispatcher.subscribe(plot.livePlot)
         for plotly_plot in plots_plotly:
             dispatcher.subscribe(plotly_plot)
+    subscribe_plots_from_dict(additionals, dispatcher)
 """
 standard_run_string += "\tdevs = devices or {}\n"
 standard_run_string += "\tmd = md or {}\n"
