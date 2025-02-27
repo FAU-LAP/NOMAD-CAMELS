@@ -132,7 +132,7 @@ class ImportThread(QThread):
         from nomad_camels import MainApp_v2
 
 
-def start_camels():
+def start_camels(start_proxy_bool=True):
     """
     Launch the NOMAD CAMELS application with a loading screen.
 
@@ -197,7 +197,7 @@ def start_camels():
     sys.excepthook = exception_hook.exception_hook
 
     # Create and display the main application window, hiding the loading screen
-    main_window = MainApp_v2.MainWindow()
+    main_window = MainApp_v2.MainWindow(start_proxy_bool=start_proxy_bool)
     loading_screen.hide()
     main_window.show()
 
