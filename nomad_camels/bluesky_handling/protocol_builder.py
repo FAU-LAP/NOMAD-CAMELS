@@ -586,6 +586,7 @@ def sub_protocol_string(
     protocol_string += (
         f"{tabs}sub_eva_{prot_name} = runEngine.subscribe({prot_name}_eva)\n"
     )
+    protocol_string += f"{tabs}{prot_name}_mod.eva = {prot_name}_eva\n"
     stream = prot_name
     if data_output == "main stream":
         stream = "primary"
@@ -623,7 +624,7 @@ def make_plots_string_of_protocol(
     protocol_path : str
         The path to the protocol that should be built.
     name : str
-        The name of the subprotocol. Only passed if it is a subprotocol. 
+        The name of the subprotocol. Only passed if it is a subprotocol.
     Returns
     -------
     plot_string : str
