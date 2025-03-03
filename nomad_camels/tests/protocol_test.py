@@ -338,6 +338,130 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path, zmq_setup):
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
     assert "True" == "True"
 
+def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
+    """Creates a For Loop from -1 to 1 that, on each iteration,
+    sets the variable 'set_var' to the loop value and waits for 0.001s.
+    The protocol is configured to plot 'set_var' versus the loop value
+    and perform a linear fit that is expected to be perfect (slope=1, intercept=0)."""
+    # Create the protocol config widget and set the protocol name.
+    conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_for_loop_set_var_protocol")
+    qtbot.addWidget(conf)
+    
+    # Add a global variable "set_var" (initial value is arbitrary here).
+    qtbot.mouseClick(conf.general_settings.pushButton_add_variable, Qt.MouseButton.LeftButton)
+    conf.general_settings.variable_table.model.item(0, 0).setText("set_var")
+    conf.general_settings.variable_table.model.item(0, 1).setText("0")
+    
+    # --- Add For Loop step ---
+    action = get_action_from_name(conf.add_actions, "For Loop")
+    action.trigger()
+    from nomad_camels.loop_steps import for_while_loops
+    conf_widge_loop = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge_loop, for_while_loops.For_Loop_Step_Config)
+    conf_widge_loop.sub_widget.lineEdit_start.setText("-1")
+    conf_widge_loop.sub_widget.lineEdit_stop.setText("1")
+    conf_widge_loop.sub_widget.lineEdit_n_points.setText("21")
+    
+    # --- Add child step: Set Variables ---
+    action = get_action_from_name(conf.add_actions, "Set Variables")
+    action.trigger()
+    from nomad_camels.loop_steps import set_variables
+    def wait_selection_sv():
+        select_step_by_name(conf, "Set Variables (Set_Variables)")
+        conf.tree_click_sequence()
+        assert isinstance(conf.loop_step_configuration_widget, set_variables.Set_Variables_Config)
+    qtbot.waitUntil(wait_selection_sv)
+    conf_widge_sv = conf.loop_step_configuration_widget
+    # Configure the Set Variables step to assign the current for loop value to "set_var".
+    # Here we assume that the expression "for_loop_value" is evaluated at runtime.
+    conf_widge_sv.variables_table.add(["set_var", "For_Loop_Value"])
+
+    # --- Read Channels ---
+    action = get_action_from_name(conf.add_actions, "Read Channels")
+    action.trigger()
+    from nomad_camels.loop_steps import read_channels
+    def wait_selection_rc():
+        select_step_by_name(conf, "Read Channels (Read_Channels)")
+        conf.tree_click_sequence()
+        assert isinstance(conf.loop_step_configuration_widget, read_channels.Read_Channels_Config)
+    qtbot.waitUntil(wait_selection_rc)
+
+    
+    # --- Add child step: Wait ---
+    action = get_action_from_name(conf.add_actions, "Wait")
+    action.trigger()
+
+    from nomad_camels.loop_steps import wait_loop_step
+
+    def wait_for_wait_widget():
+        select_step_by_name(conf, "Wait (Wait)")
+        conf.tree_click_sequence()
+        return isinstance(conf.loop_step_configuration_widget, wait_loop_step.Wait_Loop_Step_Config)
+
+    qtbot.waitUntil(wait_for_wait_widget)
+    conf_widge_wait = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge_wait, wait_loop_step.Wait_Loop_Step_Config)
+    conf_widge_wait.sub_widget.lineEdit_duration.setText("0.01")
+        
+    # --- Add a Plot definition with a linear fit ---
+    from nomad_camels.frontpanels import plot_definer
+    fit = plot_definer.Fit_Info(True, "Linear", x="For_Loop_Value", y="set_var")
+    plot = plot_definer.Plot_Info(
+         x_axis="For_Loop_Value",
+         y_axes={"formula": ["set_var"], "axis": ["left"]},
+         fits=[fit]
+    )
+    
+    # Accept the protocol configuration.
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.name = "test_for_loop_set_var_protocol"
+    prot.plots.append(plot)
+    def wait_for_move_in():
+        """ """
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        print( len(prot.loop_steps))
+    select_step_by_name(conf, "Set Variables (Set_Variables)")
+    qtbot.waitUntil(wait_for_move_in)
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    select_step_by_name(conf, "Read Channels (Read_Channels)")
+    qtbot.waitUntil(wait_for_move_in)
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    select_step_by_name(conf, "Wait (Wait)")
+    qtbot.waitUntil(wait_for_move_in)
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    
+    # Build the catalog and run the protocol.
+    catalog_maker(tmp_path)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
+    
+    # --- After the protocol run, open the Nexus file and perform a linear fit ---
+    # We assume that the protocol saves two datasets: one for the for-loop values
+    # (named "for_loop_value") and one for the variable "set_var".
+    import h5py
+    import numpy as np
+    savepath = tmp_path / (prot.name + ".nxs")
+    with h5py.File(savepath, "r") as f:
+        x_data = f[list(f.keys())[0]]["data"]["test_for_loop_set_var_protocol_variable_signal"]["For_Loop_Value"][:]  # for-loop (x-axis) values
+        y_data = f[list(f.keys())[0]]["data"]["test_for_loop_set_var_protocol_variable_signal"]["set_var"][:]         # recorded set_var values
+        slope_camels_fit = f[list(f.keys())[0]]["data"]["fits"]["Linear_set_var_v_For_Loop_Value_primary"]["slope"][:]  # linear fit values
+        intercept_camels_fit = f[list(f.keys())[0]]["data"]["fits"]["Linear_set_var_v_For_Loop_Value_primary"]["intercept"][:]  # linear fit intercept
+    
+    # Compute a linear fit on the data.
+    slope, intercept = np.polyfit(x_data, y_data, 1)
+    # Check that the slope and intercept from the CAMELS fit are the same as the ones computed from the data.
+    assert np.isclose(slope_camels_fit, slope, atol=1e-6)
+    assert np.isclose(intercept_camels_fit, intercept, atol=1e-6)
+    # Check that the slope is 1 and the intercept is 0 (within a small tolerance).
+    assert np.isclose(slope, 1, atol=1e-6)
+    assert np.isclose(intercept, 0, atol=1e-6)
+
 
 def test_trigger_and_read_channels(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Read Channels" tries to configure it with a split
