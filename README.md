@@ -19,23 +19,20 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.8.0
+Features:
+- can now asynchronously read channels during a running protocol
 
 Changes:
 - Plots now use a different backend. Should make the run engine faster and more stable. Plots now run in their own threads and should not interefere as much with the main protocol execution.
 
 Fixes:
 - You can now run the same subprotocol multiple times. Each subprotocol execution creates it own data stream. This means the datafile has separate entires for each subprotocol run
-
-### 1.7.3
-Features:
-- can now asynchronously read channels during a running protocol
-
-Fixes:
 - when dragging / dropping a step in the protocol sequence, the moved step is now selected afterwards
 - cannot drop a step in a simple sweep anymore
 - manual controls could not work with channels that need to call trigger, now fixed
 - made aborting a protocol more stable
 - generic set and read manual control now closes its thread more stabily
+- fixed expression evaluation for subprotocols
 
 ### 1.7.2
 Features:
