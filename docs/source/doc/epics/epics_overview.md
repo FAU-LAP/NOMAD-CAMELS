@@ -10,7 +10,6 @@ For how to simply integrate with EPICS using epics_instrument in CAMELS, see the
 ```{eval-rst}
 .. toctree::
    :maxdepth: 2
-   :caption: Combine with EPICS
 
    Create New EPICS IOC <doc/epics/new_ioc.md>
    Run IOCs <doc/epics/procServ.md>
