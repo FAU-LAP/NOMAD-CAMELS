@@ -148,6 +148,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    Getting Started <doc/tutorials/quick_start.md>
    Protocol Steps Explained <doc/protocol_steps/protocol_steps_landing.md>
    HDF5 files / Data Evaluation <doc/handling_hdf5.md>
+   CAMELS API <doc/api/api_landing.md>
    FAQ / Troubleshooting <doc/faq/faq.md>
 
 .. toctree::
@@ -156,12 +157,6 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
    Available Instruments <doc/instruments/instruments.rst>
    Create New Instrument Drivers <doc/programmers_guide/instrument_drivers.md>
-
-.. toctree::
-   :maxdepth: 2
-   :caption: API
-
-   CAMELS API Overview <doc/api/api_landing.md>
    
 
 .. toctree::
@@ -182,16 +177,11 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
 .. toctree::
    :maxdepth: 2
-   :caption: Maintaining CAMELS Project
+   :caption: Developer Documentation
 
    Maintain CAMELS <doc/programmers_guide/programmers_guide.md>
    Core Component Descriptions <doc/programmers_guide/components/components.md>
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Contribute to CAMELS
-
-   General Process <doc/contribute/general_process.md>
+   Contributing <doc/contribute/general_process.md>
    Running Tests <doc/contribute/running_tests.md>
    Code of Conduct <doc/contribute/code_of_conduct.md>
 
