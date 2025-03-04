@@ -15,9 +15,7 @@ sys.path.insert(0, os.path.abspath("../../nomad_camels"))
 
 exclude_patterns = []
 print(os.getenv("EXCLUDE_CODE_DIR"))
-if os.getenv("EXCLUDE_CODE_DIR") == "true":
-    exclude_patterns.append("code/**")
-else:
+if os.getenv("EXCLUDE_CODE_DIR") != "true":
     import suitcase.nomad_camels_hdf5
 
     sys.path.insert(0, suitcase.nomad_camels_hdf5.__path__[0])
@@ -35,6 +33,7 @@ extensions = [
     "myst_parser",
     "sphinx_copybutton",
     "sphinx_tabs.tabs",
+    "sphinx.ext.mathjax",
 ]
 
 templates_path = ["_templates"]

@@ -11,6 +11,7 @@ Subpackages
    nomad_camels.commands
    nomad_camels.extensions
    nomad_camels.frontpanels
+   nomad_camels.graphics
    nomad_camels.gui
    nomad_camels.loop_steps
    nomad_camels.main_classes
@@ -29,21 +30,21 @@ nomad\_camels.CAMELS\_start module
 
 .. automodule:: nomad_camels.CAMELS_start
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 nomad\_camels.MainApp\_v2 module
 --------------------------------
 
 .. automodule:: nomad_camels.MainApp_v2
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: nomad_camels
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

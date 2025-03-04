@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>nomad_camels.commands package &mdash; NOMAD-CAMELS  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=4c64c665" />
@@ -55,8 +55,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../doc/installation/installation.html">Installing CAMELS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/tutorials/quick_start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/protocol_steps/protocol_steps_landing.html">Protocol Steps Explained</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/nomad_camels_toolbox.html">Evaluation of the Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">Handling HDF5 Files</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../doc/faq/faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/faq/faq.html">FAQ / Troubleshooting</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Instruments</span></p>
 <ul>
@@ -82,6 +83,7 @@
 <p class="caption" role="heading"><span class="caption-text">Maintaining CAMELS Project</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/programmers_guide.html">Maintain CAMELS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/components/components.html">Core Component Descriptions</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contribute to CAMELS</span></p>
 <ul>
@@ -105,6 +107,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.extensions.html">nomad_camels.extensions package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.frontpanels.html">nomad_camels.frontpanels package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels.graphics.html">nomad_camels.graphics package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.gui.html">nomad_camels.gui package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.loop_steps.html">nomad_camels.loop_steps package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.main_classes.html">nomad_camels.main_classes package</a></li>
@@ -122,6 +125,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels.html#module-nomad_camels">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels_toolbox.html">nomad-camels-toolbox</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helping_packages.html">helping packages</a></li>
 <li class="toctree-l1"><a class="reference internal" href="drivers.html">drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extensions.html">extensions</a></li>
@@ -176,7 +180,7 @@
 <span id="nomad-camels-commands-change-sequence-module"></span><h2>nomad_camels.commands.change_sequence module<a class="headerlink" href="#module-nomad_camels.commands.change_sequence" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.commands.change_sequence.CommandMoveStep">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.commands.change_sequence.</span></span><span class="sig-name descname"><span class="pre">CommandMoveStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">treeView</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">up_down</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_step_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.commands.change_sequence.CommandMoveStep" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.commands.change_sequence.</span></span><span class="sig-name descname"><span class="pre">CommandMoveStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">treeView</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">up_down</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_step_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.commands.change_sequence.CommandMoveStep" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QUndoCommand</span></code></p>
 <p>Using a command for moving a step inside the protocol treeView to be able to
 reverse the action.</p>

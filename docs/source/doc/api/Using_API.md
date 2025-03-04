@@ -19,22 +19,22 @@ The CAMELS API works by sending HTTP requests to its web server.
 To use any request other than the home path of the web server you need to authenticate your request using the API key (see [Creating API Keys](Creating_API_Keys.md)).
 
 If you are using a regular browser and want to use the API manually it is best to navigate to `<host>:<port>`. You can then select the request you want to perform and click on *Try it out* and then *Execute*.
+
 ![Example image of how to manually use the API via the browser](images/image-2.png)
+
 You will be need to authenticate yourself to send any API requests. Simply enter the API key in the password section. The username can be anything or empty. This will look something like this
+
 ![Example image of the authentication pop up in the browser](images/image-4.png)
+
 Once authorized in the browser you will stay authenticated when using further requests until you close the browser.
 
 
 ## Most Useful Commands
 
-Bellow are descriptions for the most useful commands.
+Below are descriptions for the most useful commands.
 
 ```{attention}
 In the following all paths are given als relative paths from `//localhost:<port>/`.
-```
-
-```{note}
-All `GET` API calls (requests) can also be performed using a browser. `POST` requests can not be performed using a browser, as you need to pass information in the body of the request.
 ```
 
 ## Get Protocol Parameters
@@ -53,8 +53,13 @@ You can also use Python to perform the http request. This could look something l
 
 ```python
 import requests
-api_key = 123 # Enter the actual API key you got from CAMELS here
-result = requests.get("http://localhost:5000//api/v1/protocols", auth=("", f"{api_key}"))
+api_key = "123abc" # Enter the actual API key you got from CAMELS here
+# Create the headers with the Bearer token
+headers = {
+    "Authorization": f"Bearer {api_key}"
+}
+port = 5000 # Change this to the port you are acutally using
+result = requests.get(f"http://localhost:{port}/api/v1/protocols", headers=headers)
 ```
 
 The API will return a JSON string of the form:
@@ -97,16 +102,16 @@ and the protocol is finished you will be able to get the path to the measurement
 
 There are two ways you can directly **execute** a protocol you defined in CAMELS via the API:
 
-- [GET Protocols](#get-run-protocols)
-- [POST Protocols](#post-run-protocols-with-variables).
+- [Using GET: Run Protocols](#get-run-protocols)
+- [Using POST: Run Protocols](#post-run-protocols-with-variables).
 
 If you want to queue protocols see [here](#protocol-queue) for more information.
 
 ### GET: Run Protocols
 
 ```{note}
-`GET` requests can be performed using a regular browser by entering the URL below.
-``` 
+Make sure to add the required bearer token authentication in the header of the request. See for example Python code [here](#get-get-available-protocols)
+```
 
 ```bash
 GET /api/v1/actions/run/protocols/{protocol_name}
@@ -118,14 +123,11 @@ This is equivalent to pressing the `run`-button on a protocol.
 
 In response to the request, you will receive the UUID, which allows you to track the current state of the protocol. See [Executing Protocls](#executing-protocols) or [Protocol Results](#protocol-results) for more information on protocol status.
 
-
-
-
 ### POST: Run Protocols with Variables
 
 ```{note}
-`POST` requests can **NOT** be performed using a regular browser.
-``` 
+`POST` requests can **NOT** be performed using a regular browser. You can use the `/docs` section of the FastAPI to manually use the API or do it programmatically.
+```
 
 ```bash
 POST /api/v1/actions/run/protocols/{protocol_name}
@@ -162,20 +164,32 @@ body: {
 Using Python this could look like this
 
 ```python
-api_key = '123'
-protocol_name = 'demo'
-data = {'variables': {'start_stop': 10, 'points': 31}}
-# convert data to json
-data_json = json.dumps(data)
-# %%
+import requests
+api_key = "123abc" # Enter the actual API key you got from CAMELS here
+protocol_name = 'demo' # Change this to the name of the protocol you are using
+body = {'variables': {
+    'points': 21,
+    'start_stop':7
+        }
+    }
+# Create the headers with the Bearer token
+headers = {
+    "Authorization": f"Bearer {api_key}"
+}
+port = 5000 # Change this to the port you are acutally using
 result = requests.post(
-    f"http://127.0.0.1:5000/api/v1/actions/run/protocols/{protocol_name}",
-    auth=("", f"{api_key}"),
-    json=data
+    f"http://127.0.0.1:{port}/api/v1/actions/run/protocols/{protocol_name}",
+    headers=headers,
+    json=body
 )
+print(result.json())
 ```
 
-In response to the request, you will receive the UUID, which allows you to track the current state of the protocol.
+In response to the request, you will receive the UUID, which allows you to track the current state of the protocol execution.
+
+```python
+{'check protocol status here': '/api/v1/protocols/results/6949df94-9170-4d00-aee1-62580e9e75f5'}
+```
 
 ## Protocol Queue
 
@@ -240,11 +254,16 @@ In Python this can look like this
 ```python
 protocol_name = 'demo'
 index = 0
-data = {'variables': {'start_stop': 10, 'points': 31}}
+body = {'variables': {'start_stop': 10, 'points': 31}}
+api_key = "123abc" # Enter the actual API key you got from CAMELS here
+# Create the headers with the Bearer token
+headers = {
+    "Authorization": f"Bearer {api_key}"
+}
 result = requests.post(
     f"http://127.0.0.1:5000/api/v1/actions/queue/variables/protocols/{protocol_name}_{index}",
-    auth=("", f"{api_key}"),
-    json=data,
+    headers=headers,
+    json=body,
 )
 ```
 
@@ -280,7 +299,7 @@ Again give the name of the protocol (for example `demo`) and the index of where 
 
 ## Protocol Results
 
-Every protocol run will generate data. Either into a single file or individual HDF5 files for each measurement. You can check the current status of the measurement using the command found [bellow](#protocol-results-file-path).
+Every protocol run will generate data. Either into a single file or individual HDF5 files for each measurement. You can check the current status of the measurement using the command found [below](#protocol-results-file-path).
 
 To be able to retrieve the results of a protocol run via the API you can either get the [file path](#protocol-results-file-path) for the data file created or get the [actual file](#protocol-results-file).
 

@@ -23,6 +23,14 @@ What is NOMAD CAMELS?
 
 CAMELS provides a graphical user interface (GUI) that can be used to setup instrument control and measurement protocols. The GUI then generates Python code that interfaces with `bluesky <https://blueskyproject.io/>`_ to communicate with the instruments and orchestrate the measurement. CAMELS can also be used to communicate with large-scale, distributed systems implemented with `EPICS <https://epics-controls.org/>`_.
 
+CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_. 
+
+.. image:: https://www.fairmat-nfdi.eu/uploads/newweb/FAIRmat.png
+   :target: https://www.fairmat-nfdi.eu/fairmat
+   :width: 200px
+   :height: 200px
+
+
 Learn more about CAMELS in our peer-reviewed paper
 
 .. image:: https://joss.theoj.org/papers/10.21105/joss.06371/status.svg
@@ -114,8 +122,6 @@ You can also open GitHub Issues:
    :height: 50px
 
 
-CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_.
-
 The source code of CAMELS is hosted on GitHub:
 
 .. image:: /assets/CAMELS_GitHub_Logo.png
@@ -141,8 +147,8 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    Installing CAMELS <doc/installation/installation.md>
    Getting Started <doc/tutorials/quick_start.md>
    Protocol Steps Explained <doc/protocol_steps/protocol_steps_landing.md>
-   Handling HDF5 Files <doc/handling_hdf5.md>
-   FAQ <doc/faq/faq.md>
+   HDF5 files / Data Evaluation <doc/handling_hdf5.md>
+   FAQ / Troubleshooting <doc/faq/faq.md>
 
 .. toctree::
    :maxdepth: 2
@@ -179,6 +185,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    :caption: Maintaining CAMELS Project
 
    Maintain CAMELS <doc/programmers_guide/programmers_guide.md>
+   Core Component Descriptions <doc/programmers_guide/components/components.md>
 
 .. toctree::
    :maxdepth: 1
@@ -193,6 +200,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    :caption: Code Reference
 
    nomad-camels <code/nomad_camels.rst>
+   nomad-camels-toolbox <code/nomad_camels_toolbox.rst>
    helping packages <code/helping_packages.rst>
    drivers <code/drivers.rst>
    extensions <code/extensions.rst>
