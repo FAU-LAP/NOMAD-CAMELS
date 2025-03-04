@@ -161,23 +161,8 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
    Available Instruments <doc/instruments/instruments.rst>
    Create New Instrument Drivers <doc/programmers_guide/instrument_drivers.md>
+   Combine with EPICS <doc/epics/epics_overview.md>
    
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Combine with EPICS
-
-   Create New EPICS IOC <doc/epics/new_ioc.md>
-   Run IOCs <doc/epics/procServ.md>
-   Archiver Appliance <doc/epics/ArchiverAppliance.md>
-   Example Setups <doc/epics/examples.md>
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Videos
-
-   User Feedback <doc/videos/user_feedback.md>
-   Developer Statements <doc/videos/developer_statements.md>
 
 .. toctree::
    :maxdepth: 2
@@ -188,6 +173,13 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    Contributing <doc/contribute/general_process.md>
    Running Tests <doc/contribute/running_tests.md>
    Code of Conduct <doc/contribute/code_of_conduct.md>
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Videos
+
+   User Feedback <doc/videos/user_feedback.md>
+   Developer Statements <doc/videos/developer_statements.md>
 
 .. toctree::
    :maxdepth: 2
