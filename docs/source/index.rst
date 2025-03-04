@@ -142,7 +142,6 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
 .. toctree::
    :maxdepth: 2
-   :caption: User Documentation
 
    Installing CAMELS <doc/installation/installation.md>
    Getting Started <doc/tutorials/quick_start.md>
