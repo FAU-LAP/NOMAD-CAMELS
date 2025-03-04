@@ -130,12 +130,14 @@ If you have any questions or feedback you can also always reach the development 
 E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
 
+.. toctree::
+    :maxdepth: 1
+    Home <self>
 
 .. toctree::
    :maxdepth: 2
    :caption: User Documentation
 
-   Home <self>
    Installing CAMELS <doc/installation/installation.md>
    Getting Started <doc/tutorials/quick_start.md>
    Protocol Steps Explained <doc/protocol_steps/protocol_steps_landing.md>
