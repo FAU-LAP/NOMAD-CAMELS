@@ -31,7 +31,10 @@ CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <http
    :height: 200px
 
 
-Learn more about CAMELS in our peer-reviewed paper
+Cite NOMAD CAMELS
+-----------------
+
+Learn more about CAMELS in our peer-reviewed paper:
 
 .. image:: https://joss.theoj.org/papers/10.21105/joss.06371/status.svg
    :target: https://doi.org/10.21105/joss.06371
@@ -138,6 +141,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
 .. toctree::
     :maxdepth: 2
+
     Home <self>
 
 .. toctree::
