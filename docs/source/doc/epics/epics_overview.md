@@ -11,8 +11,8 @@ For how to simply integrate with EPICS using epics_instrument in CAMELS, see the
 .. toctree::
    :maxdepth: 2
 
-   Create New EPICS IOC <doc/epics/new_ioc.md>
-   Run IOCs <doc/epics/procServ.md>
-   Archiver Appliance <doc/epics/ArchiverAppliance.md>
-   Example Setups <doc/epics/examples.md>
+   Create New EPICS IOC <new_ioc.md>
+   Run IOCs <procServ.md>
+   Archiver Appliance <ArchiverAppliance.md>
+   Example Setups <examples.md>
 ```
