@@ -2,7 +2,7 @@
 /* Make the page content wider */
 /* Make the page content responsive */
 .wy-nav-content {
-    max-width: 65%; /* Default for larger screens */
+    max-width: 80%; /* Default for larger screens */
     /*margin: auto;  Center the content */
 }
 
