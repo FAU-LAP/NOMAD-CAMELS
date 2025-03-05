@@ -1,6 +1,13 @@
 {% extends "!layout.html" %}
 {% block extrahead %}
-<p>This is a HUUUGE test</p>
-<a href="https://www.lap.physik.nat.fau.de/impressum/">Imprint</a><br>
-<a href="https://fau-lap.github.io/NOMAD-CAMELS/data_privacy.html">Data privacy statement</a><br>
+<!-- make a paragraph with black background and white text (it says "hi, this is camels") -->
+<style>
+    .camels {
+        background-color: black;
+        color: white;
+        padding: 10px;
+    }
+</style>
+<p class="camels">hi, this is camels</p>
+
 {% endblock %}
