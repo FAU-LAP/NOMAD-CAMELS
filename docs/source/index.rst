@@ -23,12 +23,17 @@ What is NOMAD CAMELS?
 
 CAMELS provides a graphical user interface (GUI) that can be used to setup instrument control and measurement protocols. The GUI then generates Python code that interfaces with `bluesky <https://blueskyproject.io/>`_ to communicate with the instruments and orchestrate the measurement. CAMELS can also be used to communicate with large-scale, distributed systems implemented with `EPICS <https://epics-controls.org/>`_.
 
-CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_. 
+CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_ (see also: `NOMAD <https://nomad-lab.eu/nomad-lab/>`_) at the `FAU Erlangen-Nürnberg <https://www.lap.physik.nat.fau.eu/>`_. 
 
-.. image:: https://www.fairmat-nfdi.eu/uploads/newweb/FAIRmat.png
+.. image:: assets/fairmat_horizontal.png
    :target: https://www.fairmat-nfdi.eu/fairmat
    :width: 200px
-   :height: 200px
+.. image:: assets/nomad-horizontal.svg
+   :target: https://nomad-lab.eu/nomad-lab/
+   :width: 200px
+.. image:: assets/FAU_LAP.png
+   :target: https://www.lap.physik.nat.fau.eu/
+   :width: 200px
 
 
 Cite NOMAD CAMELS
@@ -192,15 +197,6 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    extensions <code/extensions.rst>
    genindex
 
-
-.. toctree::
-   :caption: Links
-
-   Find us on GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS>
-   Cite NOMAD CAMELS <https://joss.theoj.org/papers/10.21105/joss.06371>
-   NOMAD Website <https://nomad-lab.eu/nomad-lab/>
-   FAIRmat Website <https://www.fairmat-nfdi.eu/fairmat>
-   FAU/LAP Website <https://www.lap.physik.nat.fau.eu/>
 
 .. toctree::
    :caption: Imprint/Contact
