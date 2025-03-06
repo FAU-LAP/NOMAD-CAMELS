@@ -1792,7 +1792,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         user = self.get_user_name_data()[0]
         sample = self.get_sample_name_data()[0]
         protocol = self.protocols_dict[protocol_name]
-        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.filename or 'data'}.nxs"
+        if protocol.use_nexus:
+            file_ending = ".nxs"
+        else:
+            file_ending = ".h5"
+        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.filename or 'data'}{file_ending}"
         savepath = os.path.normpath(savepath)
         while not os.path.exists(savepath):
             savepath = os.path.dirname(savepath)
@@ -2006,6 +2010,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
         nomad = self.nomad_user is not None
+        if self.running_protocol.use_nexus:
+            self.protocol_savepath = f"{self.protocol_savepath}.nxs"
+        else:
+            self.protocol_savepath = f"{self.protocol_savepath}.h5"
         if self.last_save_file:
             file = helper_functions.get_newest_file(self.last_save_file)
         else:
@@ -2401,7 +2409,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol.tags = self.flow_layout.get_all_tags()
         user, userdata = self.get_user_name_data()
         sample, sampledata = self.get_sample_name_data()
-        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.session_name}/{protocol.filename or protocol.session_name or 'data'}.nxs"
+        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.session_name}/{protocol.filename or protocol.session_name or 'data'}"
         self.protocol_savepath = savepath
         # IMPORT protocol_builder only if needed
         from nomad_camels.bluesky_handling import protocol_builder

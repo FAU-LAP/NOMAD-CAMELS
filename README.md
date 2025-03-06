@@ -24,6 +24,7 @@ Features:
 
 Changes:
 - Plots now use a different backend. Should make the run engine faster and more stable. Plots now run in their own threads and should not interefere as much with the main protocol execution.
+- Now saves data files with an `.h5` file extension if no NeXus output was enabled. Only uses `.nxs` file extension if NeXus output is saved to the file. Should clarify that the standard CAMELS data files do **NOT** follow rigid NeXus standards.
 
 Fixes:
 - You can now run the same subprotocol multiple times. Each subprotocol execution creates it own data stream. This means the datafile has separate entires for each subprotocol run

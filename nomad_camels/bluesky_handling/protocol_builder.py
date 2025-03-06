@@ -202,7 +202,7 @@ standard_final_string += "\t\t\ttime.sleep(0.5)\n"
 
 
 def build_from_path(
-    path, save_path="test.nxs", catalog="CAMELS_CATALOG", userdata=None, sampledata=None
+    path, save_path="test", catalog="CAMELS_CATALOG", userdata=None, sampledata=None
 ):
     """Creating the runable python file from a given `protocol`.
 
@@ -211,7 +211,7 @@ def build_from_path(
     path : str, path
         The path to the protocol that should be built.
     save_path : str, path
-         (Default value = 'test.nxs')
+         (Default value = 'test')
          The path, where the data should be saved to.
     catalog : str
          (Default value = 'CAMELS_CATALOG')
@@ -233,7 +233,7 @@ def build_from_path(
 def build_protocol(
     protocol,
     file_path,
-    save_path="test.nxs",
+    save_path="test",
     catalog="CAMELS_CATALOG",
     userdata=None,
     sampledata=None,
@@ -247,8 +247,9 @@ def build_protocol(
     file_path : str, path
         The path, where the file should be saved.
     save_path : str, path
-         (Default value = 'test.nxs')
-         The path, where the data should be saved to.
+         (Default value = 'test')
+         The path, where the data should be saved to. Does NOT have a file ending. 
+         Depends on the export settings. If	 no NeXus export is selected uses .h5 otherwise .nxs
     catalog : str
          (Default value = 'CAMELS_CATALOG')
          The name of the databroker catalog that should be used.
