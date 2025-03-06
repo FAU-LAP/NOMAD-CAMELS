@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit, QMessageBox, QPushButton
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Qt
 
 from nomad_camels.frontpanels.plot_definer import Plot_Button_Overview
 from nomad_camels.loop_steps import make_step_of_type
@@ -591,11 +591,19 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
     def adjust_text_edit_size_prot(self):
         """Adjusts the size of the textEdit_desc_protocol based on its content."""
+        max_height = 130  # Set your desired maximum height here
         document = self.textEdit_desc_protocol.document()
-        document_height = document.size().height()
-        self.textEdit_desc_protocol.setFixedHeight(
-            document_height + 5
-        )  # Add some padding
+        # Calculate the height of the document (plus some padding)
+        document_height = document.size().height() + 5
+        if document_height > max_height:
+            new_height = max_height
+            # Enable scrolling if the content exceeds max height
+            self.textEdit_desc_protocol.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        else:
+            new_height = document_height
+            # Hide scroll bar if not needed
+            self.textEdit_desc_protocol.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.textEdit_desc_protocol.setFixedHeight(new_height)
 
     def enable_disable_config(self):
         disabling = self.checkBox_no_config.isChecked()

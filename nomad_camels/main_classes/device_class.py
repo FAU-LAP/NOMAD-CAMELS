@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QScrollArea,
 )
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, Qt
 from PySide6.QtCore import Signal
 
 from ophyd import EpicsSignalRO
@@ -509,10 +509,20 @@ class Device_Config(QWidget):
         self.adjust_text_edit_size()
 
     def adjust_text_edit_size(self):
-        """Adjusts the size of the textEdit_desc based on its content."""
+        """Adjusts the size of the textEdit_desc based on its content, up to a maximum height."""
+        max_height = 130  # Set your desired maximum height here
         document = self.textEdit_desc.document()
-        document_height = document.size().height()
-        self.textEdit_desc.setFixedHeight(document_height + 5)  # Add some padding
+        # Calculate the height of the document (plus some padding)
+        document_height = document.size().height() + 5
+        if document_height > max_height:
+            new_height = max_height
+            # Enable scrolling if the content exceeds max height
+            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        else:
+            new_height = document_height
+            # Hide scroll bar if not needed
+            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.textEdit_desc.setFixedHeight(new_height)
 
     def connection_type_changed(self):
         """Called when the comboBox_connection_type is changed. Switches
