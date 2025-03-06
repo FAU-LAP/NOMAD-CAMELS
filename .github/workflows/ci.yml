@@ -64,13 +64,7 @@ jobs:
           poetry run pytest -vv --timeout=100 \
             --cov-config=./nomad_camels/tests/.coveragerc \
             --cov-report term-missing:skip-covered \
-            --cov=nomad_camels \
-            nomad_camels/tests/protocol_test.py && \
-          poetry run pytest -vv --timeout=100 \
-            --cov-config=./nomad_camels/tests/.coveragerc \
-            --cov-report term-missing:skip-covered \
-            --cov=nomad_camels \
-            --ignore=nomad_camels/tests/protocol_test.py 
+            --cov=nomad_camels
 
   macos_test:
     runs-on: macos-latest
@@ -101,10 +95,4 @@ jobs:
           poetry run pytest -vv --timeout=100 \
             --cov-config=./nomad_camels/tests/.coveragerc \
             --cov-report term-missing:skip-covered \
-            --cov=nomad_camels \
-            nomad_camels/tests/protocol_test.py && \
-          poetry run pytest -vv --timeout=100 \
-            --cov-config=./nomad_camels/tests/.coveragerc \
-            --cov-report term-missing:skip-covered \
-            --cov=nomad_camels \
-            --ignore=nomad_camels/tests/protocol_test.py 
+            --cov=nomad_camels
