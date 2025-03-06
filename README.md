@@ -34,6 +34,7 @@ Fixes:
 - made aborting a protocol more stable
 - generic set and read manual control now closes its thread more stabily
 - fixed expression evaluation for subprotocols
+- Protocol and device description field is now max 130px high. After that it becomes scrollable.
 
 ### 1.7.2
 Features:
