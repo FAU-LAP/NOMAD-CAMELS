@@ -446,7 +446,11 @@ def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
     # (named "for_loop_value") and one for the variable "set_var".
     import h5py
     import numpy as np
-    savepath = tmp_path / (prot.name + ".nxs")
+    if prot.use_nexus:
+        file_ending = ".nxs"
+    else:
+        file_ending = ".h5"
+    savepath = tmp_path / (prot.name + file_ending)
     with h5py.File(savepath, "r") as f:
         x_data = f[list(f.keys())[0]]["data"]["test_for_loop_set_var_protocol_variable_signal"]["For_Loop_Value"][:]  # for-loop (x-axis) values
         y_data = f[list(f.keys())[0]]["data"]["test_for_loop_set_var_protocol_variable_signal"]["set_var"][:]         # recorded set_var values
@@ -765,11 +769,16 @@ def run_test_protocol(tmp_path, protocol, publisher, dispatcher):
     from nomad_camels.bluesky_handling import protocol_builder
 
     file = tmp_path / (protocol.name + ".py")
-    savepath = tmp_path / (protocol.name + ".nxs")
+    savepath = tmp_path / protocol.name
     protocol_builder.build_protocol(protocol, file, savepath, "test_catalog")
     sys.path.append(str(tmp_path))
     py_package = importlib.import_module(protocol.name)
     py_package.main(dispatcher=dispatcher, publisher=publisher)
+    if protocol.use_nexus:
+        file_ending = ".nxs"
+    else:
+        file_ending = ".h5"
+    savepath = f"{savepath}{file_ending}"
     assert os.path.isfile(savepath)
 
 
