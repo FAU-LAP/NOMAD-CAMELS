@@ -1,4 +1,10 @@
-# Linux - Installation Using Pyenv
+# Linux Installation
+
+NOMAD CAMELS is a Python package. We suggest to install CAMELS into a new Python environment to prevent it from interfering with other packages and dependencies.
+
+An easy way to install a specific Python version and create a virtual environment is using `pyenv`.
+
+If you already have a Python environment you want to install CAMELS into you can directly go to [chapter 4](#4-install-nomad-camels).
 
 ## 1. Pyenv Installation
 See the [official Pyenv installation guide](https://github.com/pyenv/pyenv#installation) for more details and the most recent version.
@@ -43,7 +49,9 @@ Stock Bash startup files vary widely between distributions in which of them sour
   ```
 - Install Python [build dependencies](https://github.com/pyenv/pyenv/wiki#suggested-build-environment) before attempting to install a new Python version.
 - **You can now begin using Pyenv.**
+
 ## 2. Python Installation
+
 - Run the following command
   ```
   pyenv install <python_version>
@@ -51,7 +59,8 @@ Stock Bash startup files vary widely between distributions in which of them sour
   for example `pyenv install 3.11.3`.\
 `<python_version>` is the Python version you want to install (3.11.3 or higher is suggested for NOMAD-CAMELS).
 
-## 3. Install CAMELS
+## 3. Create Virtual Environemnt
+
 - Create a folder where you want to install CAMELS (e.g. `\NOMAD-CAMELS\`)
 - Type in your shell 
   ```
@@ -67,13 +76,16 @@ Stock Bash startup files vary widely between distributions in which of them sour
   ```
   source ./.desertenv/bin/activate
   ```
-- Now type
+
+## 4. Install NOMAD CAMELS
+
+To install CAMELS run this command:
+
 ```bash
 pip install nomad-camels 
 ```
-   to install CAMELS.
 
-## 4. Run CAMELS
+## 5. Run CAMELS
 
 You can then run 
 
@@ -101,8 +113,17 @@ or run:
 python ./desertenv/lib/python<version>/site-packages/nomad_camels/CAMELS_start.py
 ```
 
-## 5. Troubleshooting
-Sometimes packages that are needed to run the `qt` libraries used for the GUI need to be installed addiitonally. The following should install all necessary packages:
+```{attention}
+If you have trouble starting CAMELS due to Qt issues like: 
+    ```bash
+    Could not load the Qt platform plugin 'xcb'`
+    ```
+```
+
+check to see if our [troubleshooting](#6-troubleshooting) step can solve this for you.
+
+## 6. Troubleshooting
+Sometimes packages that are needed to run the `Qt` libraries used for the GUI need to be installed additionally. The following should install all necessary packages:
 ```bash
 sudo apt-get install build-essential libssl-dev libffi-dev libegl1 libdbus-1-3 libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0 x11-utils libxcb-cursor0 libopengl0 libegl1-mesa libgl1-mesa-glx libpulse0
 ```
