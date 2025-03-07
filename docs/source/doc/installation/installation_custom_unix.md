@@ -118,9 +118,10 @@ If you have trouble starting CAMELS due to Qt issues like:
     ```bash
     Could not load the Qt platform plugin 'xcb'
     ```
+check to see if our [troubleshooting](#6-troubleshooting) step can solve this for you.
 ```
 
-check to see if our [troubleshooting](#6-troubleshooting) step can solve this for you.
+
 
 ## 6. Troubleshooting
 Sometimes packages that are needed to run the `Qt` libraries used for the GUI need to be installed additionally. The following should install all necessary packages:
