@@ -14,5 +14,5 @@ Module contents
 
 .. automodule:: suitcase.nomad_camels_hdf5
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

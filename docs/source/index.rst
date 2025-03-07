@@ -23,15 +23,23 @@ What is NOMAD CAMELS?
 
 CAMELS provides a graphical user interface (GUI) that can be used to setup instrument control and measurement protocols. The GUI then generates Python code that interfaces with `bluesky <https://blueskyproject.io/>`_ to communicate with the instruments and orchestrate the measurement. CAMELS can also be used to communicate with large-scale, distributed systems implemented with `EPICS <https://epics-controls.org/>`_.
 
-CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_. 
+CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_ (see also: `NOMAD <https://nomad-lab.eu/nomad-lab/>`_) at the `FAU Erlangen-Nürnberg <https://www.lap.physik.nat.fau.eu/>`_. 
 
-.. image:: https://www.fairmat-nfdi.eu/uploads/newweb/FAIRmat.png
+.. image:: assets/fairmat_horizontal.png
    :target: https://www.fairmat-nfdi.eu/fairmat
    :width: 200px
-   :height: 200px
+.. image:: assets/nomad-horizontal.svg
+   :target: https://nomad-lab.eu/nomad-lab/
+   :width: 200px
+.. image:: assets/FAU_LAP.png
+   :target: https://www.lap.physik.nat.fau.eu/
+   :width: 200px
 
 
-Learn more about CAMELS in our peer-reviewed paper
+Cite NOMAD CAMELS
+-----------------
+
+Learn more about CAMELS in our peer-reviewed paper:
 
 .. image:: https://joss.theoj.org/papers/10.21105/joss.06371/status.svg
    :target: https://doi.org/10.21105/joss.06371
@@ -136,18 +144,21 @@ If you have any questions or feedback you can also always reach the development 
 E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
 
+.. toctree::
+    :maxdepth: 2
+
+    Home <self>
 
 .. toctree::
    :maxdepth: 2
    :caption: User Documentation
 
-   Home <self>
    Installing CAMELS <doc/installation/installation.md>
    Getting Started <doc/tutorials/quick_start.md>
    Protocol Steps Explained <doc/protocol_steps/protocol_steps_landing.md>
-   Evaluation of the Data <doc/nomad_camels_toolbox.md>
-   Handling HDF5 Files <doc/handling_hdf5.md>
-   FAQ <doc/faq/faq.md>
+   HDF5 files / Data Evaluation <doc/handling_hdf5.md>
+   CAMELS API <doc/api/api_landing.md>
+   FAQ / Troubleshooting <doc/faq/faq.md>
 
 .. toctree::
    :maxdepth: 2
@@ -155,22 +166,18 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
    Available Instruments <doc/instruments/instruments.rst>
    Create New Instrument Drivers <doc/programmers_guide/instrument_drivers.md>
-
-.. toctree::
-   :maxdepth: 2
-   :caption: API
-
-   CAMELS API Overview <doc/api/api_landing.md>
+   Combine with EPICS <doc/epics/epics_overview.md>
    
 
 .. toctree::
    :maxdepth: 2
-   :caption: Combine with EPICS
+   :caption: Developer Documentation
 
-   Create New EPICS IOC <doc/epics/new_ioc.md>
-   Run IOCs <doc/epics/procServ.md>
-   Archiver Appliance <doc/epics/ArchiverAppliance.md>
-   Example Setups <doc/epics/examples.md>
+   Maintain CAMELS <doc/programmers_guide/programmers_guide.md>
+   Core Component Descriptions <doc/programmers_guide/components/components.md>
+   Contributing <doc/contribute/general_process.md>
+   Running Tests <doc/contribute/running_tests.md>
+   Code of Conduct <doc/contribute/code_of_conduct.md>
 
 .. toctree::
    :maxdepth: 2
@@ -178,21 +185,6 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
    User Feedback <doc/videos/user_feedback.md>
    Developer Statements <doc/videos/developer_statements.md>
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Maintaining CAMELS Project
-
-   Maintain CAMELS <doc/programmers_guide/programmers_guide.md>
-   Core Component Descriptions <doc/programmers_guide/components/components.md>
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Contribute to CAMELS
-
-   General Process <doc/contribute/general_process.md>
-   Running Tests <doc/contribute/running_tests.md>
-   Code of Conduct <doc/contribute/code_of_conduct.md>
 
 .. toctree::
    :maxdepth: 2
@@ -205,15 +197,6 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    extensions <code/extensions.rst>
    genindex
 
-
-.. toctree::
-   :caption: Links
-
-   Find us on GitHub <https://github.com/FAU-LAP/NOMAD-CAMELS>
-   Cite NOMAD CAMELS <https://joss.theoj.org/papers/10.21105/joss.06371>
-   NOMAD Website <https://nomad-lab.eu/nomad-lab/>
-   FAIRmat Website <https://www.fairmat-nfdi.eu/fairmat>
-   FAU/LAP Website <https://www.lap.physik.nat.fau.eu/>
 
 .. toctree::
    :caption: Imprint/Contact

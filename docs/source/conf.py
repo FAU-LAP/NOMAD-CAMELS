@@ -15,10 +15,7 @@ sys.path.insert(0, os.path.abspath("../../nomad_camels"))
 
 exclude_patterns = []
 print(os.getenv("EXCLUDE_CODE_DIR"))
-if os.getenv("EXCLUDE_CODE_DIR") == "true":
-    # exclude_patterns.append("code/**")
-    pass
-else:
+if os.getenv("EXCLUDE_CODE_DIR") != "true":
     import suitcase.nomad_camels_hdf5
 
     sys.path.insert(0, suitcase.nomad_camels_hdf5.__path__[0])
@@ -58,7 +55,8 @@ html_logo = "assets/camels_horizontal.png"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "sphinx_rtd_theme"
-html_theme_options = {"navigation_depth": 5}
+html_theme_options = {"navigation_depth": 5,
+                      "collapse_navigation": False}
 html_static_path = ["_static"]
 
 html_css_files = {"css/custom.css"}

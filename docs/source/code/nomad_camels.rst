@@ -30,21 +30,21 @@ nomad\_camels.CAMELS\_start module
 
 .. automodule:: nomad_camels.CAMELS_start
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 nomad\_camels.MainApp\_v2 module
 --------------------------------
 
 .. automodule:: nomad_camels.MainApp_v2
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: nomad_camels
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
