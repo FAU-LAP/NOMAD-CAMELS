@@ -115,9 +115,9 @@ python ./desertenv/lib/python<version>/site-packages/nomad_camels/CAMELS_start.p
 
 ```{attention}
 If you have trouble starting CAMELS due to Qt issues like: 
-    ```bash
-    Could not load the Qt platform plugin 'xcb'
-    ```
+
+    `Could not load the Qt platform plugin 'xcb'` 
+
 check to see if our [troubleshooting](#6-troubleshooting) step can solve this for you.
 ```
 
