@@ -17,8 +17,10 @@ import asyncio
 from zmq.error import ZMQError
 from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
 from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
+
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 
 @pytest.fixture(scope="session", autouse=True)
 def zmq_setup():
@@ -82,7 +84,9 @@ def test_change_dev_config(qtbot, tmp_path, zmq_setup):
     from nomad_camels.loop_steps import change_device_config
 
     conf = protocol_config.Protocol_Config()
-    conf.general_settings.lineEdit_protocol_name.setText("test_change_dev_config_protocol")
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_change_dev_config_protocol"
+    )
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Change Device Config")
     action.trigger()
@@ -147,7 +151,9 @@ def test_gradient_descent(qtbot, tmp_path, zmq_setup):
     from nomad_camels.loop_steps import gradient_descent
 
     conf = protocol_config.Protocol_Config()
-    conf.general_settings.lineEdit_protocol_name.setText("test_gradient_descent_protocol")
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_gradient_descent_protocol"
+    )
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Gradient Descent")
     action.trigger()
@@ -184,7 +190,9 @@ def test_if_and_set_variables(qtbot, tmp_path, zmq_setup):
     from nomad_camels.loop_steps import set_variables
 
     conf = protocol_config.Protocol_Config()
-    conf.general_settings.lineEdit_protocol_name.setText("test_if_and_set_variables_protocol")
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_if_and_set_variables_protocol"
+    )
     prot = conf.protocol
     qtbot.addWidget(conf)
     qtbot.mouseClick(
@@ -338,6 +346,7 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path, zmq_setup):
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
     assert "True" == "True"
 
+
 def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
     """Creates a For Loop from -1 to 1 that, on each iteration,
     sets the variable 'set_var' to the loop value and waits for 0.001s.
@@ -345,32 +354,41 @@ def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
     and perform a linear fit that is expected to be perfect (slope=1, intercept=0)."""
     # Create the protocol config widget and set the protocol name.
     conf = protocol_config.Protocol_Config()
-    conf.general_settings.lineEdit_protocol_name.setText("test_for_loop_set_var_protocol")
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_for_loop_set_var_protocol"
+    )
     qtbot.addWidget(conf)
-    
+
     # Add a global variable "set_var" (initial value is arbitrary here).
-    qtbot.mouseClick(conf.general_settings.pushButton_add_variable, Qt.MouseButton.LeftButton)
+    qtbot.mouseClick(
+        conf.general_settings.pushButton_add_variable, Qt.MouseButton.LeftButton
+    )
     conf.general_settings.variable_table.model.item(0, 0).setText("set_var")
     conf.general_settings.variable_table.model.item(0, 1).setText("0")
-    
+
     # --- Add For Loop step ---
     action = get_action_from_name(conf.add_actions, "For Loop")
     action.trigger()
     from nomad_camels.loop_steps import for_while_loops
+
     conf_widge_loop = conf.loop_step_configuration_widget
     assert isinstance(conf_widge_loop, for_while_loops.For_Loop_Step_Config)
     conf_widge_loop.sub_widget.lineEdit_start.setText("-1")
     conf_widge_loop.sub_widget.lineEdit_stop.setText("1")
     conf_widge_loop.sub_widget.lineEdit_n_points.setText("21")
-    
+
     # --- Add child step: Set Variables ---
     action = get_action_from_name(conf.add_actions, "Set Variables")
     action.trigger()
     from nomad_camels.loop_steps import set_variables
+
     def wait_selection_sv():
         select_step_by_name(conf, "Set Variables (Set_Variables)")
         conf.tree_click_sequence()
-        assert isinstance(conf.loop_step_configuration_widget, set_variables.Set_Variables_Config)
+        assert isinstance(
+            conf.loop_step_configuration_widget, set_variables.Set_Variables_Config
+        )
+
     qtbot.waitUntil(wait_selection_sv)
     conf_widge_sv = conf.loop_step_configuration_widget
     # Configure the Set Variables step to assign the current for loop value to "set_var".
@@ -381,13 +399,16 @@ def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
     action = get_action_from_name(conf.add_actions, "Read Channels")
     action.trigger()
     from nomad_camels.loop_steps import read_channels
+
     def wait_selection_rc():
         select_step_by_name(conf, "Read Channels (Read_Channels)")
         conf.tree_click_sequence()
-        assert isinstance(conf.loop_step_configuration_widget, read_channels.Read_Channels_Config)
+        assert isinstance(
+            conf.loop_step_configuration_widget, read_channels.Read_Channels_Config
+        )
+
     qtbot.waitUntil(wait_selection_rc)
 
-    
     # --- Add child step: Wait ---
     action = get_action_from_name(conf.add_actions, "Wait")
     action.trigger()
@@ -397,32 +418,37 @@ def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
     def wait_for_wait_widget():
         select_step_by_name(conf, "Wait (Wait)")
         conf.tree_click_sequence()
-        return isinstance(conf.loop_step_configuration_widget, wait_loop_step.Wait_Loop_Step_Config)
+        return isinstance(
+            conf.loop_step_configuration_widget, wait_loop_step.Wait_Loop_Step_Config
+        )
 
     qtbot.waitUntil(wait_for_wait_widget)
     conf_widge_wait = conf.loop_step_configuration_widget
     assert isinstance(conf_widge_wait, wait_loop_step.Wait_Loop_Step_Config)
     conf_widge_wait.sub_widget.lineEdit_duration.setText("0.01")
-        
+
     # --- Add a Plot definition with a linear fit ---
     from nomad_camels.frontpanels import plot_definer
+
     fit = plot_definer.Fit_Info(True, "Linear", x="For_Loop_Value", y="set_var")
     plot = plot_definer.Plot_Info(
-         x_axis="For_Loop_Value",
-         y_axes={"formula": ["set_var"], "axis": ["left"]},
-         fits=[fit]
+        x_axis="For_Loop_Value",
+        y_axes={"formula": ["set_var"], "axis": ["left"]},
+        fits=[fit],
     )
-    
+
     # Accept the protocol configuration.
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
     prot = conf.protocol
     prot.name = "test_for_loop_set_var_protocol"
     prot.plots.append(plot)
+
     def wait_for_move_in():
         """ """
         qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
-        print( len(prot.loop_steps))
+        print(len(prot.loop_steps))
+
     select_step_by_name(conf, "Set Variables (Set_Variables)")
     qtbot.waitUntil(wait_for_move_in)
     with qtbot.waitSignal(conf.accepted) as blocker:
@@ -435,28 +461,45 @@ def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
     qtbot.waitUntil(wait_for_move_in)
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
-    
+
     # Build the catalog and run the protocol.
     catalog_maker(tmp_path)
     publisher, dispatcher = zmq_setup
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
-    
+
     # --- After the protocol run, open the Nexus file and perform a linear fit ---
     # We assume that the protocol saves two datasets: one for the for-loop values
     # (named "for_loop_value") and one for the variable "set_var".
     import h5py
     import numpy as np
+
     if prot.use_nexus:
         file_ending = ".nxs"
     else:
         file_ending = ".h5"
     savepath = tmp_path / (prot.name + file_ending)
     with h5py.File(savepath, "r") as f:
-        x_data = f[list(f.keys())[0]]["data"]["test_for_loop_set_var_protocol_variable_signal"]["For_Loop_Value"][:]  # for-loop (x-axis) values
-        y_data = f[list(f.keys())[0]]["data"]["test_for_loop_set_var_protocol_variable_signal"]["set_var"][:]         # recorded set_var values
-        slope_camels_fit = f[list(f.keys())[0]]["data"]["fits"]["Linear_set_var_v_For_Loop_Value_primary"]["slope"][:]  # linear fit values
-        intercept_camels_fit = f[list(f.keys())[0]]["data"]["fits"]["Linear_set_var_v_For_Loop_Value_primary"]["intercept"][:]  # linear fit intercept
-    
+        x_data = f[list(f.keys())[0]]["data"][
+            "test_for_loop_set_var_protocol_variable_signal"
+        ]["For_Loop_Value"][
+            :
+        ]  # for-loop (x-axis) values
+        y_data = f[list(f.keys())[0]]["data"][
+            "test_for_loop_set_var_protocol_variable_signal"
+        ]["set_var"][
+            :
+        ]  # recorded set_var values
+        slope_camels_fit = f[list(f.keys())[0]]["data"]["fits"][
+            "Linear_set_var_v_For_Loop_Value_primary"
+        ]["slope"][
+            :
+        ]  # linear fit values
+        intercept_camels_fit = f[list(f.keys())[0]]["data"]["fits"][
+            "Linear_set_var_v_For_Loop_Value_primary"
+        ]["intercept"][
+            :
+        ]  # linear fit intercept
+
     # Compute a linear fit on the data.
     slope, intercept = np.polyfit(x_data, y_data, 1)
     # Check that the slope and intercept from the CAMELS fit are the same as the ones computed from the data.
@@ -725,7 +768,7 @@ def ensure_demo_in_devices():
         instrument_installer.install_instrument("demo_instrument")
         instr, packs = instrument_installer.getInstalledDevices(True, True)
         assert "demo_instrument" in instr
-        
+
     # Clear all devices and keep only demo_instrument
     if "demo_instrument" in variables_handling.devices:
         demo_inst = variables_handling.devices["demo_instrument"]
@@ -735,13 +778,15 @@ def ensure_demo_in_devices():
         variables_handling.devices.clear()
         inst = packs["demo_instrument"].subclass()
         variables_handling.devices["demo_instrument"] = inst
-        
+
     assert "demo_instrument" in variables_handling.devices
-    assert len(variables_handling.devices) == 1, "Only demo_instrument should be present"
-    
+    assert (
+        len(variables_handling.devices) == 1
+    ), "Only demo_instrument should be present"
+
     # Clear and repopulate channels
     variables_handling.channels.clear()
-    for key, dev in variables_handling.devices.items():
+    for dev in variables_handling.devices.values():
         variables_handling.channels.update(dev.get_channels())
 
 
