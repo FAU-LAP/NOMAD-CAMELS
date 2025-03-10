@@ -240,6 +240,12 @@ class Stage_Control(Manual_Control, Ui_Form):
         positions = [np.nan, np.nan, np.nan]
         if read_not_none:
             for i in range(3):
+                if hasattr(self.read_channels[i], "trigger"):
+                    try:
+                        self.read_channels[i].trigger()
+                    except:
+                        pass
+            for i in range(3):
                 try:
                     positions[i] = self.read_channels[i].get()
                 except:
@@ -389,6 +395,8 @@ class Stage_Control(Manual_Control, Ui_Form):
         move_to = [np.nan] * 3
         for i in range(3):
             if self.read_channels[i] is not None:
+                if hasattr(self.read_channels[i], "trigger"):
+                    self.read_channels[i].trigger()
                 move_to[i] = self.read_channels[i].get()
             elif self.set_channels[i] is not None:
                 move_to[i] = self.set_channels[i].get()
@@ -648,6 +656,9 @@ class Readback_Thread(QThread):
     def do_reading(self):
         """ """
         vals = []
+        for channel in self.channels:
+            if channel and hasattr(channel, "trigger"):
+                channel.trigger()
         for channel in self.channels:
             if channel:
                 vals.append(channel.get())

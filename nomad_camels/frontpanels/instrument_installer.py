@@ -597,6 +597,7 @@ def install_instrument(device_name):
         stdin=subprocess.PIPE,
         creationflags=flags,
     )
+    ret.wait()
     if ret.returncode:
         raise OSError(f"Failed to install nomad-camels-driver-{device_name}")
     return ret

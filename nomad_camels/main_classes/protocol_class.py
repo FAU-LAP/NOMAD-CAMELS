@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit, QMessageBox, QPushButton
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Qt
 
 from nomad_camels.frontpanels.plot_definer import Plot_Button_Overview
 from nomad_camels.loop_steps import make_step_of_type
@@ -8,6 +8,7 @@ from nomad_camels.gui.general_protocol_settings import Ui_Protocol_Settings
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.utility import variables_handling
+from nomad_camels.frontpanels.flyer_window import FlyerButton
 
 
 class Measurement_Protocol:
@@ -84,6 +85,8 @@ class Measurement_Protocol:
         self.allow_live_comments = (
             kwargs["allow_live_comments"] if "allow_live_comments" in kwargs else False
         )
+        self.flyer_data = kwargs.get("flyer_data", [])
+
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -287,10 +290,19 @@ class Measurement_Protocol:
         for step in self.loop_steps:
             if not step.is_active:
                 continue
-            plan_string += step.get_protocol_string(n_tabs=1)
+            if step.step_type == "Run Subprotocol":
+                step_get_string = step.get_protocol_string(n_tabs=1, name=step.name)
+                plan_string += step_get_string
+            else:
+                plan_string += step.get_protocol_string(n_tabs=1)
+            
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
         plan_string += "\tsub_eva = runEngine.subscribe(eva)\n"
         plan_string += "\tyield from bps.open_run(md=md)\n"
+        plan_string += """
+    if web_ports:
+        yield from wait_for_dash_ready_plan(web_ports)
+"""
         if self.use_end_protocol:
             plan_string += "\ttry:\n"
             plan_string += f'\t\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, stream_name, runEngine)\n'
@@ -411,6 +423,13 @@ class Measurement_Protocol:
         for dev in devices:
             adds += variables_handling.devices[dev].get_necessary_devices()
         devices += adds
+        if self.flyer_data:
+            for channel in variables_handling.channels:
+                for flyer in self.flyer_data:
+                    if channel in flyer["channels"]["channel"]:
+                        device = variables_handling.channels[channel].device
+                        if device not in devices:
+                            devices.append(device)
         if self.use_end_protocol:
             from nomad_camels.utility import load_save_functions
 
@@ -503,7 +522,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.ending_protocol_selection = Path_Button_Edit(
             self,
             self.protocol.end_protocol,
-            default_dir=variables_handling.preferences["py_files_path"],
+            default_dir=variables_handling.preferences.get("py_files_path", "."),
             file_extension="*.cprot",
         )
         self.checkBox_perform_at_end.setToolTip(
@@ -540,9 +559,14 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         else:
             self.comboBox_h5.setCurrentIndex(1)
 
+        self.flyer_button = FlyerButton(
+            parent=self, flyer_data=self.protocol.flyer_data
+        )
+
         self.layout().addWidget(self.textEdit_desc_protocol, 5, 0, 1, 6)
 
         self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
+        self.layout().addWidget(self.flyer_button, 7, 0, 1, 6)
         self.layout().addWidget(self.checkBox_perform_at_end, 20, 0, 1, 6)
         self.layout().addWidget(self.ending_protocol_selection, 21, 0, 1, 6)
         # ! Ui_Protocol_Settings.ui file adds the Variables Table at position 8 and 9 !!!
@@ -567,11 +591,19 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
     def adjust_text_edit_size_prot(self):
         """Adjusts the size of the textEdit_desc_protocol based on its content."""
+        max_height = 130  # Set your desired maximum height here
         document = self.textEdit_desc_protocol.document()
-        document_height = document.size().height()
-        self.textEdit_desc_protocol.setFixedHeight(
-            document_height + 5
-        )  # Add some padding
+        # Calculate the height of the document (plus some padding)
+        document_height = document.size().height() + 5
+        if document_height > max_height:
+            new_height = max_height
+            # Enable scrolling if the content exceeds max height
+            self.textEdit_desc_protocol.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        else:
+            new_height = document_height
+            # Hide scroll bar if not needed
+            self.textEdit_desc_protocol.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.textEdit_desc_protocol.setFixedHeight(new_height)
 
     def enable_disable_config(self):
         disabling = self.checkBox_no_config.isChecked()
@@ -638,6 +670,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.name = self.lineEdit_protocol_name.text()
         self.protocol.description = self.textEdit_desc_protocol.toPlainText()
         self.protocol.plots = self.plot_widge.plot_data
+        self.protocol.flyer_data = self.flyer_button.flyer_data
         self.protocol.export_csv = self.checkBox_csv_exp.isChecked()
         self.protocol.export_json = self.checkBox_json_exp.isChecked()
         self.protocol.skip_config = self.checkBox_no_config.isChecked()

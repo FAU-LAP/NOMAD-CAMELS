@@ -18,156 +18,184 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.0 Parallel Async Reading and New Plot Backend
+
+Features:
+- can now asynchronously read channels during a running protocol
+
+Changes:
+- Plots now use a different backend. Should make the run engine faster and more stable. Plots now run in their own threads and should not interefere as much with the main protocol execution.
+- Now saves data files with an `.h5` file extension if no NeXus output was enabled. Only uses `.nxs` file extension if NeXus output is saved to the file. Should clarify that the standard CAMELS data files do **NOT** follow rigid NeXus standards.
+
+Fixed:
+- You can now run the same subprotocol multiple times. Each subprotocol execution creates it own data stream. This means the datafile has separate entires for each subprotocol run
+- When dragging / dropping a step in the protocol sequence, the moved step is now selected afterwards
+- Cannot drop a step in a simple sweep anymore
+- Manual controls could not work with channels that need to call trigger, now fixed
+- Made aborting a protocol more stable
+- Generic set and read manual control now closes its thread more stably
+- Fixed expression evaluation for subprotocols
+- Protocol and device description field is now max 130px high. After that it becomes scrollable.
+
 ### 1.7.2
+
 Features:
 - Can now break loops in the if-step
-- can now play a sound effect (select checkbox in settings) when protocol is doen
+- Can now play a sound effect (select checkbox in settings) when protocol is doen
 
 UI:
 - Simple_Config of instruments now supports tool tips for config channels
 - Layout of Simple_Config now scrollable and can support more / less columns
 - Stage control manual control with ctrl + arrow keys now also if some part of the control is selected
 
-Fixes:
+Fixed:
 - Changing plot color now does not always affect the first item anymore
-- setting a number of plot points in the definition window now works again
-- progress bar in wait sometimes crashed, now fixed
-- updated custom function signal to better support list / tuple ... setting-types by handling kwargs from bluesky
+- Setting a number of plot points in the definition window now works again
+- Progress bar in wait sometimes crashed, now fixed
+- Updated custom function signal to better support list / tuple ... setting-types by handling kwargs from bluesky
 - Made plotting much more robust. You can now define multiple plots and read at multiple points in your protocol. The plots are only updated if data concerning the y-axis of your plot is actually read.
-- updating instrument never worked, only installing, now fixed
-- update all instruments now skips local drivers
-- users and samples are now saved in a more robust way
+- Updating instrument never worked, only installing, now fixed
+- Update all instruments now skips local drivers
+- Users and samples are now saved in a more robust way
 
 ### 1.7.1
-Fixes:
+
+Fixed:
 - Automatic upload to NOMAD fixed when also exporting to CSV
 
 ## 1.7.0 Browser plots and improved install
+
 Features:
-- can now show plots in the browser
-- support of Python 3.9 is back!
+- Can now show plots in the browser
+- Support of Python 3.9 is back!
 - Live comments now come with timestamps
 
 Changes:
 - Cleaned up the protocol builder to only import modules when necessary
 - When selecting an upload for automatic upload to NOMAD, the *Uploads* drop-down list is now automatically updated.
 - Added warning and option to install flask, dash and plotly when selecting "Show plot in browser"
-- installation and dependency management now via poetry to keep dependencies clean
+- Installation and dependency management now via poetry to keep dependencies clean
 
-Fixes:
-- fits now have at least the number of data points in the plot view
-- could insert variables at channel names in set channels and similar, now only possible for the value
-- improved exception handling for instrument (un-)install
+Fixed:
+- Fits now have at least the number of data points in the plot view
+- Could insert variables at channel names in set channels and similar, now only possible for the value
+- Improved exception handling for instrument (un-)install
 
 
 
 ## 1.6.0 Ignore failed read, new manual control
+
 Features:
-- can ignore failed readings of specific channels now, so the protocol does not break if some sensor fails once
-- new manual control to generically set / read any kind of channel
-- can now manually adjust size and position of plots in protocol configuration
+- Can ignore failed readings of specific channels now, so the protocol does not break if some sensor fails once
+- New manual control to generically set / read any kind of channel
+- Can now manually adjust size and position of plots in protocol configuration
 
 Changes:
-- order of steps in menu now alphabetically
-- default value of read variables in "Read Channels" now True
-- in the Set Value Popup, now a messagebox asks, whether the user is sure if they click on "cancel"
+- Order of steps in menu now alphabetically
+- Default value of read variables in "Read Channels" now True
+- In the Set Value Popup, now a messagebox asks, whether the user is sure if they click on "cancel"
 
-Fixes:
-- changelog is now actually shown
-- waiting bars could crash if executed in a fast loop, now fixed
+Fixed:
+- Changelog is now actually shown
+- Waiting bars could crash if executed in a fast loop, now fixed
 
 ### 1.5.3 Less Confusion!
-Changes:
-- no more confusion when opening a protocol configuration, cannot open the same twice anymore, but raises the already opened window to the front
 
-Fixes:
+Changes:
+- No more confusion when opening a protocol configuration, cannot open the same twice anymore, but raises the already opened window to the front
+
+Fixed:
 - ElapsedTime for List and 2D plots fixed
-- not necessary to read channels when waiting for condition anymore (condition might be due to variable for example)
-- driver builder does not create read-functions for set-channels anymore
-- list-plot can now display other types than numbers and bool again
-- throwing an error when trying to execute python file without specifying a file
-- variables in protocols run by a watchdog should now work
-- replace with menu now looks as the others, cannot replace step with same type anymore
+- Not necessary to read channels when waiting for condition anymore (condition might be due to variable for example)
+- Driver builder does not create read-functions for set-channels anymore
+- List-plot can now display other types than numbers and bool again
+- Throwing an error when trying to execute python file without specifying a file
+- Variables in protocols run by a watchdog should now work
+- Replace with menu now looks as the others, cannot replace step with same type anymore
 
 ### 1.5.2 The team of NOMAD CAMELS wishes you a measuring christmas and bug-free new year!
+
 Features:
-- now showing the changelog after an update
+- Now showing the changelog after an update
 
 Changes:
-- the log-window now has a maximum number of lines (default for the moment at 10000)
-- menu of steps renamed from "Additional" to "Advanced"
+- The log-window now has a maximum number of lines (default for the moment at 10000)
+- Menu of steps renamed from "Additional" to "Advanced"
 
-Fixes:
-- manage instruments could not be opened without internet connection, now fixed
-- instruments that depend on others sometimes were closed in the wrong order, should now be fixed (example: first de-instantiate the PID, then its read / set channels)
-- fixed a bug where in some Qt versions the window could not be loaded anymore by changing requirement of PySide6, fixed warning that happened in versions where it worked
-- wrong movement of stage manual control when using buttons after keyboard move fixed
-- read only config data (e.g. IDN for some instruments) were not read if they had a default value, now fixed
+Fixed:
+- Manage instruments could not be opened without internet connection, now fixed
+- Instruments that depend on others sometimes were closed in the wrong order, should now be fixed (example: first de-instantiate the PID, then its read / set channels)
+- Fixed a bug where in some Qt versions the window could not be loaded anymore by changing requirement of PySide6, fixed warning that happened in versions where it worked
+- Wrong movement of stage manual control when using buttons after keyboard move fixed
+- Read only config data (e.g. IDN for some instruments) were not read if they had a default value, now fixed
 
 ### 1.5.1
+
 Features:
 - Can now live-control the variables of a protocol while it is running
 - Can now skip some datapoints in plotting, useful for long measurements to free up some memory or improve speed
 
 Changes:
-- added a button to the API settings that redirects you to the API documentation
-- session now also creates a sub-folder
+- Added a button to the API settings that redirects you to the API documentation
+- Session now also creates a sub-folder
 
-Fixes:
-- opening the data path opened several windows in some cases, now fixed
-- samples can now be deleted again
+Fixed:
+- Opening the data path opened several windows in some cases, now fixed
+- Samples can now be deleted again
 - "Channels" or "Variables" do not appear in set value popup anymore if None of these are set
-- tree of protocol sequence not scrolling back to the top anymore on every click
-- the button for adding a step now displays the same menu as a right click in the sequence
-- folder with python files might have been missing on first start, now fixed
+- Tree of protocol sequence not scrolling back to the top anymore on every click
+- The button for adding a step now displays the same menu as a right click in the sequence
+- Folder with python files might have been missing on first start, now fixed
 
 ## 1.5.0 metadata structuring
+
 Features:
 There is a new data output structure, making it clearer to understand, mostly consistent with old versions.
 The data / metadata are not saved in a rigid NeXus shape anymore. However, it is possible (turned on by default) to add the NX structure as an additional entry in the hdf5. If doing this, the data is not duplicated, everything is done by soft-links in the hdf5.
 
-Fixes:
-- can now paste again with ctrl+v in most outer part of protocol
-- fixed throwing errors when entering bad values in variable-boxes
-- removed additional appearance of plot_data in metadata
+Fixed:
+- Can now paste again with ctrl+v in most outer part of protocol
+- Fixed throwing errors when entering bad values in variable-boxes
+- Removed additional appearance of plot_data in metadata
 
 ---
 
 ### 1.4.3
+
 Features:
 - Can now make a protocol stop on an if condition
 
 Changes in UI:
-- steps now grouped in menu
-- renamed plots button
+- Steps now grouped in menu
+- Renamed plots button
 
-Fixes:
-- removed bad version numbers from metadata
-- fixed an issue with the databroker catalog not being set
-- channel-metadata is now consistent over several measurements (metadata was lost because of mutable datatype)
+Fixed:
+- Removed bad version numbers from metadata
+- Fixed an issue with the databroker catalog not being set
+- Channel-metadata is now consistent over several measurements (metadata was lost because of mutable datatype)
 - Plots from sub-steps are now in the data
-- databroker should now load correclty again
-- added export of bytes into json
-- not always focusing the new box in tables anymore
+- Databroker should now load correclty again
+- Added export of bytes into json
+- Not always focusing the new box in tables anymore
 
 ### 1.4.2
-Changes:
-- improved the NOMAD identifier for samples, user and instruments
 
-Fixes:
-- fixed error from empty 2D plot
-- fixed several issues with how the NOMAD Oasis URL is handled
-- fixed session name not being used in data file
+Changes:
+- Improved the NOMAD identifier for samples, user and instruments
+
+Fixed:
+- Fixed error from empty 2D plot
+- Fixed several issues with how the NOMAD Oasis URL is handled
+- Fixed session name not being used in data file
 
 ### 1.4.1 2D plot features
+
 Features:
 - Clear plot now possible for 2D plots
 - 2D plot now has maximum number of data points
-
-
-
-Fixes:
-- fixed compatibility of 2D plot with newer numpy versions (np.ptp(x) instead of x.ptp())
+- 
+Fixed:
+- Fixed compatibility of 2D plot with newer numpy versions (np.ptp(x) instead of x.ptp())
 
 ## 1.4.0 API improvements, clean protocol exit, more metadata
 
@@ -184,16 +212,16 @@ Changes:
 - Data passing from the Execute Python Script step was changed. Now should be more stable, as it looks for the Data between the `###Start Data` und `###End Data` strings. See our [documentation](https://fau-lap.github.io/NOMAD-CAMELS/doc/protocol_steps/step_Execute_Python_File.html#returning-results) for more details.
 - Refactored the way metadata is saved in instruments
 
-Fixes:
-- fixed a bug where a protocol would show multiple times
-- installed version should now be found correctly when searching for updates
-- removing / moving of buttons in tabs fixed
-- requirement updated to camels suitcase 0.2.2, fixing datasets in instruments
-- some raised exceptions now provide additional traceback
-- errors raised by plots now only raised once, not for each datapoint
-- number of datapoints set in plot definition now correctly taken over to plot
-- fixed a bug that would stop users from logging in to the central NOMAD
-- logging used a bad file handler that would stop logs, now corrected
+Fixed:
+- Fixed a bug where a protocol would show multiple times
+- Installed version should now be found correctly when searching for updates
+- Removing / moving of buttons in tabs fixed
+- Requirement updated to camels suitcase 0.2.2, fixing datasets in instruments
+- Some raised exceptions now provide additional traceback
+- Errors raised by plots now only raised once, not for each datapoint
+- Number of datapoints set in plot definition now correctly taken over to plot
+- Fixed a bug that would stop users from logging in to the central NOMAD
+- Logging used a bad file handler that would stop logs, now corrected
 
 ---
 
@@ -208,7 +236,7 @@ Changes:
 - Resetting positions for plots at each run, hoping to keep plots visible for remote-sessions
 - Allowed for stopping a protocol during instrument instantiation
 
-Fixes:
+Fixed:
 - Removed unnecessary import in protocols
 - Having quotation marks in a prompt or a step description could break the protocol, now fixed
 - Fixed tabs on first startup of CAMELS
@@ -219,19 +247,19 @@ Fixes:
 - API: You can now use negative index in the API calls
 - Evaluator does not break on non-string inputs, but simply returns them
 - Fixed different read-channel steps when using a subprotocol
-- fixed subprotocol evaluator not updating
-- fixed usage of quotation marks for advanced instrument config step
-- when switching the preset, the tabs now load correctly
-- tab order is now remembered
-- log plots might not show correctly, now they have a minimum size
-- quotation mark problems with protocol overview fixed
-- links now open correctly on unix and mac
-- ctrl+v now works in container-steps
-- should now correctly handle /gui urls for NOMAD oasis
+- Fixed subprotocol evaluator not updating
+- Fixed usage of quotation marks for advanced instrument config step
+- When switching the preset, the tabs now load correctly
+- Tab order is now remembered
+- Log plots might not show correctly, now they have a minimum size
+- Quotation mark problems with protocol overview fixed
+- Links now open correctly on unix and mac
+- Ctrl+v now works in container-steps
+- Should now correctly handle /gui urls for NOMAD oasis
 - ElapsedTime now displays correctly in plots
 - Adding while-loop counter earlier to namespace so it can be part of the while condition
-- fixed a bug where a short queued protocol would be run endlessly
-- when the most recent preset was no viable json, it might break camels, now the second newest will be loaded instead of breaking
+- Fixed a bug where a short queued protocol would be run endlessly
+- When the most recent preset was no viable json, it might break camels, now the second newest will be loaded instead of breaking
 
 ## 1.3.0 API and Watchdogs
 
@@ -249,7 +277,7 @@ Changes:
 - Can now read variables also without channels
 - moved databroker catalog loading to import thread, should speed up starting
 
-Fixes:
+Fixed:
 - Can now save variables with non-scalar size
 - x-y plot now working with array-data again
 - Multiple occurances of same protocol in tab-dictionary in save-json removed
@@ -264,6 +292,7 @@ Fixes:
 ---
 
 ### 1.2.2
+
 Features:
 - Included the protocol's json used by the configuration in CAMELS into the data file
 - Added functionality to replace loopsteps (instead of delete + add a new one)
@@ -272,20 +301,21 @@ Features:
 - Added conditional waiting to the wait-step
 - More info on python file step in protocol overview
 
-Fixes:
+Fixed:
 - Cannot move protocols or manual controls to empty tab containing the "+" button anymore
 - If instrument instantiation fails, only the actual error should now be raised
 - Improved thread stability of stage control
-- plots that were once closed now behave correctly, not throwing an error on closing again and can be closed by the close plots button
+- Plots that were once closed now behave correctly, not throwing an error on closing again and can be closed by the close plots button
 - Read Channels with the same channels but different state of reading variables now work
 - Search bar of menu of editable boxes now appears at the top instead of bottom
-- cannot display empty menus for insert-variables anymore --> search does not break menu anymore
+- Cannot display empty menus for insert-variables anymore --> search does not break menu anymore
 
 ### 1.2.1
-Features:
-- added NOMAD metadata to NOMAD samples
 
-Fixes:
+Features:
+- Added NOMAD metadata to NOMAD samples
+
+Fixed:
 - For loop for which no distance was ever defined was broken, now fixed
 - Fixed bug that prevented the app from starting when no tabs were used before
 - Fixed issue with dots in paths
@@ -301,9 +331,9 @@ Features:
 
 Changes:
 - Running a protocol with a subprotocol also builds the subprotocol now. This makes it easier to change sub-protocols for more complex measurement routines.
-- start-min-max-stop sweeps in a for loop now behave differently, the number of points is now the total number of points, not the number between min and max
+- Start-min-max-stop sweeps in a for loop now behave differently, the number of points is now the total number of points, not the number between min and max
 
-Fixes:
+Fixed:
 - Description fields now change their size dynamically.
 - Filtering the channels by name does not break if no matches were found.
 - Filtering Set Channels now does not reset the value if the channel does not match the query.
@@ -313,19 +343,20 @@ Fixes:
 
 ### 1.1.2
 
-Fixes:
+Fixed:
 
 - Removed empty fit parameters, which would cause an error before
 - Fixed requirement of pyepics, version 3.5.3 seems broken on windows, going back to version 3.5.2
 
 ### 1.1.1
+
 Features:
 - parsing now understands physical constants with `const.<constant_name>` by using `scipy.constants` as `const`
 
 Changes:
 - Now displaying errors together with fit values
 
-Fixes:
+Fixed:
 - Too little characters were allowed in plot labels, now most characters are allowed again
 - Failed fits do not throw an error that crashes the protocol anymore
 - Title and icon of plot windows
@@ -334,70 +365,77 @@ Fixes:
 Features:
 - Protocols and manual controls are now sortable into tabs!
 - Protocols can now be run in a queue
-- added possibility to force sequential on/off for single channels
+- Added possibility to force sequential on/off for single channels
 - Plots are now done with pyqtgraph, improving interactivity and performance
 
-Fixes:
+Fixed:
 - Plots being placed somewhere should now not kill the program anymore
 
 ---
 
 ### 1.0.6
+
 Features:
 - Added an "owner" field to the samples, it is automatically populated when a new sample is created. This should stop cluttering the samples for all users. Only the current user's samples will show in the comboBox, or those without owner.
 - Added possibility to use instruments that generate their channels at runtime. 
 - Added SequentialDevice that forces every call to the instrument to wait for the previous one to finish.
 - Added the `*.py` and `*_ophyd.py` file contents as metadata to each instrument in the final measurement file. 
 
-Fixes:
+Fixed:
 - "Hide info" button in instrument installer now working
 
 ### 1.0.5
+
 Changes:
 - Driver versions now have a separate branch on CAMELS_drivers to improve keeping them up to date
 - Same for extensions
 - Now checking filenames of protocols for invalid characters
 - Improved speed of looking for updates
 
-Fixes:
+Fixed:
 - Fixed checking for currently used version
 - Extensions can now actually be downloaded
 
 ### 1.0.4
-Fixes:
+
+Fixed:
 - NOMAD upload now uses the correct file if new file for every run
 - Dependency updated to python>=3.11.3
 
 ### 1.0.3
+
 Changes:
 - Removed "environment" from saved hdf5 files, moved instrument information up on step in hirarchy
 - changed file extension to .nxs for better NOMAD integration
 
-Fixes:
-- fixed bug that prevented set panels from starting
-- fixed issue with uploads to NOMAD if an unnamed upload exists
-- fixed trigger for Custom_Function_SignalRO
-- fixed parameters for custom function in fits
+Fixed:
+- Fixed bug that prevented set panels from starting
+- Fixed issue with uploads to NOMAD if an unnamed upload exists
+- Fixed trigger for Custom_Function_SignalRO
+- Fixed parameters for custom function in fits
 
 ### 1.0.2
+
 Features:
 - Added functionality to select path for exporting hdf5 to csv/json
 
-Fixes:
+Fixed:
 - You can now use new lines and special characters in the protocol description field.
 - If exporting hdf5 to csv/json and not specifying the path for the export, the path of the hdf5 should now be selected correctly
 
 
 ### 1.0.1
+
 Features:
 - Now asking for the path, where to save measurement data when starting up CAMELS for the first time (or there is no preferences.json)
 - Added "Quit" button to file menu
 
 Changes:
-- changed the default configuration files path for linux and mac; now the user is asked at the first startup where to put configuration files and can set the path in the settings
-- improved usability of moving steps in sequence
+- Changed the default configuration files path for linux and mac; now the user is asked at the first startup where to put configuration files and can set the path in the settings
+- Improved usability of moving steps in sequence
 
 # 1.0.0
+
 Features:
 - Fit values can now be displayed directly in the plot
 - Refactor device instantiation to be handled in another thread to keep the UI responsive, this might cause some problems with instrument-specific manual controls that are not yet updated accordingly
@@ -413,15 +451,15 @@ Features:
 - Can now run from command line using "nomad-camels"
 
 Changes:
-- the imports needed at a later time are now running in another thread after starting the main app to improve speed
+- The imports needed at a later time are now running in another thread after starting the main app to improve speed
 - Changed displayed window titles to show "NOMAD CAMELS" last
 - Changed displayed name to "NOMAD CAMELS" wherever found
 - Removed checkbox whether to plot an xy-plot, it is now always plotted
 - Added color to GUI buttons for better usability
 
-Fixes:
-- fixed export from databroker if the run failed such that no "stop" is in metadata
-- plot widget now shows the table to change linestyle and markerstyle
+Fixed:
+- Fixed export from databroker if the run failed such that no "stop" is in metadata
+- Plot widget now shows the table to change linestyle and markerstyle
 - Refactor file paths for cross-platform compatibility in device_driver_builder.py
 - Fix issue of stage control not updating set_channel when moving manually
 
@@ -430,51 +468,51 @@ Fixes:
 
 Features:
 
-- driver builder now not only for VISA, includes custom functions
-- now allowing for non-string configs (e.g. other instruments)
+- Driver builder now not only for VISA, includes custom functions
+- Now allowing for non-string configs (e.g. other instruments)
 
 Changes:
 
-- changed order of channels to be above variables in context menu
-- changed marker style to 'pixel' for 2D-plots
-- changed driver information window, you can now toggle it on and off with the button in the instrument management
+- Changed order of channels to be above variables in context menu
+- Changed marker style to 'pixel' for 2D-plots
+- Changed driver information window, you can now toggle it on and off with the button in the instrument management
 
-Fixes:
+Fixed:
 
-- fixed error when changing the sweep channel in the ND sweep step 
+- Fixed error when changing the sweep channel in the ND sweep step 
 
 
 ### 0.2.2
 
 Features:
 - Reading/Saving of variables ad Read_Channels is now possible, appears as an array in the data
-- added a class for a waiting bar during protocols
-- added support for NOMAD's new app token feature
+- Added a class for a waiting bar during protocols
+- Added support for NOMAD's new app token feature
 
-Fixes:
-- unwanted printing of packages in instrument-management fixed
-- plots of sweeps or subprotocols of subprotocols should now also be added to the main-plot list, enabling closing on closing of CAMELS or via button
-- error of screen object already being deleted should be fixed
-- databroker export to csv improved for non simple 2D data
-- time weight of sub protocols now handled correctly
-- use abs for y axis should now be possible (again)
-- color settings for material theme are now remembered when opening the settings
+Fixed:
+- Unwanted printing of packages in instrument-management fixed
+- Plots of sweeps or subprotocols of subprotocols should now also be added to the main-plot list, enabling closing on closing of CAMELS or via button
+- Error of screen object already being deleted should be fixed
+- Databroker export to csv improved for non simple 2D data
+- Time weight of sub protocols now handled correctly
+- Use abs for y axis should now be possible (again)
+- Color settings for material theme are now remembered when opening the settings
 
 ### 0.2.1
 
 Minor features:
-- callable functions for manual move of stage control
-- now showing readme and license of drivers
+- Callable functions for manual move of stage control
+- Now showing readme and license of drivers
 
 Quality of life:
-- waiting cursor during reference drive of stage control
-- names of steps now appear in protocol overview
+- Waiting cursor during reference drive of stage control
+- Names of steps now appear in protocol overview
 
-Fixes:
+Fixed:
 - Fixed bug for showing non-number values / channels in list-plot
-- fixed repeated firing of keyPress/ReleaseEvent in manual control of stage
-- fixed all 3 axes being called when clicking "go-to" in stage control, even if not available
-- fixed that Read_Channels steps could not be renamed
+- Fixed repeated firing of keyPress/ReleaseEvent in manual control of stage
+- Fixed all 3 axes being called when clicking "go-to" in stage control, even if not available
+- Fixed that Read_Channels steps could not be renamed
 
 ## 0.2.0
 
@@ -485,13 +523,13 @@ Minor features:
 - Reference drive and stop of stage control are now callable functions
 
 Quality of life:
-- startup speed increased, but first run of protocol now slowed down
-- added plot all available channels as possibility for List-Plot
-- improved layout of set-panel
+- Startup speed increased, but first run of protocol now slowed down
+- Added plot all available channels as possibility for List-Plot
+- Improved layout of set-panel
 
-Fixes:
+Fixed:
 - Can now set log scale when using only one y-axis
-- now using settings of log-scale from definition window at startup of plot
+- Now using settings of log-scale from definition window at startup of plot
 
 ### 0.1.9
 
@@ -500,27 +538,27 @@ New features:
 - Set_Panel added as a new manual control, this may be used to easily control channels that often have to be set to certain values in preparation of an experiment
 
 Quality of life:
-- waiting cursor when adding instrument and it takes some time
+- Waiting cursor when adding instrument and it takes some time
 
-Fixes:
+Fixed:
 - Now the For-Loop (and children of it) display the "start - min - max - stop" preview correctly
-- import of instruments should now work correctly when running protocol outside the UI
-- int in instrument config is now saved as int
-- pyvisa added to requirements to support local drivers
+- Import of instruments should now work correctly when running protocol outside the UI
+- Int in instrument config is now saved as int
+- Pyvisa added to requirements to support local drivers
 
 ### 0.1.8
 
-Fixes:
-- finalize steps of instruments are now being called
-- fixed issue with handing variables to subprotocol
-- fixed update function for Windows, function for Unix/Mac not tested
+Fixed:
+- Finalize steps of instruments are now being called
+- Fixed issue with handing variables to subprotocol
+- Fixed update function for Windows, function for Unix/Mac not tested
 
 ### 0.1.7
 
 Added functionalities:
 - Added functionality to import protocols
 
-Fixes:
+Fixed:
 - Fixed error message appearing when closing List-Plot
 - Fixed login for central NOMAD
 - fixed comment/uncomment of steps being saved correctly
@@ -531,12 +569,12 @@ Added functionalities:
 - Added capabilities to interact with NOMAD (Oasis), uploading files, getting user information and using a NOMAD entry as sample
 - Functionality to comment / uncomment steps in a protocol for testing / quickly changing a protocol
 
-Fixes:
+Fixed:
 - CAMELS should not crash completely anymore when an instrument cannot be initialised
 - Variables should mostly be refreshed for step configs without clicking around
-- add_metadata removed from Custom_Function_Signal
-- search in channels-tables not case sensitive anymore
-- fixed that protocol without plots starts QApplication when run outside CAMELS
+- *add_metadata* removed from Custom_Function_Signal
+- Search in channels-tables not case sensitive anymore
+- Fixed that protocol without plots starts QApplication when run outside CAMELS
 
 ### 0.1.5
 

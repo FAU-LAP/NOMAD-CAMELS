@@ -17,3 +17,5 @@ nomad_camels/api/api_testing.py
 .venv/
 .pytest_cache/
 .tox/
+.coverage
+poetry.lock

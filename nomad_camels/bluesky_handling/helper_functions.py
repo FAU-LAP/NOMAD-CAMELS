@@ -51,13 +51,13 @@ from nomad_camels.bluesky_handling.loop_step_functions_api_call import (
 
 def get_newest_file(directory):
     """
-    Return the newest '.nxs' file in the specified directory, if one exists.
+    Return the newest '.nxs' or '.h5' file in the specified directory, if one exists.
 
     This function searches the given directory for files ending with the '.nxs'
-    extension and returns the one with the most recent modification time.
+    or '.h5' extension and returns the one with the most recent modification time.
 
     If the input 'directory' is a file, its parent directory is used for the search.
-    If no '.nxs' files are found, the function returns None.
+    If no '.nxs' or '.h5' files are found, the function returns None.
 
     Parameters
     ----------
@@ -75,18 +75,23 @@ def get_newest_file(directory):
     if os.path.isfile(directory):
         directory = os.path.dirname(directory)
 
-    # Define the search pattern for '.nxs' files
-    pattern = os.path.join(directory, "*.nxs")
-
-    # Retrieve a list of all '.nxs' files in the directory
-    nxs_files = glob.glob(pattern)
-
-    # If no '.nxs' files are found, return None
-    if not nxs_files:
+    # Define the search patterns for '.nxs' and '.h5' files
+    pattern_nxs = os.path.join(directory, "*.nxs")
+    pattern_h5 = os.path.join(directory, "*.h5")
+    
+    # Retrieve lists of all '.nxs' and '.h5' files in the directory
+    nxs_files = glob.glob(pattern_nxs)
+    h5_files = glob.glob(pattern_h5)
+    
+    # Combine the lists of files
+    all_files = nxs_files + h5_files
+    
+    # If no files are found, return None
+    if not all_files:
         return None
-
+    
     # Return the newest file based on its modification time
-    newest_file = max(nxs_files, key=os.path.getmtime)
+    newest_file = max(all_files, key=os.path.getmtime)
     return newest_file
 
 
@@ -126,7 +131,7 @@ def export_function(
         The data to be plotted.
 
     """
-    if os.path.splitext(save_path)[1] == ".nxs":
+    if os.path.splitext(save_path)[1] == ".nxs" or os.path.splitext(save_path)[1] == ".h5":
         fname = os.path.basename(save_path)
         path = os.path.dirname(save_path)
     if do_export:
@@ -165,7 +170,7 @@ def saving_function(
     start_doc : dict
         The start document of the run.
     path : str
-        The path where the file should be saved.
+        The path where the file should be saved. 
     new_file_each : bool, optional
         (Default value = True)
         Whether a new file should be created for each run. If True, the files are
@@ -182,7 +187,12 @@ def saving_function(
         The resources to be used. In this case, an empty list.
     """
     fname = start_doc["uid"]
-    if os.path.splitext(path)[1] == ".nxs":
+    if do_nexus_output:
+        file_extension = ".nxs"
+    else:
+        file_extension = ".h5"
+    path = f"{path}{file_extension}"
+    if os.path.splitext(path)[1] == ".nxs" or os.path.splitext(path)[1] == ".h5":
         fname = os.path.basename(path)
         path = os.path.dirname(path)
     return [

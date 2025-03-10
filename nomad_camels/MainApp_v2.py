@@ -11,7 +11,7 @@ import json
 import pathlib
 
 from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog
-from PySide6.QtCore import Qt, Signal, QThread
+from PySide6.QtCore import Qt, Signal, QThread, QTimer
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
 from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
@@ -57,8 +57,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     run_done_file_signal = Signal(str)
     fake_signal = Signal(int)
     protocol_finished_signal = Signal()
+    start_timer_signal = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, start_proxy_bool=True):
         """
         Initialize the MainWindow.
 
@@ -68,6 +69,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         Args:
             parent (Optional[QWidget]): Parent widget, defaults to None.
+            start_proxy_bool (bool): Flag to start proxy, defaults to True.
         """
         super().__init__(parent=parent)
         self.setupUi(self)
@@ -277,6 +279,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.container.setLayout(self.flow_layout)
         self.lineEdit_tags.returnPressed.connect(self.add_tag)
 
+        self._was_aborted = False
+        self._timer = QTimer()
+        self._timer.timeout.connect(self._check_RE_done)
+        self.start_timer_signal.connect(self._start_timer)
         self.protocol_finished_signal.connect(self.play_finished_sound)
 
         version = update_camels.get_version()
@@ -284,6 +290,47 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             update_camels.show_release_notes()
             self.preferences["last_shown_notes"] = version
             load_save_functions.save_preferences(self.preferences)
+        if start_proxy_bool:
+            # Setup a single ZMQ proxy, dispatcher and publisher for all plots
+            from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
+            from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
+            from threading import Thread
+            from zmq.error import ZMQError
+            import asyncio
+
+            if sys.platform == "win32":
+                asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+            def setup_threads():
+                try:
+                    proxy = Proxy(5577, 5578)
+                    proxy_created = True
+                except ZMQError as e:
+                    # If the proxy is already running, a ZMQError will be raised.
+                    proxy = None  # We will use the already running proxy.
+                    proxy_created = False
+
+                def start_proxy():
+                    if proxy_created and proxy is not None:
+                        proxy.start()
+
+                dispatcher = RemoteDispatcher("localhost:5578")
+
+                def start_dispatcher():
+                    try:
+                        dispatcher.start()
+                    except asyncio.exceptions.CancelledError:
+                        # This error is raised when the dispatcher is stopped. It can therefore be ignored
+                        pass
+
+                return proxy, dispatcher, start_proxy, start_dispatcher
+
+            self.publisher = Publisher("localhost:5577")
+            self.proxy, self.dispatcher, start_proxy, start_dispatcher = setup_threads()
+            proxy_thread = Thread(target=start_proxy, daemon=True)
+            dispatcher_thread = Thread(target=start_dispatcher, daemon=True)
+            proxy_thread.start()
+            dispatcher_thread.start()
 
     def add_tag(self):
         """
@@ -692,6 +739,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Args:
             a0 (QCloseEvent): The close event.
         """
+        if hasattr(self, "proxy") and self.proxy is not None:
+            self.proxy.stop()
         for window in list(self.open_windows):
             window.close()
         if self.open_windows:
@@ -1743,7 +1792,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         user = self.get_user_name_data()[0]
         sample = self.get_sample_name_data()[0]
         protocol = self.protocols_dict[protocol_name]
-        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.filename or 'data'}.nxs"
+        if protocol.use_nexus:
+            file_ending = ".nxs"
+        else:
+            file_ending = ".h5"
+        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.filename or 'data'}{file_ending}"
         savepath = os.path.normpath(savepath)
         while not os.path.exists(savepath):
             savepath = os.path.dirname(savepath)
@@ -1839,7 +1892,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.protocol_module.protocol_step_information[
                 "protocol_stepper_signal"
             ] = self.protocol_stepper_signal
-            plots, subs, _, _ = self.protocol_module.create_plots(self.run_engine)
+            plots, subs, app, plots_plotly = self.protocol_module.create_plots(
+                self.run_engine
+            )
             for plot in plots:
                 self.add_to_plots(plot)
             device_list = protocol.get_used_devices()
@@ -1850,11 +1905,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             )
             if api_uuid is not None:
                 self.instantiate_devices_thread.successful.connect(
-                    lambda: self.run_protocol_part2(api_uuid)
+                    lambda: self.run_protocol_part2(
+                        api_uuid,
+                    )
                 )
             else:
                 self.instantiate_devices_thread.successful.connect(
-                    self.run_protocol_part2
+                    lambda: self.run_protocol_part2()
                 )
             self.instantiate_devices_thread.exception_raised.connect(
                 self.propagate_exception
@@ -1944,12 +2001,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "devices": dev_data,
                 "api_uuid": api_uuid,  # Include the uuid in the metadata
             },
+            dispatcher=self.dispatcher,
+            publisher=self.publisher,
+            additionals=additionals,
         )
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(False)
         self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
         nomad = self.nomad_user is not None
+        if self.running_protocol.use_nexus:
+            self.protocol_savepath = f"{self.protocol_savepath}.nxs"
+        else:
+            self.protocol_savepath = f"{self.protocol_savepath}.h5"
         if self.last_save_file:
             file = helper_functions.get_newest_file(self.last_save_file)
         else:
@@ -2080,7 +2144,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             sys.modules[spec.name] = module
             spec.loader.exec_module(module)
             if not watchdog.plots:
-                plots, subs, _ = module.create_plots(
+                plots, subs, app, plots_plotly = module.create_plots(
                     self.run_engine, stream="watchdog_triggered"
                 )
                 watchdog.plots = plots
@@ -2149,22 +2213,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Also handles cleanup of device threads.
         """
         if self.run_engine.state != "idle":
+            self._was_aborted = True
+            self.pushButton_resume.setEnabled(False)
+            self.pushButton_pause.setEnabled(False)
+            self.pushButton_stop.setEnabled(False)
+            self.setWindowTitle(
+                "Protocol aborted, waiting for cleanup... - NOMAD CAMELS"
+            )
             self.run_engine.abort("Aborted by user")
-            if self.running_protocol.use_end_protocol:
-                for i in range(10):
-                    if self.run_engine.state == "idle":
-                        break
-                    import time
-
-                    time.sleep(0.5)
-                try:
-                    self.run_engine(
-                        self.protocol_module.ending_steps(
-                            self.run_engine, self.current_protocol_devices
-                        )
-                    )
-                except Exception as e:
-                    print(e)
         if self.instantiate_devices_thread.isRunning():
             self.instantiate_devices_thread.successful.disconnect()
             self.instantiate_devices_thread.exception_raised.disconnect()
@@ -2205,8 +2261,34 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         and performs final UI updates.
         """
         # IMPORT databroker_export and device_handling only if needed
-        from nomad_camels.utility import databroker_export, device_handling
+        if self._was_aborted:
+            if not self.run_engine.state == "idle":
+                self.start_timer_signal.emit()
+                return
+        self.protocol_finished_part_2()
 
+    def _start_timer(self):
+        self._timer.start(1000)
+
+    def _check_RE_done(self):
+        if self.run_engine.state == "idle":
+            self._timer.stop()
+            self.protocol_finished_part_2()
+
+    def protocol_finished_part_2(self):
+        if self._was_aborted and self.running_protocol.use_end_protocol:
+            try:
+                self.run_engine(
+                    self.protocol_module.ending_steps(
+                        self.run_engine, self.current_protocol_devices
+                    )
+                )
+            except Exception as e:
+                print(e)
+        self._was_aborted = False
+        self.setWindowTitle(
+            "NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems"
+        )
         if (
             self.protocol_module
             and hasattr(self.protocol_module, "uids")
@@ -2327,7 +2409,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol.tags = self.flow_layout.get_all_tags()
         user, userdata = self.get_user_name_data()
         sample, sampledata = self.get_sample_name_data()
-        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.session_name}/{protocol.filename or protocol.session_name or 'data'}.nxs"
+        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.session_name}/{protocol.filename or protocol.session_name or 'data'}"
         self.protocol_savepath = savepath
         # IMPORT protocol_builder only if needed
         from nomad_camels.bluesky_handling import protocol_builder

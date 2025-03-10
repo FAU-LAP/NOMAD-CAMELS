@@ -193,7 +193,10 @@ class Loop_Step_Container(Loop_Step):
         """Overwrites this function to additionally append all children
         to the model."""
         item = super().append_to_model(item_model, parent)
-        item.setDropEnabled(True)
+        if self.has_children:
+            item.setDropEnabled(True)
+        else:
+            item.setDropEnabled(False)
         item.setEditable(False)
         for child in self.children:
             child.append_to_model(item_model, item)

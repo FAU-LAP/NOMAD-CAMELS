@@ -213,6 +213,9 @@ class Readback_Thread(QThread):
 
     def do_reading(self):
         vals = {}
+        for channel in self.channels.values():
+            if hasattr(channel, "trigger"):
+                channel.trigger()
         for name, channel in self.channels.items():
             vals[name] = channel.get()
         self.data_sig.emit(vals)

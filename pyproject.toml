@@ -1,6 +1,6 @@
 [project]
 name = "nomad_camels"
-version = "1.7.2"
+version = "1.8.0"
 description = "CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics."
 authors = [
     {name = "FAIRmat - HU Berlin",email = "nomad-camels@fau.de"}
@@ -18,17 +18,24 @@ pyside6 = ">=6.6.0"
 bluesky = ">=1.9.0"
 ophyd = ">=1.6.4"
 lmfit = ">=1.0.2"
-suitcase-nomad-camels-hdf5 = ">=0.4.4"
+suitcase-nomad-camels-hdf5 = ">=0.4.7"
 databroker = ">=1.2.5"
 matplotlib = ">=3.6.2"
 pyqtgraph = ">=0.13.3"
 requests = ">=2.26.0"
+
 
 # == With Python-specific constraints ==
 pyyaml = [
     {version = ">=6.0", python = ">=3.10,<3.12"},
     {version = ">=6.0.1", python = ">=3.12"},
     {version = ">=3.10", python = ">=3.9,<3.10"}
+]
+pyzmq = [
+    {version = ">=26.2.0", python = ">=3.10,<3.12"},
+    {version = ">=26.2.0", python = ">=3.12"},
+    {version = ">=22.1.0", python = ">=3.9,<3.10"}
+
 ]
 setuptools = [
     {version = ">=54.2.0", python = ">=3.10,<3.12"},
@@ -70,7 +77,7 @@ pyvisa      = { version = ">=1.12.0",  optional = true }
 pyvisa-py   = { version = ">=0.5.3",    optional = true }
 pyusb       = { version = ">=1.2.0", optional = true }
 pyserial    = { version = ">=3.0", optional = true }
-psutil      = { version = ">=5.0.0", optional = true }
+psutil      = { version = ">=6.0.0", optional = true }
 zeroconf    = { version = ">=0.70.0", optional = true }
 
 

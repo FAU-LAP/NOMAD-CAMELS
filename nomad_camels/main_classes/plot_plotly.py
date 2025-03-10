@@ -14,11 +14,13 @@ from flask import request as flask_request
 
 # Import necessary Plotly components for creating and manipulating plots.
 from plotly import graph_objs as go
+
 # Subplots allow multiple traces with secondary y-axes, etc.
 from plotly.subplots import make_subplots
 
 # Core components for building Dash layout and interactive elements.
 from dash import dcc, html, Dash
+
 # For reactive callbacks in Dash (linking outputs to inputs).
 from dash.dependencies import Input, Output
 
@@ -128,6 +130,11 @@ def run_dash_app(
             ),
         ]
     )
+
+    # Add a status endpoint to signal that the app is up.
+    @dash_app.server.route("/status", methods=["GET"])
+    def status():
+        return "OK", 200
 
     @dash_app.server.route("/fit_result", methods=["POST"])
     def fit_result():
@@ -240,7 +247,9 @@ def run_dash_app(
                                 )
                                 # Rebuild lmfit.Parameters from the stored dictionary.
                                 params = lmfit.Parameters()
-                                for param_name, param_value in fit_data["fit_params"].items():
+                                for param_name, param_value in fit_data[
+                                    "fit_params"
+                                ].items():
                                     params.add(param_name, value=param_value)
                                 # Evaluate the model at the new x_data points.
                                 fit_y_points = fit.eval(params=params, x=x_data)
@@ -307,7 +316,7 @@ class PlotlyLiveCallback(CallbackBase):
     ):
         """
         Initialize the PlotlyLiveCallback.
-        
+
         Parameters
         ----------
         x_name : str
@@ -395,7 +404,7 @@ class PlotlyLiveCallback(CallbackBase):
         """
         Called whenever a new event document is emitted from the RunEngine.
         Uses the `stream_name` to filter relevant data.
-        Once an event is validated, it extracts x and y values 
+        Once an event is validated, it extracts x and y values
         and sends them to the Dash server via GET request.
         """
         if doc["descriptor"] not in self.desc:
@@ -403,9 +412,10 @@ class PlotlyLiveCallback(CallbackBase):
         elif doc["uid"] in self.ignore_fit_docs:
             return
 
-        # Check to see if doc["data"] contains keys matching any on the self.ys strings or self.x
-        if not (any(key in s for key in doc["data"] for s in self.y_names)): #or self.x in doc["data"]):
-            print("The data of the event does not match the data ")
+        # Check to see if doc["data"] contains keys matching any on the self.ys strings or self.x. This means that plots are only tried to be updated if the data is present.
+        if not (
+            any(key in s for key in doc["data"] for s in self.y_names)
+        ):
             return
         # Try to retrieve x value from doc["data"], or fallback to evaluator if missing.
         try:
@@ -449,6 +459,7 @@ class PlotlyLiveCallback(CallbackBase):
         Terminates the Dash process if it is still alive.
         """
         import time
+
         if hasattr(self, "dash_process") and self.dash_process.is_alive():
             # Give a short pause before terminating.
             time.sleep(1)
@@ -494,6 +505,7 @@ class PlotlyLiveCallback(CallbackBase):
             self.__setup_event.set()
         self.setup_is_done = True
 
+
 def run_dash_app_2d(
     web_port,
     wait_for_dash_app_event,
@@ -538,8 +550,6 @@ def run_dash_app_2d(
     - The server runs in debug=False mode and does not use a reloader to avoid issues
       with subprocess execution.
     """
-    import plotly.express as px
-
     # Store x, y, z data in a dictionary of lists.
     data = {x_name: [], y_name: [], z_name: []}
     # Create the Dash app.
@@ -551,11 +561,15 @@ def run_dash_app_2d(
             dcc.Graph(id="scatter-plot"),
             dcc.Interval(
                 id="graph-update",
-                interval=5000,  # Check every 5 seconds for new data.
+                interval=500,  # Check every 0.5 second for new data.
                 n_intervals=0,
             ),
         ]
     )
+
+    @dash_app.server.route("/status", methods=["GET"])
+    def status():
+        return "OK", 200
 
     @dash_app.server.route("/add_data_2d", methods=["GET"])
     def add_data_2d():
@@ -586,52 +600,62 @@ def run_dash_app_2d(
         Periodic callback that regenerates the figure based on the data dictionary.
         """
         nonlocal data, title, xlabel, ylabel, maxlen
-        # Convert our data into a pandas DataFrame for easier usage with plotly.express.
-        import pandas as pd
-        data_pd = pd.DataFrame({"x": data[x_name], "y": data[y_name], "z": data[z_name]})
 
-        # Use plotly.express scatter, coloring points by z.
-        fig = px.scatter(
-            data_pd,
-            x="x",
-            y="y",
-            color="z",
-            color_continuous_scale="Viridis",
-            title=title,
-            labels={x_name: xlabel, y_name: ylabel, z_name: z_name},
+        if xlabel == "":
+            xlabel = x_name
+        if ylabel == "":
+            ylabel = y_name
+        fig = go.Figure(
+            data=go.Scatter(
+                x=data[x_name],
+                y=data[y_name],
+                mode="markers",
+                marker=dict(
+                    color=data[z_name],  # Use z values for color
+                    colorscale="Viridis",  # Specify the colorscale
+                    colorbar=dict(title=z_name),  # Optionally add a colorbar
+                    showscale=True,
+                ),
+            )
         )
-
+        # Update layout to include axis labels and title
+        fig.update_layout(
+            title=title,
+            xaxis_title=xlabel,
+            yaxis_title=ylabel
+        )
         return fig
 
     # Signal that the Dash server has started.
     wait_for_dash_app_event.set()
     dash_app.run(host="127.0.0.1", port=web_port, debug=False, use_reloader=False)
 
+
 class PlotlyLiveCallback_2d(CallbackBase):
     """
     A Bluesky callback that automatically collects and plots 2D data (x, y) with an associated
-    color dimension z in a separate Dash application. During a Bluesky run, each event document 
-    triggers an update that sends the latest x, y, and z data to a Dash endpoint, rendering a 
-    scatter plot where z is visualized as a color scale. 
+    color dimension z in a separate Dash application. During a Bluesky run, each event document
+    triggers an update that sends the latest x, y, and z data to a Dash endpoint, rendering a
+    scatter plot where z is visualized as a color scale.
 
-    This class is particularly useful for real-time visualizations of 2D data where one 
-    axis depends on x and y, and an additional parameter (z) is encoded as color. It manages 
-    the lifecycle of a subprocess running Dash (start, stop) and ensures that relevant data 
+    This class is particularly useful for real-time visualizations of 2D data where one
+    axis depends on x and y, and an additional parameter (z) is encoded as color. It manages
+    the lifecycle of a subprocess running Dash (start, stop) and ensures that relevant data
     are gathered and transmitted appropriately.
 
     Parameters
     ----------
     x_name : str
-        The key under which x-values are located in the event documents' "data" fields or 
+        The key under which x-values are located in the event documents' "data" fields or
         can be evaluated using the `evaluator`.
     y_name : str
-        The key under which y-values are located in the event documents' "data" fields or 
+        The key under which y-values are located in the event documents' "data" fields or
         can be evaluated using the `evaluator`.
     z_name : str
-        The key under which z-values are located, representing the color dimension in the 
+        The key under which z-values are located, representing the color dimension in the
         plotly scatter plot.
     evaluator : Evaluator
-        An instance of an evaluation helper, used to compute derived x, y, or z values 
+        An instance of an evaluation helper, used to compute derived x, y, or z values
         if they are not directly available in the event data.
     web_port : int
         The TCP port on which the Dash server will listen for requests.
@@ -647,26 +671,26 @@ class PlotlyLiveCallback_2d(CallbackBase):
     title : str, optional
         Main title of the plot. Defaults to a combination of `xlabel` and `ylabel`.
     maxlen : str or int, optional
-        Maximum number of data points retained. Can be "inf" for unlimited storage. 
+        Maximum number of data points retained. Can be "inf" for unlimited storage.
         Defaults to "inf".
     stream_name : str, optional
-        The specific Bluesky stream name this callback should monitor. When a new descriptor 
-        document's name matches `stream_name`, its events will be recognized for plotting. 
+        The specific Bluesky stream name this callback should monitor. When a new descriptor
+        document's name matches `stream_name`, its events will be recognized for plotting.
         If not provided, no stream filtering is performed.
     multi_stream : bool, optional
-        Indicates if multiple streams are used. This can adjust how the descriptor checks 
+        Indicates if multiple streams are used. This can adjust how the descriptor checks
         are performed. Defaults to False.
 
     Notes
     -----
     - The `start` method spawns the Dash server in a separate process, using
-      `run_dash_app_2d`. That server provides a REST endpoint (`"/add_data_2d"`) to receive 
+      `run_dash_app_2d`. That server provides a REST endpoint (`"/add_data_2d"`) to receive
       x, y, z values.
-    - The `event` method inspects each Bluesky event document to extract or evaluate x, y, and 
-      z, then sends them to the Dash server if the descriptor matches. 
+    - The `event` method inspects each Bluesky event document to extract or evaluate x, y, and
+      z, then sends them to the Dash server if the descriptor matches.
     - The `stop` method terminates the Dash server subprocess upon the completion of a Bluesky run.
     - The `clear_data` method can be used to reset any accumulated data between runs.
-    - The `descriptor` method ensures that only events from relevant descriptors (matching 
+    - The `descriptor` method ensures that only events from relevant descriptors (matching
       `stream_name`) are processed.
     """
 

@@ -613,6 +613,8 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.live_variable_update = prot_data["live_variable_update"]
         if "allow_live_comments" in prot_data:
             prot.allow_live_comments = prot_data["allow_live_comments"]
+        if "flyer_data" in prot_data:
+            prot.flyer_data = prot_data["flyer_data"]
         prot_dict.update({key: prot})
 
 

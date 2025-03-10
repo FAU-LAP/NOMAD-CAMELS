@@ -104,8 +104,10 @@ def print_requirements_txt(min_versions_by_python):
             for package, version in min_versions.items():
                 if version:
                     f.write(f"{package}=={version}\n")
+                    print(f"{package}=={version}")
                 else:
                     f.write(f"{package}\n")
+                    print(f"{package}")
 
 
 if __name__ == "__main__":

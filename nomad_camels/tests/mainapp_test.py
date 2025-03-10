@@ -12,7 +12,7 @@ def app(qtbot):
     app = QApplication.instance()
     if app is None:
         app = QApplication([])
-    window = MainWindow()
+    window = MainWindow(start_proxy_bool=False)
     qtbot.addWidget(window)
     return window
 

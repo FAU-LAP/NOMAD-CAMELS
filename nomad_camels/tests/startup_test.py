@@ -45,7 +45,7 @@ def test_start_camels(qtbot, capfd):
                 if app is not None:
                     app.quit()
                     del app
-                start_camels()
+                start_camels(start_proxy_bool=False)
                 app = QApplication.instance()
 
                 # Check if the main window is displayed
