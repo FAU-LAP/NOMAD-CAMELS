@@ -4,8 +4,9 @@
 <style>
     .camels_header {
         padding: 10px;
-        margin-left: 300px;
+        margin-left: 320px;
         max-width: calc(80vw - 300px);
+        gap: 10px;             /* Space between images */
         display: flex;          /* Enable flexbox */
         justify-content: space-between;  /* Distribute space evenly */
         align-items: center;
@@ -14,6 +15,7 @@
         .camels_header {
             margin-left: 0px;
             max-width: 100vw;
+            gap: 0px;             /* Space between images */
         }
     }
     .camels_header img {
@@ -23,7 +25,6 @@
     @media (max-width: 1200px) {
         .camels_header img {
             width: calc(100vw / 5.5);
-            max-width: 200px;
         }
     }
 </style>
