@@ -60,6 +60,14 @@ nomad\_camels.main\_classes.plot\_plotly module
    :show-inheritance:
    :undoc-members:
 
+nomad\_camels.main\_classes.plot\_proxy module
+----------------------------------------------
+
+.. automodule:: nomad_camels.main_classes.plot_proxy
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 nomad\_camels.main\_classes.plot\_pyqtgraph module
 --------------------------------------------------
 
