@@ -44,6 +44,8 @@ jobs:
                 python-version: ${{ matrix.python-version }}
             - name: Install dependencies
               run: |
+                pip install toml
+                python ./dev_tools/min_versions_from_toml.py
                 pip install -q -r ./dev_tools/req_min_${{ matrix.python-version }}.txt
                 pip list
             - name: Run tests
