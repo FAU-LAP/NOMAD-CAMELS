@@ -23,13 +23,19 @@ databroker = ">=1.2.5"
 matplotlib = ">=3.6.2"
 pyqtgraph = ">=0.13.3"
 requests = ">=2.26.0"
-pyzmq = ">=26.2.0"
+
 
 # == With Python-specific constraints ==
 pyyaml = [
     {version = ">=6.0", python = ">=3.10,<3.12"},
     {version = ">=6.0.1", python = ">=3.12"},
     {version = ">=3.10", python = ">=3.9,<3.10"}
+]
+pyzmq = [
+    {version = ">=26.2.0", python = ">=3.10,<3.12"},
+    {version = ">=26.2.0", python = ">=3.12"},
+    {version = ">=22.1.0", python = ">=3.9,<3.10"}
+
 ]
 setuptools = [
     {version = ">=54.2.0", python = ">=3.10,<3.12"},
