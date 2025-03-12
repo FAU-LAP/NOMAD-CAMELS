@@ -18,7 +18,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 1.8.0 Parallel Async Reading and New Plot Backend
+## 1.8.0 Parallel Async Reading and New Plot Backend
 
 Features:
 - can now asynchronously read channels during a running protocol
