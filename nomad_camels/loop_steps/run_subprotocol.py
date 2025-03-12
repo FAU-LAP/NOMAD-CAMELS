@@ -46,7 +46,7 @@ class Run_Subprotocol(Loop_Step):
         )
         self.own_plots = step_info["own_plots"] if "own_plots" in step_info else True
 
-    def get_protocol_string(self, n_tabs=1, name=None):
+    def get_protocol_string(self, n_tabs=1):
         """Overwrites the signal for the progressbar and the number of steps in
         the subprotocol's module. Evaluates the input variables, then writes
         them into the subprotocol's namespace and starts the subprotocol's
@@ -62,7 +62,7 @@ class Run_Subprotocol(Loop_Step):
             variables_in=self.vars_in,
             variables_out=self.vars_out,
             data_output=self.data_output,
-            new_stream=name,
+            new_stream=self.name,
         )
         return protocol_string
 
