@@ -18,6 +18,17 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.1 Fixed broken Plots in Loops
+
+Fixed:
+- Fixed loops not updating when used in loops (`For Loop`, `Simple Sweep`).
+
+
+### 1.8.1 Fixed broken Plots in Loops
+
+Fixed:
+- Fixed loops not updating when used in loops (`For Loop`, `Simple Sweep`).
+
 ## 1.8.0 Parallel Async Reading and New Plot Backend
 
 Features:
@@ -26,6 +37,7 @@ Features:
 Changes:
 - Plots now use a different backend. Should make the run engine faster and more stable. Plots now run in their own threads and should not interefere as much with the main protocol execution.
 - Now saves data files with an `.h5` file extension if no NeXus output was enabled. Only uses `.nxs` file extension if NeXus output is saved to the file. Should clarify that the standard CAMELS data files do **NOT** follow rigid NeXus standards.
+- Subprotocols always create a new data stream and entry in the data file
 
 Fixed:
 - You can now run the same subprotocol multiple times. Each subprotocol execution creates it own data stream. This means the datafile has separate entires for each subprotocol run
