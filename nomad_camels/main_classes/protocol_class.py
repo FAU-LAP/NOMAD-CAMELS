@@ -56,7 +56,7 @@ class Measurement_Protocol:
         plots=None,
         channels=None,
         name="",
-        use_nexus=True,
+        use_nexus=False,
         **kwargs,
     ):
         if plots is None:
