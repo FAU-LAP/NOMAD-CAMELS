@@ -24,11 +24,6 @@ Fixed:
 - Fixed loops not updating when used in loops (`For Loop`, `Simple Sweep`).
 
 
-### 1.8.1 Fixed broken Plots in Loops
-
-Fixed:
-- Fixed loops not updating when used in loops (`For Loop`, `Simple Sweep`).
-
 ## 1.8.0 Parallel Async Reading and New Plot Backend
 
 Features:
