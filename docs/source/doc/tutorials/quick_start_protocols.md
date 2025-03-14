@@ -16,7 +16,7 @@ Start by clicking the large &#10133; symbol next to `Measurement Protocols`. Thi
 
 Here you can fully configure the measurement routine you want to perform. Give the protocol a custom name using `Protocol Name`. With `Filename` you set the name of data file that is created during the measurement. You can also add a custom description to describe what your measurement protocol does.
 
-One key part of this window is the `Sequence` element on the left.
+One key part of this window is the `Sequence` element on the right.
 Here you will configure the individual steps of the measurement procedure.
 
 Right click into the empty space to add a new step
