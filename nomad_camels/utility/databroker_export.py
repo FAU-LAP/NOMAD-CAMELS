@@ -494,6 +494,8 @@ def export_h5_group_to_csv(group, filename):
     import pandas as pd
 
     arrs = {}
+    if os.path.isfile(filename):
+        raise FileExistsError(f"File '{filename}' already exists. Please choose a different filename.")
     if not os.path.isdir(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
     for k in group.keys():
