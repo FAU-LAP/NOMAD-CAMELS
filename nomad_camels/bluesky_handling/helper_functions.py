@@ -131,6 +131,11 @@ def export_function(
         The data to be plotted.
 
     """
+    if do_nexus_output:
+        file_extension = ".nxs"
+    else:
+        file_extension = ".h5"
+    save_path = f"{save_path}{file_extension}"
     if os.path.splitext(save_path)[1] == ".nxs" or os.path.splitext(save_path)[1] == ".h5":
         fname = os.path.basename(save_path)
         path = os.path.dirname(save_path)
