@@ -22,6 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 Fixed:
 - Fixed loops not updating when used in loops (`For Loop`, `Simple Sweep`).
+- Error message now only appears once when trying to plot and fit something that is not being read
 
 
 ## 1.8.0 Parallel Async Reading and New Plot Backend

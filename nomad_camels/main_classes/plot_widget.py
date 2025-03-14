@@ -467,7 +467,7 @@ class LiveFit_Eva(LiveFit):
                 else:
                     if not self.eva.is_to_date(doc["time"]):
                         self.eva.event(doc)
-                    new_x = self.eva.eval(v)
+                    new_x = self.eva.eval(v, do_not_reraise=True)
             idv[k] = new_x
 
         try:
@@ -475,7 +475,7 @@ class LiveFit_Eva(LiveFit):
         except KeyError:
             if not self.eva.is_to_date(doc["time"]):
                 self.eva.event(doc)
-            y = self.eva.eval(self.y)
+            y = self.eva.eval(self.y, do_not_reraise=True)
         # Always stash the data for the next time the fit is updated.
         self.update_caches(y, idv)
         self.timestamp = doc["time"]
@@ -526,7 +526,16 @@ class LiveFit_Eva(LiveFit):
         self.__stale = False
         if self.show_in_browser:
             try:
-                request = requests.post(f"http://127.0.0.1:{self.web_port}/fit_result", json={"best_fit": self.result.best_fit.tolist(), "name": self.name, "fit_params": self.result.best_values, "model_name":self.model.name, "y_axis_name":self.y})
+                request = requests.post(
+                    f"http://127.0.0.1:{self.web_port}/fit_result",
+                    json={
+                        "best_fit": self.result.best_fit.tolist(),
+                        "name": self.name,
+                        "fit_params": self.result.best_values,
+                        "model_name": self.model.name,
+                        "y_axis_name": self.y,
+                    },
+                )
                 if request.status_code != 200:
                     print(f"Error: {request.status_code}")
             except requests.exceptions.ConnectionError:
