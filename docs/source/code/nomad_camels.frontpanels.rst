@@ -12,6 +12,14 @@ Subpackages
 Submodules
 ----------
 
+nomad\_camels.frontpanels.flyer\_window module
+----------------------------------------------
+
+.. automodule:: nomad_camels.frontpanels.flyer_window
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 nomad\_camels.frontpanels.instrument\_config module
 ---------------------------------------------------
 

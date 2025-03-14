@@ -63,7 +63,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Keysight / Agilent</td>
                 <td>34970</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-agilent-34970'>0.1.0</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-agilent-34970'>0.1.1</a></td>
             </tr>
             <tr>
                 <td>Keysight / Agilent</td>
@@ -117,7 +117,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Epics</td>
                 <td>Instrument</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-epics-instrument'>0.1.0</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-epics-instrument'>0.1.1</a></td>
             </tr>
             <tr>
                 <td>Eurotherm</td>
@@ -129,7 +129,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>IBeam</td>
                 <td>Smart</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-iBeam-smart'>0.1.0</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-iBeam-smart'>0.1.1</a></td>
             </tr>
             <tr>
                 <td>Keithley</td>
@@ -165,7 +165,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Keysight / Agilent</td>
                 <td><a href='keysight_b2912a/keysight_b2912a'>B2912a</a></td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-keysight-b2912a'>0.1.0</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-keysight-b2912a'>0.1.1</a></td>
             </tr>
             <tr>
                 <td>Keysight / Agilent</td>
@@ -201,7 +201,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Opc</td>
                 <td>Ua_instrument</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-opc-ua-instrument'>0.1.4</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-opc-ua-instrument'>0.1.6</a></td>
             </tr>
             <tr>
                 <td></td>
@@ -285,6 +285,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Basler (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Pylon</a></td>
                 <td>Camera</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Formfactor (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Velox</a></td>
+                <td>WaferProber</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
