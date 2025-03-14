@@ -20,6 +20,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 ### 1.8.1 Fixed broken Plots in Loops
 
+UI-Improvements:
+- Tabs now have an "x" button to close them (right-click still works)
+
 Fixed:
 - Fixed loops not updating when used in loops (`For Loop`, `Simple Sweep`).
 - Error message now only appears once when trying to plot and fit something that is not being read
