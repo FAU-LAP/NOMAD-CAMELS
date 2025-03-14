@@ -1658,7 +1658,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         self.protocols_dict[protocol.name] = protocol
         self.add_button_to_meas(protocol.name)
-        self.button_area_meas.setHidden(False)
+        if self.button_area_meas.isHidden():
+            self.button_area_meas.setHidden(False)
 
     def remove_protocol(self, prot_name):
         """
