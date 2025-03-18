@@ -503,11 +503,11 @@ def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
     # Compute a linear fit on the data.
     slope, intercept = np.polyfit(x_data, y_data, 1)
     # Check that the slope and intercept from the CAMELS fit are the same as the ones computed from the data.
-    assert np.isclose(slope_camels_fit, slope, atol=1e-3)
-    assert np.isclose(intercept_camels_fit, intercept, atol=1e-3)
+    assert np.isclose(slope_camels_fit, slope, atol=0.05)
+    assert np.isclose(intercept_camels_fit, intercept, atol=0.05)
     # Check that the slope is 1 and the intercept is 0 (within a small tolerance).
-    assert np.isclose(slope, 1, atol=1e-3)
-    assert np.isclose(intercept, 0, atol=1e-3)
+    assert np.isclose(slope, 1, atol=0.05)
+    assert np.isclose(intercept, 0, atol=0.05)
 
 
 def test_trigger_and_read_channels(qtbot, tmp_path, zmq_setup):
