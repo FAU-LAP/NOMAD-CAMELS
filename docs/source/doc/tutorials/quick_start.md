@@ -13,6 +13,16 @@ After successful [installation](../installation/installation.md) of CAMELS you a
     <p class="box-content">Learn how to setup measurement protocols. Use the instruments you configured in measurement sequences.</p>
   </a>
 
+  <a href="quick_start_plots.html" class="box">
+    <span class="box-title">How to Add Plots to a Protocol</span>
+    <p class="box-content">Learn how to configure live plots for the the measurement sequence you configured.</p>
+  </a>
+
+  <a href="quick_start_manual_controls.html" class="box">
+    <span class="box-title">Using Manual Controls</span>
+    <p class="box-content">Apart from a protocol, learn how to use your instruments manually, e.g. for testing or setting the conditions for your measurement.</p>
+  </a>
+
   <a href="../protocol_steps/protocol_steps_landing.html" class="box">
     <span class="box-title">Protocol Steps Explained</span>
     <p class="box-content">You can learn which protocol steps exist and how to use them. Protocol steps are the actions you can perform during a measurement sequence, like setting and reading an instrument channel, or creating a loop, waiting for a specified time.</p>
@@ -37,6 +47,17 @@ After successful [installation](../installation/installation.md) of CAMELS you a
   </a>
 </div>
 
+
+```{eval-rst}
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+
+   Adding Instruments <quick_start_install.md>
+   Measurement Protocols <quick_start_protocols.md>
+   Plots in Measurements <quick_start_plots.md>
+   Manual Controls <quick_start_manual_control.md>
+```
 
 
 <!-- 
