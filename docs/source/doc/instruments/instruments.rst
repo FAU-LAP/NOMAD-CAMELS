@@ -63,7 +63,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Keysight / Agilent</td>
                 <td>34970</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-agilent-34970'>0.1.1</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-agilent-34970'>0.1.3</a></td>
             </tr>
             <tr>
                 <td>Keysight / Agilent</td>
@@ -1224,6 +1224,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
+                <td>Rohde&schwarz (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Fpc_series</a></td>
+                <td>SpectrumAnalyzer</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
                 <td>Ar (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Amplifier</a></td>
                 <td>Switch</td>
@@ -1466,12 +1472,6 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             <tr>
                 <td>Picardindustries (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Usb-filterwheel</a></td>
-                <td>Switch</td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
-            </tr>
-            <tr>
-                <td>Simulation (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
-                <td>Powersupply</a></td>
                 <td>Switch</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
