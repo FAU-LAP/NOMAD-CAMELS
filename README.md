@@ -20,10 +20,18 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 ### 1.8.1 Fixed broken Plots in Loops
 
-Fixed:
-- Fixed loops not updating when used in loops (`For Loop`, `Simple Sweep`).
+UI-Improvements:
+- Tabs now have an "x" button to close them (right-click still works)
 
-### 1.8.0 Parallel Async Reading and New Plot Backend
+Fixed:
+- Fixed plots in subprotocols not updating when called from loops (`For Loop`, `Simple Sweep`).
+- Error message now only appears once when trying to plot and fit something that is not being read
+- When adding a new protocol, the view does not jump back to the first tab anymore
+- Fixed broken export to csv files and prevent overwriting of existing csv files.
+- Deleting tabs now works again
+
+
+## 1.8.0 Parallel Async Reading and New Plot Backend
 
 Features:
 - can now asynchronously read channels during a running protocol

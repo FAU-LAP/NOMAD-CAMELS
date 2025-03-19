@@ -14,8 +14,8 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QComboBox,
 )
-from PySide6.QtGui import QDrag, QPixmap
-from PySide6.QtCore import Qt, QMimeData, Signal, QByteArray, QMimeData
+from PySide6.QtGui import QDrag
+from PySide6.QtCore import Qt, QMimeData, Signal, QMimeData
 
 from collections import OrderedDict
 
@@ -409,6 +409,7 @@ class RenameTabWidget(QTabWidget):
         self.all_buttons = []
         self.editing_old_name = ""
         self.addPlusTab()
+        self.close_buttons = []
 
         # Add a context menu to the tab bar
         self.tabBar().setContextMenuPolicy(Qt.CustomContextMenu)
@@ -466,8 +467,9 @@ class RenameTabWidget(QTabWidget):
         )
         if delete_question != QMessageBox.Yes:
             return
-        for protocol_ in self.tab_button_dict[self.tabText(index)]:
-            del self.tab_button_dict[protocol_]
+        tab_name = self.tabText(index)
+        for i, protocol_ in enumerate(self.tab_button_dict[tab_name]):
+            del self.tab_button_dict[tab_name][i]
         del self.tab_button_dict[self.tabText(index)]
         self.removeTab(index)
 
@@ -505,9 +507,7 @@ class RenameTabWidget(QTabWidget):
             if self.tabText(i) == name:
                 return self.widget(i)
         if make_new:
-            tab = Drop_Scroll_Area()
-            self.insertTab(self.count() - 1, tab, name)  # Insert before the plus tab
-            return tab
+            return self.make_tab(name)  # Insert before the plus tab
         return None
 
     def add_button(self, button, name, tab_name=""):
@@ -558,15 +558,52 @@ class RenameTabWidget(QTabWidget):
         for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             self.widget(i).enable_single_run(name)
 
-    def create_new_tab(self, name='New Tab'):
+    def create_new_tab(self, name="New Tab"):
         i = 1
         while name in self.tab_button_dict:
             name = f"{name} {i}"
             i += 1
+        new_tab = self.make_tab(name)
+
+    def make_tab(self, name="New Tab"):
         new_tab = Drop_Scroll_Area()
         self.insertTab(self.count() - 1, new_tab, name)  # Insert before the plus tab
         self.tab_button_dict[name] = []
         new_tab.order_changed.connect(self.update_order)
+        close_button = QPushButton("x")
+        close_button.setFixedSize(16, 16)
+        close_button.setStyleSheet(
+            """
+            QPushButton {
+                border: 1px solid #abaaa7;
+                border-radius: 8px;  /* half of the button size to make it circular */
+                color: #abaaa7;
+                padding: 0px;
+                padding-bottom: 4px;
+                font-size: 12px;
+                font-weight: bold;
+                background-color: transparent;
+                text-align: center;
+                margin: 0px;
+            }
+            QPushButton:hover {
+                color: white;
+                border-color: white;
+                background-color: #5e5e5c;
+            }
+            QPushButton:pressed {
+                color: #5e5e5c;
+                border-color: #5e5e5c;
+                background-color: #abaaa7;
+            }
+            """
+        )
+        close_button.clicked.connect(
+            lambda state, x=self.count() - 2: self.tab_removing(x)
+        )
+        self.close_buttons.append(close_button)
+        self.tabBar().setTabButton(self.count() - 2, QTabBar.RightSide, close_button)
+        return new_tab
 
     def addTab(self, widget, name):
         super().addTab(widget, name)
@@ -583,7 +620,7 @@ class RenameTabWidget(QTabWidget):
         for i in range(self.count() - 1):  # Skip the last tab (plus tab)
             tab_name = self.tabText(i)
             new_dict[tab_name] = self.widget(i).get_button_order()
-        self.tab_button_dict =  new_dict
+        self.tab_button_dict = new_dict
         return new_dict
 
 
