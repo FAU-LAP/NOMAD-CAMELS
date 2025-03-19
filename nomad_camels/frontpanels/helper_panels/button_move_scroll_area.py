@@ -467,8 +467,9 @@ class RenameTabWidget(QTabWidget):
         )
         if delete_question != QMessageBox.Yes:
             return
-        for protocol_ in self.tab_button_dict[self.tabText(index)]:
-            del self.tab_button_dict[protocol_]
+        tab_name = self.tabText(index)
+        for i, protocol_ in enumerate(self.tab_button_dict[tab_name]):
+            del self.tab_button_dict[tab_name][i]
         del self.tab_button_dict[self.tabText(index)]
         self.removeTab(index)
 

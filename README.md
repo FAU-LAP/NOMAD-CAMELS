@@ -27,6 +27,7 @@ Fixed:
 - Fixed loops not updating when used in loops (`For Loop`, `Simple Sweep`).
 - Error message now only appears once when trying to plot and fit something that is not being read
 - When adding a new protocol, the view does not jump back to the first tab anymore
+- Deleting tabs now works again
 
 
 ## 1.8.0 Parallel Async Reading and New Plot Backend
