@@ -198,6 +198,16 @@ def start_camels(start_proxy_bool=True):
 
     # Create and display the main application window, hiding the loading screen
     main_window = MainApp_v2.MainWindow(start_proxy_bool=start_proxy_bool)
+    main_window.setStyleSheet("""
+    QToolTip {
+        background-color: #2a2a2a;
+        color: white;
+        border: 1px solid #3a3a3a;
+        border-radius: 4px;
+        padding: 5px;
+        font: 12px;
+    }
+""")
     loading_screen.hide()
     main_window.show()
 
