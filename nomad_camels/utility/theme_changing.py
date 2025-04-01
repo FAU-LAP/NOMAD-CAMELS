@@ -3,12 +3,13 @@ default color palettes `light_palette` and `dark_palette`."""
 
 from PySide6.QtWidgets import QApplication, QMainWindow, QStyleFactory
 from PySide6.QtGui import QPalette, QColor, QColorConstants
+
 try:
     from qt_material import apply_stylesheet
+
     QT_MATERIAL = True
 except ImportError:
     QT_MATERIAL = False
-
 
 
 light_palette = QPalette(QColor(225, 225, 225), QColor(238, 238, 238))
@@ -28,6 +29,28 @@ dark_palette.setColor(QPalette.BrightText, QColorConstants.Red)
 dark_palette.setColor(QPalette.Link, QColor(42, 130, 218))
 dark_palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
 dark_palette.setColor(QPalette.HighlightedText, QColorConstants.Black)
+
+
+tooltip_dark = """
+    QToolTip {
+        background-color: #2a2a2a;
+        color: white;
+        border: 1px solid #3a3a3a;
+        border-radius: 6px;
+        padding: 3px;
+        font: 12px;
+    }
+"""
+tooltip_light = """
+    QToolTip {
+        background-color: #ffffff;
+        color: #000000;
+        border: 1px solid #c0c0c0;
+        border-radius: 6px;
+        padding: 3px;
+        font: 12px;
+    }
+"""
 
 
 def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
@@ -59,8 +82,10 @@ def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
         palette = None
         if dark_mode:
             palette = dark_palette
+            main_app.setStyleSheet(tooltip_dark)
         else:
             palette = light_palette
+            main_app.setStyleSheet(tooltip_light)
         if theme == "windowsvista":
             main_app.setStyle(QStyleFactory.create("windowsvista"))
         main_app.setPalette(palette)

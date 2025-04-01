@@ -23,6 +23,7 @@ UI-Improvements:
 - Notification when log in to NOMAD was (not) successful
 - Added a maximum height and scrollbar for description of protocol steps
 - Added more tooltips in the UI
+- modernized tooltip style
 
 ### 1.8.1 Fixed broken Plots in Loops
 
