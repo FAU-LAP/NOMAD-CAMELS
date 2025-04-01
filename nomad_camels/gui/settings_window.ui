@@ -27,16 +27,6 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="4">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0" rowspan="2" colspan="2">
     <widget class="QWidget" name="left" native="true">
      <layout class="QGridLayout" name="gridLayout_3">
@@ -84,6 +74,10 @@
          </item>
          <item row="2" column="1">
           <widget class="QSpinBox" name="spinBox_logfile_size">
+           <property name="toolTip">
+            <string>maximum size of the logfile
+if reached, a new file is started</string>
+           </property>
            <property name="value">
             <number>1</number>
            </property>
@@ -91,6 +85,12 @@
          </item>
          <item row="2" column="2">
           <widget class="QSpinBox" name="spinBox_logfile_number">
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>number of old files to keep, when starting a new logfile</string>
+           </property>
            <property name="value">
             <number>1</number>
            </property>
@@ -111,7 +111,11 @@
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QComboBox" name="comboBox_log_level"/>
+          <widget class="QComboBox" name="comboBox_log_level">
+           <property name="toolTip">
+            <string>the minimum level to write to the log file</string>
+           </property>
+          </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_15">
@@ -153,18 +157,17 @@
          </property>
          <item row="3" column="2">
           <widget class="QRadioButton" name="radioButton_smart_backups">
+           <property name="toolTip">
+            <string>keep all backups of the last 7 days,
+one for for each of the last 30,
+one for each of the last 12 months
+and one for each year</string>
+           </property>
            <property name="text">
             <string>&quot;smart&quot; backups</string>
            </property>
            <property name="checked">
             <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QCheckBox" name="checkBox_backup_before_run">
-           <property name="text">
-            <string>backup before run</string>
            </property>
           </widget>
          </item>
@@ -189,6 +192,9 @@
          </item>
          <item row="2" column="0">
           <widget class="QCheckBox" name="checkBox_autosave">
+           <property name="toolTip">
+            <string>When CAMELS is closed, the current state is saved.</string>
+           </property>
            <property name="text">
             <string>autosave on closing</string>
            </property>
@@ -196,20 +202,19 @@
          </item>
          <item row="1" column="0" colspan="3">
           <widget class="QCheckBox" name="checkBox_password">
+           <property name="toolTip">
+            <string>The user is not allowed to change protocols or instrument configuration without the password.</string>
+           </property>
            <property name="text">
             <string>password protection</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
-          <widget class="QCheckBox" name="checkBox_autosave_run">
-           <property name="text">
-            <string>autosave before run</string>
-           </property>
-          </widget>
-         </item>
          <item row="5" column="0" colspan="3">
           <widget class="QCheckBox" name="checkBox_new_file_each_run">
+           <property name="toolTip">
+            <string>creates a new datafile for each measurement instead of saving new entries in the same hdf5 file</string>
+           </property>
            <property name="text">
             <string>save each measurement run in new file</string>
            </property>
@@ -233,6 +238,9 @@
          </item>
          <item row="3" column="0">
           <widget class="QRadioButton" name="radioButton_all_backups">
+           <property name="toolTip">
+            <string>keep all backups of the CAMELS state</string>
+           </property>
            <property name="text">
             <string>keep all backups</string>
            </property>
@@ -240,6 +248,9 @@
          </item>
          <item row="3" column="1">
           <widget class="QRadioButton" name="radioButton_n_backups">
+           <property name="toolTip">
+            <string>keep the defined number of newest backups</string>
+           </property>
            <property name="text">
             <string>keep only...</string>
            </property>
@@ -254,6 +265,26 @@
          </item>
          <item row="6" column="1" colspan="2">
           <widget class="Path_Button_Edit" name="pathButton_config_path" native="true"/>
+         </item>
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="checkBox_autosave_run">
+           <property name="toolTip">
+            <string>autosaves when running a protocol</string>
+           </property>
+           <property name="text">
+            <string>autosave before run</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QCheckBox" name="checkBox_backup_before_run">
+           <property name="toolTip">
+            <string>also does a backup when autosave before run</string>
+           </property>
+           <property name="text">
+            <string>backup before run</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -287,12 +318,26 @@
          </item>
          <item row="1" column="0">
           <widget class="QCheckBox" name="checkBox_play_camel_on_error">
+           <property name="toolTip">
+            <string>when an error occurs,
+you will hear a beautiful sound ;)</string>
+           </property>
            <property name="text">
             <string>Play Camel-Roar on error</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="checkBox_finished_sound">
+           <property name="toolTip">
+            <string>a short sound when a protocol is done</string>
+           </property>
+           <property name="text">
+            <string>Sound on finished protocol</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
           <widget class="Line" name="line">
            <property name="frameShadow">
             <enum>QFrame::Shadow::Raised</enum>
@@ -302,13 +347,6 @@
            </property>
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QCheckBox" name="checkBox_finished_sound">
-           <property name="text">
-            <string>Sound on finished protocol</string>
            </property>
           </widget>
          </item>
@@ -459,10 +497,18 @@
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QComboBox" name="comboBox_theme"/>
+          <widget class="QComboBox" name="comboBox_theme">
+           <property name="toolTip">
+            <string>change the appearance of CAMELS</string>
+           </property>
+          </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QComboBox" name="comboBox_material_theme"/>
+          <widget class="QComboBox" name="comboBox_material_theme">
+           <property name="toolTip">
+            <string>change the the themes color</string>
+           </property>
+          </widget>
          </item>
          <item row="2" column="0" colspan="3">
           <widget class="Line" name="line_2">
@@ -514,114 +560,11 @@
       <property name="spacing">
        <number>9</number>
       </property>
-      <item row="6" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="bottomMargin">
-         <number>0</number>
+      <item row="7" column="0">
+       <widget class="QPushButton" name="pushButton_API_docu">
+        <property name="text">
+         <string>API documentation</string>
         </property>
-        <item>
-         <widget class="QCheckBox" name="checkBox_enable_Api">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Enable API</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_14">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>API Port:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="lineEdit_api_port">
-          <property name="placeholderText">
-           <string>API Port</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0">
-       <widget class="QWidget" name="drivers" native="true">
-        <layout class="QGridLayout" name="gridLayout_10">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_13">
-           <property name="font">
-            <font>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Drivers</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_8">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>17</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Local drivers path</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="3">
-          <widget class="Line" name="line_5">
-           <property name="frameShadow">
-            <enum>QFrame::Shadow::Raised</enum>
-           </property>
-           <property name="lineWidth">
-            <number>5</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" colspan="2">
-          <widget class="Path_Button_Edit" name="pathButton_device_path" native="true"/>
-         </item>
-        </layout>
        </widget>
       </item>
       <item row="4" column="0">
@@ -690,16 +633,6 @@
         </property>
        </spacer>
       </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="label_ApiKey">
-        <property name="styleSheet">
-         <string notr="true">font-weight: bold;</string>
-        </property>
-        <property name="text">
-         <string>API Key</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QWidget" name="files" native="true">
         <layout class="QGridLayout" name="gridLayout_7">
@@ -767,7 +700,11 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="Path_Button_Edit" name="pathButton_py_files" native="true"/>
+          <widget class="Path_Button_Edit" name="pathButton_py_files" native="true">
+           <property name="toolTip">
+            <string>where the produced protocol python files are saved</string>
+           </property>
+          </widget>
          </item>
          <item row="6" column="0" colspan="2">
           <widget class="Line" name="line_6">
@@ -783,7 +720,11 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="Path_Button_Edit" name="pathButton_meas_files" native="true"/>
+          <widget class="Path_Button_Edit" name="pathButton_meas_files" native="true">
+           <property name="toolTip">
+            <string>where the data is saved</string>
+           </property>
+          </widget>
          </item>
          <item row="5" column="1">
           <widget class="QSpinBox" name="spinBox_n_databroker_files">
@@ -800,7 +741,206 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QLineEdit" name="lineEdit_catalog_name"/>
+          <widget class="QLineEdit" name="lineEdit_catalog_name">
+           <property name="toolTip">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QWidget" name="extensions" native="true">
+        <layout class="QGridLayout" name="gridLayout_12">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_21">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>17</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Local extensions path</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="label_22">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Extensions</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="Path_Button_Edit" name="pathButton_extension_path" native="true">
+           <property name="toolTip">
+            <string>where to find extensions for CAMELS</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="Line" name="line_9">
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Raised</enum>
+           </property>
+           <property name="lineWidth">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QWidget" name="drivers" native="true">
+        <layout class="QGridLayout" name="gridLayout_10">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_13">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Drivers</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>17</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Local drivers path</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="3">
+          <widget class="Line" name="line_5">
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Raised</enum>
+           </property>
+           <property name="lineWidth">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <widget class="Path_Button_Edit" name="pathButton_device_path" native="true">
+           <property name="toolTip">
+            <string>path to local instrument drivers,
+e.g. self-written or adjusted ones</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_ApiKey">
+        <property name="styleSheet">
+         <string notr="true">font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>API Key</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QWidget" name="eln" native="true">
+        <layout class="QGridLayout" name="gridLayout_11">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_19">
+           <property name="text">
+            <string>NOMAD Oasis URL</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lineEdit_oasis">
+           <property name="toolTip">
+            <string>define your NOMAD Oasis here,
+for quick login</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="label_18">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>ELN integration</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="Line" name="line_3">
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Raised</enum>
+           </property>
+           <property name="lineWidth">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -858,117 +998,56 @@ API keys</string>
         </item>
        </layout>
       </item>
-      <item row="3" column="0">
-       <widget class="QWidget" name="extensions" native="true">
-        <layout class="QGridLayout" name="gridLayout_12">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_21">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>17</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Local extensions path</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="label_22">
-           <property name="font">
-            <font>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Extensions</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="Path_Button_Edit" name="pathButton_extension_path" native="true"/>
-         </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="Line" name="line_9">
-           <property name="frameShadow">
-            <enum>QFrame::Shadow::Raised</enum>
-           </property>
-           <property name="lineWidth">
-            <number>5</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QWidget" name="eln" native="true">
-        <layout class="QGridLayout" name="gridLayout_11">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_19">
-           <property name="text">
-            <string>NOMAD Oasis URL</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="lineEdit_oasis"/>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="label_18">
-           <property name="font">
-            <font>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>ELN integration</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="Line" name="line_3">
-           <property name="frameShadow">
-            <enum>QFrame::Shadow::Raised</enum>
-           </property>
-           <property name="lineWidth">
-            <number>5</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
+      <item row="6" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="checkBox_enable_Api">
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Enable API</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_14">
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>API Port:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_api_port">
+          <property name="placeholderText">
+           <string>API Port</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item row="15" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -1004,14 +1083,17 @@ API keys</string>
         </item>
        </layout>
       </item>
-      <item row="7" column="0">
-       <widget class="QPushButton" name="pushButton_API_docu">
-        <property name="text">
-         <string>API documentation</string>
-        </property>
-       </widget>
-      </item>
      </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="4">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+     </property>
     </widget>
    </item>
   </layout>
