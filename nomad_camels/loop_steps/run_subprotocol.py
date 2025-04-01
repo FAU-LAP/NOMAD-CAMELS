@@ -89,7 +89,7 @@ class Run_Subprotocol(Loop_Step):
     def get_add_main_string(self):
         """If using its own plots, adds them to the steps. In any case, the
         added steps from the subprotocol are added here as well."""
-        if self.step_type == 'Run Subprotocol':
+        if self.step_type == "Run Subprotocol":
             return protocol_builder.make_plots_string_of_protocol(
                 self.prot_path, self.own_plots, self.data_output, 1, self.name
             )
@@ -144,6 +144,9 @@ class Run_Subprotocol_Config(Loop_Step_Config):
             comboBoxes=comboBoxes,
             checkstrings=[1],
         )
+        self.input_table.setToolTip(
+            "The variables of the subprotocol and the values they should get before the subprotocol is run.\nThis can be used to e.g. give the subprotocol a new value for each run inside a loop."
+        )
         headerLabels = ["Variable", "Write to name"]
         comboBoxes = {"Variable": self.sub_vars.keys()}
         self.output_table = AddRemoveTable(
@@ -151,6 +154,9 @@ class Run_Subprotocol_Config(Loop_Step_Config):
             tableData=loop_step.vars_out,
             title="Variables Out",
             comboBoxes=comboBoxes,
+        )
+        self.output_table.setToolTip(
+            "The variables of the subprotocol and the name in the main protocol's namespace where they should be put.\nThis can be used to e.g. store some value determined by the subprotocol for later use in the main protocol.\n(Hint: it may be useful to define the variables in the main protocol beforehand.)"
         )
 
         label_data = QLabel("Data Output:")

@@ -49,12 +49,12 @@ models_names.pop("Expression", None)
 def parse_int_field(text, min_value, fallback=""):
     """
     Parse an integer from the provided text while enforcing a minimum value.
-    
+
     Parameters:
         text (str): The string to parse.
         min_value (int): The minimum allowed value.
         fallback (str): The value to return if parsing fails.
-        
+
     Returns:
         int or str: The parsed integer (if successful) or the fallback.
     """
@@ -69,7 +69,7 @@ def parse_int_field(text, min_value, fallback=""):
 class Plot_Info:
     """
     Holds all relevant metadata about a single plot configuration.
-    
+
     This includes information such as the type of plot, axis definitions,
     fit settings, manual positioning options, and display options.
 
@@ -145,7 +145,7 @@ class Plot_Info:
         self.same_fit = same_fit
         self.fits = fits or []
         # For Value-List plots, default to plotting all available channels.
-        self.plot_all_available = True  
+        self.plot_all_available = True
         self.all_fit = all_fit or Fit_Info()
         self.name = ""
         self.maxlen = np.inf
@@ -163,7 +163,7 @@ class Plot_Info:
 
     def update_name(self):
         """
-        Update the plot's `name` attribute to a short descriptive string 
+        Update the plot's `name` attribute to a short descriptive string
         based on the current plot configuration.
         """
         if self.title:
@@ -197,10 +197,10 @@ class Plot_Info:
     def get_fit_vars(self, stream=""):
         """
         Collect all fit variable names needed for this plot.
-        
+
         Parameters:
             stream (str): An identifier or suffix to append to variable names.
-            
+
         Returns:
             dict: A dictionary mapping variable names to an initial value (1).
         """
@@ -224,7 +224,7 @@ class Plot_Info:
 class Fit_Info:
     """
     Stores all relevant settings for performing a curve fit.
-    
+
     Attributes:
         do_fit (bool): Flag indicating if a fit should be performed.
         predef_func (str): Name of a predefined lmfit model.
@@ -275,10 +275,10 @@ class Fit_Info:
     def get_name(self, stream=""):
         """
         Generate a unique name for this fit.
-        
+
         Parameters:
             stream (str): An identifier (e.g., a data stream name) to append.
-            
+
         Returns:
             str: A generated fit name (e.g., "Gaussian_channelY_v_channelX_stream").
         """
@@ -290,12 +290,12 @@ class Fit_Info:
     def get_variables(self, stream=""):
         """
         Build a dictionary of parameter variable names for this fit.
-        
+
         Each parameter name is prefixed by the unique fit name.
-        
+
         Parameters:
             stream (str): An identifier to append to parameter names.
-            
+
         Returns:
             dict: A mapping {param_name: 1} for each parameter in initial_params.
         """
@@ -313,7 +313,7 @@ class Fit_Info:
 class Plot_Definer(QDialog):
     """
     Dialog for defining or editing multiple Plot_Info objects.
-    
+
     It displays a table (AddRemoveTable) with existing plots and a child widget
     on the right for configuring details of the selected plot.
     """
@@ -321,7 +321,7 @@ class Plot_Definer(QDialog):
     def __init__(self, parent=None, plot_data=None):
         """
         Initialize the Plot_Definer dialog.
-        
+
         Parameters:
             parent (QWidget, optional): The parent widget.
             plot_data (list of Plot_Info, optional): Initial plot configurations.
@@ -350,6 +350,8 @@ class Plot_Definer(QDialog):
             comboBoxes=combo_boxes,
             tableData=table_data,
             askdelete=True,
+            add_tooltip="Add a new plot",
+            remove_tooltip="Remove selected plot",
         )
         # Connect signals for table interactions.
         self.plot_table.table.clicked.connect(self.change_plot_def)
@@ -402,10 +404,10 @@ class Plot_Definer(QDialog):
     def change_plot_def(self, index):
         """
         Called when the user selects a plot in the table.
-        
+
         Replaces the right-hand widget with the appropriate sub-definer
         based on the selected plot type.
-        
+
         Parameters:
             index (QModelIndex): Index of the selected row.
         """
@@ -449,7 +451,7 @@ class Plot_Definer(QDialog):
     def plot_added(self, n):
         """
         Slot called when a new plot row is added.
-        
+
         Parameters:
             n (int): The index of the newly added row.
         """
@@ -459,7 +461,7 @@ class Plot_Definer(QDialog):
     def plot_removed(self, n):
         """
         Slot called when a plot row is removed.
-        
+
         Parameters:
             n (int): The index of the removed row.
         """
@@ -469,14 +471,14 @@ class Plot_Definer(QDialog):
 class Single_Plot_Definer(QWidget):
     """
     Base class for a widget that defines a single plot.
-    
+
     Extended by subclasses for specific plot types (e.g., X-Y, Value-List, 2D).
     """
 
     def __init__(self, plot_data: Plot_Info, parent=None):
         """
         Initialize with a Plot_Info instance.
-        
+
         Parameters:
             plot_data (Plot_Info): The plot configuration to be edited.
             parent (QWidget, optional): The parent widget.
@@ -487,9 +489,9 @@ class Single_Plot_Definer(QWidget):
     def get_data(self):
         """
         Retrieve the current plot configuration.
-        
+
         Child classes should override this method to update additional data.
-        
+
         Returns:
             Plot_Info: The current plot configuration.
         """
@@ -498,7 +500,7 @@ class Single_Plot_Definer(QWidget):
     def add_y(self, n):
         """
         Called when a new y-axis (or formula) row is added.
-        
+
         Parameters:
             n (int): The index of the newly added row.
         """
@@ -508,7 +510,7 @@ class Single_Plot_Definer(QWidget):
     def remove_y(self, n):
         """
         Called when a y-axis (or formula) row is removed.
-        
+
         Parameters:
             n (int): The index of the removed row.
         """
@@ -518,7 +520,7 @@ class Single_Plot_Definer(QWidget):
 class Single_Plot_Definer_List(Single_Plot_Definer):
     """
     Widget to configure a "Value-List" plot.
-    
+
     This widget displays a checkbox to plot all available channels, a table for
     custom expressions, and fields for manual positioning and sizing.
     """
@@ -526,7 +528,7 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
     def __init__(self, plot_data: Plot_Info, parent=None):
         """
         Initialize the Value-List definer widget.
-        
+
         Parameters:
             plot_data (Plot_Info): The plot configuration to be edited.
             parent (QWidget, optional): The parent widget.
@@ -543,6 +545,8 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
             headerLabels=[],
             tableData=plot_data.y_axes["formula"],
             checkstrings=[0],
+            add_tooltip="Add a new value to be shown",
+            remove_tooltip="Remove selected value",
         )
         self.table.added.connect(self.add_y)
         self.table.removed.connect(self.remove_y)
@@ -600,10 +604,10 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
     def get_data(self):
         """
         Validate and retrieve data from the UI elements for the Value-List plot.
-        
+
         Returns:
             Plot_Info: The updated plot configuration.
-        
+
         Raises:
             ValueError: If manual position/size is partially defined.
         """
@@ -616,8 +620,12 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
         # Parse and store manual position/size using the helper function.
         self.plot_data.top_left_x = parse_int_field(self.lineEdit_top_left_x.text(), 0)
         self.plot_data.top_left_y = parse_int_field(self.lineEdit_top_left_y.text(), 0)
-        self.plot_data.plot_width = parse_int_field(self.lineEdit_plot_width.text(), 430)
-        self.plot_data.plot_height = parse_int_field(self.lineEdit_plot_height.text(), 126)
+        self.plot_data.plot_width = parse_int_field(
+            self.lineEdit_plot_width.text(), 430
+        )
+        self.plot_data.plot_height = parse_int_field(
+            self.lineEdit_plot_height.text(), 126
+        )
 
         # Check for partial definitions of manual positioning or sizing.
         if self.lineEdit_top_left_x.text() and not self.lineEdit_top_left_y.text():
@@ -637,14 +645,14 @@ class Single_Plot_Definer_List(Single_Plot_Definer):
 class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
     """
     Widget to configure a "2D plot".
-    
+
     This widget is based on the Qt Designer form compiled into Ui_Plot_Definer_2D.
     """
 
     def __init__(self, plot_data: Plot_Info, parent=None):
         """
         Initialize the 2D plot definer.
-        
+
         Parameters:
             plot_data (Plot_Info): The plot configuration to be edited.
             parent (QWidget, optional): The parent widget.
@@ -669,8 +677,12 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.plot_data.update_name()
 
         # Connect checkboxes for manual positioning and browser port display.
-        self.checkBox_manual_plot_position_2d.stateChanged.connect(self.hide_show_manual_position)
-        self.checkBox_show_in_browser.stateChanged.connect(self.hide_show_show_in_browser)
+        self.checkBox_manual_plot_position_2d.stateChanged.connect(
+            self.hide_show_manual_position
+        )
+        self.checkBox_show_in_browser.stateChanged.connect(
+            self.hide_show_show_in_browser
+        )
         self.checkBox_show_in_browser.clicked.connect(self.hide_show_show_in_browser)
 
     def load_data(self):
@@ -694,7 +706,9 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
             self.checkBox_manual_plot_position_2d.setChecked(False)
 
         if hasattr(self.plot_data, "checkbox_show_in_browser"):
-            self.checkBox_show_in_browser.setChecked(self.plot_data.checkbox_show_in_browser)
+            self.checkBox_show_in_browser.setChecked(
+                self.plot_data.checkbox_show_in_browser
+            )
         else:
             self.checkBox_show_in_browser.setChecked(False)
 
@@ -715,10 +729,10 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
     def get_data(self):
         """
         Validate and retrieve data from the UI for the 2D plot.
-        
+
         Returns:
             Plot_Info: The updated plot configuration.
-            
+
         Raises:
             ValueError: If any axis label contains invalid characters or if manual
                         positioning/sizing is partially defined.
@@ -746,8 +760,12 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         # Parse manual positioning and sizing using the helper function.
         self.plot_data.top_left_x = parse_int_field(self.lineEdit_top_left_x.text(), 0)
         self.plot_data.top_left_y = parse_int_field(self.lineEdit_top_left_y.text(), 0)
-        self.plot_data.plot_width = parse_int_field(self.lineEdit_plot_width.text(), 430)
-        self.plot_data.plot_height = parse_int_field(self.lineEdit_plot_height.text(), 126)
+        self.plot_data.plot_width = parse_int_field(
+            self.lineEdit_plot_width.text(), 430
+        )
+        self.plot_data.plot_height = parse_int_field(
+            self.lineEdit_plot_height.text(), 126
+        )
 
         # Validate that position/size fields are either fully specified or left empty.
         if self.lineEdit_top_left_x.text() and not self.lineEdit_top_left_y.text():
@@ -763,7 +781,9 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.plot_data.checkbox_manual_plot_position = (
             self.checkBox_manual_plot_position_2d.isChecked()
         )
-        self.plot_data.checkbox_show_in_browser = self.checkBox_show_in_browser.isChecked()
+        self.plot_data.checkbox_show_in_browser = (
+            self.checkBox_show_in_browser.isChecked()
+        )
         self.plot_data.browser_port = self.spinBox_port.value()
 
         self.plot_data.update_name()
@@ -797,14 +817,14 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
 class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
     """
     Widget to configure a classic "X-Y plot".
-    
+
     This widget is based on the Qt Designer form compiled into Ui_Plot_Definer.
     """
 
     def __init__(self, plot_data: Plot_Info, parent=None):
         """
         Initialize the X-Y plot definer widget.
-        
+
         Parameters:
             plot_data (Plot_Info): The plot configuration to be edited.
             parent (QWidget, optional): The parent widget.
@@ -822,6 +842,8 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
             comboBoxes=combo_boxes,
             tableData=plot_data.y_axes,
             checkstrings=[0],
+            add_tooltip="Add a new line to be plotted",
+            remove_tooltip="Remove selected line",
         )
         self.y_table.added.connect(self.add_y)
         self.y_table.removed.connect(self.remove_y)
@@ -838,8 +860,12 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         self.fit_change()
 
         # Connect checkboxes for manual positioning and browser port display.
-        self.checkBox_manual_plot_position.stateChanged.connect(self.hide_show_manual_position)
-        self.checkBox_show_in_browser.stateChanged.connect(self.hide_show_show_in_browser)
+        self.checkBox_manual_plot_position.stateChanged.connect(
+            self.hide_show_manual_position
+        )
+        self.checkBox_show_in_browser.stateChanged.connect(
+            self.hide_show_show_in_browser
+        )
         self.checkBox_show_in_browser.clicked.connect(self.hide_show_show_in_browser)
 
     def load_data(self):
@@ -897,10 +923,10 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
     def get_data(self):
         """
         Validate and retrieve data from the UI for the X-Y plot.
-        
+
         Returns:
             Plot_Info: The updated plot configuration.
-        
+
         Raises:
             ValueError: If any label contains invalid characters or if manual
                         position/size is partially defined.
@@ -937,8 +963,12 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         # Parse manual positioning and sizing using the helper function.
         self.plot_data.top_left_x = parse_int_field(self.lineEdit_top_left_x.text(), 0)
         self.plot_data.top_left_y = parse_int_field(self.lineEdit_top_left_y.text(), 0)
-        self.plot_data.plot_width = parse_int_field(self.lineEdit_plot_width.text(), 430)
-        self.plot_data.plot_height = parse_int_field(self.lineEdit_plot_height.text(), 126)
+        self.plot_data.plot_width = parse_int_field(
+            self.lineEdit_plot_width.text(), 430
+        )
+        self.plot_data.plot_height = parse_int_field(
+            self.lineEdit_plot_height.text(), 126
+        )
 
         # Validate that either both or none of the manual position/size fields are provided.
         if self.lineEdit_top_left_x.text() and not self.lineEdit_top_left_y.text():
@@ -951,8 +981,12 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
             raise ValueError("Plot width is not set, but height is.")
 
         # Save checkbox states and browser port.
-        self.plot_data.checkbox_manual_plot_position = self.checkBox_manual_plot_position.isChecked()
-        self.plot_data.checkbox_show_in_browser = self.checkBox_show_in_browser.isChecked()
+        self.plot_data.checkbox_manual_plot_position = (
+            self.checkBox_manual_plot_position.isChecked()
+        )
+        self.plot_data.checkbox_show_in_browser = (
+            self.checkBox_show_in_browser.isChecked()
+        )
         self.plot_data.browser_port = self.spinBox_port.value()
 
         # Retrieve any changes from the embedded fit definer widget.
@@ -998,7 +1032,7 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
     def fit_change(self):
         """
         Switch the fit-defining widget based on the user's selection.
-        
+
         Uses a single shared Fit_Definer if "same fit" is checked, or an individual
         Fit_Definer for the selected y-axis row otherwise.
         """
@@ -1034,7 +1068,7 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
 class Fit_Definer(Ui_Fit_Definer, QWidget):
     """
     Widget for configuring a Fit_Info object.
-    
+
     Users can choose between a predefined or custom function, set initial parameters,
     and adjust bounds. This widget is based on the Qt Designer form compiled into
     Ui_Fit_Definer.
@@ -1043,7 +1077,7 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
     def __init__(self, fit_info: Fit_Info, parent=None, fit_to=""):
         """
         Initialize the Fit_Definer widget.
-        
+
         Parameters:
             fit_info (Fit_Info): The fit configuration to be edited.
             parent (QWidget, optional): The parent widget.
@@ -1066,6 +1100,8 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
             title="Fit Parameters",
             editables=[1, 2, 3],
             tableData=fit_info.initial_params,
+            add_tooltip="Add a new parameter",
+            remove_tooltip="Remove selected parameter",
         )
         # Create a table for additional data.
         self.add_data = AddRemoveTable(
@@ -1110,10 +1146,10 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
     def _build_param_table(self, params):
         """
         Build a new parameter table given a list of parameter names.
-        
+
         Parameters:
             params (list): List of parameter names.
-        
+
         Returns:
             dict: A dictionary with keys "name", "initial value", "lower bound", "upper bound".
         """
@@ -1133,7 +1169,7 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
     def change_func(self):
         """
         Enable or disable various fields depending on the user's fit selections.
-        
+
         This method dynamically updates the UI elements based on whether the fit is
         enabled, if a custom function is chosen, and whether parameter guessing is enabled.
         """
@@ -1171,7 +1207,9 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
             if custom_func_enabled:
                 # For custom functions, try parsing the expression.
                 try:
-                    expression_model = models.ExpressionModel(self.lineEdit_custom_func.text())
+                    expression_model = models.ExpressionModel(
+                        self.lineEdit_custom_func.text()
+                    )
                     params = expression_model.param_names
                     # Set the background color to green on success.
                     self.lineEdit_custom_func.setStyleSheet(
@@ -1229,7 +1267,7 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
 def add_fit(table_data, fit):
     """
     Helper function to add the appropriate fit function name into the table data.
-    
+
     Parameters:
         table_data (dict): Dictionary used by an AddRemoveTable (keys include "fit").
         fit (Fit_Info): The fit data object.
@@ -1243,10 +1281,10 @@ def add_fit(table_data, fit):
 def make_table_data(plot_data):
     """
     Build a summary table data dictionary for an overview of plots and their fits.
-    
+
     Parameters:
         plot_data (list of Plot_Info): List of plot configurations.
-        
+
     Returns:
         dict: A dictionary with keys "plot-type", "name", and "fit" for the overview table.
     """
@@ -1280,7 +1318,7 @@ class Plot_Button_Overview(QWidget):
     def __init__(self, parent, plot_data=None):
         """
         Initialize the overview widget.
-        
+
         Parameters:
             parent (QWidget): The parent widget.
             plot_data (list of Plot_Info, optional): List of plot configurations.
@@ -1355,7 +1393,7 @@ class Plot_Button_Overview(QWidget):
     def keyPressEvent(self, event: QKeyEvent) -> None:
         """
         Overridden to ignore the Enter/Return key to prevent premature dialog closure.
-        
+
         Parameters:
             event (QKeyEvent): The key press event.
         """
@@ -1367,10 +1405,10 @@ class Plot_Button_Overview(QWidget):
 def is_module_available(module_name):
     """
     Check if a module is available for import.
-    
+
     Parameters:
         module_name (str): The name of the module.
-        
+
     Returns:
         bool: True if the module can be imported, False otherwise.
     """
@@ -1379,19 +1417,19 @@ def is_module_available(module_name):
         return True
     except ImportError:
         return False
-    
+
 
 def check_if_plotly_modules_are_available(self):
     """
     Check for the availability of required modules for browser-based plotting.
-    
+
     If any required modules are missing, prompt the user to install them.
-    
+
     Parameters:
         self: The calling widget instance (used to update UI elements based on the outcome).
     """
     # List of required modules.
-    required_modules = ['flask', 'dash', 'plotly']
+    required_modules = ["flask", "dash", "plotly"]
 
     # Identify any missing modules.
     missing_modules = [mod for mod in required_modules if not is_module_available(mod)]
@@ -1410,16 +1448,24 @@ def check_if_plotly_modules_are_available(self):
             "Install Required Modules",
             msg,
             QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
+            QMessageBox.No,
         )
 
         if reply_update_modules == QMessageBox.Yes:
             try:
                 # First attempt to install nomad-camels[dash] which should cover dependencies.
                 try:
-                    command = [sys.executable, "-m", "pip", "install", "nomad-camels[dash]"]
+                    command = [
+                        sys.executable,
+                        "-m",
+                        "pip",
+                        "install",
+                        "nomad-camels[dash]",
+                    ]
                     subprocess.check_call(command)
-                    missing_modules = [mod for mod in required_modules if not is_module_available(mod)]
+                    missing_modules = [
+                        mod for mod in required_modules if not is_module_available(mod)
+                    ]
                     if missing_modules:
                         raise Exception("Failed to install nomad-camels[dash]")
                 except Exception as e:
@@ -1431,21 +1477,25 @@ def check_if_plotly_modules_are_available(self):
                 QMessageBox.information(
                     None,
                     "Installation Complete",
-                    "The required modules have been installed.\nYou can now view your plots from a web browser."
+                    "The required modules have been installed.\nYou can now view your plots from a web browser.",
                 )
             except Exception as e:
                 QMessageBox.critical(
                     None,
                     "Installation Failed",
-                    f"An error occurred during installation:\n{str(e)}"
+                    f"An error occurred during installation:\n{str(e)}",
                 )
                 self.checkBox_show_in_browser.setChecked(False)
-                self.plot_data.checkbox_show_in_browser = self.checkBox_show_in_browser.isChecked()
+                self.plot_data.checkbox_show_in_browser = (
+                    self.checkBox_show_in_browser.isChecked()
+                )
         else:
             QMessageBox.warning(
                 None,
                 "Modules Missing",
-                "You cannot display the plots in the browser without the required modules."
+                "You cannot display the plots in the browser without the required modules.",
             )
             self.checkBox_show_in_browser.setChecked(False)
-            self.plot_data.checkbox_show_in_browser = self.checkBox_show_in_browser.isChecked()
+            self.plot_data.checkbox_show_in_browser = (
+                self.checkBox_show_in_browser.isChecked()
+            )

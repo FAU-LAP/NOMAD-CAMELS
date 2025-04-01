@@ -94,10 +94,6 @@ class Set_Channels_Config(Loop_Step_Config):
             "channel": self.loop_step.channels_values["Channels"],
             "value": self.loop_step.channels_values["Values"],
         }
-        # self.sub_widget = AddRemoveTable(headerLabels=['Channels', 'Values'],
-        #                                  comboBoxes={'Channels': box},
-        #                                  tableData=loop_step.channels_values,
-        #                                  checkstrings=1)
         self.sub_widget = Channels_Check_Table(
             self, ["set", "channel", "value"], True, info_dict, [2]
         )

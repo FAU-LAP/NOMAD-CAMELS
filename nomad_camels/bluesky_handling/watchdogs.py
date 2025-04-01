@@ -133,7 +133,11 @@ class Watchdog_Definer(QDialog):
         self.watchdogs = dict(variables_handling.watchdogs)
         tabledata = {"Name": list(self.watchdogs.keys())}
         self.watchdog_table = AddRemoveTable(
-            headerLabels=["Name"], tableData=tabledata, editables=[]
+            headerLabels=["Name"],
+            tableData=tabledata,
+            editables=[],
+            add_tooltip="Add a new watchdog",
+            remove_tooltip="Remove the selected watchdog",
         )
         self.last_item = None
 

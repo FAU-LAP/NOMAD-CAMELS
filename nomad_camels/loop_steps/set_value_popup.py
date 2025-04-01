@@ -72,13 +72,18 @@ class Set_Value_Popup_Config(Loop_Step_Config):
 
     def __init__(self, loop_step: Set_Value_Popup, parent=None):
         super().__init__(parent, loop_step)
-        combo_list = loop_step.combo_list or ['' for _ in loop_step.variables]
-        table_data = {'variable': loop_step.variables,
-                      'combobox-list': combo_list}
+        combo_list = loop_step.combo_list or ["" for _ in loop_step.variables]
+        table_data = {"variable": loop_step.variables, "combobox-list": combo_list}
         self.variables_table = AddRemoveTable(
-            tableData=table_data, title="Variables", headerLabels=['variable', 'combobox-list']
+            tableData=table_data,
+            title="Variables",
+            headerLabels=["variable", "combobox-list"],
+            add_tooltip="Add a variable to set",
+            remove_tooltip="Remove selected variable",
         )
-        self.variables_table.setToolTip("If you want to allow free setting, keep combobox-list empty, otherwise you can fill it with a list of possible values.\nExample: ['value1', 'value2'] or [2, 3, 4]")
+        self.variables_table.setToolTip(
+            "If you want to allow free setting, keep combobox-list empty, otherwise you can fill it with a list of possible values.\nExample: ['value1', 'value2'] or [2, 3, 4]"
+        )
         labels = ["use", "channel"]
         info_dict = {"channel": loop_step.channels}
         self.channels_table = Channels_Check_Table(
@@ -95,8 +100,11 @@ class Set_Value_Popup_Config(Loop_Step_Config):
     def update_step_config(self):
         """ """
         super().update_step_config()
-        self.loop_step.variables = self.variables_table.update_table_data()['variable']
-        self.loop_step.combo_list = [ast.literal_eval(x) if x else "" for x in self.variables_table.update_table_data()['combobox-list']]
+        self.loop_step.variables = self.variables_table.update_table_data()["variable"]
+        self.loop_step.combo_list = [
+            ast.literal_eval(x) if x else ""
+            for x in self.variables_table.update_table_data()["combobox-list"]
+        ]
         self.loop_step.channels = self.channels_table.get_info()["channel"]
         self.loop_step.free_channels = self.checkBox_free_channels.isChecked()
         self.loop_step.free_variables = self.checkBox_free_variables.isChecked()

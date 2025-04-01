@@ -58,6 +58,8 @@ class FlyerWindow(QDialog):
             tableData=table_data,
             editables=[],
             default_values={"Name": "", "Reading Rate": 1},
+            add_tooltip="Add a new entry",
+            remove_tooltip="Remove selected entry",
         )
 
         self.flyer_table.table.clicked.connect(self.change_flyer_def)

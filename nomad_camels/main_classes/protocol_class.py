@@ -5,7 +5,6 @@ from nomad_camels.frontpanels.plot_definer import Plot_Button_Overview
 from nomad_camels.loop_steps import make_step_of_type
 from nomad_camels.gui.general_protocol_settings import Ui_Protocol_Settings
 
-from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.utility import variables_handling
 from nomad_camels.frontpanels.flyer_window import FlyerButton

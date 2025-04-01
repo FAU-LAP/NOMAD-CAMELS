@@ -54,7 +54,10 @@ class Set_Variables_Config(Loop_Step_Config):
     def __init__(self, loop_step: Set_Variables, parent=None):
         super().__init__(parent, loop_step)
         self.variables_table = AddRemoveTable(
-            tableData=loop_step.variables_values, checkstrings=[1]
+            tableData=loop_step.variables_values,
+            checkstrings=[1],
+            add_tooltip="Add variable to set",
+            remove_tooltip="Remove variable",
         )
         self.layout().addWidget(self.variables_table, 1, 0, 1, 5)
 

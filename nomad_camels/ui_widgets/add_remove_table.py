@@ -58,6 +58,8 @@ class AddRemoveTable(QWidget):
         fixedsize=False,
         enableds=None,
         default_values=None,
+        add_tooltip=None,
+        remove_tooltip=None,
     ):
         """
 
@@ -166,6 +168,8 @@ class AddRemoveTable(QWidget):
         self.enableds = enableds if not isinstance(enableds, int) else [enableds]
 
         self.addButton = QPushButton(addLabel)
+        if add_tooltip:
+            self.addButton.setToolTip(add_tooltip)
         self.addButton.setMaximumHeight(24)
         self.addButton.setStyleSheet(
             "QPushButton {\n"
@@ -192,6 +196,8 @@ class AddRemoveTable(QWidget):
             "                            }"
         )
         self.removeButton = QPushButton(removeLabel)
+        if remove_tooltip:
+            self.removeButton.setToolTip(remove_tooltip)
         self.removeButton.setMaximumHeight(24)
         self.removeButton.setStyleSheet(
             "QPushButton {\n"

@@ -218,6 +218,8 @@ class If_Step_Config_Sub(QWidget):
             title="Elif-cases:",
             checkstrings=0,
             askdelete=True,
+            add_tooltip="Add a new elif-case",
+            remove_tooltip="Remove the selected elif-case",
         )
         self.elif_table.sizechange.connect(self.update_condition)
 
