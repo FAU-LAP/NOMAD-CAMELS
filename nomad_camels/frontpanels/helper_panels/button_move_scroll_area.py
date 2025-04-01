@@ -399,6 +399,7 @@ class RenameTabWidget(QTabWidget):
 
         # Add the "plus" tab
         self.plus_tab = QPushButton("+")
+        self.plus_tab.setToolTip("Add new tab")
         self.plus_tab.setFlat(True)
         self.plus_tab.setFocusPolicy(Qt.NoFocus)
         self.plus_tab.setFixedSize(25, 25)

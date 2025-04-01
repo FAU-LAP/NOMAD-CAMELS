@@ -1,5 +1,6 @@
 import importlib
 import sys
+
 if sys.version_info >= (3, 8):
     import importlib.metadata as importlib_metadata
 else:
@@ -66,6 +67,11 @@ class Instrument_Config(Ui_Form, QWidget):
         self.info_widge = Info_Widget(self)
         self.info_widge.setHidden(True)
         self.layout().addWidget(self.info_widge, 0, 5, 3, 1)
+
+        self.pushButton_add.setToolTip("Add an instance of the selected instrument")
+        self.pushButton_remove.setToolTip(
+            "Remove the selected instance of the instrument"
+        )
 
         self.hide_info = False
         self.toggle_info_hidden()

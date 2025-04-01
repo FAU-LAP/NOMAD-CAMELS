@@ -1,7 +1,7 @@
 """This module is used to change the UI-theme of CAMELS. It provides some
 default color palettes `light_palette` and `dark_palette`."""
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QStyleFactory
+from PySide6.QtWidgets import QApplication, QStyleFactory
 from PySide6.QtGui import QPalette, QColor, QColorConstants
 
 try:

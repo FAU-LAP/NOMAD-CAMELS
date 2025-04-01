@@ -95,6 +95,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 super().__init__(parent)
                 self.setText("+")
                 self.function = function
+                self.setToolTip("Add a step to the protocol")
 
             def mousePressEvent(self, event):
                 if event.button() == Qt.LeftButton:
@@ -112,6 +113,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.toolButton_add_step = add_button
         self.protocol = protocol
         self.loop_step_configuration_widget = None
+        self.pushButton_remove_step.setToolTip("Delete selected step")
 
         self.add_actions = []
         self.device_actions = []
