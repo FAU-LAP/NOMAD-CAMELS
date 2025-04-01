@@ -24,6 +24,7 @@ UI-Improvements:
 - Added a maximum height and scrollbar for description of protocol steps
 - Added more tooltips in the UI
 - modernized tooltip style
+- increased startup size of instrument management, to decrease number of resize-events
 
 ### 1.8.1 Fixed broken Plots in Loops
 

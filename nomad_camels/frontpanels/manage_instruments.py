@@ -53,6 +53,7 @@ class ManageInstruments(QDialog):
                 0,
                 'Could not reach the server for list of drivers\ncheck your internet connection and try opening "Manage Instruments" again',
             )
+        self.resize(1000, 700)
 
     def accept(self) -> None:
         """ """
