@@ -28,6 +28,9 @@ UI-Improvements:
 - driver-builder now pre-creates the finalize-steps method
 - table with channels can now be sorted
 
+Fixes:
+- instrument do not change anymore when "cancel" clicked in manage instruments
+
 ### 1.8.1 Fixed broken Plots in Loops
 
 UI-Improvements:
