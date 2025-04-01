@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.2
+UI-Improvements:
+- Notification when log in to NOMAD was (not) successful
+
 ### 1.8.1 Fixed broken Plots in Loops
 
 UI-Improvements:
