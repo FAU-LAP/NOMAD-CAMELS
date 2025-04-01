@@ -25,6 +25,7 @@ UI-Improvements:
 - Added more tooltips in the UI
 - modernized tooltip style
 - increased startup size of instrument management, to decrease number of resize-events
+- driver-builder now pre-creates the finalize-steps method
 
 ### 1.8.1 Fixed broken Plots in Loops
 
