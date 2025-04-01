@@ -22,6 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 UI-Improvements:
 - Notification when log in to NOMAD was (not) successful
 - Added a maximum height and scrollbar for description of protocol steps
+- Added more tooltips in the UI
 
 ### 1.8.1 Fixed broken Plots in Loops
 
