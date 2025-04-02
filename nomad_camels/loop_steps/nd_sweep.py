@@ -120,6 +120,8 @@ class ND_Sweep(Loop_Step):
         if self.data_output == "main stream":
             stream = "stream_name"
 
+        skip_failed = list(self.skip_failed)
+
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f"{tabs}channels = ["
         for i, channel in enumerate(self.read_channels):
@@ -150,7 +152,7 @@ class ND_Sweep(Loop_Step):
 
         tabs = "\t" * (n_tabs + i)
         protocol_string += f'{tabs}\tyield from bps.wait("A")\n'
-        protocol_string += f"{tabs}\tyield from helper_functions.trigger_and_read(channels, name={stream})\n"
+        protocol_string += f"{tabs}\tyield from helper_functions.trigger_and_read(channels, name={stream}, skip_on_exception={skip_failed})\n"
         protocol_string += f"{tabs}yield from helper_functions.get_fit_results(all_fits, namespace, True, {stream})\n"
         self.update_time_weight()
         return protocol_string
