@@ -104,6 +104,8 @@ class Simple_Sweep(For_Loop_Step):
         if self.data_output == "main stream":
             stream = "stream_name"
 
+        skip_failed = list(self.skip_failed)
+
         protocol_string = f"{tabs}channels = ["
         for i, channel in enumerate(self.read_channels):
             if channel not in variables_handling.channels:
@@ -130,7 +132,7 @@ class Simple_Sweep(For_Loop_Step):
 
         protocol_string += f'{tabs}\tyield from bps.abs_set({setter}, {self.name.replace(" ", "_")}_Value, group="A")\n'
         protocol_string += f'{tabs}\tyield from bps.wait("A")\n'
-        protocol_string += f"{tabs}\tyield from helper_functions.trigger_and_read(channels, name={stream})\n"
+        protocol_string += f"{tabs}\tyield from helper_functions.trigger_and_read(channels, name={stream}, skip_on_exception={skip_failed})\n"
         protocol_string += f"{tabs}yield from helper_functions.get_fit_results(all_fits, namespace, True, {stream})\n"
         self.update_time_weight()
         return protocol_string
@@ -173,7 +175,6 @@ class Simple_Sweep_Config(Loop_Step_Config):
             "channel": self.loop_step.read_channels,
             "ignore failed": self.loop_step.skip_failed,
         }
-        info_dict = {"channel": self.loop_step.read_channels}
         self.read_table = Channels_Check_Table(
             self, labels, info_dict=info_dict, title="Read-Channels", checkables=[2]
         )

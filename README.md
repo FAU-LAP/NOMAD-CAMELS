@@ -33,6 +33,7 @@ Fixes:
 - instrument do not change anymore when "cancel" clicked in manage instruments
 - if default file association for .py is running python, protocols are not run anymore right away when opening externally, but instead revealed in os-file explorer
 - sometimes breaking for-loops or sweeps when point distance could not be calculated after copying or reloading should be fixed
+- ignore failed readings in simple sweep now actually doing something
 
 ### 1.8.1 Fixed broken Plots in Loops
 
