@@ -18,6 +18,23 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.2 UI-Improvements, minor fixes
+UI-Improvements:
+- Notification when log in to NOMAD was (not) successful
+- Added a maximum height and scrollbar for description of protocol steps
+- Added more tooltips in the UI
+- modernized tooltip style
+- increased startup size of instrument management, to decrease number of resize-events
+- driver-builder now pre-creates the finalize-steps method
+- table with channels can now be sorted
+- read channels of gradient-descent step now same table type as for all other steps
+
+Fixes:
+- instrument do not change anymore when "cancel" clicked in manage instruments
+- if default file association for .py is running python, protocols are not run anymore right away when opening externally, but instead revealed in os-file explorer
+- sometimes breaking for-loops or sweeps when point distance could not be calculated after copying or reloading should be fixed
+- ignore failed readings in simple sweep and ND-sweep now actually doing something
+
 ### 1.8.1 Fixed broken Plots in Loops
 
 UI-Improvements:

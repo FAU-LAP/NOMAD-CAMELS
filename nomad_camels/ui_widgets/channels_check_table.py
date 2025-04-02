@@ -15,6 +15,38 @@ from PySide6.QtGui import QBrush, QFont, QStandardItem
 from nomad_camels.utility import variables_handling
 
 
+class CheckableTableWidgetItem(QTableWidgetItem):
+    def __init__(self, checkState=Qt.Unchecked):
+        super().__init__()
+        # Set the item to be checkable and enabled
+        self.setFlags(self.flags() ^ Qt.ItemIsEditable)
+        self.setFlags(self.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+        if isinstance(checkState, bool):
+            # Convert boolean to Qt.CheckState
+            checkState = Qt.Checked if checkState else Qt.Unchecked
+        self.setCheckState(checkState)
+
+    def __lt__(self, other):
+        # When comparing two checkable items, compare based on checkState.
+        # Here, we treat Qt.Checked (2) as greater than Qt.Unchecked (0)
+        if isinstance(other, QTableWidgetItem):
+            # Use the checkState value for comparison if both items are checkable
+            if self.checkState() == Qt.Checked and other.checkState() == Qt.Unchecked:
+                return True
+            elif self.checkState() == Qt.Unchecked and other.checkState() == Qt.Checked:
+                return False
+            elif self.checkState() == Qt.Checked and other.checkState() == Qt.Checked:
+                return self.text() < other.text()
+            elif (
+                self.checkState() == Qt.Unchecked and other.checkState() == Qt.Unchecked
+            ):
+                return self.text() < other.text()
+            else:
+                # If both are checkable but not checked, compare based on the text
+                return self.text() < other.text()
+        return super().__lt__(other)
+
+
 class Channels_Check_Table(QWidget):
     """ """
 
@@ -75,6 +107,8 @@ class Channels_Check_Table(QWidget):
         self.build_channels_table()
         self.tableWidget_channels.itemChanged.connect(self.check_string)
         self.tableWidget_channels.clicked.connect(self.check_change)
+        self.tableWidget_channels.setSortingEnabled(True)
+        self.tableWidget_channels.sortByColumn(1, Qt.AscendingOrder)
 
     def context_menu(self, pos):
         """Generates the right-click-menu.
@@ -293,6 +327,11 @@ class Channels_Check_Table(QWidget):
 
     def build_channels_table(self):
         """ """
+        header = self.tableWidget_channels.horizontalHeader()
+        sort_column = header.sortIndicatorSection()
+        sort_order = header.sortIndicatorOrder()
+        self.tableWidget_channels.sortByColumn(1, Qt.AscendingOrder)
+        self.tableWidget_channels.setSortingEnabled(False)
         self.tableWidget_channels.clear()
         self.tableWidget_channels.setColumnCount(len(self.headerLabels))
         self.tableWidget_channels.setRowCount(0)
@@ -311,12 +350,14 @@ class Channels_Check_Table(QWidget):
             if not isinstance(self.channels, list):
                 metadata = self.channels[channel].get_meta_str()
             self.tableWidget_channels.setRowCount(n + 1)
-            item = QTableWidgetItem()
-            item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-            if channel in channel_list:
-                item.setCheckState(Qt.CheckState.Checked)
-            else:
-                item.setCheckState(Qt.CheckState.Unchecked)
+            state = channel in channel_list
+            item = CheckableTableWidgetItem(checkState=state)
+            # item = QTableWidgetItem()
+            # item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+            # if channel in channel_list:
+            #     item.setCheckState(Qt.CheckState.Checked)
+            # else:
+            #     item.setCheckState(Qt.CheckState.Unchecked)
             if metadata:
                 item.setToolTip(metadata)
             self.tableWidget_channels.setItem(n, 0, item)
@@ -339,15 +380,22 @@ class Channels_Check_Table(QWidget):
                         vals.append("")  # Append empty string if index is out of range
             for j in range(len(self.headerLabels[2:])):
                 if j + 2 in self.checkables:
-                    item = QTableWidgetItem()
-                    # set item checkable by user but set it to be not editable
-                    item.setFlags(item.flags() ^ Qt.ItemIsEditable)
-                    item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                    item.setCheckState(
+                    state = (
                         Qt.CheckState.Checked
                         if vals and vals[j] == "True"
                         else Qt.CheckState.Unchecked
                     )
+                    item = CheckableTableWidgetItem(checkState=state)
+
+                    # item = QTableWidgetItem()
+                    # # set item checkable by user but set it to be not editable
+                    # item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+                    # item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                    # item.setCheckState(
+                    #     Qt.CheckState.Checked
+                    #     if vals and vals[j] == "True"
+                    #     else Qt.CheckState.Unchecked
+                    # )
                     self.tableWidget_channels.setItem(n, j + 2, item)
                 else:
                     item = QTableWidgetItem(vals[j] if vals else "")
@@ -357,6 +405,8 @@ class Channels_Check_Table(QWidget):
                     item.setToolTip(metadata)
             n += 1
         self.tableWidget_channels.resizeColumnsToContents()
+        self.tableWidget_channels.setSortingEnabled(True)
+        self.tableWidget_channels.sortByColumn(sort_column, sort_order)
 
 
 class Call_Functions_Table(QWidget):

@@ -104,6 +104,8 @@ class Simple_Sweep(For_Loop_Step):
         if self.data_output == "main stream":
             stream = "stream_name"
 
+        skip_failed = list(self.skip_failed)
+
         protocol_string = f"{tabs}channels = ["
         for i, channel in enumerate(self.read_channels):
             if channel not in variables_handling.channels:
@@ -130,7 +132,7 @@ class Simple_Sweep(For_Loop_Step):
 
         protocol_string += f'{tabs}\tyield from bps.abs_set({setter}, {self.name.replace(" ", "_")}_Value, group="A")\n'
         protocol_string += f'{tabs}\tyield from bps.wait("A")\n'
-        protocol_string += f"{tabs}\tyield from helper_functions.trigger_and_read(channels, name={stream})\n"
+        protocol_string += f"{tabs}\tyield from helper_functions.trigger_and_read(channels, name={stream}, skip_on_exception={skip_failed})\n"
         protocol_string += f"{tabs}yield from helper_functions.get_fit_results(all_fits, namespace, True, {stream})\n"
         self.update_time_weight()
         return protocol_string
@@ -168,68 +170,20 @@ class Simple_Sweep_Config(Loop_Step_Config):
         self.comboBox_data_output.setCurrentText(loop_step.data_output)
 
         self.sweep_widget = For_Loop_Step_Config_Sub(parent=self, loop_step=loop_step)
-
-        # self.read_table = AddRemoveTable(title='Read Channels', headerLabels=[],
-        #                                  tableData=loop_step.read_channels,
-        #                                  comboBoxes=in_box)
         labels = ["read?", "channel", "ignore failed"]
         info_dict = {
             "channel": self.loop_step.read_channels,
             "ignore failed": self.loop_step.skip_failed,
         }
-        info_dict = {"channel": self.loop_step.read_channels}
         self.read_table = Channels_Check_Table(
             self, labels, info_dict=info_dict, title="Read-Channels", checkables=[2]
         )
-
-        # self.checkBox_use_own_plots = QCheckBox('Use own Plots')
-        # self.checkBox_use_own_plots.setChecked(loop_step.use_own_plots)
 
         self.plot_widge = Plot_Button_Overview(self, self.loop_step.plots)
 
         # label_proc = QLabel('Data processing')
         font = QFont()
         font.setBold(True)
-        # label_proc.setStyleSheet('font-size: 9pt')
-        # label_proc.setFont(font)
-        # self.checkBox_minmax = QCheckBox('Calculate min/max')
-        # self.checkBox_minmax.setChecked(loop_step.calc_minmax)
-        # self.checkBox_mean = QCheckBox('Calculate mean')
-        # self.checkBox_mean.setChecked(loop_step.calc_mean)
-        # self.checkBox_stddev = QCheckBox('Calculate standard deviation')
-        # self.checkBox_stddev.setChecked(loop_step.calc_stddev)
-        # self.checkBox_fit = QCheckBox('Calculate fit')
-        #         # self.checkBox_fit.setChecked(loop_step.calc_fit)
-        # self.checkBox_fit.clicked.connect(self.change_fitting)
-        # self.checkBox_guess_fit = QCheckBox('Guess initial params')
-        # self.checkBox_guess_fit.setChecked(loop_step.guess_fit_params)
-        # self.checkBox_guess_fit.clicked.connect(self.change_fitting)
-        # self.radioButton_predev = QRadioButton('Predefined function')
-        # self.radioButton_own = QRadioButton('Own function')
-        # self.radioButton_predev.setChecked(True)
-        # self.radioButton_own.setChecked(loop_step.use_custom_fit)
-        # self.radioButton_predev.clicked.connect(self.change_fitting)
-        # self.radioButton_own.clicked.connect(self.change_fitting)
-        #
-        # self.comboBox_fit = QComboBox()
-        # self.comboBox_fit.addItems(sorted(models_names.keys()))
-        # if loop_step.predef_fit in models_names.keys():
-        #     self.comboBox_fit.setCurrentText(loop_step.predef_fit)
-        # else:
-        #     self.comboBox_fit.setCurrentText('Linear')
-        # self.lineEdit_fit_func = QLineEdit()
-        # self.lineEdit_fit_func.setText(loop_step.custom_fit)
-        # self.comboBox_fit.currentTextChanged.connect(self.change_fitting)
-        # self.lineEdit_fit_func.textChanged.connect(self.change_fitting)
-        #
-        # cols = ['name', 'initial value']
-        # self.start_params = AddRemoveTable(headerLabels=cols,
-        #                                   title='Fit Parameters',
-        #                                   editables=[1],
-        #                                   tableData=loop_step.fit_params)
-        # self.start_params.addButton.setHidden(True)
-        # self.start_params.removeButton.setHidden(True)
-        # self.change_fitting()
 
         self.layout().addWidget(label_sweep_channel, 1, 0)
         self.layout().addWidget(self.comboBox_sweep_channel, 1, 1, 1, 4)
@@ -239,46 +193,6 @@ class Simple_Sweep_Config(Loop_Step_Config):
         self.layout().addWidget(self.read_table, 6, 0, 1, 5)
 
         self.layout().addWidget(self.plot_widge, 8, 0, 1, 5)
-        # self.layout().addWidget(self.checkBox_use_own_plots, 7, 0, 1, 5)
-        # self.layout().addWidget(self.plot_table, 7, 2, 1, 3)
-        # self.checkBox_use_own_plots.clicked.connect(self.use_plot_change)
-
-        # self.layout().addWidget(label_proc, 10, 0, 1, 5)
-        # self.layout().addWidget(self.checkBox_minmax, 11, 0, 1, 2)
-        # self.layout().addWidget(self.checkBox_mean, 11, 2, 1, 3)
-        # self.layout().addWidget(self.checkBox_stddev, 13, 0, 1, 2)
-        # self.layout().addWidget(self.checkBox_fit, 20, 0, 1, 2)
-        # self.layout().addWidget(self.checkBox_guess_fit, 20, 2, 1, 3)
-        # self.layout().addWidget(self.radioButton_predev, 21, 0, 1, 2)
-        # self.layout().addWidget(self.radioButton_own, 21, 2, 1, 3)
-        # self.layout().addWidget(self.comboBox_fit, 22, 0, 1, 2)
-        # self.layout().addWidget(self.lineEdit_fit_func, 22, 2, 1, 3)
-        # self.layout().addWidget(self.start_params, 23, 0, 1, 5)
-
-        # self.use_plot_change()
-
-    # def setup_plots(self):
-    #     """Called when any preferences are changed. Makes the dictionary
-    #      of preferences and calls save_preferences from the
-    #      load_save_functions module."""
-    #     plot_dialog = Plot_Definer(self)
-    #     plot_dialog.exec()
-    #     print(plot_dialog.data)
-    # if settings_dialog.exec():
-    #     self.preferences = settings_dialog.get_settings()
-    #     number_formatting.preferences = self.preferences
-    #     self.toggle_dark_mode()
-    #     load_save_functions.save_preferences(self.preferences)
-    #     variables_handling.device_driver_path = self.preferences['device_driver_path']
-    #     variables_handling.meas_files_path = self.preferences['meas_files_path']
-    # prefs = {'autosave': self.actionAutosave_on_closing.isChecked(),
-    #          'dark_mode': self.actionDark_Mode.isChecked()}
-    # load_save_functions.save_preferences(prefs)
-
-    # def use_plot_change(self):
-    #     """ """
-    #     use_plots = self.checkBox_use_own_plots.isChecked()
-    #     self.plot_widge.setEnabled(use_plots)
 
     def update_step_config(self):
         """ """
@@ -291,10 +205,3 @@ class Simple_Sweep_Config(Loop_Step_Config):
         self.loop_step.skip_failed = info["ignore failed"]
         self.loop_step.data_output = self.comboBox_data_output.currentText()
         self.loop_step.sweep_channel = self.comboBox_sweep_channel.currentText()
-        # self.loop_step.calc_minmax = self.checkBox_minmax.isChecked()
-        # self.loop_step.calc_mean = self.checkBox_mean.isChecked()
-        # self.loop_step.calc_stddev = self.checkBox_stddev.isChecked()
-        # # self.loop_step.calc_fit = self.checkBox_fit.isChecked()
-        # self.loop_step.use_custom_fit = self.radioButton_own.isChecked()
-        # self.loop_step.predef_fit = self.comboBox_fit.currentText()
-        # self.loop_step.custom_fit = self.lineEdit_fit_func.text()

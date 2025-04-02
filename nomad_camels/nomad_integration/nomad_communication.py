@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QDialog
 from nomad_camels.nomad_integration.nomad_login import LoginDialog
 from nomad_camels.utility.dict_recursive_string import dict_recursive_string
 from nomad_camels.utility import variables_handling
+from nomad_camels.ui_widgets.warn_popup import WarnPopup
 import re
 import logging
 
@@ -77,6 +78,11 @@ def login_to_nomad(parent=None):
         check_response(response, "Login failed!")
         token = response.json()["access_token"]
         auth = {"Authorization": f"Bearer {token}"}
+    WarnPopup(
+        text="Successfully logged in to NOMAD!",
+        title="Login successful",
+        info_icon=True,
+    )
     return token
 
 

@@ -78,18 +78,18 @@ def get_newest_file(directory):
     # Define the search patterns for '.nxs' and '.h5' files
     pattern_nxs = os.path.join(directory, "*.nxs")
     pattern_h5 = os.path.join(directory, "*.h5")
-    
+
     # Retrieve lists of all '.nxs' and '.h5' files in the directory
     nxs_files = glob.glob(pattern_nxs)
     h5_files = glob.glob(pattern_h5)
-    
+
     # Combine the lists of files
     all_files = nxs_files + h5_files
-    
+
     # If no files are found, return None
     if not all_files:
         return None
-    
+
     # Return the newest file based on its modification time
     newest_file = max(all_files, key=os.path.getmtime)
     return newest_file
@@ -136,7 +136,10 @@ def export_function(
     else:
         file_extension = ".h5"
     save_path = f"{save_path}{file_extension}"
-    if os.path.splitext(save_path)[1] == ".nxs" or os.path.splitext(save_path)[1] == ".h5":
+    if (
+        os.path.splitext(save_path)[1] == ".nxs"
+        or os.path.splitext(save_path)[1] == ".h5"
+    ):
         fname = os.path.basename(save_path)
         path = os.path.dirname(save_path)
     if do_export:
@@ -175,7 +178,7 @@ def saving_function(
     start_doc : dict
         The start document of the run.
     path : str
-        The path where the file should be saved. 
+        The path where the file should be saved.
     new_file_each : bool, optional
         (Default value = True)
         Whether a new file should be created for each run. If True, the files are
@@ -878,7 +881,11 @@ class Value_Box(QDialog):
             layout.addWidget(self.channel_table, 2 + n_channels + n_variables, 0, 1, 2)
         if free_variables:
             header = ["variable", "value"]
-            self.variable_table = AddRemoveTable(headerLabels=header)
+            self.variable_table = AddRemoveTable(
+                headerLabels=header,
+                add_tooltip="Add a variable",
+                remove_tooltip="Remove the selected variable",
+            )
             layout.addWidget(self.variable_table, 2 + n_channels + n_variables, 2, 1, 2)
 
         self.buttonBox.rejected.connect(self.reject)

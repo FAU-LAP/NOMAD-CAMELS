@@ -39,13 +39,6 @@ class Ui_settings_window(object):
 
         self.gridLayout.addWidget(self.line_vertical, 0, 2, 1, 1)
 
-        self.buttonBox = QDialogButtonBox(settings_window)
-        self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
-
-        self.gridLayout.addWidget(self.buttonBox, 2, 0, 1, 4)
-
         self.left = QWidget(settings_window)
         self.left.setObjectName(u"left")
         self.gridLayout_3 = QGridLayout(self.left)
@@ -73,6 +66,7 @@ class Ui_settings_window(object):
 
         self.spinBox_logfile_number = QSpinBox(self.logging)
         self.spinBox_logfile_number.setObjectName(u"spinBox_logfile_number")
+        self.spinBox_logfile_number.setAcceptDrops(False)
         self.spinBox_logfile_number.setValue(1)
 
         self.gridLayout_4.addWidget(self.spinBox_logfile_number, 2, 2, 1, 1)
@@ -119,11 +113,6 @@ class Ui_settings_window(object):
 
         self.gridLayout_2.addWidget(self.radioButton_smart_backups, 3, 2, 1, 1)
 
-        self.checkBox_backup_before_run = QCheckBox(self.saving)
-        self.checkBox_backup_before_run.setObjectName(u"checkBox_backup_before_run")
-
-        self.gridLayout_2.addWidget(self.checkBox_backup_before_run, 2, 1, 1, 1)
-
         self.label = QLabel(self.saving)
         self.label.setObjectName(u"label")
         self.label.setMaximumSize(QSize(16777215, 17))
@@ -143,11 +132,6 @@ class Ui_settings_window(object):
         self.checkBox_password.setObjectName(u"checkBox_password")
 
         self.gridLayout_2.addWidget(self.checkBox_password, 1, 0, 1, 3)
-
-        self.checkBox_autosave_run = QCheckBox(self.saving)
-        self.checkBox_autosave_run.setObjectName(u"checkBox_autosave_run")
-
-        self.gridLayout_2.addWidget(self.checkBox_autosave_run, 2, 2, 1, 1)
 
         self.checkBox_new_file_each_run = QCheckBox(self.saving)
         self.checkBox_new_file_each_run.setObjectName(u"checkBox_new_file_each_run")
@@ -187,6 +171,16 @@ class Ui_settings_window(object):
 
         self.gridLayout_2.addWidget(self.pathButton_config_path, 6, 1, 1, 2)
 
+        self.checkBox_autosave_run = QCheckBox(self.saving)
+        self.checkBox_autosave_run.setObjectName(u"checkBox_autosave_run")
+
+        self.gridLayout_2.addWidget(self.checkBox_autosave_run, 2, 1, 1, 1)
+
+        self.checkBox_backup_before_run = QCheckBox(self.saving)
+        self.checkBox_backup_before_run.setObjectName(u"checkBox_backup_before_run")
+
+        self.gridLayout_2.addWidget(self.checkBox_backup_before_run, 2, 2, 1, 1)
+
 
         self.gridLayout_3.addWidget(self.saving, 0, 0, 1, 1)
 
@@ -206,18 +200,18 @@ class Ui_settings_window(object):
 
         self.gridLayout_8.addWidget(self.checkBox_play_camel_on_error, 1, 0, 1, 1)
 
+        self.checkBox_finished_sound = QCheckBox(self.sounds)
+        self.checkBox_finished_sound.setObjectName(u"checkBox_finished_sound")
+
+        self.gridLayout_8.addWidget(self.checkBox_finished_sound, 1, 1, 1, 1)
+
         self.line = QFrame(self.sounds)
         self.line.setObjectName(u"line")
         self.line.setFrameShadow(QFrame.Shadow.Raised)
         self.line.setLineWidth(5)
         self.line.setFrameShape(QFrame.Shape.HLine)
 
-        self.gridLayout_8.addWidget(self.line, 2, 0, 1, 1)
-
-        self.checkBox_finished_sound = QCheckBox(self.sounds)
-        self.checkBox_finished_sound.setObjectName(u"checkBox_finished_sound")
-
-        self.gridLayout_8.addWidget(self.checkBox_finished_sound, 1, 1, 1, 1)
+        self.gridLayout_8.addWidget(self.line, 2, 0, 1, 2)
 
 
         self.gridLayout_3.addWidget(self.sounds, 3, 0, 1, 1)
@@ -331,65 +325,10 @@ class Ui_settings_window(object):
         self.gridLayout_9.setSpacing(9)
         self.gridLayout_9.setObjectName(u"gridLayout_9")
         self.gridLayout_9.setContentsMargins(3, 3, 3, 3)
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalLayout_2.setContentsMargins(-1, -1, -1, 0)
-        self.checkBox_enable_Api = QCheckBox(self.right)
-        self.checkBox_enable_Api.setObjectName(u"checkBox_enable_Api")
-        self.checkBox_enable_Api.setFont(font)
+        self.pushButton_API_docu = QPushButton(self.right)
+        self.pushButton_API_docu.setObjectName(u"pushButton_API_docu")
 
-        self.horizontalLayout_2.addWidget(self.checkBox_enable_Api)
-
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout_2.addItem(self.horizontalSpacer_2)
-
-        self.label_14 = QLabel(self.right)
-        self.label_14.setObjectName(u"label_14")
-        self.label_14.setFont(font)
-
-        self.horizontalLayout_2.addWidget(self.label_14)
-
-        self.lineEdit_api_port = QLineEdit(self.right)
-        self.lineEdit_api_port.setObjectName(u"lineEdit_api_port")
-
-        self.horizontalLayout_2.addWidget(self.lineEdit_api_port)
-
-
-        self.gridLayout_9.addLayout(self.horizontalLayout_2, 6, 0, 1, 1)
-
-        self.drivers = QWidget(self.right)
-        self.drivers.setObjectName(u"drivers")
-        self.gridLayout_10 = QGridLayout(self.drivers)
-        self.gridLayout_10.setObjectName(u"gridLayout_10")
-        self.gridLayout_10.setContentsMargins(0, 0, 0, 0)
-        self.label_13 = QLabel(self.drivers)
-        self.label_13.setObjectName(u"label_13")
-        self.label_13.setFont(font)
-
-        self.gridLayout_10.addWidget(self.label_13, 0, 0, 1, 1)
-
-        self.label_8 = QLabel(self.drivers)
-        self.label_8.setObjectName(u"label_8")
-        self.label_8.setMaximumSize(QSize(16777215, 17))
-
-        self.gridLayout_10.addWidget(self.label_8, 1, 0, 1, 1)
-
-        self.line_5 = QFrame(self.drivers)
-        self.line_5.setObjectName(u"line_5")
-        self.line_5.setFrameShadow(QFrame.Shadow.Raised)
-        self.line_5.setLineWidth(5)
-        self.line_5.setFrameShape(QFrame.Shape.HLine)
-
-        self.gridLayout_10.addWidget(self.line_5, 2, 0, 1, 3)
-
-        self.pathButton_device_path = Path_Button_Edit(self.drivers)
-        self.pathButton_device_path.setObjectName(u"pathButton_device_path")
-
-        self.gridLayout_10.addWidget(self.pathButton_device_path, 1, 1, 1, 2)
-
-
-        self.gridLayout_9.addWidget(self.drivers, 1, 0, 1, 1)
+        self.gridLayout_9.addWidget(self.pushButton_API_docu, 7, 0, 1, 1)
 
         self.updates = QWidget(self.right)
         self.updates.setObjectName(u"updates")
@@ -422,12 +361,6 @@ class Ui_settings_window(object):
         self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.gridLayout_9.addItem(self.verticalSpacer_2, 22, 0, 1, 1)
-
-        self.label_ApiKey = QLabel(self.right)
-        self.label_ApiKey.setObjectName(u"label_ApiKey")
-        self.label_ApiKey.setStyleSheet(u"font-weight: bold;")
-
-        self.gridLayout_9.addWidget(self.label_ApiKey, 5, 0, 1, 1)
 
         self.files = QWidget(self.right)
         self.files.setObjectName(u"files")
@@ -494,6 +427,110 @@ class Ui_settings_window(object):
 
         self.gridLayout_9.addWidget(self.files, 0, 0, 1, 1)
 
+        self.extensions = QWidget(self.right)
+        self.extensions.setObjectName(u"extensions")
+        self.gridLayout_12 = QGridLayout(self.extensions)
+        self.gridLayout_12.setObjectName(u"gridLayout_12")
+        self.gridLayout_12.setContentsMargins(0, 0, 0, 0)
+        self.label_21 = QLabel(self.extensions)
+        self.label_21.setObjectName(u"label_21")
+        self.label_21.setMaximumSize(QSize(16777215, 17))
+
+        self.gridLayout_12.addWidget(self.label_21, 1, 0, 1, 1)
+
+        self.label_22 = QLabel(self.extensions)
+        self.label_22.setObjectName(u"label_22")
+        self.label_22.setFont(font)
+
+        self.gridLayout_12.addWidget(self.label_22, 0, 0, 1, 2)
+
+        self.pathButton_extension_path = Path_Button_Edit(self.extensions)
+        self.pathButton_extension_path.setObjectName(u"pathButton_extension_path")
+
+        self.gridLayout_12.addWidget(self.pathButton_extension_path, 1, 1, 1, 1)
+
+        self.line_9 = QFrame(self.extensions)
+        self.line_9.setObjectName(u"line_9")
+        self.line_9.setFrameShadow(QFrame.Shadow.Raised)
+        self.line_9.setLineWidth(5)
+        self.line_9.setFrameShape(QFrame.Shape.HLine)
+
+        self.gridLayout_12.addWidget(self.line_9, 2, 0, 1, 2)
+
+
+        self.gridLayout_9.addWidget(self.extensions, 3, 0, 1, 1)
+
+        self.drivers = QWidget(self.right)
+        self.drivers.setObjectName(u"drivers")
+        self.gridLayout_10 = QGridLayout(self.drivers)
+        self.gridLayout_10.setObjectName(u"gridLayout_10")
+        self.gridLayout_10.setContentsMargins(0, 0, 0, 0)
+        self.label_13 = QLabel(self.drivers)
+        self.label_13.setObjectName(u"label_13")
+        self.label_13.setFont(font)
+
+        self.gridLayout_10.addWidget(self.label_13, 0, 0, 1, 1)
+
+        self.label_8 = QLabel(self.drivers)
+        self.label_8.setObjectName(u"label_8")
+        self.label_8.setMaximumSize(QSize(16777215, 17))
+
+        self.gridLayout_10.addWidget(self.label_8, 1, 0, 1, 1)
+
+        self.line_5 = QFrame(self.drivers)
+        self.line_5.setObjectName(u"line_5")
+        self.line_5.setFrameShadow(QFrame.Shadow.Raised)
+        self.line_5.setLineWidth(5)
+        self.line_5.setFrameShape(QFrame.Shape.HLine)
+
+        self.gridLayout_10.addWidget(self.line_5, 2, 0, 1, 3)
+
+        self.pathButton_device_path = Path_Button_Edit(self.drivers)
+        self.pathButton_device_path.setObjectName(u"pathButton_device_path")
+
+        self.gridLayout_10.addWidget(self.pathButton_device_path, 1, 1, 1, 2)
+
+
+        self.gridLayout_9.addWidget(self.drivers, 1, 0, 1, 1)
+
+        self.label_ApiKey = QLabel(self.right)
+        self.label_ApiKey.setObjectName(u"label_ApiKey")
+        self.label_ApiKey.setStyleSheet(u"font-weight: bold;")
+
+        self.gridLayout_9.addWidget(self.label_ApiKey, 5, 0, 1, 1)
+
+        self.eln = QWidget(self.right)
+        self.eln.setObjectName(u"eln")
+        self.gridLayout_11 = QGridLayout(self.eln)
+        self.gridLayout_11.setObjectName(u"gridLayout_11")
+        self.gridLayout_11.setContentsMargins(0, 0, 0, 0)
+        self.label_19 = QLabel(self.eln)
+        self.label_19.setObjectName(u"label_19")
+
+        self.gridLayout_11.addWidget(self.label_19, 1, 0, 1, 1)
+
+        self.lineEdit_oasis = QLineEdit(self.eln)
+        self.lineEdit_oasis.setObjectName(u"lineEdit_oasis")
+
+        self.gridLayout_11.addWidget(self.lineEdit_oasis, 1, 1, 1, 1)
+
+        self.label_18 = QLabel(self.eln)
+        self.label_18.setObjectName(u"label_18")
+        self.label_18.setFont(font)
+
+        self.gridLayout_11.addWidget(self.label_18, 0, 0, 1, 2)
+
+        self.line_3 = QFrame(self.eln)
+        self.line_3.setObjectName(u"line_3")
+        self.line_3.setFrameShadow(QFrame.Shadow.Raised)
+        self.line_3.setLineWidth(5)
+        self.line_3.setFrameShape(QFrame.Shape.HLine)
+
+        self.gridLayout_11.addWidget(self.line_3, 2, 0, 1, 2)
+
+
+        self.gridLayout_9.addWidget(self.eln, 2, 0, 1, 1)
+
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(-1, -1, -1, 0)
@@ -529,70 +566,32 @@ class Ui_settings_window(object):
 
         self.gridLayout_9.addLayout(self.horizontalLayout, 11, 0, 4, 1)
 
-        self.extensions = QWidget(self.right)
-        self.extensions.setObjectName(u"extensions")
-        self.gridLayout_12 = QGridLayout(self.extensions)
-        self.gridLayout_12.setObjectName(u"gridLayout_12")
-        self.gridLayout_12.setContentsMargins(0, 0, 0, 0)
-        self.label_21 = QLabel(self.extensions)
-        self.label_21.setObjectName(u"label_21")
-        self.label_21.setMaximumSize(QSize(16777215, 17))
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(-1, -1, -1, 0)
+        self.checkBox_enable_Api = QCheckBox(self.right)
+        self.checkBox_enable_Api.setObjectName(u"checkBox_enable_Api")
+        self.checkBox_enable_Api.setFont(font)
 
-        self.gridLayout_12.addWidget(self.label_21, 1, 0, 1, 1)
+        self.horizontalLayout_2.addWidget(self.checkBox_enable_Api)
 
-        self.label_22 = QLabel(self.extensions)
-        self.label_22.setObjectName(u"label_22")
-        self.label_22.setFont(font)
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.gridLayout_12.addWidget(self.label_22, 0, 0, 1, 2)
+        self.horizontalLayout_2.addItem(self.horizontalSpacer_2)
 
-        self.pathButton_extension_path = Path_Button_Edit(self.extensions)
-        self.pathButton_extension_path.setObjectName(u"pathButton_extension_path")
+        self.label_14 = QLabel(self.right)
+        self.label_14.setObjectName(u"label_14")
+        self.label_14.setFont(font)
 
-        self.gridLayout_12.addWidget(self.pathButton_extension_path, 1, 1, 1, 1)
+        self.horizontalLayout_2.addWidget(self.label_14)
 
-        self.line_9 = QFrame(self.extensions)
-        self.line_9.setObjectName(u"line_9")
-        self.line_9.setFrameShadow(QFrame.Shadow.Raised)
-        self.line_9.setLineWidth(5)
-        self.line_9.setFrameShape(QFrame.Shape.HLine)
+        self.lineEdit_api_port = QLineEdit(self.right)
+        self.lineEdit_api_port.setObjectName(u"lineEdit_api_port")
 
-        self.gridLayout_12.addWidget(self.line_9, 2, 0, 1, 2)
+        self.horizontalLayout_2.addWidget(self.lineEdit_api_port)
 
 
-        self.gridLayout_9.addWidget(self.extensions, 3, 0, 1, 1)
-
-        self.eln = QWidget(self.right)
-        self.eln.setObjectName(u"eln")
-        self.gridLayout_11 = QGridLayout(self.eln)
-        self.gridLayout_11.setObjectName(u"gridLayout_11")
-        self.gridLayout_11.setContentsMargins(0, 0, 0, 0)
-        self.label_19 = QLabel(self.eln)
-        self.label_19.setObjectName(u"label_19")
-
-        self.gridLayout_11.addWidget(self.label_19, 1, 0, 1, 1)
-
-        self.lineEdit_oasis = QLineEdit(self.eln)
-        self.lineEdit_oasis.setObjectName(u"lineEdit_oasis")
-
-        self.gridLayout_11.addWidget(self.lineEdit_oasis, 1, 1, 1, 1)
-
-        self.label_18 = QLabel(self.eln)
-        self.label_18.setObjectName(u"label_18")
-        self.label_18.setFont(font)
-
-        self.gridLayout_11.addWidget(self.label_18, 0, 0, 1, 2)
-
-        self.line_3 = QFrame(self.eln)
-        self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShadow(QFrame.Shadow.Raised)
-        self.line_3.setLineWidth(5)
-        self.line_3.setFrameShape(QFrame.Shape.HLine)
-
-        self.gridLayout_11.addWidget(self.line_3, 2, 0, 1, 2)
-
-
-        self.gridLayout_9.addWidget(self.eln, 2, 0, 1, 1)
+        self.gridLayout_9.addLayout(self.horizontalLayout_2, 6, 0, 1, 1)
 
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
@@ -616,13 +615,15 @@ class Ui_settings_window(object):
 
         self.gridLayout_9.addLayout(self.horizontalLayout_4, 15, 0, 1, 1)
 
-        self.pushButton_API_docu = QPushButton(self.right)
-        self.pushButton_API_docu.setObjectName(u"pushButton_API_docu")
-
-        self.gridLayout_9.addWidget(self.pushButton_API_docu, 7, 0, 1, 1)
-
 
         self.gridLayout.addWidget(self.right, 0, 3, 1, 1)
+
+        self.buttonBox = QDialogButtonBox(settings_window)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
+
+        self.gridLayout.addWidget(self.buttonBox, 2, 0, 1, 4)
 
 
         self.retranslateUi(settings_window)
@@ -635,21 +636,65 @@ class Ui_settings_window(object):
     def retranslateUi(self, settings_window):
         settings_window.setWindowTitle(QCoreApplication.translate("settings_window", u"Dialog", None))
         self.label_9.setText(QCoreApplication.translate("settings_window", u"Logging", None))
+#if QT_CONFIG(tooltip)
+        self.spinBox_logfile_size.setToolTip(QCoreApplication.translate("settings_window", u"maximum size of the logfile\n"
+"if reached, a new file is started", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.spinBox_logfile_number.setToolTip(QCoreApplication.translate("settings_window", u"number of old files to keep, when starting a new logfile", None))
+#endif // QT_CONFIG(tooltip)
         self.label_17.setText(QCoreApplication.translate("settings_window", u"old logfile backups", None))
         self.label_16.setText(QCoreApplication.translate("settings_window", u"max. logfile size (MB)", None))
+#if QT_CONFIG(tooltip)
+        self.comboBox_log_level.setToolTip(QCoreApplication.translate("settings_window", u"the minimum level to write to the log file", None))
+#endif // QT_CONFIG(tooltip)
         self.label_15.setText(QCoreApplication.translate("settings_window", u"Log-Level", None))
+#if QT_CONFIG(tooltip)
+        self.radioButton_smart_backups.setToolTip(QCoreApplication.translate("settings_window", u"keep all backups of the last 7 days,\n"
+"one for for each of the last 30,\n"
+"one for each of the last 12 months\n"
+"and one for each year", None))
+#endif // QT_CONFIG(tooltip)
         self.radioButton_smart_backups.setText(QCoreApplication.translate("settings_window", u"\"smart\" backups", None))
-        self.checkBox_backup_before_run.setText(QCoreApplication.translate("settings_window", u"backup before run", None))
         self.label.setText(QCoreApplication.translate("settings_window", u"Saving", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_autosave.setToolTip(QCoreApplication.translate("settings_window", u"When CAMELS is closed, the current state is saved.", None))
+#endif // QT_CONFIG(tooltip)
         self.checkBox_autosave.setText(QCoreApplication.translate("settings_window", u"autosave on closing", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_password.setToolTip(QCoreApplication.translate("settings_window", u"The user is not allowed to change protocols or instrument configuration without the password.", None))
+#endif // QT_CONFIG(tooltip)
         self.checkBox_password.setText(QCoreApplication.translate("settings_window", u"password protection", None))
-        self.checkBox_autosave_run.setText(QCoreApplication.translate("settings_window", u"autosave before run", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_new_file_each_run.setToolTip(QCoreApplication.translate("settings_window", u"creates a new datafile for each measurement instead of saving new entries in the same hdf5 file", None))
+#endif // QT_CONFIG(tooltip)
         self.checkBox_new_file_each_run.setText(QCoreApplication.translate("settings_window", u"save each measurement run in new file", None))
+#if QT_CONFIG(tooltip)
+        self.radioButton_all_backups.setToolTip(QCoreApplication.translate("settings_window", u"keep all backups of the CAMELS state", None))
+#endif // QT_CONFIG(tooltip)
         self.radioButton_all_backups.setText(QCoreApplication.translate("settings_window", u"keep all backups", None))
+#if QT_CONFIG(tooltip)
+        self.radioButton_n_backups.setToolTip(QCoreApplication.translate("settings_window", u"keep the defined number of newest backups", None))
+#endif // QT_CONFIG(tooltip)
         self.radioButton_n_backups.setText(QCoreApplication.translate("settings_window", u"keep only...", None))
         self.label_12.setText(QCoreApplication.translate("settings_window", u"path for configuration files:", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_autosave_run.setToolTip(QCoreApplication.translate("settings_window", u"autosaves when running a protocol", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_autosave_run.setText(QCoreApplication.translate("settings_window", u"autosave before run", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_backup_before_run.setToolTip(QCoreApplication.translate("settings_window", u"also does a backup when autosave before run", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_backup_before_run.setText(QCoreApplication.translate("settings_window", u"backup before run", None))
         self.label_11.setText(QCoreApplication.translate("settings_window", u"Sounds", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_play_camel_on_error.setToolTip(QCoreApplication.translate("settings_window", u"when an error occurs,\n"
+"you will hear a beautiful sound ;)", None))
+#endif // QT_CONFIG(tooltip)
         self.checkBox_play_camel_on_error.setText(QCoreApplication.translate("settings_window", u"Play Camel-Roar on error", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_finished_sound.setToolTip(QCoreApplication.translate("settings_window", u"a short sound when a protocol is done", None))
+#endif // QT_CONFIG(tooltip)
         self.checkBox_finished_sound.setText(QCoreApplication.translate("settings_window", u"Sound on finished protocol", None))
         self.label_3.setText(QCoreApplication.translate("settings_window", u"Number-Formatting (only visual)", None))
         self.radioButton_mixed.setText(QCoreApplication.translate("settings_window", u"Scientific from 1e...", None))
@@ -658,31 +703,57 @@ class Ui_settings_window(object):
         self.radioButton_scientific.setText(QCoreApplication.translate("settings_window", u"Scientific", None))
         self.checkBox_dark.setText(QCoreApplication.translate("settings_window", u"dark mode", None))
         self.label_2.setText(QCoreApplication.translate("settings_window", u"Theme", None))
-        self.checkBox_enable_Api.setText(QCoreApplication.translate("settings_window", u"Enable API", None))
-        self.label_14.setText(QCoreApplication.translate("settings_window", u"API Port:", None))
-        self.lineEdit_api_port.setPlaceholderText(QCoreApplication.translate("settings_window", u"API Port", None))
-        self.label_13.setText(QCoreApplication.translate("settings_window", u"Drivers", None))
-        self.label_8.setText(QCoreApplication.translate("settings_window", u"Local drivers path", None))
+#if QT_CONFIG(tooltip)
+        self.comboBox_theme.setToolTip(QCoreApplication.translate("settings_window", u"change the appearance of CAMELS", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.comboBox_material_theme.setToolTip(QCoreApplication.translate("settings_window", u"change the the themes color", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_API_docu.setText(QCoreApplication.translate("settings_window", u"API documentation", None))
         self.label_23.setText(QCoreApplication.translate("settings_window", u"Updates", None))
         self.checkBox_auto_check_updates.setText(QCoreApplication.translate("settings_window", u"automatically search for updates", None))
-        self.label_ApiKey.setText(QCoreApplication.translate("settings_window", u"API Key", None))
         self.label_5.setText(QCoreApplication.translate("settings_window", u"Files", None))
         self.label_7.setText(QCoreApplication.translate("settings_window", u"Measurement-Data Path", None))
         self.label_10.setText(QCoreApplication.translate("settings_window", u"Databroker catalog-name", None))
         self.label_6.setText(QCoreApplication.translate("settings_window", u"Python-Files Path", None))
 #if QT_CONFIG(tooltip)
+        self.pathButton_py_files.setToolTip(QCoreApplication.translate("settings_window", u"where the produced protocol python files are saved", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.pathButton_meas_files.setToolTip(QCoreApplication.translate("settings_window", u"where the data is saved", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
         self.spinBox_n_databroker_files.setToolTip(QCoreApplication.translate("settings_window", u"with \"0\" all files will be kept", None))
 #endif // QT_CONFIG(tooltip)
         self.label_20.setText(QCoreApplication.translate("settings_window", u"# databroker files", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_catalog_name.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.label_21.setText(QCoreApplication.translate("settings_window", u"Local extensions path", None))
+        self.label_22.setText(QCoreApplication.translate("settings_window", u"Extensions", None))
+#if QT_CONFIG(tooltip)
+        self.pathButton_extension_path.setToolTip(QCoreApplication.translate("settings_window", u"where to find extensions for CAMELS", None))
+#endif // QT_CONFIG(tooltip)
+        self.label_13.setText(QCoreApplication.translate("settings_window", u"Drivers", None))
+        self.label_8.setText(QCoreApplication.translate("settings_window", u"Local drivers path", None))
+#if QT_CONFIG(tooltip)
+        self.pathButton_device_path.setToolTip(QCoreApplication.translate("settings_window", u"path to local instrument drivers,\n"
+"e.g. self-written or adjusted ones", None))
+#endif // QT_CONFIG(tooltip)
+        self.label_ApiKey.setText(QCoreApplication.translate("settings_window", u"API Key", None))
+        self.label_19.setText(QCoreApplication.translate("settings_window", u"NOMAD Oasis URL", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_oasis.setToolTip(QCoreApplication.translate("settings_window", u"define your NOMAD Oasis here,\n"
+"for quick login", None))
+#endif // QT_CONFIG(tooltip)
+        self.label_18.setText(QCoreApplication.translate("settings_window", u"ELN integration", None))
         self.pushButton_generate_Api_key.setText(QCoreApplication.translate("settings_window", u"Generate\n"
 "API Key", None))
         self.pushButton_delete_Api_keys.setText(QCoreApplication.translate("settings_window", u"Delete ALL\n"
 "API keys", None))
-        self.label_21.setText(QCoreApplication.translate("settings_window", u"Local extensions path", None))
-        self.label_22.setText(QCoreApplication.translate("settings_window", u"Extensions", None))
-        self.label_19.setText(QCoreApplication.translate("settings_window", u"NOMAD Oasis URL", None))
-        self.label_18.setText(QCoreApplication.translate("settings_window", u"ELN integration", None))
+        self.checkBox_enable_Api.setText(QCoreApplication.translate("settings_window", u"Enable API", None))
+        self.label_14.setText(QCoreApplication.translate("settings_window", u"API Port:", None))
+        self.lineEdit_api_port.setPlaceholderText(QCoreApplication.translate("settings_window", u"API Port", None))
         self.pushButton_copy_Api_key_clipboard.setText(QCoreApplication.translate("settings_window", u"Copy key to clipboard", None))
-        self.pushButton_API_docu.setText(QCoreApplication.translate("settings_window", u"API documentation", None))
     # retranslateUi
 

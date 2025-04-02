@@ -5,7 +5,6 @@ from nomad_camels.frontpanels.plot_definer import Plot_Button_Overview
 from nomad_camels.loop_steps import make_step_of_type
 from nomad_camels.gui.general_protocol_settings import Ui_Protocol_Settings
 
-from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.utility import variables_handling
 from nomad_camels.frontpanels.flyer_window import FlyerButton
@@ -291,7 +290,7 @@ class Measurement_Protocol:
             if not step.is_active:
                 continue
             plan_string += step.get_protocol_string(n_tabs=1)
-            
+
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
         plan_string += "\tsub_eva = runEngine.subscribe(eva)\n"
         plan_string += "\tyield from bps.open_run(md=md)\n"
@@ -510,6 +509,10 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
         self.pushButton_add_variable.clicked.connect(lambda x: self.add_variable())
         self.pushButton_remove_variable.clicked.connect(self.remove_variable)
+        self.pushButton_add_variable.setToolTip("Add a new variable to the protocol.")
+        self.pushButton_remove_variable.setToolTip(
+            "Remove the selected variable from the protocol."
+        )
 
         # self.variable_model.itemChanged.connect(self.check_variable)
 
@@ -598,7 +601,9 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         else:
             new_height = document_height
             # Hide scroll bar if not needed
-            self.textEdit_desc_protocol.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self.textEdit_desc_protocol.setVerticalScrollBarPolicy(
+                Qt.ScrollBarAlwaysOff
+            )
         self.textEdit_desc_protocol.setFixedHeight(new_height)
 
     def enable_disable_config(self):
