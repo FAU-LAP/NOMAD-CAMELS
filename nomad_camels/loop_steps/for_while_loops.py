@@ -288,6 +288,7 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
 
     def __init__(self, loop_step: For_Loop_Step, parent=None):
         super().__init__(parent)
+        self.distance = np.nan
         self.setupUi(self)
         self.loop_step = loop_step
         self.load_data()
