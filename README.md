@@ -27,6 +27,7 @@ UI-Improvements:
 - increased startup size of instrument management, to decrease number of resize-events
 - driver-builder now pre-creates the finalize-steps method
 - table with channels can now be sorted
+- read channels of gradient-descent step now same table type as for all other steps
 
 Fixes:
 - instrument do not change anymore when "cancel" clicked in manage instruments
