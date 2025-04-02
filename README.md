@@ -18,7 +18,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 1.8.2
+### 1.8.2 UI-Improvements, minor fixes
 UI-Improvements:
 - Notification when log in to NOMAD was (not) successful
 - Added a maximum height and scrollbar for description of protocol steps
