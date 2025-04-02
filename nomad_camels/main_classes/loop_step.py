@@ -114,11 +114,10 @@ class Loop_Step:
         """
         tabs = "\t" * n_tabs
         desc = self.description.replace("\n", f"\n{tabs}").replace('"', '\\"')
-        protocol_string = f'\n{tabs}"""{desc} """\n'
-        protocol_string += f'{tabs}protocol_step_information["protocol_stepper_signal"].emit(protocol_step_information["protocol_step_counter"] / protocol_step_information["total_protocol_steps"] * 100)\n'
-        protocol_string += (
-            f'{tabs}protocol_step_information["protocol_step_counter"] += 1\n'
-        )
+        desc = f"\n{tabs}{desc}" if desc else ""
+        protocol_string = f'\n{tabs}"""{self.name}{desc}"""\n'
+        protocol_string += f"{tabs}helper_functions.update_protocol_counter(protocol_step_information)\n"
+
         protocol_string += f"{tabs}yield from bps.checkpoint()\n"
         return protocol_string
 

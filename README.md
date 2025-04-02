@@ -22,6 +22,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Changes:
 - many messages, that were previously only printed are now being logged
 
+Fixes:
+- progress bar does not jump back to 0 after going to 1 first
+
 ### 1.8.2 UI-Improvements, minor fixes
 UI-Improvements:
 - Notification when log in to NOMAD was (not) successful
