@@ -39,6 +39,7 @@ from nomad_camels.bluesky_handling import helper_functions
 
 from collections import OrderedDict
 import importlib
+import logging
 
 
 camels_github = "https://github.com/FAU-LAP/NOMAD-CAMELS"
@@ -607,7 +608,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             try:
                 extension_module = importlib.import_module(extension)
             except (ModuleNotFoundError, AttributeError) as e:
-                print(f"Could not load extension {extension}.\n{e}")
+                logging.warning(
+                    f"Could not load extension {extension}.\n{e}"
+                )
                 continue
             config = getattr(extension_module, "EXTENSION_CONFIG")
             name = config["name"]
@@ -2104,11 +2107,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         import bluesky, ophyd
         import bluesky.plan_stubs as bps
 
-        print("trigger")
+        warn_text = (
+            f"Watchdog {watchdog.name} triggered with condition {watchdog.condition}"
+        )
+        logging.warning(warn_text)
         watchdog.was_triggered = True
         warning = warn_popup.WarnPopup(
             self,
-            f"Watchdog {watchdog.name} triggered with condition {watchdog.condition}",
+            warn_text,
             "Watchdog Triggered",
             do_not_pause=True,
         )
@@ -2285,7 +2291,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     )
                 )
             except Exception as e:
-                print(e)
+                logging.error(f"Error during end protocol steps: {e}")
         self._was_aborted = False
         self.setWindowTitle(
             "NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems"
@@ -2356,7 +2362,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 )
                 self.sound_effect.play()
             except Exception as e:
-                print(e)
+                logging.warning(f"Error playing sound: {e}")
 
     def close_old_queue_devices(self):
         """

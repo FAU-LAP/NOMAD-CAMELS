@@ -7,6 +7,7 @@ sys.path.append(os.path.dirname(__file__).split("nomad_camels")[0])
 import numpy as np
 import threading
 from collections import deque
+import logging
 
 from PySide6.QtWidgets import (
     QWidget,
@@ -870,7 +871,7 @@ class LivePlot(QObject, CallbackBase):
             try:
                 self.add_plot(y)
             except Exception as e:
-                print(e)
+                logging.warning(e)
         self.legend = pg.LegendItem(
             offset=(1, 1), horSpacing=20, verSpacing=-5, pen="w" if dark_mode else "k"
         )
@@ -918,7 +919,7 @@ class LivePlot(QObject, CallbackBase):
             try:
                 pg.PlotWidget.event(self, doc)
             except Exception as e:
-                print(e)
+                logging.warning(e)
             return
         if doc["descriptor"] not in self.desc:
             if doc["descriptor"] in self.descs_fit_readying:
@@ -926,13 +927,13 @@ class LivePlot(QObject, CallbackBase):
             return
         # Check to see if doc["data"] contains keys matching any on the self.ys strings
         if not (
-    any(key in s for key in doc["data"] for s in self.ys) or
-    any(
-        key.endswith("_variable_signal") and 
-        any(subkey in s for subkey in doc["data"][key] for s in self.ys)
-        for key in doc["data"]
-    )
-):
+            any(key in s for key in doc["data"] for s in self.ys)
+            or any(
+                key.endswith("_variable_signal")
+                and any(subkey in s for subkey in doc["data"][key] for s in self.ys)
+                for key in doc["data"]
+            )
+        ):
             return
         try:
             new_x = doc["data"][self.x]
@@ -956,7 +957,7 @@ class LivePlot(QObject, CallbackBase):
                 try:
                     new_y[y] = self.eva.eval(y, do_not_reraise=True)
                 except ValueError as e:
-                    print("Error getting data for plot", e)
+                    logging.warning("Error getting data for plot", e)
                     return
         self.update_caches(new_x, new_y)
         for fit in self.fitPlots:
@@ -1001,14 +1002,14 @@ class LivePlot(QObject, CallbackBase):
 
     def stop(self, doc):
         if not self.x_data:
-            print(
+            logging.warning(
                 f"LivePlot did not get any data that corresponds to the x axis. {self.x}"
             )
         for y in self.y_data:
             if not self.y_data[y]:
-                print(f"LivePlot did not get any data for {y}")
+                logging.warning(f"LivePlot did not get any data for {y}")
             if len(self.y_data[y]) != len(self.x_data):
-                print(f"LivePlot has a length mismatch for {y}")
+                logging.warning(f"LivePlot has a length mismatch for {y}")
         for fit in self.fitPlots:
             fit.stop(doc)
 
@@ -1445,7 +1446,7 @@ class LivePlot_2D(QObject, CallbackBase):
         x_shape = len(set(self.x_data))
         y_shape = len(set(self.y_data))
         mesh = self.make_colormesh(x_shape, y_shape)
-        
+
         if mesh:
             x, y, z = mesh
             if not self.x_data:
@@ -1576,7 +1577,7 @@ class LivePlot_NoBluesky(QObject):
                         self.y_data[y] = []
                     self.n_plots += 1
                 except Exception as e:
-                    print(e)
+                    logging.warning(e)
             self.setup_done_signal.emit()
         if add:
             self.x_data.append(x)

@@ -72,7 +72,11 @@ def getInstalledDevices(force=False, return_packages=False):
                     f"nomad_camels_driver_{instr}.{instr}"
                 )
             except Exception as e:
-                print(instr, e)
+                import logging
+
+                logging.warning(
+                    f"Could not load {instr} from installed packages. Error: {e}"
+                )
                 not_loaded.append(instr)
     for instr in not_loaded:
         installed_instr.pop(instr)

@@ -92,7 +92,6 @@ class Watchdog(QObject):
         if not self.active:
             return
         for channel in self.channels:
-            print(channel)
             if channel in self.subscriptions:
                 continue
             chan = variables_handling.channels[channel]
@@ -110,7 +109,9 @@ class Watchdog(QObject):
         try:
             condition = self.eva.eval(self.condition)
         except:
-            print(f'Evaluating condition failed for watchdog "{self.name}"!')
+            import logging
+
+            logging.error(f"Error evaluating condition for watchdog {self.name}!")
             return
         if condition:
             if not self.was_triggered:

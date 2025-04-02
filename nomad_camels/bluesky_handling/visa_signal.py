@@ -181,7 +181,9 @@ class VISA_Signal(Signal):
                     else:
                         val = self.parse(val)
                 except Exception as e:
-                    print(e)
+                    import logging
+
+                    logging.warning(f"Error parsing value: {val}, Exception: {e}")
             if self.parse_return_type:
                 try:
                     value = self.parse_return_type(val)
@@ -239,6 +241,11 @@ def retry_query_or_write(
         except Exception as e:
             if i == retries:
                 print(excs)
+                import logging
+
+                logging.error(
+                    f"Error communicating with VISA instrument {visa_instrument}: {e}"
+                )
                 raise e
             excs.append(e)
 
@@ -354,7 +361,9 @@ class VISA_Signal_RO(SignalRO):
                 else:
                     val = self.parse(val)
             except Exception as e:
-                print(e)
+                import logging
+
+                logging.warning(f"Error parsing value: {val}, Exception: {e}")
         if self.parse_return_type:
             try:
                 val = self.parse_return_type(val)

@@ -381,6 +381,8 @@ class Additional_Imports_Thread(QThread):
                 variables_handling.preferences["databroker_catalog_name"]
             ]
         except KeyError:
-            print("Could not find databroker catalog, using temporary")
+            import logging
+
+            logging.warning("Could not find databroker catalog, using temporary")
             self.catalog = databroker.temp().v2
             self.catalog_temporary = True

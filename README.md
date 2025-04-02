@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.3
+Changes:
+- many messages, that were previously only printed are now being logged
+
 ### 1.8.2 UI-Improvements, minor fixes
 UI-Improvements:
 - Notification when log in to NOMAD was (not) successful

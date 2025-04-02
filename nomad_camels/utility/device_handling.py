@@ -23,6 +23,7 @@ import re
 
 from nomad_camels.utility import variables_handling
 from nomad_camels.bluesky_handling import helper_functions
+import logging
 
 import copy
 import pathlib
@@ -99,7 +100,8 @@ def load_local_packages(tell_local=False):
 
                     local_package_paths[device.name] = str(path_obj.parent)
                 except Exception as e:
-                    print(path_obj, e)
+                    print(f'could not load package "{path_obj}": {e}')
+                    logging.warning(f'could not load package "{path_obj}": {e}')
 
     # 2) Do the same for the manual_controls folder
     manual_path = pathlib.Path("manual_controls").resolve()
@@ -123,7 +125,8 @@ def load_local_packages(tell_local=False):
                     local_package_paths[device.name] = str(path_obj.parent)
                     from_manual_controls.append(device.name)
                 except Exception as e:
-                    print(path_obj, e)
+                    print(f'could not load package "{path_obj}": {e}')
+                    logging.warning(f'could not load package "{path_obj}": {e}')
 
     return local_packages
 
@@ -296,6 +299,7 @@ def instantiate_devices(device_list, skip_config=False):
 
             # instantiating ophyd-device
             print(f"connecting {dev}")
+            logging.debug(f"connecting {dev}")
             if dev in running_devices:
                 ophyd_device = running_devices[dev]
                 ophyd_device.device_run_count += 1
