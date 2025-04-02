@@ -111,24 +111,110 @@ operator_names = {
 }
 
 
+def get_user_default_command(ext):
+    try:
+        import winreg
+
+        # Read the ProgId from the per-user association:
+        key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            rf"Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\{ext}\UserChoice",
+        )
+        progid, _ = winreg.QueryValueEx(key, "ProgId")
+        winreg.CloseKey(key)
+    except Exception:
+        progid = None
+
+    if progid:
+        try:
+            key = winreg.OpenKey(
+                winreg.HKEY_CLASSES_ROOT, progid + r"\shell\open\command"
+            )
+            command, _ = winreg.QueryValueEx(key, None)
+            winreg.CloseKey(key)
+            return command.lower()
+        except Exception:
+            return ""
+    return ""
+
+
 def open_link(link):
     """
-    Open a link in the default program. Should work in all operating systems.
+    Open a link or file path using the default program.
+
+    On Windows:
+      If a .py file’s default association appears to run it (its command contains "python"),
+      the function instead opens it in an editor (or reveals it in Explorer).
+
+    On macOS:
+      If the default application’s bundle identifier for the file contains "python",
+      reveal the file in Finder; otherwise open with the default association.
+
+    On Linux:
+      If the file is a .py file and its default association (queried via MIME)
+      contains "python", open its containing folder; otherwise, open normally.
 
     Parameters
     ----------
     link : str
-        The link to open.
+        The file path to open.
     """
     import os
     import platform
     import subprocess
 
-    if platform.system() == "Windows":
-        os.startfile(link)
+    try:
+        ext = os.path.splitext(link)[-1].lower()
+    except Exception:
+        ext = ""
+    system = platform.system()
+    if system == "Windows":
+        if ext == ".py":
+            # Try to get the user default command for .py from the UserChoice registry key.
+            command = get_user_default_command(".py")
+            if not command or "python" in command:
+                # Default would execute the file.
+                subprocess.Popen(["explorer", "/select,", os.path.abspath(link)])
+            else:
+                os.startfile(link)
+        else:
+            os.startfile(link)
+    elif system == "Darwin":
+        if ext == ".py":
+            try:
+                # Use AppleScript to get the default app's bundle identifier for the file.
+                applescript = 'tell application "Finder" to get bundle identifier of (get default application for file (POSIX file "{}") as alias)'.format(
+                    link
+                )
+                default_app = subprocess.check_output(
+                    ["osascript", "-e", applescript], universal_newlines=True
+                ).strip()
+            except Exception:
+                default_app = ""
+            if not default_app or "python" in default_app.lower():
+                # Reveal the file in Finder if the default app is Python-related
+                subprocess.call(["open", "-R", link])
+            else:
+                subprocess.call(["open", link])
+        else:
+            subprocess.call(["open", link])
     else:
-        opener = "open" if platform.system() == "Darwin" else "xdg-open"
-        subprocess.call([opener, link])
+        # Linux
+        if ext == ".py":
+            try:
+                mime_type = "text/x-python"
+                desktop = subprocess.check_output(
+                    ["xdg-mime", "query", "default", mime_type], universal_newlines=True
+                ).strip()
+            except Exception:
+                desktop = ""
+            if "python" in desktop.lower():
+                folder = os.path.dirname(os.path.abspath(link))
+                subprocess.call(["xdg-open", folder])
+            else:
+                subprocess.call(["xdg-open", link])
+        else:
+            subprocess.call(["xdg-open", link])
 
 
 def get_non_channel_functions():

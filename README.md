@@ -30,6 +30,7 @@ UI-Improvements:
 
 Fixes:
 - instrument do not change anymore when "cancel" clicked in manage instruments
+- if default file association for .py is running python, protocols are not run anymore right away when opening externally, but instead revealed in os-file explorer
 
 ### 1.8.1 Fixed broken Plots in Loops
 
