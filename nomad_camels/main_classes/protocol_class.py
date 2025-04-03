@@ -275,7 +275,8 @@ class Measurement_Protocol:
         """Get the string for the protocol-plan, including the loopsteps."""
         variables_handling.current_protocol = self
         plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, stream_name="primary", runEngine=None):\n'
-        prot_vars = dict(variables_handling.protocol_variables)
+        prot_vars = self.variables
+        variables_handling.protocol_variables = prot_vars
         if "StartTime" in prot_vars:
             prot_vars.pop("StartTime")
             prot_vars.pop("ElapsedTime")
