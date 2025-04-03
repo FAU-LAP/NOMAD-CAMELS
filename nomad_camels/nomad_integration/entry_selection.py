@@ -4,10 +4,12 @@ from PySide6.QtWidgets import (
     QDialog,
     QLabel,
     QLineEdit,
+    QSpacerItem,
     QGridLayout,
     QDialogButtonBox,
     QComboBox,
     QTextEdit,
+    QSizePolicy,
 )
 from PySide6.QtCore import Qt, QThread, Signal
 
@@ -59,18 +61,39 @@ class EntrySelector(QDialog):
             Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse
         )
 
+        vertical_spacer = QSpacerItem(
+            20, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
+        )
+
         layout = QGridLayout()
         layout.addWidget(label_entry_scope, 0, 0)
-        layout.addWidget(self.comboBox_entry_scope, 0, 1)
-        layout.addWidget(label_upload, 1, 0)
-        layout.addWidget(self.upload_box, 1, 1)
-        layout.addWidget(label_entry_type, 2, 0)
-        layout.addWidget(self.entry_type_box, 2, 1)
+        layout.addWidget(self.comboBox_entry_scope, 1, 0)
+        layout.addItem(vertical_spacer, 2, 0)
+        layout.addWidget(label_upload, 3, 0)
+        layout.addWidget(self.upload_box, 4, 0)
+        layout.addItem(vertical_spacer, 5, 0)
+        layout.addWidget(label_entry_type, 6, 0)
+        layout.addWidget(self.entry_type_box, 7, 0)
+        layout.addItem(vertical_spacer, 8, 0)
         layout.addWidget(label_entry, 10, 0)
-        layout.addWidget(self.entry_box, 10, 1)
-        layout.addWidget(self.entry_info, 0, 2, 12, 1)
+        layout.addWidget(self.entry_box, 11, 0)
+        layout.addItem(vertical_spacer, 12, 0)
+        layout.addWidget(self.entry_info, 0, 2, 15, 1)
         layout.addWidget(self.button_box, 20, 0, 1, 3)
         self.setLayout(layout)
+
+        self.comboBox_entry_scope.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+        )
+        self.upload_box.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+        )
+        self.entry_type_box.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+        )
+        self.entry_box.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+        )
 
         self._uploads_getter_thread = Upload_Getter_Thread(
             self, upload_names=self.upload_names, upload_ids=self.upload_ids
@@ -97,8 +120,8 @@ class EntrySelector(QDialog):
 
         self.return_data = {}
 
-        self.adjustSize()
-        # self.resize(800, 600)
+        # self.adjustSize()
+        self.resize(800, 500)
 
     def _propagate_exception(self, exception):
         """Propagate exceptions from the thread to the main thread."""
@@ -141,10 +164,12 @@ class EntrySelector(QDialog):
         self.entry_ids = self._entries_getter_thread.entry_ids
 
         self.entry_type_box.clear()
-        self.entry_type_box.addItems(sorted(list(set(self.entry_types))))
+        entry_types = sorted(list(set(self.entry_types)))
+        self.entry_type_box.addItems(entry_types)
 
         self.reloading = False
-        self.entry_filtering()
+        if entry_types:
+            self.entry_filtering()
         self.setEnabled(True)
         self.setWindowTitle(self._window_title)
         self.setCursor(Qt.ArrowCursor)
@@ -161,6 +186,24 @@ class EntrySelector(QDialog):
         self.entry_box.clear()
         self.entry_box.addItems(entries)
         self.reloading = False
+
+        # Compute the maximum width needed for any combobox
+        max_width = min(
+            max(
+                compute_combo_max_width(self.comboBox_entry_scope),
+                compute_combo_max_width(self.upload_box),
+                compute_combo_max_width(self.entry_type_box),
+                compute_combo_max_width(self.entry_box),
+            ),
+            400,
+        )
+
+        # Limit their maximum width
+        self.comboBox_entry_scope.setMaximumWidth(max_width)
+        self.upload_box.setMaximumWidth(max_width)
+        self.entry_type_box.setMaximumWidth(max_width)
+        self.entry_box.setMaximumWidth(max_width)
+
         self.entry_change()
 
     def entry_change(self):
@@ -281,3 +324,15 @@ class Upload_Getter_Thread(QThread):
                 self.upload_ids.append(upload["upload_id"])
         except Exception as e:
             self.exception_signal.emit(e)
+
+
+def compute_combo_max_width(combo):
+    # Compute the maximum width among the combo items.
+    fm = combo.fontMetrics()
+    max_width = 0
+    for i in range(combo.count()):
+        item_width = fm.horizontalAdvance(combo.itemText(i))
+        if item_width > max_width:
+            max_width = item_width
+    # Add extra padding for margins and the drop-down arrow.
+    return max_width + 40

@@ -22,6 +22,8 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 UI-Improvements:
 - Next to the progress bar is now the elapsed time and an estimated remaining time
 - NOMAD entry selection vastly improved in speed
+- no more bad values in NOMAD entry selection
+- NOMAD entry selection layout slightly adjusted to better fit
 
 Changes:
 - many messages, that were previously only printed are now being logged
