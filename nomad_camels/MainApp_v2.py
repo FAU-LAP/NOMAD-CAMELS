@@ -119,6 +119,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.protocol_stepper_signal.connect(self.progressBar_protocols.setValue)
         self.protocol_stepper_signal.connect(self._update_remaining_time_label)
+        self._protocol_start_time = time.time()
 
         # Initialize fastAPI server variables
         self.fastapi_thread = None
