@@ -19,11 +19,15 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.8.3
+UI-Improvements:
+- Next to the progress bar is now the elapsed time and an estimated remaining time
+
 Changes:
 - many messages, that were previously only printed are now being logged
 
 Fixes:
 - progress bar does not jump back to 0 after going to 1 first
+- fixed broken file saving when queuing protocols
 
 ### 1.8.2 UI-Improvements, minor fixes
 UI-Improvements:
