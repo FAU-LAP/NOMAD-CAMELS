@@ -403,7 +403,7 @@ class Stage_Control(Manual_Control, Ui_Form):
         if self.read_thread:
             self.read_thread.paused = False
         move_to[axis] = move_to[axis] + step_size
-        self.move_thread.set_absolute = move_to
+        self.move_thread.set_absolute = move_to + [True]
 
     def reference_drive(self):
         """ """
@@ -435,7 +435,7 @@ class Stage_Control(Manual_Control, Ui_Form):
         for i in range(3):
             if self.set_channels[i]:
                 positions[i] = self.control_data[f"go_to_{axes[i]}"]
-        self.move_thread.set_absolute = positions
+        self.move_thread.set_absolute = positions + [True]
 
     def eventFilter(self, obj, event):
         if (
@@ -556,8 +556,8 @@ class Move_Thread(QThread):
         self.up_dir = [True, True, True]
         self.last_set = starting_positions or [np.nan, np.nan, np.nan]
         self.moving_started = [False, False, False]
-        self.set_absolute = [np.nan, np.nan, np.nan]
-        self.last_absolute = [np.nan, np.nan, np.nan]
+        self.set_absolute = [np.nan, np.nan, np.nan, False]
+        self.last_absolute = [np.nan, np.nan, np.nan, False]
 
     def run(self) -> None:
         """ """
@@ -579,6 +579,9 @@ class Move_Thread(QThread):
                             self.moving_started[i] = False
                 if self.set_absolute != self.last_absolute:
                     for i, val in enumerate(self.set_absolute):
+                        if i == 3:
+                            self.set_absolute[i] = False
+                            continue
                         if not np.isnan(val):
                             self.channels[i].put(val)
                             self.last_absolute[i] = val

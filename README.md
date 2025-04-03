@@ -29,6 +29,7 @@ Fixes:
 - progress bar does not jump back to 0 after going to 1 first
 - fixed broken file saving when queuing protocols
 - For-loop step now calculates progress bar value correctly when changing a variable that is used in the step
+- stage-control now also moves stage with "Go To" when it was moved away from same position by a protocol
 
 ### 1.8.2 UI-Improvements, minor fixes
 UI-Improvements:
