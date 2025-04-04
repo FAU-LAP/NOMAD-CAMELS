@@ -20,7 +20,7 @@ from nomad_camels.nomad_integration import nomad_communication
 
 
 class EntrySelector(QDialog):
-    def __init__(self, parent=None, selection="Sample"):
+    def __init__(self, parent=None, selection="Sample", upload_id=None, entry_id=None):
         super().__init__(parent)
         self.reloading = False
         self._window_title = f"Select {selection} - NOMAD CAMELS"
@@ -110,9 +110,10 @@ class EntrySelector(QDialog):
         self._entries_getter_thread.exception_signal.connect(self._propagate_exception)
         self._entries_getter_thread.finished.connect(self._update_entries_finished)
 
+        self.last_upload_id = upload_id
+        self.last_entry_id = entry_id
+
         self.update_uploads()
-        self.entry_filtering()
-        self.entry_change()
         self.upload_box.currentTextChanged.connect(self.update_entries)
         self.entry_type_box.currentTextChanged.connect(self.entry_filtering)
         self.entry_box.currentTextChanged.connect(self.entry_change)
@@ -142,6 +143,15 @@ class EntrySelector(QDialog):
         self.upload_box.clear()
         self.upload_box.addItems(sorted(self.upload_names))
 
+        if self.last_upload_id:
+            try:
+                index = self.upload_ids.index(self.last_upload_id)
+                name = self.upload_names[index]
+                self.upload_box.setCurrentText(name)
+                self.last_upload_id = None
+            except ValueError:
+                pass
+
         self.reloading = False
         self.update_entries()
 
@@ -166,6 +176,15 @@ class EntrySelector(QDialog):
         self.entry_type_box.clear()
         entry_types = sorted(list(set(self.entry_types)))
         self.entry_type_box.addItems(entry_types)
+
+        if self.last_entry_id:
+            try:
+                index = self.entry_ids.index(self.last_entry_id)
+                name = self.entry_names[index]
+                self.entry_box.setCurrentText(name)
+                self.last_entry_id = None
+            except ValueError:
+                pass
 
         self.reloading = False
         if entry_types:
@@ -271,6 +290,7 @@ class Entries_Getter_Thread(QThread):
             )
             self.entry_names.clear()
             self.entry_types.clear()
+            self.entry_ids.clear()
             for entry in entries:
                 if "entry_metadata" not in entry:
                     continue

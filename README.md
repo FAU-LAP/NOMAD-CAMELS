@@ -24,6 +24,7 @@ UI-Improvements:
 - NOMAD entry selection vastly improved in speed
 - no more bad values in NOMAD entry selection
 - NOMAD entry selection layout slightly adjusted to better fit
+- NOMAD entry selection now remembers last selected entry (at least if it was in user scope)
 
 Changes:
 - many messages, that were previously only printed are now being logged

@@ -1049,7 +1049,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # IMPORT sample_selection only if it is needed
         from nomad_camels.nomad_integration import entry_selection
 
-        dialog = entry_selection.EntrySelector(self)
+        upload_id = None
+        entry_id = None
+        if self.nomad_sample is not None:
+            metadata = self.nomad_sample.get("NOMAD_entry_metadata", {})
+            upload_id = metadata.get("upload_id", None)
+            entry_id = metadata.get("entry_id", None)
+
+        dialog = entry_selection.EntrySelector(self, upload_id=upload_id, entry_id=entry_id)
         if dialog.exec():
             self.nomad_sample = dialog.return_data
             if "name" in self.nomad_sample:
