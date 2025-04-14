@@ -252,6 +252,10 @@ QPushButton:disabled {
            <height>16777215</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Calculated from the number of steps in the protocol.
+Protocols with While Loops or If statements may have bad calculations!</string>
+         </property>
          <property name="value">
           <number>0</number>
          </property>

@@ -841,6 +841,10 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.label_queue.setText(QCoreApplication.translate("MainWindow", u"Queue", None))
 #if QT_CONFIG(tooltip)
+        self.progressBar_protocols.setToolTip(QCoreApplication.translate("MainWindow", u"Calculated from the number of steps in the protocol.\n"
+"Protocols with While Loops or If statements may have bad calculations!", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
         self.label_remaining_time.setToolTip(QCoreApplication.translate("MainWindow", u"elapsed time of the protocol run /\n"
 "estimated time to finish", None))
 #endif // QT_CONFIG(tooltip)
