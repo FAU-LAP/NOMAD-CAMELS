@@ -95,20 +95,8 @@ class EntrySelector(QDialog):
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
         )
 
-        self._uploads_getter_thread = Upload_Getter_Thread(
-            self, upload_names=self.upload_names, upload_ids=self.upload_ids
-        )
-        self._uploads_getter_thread.exception_signal.connect(self._propagate_exception)
-        self._uploads_getter_thread.finished.connect(self._update_uploads_finished)
-
-        self._entries_getter_thread = Entries_Getter_Thread(
-            self,
-            entry_types=self.entry_types,
-            entry_names=self.entry_names,
-            entry_ids=self.entry_ids,
-        )
-        self._entries_getter_thread.exception_signal.connect(self._propagate_exception)
-        self._entries_getter_thread.finished.connect(self._update_entries_finished)
+        self._uploads_getter_thread = None
+        self._entries_getter_thread = None
 
         self.last_upload_id = upload_id
         self.last_entry_id = entry_id
@@ -133,12 +121,21 @@ class EntrySelector(QDialog):
         self.setCursor(Qt.WaitCursor)
         self.setWindowTitle("communicating with NOMAD...")
         self.reloading = True
+
+        self._uploads_getter_thread = Upload_Getter_Thread(
+            self, upload_names=self.upload_names, upload_ids=self.upload_ids
+        )
+        self._uploads_getter_thread.exception_signal.connect(self._propagate_exception)
+        self._uploads_getter_thread.finished.connect(self._update_uploads_finished)
+
         self._uploads_getter_thread.set_scope(self.comboBox_entry_scope.currentText())
         self._uploads_getter_thread.start()
 
     def _update_uploads_finished(self):
         self.upload_names = self._uploads_getter_thread.upload_names
         self.upload_ids = self._uploads_getter_thread.upload_ids
+        self._uploads_getter_thread.deleteLater()
+        self._uploads_getter_thread = None
 
         self.upload_box.clear()
         self.upload_box.addItems(sorted(self.upload_names))
@@ -165,13 +162,26 @@ class EntrySelector(QDialog):
         upload_name = self.upload_box.currentText()
         index = self.upload_names.index(upload_name)
         upload_id = self.upload_ids[index]
+
+        self._entries_getter_thread = Entries_Getter_Thread(
+            self,
+            entry_types=self.entry_types,
+            entry_names=self.entry_names,
+            entry_ids=self.entry_ids,
+        )
+        self._entries_getter_thread.exception_signal.connect(self._propagate_exception)
+        self._entries_getter_thread.finished.connect(self._update_entries_finished)
+
         self._entries_getter_thread.set_upload_id(upload_id)
+
         self._entries_getter_thread.start()
 
     def _update_entries_finished(self):
         self.entry_names = self._entries_getter_thread.entry_names
         self.entry_types = self._entries_getter_thread.entry_types
         self.entry_ids = self._entries_getter_thread.entry_ids
+        self._entries_getter_thread.deleteLater()
+        self._entries_getter_thread = None
 
         self.entry_type_box.clear()
         entry_types = sorted(list(set(self.entry_types)))
