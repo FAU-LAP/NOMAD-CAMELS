@@ -8,6 +8,7 @@ from nomad_camels.utility import variables_handling, load_save_functions
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.bluesky_handling import protocol_builder, builder_helper_functions
 from nomad_camels.bluesky_handling import protocol_builder
+import json
 
 
 class Run_Subprotocol(Loop_Step):
@@ -45,6 +46,7 @@ class Run_Subprotocol(Loop_Step):
             step_info["data_output"] if "data_output" in step_info else "sub-stream"
         )
         self.own_plots = step_info["own_plots"] if "own_plots" in step_info else True
+        self._sub_protocol_dict = None
 
     def get_protocol_string(self, n_tabs=1):
         """Overwrites the signal for the progressbar and the number of steps in
@@ -64,6 +66,8 @@ class Run_Subprotocol(Loop_Step):
             data_output=self.data_output,
             new_stream=self.name,
         )
+        with open(self.prot_path, "r", encoding="utf-8") as f:
+            self._sub_protocol_dict = json.load(f)
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):

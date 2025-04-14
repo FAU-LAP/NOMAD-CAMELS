@@ -472,7 +472,15 @@ class Device_Config(QWidget):
                 info_icon=True,
             )
         elif logged_in == "NOMAD":
-            selector = entry_selection.EntrySelector(self, "Instrument")
+            upload_id = None
+            entry_id = None
+            if self.ELN_metadata is not None:
+                metadata = self.ELN_metadata.get("NOMAD_entry_metadata", {})
+                upload_id = metadata.get("upload_id", None)
+                entry_id = metadata.get("entry_id", None)
+            selector = entry_selection.EntrySelector(
+                self, "Instrument", upload_id=upload_id, entry_id=entry_id
+            )
             if selector.exec():
                 self.ELN_metadata = selector.return_data
                 self.lineEdit_id.setText(

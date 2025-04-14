@@ -199,13 +199,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_4.addWidget(self.pushButton_pause, 1, 1, 1, 1)
 
-        self.progressBar_protocols = QProgressBar(self.widget)
-        self.progressBar_protocols.setObjectName(u"progressBar_protocols")
-        self.progressBar_protocols.setMaximumSize(QSize(16777215, 16777215))
-        self.progressBar_protocols.setValue(0)
-
-        self.gridLayout_4.addWidget(self.progressBar_protocols, 2, 0, 1, 3)
-
         self.queue_variable_table = VariableTable(self.widget)
         self.queue_variable_table.setObjectName(u"queue_variable_table")
 
@@ -244,6 +237,20 @@ class Ui_MainWindow(object):
 
 
         self.gridLayout_4.addLayout(self.gridLayout_7, 0, 0, 1, 3)
+
+        self.progressBar_protocols = QProgressBar(self.widget)
+        self.progressBar_protocols.setObjectName(u"progressBar_protocols")
+        self.progressBar_protocols.setMaximumSize(QSize(16777215, 16777215))
+        self.progressBar_protocols.setValue(0)
+
+        self.gridLayout_4.addWidget(self.progressBar_protocols, 2, 0, 1, 2)
+
+        self.label_remaining_time = QLabel(self.widget)
+        self.label_remaining_time.setObjectName(u"label_remaining_time")
+        self.label_remaining_time.setEnabled(False)
+        self.label_remaining_time.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_4.addWidget(self.label_remaining_time, 2, 2, 1, 1)
 
 
         self.gridLayout_5.addWidget(self.widget, 4, 9, 1, 2)
@@ -833,6 +840,15 @@ class Ui_MainWindow(object):
         self.run_queue_widget.setToolTip(QCoreApplication.translate("MainWindow", u"Add descriptions to the specific measurement, i.e. the next protocol run", None))
 #endif // QT_CONFIG(tooltip)
         self.label_queue.setText(QCoreApplication.translate("MainWindow", u"Queue", None))
+#if QT_CONFIG(tooltip)
+        self.progressBar_protocols.setToolTip(QCoreApplication.translate("MainWindow", u"Calculated from the number of steps in the protocol.\n"
+"Protocols with While Loops or If statements may have bad calculations!", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.label_remaining_time.setToolTip(QCoreApplication.translate("MainWindow", u"elapsed time of the protocol run /\n"
+"estimated time to finish", None))
+#endif // QT_CONFIG(tooltip)
+        self.label_remaining_time.setText(QCoreApplication.translate("MainWindow", u"00:00 / 00:00", None))
         self.label_logo.setText("")
 #if QT_CONFIG(tooltip)
         self.pushButton_manage_instr.setToolTip(QCoreApplication.translate("MainWindow", u"Configure your instruments or install new drivers", None))

@@ -40,6 +40,7 @@ from nomad_camels.utility.plot_placement import place_widget
 from importlib import resources
 from nomad_camels import graphics
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
+import logging
 
 stdCols = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 
@@ -518,7 +519,7 @@ class LiveFit_Eva(LiveFit):
             else:
                 self.result = self.model.fit(self.ydata, **kwargs)
         except Exception as e:
-            print(f"Error in fit {self.name}: {e}")
+            logging.warning(f"Error in fit {self.name}: {e}")
             return None
         self.results[f"{self.timestamp}"] = self.result
         for d in self.additional_data:
@@ -537,9 +538,9 @@ class LiveFit_Eva(LiveFit):
                     },
                 )
                 if request.status_code != 200:
-                    print(f"Error: {request.status_code}")
+                    logging.warning(f"Error: {request.status_code}")
             except requests.exceptions.ConnectionError:
-                print("ConnectionError. Failed to send fit result to browser.")
+                logging.warning("ConnectionError. Failed to send fit result to browser.")
         # self.ophyd_fit.update_data(self.result, self.timestamp)
         self.parent_plot.fit_has_result()
 
@@ -1259,7 +1260,7 @@ class MultiLivePlot(LivePlot, QObject):
                         [], [], label=self.legend_keys[i], color=stdCols[i], **kwargs
                     )
             except Exception as e:
-                print(e)
+                logging.warning(e)
         self.lines.append(self.current_lines)
         legend = self.ax.legend(loc=0)
         try:
@@ -1407,18 +1408,18 @@ class MultiLivePlot(LivePlot, QObject):
 
         """
         if not self.x_data:
-            print(
+            logging.warning(
                 "MultiLivePlot did not get any data that corresponds to the "
                 "x axis. {}".format(self.x)
             )
         for y in self.y_data:
             if not self.y_data[y]:
-                print(
+                logging.warning(
                     "MultiLivePlot did not get any data that corresponds to the "
                     "y axis. {}".format(y)
                 )
             if len(self.y_data[y]) != len(self.x_data):
-                print(
+                logging.warning(
                     "MultiLivePlot has a different number of elements for x ({}) and"
                     "y ({}, {})".format(len(self.x_data), len(self.y_data), y)
                 )
@@ -1609,7 +1610,7 @@ class MultiPlot_NoBluesky(QObject):
                     else:
                         self.ydata[y] = []
                 except Exception as e:
-                    print(e)
+                    logging.warning(e)
             self.setup_done.emit()
         if add:
             self.xdata.append(x)

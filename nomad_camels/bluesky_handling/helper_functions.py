@@ -1358,3 +1358,10 @@ class Commenting_Box(QWidget):
     def closeEvent(self, event):
         self.closing.emit()
         return super().closeEvent(event)
+
+
+def update_protocol_counter(step_info):
+    step_info["protocol_stepper_signal"].emit(
+        1 + step_info["protocol_step_counter"] / step_info["total_protocol_steps"] * 99
+    )
+    step_info["protocol_step_counter"] += 1

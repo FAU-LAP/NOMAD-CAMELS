@@ -4,6 +4,7 @@ import sys
 import os
 import platform, subprocess
 import re
+import time
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 sys.path.append(os.path.dirname(__file__))
@@ -39,6 +40,7 @@ from nomad_camels.bluesky_handling import helper_functions
 
 from collections import OrderedDict
 import importlib
+import logging
 
 
 camels_github = "https://github.com/FAU-LAP/NOMAD-CAMELS"
@@ -53,7 +55,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     protocol execution, device management, and various settings/preferences.
     """
 
-    protocol_stepper_signal = Signal(int)
+    protocol_stepper_signal = Signal(float)
     run_done_file_signal = Signal(str)
     fake_signal = Signal(int)
     protocol_finished_signal = Signal()
@@ -116,6 +118,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.protocol_stepper_signal.connect(self.progressBar_protocols.setValue)
+        self.protocol_stepper_signal.connect(self._update_remaining_time_label)
+        self._protocol_start_time = time.time()
 
         # Initialize fastAPI server variables
         self.fastapi_thread = None
@@ -607,7 +611,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             try:
                 extension_module = importlib.import_module(extension)
             except (ModuleNotFoundError, AttributeError) as e:
-                print(f"Could not load extension {extension}.\n{e}")
+                logging.warning(f"Could not load extension {extension}.\n{e}")
                 continue
             config = getattr(extension_module, "EXTENSION_CONFIG")
             name = config["name"]
@@ -1045,7 +1049,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # IMPORT sample_selection only if it is needed
         from nomad_camels.nomad_integration import entry_selection
 
-        dialog = entry_selection.EntrySelector(self)
+        upload_id = None
+        entry_id = None
+        if self.nomad_sample is not None:
+            metadata = self.nomad_sample.get("NOMAD_entry_metadata", {})
+            upload_id = metadata.get("upload_id", None)
+            entry_id = metadata.get("entry_id", None)
+
+        dialog = entry_selection.EntrySelector(self, upload_id=upload_id, entry_id=entry_id)
         if dialog.exec():
             self.nomad_sample = dialog.return_data
             if "name" in self.nomad_sample:
@@ -1991,6 +2002,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         for window in live_windows:
             self.add_to_open_windows(window)
 
+        if self.running_protocol.use_nexus:
+            protocol_savepath = f"{self.protocol_savepath}.nxs"
+        else:
+            protocol_savepath = f"{self.protocol_savepath}.h5"
+
         self.pushButton_resume.setEnabled(False)
         self.pushButton_pause.setEnabled(True)
         self.pushButton_stop.setEnabled(True)
@@ -2011,14 +2027,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_stop.setEnabled(False)
         self.protocol_stepper_signal.emit(100)
         nomad = self.nomad_user is not None
-        if self.running_protocol.use_nexus:
-            self.protocol_savepath = f"{self.protocol_savepath}.nxs"
-        else:
-            self.protocol_savepath = f"{self.protocol_savepath}.h5"
         if self.last_save_file:
             file = helper_functions.get_newest_file(self.last_save_file)
         else:
-            file = helper_functions.get_newest_file(self.protocol_savepath)
+            file = helper_functions.get_newest_file(protocol_savepath)
         file = os.path.normpath(file)
         self.run_done_file_signal.emit(file)
         # Check if the protocol was executed using the api and save results to db if true
@@ -2104,11 +2116,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         import bluesky, ophyd
         import bluesky.plan_stubs as bps
 
-        print("trigger")
+        warn_text = (
+            f"Watchdog {watchdog.name} triggered with condition {watchdog.condition}"
+        )
+        logging.warning(warn_text)
         watchdog.was_triggered = True
         warning = warn_popup.WarnPopup(
             self,
-            f"Watchdog {watchdog.name} triggered with condition {watchdog.condition}",
+            warn_text,
             "Watchdog Triggered",
             do_not_pause=True,
         )
@@ -2285,7 +2300,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     )
                 )
             except Exception as e:
-                print(e)
+                logging.error(f"Error during end protocol steps: {e}")
         self._was_aborted = False
         self.setWindowTitle(
             "NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems"
@@ -2356,7 +2371,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 )
                 self.sound_effect.play()
             except Exception as e:
-                print(e)
+                logging.warning(f"Error playing sound: {e}")
+
+    def _update_remaining_time_label(self, step):
+        now = time.time()
+        elapsed_time = now - self._protocol_start_time
+        remaining_time = (elapsed_time / step) * (100 - step)
+        if remaining_time > 3600 or elapsed_time > 3600:
+            remaining_time_str = time.strftime("%H:%M:%S", time.gmtime(remaining_time))
+            elapsed_time_str = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
+        else:
+            remaining_time_str = time.strftime("%M:%S", time.gmtime(remaining_time))
+            elapsed_time_str = time.strftime("%M:%S", time.gmtime(elapsed_time))
+        self.label_remaining_time.setText(f"{elapsed_time_str} / {remaining_time_str}")
 
     def close_old_queue_devices(self):
         """
@@ -2390,6 +2417,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         from copy import deepcopy
 
         self.progressBar_protocols.setValue(0)
+        self._protocol_start_time = time.time()
         protocol = deepcopy(self.protocols_dict[protocol_name])
         protocol.variables = variables or protocol.variables
         protocol.session_name = self.lineEdit_session.text()
@@ -2418,6 +2446,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol_builder.build_protocol(
             protocol, path, savepath, userdata=userdata, sampledata=sampledata
         )
+        self.update_prot_data(protocol, protocol_name)
         print("\n\nBuild successful!\n")
         self.progressBar_protocols.setValue(100 if ask_file else 1)
 

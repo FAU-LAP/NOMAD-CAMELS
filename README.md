@@ -18,6 +18,25 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.3
+UI-Improvements:
+- Next to the progress bar is now the elapsed time and an estimated remaining time
+- NOMAD entry selection vastly improved in speed
+- no more bad values in NOMAD entry selection
+- NOMAD entry selection layout slightly adjusted to better fit
+- NOMAD entry selection now remembers last selected entry (at least if it was in user scope)
+
+Changes:
+- trying to improve sability of saved files if program crashes, by closing more often in between. Please contact us if you have issues!
+- many messages, that were previously only printed are now being logged
+- protocol-json of subprotocol now also in main protocol-json
+
+Fixes:
+- progress bar does not jump back to 0 after going to 1 first
+- fixed broken file saving when queuing protocols
+- For-loop step now calculates progress bar value correctly when changing a variable that is used in the step
+- stage-control now also moves stage with "Go To" when it was moved away from same position by a protocol
+
 ### 1.8.2 UI-Improvements, minor fixes
 UI-Improvements:
 - Notification when log in to NOMAD was (not) successful

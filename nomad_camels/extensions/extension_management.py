@@ -96,7 +96,9 @@ def get_local_extensions():
                 version = package.EXTENSION_CONFIG["version"]
                 local_extensions[name] = version
             except Exception as e:
-                print(f, e)
+                import logging
+
+                logging.warning(f"Error loading local extension {f}: {e}")
     return local_extensions
 
 
