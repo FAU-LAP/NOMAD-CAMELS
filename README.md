@@ -27,6 +27,7 @@ UI-Improvements:
 - NOMAD entry selection now remembers last selected entry (at least if it was in user scope)
 
 Changes:
+- trying to improve sability of saved files if program crashes, by closing more often in between. Please contact us if you have issues!
 - many messages, that were previously only printed are now being logged
 - protocol-json of subprotocol now also in main protocol-json
 
