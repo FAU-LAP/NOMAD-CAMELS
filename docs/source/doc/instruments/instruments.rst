@@ -1225,7 +1225,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             </tr>
             <tr>
                 <td>Rohde&schwarz (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
-                <td>Fpc_series</a></td>
+                <td>Fpcseries</a></td>
                 <td>SpectrumAnalyzer</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>

@@ -38,3 +38,4 @@ Drivers
    nomad_camels_driver_trinamic_tmcm_1110
    nomad_camels_driver_voltcraft_pps
    nomad_camels_driver_voltcraft_psp
+   nomad_camels_driver_zurichinstruments_uhfli_600
