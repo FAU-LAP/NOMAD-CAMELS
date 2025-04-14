@@ -66,12 +66,12 @@ class Run_Subprotocol(Loop_Step):
             data_output=self.data_output,
             new_stream=self.name,
         )
+        with open(self.prot_path, "r", encoding="utf-8") as f:
+            self._sub_protocol_dict = json.load(f)
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
         """Specifies the name / path of the subprotocol."""
-        with open(self.prot_path, "r", encoding="utf-8") as f:
-            self._sub_protocol_dict = json.load(f)
         short_string = super().get_protocol_short_string(n_tabs)
         short_string = f"{short_string[:-1]} - {self.prot_path} - {self.description}\n"
         return short_string

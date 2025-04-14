@@ -228,6 +228,8 @@ def build_from_path(
     build_protocol(
         protocol, path.with_suffix(".py"), save_path, catalog, userdata, sampledata
     )
+    protocol_dict = load_save_functions.get_save_str(protocol)
+    load_save_functions.save_dictionary(path, protocol_dict)
 
 
 def build_protocol(
@@ -248,7 +250,7 @@ def build_protocol(
         The path, where the file should be saved.
     save_path : str, path
          (Default value = 'test')
-         The path, where the data should be saved to. Does NOT have a file ending. 
+         The path, where the data should be saved to. Does NOT have a file ending.
          Depends on the export settings. If	 no NeXus export is selected uses .h5 otherwise .nxs
     catalog : str
          (Default value = 'CAMELS_CATALOG')
