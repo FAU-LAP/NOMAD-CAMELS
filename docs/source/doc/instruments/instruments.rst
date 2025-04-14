@@ -117,7 +117,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Epics</td>
                 <td>Instrument</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-epics-instrument'>0.1.1</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-epics-instrument'>0.1.2</a></td>
             </tr>
             <tr>
                 <td>Eurotherm</td>
