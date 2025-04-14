@@ -25,7 +25,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Helping Packages" href="helping_packages.html" />
+    <link rel="next" title="nomad_camels_toolbox.utils package" href="nomad_camels_toolbox.utils.html" />
     <link rel="prev" title="nomad_camels.utility package" href="nomad_camels.utility.html" />
 <!-- make a paragraph with black background and white text, if it is a large screen, it should only start its text after the navigation area on the left -->
 <style>
@@ -259,13 +259,9 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">HDF5 files / Data Evaluation</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">HDF5 files</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../doc/handling_hdf5.html#display-hdf5-file">Display HDF5 File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../doc/handling_hdf5.html#nomad-camels-toolbox">NOMAD CAMELS toolbox</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../doc/handling_hdf5.html#installation">Installation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../doc/handling_hdf5.html#reading-data">Reading Data</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="../doc/handling_hdf5.html#using-the-nomad-camels-toolbox">Using the NOMAD CAMELS toolbox</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../doc/handling_hdf5.html#using-h5py">Using h5py</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../doc/handling_hdf5.html#reading-hdf5-files-from-camels">Reading HDF5 Files from CAMELS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../doc/handling_hdf5.html#navigate-the-file">Navigate the File</a></li>
@@ -278,6 +274,13 @@
 <li class="toctree-l3"><a class="reference internal" href="../doc/handling_hdf5.html#convert-the-full-hdf5-file-to-python-dictionary">Convert the full HDF5 File to Python Dictionary</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/nomad_camels_toolbox.html">Data Evaluation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#reading-data">Reading Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#recreating-plots">Recreating Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#data-viewer">Data Viewer</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/api/api_landing.html">CAMELS API</a><ul>
@@ -621,6 +624,7 @@
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.simplify_configs_dict"><code class="docutils literal notranslate"><span class="pre">simplify_configs_dict()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.trigger_and_read"><code class="docutils literal notranslate"><span class="pre">trigger_and_read()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.trigger_multi"><code class="docutils literal notranslate"><span class="pre">trigger_multi()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.update_protocol_counter"><code class="docutils literal notranslate"><span class="pre">update_protocol_counter()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#module-nomad_camels.bluesky_handling.loop_step_functions_api_call">nomad_camels.bluesky_handling.loop_step_functions_api_call module</a><ul>
@@ -1093,7 +1097,10 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.nomad_integration.html">nomad_camels.nomad_integration package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.nomad_integration.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.nomad_integration.html#module-nomad_camels.nomad_integration.entry_selection">nomad_camels.nomad_integration.entry_selection module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread"><code class="docutils literal notranslate"><span class="pre">Entries_Getter_Thread</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.entry_selection.EntrySelector"><code class="docutils literal notranslate"><span class="pre">EntrySelector</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread"><code class="docutils literal notranslate"><span class="pre">Upload_Getter_Thread</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.entry_selection.compute_combo_max_width"><code class="docutils literal notranslate"><span class="pre">compute_combo_max_width()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.nomad_integration.html#module-nomad_camels.nomad_integration.file_uploading">nomad_camels.nomad_integration.file_uploading module</a><ul>
@@ -1105,6 +1112,8 @@
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.nomad_communication.correct_timestamp"><code class="docutils literal notranslate"><span class="pre">correct_timestamp()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.nomad_communication.ensure_login"><code class="docutils literal notranslate"><span class="pre">ensure_login()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.nomad_communication.get_entries"><code class="docutils literal notranslate"><span class="pre">get_entries()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.nomad_communication.get_entries_from_upload"><code class="docutils literal notranslate"><span class="pre">get_entries_from_upload()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.nomad_communication.get_entry_archive"><code class="docutils literal notranslate"><span class="pre">get_entry_archive()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.nomad_communication.get_user_information"><code class="docutils literal notranslate"><span class="pre">get_user_information()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.nomad_communication.get_user_upload_names"><code class="docutils literal notranslate"><span class="pre">get_user_upload_names()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.nomad_communication.get_user_uploads"><code class="docutils literal notranslate"><span class="pre">get_user_uploads()</span></code></a></li>
@@ -1561,11 +1570,32 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">nomad-camels-toolbox</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.utils.html">nomad_camels_toolbox.utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.utils.html#module-nomad_camels_toolbox.utils.exception_hook">nomad_camels_toolbox.utils.exception_hook module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels_toolbox.utils.html#nomad_camels_toolbox.utils.exception_hook.ErrorMessage"><code class="docutils literal notranslate"><span class="pre">ErrorMessage</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels_toolbox.utils.html#nomad_camels_toolbox.utils.exception_hook.exception_hook"><code class="docutils literal notranslate"><span class="pre">exception_hook()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.utils.html#module-nomad_camels_toolbox.utils.fit_variable_renaming">nomad_camels_toolbox.utils.fit_variable_renaming module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels_toolbox.utils.html#nomad_camels_toolbox.utils.fit_variable_renaming.replace_name"><code class="docutils literal notranslate"><span class="pre">replace_name()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.utils.html#module-nomad_camels_toolbox.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-nomad_camels_toolbox.data_reader">nomad_camels_toolbox.data_reader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nomad_camels_toolbox.data_reader.decide_entry_key"><code class="docutils literal notranslate"><span class="pre">decide_entry_key()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nomad_camels_toolbox.data_reader.h5_group_to_dict"><code class="docutils literal notranslate"><span class="pre">h5_group_to_dict()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#nomad_camels_toolbox.data_reader.read_camels_file"><code class="docutils literal notranslate"><span class="pre">read_camels_file()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#nomad-camels-toolbox-plotting-module">nomad_camels_toolbox.plotting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nomad-camels-toolbox-qt-viewer-module">nomad_camels_toolbox.qt_viewer module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-nomad_camels_toolbox">Module contents</a></li>
 </ul>
 </li>
@@ -1585,6 +1615,7 @@
 <li class="toctree-l4"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.FileManager"><code class="docutils literal notranslate"><span class="pre">FileManager</span></code></a><ul>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.FileManager.artifacts"><code class="docutils literal notranslate"><span class="pre">FileManager.artifacts</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.FileManager.close"><code class="docutils literal notranslate"><span class="pre">FileManager.close()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.FileManager.get_last_file"><code class="docutils literal notranslate"><span class="pre">FileManager.get_last_file()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.FileManager.open"><code class="docutils literal notranslate"><span class="pre">FileManager.open()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.FileManager.reserve_name"><code class="docutils literal notranslate"><span class="pre">FileManager.reserve_name()</span></code></a></li>
 </ul>
@@ -1594,8 +1625,10 @@
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#id0"><code class="docutils literal notranslate"><span class="pre">Serializer.artifacts</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.close"><code class="docutils literal notranslate"><span class="pre">Serializer.close()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.descriptor"><code class="docutils literal notranslate"><span class="pre">Serializer.descriptor()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.ensure_open"><code class="docutils literal notranslate"><span class="pre">Serializer.ensure_open()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.event_page"><code class="docutils literal notranslate"><span class="pre">Serializer.event_page()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.get_length_of_stream"><code class="docutils literal notranslate"><span class="pre">Serializer.get_length_of_stream()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.handle_event_page"><code class="docutils literal notranslate"><span class="pre">Serializer.handle_event_page()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.make_nexus_structure"><code class="docutils literal notranslate"><span class="pre">Serializer.make_nexus_structure()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.start"><code class="docutils literal notranslate"><span class="pre">Serializer.start()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.stop"><code class="docutils literal notranslate"><span class="pre">Serializer.stop()</span></code></a></li>
@@ -4052,24 +4085,65 @@
              
   <section id="nomad-camels-toolbox-package">
 <h1>nomad_camels_toolbox package<a class="headerlink" href="#nomad-camels-toolbox-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="nomad_camels_toolbox.utils.html">nomad_camels_toolbox.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.utils.html#module-nomad_camels_toolbox.utils.exception_hook">nomad_camels_toolbox.utils.exception_hook module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.utils.html#nomad_camels_toolbox.utils.exception_hook.ErrorMessage"><code class="docutils literal notranslate"><span class="pre">ErrorMessage</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.utils.html#nomad_camels_toolbox.utils.exception_hook.ErrorMessage.show_more_info"><code class="docutils literal notranslate"><span class="pre">ErrorMessage.show_more_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.utils.html#nomad_camels_toolbox.utils.exception_hook.ErrorMessage.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">ErrorMessage.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.utils.html#nomad_camels_toolbox.utils.exception_hook.exception_hook"><code class="docutils literal notranslate"><span class="pre">exception_hook()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.utils.html#module-nomad_camels_toolbox.utils.fit_variable_renaming">nomad_camels_toolbox.utils.fit_variable_renaming module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.utils.html#nomad_camels_toolbox.utils.fit_variable_renaming.replace_name"><code class="docutils literal notranslate"><span class="pre">replace_name()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.utils.html#module-nomad_camels_toolbox.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
 <section id="module-nomad_camels_toolbox.data_reader">
 <span id="nomad-camels-toolbox-data-reader-module"></span><h2>nomad_camels_toolbox.data_reader module<a class="headerlink" href="#module-nomad_camels_toolbox.data_reader" title="Link to this heading"></a></h2>
 <dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_toolbox.data_reader.decide_entry_key">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_toolbox.data_reader.</span></span><span class="sig-name descname"><span class="pre">decide_entry_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_handle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_toolbox.data_reader.decide_entry_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels_toolbox.data_reader.h5_group_to_dict">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_toolbox.data_reader.</span></span><span class="sig-name descname"><span class="pre">h5_group_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_toolbox.data_reader.h5_group_to_dict" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>group</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels_toolbox.data_reader.read_camels_file">
-<span class="sig-prename descclassname"><span class="pre">nomad_camels_toolbox.data_reader.</span></span><span class="sig-name descname"><span class="pre">read_camels_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_set_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dataframe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_fits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_toolbox.data_reader.read_camels_file" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">nomad_camels_toolbox.data_reader.</span></span><span class="sig-name descname"><span class="pre">read_camels_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_set_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dataframe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_fits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_all_datasets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels_toolbox.data_reader.read_camels_file" title="Link to this definition"></a></dt>
 <dd><p>Read data from a CAMELS file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_path</strong> (<em>str</em>) – Path to the CAMELS file.</p></li>
 <li><p><strong>data_set_key</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: &quot;&quot;</em><em>)</em>) – Key of the data set to read. If not specified, the main data set is read.</p></li>
-<li><p><strong>entry_key</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: &quot;&quot;</em><em>)</em>) – Key of the entry to read. If not specified and there is more than one entry, the user is asked to select one.</p></li>
+<li><p><strong>entry_key</strong> (<em>str</em><em>, </em><em>optional</em><em> (</em><em>default: &quot;&quot;</em><em>)</em>) – Entry-Key to read. If not specified and there is more than one entry, the user is asked to select one. Usually files only have one entry “CAMELS_entry”, i.e. this is not needed.</p></li>
 <li><p><strong>return_dataframe</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default: True</em><em>)</em>) – Whether to return the data as a pandas DataFrame. Requires pandas to be installed if pandas is not installed, this parameter is ignored.</p></li>
 <li><p><strong>read_variables</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default: True</em><em>)</em>) – Whether to read the variables from the data set.</p></li>
 <li><p><strong>return_fits</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default: False</em><em>)</em>) – Whether to return the fits of the data set.</p></li>
+<li><p><strong>read_all_datasets</strong> (<em>bool</em><em>, </em><em>optional</em><em> (</em><em>default: False</em><em>)</em>) – Whether to read all datasets in the file. If True, the data_set_key parameter is ignored. If True, a dictionary with the data sets is returned.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -4083,6 +4157,12 @@
 </dd></dl>
 
 </section>
+<section id="nomad-camels-toolbox-plotting-module">
+<h2>nomad_camels_toolbox.plotting module<a class="headerlink" href="#nomad-camels-toolbox-plotting-module" title="Link to this heading"></a></h2>
+</section>
+<section id="nomad-camels-toolbox-qt-viewer-module">
+<h2>nomad_camels_toolbox.qt_viewer module<a class="headerlink" href="#nomad-camels-toolbox-qt-viewer-module" title="Link to this heading"></a></h2>
+</section>
 <section id="module-nomad_camels_toolbox">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nomad_camels_toolbox" title="Link to this heading"></a></h2>
 </section>
@@ -4093,7 +4173,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="nomad_camels.utility.html" class="btn btn-neutral float-left" title="nomad_camels.utility package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="helping_packages.html" class="btn btn-neutral float-right" title="Helping Packages" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="nomad_camels_toolbox.utils.html" class="btn btn-neutral float-right" title="nomad_camels_toolbox.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -259,13 +259,9 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">HDF5 files / Data Evaluation</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/handling_hdf5.html">HDF5 files</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../doc/handling_hdf5.html#display-hdf5-file">Display HDF5 File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../doc/handling_hdf5.html#nomad-camels-toolbox">NOMAD CAMELS toolbox</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../doc/handling_hdf5.html#installation">Installation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../doc/handling_hdf5.html#reading-data">Reading Data</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="../doc/handling_hdf5.html#using-the-nomad-camels-toolbox">Using the NOMAD CAMELS toolbox</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../doc/handling_hdf5.html#using-h5py">Using h5py</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../doc/handling_hdf5.html#reading-hdf5-files-from-camels">Reading HDF5 Files from CAMELS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../doc/handling_hdf5.html#navigate-the-file">Navigate the File</a></li>
@@ -278,6 +274,13 @@
 <li class="toctree-l3"><a class="reference internal" href="../doc/handling_hdf5.html#convert-the-full-hdf5-file-to-python-dictionary">Convert the full HDF5 File to Python Dictionary</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/nomad_camels_toolbox.html">Data Evaluation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#reading-data">Reading Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#recreating-plots">Recreating Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#data-viewer">Data Viewer</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/api/api_landing.html">CAMELS API</a><ul>
@@ -621,6 +624,7 @@
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.simplify_configs_dict"><code class="docutils literal notranslate"><span class="pre">simplify_configs_dict()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.trigger_and_read"><code class="docutils literal notranslate"><span class="pre">trigger_and_read()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.trigger_multi"><code class="docutils literal notranslate"><span class="pre">trigger_multi()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.bluesky_handling.html#nomad_camels.bluesky_handling.helper_functions.update_protocol_counter"><code class="docutils literal notranslate"><span class="pre">update_protocol_counter()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.bluesky_handling.html#module-nomad_camels.bluesky_handling.loop_step_functions_api_call">nomad_camels.bluesky_handling.loop_step_functions_api_call module</a><ul>
@@ -1093,7 +1097,10 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">nomad_camels.nomad_integration package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.nomad_integration.entry_selection">nomad_camels.nomad_integration.entry_selection module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread"><code class="docutils literal notranslate"><span class="pre">Entries_Getter_Thread</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.nomad_integration.entry_selection.EntrySelector"><code class="docutils literal notranslate"><span class="pre">EntrySelector</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread"><code class="docutils literal notranslate"><span class="pre">Upload_Getter_Thread</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.nomad_integration.entry_selection.compute_combo_max_width"><code class="docutils literal notranslate"><span class="pre">compute_combo_max_width()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.nomad_integration.file_uploading">nomad_camels.nomad_integration.file_uploading module</a><ul>
@@ -1105,6 +1112,8 @@
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.nomad_integration.nomad_communication.correct_timestamp"><code class="docutils literal notranslate"><span class="pre">correct_timestamp()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.nomad_integration.nomad_communication.ensure_login"><code class="docutils literal notranslate"><span class="pre">ensure_login()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.nomad_integration.nomad_communication.get_entries"><code class="docutils literal notranslate"><span class="pre">get_entries()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.nomad_integration.nomad_communication.get_entries_from_upload"><code class="docutils literal notranslate"><span class="pre">get_entries_from_upload()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.nomad_integration.nomad_communication.get_entry_archive"><code class="docutils literal notranslate"><span class="pre">get_entry_archive()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.nomad_integration.nomad_communication.get_user_information"><code class="docutils literal notranslate"><span class="pre">get_user_information()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.nomad_integration.nomad_communication.get_user_upload_names"><code class="docutils literal notranslate"><span class="pre">get_user_upload_names()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.nomad_integration.nomad_communication.get_user_uploads"><code class="docutils literal notranslate"><span class="pre">get_user_uploads()</span></code></a></li>
@@ -1561,11 +1570,32 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nomad_camels_toolbox.html">nomad-camels-toolbox</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.utils.html">nomad_camels_toolbox.utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.utils.html#module-nomad_camels_toolbox.utils.exception_hook">nomad_camels_toolbox.utils.exception_hook module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels_toolbox.utils.html#nomad_camels_toolbox.utils.exception_hook.ErrorMessage"><code class="docutils literal notranslate"><span class="pre">ErrorMessage</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels_toolbox.utils.html#nomad_camels_toolbox.utils.exception_hook.exception_hook"><code class="docutils literal notranslate"><span class="pre">exception_hook()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.utils.html#module-nomad_camels_toolbox.utils.fit_variable_renaming">nomad_camels_toolbox.utils.fit_variable_renaming module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels_toolbox.utils.html#nomad_camels_toolbox.utils.fit_variable_renaming.replace_name"><code class="docutils literal notranslate"><span class="pre">replace_name()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.utils.html#module-nomad_camels_toolbox.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.html#module-nomad_camels_toolbox.data_reader">nomad_camels_toolbox.data_reader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.data_reader.decide_entry_key"><code class="docutils literal notranslate"><span class="pre">decide_entry_key()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.data_reader.h5_group_to_dict"><code class="docutils literal notranslate"><span class="pre">h5_group_to_dict()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.data_reader.read_camels_file"><code class="docutils literal notranslate"><span class="pre">read_camels_file()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.html#nomad-camels-toolbox-plotting-module">nomad_camels_toolbox.plotting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.html#nomad-camels-toolbox-qt-viewer-module">nomad_camels_toolbox.qt_viewer module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.html#module-nomad_camels_toolbox">Module contents</a></li>
 </ul>
 </li>
@@ -1585,6 +1615,7 @@
 <li class="toctree-l4"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.FileManager"><code class="docutils literal notranslate"><span class="pre">FileManager</span></code></a><ul>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.FileManager.artifacts"><code class="docutils literal notranslate"><span class="pre">FileManager.artifacts</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.FileManager.close"><code class="docutils literal notranslate"><span class="pre">FileManager.close()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.FileManager.get_last_file"><code class="docutils literal notranslate"><span class="pre">FileManager.get_last_file()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.FileManager.open"><code class="docutils literal notranslate"><span class="pre">FileManager.open()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.FileManager.reserve_name"><code class="docutils literal notranslate"><span class="pre">FileManager.reserve_name()</span></code></a></li>
 </ul>
@@ -1594,8 +1625,10 @@
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#id0"><code class="docutils literal notranslate"><span class="pre">Serializer.artifacts</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.close"><code class="docutils literal notranslate"><span class="pre">Serializer.close()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.descriptor"><code class="docutils literal notranslate"><span class="pre">Serializer.descriptor()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.ensure_open"><code class="docutils literal notranslate"><span class="pre">Serializer.ensure_open()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.event_page"><code class="docutils literal notranslate"><span class="pre">Serializer.event_page()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.get_length_of_stream"><code class="docutils literal notranslate"><span class="pre">Serializer.get_length_of_stream()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.handle_event_page"><code class="docutils literal notranslate"><span class="pre">Serializer.handle_event_page()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.make_nexus_structure"><code class="docutils literal notranslate"><span class="pre">Serializer.make_nexus_structure()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.start"><code class="docutils literal notranslate"><span class="pre">Serializer.start()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="suitcase.nomad_camels_hdf5.html#suitcase.nomad_camels_hdf5.Serializer.stop"><code class="docutils literal notranslate"><span class="pre">Serializer.stop()</span></code></a></li>
@@ -4059,8 +4092,35 @@
 <section id="module-nomad_camels.nomad_integration.entry_selection">
 <span id="nomad-camels-nomad-integration-entry-selection-module"></span><h2>nomad_camels.nomad_integration.entry_selection module<a class="headerlink" href="#module-nomad_camels.nomad_integration.entry_selection" title="Link to this heading"></a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.nomad_integration.entry_selection.</span></span><span class="sig-name descname"><span class="pre">Entries_Getter_Thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QThread</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread.exception_signal">
+<span class="sig-name descname"><span class="pre">exception_signal</span></span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread.exception_signal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread.run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread.set_upload_id">
+<span class="sig-name descname"><span class="pre">set_upload_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upload_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread.set_upload_id" title="Link to this definition"></a></dt>
+<dd><p>Update the current upload ID.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Entries_Getter_Thread&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QThread&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#12</span> <span class="pre">type=Signal,</span> <span class="pre">signature=exception_signal(PyObject),</span> <span class="pre">parameters=PyObject</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.EntrySelector">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.nomad_integration.entry_selection.</span></span><span class="sig-name descname"><span class="pre">EntrySelector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Sample'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.EntrySelector" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.nomad_integration.entry_selection.</span></span><span class="sig-name descname"><span class="pre">EntrySelector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Sample'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.EntrySelector" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.EntrySelector.accept">
@@ -4077,14 +4137,14 @@
 <span class="sig-name descname"><span class="pre">entry_filtering</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.EntrySelector.entry_filtering" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.EntrySelector.get_current_entry_data">
-<span class="sig-name descname"><span class="pre">get_current_entry_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.EntrySelector.get_current_entry_data" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.EntrySelector.staticMetaObject">
 <span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;EntrySelector&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.EntrySelector.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.EntrySelector.update_current_entry_data">
+<span class="sig-name descname"><span class="pre">update_current_entry_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.EntrySelector.update_current_entry_data" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -4092,7 +4152,44 @@
 <span class="sig-name descname"><span class="pre">update_entries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.EntrySelector.update_entries" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.EntrySelector.update_uploads">
+<span class="sig-name descname"><span class="pre">update_uploads</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.EntrySelector.update_uploads" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.nomad_integration.entry_selection.</span></span><span class="sig-name descname"><span class="pre">Upload_Getter_Thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'user'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QThread</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread.exception_signal">
+<span class="sig-name descname"><span class="pre">exception_signal</span></span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread.exception_signal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread.run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread.set_scope">
+<span class="sig-name descname"><span class="pre">set_scope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scope</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread.set_scope" title="Link to this definition"></a></dt>
+<dd><p>Update the scope of the thread.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Upload_Getter_Thread&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QThread&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#12</span> <span class="pre">type=Signal,</span> <span class="pre">signature=exception_signal(PyObject),</span> <span class="pre">parameters=PyObject</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.entry_selection.compute_combo_max_width">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.nomad_integration.entry_selection.</span></span><span class="sig-name descname"><span class="pre">compute_combo_max_width</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">combo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.entry_selection.compute_combo_max_width" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-nomad_camels.nomad_integration.file_uploading">
@@ -4172,6 +4269,42 @@ used one, <cite>logout_of_nomad</cite> is called. Then, if <cite>token</cite> is
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.nomad_communication.get_entries_from_upload">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.nomad_integration.nomad_communication.</span></span><span class="sig-name descname"><span class="pre">get_entries_from_upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upload_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.nomad_communication.get_entries_from_upload" title="Link to this definition"></a></dt>
+<dd><p>Provides the entries of a given upload.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>upload_id</strong> (<em>str</em>) – the id of the upload</p></li>
+<li><p><strong>parent</strong> (<em>QWidget</em>) – the parent widget for the login dialog of <cite>login_to_nomad</cite>
+(if needed)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>the entries of the upload</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nomad_camels.nomad_integration.nomad_communication.get_entry_archive">
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.nomad_integration.nomad_communication.</span></span><span class="sig-name descname"><span class="pre">get_entry_archive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.nomad_communication.get_entry_archive" title="Link to this definition"></a></dt>
+<dd><p>Provides the archive of a given entry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> (<em>QWidget</em>) – the parent widget for the login dialog of <cite>login_to_nomad</cite>
+(if needed)</p></li>
+<li><p><strong>entry_id</strong> (<em>str</em>) – the id of the entry</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>the archive of the entry</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.nomad_integration.nomad_communication.get_user_information">
 <span class="sig-prename descclassname"><span class="pre">nomad_camels.nomad_integration.nomad_communication.</span></span><span class="sig-name descname"><span class="pre">get_user_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.nomad_communication.get_user_information" title="Link to this definition"></a></dt>
 <dd><p>Retrieves the information of the logged in user.</p>
@@ -4205,7 +4338,7 @@ name.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="nomad_camels.nomad_integration.nomad_communication.get_user_uploads">
-<span class="sig-prename descclassname"><span class="pre">nomad_camels.nomad_integration.nomad_communication.</span></span><span class="sig-name descname"><span class="pre">get_user_uploads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.nomad_communication.get_user_uploads" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">nomad_camels.nomad_integration.nomad_communication.</span></span><span class="sig-name descname"><span class="pre">get_user_uploads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'shared'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.nomad_integration.nomad_communication.get_user_uploads" title="Link to this definition"></a></dt>
 <dd><p>Provides the uploads of the logged in user. If there is no login token, <cite>login_to_nomad</cite> will be called.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
