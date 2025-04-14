@@ -156,7 +156,8 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    Installing CAMELS <doc/installation/installation.md>
    Getting Started <doc/tutorials/quick_start.md>
    Protocol Steps Explained <doc/protocol_steps/protocol_steps_landing.md>
-   HDF5 files / Data Evaluation <doc/handling_hdf5.md>
+   HDF5 files <doc/handling_hdf5.md>
+   Data Evaluation <doc/nomad_camels_toolbox.md>
    NOMAD Integration <doc/NOMAAD_integration.md>
    CAMELS API <doc/api/api_landing.md>
    FAQ / Troubleshooting <doc/faq/faq.md>
