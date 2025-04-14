@@ -2446,6 +2446,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol_builder.build_protocol(
             protocol, path, savepath, userdata=userdata, sampledata=sampledata
         )
+        self.update_prot_data(protocol, protocol_name)
         print("\n\nBuild successful!\n")
         self.progressBar_protocols.setValue(100 if ask_file else 1)
 

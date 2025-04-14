@@ -28,6 +28,7 @@ UI-Improvements:
 
 Changes:
 - many messages, that were previously only printed are now being logged
+- protocol-json of subprotocol now also in main protocol-json
 
 Fixes:
 - progress bar does not jump back to 0 after going to 1 first
