@@ -194,6 +194,7 @@ class Gradient_Descent_Config_Sub(Ui_Grad_Desc, QWidget):
         self.comboBox_extremum_type.setCurrentText(loop_step.extremum)
 
         out_box = []
+        channels = variables_handling.get_channels()
         for channel in channels:
             if channels[channel].output:
                 out_box.append(channel)

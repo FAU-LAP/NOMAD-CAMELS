@@ -927,10 +927,18 @@ class LivePlot(QObject, CallbackBase):
             return
         # Check to see if doc["data"] contains keys matching any on the self.ys strings
         if not (
-            any(key in s for key in doc["data"] for s in self.ys)
+            any(
+                key in self.eva.exchange_aliases(s)
+                for key in doc["data"]
+                for s in self.ys
+            )
             or any(
                 key.endswith("_variable_signal")
-                and any(subkey in s for subkey in doc["data"][key] for s in self.ys)
+                and any(
+                    subkey in self.eva.exchange_aliases(s)
+                    for subkey in doc["data"][key]
+                    for s in self.ys
+                )
                 for key in doc["data"]
             )
         ):

@@ -329,7 +329,8 @@ def build_protocol(
         variable_string += f"{var} = {val}\n"
         variable_string += f'namespace["{var}"] = {var}\n'
     variable_string += f'\n{protocol.name}_variable_signal = variable_reading.Variable_Signal(name="{protocol.name}_variable_signal", variables_dict=namespace)\n'
-    variable_string += "eva = Evaluator(namespace=namespace)\n"
+    variable_string += f"aliases = {protocol.get_aliases()}\n"
+    variable_string += "eva = Evaluator(namespace=namespace, aliases=aliases)\n"
     # this handles all the used devices
     for dev in protocol.get_used_devices():
         device = variables_handling.devices[dev]

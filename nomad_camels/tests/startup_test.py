@@ -84,7 +84,7 @@ def app():
 
 @pytest.fixture
 def instance(app):
-    return LoadingScreen()  # Replace with the actual class name
+    return LoadingScreen()
 
 
 @pytest.mark.order(0)
@@ -130,3 +130,6 @@ def test_import_thread(qtbot):
 
     # Ensure the thread has finished
     assert not thread.isRunning()
+    thread.quit()
+    thread.wait()
+    thread.deleteLater()

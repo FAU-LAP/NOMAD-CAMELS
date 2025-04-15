@@ -107,6 +107,7 @@ class Simple_Sweep(For_Loop_Step):
 
         skip_failed = list(self.skip_failed)
         protocol_string = f"{tabs}channels = ["
+        channels = variables_handling.get_channels()
         for i, channel in enumerate(self.read_channels):
             if channel not in channels:
                 raise Exception(

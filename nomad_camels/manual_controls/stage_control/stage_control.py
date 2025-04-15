@@ -354,8 +354,16 @@ class Stage_Control(Manual_Control, Ui_Form):
         Stops the readback and move threads when the control is closed."""
         if self.read_thread:
             self.read_thread.still_running = False
+            self.read_thread.quit()
+            self.read_thread.wait()
+            self.read_thread.deleteLater()
+            self.read_thread = None
         if self.move_thread:
             self.move_thread.still_running = False
+            self.move_thread.quit()
+            self.move_thread.wait()
+            self.move_thread.deleteLater()
+            self.move_thread = None
         return super().close()
 
     def closeEvent(self, a0) -> None:
@@ -368,8 +376,16 @@ class Stage_Control(Manual_Control, Ui_Form):
         """
         if self.read_thread:
             self.read_thread.still_running = False
+            self.read_thread.quit()
+            self.read_thread.wait()
+            self.read_thread.deleteLater()
+            self.read_thread = None
         if self.move_thread:
             self.move_thread.still_running = False
+            self.move_thread.quit()
+            self.move_thread.wait()
+            self.move_thread.deleteLater()
+            self.move_thread = None
         return super().closeEvent(a0)
 
     def step_axis(self, axis, up=True):

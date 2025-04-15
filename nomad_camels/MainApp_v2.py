@@ -445,6 +445,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         if hasattr(self, "fastapi_thread") and self.fastapi_thread is not None:
             self.fastapi_thread.stop_server()
+            self.fastapi_thread.deleteLater()
             self.fastapi_thread = None
             self.current_api_port = None
 
@@ -639,6 +640,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.run_engine.subscribe(bec)
         self.importer_thread.wait()
         self.databroker_catalog = self.importer_thread.catalog
+        self.importer_thread.deleteLater()
         self.change_catalog_name()
         self.run_engine.subscribe(self.databroker_catalog.v1.insert)
         self.run_engine.subscribe(self.protocol_finished, "stop")
@@ -1056,7 +1058,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             upload_id = metadata.get("upload_id", None)
             entry_id = metadata.get("entry_id", None)
 
-        dialog = entry_selection.EntrySelector(self, upload_id=upload_id, entry_id=entry_id)
+        dialog = entry_selection.EntrySelector(
+            self, upload_id=upload_id, entry_id=entry_id
+        )
         if dialog.exec():
             self.nomad_sample = dialog.return_data
             if "name" in self.nomad_sample:
@@ -1964,6 +1968,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         try:
             devs = self.instantiate_devices_thread.devices
             dev_data = self.instantiate_devices_thread.device_config
+            self.instantiate_devices_thread.quit()
+            self.instantiate_devices_thread.wait()
+            self.instantiate_devices_thread.deleteLater()
+            self.instantiate_devices_thread = None
             additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
             self.add_subs_and_plots_from_dict(additionals)
             self.current_protocol_devices = devs
@@ -2237,7 +2245,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "Protocol aborted, waiting for cleanup... - NOMAD CAMELS"
             )
             self.run_engine.abort("Aborted by user")
-        if self.instantiate_devices_thread.isRunning():
+        if self.instantiate_devices_thread and self.instantiate_devices_thread.isRunning():
             self.instantiate_devices_thread.successful.disconnect()
             self.instantiate_devices_thread.exception_raised.disconnect()
             self.old_devices_thread = self.instantiate_devices_thread

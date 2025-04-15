@@ -122,12 +122,19 @@ class Generic_Set_Read(Manual_Control):
 
     def close(self):
         self.work_thread.still_running = False
+        self.work_thread.quit()
+        self.work_thread.wait()
+        self.work_thread.deleteLater()
+        self.work_thread = None
         return super().close()
 
     def closeEvent(self, a0):
         self.work_thread.still_running = False
+        self.work_thread.quit()
+        self.work_thread.wait()
+        self.work_thread.deleteLater()
+        self.work_thread = None
         return super().closeEvent(a0)
-
 
 
 class Work_Thread(QThread):
