@@ -615,6 +615,10 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.allow_live_comments = prot_data["allow_live_comments"]
         if "flyer_data" in prot_data:
             prot.flyer_data = prot_data["flyer_data"]
+        if "channel_aliases" in prot_data:
+            prot.channel_aliases = prot_data["channel_aliases"]
+        if "instrument_aliases" in prot_data:
+            prot.instrument_aliases = prot_data["instrument_aliases"]
         prot_dict.update({key: prot})
 
 
