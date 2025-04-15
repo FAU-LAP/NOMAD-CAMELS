@@ -2,8 +2,6 @@ import re
 import subprocess
 import importlib
 
-import pkg_resources
-
 from nomad_camels.gui.device_installer import Ui_Form
 from PySide6.QtWidgets import (
     QWidget,
@@ -66,11 +64,22 @@ def getInstalledDevices(force=False, return_packages=False):
     packages = dict(device_handling.load_local_packages())
     for package in packages:
         installed_instr[package] = "local"
+    not_loaded = []
     for instr in installed_instr:
         if instr not in packages:
-            packages[instr] = importlib.import_module(
-                f"nomad_camels_driver_{instr}.{instr}"
-            )
+            try:
+                packages[instr] = importlib.import_module(
+                    f"nomad_camels_driver_{instr}.{instr}"
+                )
+            except Exception as e:
+                import logging
+
+                logging.warning(
+                    f"Could not load {instr} from installed packages. Error: {e}"
+                )
+                not_loaded.append(instr)
+    for instr in not_loaded:
+        installed_instr.pop(instr)
     if return_packages:
         return installed_instr, packages
     return installed_instr
@@ -109,8 +118,11 @@ def getAllDevices():
         url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/driver_list/driver_list.txt"
         devices_str = requests.get(url).text
     except:
-        url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt"
-        devices_str = requests.get(url).text
+        try:
+            url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt"
+            devices_str = requests.get(url).text
+        except:
+            devices_str = ""
     warned = False
     for x in devices_str.splitlines():
         if "==" not in x:
@@ -192,14 +204,14 @@ class Info_Widget(QSplitter):
             self.license_text.clear()
             try:
                 text = ""
-                for p in pkg_resources.working_set:
-                    if not p.key.startswith(
+                for dist in importlib_metadata.distributions():
+                    if not dist.metadata["Name"].startswith(
                         f'nomad-camels-driver-{instr.replace("_", "-")}'
                     ):
                         continue
-                    lic = p.get_metadata_lines("LICENSE.txt")
-                    for l in lic:
-                        text += f"{l}\n"
+                    lic = dist.read_text("LICENSE.txt")
+                    if lic:
+                        text += f"{lic}\n"
                     break
                 if not text:
                     raise Exception("")
@@ -347,9 +359,10 @@ class Instrument_Installer(Ui_Form, QWidget):
         """ """
         devs = []
         for dev, version in self.installed_devs.items():
-            if version != self.all_devs[dev]:
+            if version != "local" and self.all_devs[dev]:
                 devs.append(dev)
         self.install_thread = Install_Thread(devs, False, self)
+        self.install_thread.error_signal.connect(self.propagate_exception)
         self.install_thread.info_step.connect(self.textEdit_device_info.append)
         self.install_thread.val_step.connect(self.progressBar.setValue)
         self.install_thread.finished.connect(self.thread_done)
@@ -376,6 +389,7 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.textEdit_device_info.clear()
         devs = self.get_checked_devs(uninstall)
         self.install_thread = Install_Thread(devs, uninstall, self)
+        self.install_thread.error_signal.connect(self.propagate_exception)
         self.install_thread.info_step.connect(self.textEdit_device_info.append)
         self.install_thread.val_step.connect(self.progressBar.setValue)
         self.install_thread.finished.connect(self.thread_done)
@@ -461,8 +475,14 @@ class Instrument_Installer(Ui_Form, QWidget):
         finally:
             self.setCursor(Qt.ArrowCursor)
 
+    def propagate_exception(self, e: BaseException):
+        """ """
+        raise e
+
+
 class CustomTextEdit_new_painter(QTextEdit):
     """Custom QTextEdit that paints custom text when the text is empty."""
+
     def paintEvent(self, event):
         # Call the original paint event to handle the default drawing
         super().paintEvent(event)
@@ -486,6 +506,7 @@ class CustomTextEdit_new_painter(QTextEdit):
 class Install_Thread(QThread):
     """ """
 
+    error_signal = Signal(BaseException)
     info_step = Signal(str)
     val_step = Signal(int)
 
@@ -519,9 +540,12 @@ class Install_Thread(QThread):
                     creationflags=flags,
                 )
                 if ret.returncode:
-                    raise OSError(
-                        f"Failed to uninstall nomad-camels-driver-{device_name}"
+                    self.error_signal.emit(
+                        OSError(
+                            f"Failed to uninstall nomad-camels-driver-{device_name}"
+                        )
                     )
+                    return
             else:
                 device_name = dev.replace("_", "-")
                 ret = install_instrument(device_name)
@@ -531,12 +555,12 @@ class Install_Thread(QThread):
         getInstalledDevices(True)
         for i, dev in enumerate(self.devs):
             if self.uninstall and dev in installed_instr:
-                raise Warning(f"Uninstall of {dev} failed!")
+                self.error_signal.emit(Warning(f"Uninstall of {dev} failed!"))
                 # WarnPopup(self.parent(),
                 #           f'Uninstall of {dev} failed!',
                 #           f'Uninstall of {dev} failed!')
             elif not self.uninstall and dev not in installed_instr:
-                raise Warning(f"Installation of {dev} failed!")
+                self.error_signal.emit(Warning(f"Installation of {dev} failed!"))
                 # WarnPopup(self.parent(),
                 #           f'Installation of {dev} failed!',
                 #           f'Installation of {dev} failed!')
@@ -565,6 +589,7 @@ def install_instrument(device_name):
             "-m",
             "pip",
             "install",
+            "--upgrade",
             # '--no-cache-dir',
             # '--index-url', pypi_url,
             # '--extra-index-url',
@@ -576,6 +601,7 @@ def install_instrument(device_name):
         stdin=subprocess.PIPE,
         creationflags=flags,
     )
+    ret.wait()
     if ret.returncode:
         raise OSError(f"Failed to install nomad-camels-driver-{device_name}")
     return ret

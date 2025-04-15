@@ -45,6 +45,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
 )
 from PySide6.QtGui import QAction
+from PySide6.QtCore import QTimer, Signal, SignalInstance
 
 from datetime import datetime, timedelta
 import json
@@ -55,6 +56,8 @@ from nomad_camels.utility.load_save_helper_functions import load_plots
 from nomad_camels.utility.device_handling import load_local_packages
 from nomad_camels.utility import variables_handling
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
+from nomad_camels.bluesky_handling.watchdogs import Watchdog
+from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 
 
 os_name = platform.system()
@@ -101,6 +104,10 @@ save_dict_skip = [
     QAction,
     QStatusBar,
     QGridLayout,
+    QTimer,
+    Evaluator,
+    Signal,
+    SignalInstance,
 ]
 
 # Get the current operating system
@@ -125,6 +132,7 @@ standard_pref = {
     "repo_branch": "main",
     "repo_directory": "",
     "play_camel_on_error": False,
+    "finished_sound": False,
     "auto_check_updates": False,
     "log_level": "Warning",
     "logfile_size": 1,
@@ -138,6 +146,9 @@ standard_pref = {
     "password_protection": False,
     "password_hash": "",
     "new_file_each_run": True,
+    "enable_API": False,
+    "API_port": "5000",
+    "last_shown_notes": "0.0.0",
 }
 
 
@@ -266,6 +277,8 @@ def save_dictionary(path, dictionary: dict):
         add_string = get_save_str(val)
         if add_string is not None:
             save_dict[key] = add_string
+    if not os.path.isdir(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
     with open(path, "w", encoding="utf-8") as file:
         json.dump(save_dict, file, indent=2)
 
@@ -395,6 +408,9 @@ def load_save_dict(
                 obj.setCurrentText(val)
             elif issubclass(type(obj), QLineEdit):
                 obj.setText(val)
+            elif key == "watchdogs":
+                for w in val:
+                    obj[w] = Watchdog(**val[w])
             elif key == "protocols_dict":
                 load_protocols_dict(val, obj)
             elif key in ["active_devices_dict", "active_instruments"]:
@@ -589,6 +605,16 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.export_csv = prot_data["export_csv"]
         if "h5_during_run" in prot_data:
             prot.h5_during_run = prot_data["h5_during_run"]
+        if "use_end_protocol" in prot_data:
+            prot.use_end_protocol = prot_data["use_end_protocol"]
+        if "end_protocol" in prot_data:
+            prot.end_protocol = prot_data["end_protocol"]
+        if "live_variable_update" in prot_data:
+            prot.live_variable_update = prot_data["live_variable_update"]
+        if "allow_live_comments" in prot_data:
+            prot.allow_live_comments = prot_data["allow_live_comments"]
+        if "flyer_data" in prot_data:
+            prot.flyer_data = prot_data["flyer_data"]
         if "channel_aliases" in prot_data:
             prot.channel_aliases = prot_data["channel_aliases"]
         if "instrument_aliases" in prot_data:
@@ -612,7 +638,6 @@ def load_devices_dict(string_dict, devices_dict):
     local_packages = load_local_packages()
 
     path = f"{os.path.dirname(os.path.dirname(__file__))}/manual_controls/set_panel"
-    print(path)
     sys.path.append(path)
     for key in string_dict:
         dev_data = string_dict[key]
@@ -657,7 +682,7 @@ def load_devices_dict(string_dict, devices_dict):
         devices_dict.update({key: dev})
 
 
-def get_most_recent_presets():
+def get_most_recent_presets(return_all=False):
     """Goes through all files in the `preset_path` and returns the newest preset.
 
     Returns
@@ -671,13 +696,18 @@ def get_most_recent_presets():
     for name in listdir(preset_path):
         if name.endswith(".preset"):
             presets.append(name)
+    if preset_path is None:
+        return None if not return_all else [None]
     if presets:
-        preset = sorted(
-            presets, key=lambda x: os.path.getmtime(os.path.join(preset_path, x))
-        )[-1][:-7]
+        presets = [
+            x[:-7]
+            for x in sorted(
+                presets, key=lambda x: os.path.getmtime(os.path.join(preset_path, x))
+            )
+        ]
     else:
-        preset = None
-    return preset
+        return None if not return_all else [None]
+    return presets[-1] if not return_all else presets
 
 
 def get_preferences():

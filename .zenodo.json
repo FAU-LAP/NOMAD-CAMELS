@@ -1,0 +1,78 @@
+{
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "LGPL-2.1",
+  "creators": [
+    {
+      "affiliation": "Lehrstuhl f\u00fcr Angewandte Physik, Department Physik, Friedrich-Alexander-Universit\u00e4t Erlangen-N\u00fcrnberg",
+      "name": "Fuchs, Alexander D.",
+      "orcid": "0000-0003-1896-9242"
+    },
+    {
+      "affiliation": "Lehrstuhl f\u00fcr Angewandte Physik, Department Physik, Friedrich-Alexander-Universit\u00e4t Erlangen-N\u00fcrnberg",
+      "name": "Lehmeyer, Johannes A. F.",
+      "orcid": "0000-0003-2041-9987"
+    },
+    {
+      "affiliation": "Fritz Haber Institute of the Max Planck Society",
+      "orcid": "0000-0002-0218-4873",
+      "name": "Junkes, Heinz"
+    },
+    {
+      "affiliation": "Lehrstuhl f\u00fcr Angewandte Physik, Department Physik, Friedrich-Alexander-Universit\u00e4t Erlangen-N\u00fcrnberg",
+      "orcid": "0000-0002-6403-9022",
+      "name": "Weber, Heiko B."
+    },
+    {
+      "affiliation": "Lehrstuhl f\u00fcr Angewandte Physik, Department Physik, Friedrich-Alexander-Universit\u00e4t Erlangen-N\u00fcrnberg",
+      "orcid": "0000-0003-1480-9161",
+      "name": "Krieger, Michael"
+    }
+  ],
+  "contributors": [
+    {
+      "affiliation": "Lehrstuhl f\u00fcr Angewandte Physik, Department Physik, Friedrich-Alexander-Universit\u00e4t Erlangen-N\u00fcrnberg",
+      "name": "Fuchs, Alexander D.",
+      "orcid": "0000-0003-1896-9242",
+      "type": "Researcher"
+    },
+    {
+      "affiliation": "Lehrstuhl f\u00fcr Angewandte Physik, Department Physik, Friedrich-Alexander-Universit\u00e4t Erlangen-N\u00fcrnberg",
+      "name": "Lehmeyer, Johannes A. F.",
+      "orcid": "0000-0003-2041-9987",
+      "type": "Researcher"
+    },
+    {
+      "affiliation": "Fritz Haber Institute of the Max Planck Society",
+      "orcid": "0000-0002-0218-4873",
+      "name": "Junkes, Heinz",
+      "type": "ProjectLeader"      
+    },
+    {
+      "affiliation": "Lehrstuhl f\u00fcr Angewandte Physik, Department Physik, Friedrich-Alexander-Universit\u00e4t Erlangen-N\u00fcrnberg",
+      "orcid": "0000-0002-6403-9022",
+      "name": "Weber, Heiko B.",
+      "type": "ProjectLeader"      
+    },
+    {
+      "affiliation": "Lehrstuhl f\u00fcr Angewandte Physik, Department Physik, Friedrich-Alexander-Universit\u00e4t Erlangen-N\u00fcrnberg",
+      "orcid": "0000-0003-1480-9161",
+      "name": "Krieger, Michael",
+      "type": "ProjectLeader"      
+    }
+  ],
+  "description": "<p>NOMAD CAMELS (short: CAMELS) is a configurable, open-source measurement software that records fully self-describing experimental data. It has its origins in the field of experimental physics where a wide variety of measurement instruments are used in frequently changing experimental setups and measurement protocols. CAMELS provides a graphical user interface (GUI) which allows the user to configure experiments without the need of programming skills or deep understanding of instrument communication. CAMELS translates user-defined measurement protocols into stand-alone executable Python code for full transparency of the actual measurement sequences. Existing large-scale, distributed control systems using e.g. EPICS can be natively implemented. CAMELS is designed with focus on full recording of data and metadata. When shared with others, data produced with CAMELS allow full understanding of the measurement and the resulting data in accordance with the FAIR (Findable, Accessible, Interoperable and Re-usable) principles.</p>",
+  "related_identifiers": [
+    {
+      "identifier": "10.21105/joss.06371",
+      "relation": "isDocumentedBy",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    }
+  ],
+  "title": "NOMAD CAMELS: Configurable Application for Measurements, Experiments and Laboratory Systems",
+  "notes": "If you use this software, please cite our article in the Journal of Open Source Software (doi: 10.21105/joss.06371).",
+  "communities": [{"identifier": "fairmat_nfdi"}],
+  "language": "eng",
+  "keywords": ["measurement", "automation", "solid-state physics", "experiment", "python", "FAIR data"]
+}

@@ -1,4 +1,4 @@
-from traceback import format_tb, print_tb
+from traceback import format_tb, print_tb, format_exception
 from PySide6.QtWidgets import QMessageBox, QTextEdit, QPushButton, QVBoxLayout
 from PySide6.QtCore import QUrl
 
@@ -32,10 +32,11 @@ class ErrorMessage(QMessageBox):
 
     def __init__(self, exc_info, parent=None):
         tb = format_tb(exc_info[2])
+        formatted_exc = "".join(format_exception(exc_info[0], exc_info[1], exc_info[2]))
         print_tb(exc_info[2])
         msg = str(exc_info[0].__name__)
         info_text = str(exc_info[1])
-        logging.exception(f"{exc_info[1]} - {tb}")
+        logging.exception(formatted_exc)
         print(msg)
         print(info_text)
         super().__init__(parent)

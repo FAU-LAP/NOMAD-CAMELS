@@ -24,10 +24,12 @@ import sys
 from PySide6.QtWidgets import QWidget, QApplication
 from PySide6.QtCore import QCoreApplication
 
+
 app = QCoreApplication.instance()
 if app is None:
     app = QApplication(sys.argv)
 screens = app.screens()
+
 
 current_screen = 0
 current_pos = [0, 0]
@@ -39,7 +41,7 @@ vertical_margin = 5
 
 
 def reset_variables():
-    global current_screen, current_pos, max_height_in_row, iteration, screens
+    global current_screen, current_pos, max_height_in_row, iteration, screens, app
     screens = app.screens()
     current_screen = 0
     current_pos = [0, 0]
@@ -48,7 +50,13 @@ def reset_variables():
     screen_geometry = screens[current_screen].availableGeometry()
 
 
-def place_widget(widget: QWidget):
+def place_widget(
+    widget: QWidget,
+    top_left_x: str = "",
+    top_left_y: str = "",
+    plot_width: str = "",
+    plot_height: str = "",
+):
     """
     This function places the given `widget` on the next free spot on the screen.
     First all widgets are placed next to each other in a row, until one would be
@@ -62,15 +70,34 @@ def place_widget(widget: QWidget):
     widget : QWidget
         the widget that should be placed
     """
-    global max_height_in_row, current_screen, current_pos, iteration, screens
+    global max_height_in_row, current_screen, current_pos, iteration, screens, app
     widget.show()
-    c = current_pos
-    # print(c, current_screen)
+
+    # If specific coordinates and dimensions are provided, use them
+    if plot_width not in (None, "") and plot_height not in (None, ""):
+        widget.setMinimumSize(0, 0)
+        if hasattr(widget, "plot_widget"):
+            widget.plot_widget.setMinimumSize(0, 0)
+        widget.resize(int(plot_width), int(plot_height))
+    if (
+        top_left_x is not None
+        and top_left_y is not None
+        and top_left_x != ""
+        and top_left_y != ""
+    ):
+        # Get current screen geometry for offsets
+        screen_geometry = screens[current_screen].availableGeometry()
+        widget.move(
+            int(top_left_x) + screen_geometry.x(), int(top_left_y) + screen_geometry.y()
+        )
+        return
+
     s = widget.size()
     try:
         screen_geometry = screens[current_screen].availableGeometry()
     except:
         reset_variables()
+        screen_geometry = screens[current_screen].availableGeometry()
     if current_pos[0] + s.width() > screen_geometry.width():
         current_pos[1] += max_height_in_row + horizontal_margin
         current_pos[0] = 0
@@ -81,12 +108,10 @@ def place_widget(widget: QWidget):
             if current_screen >= len(screens):
                 current_screen = 0
                 iteration += 1
-            screen_geometry = screens[current_screen].availableGeometry()
             current_pos[1] += 5 * iteration * vertical_margin
     widget.move(
         current_pos[0] + screen_geometry.x(), current_pos[1] + screen_geometry.y()
     )
-    # print(current_pos[0] + screen_geometry.x(), current_pos[1] + screen_geometry.y())
     current_pos[0] += s.width() + vertical_margin
     max_height_in_row = (
         s.height() if s.height() > max_height_in_row else max_height_in_row

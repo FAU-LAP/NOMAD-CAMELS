@@ -6,6 +6,7 @@ import lmfit
 from collections import deque
 
 import matplotlib
+import requests
 
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
@@ -39,6 +40,7 @@ from nomad_camels.utility.plot_placement import place_widget
 from importlib import resources
 from nomad_camels import graphics
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
+import logging
 
 stdCols = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 
@@ -409,10 +411,14 @@ class LiveFit_Eva(LiveFit):
         name="",
         params=None,
         stream_name="primary",
+        show_in_browser=False,
+        web_port=None,
     ):
         super().__init__(
             model=model, y=y, independent_vars=independent_vars, init_guess=init_guess
         )
+        self.web_port = web_port
+        self.show_in_browser = show_in_browser
         self.eva = evaluator
         self.name = f"{name}_{stream_name}"
         self.params = params
@@ -462,7 +468,7 @@ class LiveFit_Eva(LiveFit):
                 else:
                     if not self.eva.is_to_date(doc["time"]):
                         self.eva.event(doc)
-                    new_x = self.eva.eval(v)
+                    new_x = self.eva.eval(v, do_not_reraise=True)
             idv[k] = new_x
 
         try:
@@ -470,7 +476,7 @@ class LiveFit_Eva(LiveFit):
         except KeyError:
             if not self.eva.is_to_date(doc["time"]):
                 self.eva.event(doc)
-            y = self.eva.eval(self.y)
+            y = self.eva.eval(self.y, do_not_reraise=True)
         # Always stash the data for the next time the fit is updated.
         self.update_caches(y, idv)
         self.timestamp = doc["time"]
@@ -513,12 +519,28 @@ class LiveFit_Eva(LiveFit):
             else:
                 self.result = self.model.fit(self.ydata, **kwargs)
         except Exception as e:
-            print(f"Error in fit {self.name}: {e}")
+            logging.warning(f"Error in fit {self.name}: {e}")
             return None
         self.results[f"{self.timestamp}"] = self.result
         for d in self.additional_data:
             self.additional_data[d].append(self.eva.eval(d))
         self.__stale = False
+        if self.show_in_browser:
+            try:
+                request = requests.post(
+                    f"http://127.0.0.1:{self.web_port}/fit_result",
+                    json={
+                        "best_fit": self.result.best_fit.tolist(),
+                        "name": self.name,
+                        "fit_params": self.result.best_values,
+                        "model_name": self.model.name,
+                        "y_axis_name": self.y,
+                    },
+                )
+                if request.status_code != 200:
+                    logging.warning(f"Error: {request.status_code}")
+            except requests.exceptions.ConnectionError:
+                logging.warning("ConnectionError. Failed to send fit result to browser.")
         # self.ophyd_fit.update_data(self.result, self.timestamp)
         self.parent_plot.fit_has_result()
 
@@ -1238,7 +1260,7 @@ class MultiLivePlot(LivePlot, QObject):
                         [], [], label=self.legend_keys[i], color=stdCols[i], **kwargs
                     )
             except Exception as e:
-                print(e)
+                logging.warning(e)
         self.lines.append(self.current_lines)
         legend = self.ax.legend(loc=0)
         try:
@@ -1386,18 +1408,18 @@ class MultiLivePlot(LivePlot, QObject):
 
         """
         if not self.x_data:
-            print(
+            logging.warning(
                 "MultiLivePlot did not get any data that corresponds to the "
                 "x axis. {}".format(self.x)
             )
         for y in self.y_data:
             if not self.y_data[y]:
-                print(
+                logging.warning(
                     "MultiLivePlot did not get any data that corresponds to the "
                     "y axis. {}".format(y)
                 )
             if len(self.y_data[y]) != len(self.x_data):
-                print(
+                logging.warning(
                     "MultiLivePlot has a different number of elements for x ({}) and"
                     "y ({}, {})".format(len(self.x_data), len(self.y_data), y)
                 )
@@ -1588,7 +1610,7 @@ class MultiPlot_NoBluesky(QObject):
                     else:
                         self.ydata[y] = []
                 except Exception as e:
-                    print(e)
+                    logging.warning(e)
             self.setup_done.emit()
         if add:
             self.xdata.append(x)
@@ -1643,24 +1665,3 @@ class MultiPlot_NoBluesky(QObject):
         self.xdata.clear()
         for y in self.ydata:
             self.ydata[y].clear()
-
-
-# if __name__ == '__main__':
-#     from bluesky import RunEngine
-#     from bluesky.plans import scan
-#     from ophyd.sim import motor, det
-#
-#     motor.delay = 0.1
-#
-#     def plan():
-#         for i in range(4, 5):
-#             yield from scan([det], motor, -5, 5, 3**i)
-#
-#     RE = RunEngine()
-#     app = QApplication(sys.argv)
-#     # myapp = PlotWidget(run_engine=RE, x_name='motor', y_names=['det'], title='test', xlabel='aaaa', ylabel='bbbb')
-#     myapp = PlotWidget('motor', ['det', 'det**2', 'sin(motor)'])
-#     myapp.show()
-#     RE.subscribe(myapp.livePlot)
-#     RE(plan())
-#     sys.exit(app.exec())

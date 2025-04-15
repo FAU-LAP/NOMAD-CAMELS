@@ -6,6 +6,8 @@ from PySide6.QtCore import QThread
 
 import importlib
 
+from nomad_camels.utility import variables_handling
+
 
 # class Run_Protocol(QThread):
 #     """
@@ -313,17 +315,19 @@ class Additional_Imports_Thread(QThread):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.imports = []
+        self.catalog = None
+        self.catalog_temporary = False
 
     def run(self) -> None:
         """ """
-        from bluesky import RunEngine
+        from bluesky_handling.run_engine_overwrite import RunEngineOverwrite
         from bluesky.callbacks.best_effort import BestEffortCallback
         import databroker
         from nomad_camels.frontpanels.manage_instruments import ManageInstruments
         from nomad_camels.nomad_integration import nomad_communication
         import pandas as pd
         from nomad_camels.ui_widgets import add_remove_table
-        from nomad_camels.nomad_integration import sample_selection
+        from nomad_camels.nomad_integration import entry_selection
         from nomad_camels.bluesky_handling import make_catalog
         import warnings
         from nomad_camels.frontpanels.settings_window import Settings_Window
@@ -344,14 +348,14 @@ class Additional_Imports_Thread(QThread):
         from nomad_camels.tools import databroker_exporter
         from nomad_camels.bluesky_handling import helper_functions
 
-        self.imports.append(RunEngine)
+        self.imports.append(RunEngineOverwrite)
         self.imports.append(BestEffortCallback)
         self.imports.append(databroker)
         self.imports.append(ManageInstruments)
         self.imports.append(nomad_communication)
         self.imports.append(pd)
         self.imports.append(add_remove_table)
-        self.imports.append(sample_selection)
+        self.imports.append(entry_selection)
         self.imports.append(make_catalog)
         self.imports.append(warnings)
         self.imports.append(Settings_Window)
@@ -371,3 +375,14 @@ class Additional_Imports_Thread(QThread):
         self.imports.append(EPICS_driver_builder)
         self.imports.append(databroker_exporter)
         self.imports.append(helper_functions)
+
+        try:
+            self.catalog = databroker.catalog[
+                variables_handling.preferences["databroker_catalog_name"]
+            ]
+        except KeyError:
+            import logging
+
+            logging.warning("Could not find databroker catalog, using temporary")
+            self.catalog = databroker.temp().v2
+            self.catalog_temporary = True

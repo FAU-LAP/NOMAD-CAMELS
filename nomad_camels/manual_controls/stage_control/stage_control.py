@@ -188,6 +188,9 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.move_thread = None
         self.start_multiple_devices(channels, True)
 
+        for child in self.findChildren(QWidget):
+            child.installEventFilter(self)
+
     def device_ready(self):
         """
         Overwrites the `device_ready` method from the `Manual_Control` class. This method is called when the device is ready. It sets the channels, read channels, reference functions, stop functions, and manual functions from the instantiated devices. It also starts the readback thread and the move thread.
@@ -212,21 +215,41 @@ class Stage_Control(Manual_Control, Ui_Form):
             if channel is not None:
                 read_not_none = True
                 break
+        if read_not_none:
+            self.start_read_thread()
+        else:
+            self.lineEdit_read_frequ.setEnabled(False)
+        self.start_move_thread()
+        for child in self.children():
+            if isinstance(child, QWidget):
+                child.setFocusPolicy(Qt.ClickFocus)
+        self.setFocusPolicy(Qt.ClickFocus)
+        self.show()
+        for i, auto in enumerate(self.control_data["auto_reference"]):
+            self.checks[i].setChecked(auto)
+        self.reference_drive()
+        for i, auto in enumerate(self.control_data["auto_reference"]):
+            self.checks[i].setChecked(True)
+
+    def start_move_thread(self):
+        read_not_none = False
+        for channel in self.read_channels:
+            if channel is not None:
+                read_not_none = True
+                break
         positions = [np.nan, np.nan, np.nan]
         if read_not_none:
+            for i in range(3):
+                if hasattr(self.read_channels[i], "trigger"):
+                    try:
+                        self.read_channels[i].trigger()
+                    except:
+                        pass
             for i in range(3):
                 try:
                     positions[i] = self.read_channels[i].get()
                 except:
                     pass
-            self.read_thread = Readback_Thread(
-                self, self.read_channels, self.control_data["read_frequ"]
-            )
-            self.read_thread.data_sig.connect(self.update_readback)
-            self.read_thread.start()
-        else:
-            self.lineEdit_read_frequ.setEnabled(False)
-
         manual_X = self.control_data["manual_X"]
         manual_Y = self.control_data["manual_Y"]
         manual_Z = self.control_data["manual_Z"]
@@ -239,17 +262,49 @@ class Stage_Control(Manual_Control, Ui_Form):
             stop_functions=self.stop_funcs,
             starting_positions=positions,
         )
+        self.move_thread.exception_signal.connect(
+            lambda ex, name="move": self.exception_caught(ex, name)
+        )
         self.move_thread.start()
-        for child in self.children():
-            if isinstance(child, QWidget):
-                child.setFocusPolicy(Qt.ClickFocus)
-        self.setFocusPolicy(Qt.ClickFocus)
-        self.show()
-        for i, auto in enumerate(self.control_data["auto_reference"]):
-            self.checks[i].setChecked(auto)
-        self.reference_drive()
-        for i, auto in enumerate(self.control_data["auto_reference"]):
-            self.checks[i].setChecked(True)
+
+    def start_read_thread(self):
+        self.read_thread = Readback_Thread(
+            self, self.read_channels, self.control_data["read_frequ"]
+        )
+        self.read_thread.data_sig.connect(self.update_readback)
+        self.read_thread.exception_signal.connect(
+            lambda ex, name="read": self.exception_caught(ex, name)
+        )
+        self.read_thread.start()
+
+    def exception_caught(self, ex, name):
+        """
+        Handles exceptions caught by the readback or move threads.
+
+        Parameters
+        ----------
+        ex : Exception
+            The exception that was caught.
+
+        name : str
+            The name of the thread that caught the exception.
+        """
+        from PySide6.QtWidgets import QMessageBox
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setText(f"Error in {name} thread")
+        msg.setInformativeText(
+            f"An error occured in the {name} thread of {self.name}:\n{ex}\nDo you want to restart the read thread?"
+        )
+        msg.setWindowTitle(f"Error in {name} thread")
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg.setDefaultButton(QMessageBox.Yes)
+        if msg.exec() == QMessageBox.Yes:
+            if name == "read":
+                self.start_read_thread()
+            elif name == "move":
+                self.start_move_thread()
 
     def line_change(self):
         """
@@ -311,8 +366,10 @@ class Stage_Control(Manual_Control, Ui_Form):
         ----------
         a0 : QCloseEvent
         """
-        self.read_thread.still_running = False
-        self.move_thread.still_running = False
+        if self.read_thread:
+            self.read_thread.still_running = False
+        if self.move_thread:
+            self.move_thread.still_running = False
         return super().closeEvent(a0)
 
     def step_axis(self, axis, up=True):
@@ -329,15 +386,24 @@ class Stage_Control(Manual_Control, Ui_Form):
         -------
 
         """
+        if self.read_thread:
+            self.read_thread.paused = True
         ax_names = ["X", "Y", "Z"]
         step_size = self.control_data[f"stepSize_{ax_names[axis]}"]
         if not up:
             step_size *= -1
-        if self.read_channels[axis] is not None:
-            before = self.read_channels[axis].get()
-        else:
-            before = self.set_channels[axis].get()
-        self.set_channels[axis].put(before + step_size)
+        move_to = [np.nan] * 3
+        for i in range(3):
+            if self.read_channels[i] is not None:
+                if hasattr(self.read_channels[i], "trigger"):
+                    self.read_channels[i].trigger()
+                move_to[i] = self.read_channels[i].get()
+            elif self.set_channels[i] is not None:
+                move_to[i] = self.set_channels[i].get()
+        if self.read_thread:
+            self.read_thread.paused = False
+        move_to[axis] = move_to[axis] + step_size
+        self.move_thread.set_absolute = move_to + [True]
 
     def reference_drive(self):
         """ """
@@ -365,9 +431,29 @@ class Stage_Control(Manual_Control, Ui_Form):
     def move_to_position(self):
         """ """
         axes = ["X", "Y", "Z"]
+        positions = [np.nan, np.nan, np.nan]
         for i in range(3):
             if self.set_channels[i]:
-                self.set_channels[i].put(self.control_data[f"go_to_{axes[i]}"])
+                positions[i] = self.control_data[f"go_to_{axes[i]}"]
+        self.move_thread.set_absolute = positions + [True]
+
+    def eventFilter(self, obj, event):
+        if (
+            isinstance(event, QKeyEvent)
+            and event.modifiers() == Qt.ControlModifier
+            and event.key()
+            in [
+                Qt.Key_Left,
+                Qt.Key_Right,
+                Qt.Key_Up,
+                Qt.Key_Down,
+                Qt.Key_PageUp,
+                Qt.Key_PageDown,
+            ]
+        ):
+            self.keyPressEvent(event)
+            return True
+        return super().eventFilter(obj, event)
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
         """
@@ -448,6 +534,8 @@ class Stage_Control(Manual_Control, Ui_Form):
 class Move_Thread(QThread):
     """ """
 
+    exception_signal = Signal(Exception)
+
     def __init__(
         self,
         parent=None,
@@ -468,26 +556,40 @@ class Move_Thread(QThread):
         self.up_dir = [True, True, True]
         self.last_set = starting_positions or [np.nan, np.nan, np.nan]
         self.moving_started = [False, False, False]
+        self.set_absolute = [np.nan, np.nan, np.nan, False]
+        self.last_absolute = [np.nan, np.nan, np.nan, False]
 
     def run(self) -> None:
         """ """
-        while self.still_running:
-            move = False
-            for i, mover in enumerate(self.movers):
-                if mover:
-                    move = True
-                    if np.isnan(self.move_starts[i]):
-                        self.move_starts[i] = time.time()
-                        self.last_set[i] = self.channels[i].get()
-                    self.move(i)
-                else:
-                    if not np.isnan(self.move_starts[i]):
-                        self.move_starts[i] = np.nan
-                        if self.stop_functions and self.stop_functions[i]:
-                            self.stop_functions[i]()
-                        self.moving_started[i] = False
-            if not move:
-                time.sleep(0.1)
+        try:
+            while self.still_running:
+                move = False
+                for i, mover in enumerate(self.movers):
+                    if mover:
+                        move = True
+                        if np.isnan(self.move_starts[i]):
+                            self.move_starts[i] = time.time()
+                            self.last_set[i] = self.channels[i].get()
+                        self.move(i)
+                    else:
+                        if not np.isnan(self.move_starts[i]):
+                            self.move_starts[i] = np.nan
+                            if self.stop_functions and self.stop_functions[i]:
+                                self.stop_functions[i]()
+                            self.moving_started[i] = False
+                if self.set_absolute != self.last_absolute:
+                    for i, val in enumerate(self.set_absolute):
+                        if i == 3:
+                            self.set_absolute[i] = False
+                            continue
+                        if not np.isnan(val):
+                            self.channels[i].put(val)
+                            self.last_absolute[i] = val
+                    continue
+                if not move:
+                    time.sleep(0.1)
+        except Exception as e:
+            self.exception_signal.emit(e)
 
     def move(self, ax):
         """
@@ -523,32 +625,43 @@ class Readback_Thread(QThread):
     """ """
 
     data_sig = Signal(float, float, float)
+    exception_signal = Signal(Exception)
 
     def __init__(self, parent=None, channels=None, read_time=np.inf):
         super().__init__(parent=parent)
         self.channels = channels or []
         self.read_time = read_time
         self.still_running = True
+        self.paused = False
 
     def run(self):
         """ """
-        accum = 0
-        while self.still_running:
-            self.do_reading()
-            if self.read_time > 5:
-                if self.read_time - accum > 5:
-                    time.sleep(5)
-                    accum += 5
+        try:
+            accum = 0
+            while self.still_running:
+                if self.paused:
+                    time.sleep(self.read_time)
                     continue
+                self.do_reading()
+                if self.read_time > 5:
+                    if self.read_time - accum > 5:
+                        time.sleep(5)
+                        accum += 5
+                        continue
+                    else:
+                        time.sleep(self.read_time - accum)
+                        accum = 0
                 else:
-                    time.sleep(self.read_time - accum)
-                    accum = 0
-            else:
-                time.sleep(self.read_time)
+                    time.sleep(self.read_time)
+        except Exception as e:
+            self.exception_signal.emit(e)
 
     def do_reading(self):
         """ """
         vals = []
+        for channel in self.channels:
+            if channel and hasattr(channel, "trigger"):
+                channel.trigger()
         for channel in self.channels:
             if channel:
                 vals.append(channel.get())

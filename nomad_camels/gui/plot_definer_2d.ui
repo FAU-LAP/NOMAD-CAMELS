@@ -7,24 +7,53 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>222</height>
+    <height>275</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_5">
+   <item row="9" column="0">
+    <widget class="QLabel" name="label_top_left_x">
+     <property name="toolTip">
+      <string>Set the exact x coordinate of the top left corner of the plot window in pixels (min 0)</string>
+     </property>
+     <property name="text">
+      <string>Top Left X</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QLabel" name="label_9">
      <property name="font">
       <font>
        <pointsize>9</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>x-axis:</string>
+      <string>x-label:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="3">
+    <widget class="QLineEdit" name="lineEdit_plot_height">
+     <property name="toolTip">
+      <string>Minimum is 126 pixels</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QLabel" name="label_10">
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>z-label:</string>
      </property>
     </widget>
    </item>
@@ -33,7 +62,6 @@
      <property name="font">
       <font>
        <pointsize>9</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -42,12 +70,90 @@
      </property>
     </widget>
    </item>
+   <item row="4" column="3">
+    <widget class="QLineEdit" name="lineEdit_zlabel"/>
+   </item>
+   <item row="9" column="1">
+    <widget class="QLineEdit" name="lineEdit_top_left_x">
+     <property name="toolTip">
+      <string>Minimum is 0 pixels</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QCheckBox" name="checkBox_manual_plot_position_2d">
+     <property name="toolTip">
+      <string>Check this to set the manual x&amp;y coordinates and the size of the plot window.</string>
+     </property>
+     <property name="text">
+      <string>Manual plot position</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="2">
+    <widget class="QLabel" name="label_plot_width">
+     <property name="toolTip">
+      <string>Set the width of the plot window in pixels (min 430)</string>
+     </property>
+     <property name="text">
+      <string>Plot Width</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QSpinBox" name="spinBox_port">
+     <property name="buttonSymbols">
+      <enum>QAbstractSpinBox::NoButtons</enum>
+     </property>
+     <property name="maximum">
+      <number>65536</number>
+     </property>
+     <property name="value">
+      <number>8050</number>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLabel" name="label_8">
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>y-label:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="2">
+    <widget class="QLabel" name="label_plot_height">
+     <property name="toolTip">
+      <string>Set the height of the plot window in pixels (min 126)</string>
+     </property>
+     <property name="text">
+      <string>Plot Height</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_11">
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>title:</string>
+     </property>
+    </widget>
+   </item>
    <item row="4" column="0">
     <widget class="QLabel" name="label_7">
      <property name="font">
       <font>
        <pointsize>9</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -59,30 +165,14 @@
    <item row="2" column="1">
     <widget class="Variable_Box" name="lineEdit_x_axis"/>
    </item>
-   <item row="3" column="1">
-    <widget class="Variable_Box" name="lineEdit_y_axis"/>
-   </item>
-   <item row="4" column="1">
-    <widget class="Variable_Box" name="lineEdit_z_axis"/>
-   </item>
-   <item row="2" column="3">
-    <widget class="QLineEdit" name="lineEdit_xlabel"/>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_11">
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>title:</string>
+   <item row="9" column="3">
+    <widget class="QLineEdit" name="lineEdit_plot_width">
+     <property name="toolTip">
+      <string>Minimum is 430 pixels</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="13" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -95,69 +185,99 @@
      </property>
     </spacer>
    </item>
-   <item row="4" column="2">
-    <widget class="QLabel" name="label_10">
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_5">
      <property name="font">
       <font>
        <pointsize>9</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>z-label:</string>
+      <string>x-axis:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="3">
-    <widget class="QLineEdit" name="lineEdit_zlabel"/>
+   <item row="10" column="0">
+    <widget class="QLabel" name="label_top_left_y">
+     <property name="toolTip">
+      <string>Set the exact y coordinate of the top left corner of the plot window in pixels (min 0)</string>
+     </property>
+     <property name="text">
+      <string>Top Left Y</string>
+     </property>
+    </widget>
    </item>
-   <item row="3" column="2">
-    <widget class="QLabel" name="label_8">
+   <item row="5" column="2" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_n_data_points">
+     <property name="text">
+      <string>inf</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="Variable_Box" name="lineEdit_y_axis"/>
+   </item>
+   <item row="4" column="1">
+    <widget class="Variable_Box" name="lineEdit_z_axis"/>
+   </item>
+   <item row="11" column="0">
+    <widget class="QCheckBox" name="checkBox_show_in_browser">
+     <property name="toolTip">
+      <string>Check this to make the plot available via the browser.
+This will significantly increase the protocol startup time!
+Reachable under 127.0.0.1:Port</string>
+     </property>
+     <property name="text">
+      <string>Show plot in browser</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_title"/>
+   </item>
+   <item row="2" column="3">
+    <widget class="QLineEdit" name="lineEdit_xlabel"/>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <widget class="QLabel" name="label_12">
      <property name="font">
       <font>
        <pointsize>9</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>y-label:</string>
+      <string># data points:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="4">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <widget class="QLineEdit" name="lineEdit_top_left_y">
+     <property name="toolTip">
+      <string>Minimum is 0 pixels</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0">
+    <widget class="QLabel" name="label_port">
+     <property name="toolTip">
+      <string>Port of the localhost to display the plot. </string>
+     </property>
+     <property name="text">
+      <string>Port</string>
      </property>
     </widget>
    </item>
    <item row="3" column="3">
     <widget class="QLineEdit" name="lineEdit_ylabel"/>
-   </item>
-   <item row="0" column="1" colspan="3">
-    <widget class="QLineEdit" name="lineEdit_title"/>
-   </item>
-   <item row="2" column="2">
-    <widget class="QLabel" name="label_9">
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>x-label:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
@@ -176,6 +296,11 @@
   <tabstop>lineEdit_xlabel</tabstop>
   <tabstop>lineEdit_ylabel</tabstop>
   <tabstop>lineEdit_zlabel</tabstop>
+  <tabstop>lineEdit_n_data_points</tabstop>
+  <tabstop>lineEdit_top_left_x</tabstop>
+  <tabstop>lineEdit_top_left_y</tabstop>
+  <tabstop>lineEdit_plot_width</tabstop>
+  <tabstop>lineEdit_plot_height</tabstop>
  </tabstops>
  <resources/>
  <connections/>

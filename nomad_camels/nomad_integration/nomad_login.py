@@ -1,4 +1,5 @@
 import os
+import platform, subprocess
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -50,7 +51,7 @@ class LoginDialog(QDialog):
         self.label_logo.setAlignment(Qt.AlignCenter)
 
         self.label_info_oasis = QLabel(
-            "Hint: You can set the URL for the Oasis also in the settings of CAMELS.\nCurrently we only support direct login for NOMAD Oasis via username/password.\nIf you use Single-Sing-On for your Oasis, you need to use NOMAD's app token."
+            "Hint: You can set the URL for the Oasis also in the settings of CAMELS."
         )
         self.label_auth_type = QLabel("Authentication type:")
         self.comboBox_auth_type = QComboBox()
@@ -78,7 +79,7 @@ class LoginDialog(QDialog):
         self.button_box.rejected.connect(self.reject)
 
         layout = QGridLayout()
-        layout.addWidget(self.comboBox_nomad_choice, 10, 0, 1, 2)
+        layout.addWidget(self.comboBox_nomad_choice, 0, 0, 1, 2)
         layout.addWidget(self.label_oasis_url, 11, 0)
         layout.addWidget(self.lineEdit_oasis_url, 11, 1)
         layout.addWidget(self.label_logo, 12, 0)
@@ -86,9 +87,9 @@ class LoginDialog(QDialog):
 
         layout.addWidget(self.label_info_oasis, 15, 0, 1, 2)
 
-        layout.addWidget(info_label, 0, 0, 1, 2)
-        layout.addWidget(self.label_auth_type, 1, 0)
-        layout.addWidget(self.comboBox_auth_type, 1, 1)
+        # layout.addWidget(info_label, 0, 0, 1, 2)
+        # layout.addWidget(self.label_auth_type, 1, 0)
+        # layout.addWidget(self.comboBox_auth_type, 1, 1)
 
         layout.addWidget(self.username_label, 5, 0)
         layout.addWidget(self.username_input, 5, 1)
@@ -113,14 +114,22 @@ class LoginDialog(QDialog):
             path = self.lineEdit_oasis_url.text()
             if "/api/" in path:
                 path = path.split("/api/")[0]
+            elif path.endswith("/api"):
+                path = path.split("/api")[0]
             if "/gui/" in path:
                 path = path.split("/gui/")[0]
+            elif path.endswith("/gui"):
+                path = path.split("/gui")[0]
             if path.endswith("/"):
                 path = path[:-1]
             path = f"{path}/gui/analyze/apis"
         else:
             path = nomad_url
-        os.startfile(path)
+        if platform.system() == "Windows":
+            os.startfile(path)
+        else:
+            opener = "open" if platform.system() == "Darwin" else "xdg-open"
+            subprocess.call([opener, path])
 
     def accept(self):
         oasis = self.comboBox_nomad_choice.currentText() == "NOMAD Oasis"

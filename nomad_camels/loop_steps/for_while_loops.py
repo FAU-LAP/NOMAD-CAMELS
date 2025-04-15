@@ -57,6 +57,7 @@ class While_Loop_Step(Loop_Step_Container):
         count_var = f'{self.name.replace(" ", "_")}_Count'
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f"{tabs}{count_var} = 0\n"
+        protocol_string += f'{tabs}namespace["{count_var}"] = {count_var}\n'
         protocol_string += f'{tabs}while eva.eval("{self.condition}"):\n'
         protocol_string += f'{tabs}\tnamespace["{count_var}"] = {count_var}\n'
         protocol_string += self.get_children_strings(n_tabs + 1)
@@ -189,7 +190,7 @@ class For_Loop_Step(Loop_Step_Container):
             step_info["sweep_mode"] if "sweep_mode" in step_info else "linear"
         )
         self.n_iterations = (
-            step_info["n_iterations"] if "n_iterations" in step_info else 0
+            step_info["n_iterations"] if "n_iterations" in step_info else 1
         )
         # self.point_array = step_info['point_array'] if 'point_array' in step_info else []
         self.val_list = step_info["val_list"] if "val_list" in step_info else []
@@ -242,13 +243,13 @@ class For_Loop_Step(Loop_Step_Container):
         protocol_string += f'{tabs}for {self.name.replace(" ", "_")}_Count, {self.name.replace(" ", "_")}_Value in enumerate({enumerator}):\n'
         protocol_string += f'{tabs}\tnamespace.update({{"{self.name.replace(" ", "_")}_Count": {self.name.replace(" ", "_")}_Count, "{self.name.replace(" ", "_")}_Value": {self.name.replace(" ", "_")}_Value}})\n'
         protocol_string += self.get_children_strings(n_tabs + 1)
-        self.update_time_weight()
         return protocol_string
 
     def update_time_weight(self):
         """Multiplies the children time_weight (-1 for the step itself) by the
         number of iterations and adds 1 (for the step itself)."""
         super().update_time_weight()
+        self._calc_n_iterations()
         self.time_weight = (self.time_weight - 1) * self.n_iterations + 1
 
     def get_protocol_short_string(self, n_tabs=0):
@@ -272,6 +273,54 @@ class For_Loop_Step(Loop_Step_Container):
             short_string += child.get_protocol_short_string(n_tabs + 1)
         return short_string
 
+    def _calc_n_iterations(self):
+        if self.loop_type in [
+            "start - stop",
+            "start - min - max - stop",
+            "start - max - min - stop",
+        ]:
+            from nomad_camels.bluesky_handling import (
+                helper_functions,
+                evaluation_helper,
+            )
+
+            min_val = self.min_val if self.min_val != "" else np.nan
+            max_val = self.max_val if self.max_val != "" else np.nan
+            start = self.start_val if self.start_val != "" else np.nan
+            stop = self.stop_val if self.stop_val != "" else np.nan
+            points = self.n_points if self.n_points != "" else 0
+            distance = self.point_distance if self.point_distance != "" else np.nan
+            namespace = {}
+            namespace.update(variables_handling.protocol_variables)
+            namespace.update(variables_handling.loop_step_variables)
+            for channel in variables_handling.channels:
+                namespace.update({channel: 1})
+            try:
+                vals = helper_functions.get_range(
+                    evaluator=evaluation_helper.Evaluator(namespace=namespace),
+                    start=start,
+                    stop=stop,
+                    points=points,
+                    min_val=min_val,
+                    max_val=max_val,
+                    distance=distance,
+                    loop_type=self.loop_type,
+                    sweep_mode=self.sweep_mode,
+                    endpoint=self.include_end_points,
+                    use_distance=self.use_distance,
+                )
+                self.n_iterations = len(vals)
+            except (ValueError, ZeroDivisionError):
+                return
+        elif self.loop_type == "Value-List":
+            self.n_iterations = len(self.val_list)
+        else:
+            try:
+                vals = np.loadtxt(self.file_path)
+                self.n_iterations = len(vals)
+            except OSError:
+                return
+
 
 class For_Loop_Step_Config(Loop_Step_Config):
     """Configuration-Widget for the for-loop step."""
@@ -287,6 +336,7 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
 
     def __init__(self, loop_step: For_Loop_Step, parent=None):
         super().__init__(parent)
+        self.distance = np.nan
         self.setupUi(self)
         self.loop_step = loop_step
         self.load_data()

@@ -10,6 +10,8 @@ from datetime import datetime as dt
 import numpy as np
 import xarray
 
+import logging
+
 from PySide6.QtWidgets import (
     QDialog,
     QComboBox,
@@ -104,8 +106,6 @@ def broker_to_hdf5(runs, filename, additional_data=None):
             recourse_entry_dict(entry, additional_data)
             for stream in run:
                 dataset = run[stream].read()
-                # entry[stream] = dataset.to_pandas()
-                # return
                 group = entry.create_group(stream)
                 for coord in dataset.coords:
                     if coord == "time":
@@ -218,8 +218,10 @@ def broker_to_NX(
         if new_file_each_run and os.path.isfile(filename):
             filename = os.path.splitext(filename)[0] + f"_{entry_name_non_iso}.nxs"
         filename = os.path.join(
-            os.path.abspath(os.path.dirname(filename))
-            , os.path.normpath(f'{clean_filename(os.path.splitext(os.path.basename(filename))[0])}.nxs')
+            os.path.abspath(os.path.dirname(filename)),
+            os.path.normpath(
+                f"{clean_filename(os.path.splitext(os.path.basename(filename))[0])}.nxs"
+            ),
         )
         if export_to_json:
             if not os.path.isdir(filename.split(".")[0]):
@@ -301,7 +303,7 @@ def broker_to_NX(
                             sep=";",
                         )
                     except Exception as e:
-                        print(e)
+                        logging.warning(e)
                 if stream == "primary":
                     group = data_entry
                 else:
@@ -333,7 +335,7 @@ def broker_to_NX(
                                 try:
                                     group[key].attrs[k] = v
                                 except Exception as e:
-                                    print(
+                                    logging.warning(
                                         f"could not add value {v} to metadata with name {k}\n{e}"
                                     )
                 if not plot_data:
@@ -452,6 +454,10 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.tolist()
         elif isinstance(obj, np.bool_):
             return bool(obj)
+        elif isinstance(obj, bytes):
+            import base64
+
+            return base64.b64encode(obj).decode("utf-8")
         else:
             return super(NumpyEncoder, self).default(obj)
 
@@ -490,6 +496,10 @@ def export_h5_group_to_csv(group, filename):
     import pandas as pd
 
     arrs = {}
+    if os.path.isfile(filename):
+        raise FileExistsError(
+            f"File '{filename}' already exists. Please choose a different filename."
+        )
     if not os.path.isdir(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
     for k in group.keys():
@@ -518,7 +528,7 @@ def export_h5_group_to_csv(group, filename):
         try:
             df = pd.DataFrame(arrs)
         except Exception as e:
-            print(e)
+            logging.warning(e)
             return
         df.to_csv(filename, sep=",")
 

@@ -1,22 +1,20 @@
-from ophyd import Signal, SignalRO, Device
+from ophyd import Signal, SignalRO, Device, Kind
 import inspect
 import time
 
 
 class Custom_Function_Signal(Signal):
-    """Overwrites ophyd's Signal to add a simple python function that's called
-    when calling `put`, `trigger` or `get`.
+    """
+    A custom signal class that extends ophyd's Signal by allowing the user to specify
+    custom functions that are executed when putting, reading, or triggering the signal.
 
-    Attributes
-    ----------
-    put_function : callable
-        Called when the Signal's `put` method is called.
-
-    read_function : callable
-        Called when the Signal's `get` method is called.
-
-    trigger_function : callable
-        Called when the Signal's `trigger` method is called.
+    Attributes:
+        put_function (callable): Function called when the signal's put() method is invoked.
+        read_function (callable): Function called when the signal's get() method is invoked.
+        trigger_function (callable): Function called when the signal's trigger() method is invoked.
+        retry_on_error (int): Number of retry attempts in case of failure when calling custom functions.
+        error_retry_function (callable): Optional function to be called if a custom function raises an error.
+        force_sequential (bool): Flag to force sequential execution; if True, operations may wait for the parent.
     """
 
     def __init__(
@@ -39,6 +37,28 @@ class Custom_Function_Signal(Signal):
         error_retry_function=None,
         force_sequential=None,
     ):
+        """
+        Initialize a Custom_Function_Signal instance.
+
+        Args:
+            name (str): Name of the signal.
+            value (optional): Initial value of the signal. Defaults to 0.0.
+            timestamp (optional): Timestamp for the signal.
+            parent (optional): Parent device of the signal.
+            labels (optional): Labels for the signal.
+            kind (str, optional): Kind of signal (e.g., 'hinted'). Defaults to "hinted".
+            tolerance (optional): Tolerance for value changes.
+            rtolerance (optional): Relative tolerance for value changes.
+            metadata (optional): Additional metadata.
+            cl (optional): Class information for the signal.
+            attr_name (str, optional): Attribute name of the signal.
+            put_function (callable, optional): Function to be called during put().
+            read_function (callable, optional): Function to be called during get().
+            trigger_function (callable, optional): Function to be called during trigger().
+            retry_on_error (int, optional): Number of retries if custom functions fail. Defaults to 0.
+            error_retry_function (callable, optional): Function to call when an error occurs.
+            force_sequential (bool, optional): If True, operations force sequential execution with the parent.
+        """
         super().__init__(
             name=name,
             value=value,
@@ -61,18 +81,32 @@ class Custom_Function_Signal(Signal):
 
     def put(self, value, *, timestamp=None, force=False, metadata=None, **kwargs):
         """
-        Overwrites Signal's `put` to add the defined `put_function`.
-        For further information see ophyd's documentation.
+        Write a value to the signal. If a put_function is defined, it is called to process the value.
+        The function is retried upon error based on the retry_on_error setting.
+
+        This method first checks if a put_function is provided and if it needs the instance reference.
+        If the put_function's first parameter is named "_self_instance", the instance (self) is passed.
+        Otherwise, the function is executed without the instance.
+
+        Args:
+            value: The value to be written to the signal.
+            timestamp (optional): Timestamp for the put operation.
+            force (bool, optional): Force the put operation even if the value is the same. Defaults to False.
+            metadata (optional): Additional metadata for the put operation.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            None
         """
         if self.put_function:
-            # If the put_function requires the instance of the class, pass it as the first argument
-            # The instance is the signal, while the parent is the Device class
-            # For dynamically created signals often a call to self.parent is required
+            # Determine if sequential execution is forced via self.force_sequential or parent's attribute.
             parent = False
             if self.force_sequential is not None:
                 parent = self.parent if self.force_sequential else False
             elif getattr(self.parent, "force_sequential", None):
                 parent = self.parent
+
+            # Check if the put_function expects the instance as the first argument.
             if (
                 self.put_function
                 and inspect.getfullargspec(self.put_function).args
@@ -83,10 +117,7 @@ class Custom_Function_Signal(Signal):
                     self.put_function(self, value),
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
-                    # parent is required if you want to force sequential reading
-                    # parent is False if self.parent.force_sequential is False
-                    # or if self.parent does not have a force_sequential attribute
-                    parent=parent,
+                    parent=parent,  # Ensure sequential reading if required.
                 )
             else:
                 retry_function(
@@ -94,29 +125,34 @@ class Custom_Function_Signal(Signal):
                     self.retry_on_error,
                     value,
                     error_retry_function=self.error_retry_function,
-                    # parent is required if you want to force sequential reading
-                    # parent is False if self.parent.force_sequential is False
-                    # or if self.parent does not have a force_sequential attribute
-                    parent=parent,
+                    parent=parent,  # Ensure sequential reading if required.
                 )
+
+        # Call the parent class put() method after processing.
         super().put(
             value, timestamp=timestamp, force=force, metadata=metadata, **kwargs
         )
 
-    def get(self):
+    def get(self, **kwargs):
         """
-        Overwrites Signal's `get` to add the defined `read_function`.
-        For further information see ophyd's documentation.
+        Read the value from the signal. If a read_function is defined, it is used to obtain the value.
+        The function is retried upon error based on the retry_on_error setting.
+
+        This method updates the internal _readback attribute and notifies subscribers of the change.
+
+        Returns:
+            The value obtained from the parent get() method.
         """
+        old_value = self._readback
         if self.read_function:
-            # If the read_function requires the instance of the class, pass it as the first argument
-            # The instance is the signal, while the parent is the Device class
-            # For dynamically created signals often a call to self.parent is required
+            # Determine if sequential execution is forced via self.force_sequential or parent's attribute.
             parent = False
             if self.force_sequential is not None:
                 parent = self.parent if self.force_sequential else False
             elif getattr(self.parent, "force_sequential", None):
                 parent = self.parent
+
+            # Check if the read_function expects the instance as the first argument.
             if (
                 self.read_function
                 and inspect.getfullargspec(self.read_function).args
@@ -127,9 +163,6 @@ class Custom_Function_Signal(Signal):
                     self.read_function(self),
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
-                    # parent is required if you want to force sequential reading
-                    # parent is False if self.parent.force_sequential is False
-                    # or if self.parent does not have a force_sequential attribute
                     parent=parent,
                 )
             else:
@@ -137,17 +170,24 @@ class Custom_Function_Signal(Signal):
                     self.read_function,
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
-                    # parent is required if you want to force sequential reading
-                    # parent is False if self.parent.force_sequential is False
-                    # or if self.parent does not have a force_sequential attribute
                     parent=parent,
                 )
-        return super().get()
+
+        # Notify subscribers that the signal value has changed.
+        self._run_subs(
+            sub_type=self.SUB_VALUE,
+            old_value=old_value,
+            value=self._readback,
+            timestamp=time.time(),
+        )
+        return super().get(**kwargs)
 
     def trigger(self):
         """
-        Overwrites Signal's `trigger` to add the defined `trigger_function`.
-        For further information see ophyd's documentation.
+        Trigger the signal. If a trigger_function is defined, it is executed with retries upon failure.
+
+        Returns:
+            The result of the parent trigger() method.
         """
         if self.trigger_function:
             retry_function(
@@ -158,12 +198,27 @@ class Custom_Function_Signal(Signal):
         return super().trigger()
 
     def describe(self):
-        """Overwrites describe to add 'Custom Function' as 'source'."""
+        """
+        Return a description of the signal with a custom source identifier.
+
+        Returns:
+            dict: A dictionary describing the signal, with the 'source' set to "Custom Function".
+        """
         info = super().describe()
         info[self.name]["source"] = "Custom Function"
         return info
 
     def read_configuration(self):
+        """
+        Read the current configuration of the signal.
+
+        If _readback is already set, that value is used; otherwise, get() is called.
+        The returned configuration is a dictionary with the signal's name as the key and a dictionary
+        containing the value and timestamp.
+
+        Returns:
+            dict: A dictionary in the format {signal_name: {"value": value, "timestamp": timestamp}}.
+        """
         if self._readback is not None:
             value = self._readback
         else:
@@ -175,27 +230,32 @@ def retry_function(
     func, retries: int, *args, error_retry_function=None, parent=None, **kwargs
 ):
     """
-    This function attempts to execute a given function multiple times until it succeeds or the maximum number of retries is reached.
-    If a parent object is provided and it is currently reading, the function waits until the parent is no longer reading before attempting to execute the function.
+    Attempt to execute a function multiple times until it succeeds or the maximum number of retries is reached.
 
-    Parameters:
-    func (callable): The function to be executed.
-    retries (int): The maximum number of times to retry executing the function.
-    *args: Variable length argument list for the function to be executed.
-    error_retry_function (callable, optional): A function to be called when an error occurs. Defaults to None.
-    parent (object, optional): An object (the instrument class) that the function checks for a currently_reading attribute. If currently_reading is True, the function waits until it is False before executing. Defaults to None.
-    **kwargs: Arbitrary keyword arguments for the function to be executed.
+    If a parent object is provided and it is currently reading (i.e., parent.currently_reading is True),
+    the function waits until the parent is no longer reading before executing.
+
+    Args:
+        func (callable): The function to be executed.
+        retries (int): Maximum number of retries upon failure.
+        *args: Variable length argument list for the function.
+        error_retry_function (callable, optional): Function to call when an error occurs. Defaults to None.
+        parent (object, optional): An object (e.g., an instrument) that may enforce sequential access. Defaults to None.
+        **kwargs: Arbitrary keyword arguments for the function.
 
     Returns:
-    The return value of the function to be executed.
+        The result of the function call if successful.
 
     Raises:
-    Exception: If the function fails to execute after the specified number of retries, an exception is raised with details of the last exception encountered.
+        Exception: If the function fails after the specified number of retries, an exception is raised
+                   with details of the last and first encountered exceptions.
     """
     if parent:
+        # Wait until the parent is not in a reading state.
         while parent.currently_reading:
-            time.sleep(0.001)  # wait for 1 ms
+            time.sleep(0.001)  # Sleep for 1 ms before checking again.
         parent.currently_reading = True
+
     excs = []
     for i in range(retries + 1):
         try:
@@ -207,23 +267,25 @@ def retry_function(
             excs.append(e)
             if error_retry_function:
                 error_retry_function(e)
-    parent.currently_reading = False
+    if parent:
+        parent.currently_reading = False
     raise Exception(
-        f"Failed to execute function {func} after {retries} retries. Last exception: {excs[-1]}"
-    )
+        f"Failed to execute function {func} after {retries} retries.\n"
+        f"Last exception: {excs[-1]}\nFirst exception: {excs[0]}"
+    ) from excs[-1]
 
 
 class Custom_Function_SignalRO(SignalRO):
-    """Overwrites ophyd's SignalRO to add a simple python function that's called
-    when calling, `trigger` or `get`.
+    """
+    A custom read-only signal class that extends ophyd's SignalRO by allowing the user to specify
+    functions that are executed when reading or triggering the signal.
 
-    Attributes
-    ----------
-    read_function : callable
-        Called when the Signal's `get` method is called.
-
-    trigger_function : callable
-        Called when the Signal's `trigger` method is called.
+    Attributes:
+        read_function (callable): Function called when the signal's get() method is invoked.
+        trigger_function (callable): Function called when the signal's trigger() method is invoked.
+        retry_on_error (int): Number of retry attempts in case of failure when calling custom functions.
+        error_retry_function (callable): Optional function to be called if a custom function raises an error.
+        force_sequential (bool): Flag to force sequential execution; if True, operations may wait for the parent.
     """
 
     def __init__(
@@ -245,6 +307,27 @@ class Custom_Function_SignalRO(SignalRO):
         error_retry_function=None,
         force_sequential=None,
     ):
+        """
+        Initialize a Custom_Function_SignalRO instance.
+
+        Args:
+            name (str): Name of the signal.
+            value (optional): Initial value of the signal. Defaults to 0.0.
+            timestamp (optional): Timestamp for the signal.
+            parent (optional): Parent device of the signal.
+            labels (optional): Labels for the signal.
+            kind (str, optional): Kind of signal (e.g., 'hinted'). Defaults to "hinted".
+            tolerance (optional): Tolerance for value changes.
+            rtolerance (optional): Relative tolerance for value changes.
+            metadata (optional): Additional metadata.
+            cl (optional): Class information for the signal.
+            attr_name (str, optional): Attribute name of the signal.
+            read_function (callable, optional): Function to be called during get().
+            trigger_function (callable, optional): Function to be called during trigger().
+            retry_on_error (int, optional): Number of retries if custom functions fail. Defaults to 0.
+            error_retry_function (callable, optional): Function to call when an error occurs.
+            force_sequential (bool, optional): If True, operations force sequential execution with the parent.
+        """
         super().__init__(
             name=name,
             value=value,
@@ -264,20 +347,26 @@ class Custom_Function_SignalRO(SignalRO):
         self.error_retry_function = error_retry_function
         self.force_sequential = force_sequential
 
-    def get(self):
+    def get(self, **kwargs):  # kwargs might come from bluesky!
         """
-        Overwrites SignalRO's `get` to add the defined `read_function`.
-        For further information see ophyd's documentation.
+        Read the value from the read-only signal. If a read_function is defined, it is used to obtain the value.
+        The function is retried upon error based on the retry_on_error setting.
+
+        The internal _readback attribute is updated and subscribers are notified of the change.
+
+        Returns:
+            The value obtained from the parent get() method.
         """
+        old_value = self._readback
         if self.read_function:
-            # If the read_function requires the instance of the class, pass it as the first argument
-            # The instance is the signal, while the parent is the Device class
-            # For dynamically created signals often a call to self.parent is required
+            # Determine if sequential execution is enforced.
             parent = False
             if self.force_sequential is not None:
                 parent = self.parent if self.force_sequential else False
             elif getattr(self.parent, "force_sequential", None):
                 parent = self.parent
+
+            # Check if the read_function expects the instance as the first argument.
             if (
                 self.read_function
                 and inspect.getfullargspec(self.read_function).args
@@ -288,9 +377,6 @@ class Custom_Function_SignalRO(SignalRO):
                     self.read_function(self),
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
-                    # parent is required if you want to force sequential reading
-                    # parent is False if self.parent.force_sequential is False
-                    # or if self.parent does not have a force_sequential attribute
                     parent=parent,
                 )
             else:
@@ -298,17 +384,24 @@ class Custom_Function_SignalRO(SignalRO):
                     self.read_function,
                     self.retry_on_error,
                     error_retry_function=self.error_retry_function,
-                    # parent is required if you want to force sequential reading
-                    # parent is False if self.parent.force_sequential is False
-                    # or if self.parent does not have a force_sequential attribute
                     parent=parent,
                 )
-        return super().get()
+
+        # Notify subscribers about the update.
+        self._run_subs(
+            sub_type=self.SUB_VALUE,
+            old_value=old_value,
+            value=self._readback,
+            timestamp=time.time(),
+        )
+        return super().get(**kwargs)
 
     def trigger(self):
         """
-        Overwrites SignalRO's `trigger` to add the defined `trigger_function`.
-        For further information see ophyd's documentation.
+        Trigger the read-only signal. If a trigger_function is defined, it is executed with retries upon failure.
+
+        Returns:
+            The result of the parent trigger() method.
         """
         if self.trigger_function:
             retry_function(
@@ -319,13 +412,31 @@ class Custom_Function_SignalRO(SignalRO):
         return super().trigger()
 
     def describe(self):
-        """Overwrites describe to add 'Custom Function' as 'source'."""
+        """
+        Return a description of the read-only signal with a custom source identifier.
+
+        Returns:
+            dict: A dictionary describing the signal, with the 'source' set to "Custom Function".
+        """
         info = super().describe()
         info[self.name]["source"] = "Custom Function"
         return info
 
     def read_configuration(self):
-        if self._readback is not None:
+        """
+        Read the current configuration of the read-only signal.
+
+        If _readback is set and the signal is not a configuration signal with an associated read_function,
+        the existing value is used; otherwise, get() is called to obtain the value.
+        The returned configuration is a dictionary with the signal's name as the key and a dictionary
+        containing the value and timestamp.
+
+        Returns:
+            dict: A dictionary in the format {signal_name: {"value": value, "timestamp": timestamp}}.
+        """
+        if self._readback is not None and not (
+            self.kind in ["config", Kind.config] and self.read_function
+        ):
             value = self._readback
         else:
             value = self.get()
@@ -333,9 +444,23 @@ class Custom_Function_SignalRO(SignalRO):
 
 
 class Sequential_Device(Device):
+    """
+    A custom device class that supports sequential operations.
+    It provides flags to force sequential execution and to indicate whether a reading operation is in progress.
+    """
+
     def __init__(
         self, force_sequential=False, currently_reading=False, *args, **kwargs
     ):
+        """
+        Initialize a Sequential_Device instance.
+
+        Args:
+            force_sequential (bool, optional): If True, operations on this device are executed sequentially. Defaults to False.
+            currently_reading (bool, optional): Indicates if the device is currently performing a read operation. Defaults to False.
+            *args: Additional positional arguments passed to the Device base class.
+            **kwargs: Additional keyword arguments passed to the Device base class.
+        """
         super().__init__(*args, **kwargs)
         self.force_sequential = force_sequential
         self.currently_reading = currently_reading

@@ -50,7 +50,7 @@ class RunQueue(QListWidget):
     Each run can have its own variables, the values do not change the default settings for the protocol.
     """
 
-    protocol_signal = Signal(str, dict)
+    protocol_signal = Signal(str, dict, str)
 
     def __init__(self, parent=None, protocols_dict=None, variable_table=None):
         super().__init__(parent=parent)
@@ -67,7 +67,7 @@ class RunQueue(QListWidget):
         self.selectionModel().selectionChanged.connect(self.change_variable_table)
         self.last_selected = None
 
-    def add_item(self, text):
+    def add_item(self, text, api_uuid=None):
         """
         Add a new item to the run queue. The item is represented by a RunWidget, which is added to a QListWidgetItem, which is then added to the QListWidget. The item is also added to the order list, which determines the order of the runs in the queue. The name of the protocol and its variables are stored in the protocol_name_variables dictionary.
         """
@@ -96,7 +96,45 @@ class RunQueue(QListWidget):
         self.protocol_name_variables[str(item)] = [
             text,
             self.protocols_dict[text].variables,
+            api_uuid,
         ]
+
+    def check_checkbox(self, name):
+        """
+        Check the checkbox of the specified item.
+
+        Parameters
+        ----------
+        name : str
+        string of the QListWidgetItem. The item to check.
+        """
+        for item in self.order_list:
+            if name == str(item):
+                widget = self.itemWidget(item)
+                checkbox = widget.layout().itemAt(0).widget().checkbox
+                checkbox.setChecked(True)
+                checkbox.clicked.emit()
+
+    def update_variables_queue(self, name, variables, index):
+        """
+        Update the variables for a protocol in the queue.
+
+        Parameters
+        ----------
+        name : str
+            The name of the protocol.
+        variables : dict
+            The new variables for the protocol.
+        """
+        item = self.order_list[index]
+        if name == str(item):
+            pass
+        else:
+            raise ValueError(
+                "The name of the protocol does not match the name of the protocol at this index in the queue."
+            )
+        self.protocol_name_variables[str(item)][1] = variables
+        self.change_variable_table()
 
     def check_next_protocol(self):
         """
@@ -119,6 +157,12 @@ class RunQueue(QListWidget):
         # If the checkbox is checked, emit the run signal
         if checkbox.isChecked():
             self.change_variable_table()
+            if self.protocol_name_variables[str(item)][2] is not None:
+                from nomad_camels.api.api import write_protocol_result_path_to_db
+
+                write_protocol_result_path_to_db(
+                    self.protocol_name_variables[str(item)][2], "currently running"
+                )
             self.protocol_signal.emit(*self.protocol_name_variables[str(item)])
             return True
         return False
@@ -161,6 +205,19 @@ class RunQueue(QListWidget):
         # Remove the item from the QListWidget
         self.takeItem(self.row(item))
 
+    def remove_item_by_name(self, name):
+        """
+        Remove an item from the run queue by name.
+
+        Parameters
+        ----------
+        name : str
+            The name of the item to remove.
+        """
+        for item in self.order_list:
+            if name == str(item):
+                self.remove_item(item, ask=False)
+
     def update_order_list(self):
         """
         Update the order list to match the current order of items in the QListWidget
@@ -188,7 +245,12 @@ class RunQueue(QListWidget):
             self.variable_table.setHidden(True)
             return
         # Get the variables for the current item
-        name, variables = self.protocol_name_variables[str(self.last_selected)]
+        (
+            name,
+            variables,
+        ) = self.protocol_name_variables[
+            str(self.last_selected)
+        ][:2]
         self.variable_table.protocol = self.protocols_dict[name]
         for var in variables:
             self.variable_table.append_variable(var, str(variables[var]), unique=False)

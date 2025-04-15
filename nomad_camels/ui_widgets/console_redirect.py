@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QTextEdit, QWidget
 from PySide6.QtCore import Signal
+from PySide6.QtGui import QTextCursor
 from nomad_camels.utility import variables_handling
 
 import io
@@ -75,7 +76,7 @@ class TextSignalHanlder(QWidget):
 class Console_TextEdit(QTextEdit):
     """ """
 
-    def __init__(self, parent):
+    def __init__(self, parent, max_lines=10000):
         super().__init__(parent)
         use_old = not sys.executable.endswith("pythonw.exe")
         self.text_handler = TextSignalHanlder()
@@ -83,6 +84,7 @@ class Console_TextEdit(QTextEdit):
         self.text_handler.write_error_signal.connect(self.write_error)
         self.text_writer = Text_Writer(self.text_handler, use_old)
         self.error_writer = Error_Writer(self.text_handler, use_old)
+        self.max_lines = max_lines
 
     def write_error(self, text):
         self.setTextColor(variables_handling.get_color("strong_red"))
@@ -91,3 +93,20 @@ class Console_TextEdit(QTextEdit):
     def write_output(self, text):
         self.setTextColor(variables_handling.get_color("black"))
         self.append(text)
+
+    def append(self, text):
+        """Ensure the number of lines does not exceed `self.max_lines`."""
+        super().append(text)
+        document = self.document()
+        line_count = document.blockCount()
+
+        # Remove excess lines from the beginning
+        if line_count > self.max_lines:
+            cursor = QTextCursor(document)
+            cursor.movePosition(
+                QTextCursor.Start
+            )  # Move cursor to the start of the document
+            for _ in range(line_count - self.max_lines):
+                cursor.select(QTextCursor.BlockUnderCursor)  # Select the first block
+                cursor.removeSelectedText()  # Remove the selected text
+                cursor.deleteChar()  # Remove the newline character

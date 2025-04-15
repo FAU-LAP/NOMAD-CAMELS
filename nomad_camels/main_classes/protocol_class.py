@@ -1,13 +1,13 @@
-from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit, QMessageBox, QTableView
-from PySide6.QtGui import QStandardItemModel, QStandardItem
-from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit, QMessageBox, QPushButton
+from PySide6.QtCore import Signal, Qt
 
 from nomad_camels.frontpanels.plot_definer import Plot_Button_Overview
 from nomad_camels.loop_steps import make_step_of_type
 from nomad_camels.gui.general_protocol_settings import Ui_Protocol_Settings
 
-from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
+from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.utility import variables_handling
+from nomad_camels.frontpanels.flyer_window import FlyerButton
 
 
 class Measurement_Protocol:
@@ -45,14 +45,8 @@ class Measurement_Protocol:
         Dictionary of the channel-names and channels used inside the protocol
     name : str
         The name of the protocol. This also appears in the main UI
-    channel_metadata : dict
-        Currently deprecated. Only used for specific nexus output.
-    config_metadata : dict
-        Currently deprecated. Only used for specific nexus output.
-    metadata : dict
-        Currently deprecated. Only used for specific nexus output.
     use_nexus : bool
-        Currently deprecated. Only used for specific nexus output.
+        Whether to write a NeXus-entry into the datafile as well.
     """
 
     def __init__(
@@ -61,10 +55,7 @@ class Measurement_Protocol:
         plots=None,
         channels=None,
         name="",
-        channel_metadata=None,
-        metadata=None,
         use_nexus=False,
-        config_metadata=None,
         **kwargs,
     ):
         if plots is None:
@@ -73,10 +64,6 @@ class Measurement_Protocol:
             loop_steps = []
         if channels is None:
             channels = {}
-        if channel_metadata is None:
-            channel_metadata = {}
-        if metadata is None:
-            metadata = {}
         self.description = kwargs["description"] if "description" in kwargs else ""
         self.export_csv = kwargs["export_csv"] if "export_csv" in kwargs else False
         self.export_json = kwargs["export_json"] if "export_json" in kwargs else False
@@ -85,6 +72,20 @@ class Measurement_Protocol:
         self.h5_during_run = (
             kwargs["h5_during_run"] if "h5_during_run" in kwargs else True
         )
+        self.use_end_protocol = (
+            kwargs["use_end_protocol"] if "use_end_protocol" in kwargs else False
+        )
+        self.end_protocol = kwargs["end_protocol"] if "end_protocol" in kwargs else ""
+        self.live_variable_update = (
+            kwargs["live_variable_update"]
+            if "live_variable_update" in kwargs
+            else False
+        )
+        self.allow_live_comments = (
+            kwargs["allow_live_comments"] if "allow_live_comments" in kwargs else False
+        )
+        self.flyer_data = kwargs.get("flyer_data", [])
+
         self.instrument_aliases = (
             kwargs["instrument_aliases"]
             if "instrument_aliases" in kwargs
@@ -95,6 +96,7 @@ class Measurement_Protocol:
             if "channel_aliases" in kwargs
             else {"channel": [], "Alias": []}
         )
+        
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -105,10 +107,9 @@ class Measurement_Protocol:
         self.loop_step_variables = {}
         self.channels = channels
         self.name = name or "Protocol"
-        self.channel_metadata = channel_metadata
-        self.config_metadata = config_metadata
-        self.metadata = metadata
         self.use_nexus = use_nexus
+        self.measurement_description = ""
+        self.tags = []
 
     def update_variables(self):
         """Update all the variables provided by loopsteps."""
@@ -117,32 +118,6 @@ class Measurement_Protocol:
             if not step.is_active:
                 continue
             step.update_variables()
-
-    def get_nexus_paths(self):
-        """Get a dictionary containing the paths used for the output
-        NeXus-file. Currently deprecated."""
-        paths = {}
-        for i, name in enumerate(self.metadata["Name"]):
-            paths[self.metadata["NeXus-path"][i]] = f"metadata_start/{name}"
-        for i, name in enumerate(self.channel_metadata["Channel"]):
-            paths[self.channel_metadata["NeXus-path"][i]] = f"data/{name}"
-        for i, name in enumerate(self.config_metadata["Configuration"]):
-            path = ""
-            for dev in variables_handling.devices:
-                if dev in name:
-                    rn = name.split(dev)[1][1:]
-                    device = variables_handling.devices[dev]
-                    if (
-                        rn in device.get_config()
-                        or rn in device.get_config()
-                        or rn in device.get_passive_config()
-                    ):
-                        path = f"metadata_start/device_config/{dev}/{name}"
-                        break
-            if not path:
-                raise Exception(f"Cannot find {name} in any configuration!")
-            paths[self.config_metadata["NeXus-path"][i]] = path
-        return paths
 
     def add_loop_step(self, loop_step, position=-1, parent_step_name=None, model=None):
         """Adds a loop_step to the protocol (or the parent_step)at the specified
@@ -310,8 +285,9 @@ class Measurement_Protocol:
     def get_plan_string(self):
         """Get the string for the protocol-plan, including the loopsteps."""
         variables_handling.current_protocol = self
-        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, eva=None, stream_name="primary"):\n'
-        prot_vars = dict(variables_handling.protocol_variables)
+        plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, stream_name="primary", runEngine=None):\n'
+        prot_vars = self.variables
+        variables_handling.protocol_variables = prot_vars
         if "StartTime" in prot_vars:
             prot_vars.pop("StartTime")
             prot_vars.pop("ElapsedTime")
@@ -326,14 +302,39 @@ class Measurement_Protocol:
             if not step.is_active:
                 continue
             plan_string += step.get_protocol_string(n_tabs=1)
+
         plan_string += f'\n\n\ndef {self.name.replace(" ","_")}_plan(devs, md=None, runEngine=None, stream_name="primary"):\n'
-        plan_string += "\teva = Evaluator(namespace=namespace)\n"
         plan_string += "\tsub_eva = runEngine.subscribe(eva)\n"
         plan_string += "\tyield from bps.open_run(md=md)\n"
-        plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, eva, stream_name)\n'
-        plan_string += (
-            "\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
-        )
+        plan_string += """
+    if web_ports:
+        yield from wait_for_dash_ready_plan(web_ports)
+"""
+        if self.use_end_protocol:
+            plan_string += "\ttry:\n"
+            plan_string += f'\t\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, stream_name, runEngine)\n'
+            plan_string += "\t\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
+            plan_string += "\tfinally:\n"
+            plan_string += "\t\tyield from ending_steps(runEngine, devs)\n"
+        else:
+            plan_string += f'\tyield from {self.name.replace(" ", "_")}_plan_inner(devs, stream_name, runEngine)\n'
+            plan_string += "\tyield from helper_functions.get_fit_results(all_fits, namespace, True)\n"
+        check_live_windows = False
+        if self.allow_live_comments:
+            check_live_windows = True
+        if check_live_windows:
+            plan_string += "\tfinished = False\n"
+            plan_string += "\twhile not finished:\n"
+            plan_string += "\t\tfinished = True\n"
+            plan_string += "\t\tfor window in live_windows:\n"
+            plan_string += "\t\t\tif hasattr(window, '_is_finished') and not window._is_finished:\n"
+            plan_string += "\t\t\t\tfinished = False\n"
+            plan_string += "\tlive_metadata = {}\n"
+            plan_string += "\tfor window in live_windows:\n"
+            plan_string += "\t\tif hasattr(window, 'get_metadata'):\n"
+            plan_string += "\t\t\tlive_metadata.update(window.get_metadata())\n"
+            plan_string += "\tlive_metadata_signal = variable_reading.Variable_Signal(name='live_metadata', variables_dict=live_metadata)\n"
+            plan_string += '\tyield from bps.trigger_and_read([live_metadata_signal], name="_live_metadata_reading_")\n'
         plan_string += "\tyield from bps.close_run()\n"
         plan_string += "\trunEngine.unsubscribe(sub_eva)\n"
         return plan_string
@@ -357,8 +358,39 @@ class Measurement_Protocol:
             if not step.is_active:
                 continue
             add_main_string += step.get_add_main_string()
+        if self.use_end_protocol:
+            from nomad_camels.bluesky_handling import protocol_builder
+
+            add_main_string += protocol_builder.make_plots_string_of_protocol(
+                self.end_protocol, 1
+            )
+
         add_main_string += "\treturn returner\n\n\n"
         return add_main_string
+
+    def get_live_interaction_string(self):
+        """Returns the string for the live interaction of the protocol."""
+        live_string = "def create_live_windows():\n"
+        live_string += "\tglobal live_windows\n"
+        if self.live_variable_update:
+            live_string += (
+                "\tfrom nomad_camels.ui_widgets.variable_table import VariableBox\n"
+            )
+            live_string += f"\tvariables = {self.variables}\n"
+            live_string += f'\tvariable_box = VariableBox(editable_names=False, variables=variables, name="{self.name}")\n'
+            live_string += "\n\tdef update_variables(new_variables):\n"
+            live_string += "\t\tglobal namespace\n"
+            live_string += "\t\tnamespace.update(new_variables)\n\n"
+            live_string += (
+                "\tvariable_box.new_values_signal.connect(update_variables)\n"
+            )
+            live_string += "\tlive_windows.append(variable_box)\n"
+            live_string += "\tvariable_box.show()\n"
+        if self.allow_live_comments:
+            live_string += "\tcommenting_box = helper_functions.Commenting_Box()\n"
+            live_string += "\tlive_windows.append(commenting_box)\n"
+        live_string += "\treturn live_windows\n\n\n"
+        return live_string
 
     def get_total_steps(self):
         """Returns the total number of steps (including repetitions for loops)"""
@@ -373,11 +405,17 @@ class Measurement_Protocol:
     def get_outer_string(self):
         """Strings outside of all other functions of the script, e.g. more
         functions to create step-specific plots."""
-        outer_string = ""
+        outer_string = "\n"
         for step in self.loop_steps:
             if not step.is_active:
                 continue
             outer_string += step.get_outer_string()
+        if self.use_end_protocol:
+            from nomad_camels.bluesky_handling import protocol_builder
+
+            outer_string += protocol_builder.import_protocol_string(
+                self.end_protocol, 0
+            )
         return outer_string
 
     def get_used_devices(self):
@@ -392,6 +430,18 @@ class Measurement_Protocol:
         for dev in devices:
             adds += variables_handling.devices[dev].get_necessary_devices()
         devices += adds
+        if self.flyer_data:
+            for channel in variables_handling.channels:
+                for flyer in self.flyer_data:
+                    if channel in flyer["channels"]["channel"]:
+                        device = variables_handling.channels[channel].device
+                        if device not in devices:
+                            devices.append(device)
+        if self.use_end_protocol:
+            from nomad_camels.utility import load_save_functions
+
+            end_protocol = load_save_functions.load_protocol(self.end_protocol)
+            devices += end_protocol.get_used_devices()
         devices = list(set(devices))
         devices = sorted(devices, key=lambda x: x in adds, reverse=True)
         return devices
@@ -471,44 +521,32 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
         self.pushButton_add_variable.clicked.connect(lambda x: self.add_variable())
         self.pushButton_remove_variable.clicked.connect(self.remove_variable)
+        self.pushButton_add_variable.setToolTip("Add a new variable to the protocol.")
+        self.pushButton_remove_variable.setToolTip(
+            "Remove the selected variable from the protocol."
+        )
 
         # self.variable_model.itemChanged.connect(self.check_variable)
 
+        self.checkBox_perform_at_end = QCheckBox("Perform steps at end of protocol")
+        self.checkBox_perform_at_end.setChecked(self.protocol.use_end_protocol)
+        self.ending_protocol_selection = Path_Button_Edit(
+            self,
+            self.protocol.end_protocol,
+            default_dir=variables_handling.preferences.get("py_files_path", "."),
+            file_extension="*.cprot",
+        )
+        self.checkBox_perform_at_end.setToolTip(
+            "Select a protocol to always be performed at the end of this protocol, no matter whether it runs smoothly or fails or is stopped by the user.\nThis may be useful e.g. to turn something off in a controlled way.\nThis is NOT executed, when the protocol is run as a subprotocol."
+        )
+        self.ending_protocol_selection.setToolTip(
+            "Select a protocol to be performed at the end of this protocol or when it is aborted by the user.\nThis may be useful e.g. to turn something of in a controlled way.\nThis is NOT executed, when the protocol is run as a subprotocol."
+        )
+        self.checkBox_perform_at_end.stateChanged.connect(self.check_use_ending_steps)
+        self.check_use_ending_steps()
+
         self.plot_widge = Plot_Button_Overview(self, self.protocol.plots)
 
-        cols = ["Channel", "NeXus-path"]
-        comboBoxes = {"Channel": list(variables_handling.get_channels().keys())}
-        self.table_channel_NX_paths = AddRemoveTable(
-            headerLabels=cols,
-            title="Channel-NeXus-Path",
-            comboBoxes=comboBoxes,
-            tableData=self.protocol.channel_metadata,
-        )
-
-        cols = ["Configuration", "NeXus-path"]
-        configs = []
-        for dev in variables_handling.devices:
-            device = variables_handling.devices[dev]
-            allconf = []
-            allconf += list(device.get_passive_config().keys())
-            allconf += list(device.get_config().keys())
-            for key in allconf:
-                configs.append(f"{device.name}_{key}")
-        comboBoxes = {"Configuration": configs}
-        self.table_config_NX_paths = AddRemoveTable(
-            headerLabels=cols,
-            title="Config-NeXus-Path",
-            comboBoxes=comboBoxes,
-            tableData=self.protocol.config_metadata,
-        )
-
-        cols = ["Name", "NeXus-path", "Value"]
-        self.table_metadata = AddRemoveTable(
-            headerLabels=cols, title="NeXus-Metadata", tableData=self.protocol.metadata
-        )
-
-        self.checkBox_NeXus = QCheckBox("Use NeXus-output")
-        self.checkBox_NeXus.clicked.connect(self.enable_nexus)
         self.checkBox_NeXus.setChecked(self.protocol.use_nexus)
         self.lineEdit_protocol_name.textChanged.connect(self.name_change)
         self.name_change()
@@ -524,23 +562,39 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.checkBox_no_config.clicked.connect(self.enable_disable_config)
         self.adjust_text_edit_size_prot()
 
-        self.radioButton_h5_during.setChecked(self.protocol.h5_during_run)
-        self.radioButton_h5_after.setChecked(not self.protocol.h5_during_run)
+        self.checkBox_live_variables.setChecked(self.protocol.live_variable_update)
+        self.checkBox_live_comments.setChecked(self.protocol.allow_live_comments)
+
+        if self.protocol.h5_during_run:
+            self.comboBox_h5.setCurrentIndex(0)
+        else:
+            self.comboBox_h5.setCurrentIndex(1)
+
+        self.flyer_button = FlyerButton(
+            parent=self, flyer_data=self.protocol.flyer_data
+        )
 
         self.layout().addWidget(self.textEdit_desc_protocol, 5, 0, 1, 6)
 
         self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
-        self.layout().addWidget(self.checkBox_NeXus, 7, 0, 1, 6)
-        self.layout().addWidget(self.table_channel_NX_paths, 9, 0, 1, 6)
-        self.layout().addWidget(self.table_config_NX_paths, 10, 0, 1, 6)
-        self.layout().addWidget(self.table_metadata, 11, 0, 1, 6)
+        self.layout().addWidget(self.flyer_button, 7, 0, 1, 6)
+        self.layout().addWidget(self.checkBox_perform_at_end, 20, 0, 1, 6)
+        self.layout().addWidget(self.ending_protocol_selection, 21, 0, 1, 6)
+        # ! Ui_Protocol_Settings.ui file adds the Variables Table at position 8 and 9 !!!
 
-        self.checkBox_NeXus.setHidden(True)
-        self.enable_nexus()
         self.update_variable_select()
         self.variable_table.selectionModel().selectionChanged.connect(
             self.update_variable_select
         )
+
+    def check_use_ending_steps(self):
+        """If the checkBox_perform_at_end is checked, the ending_protocol_selection
+        is enabled, otherwise disabled."""
+        if self.checkBox_perform_at_end.isChecked():
+            self.ending_protocol_selection.setEnabled(True)
+        else:
+            self.ending_protocol_selection.setEnabled(False)
+            
         self.pushButton_instrument_aliases.clicked.connect(
             self.change_instrument_aliases
         )
@@ -554,11 +608,21 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
     def adjust_text_edit_size_prot(self):
         """Adjusts the size of the textEdit_desc_protocol based on its content."""
+        max_height = 130  # Set your desired maximum height here
         document = self.textEdit_desc_protocol.document()
-        document_height = document.size().height()
-        self.textEdit_desc_protocol.setFixedHeight(
-            document_height + 5  # Add some padding
-        )
+        # Calculate the height of the document (plus some padding)
+        document_height = document.size().height() + 5
+        if document_height > max_height:
+            new_height = max_height
+            # Enable scrolling if the content exceeds max height
+            self.textEdit_desc_protocol.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        else:
+            new_height = document_height
+            # Hide scroll bar if not needed
+            self.textEdit_desc_protocol.setVerticalScrollBarPolicy(
+                Qt.ScrollBarAlwaysOff
+            )
+        self.textEdit_desc_protocol.setFixedHeight(new_height)
 
     def enable_disable_config(self):
         disabling = self.checkBox_no_config.isChecked()
@@ -572,44 +636,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             result = msgBox.exec()
             if result != QMessageBox.Yes:
                 self.checkBox_no_config.setChecked(False)
-
-    def enable_nexus(self):
-        """When the checkBox_NeXus is clicked, enables / disables the
-        other widgets for the nexus-definition.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        """
-        nx = self.checkBox_NeXus.isChecked()
-        self.table_channel_NX_paths.setHidden(not nx)
-        self.table_metadata.setHidden(not nx)
-        self.table_config_NX_paths.setHidden(not nx)
-
-    # def get_unique_name(self, name="name"):
-    #     """Checks whether name already exists in the variables of the
-    #     protocol and returns a unique name (with added _i).
-
-    #     Parameters
-    #     ----------
-    #     name :
-    #          (Default value = 'name')
-
-    #     Returns
-    #     -------
-
-    #     """
-    #     i = 1
-    #     while name in self.protocol.variables:
-    #         if "_" not in name:
-    #             name += f"_{i}"
-    #         else:
-    #             name = f'{name.split("_")[0]}_{i}'
-    #         i += 1
-    #     return name
 
     def add_variable(self):
         """Add a variable to the list, given a unique name, then updates
@@ -663,15 +689,17 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.name = self.lineEdit_protocol_name.text()
         self.protocol.description = self.textEdit_desc_protocol.toPlainText()
         self.protocol.plots = self.plot_widge.plot_data
-        self.protocol.metadata = self.table_metadata.update_table_data()
-        self.protocol.channel_metadata = self.table_channel_NX_paths.update_table_data()
-        self.protocol.config_metadata = self.table_config_NX_paths.update_table_data()
+        self.protocol.flyer_data = self.flyer_button.flyer_data
         self.protocol.export_csv = self.checkBox_csv_exp.isChecked()
         self.protocol.export_json = self.checkBox_json_exp.isChecked()
         self.protocol.skip_config = self.checkBox_no_config.isChecked()
         self.variable_table.update_variables()
         self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
-        self.protocol.h5_during_run = self.radioButton_h5_during.isChecked()
+        self.protocol.h5_during_run = self.comboBox_h5.currentIndex() == 0
+        self.protocol.use_end_protocol = self.checkBox_perform_at_end.isChecked()
+        self.protocol.end_protocol = self.ending_protocol_selection.get_path()
+        self.protocol.live_variable_update = self.checkBox_live_variables.isChecked()
+        self.protocol.allow_live_comments = self.checkBox_live_comments.isChecked()
 
     # def load_variables(self):
     #     """Called when starting, loads the variables from the protocol

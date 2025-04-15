@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QWidget
 from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
 from nomad_camels.gui.gradient_descent_step import Ui_Grad_Desc
-from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
+from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 from nomad_camels.utility import variables_handling
 from nomad_camels.bluesky_handling import builder_helper_functions
 from nomad_camels.frontpanels.plot_definer import Plot_Info
@@ -181,12 +181,13 @@ class Gradient_Descent_Config_Sub(Ui_Grad_Desc, QWidget):
         super().__init__(parent)
         self.setupUi(self)
         self.loop_step = loop_step
-        channels = variables_handling.get_channels()
-        self.read_table = AddRemoveTable(
-            title="Read Channels",
-            headerLabels=[],
-            tableData=loop_step.read_channels,
-            comboBoxes=channels.keys(),
+
+        labels = ["read?", "channel"]
+        info_dict = {
+            "channel": self.loop_step.read_channels,
+        }
+        self.read_table = Channels_Check_Table(
+            self, labels, info_dict=info_dict, title="Read-Channels"
         )
         self.layout().addWidget(self.read_table, 20, 0, 1, 3)
         self.comboBox_extremum_type.addItems(["Minimum", "Maximum"])
@@ -225,5 +226,6 @@ class Gradient_Descent_Config_Sub(Ui_Grad_Desc, QWidget):
         self.loop_step.min_step = self.lineEdit_smallest_step.text()
         self.loop_step.max_step = self.lineEdit_largest_step.text()
         self.loop_step.n_steps = self.lineEdit_max_n_steps.text()
-        self.loop_step.read_channels = self.read_table.update_table_data()
+        info = self.read_table.get_info()
+        self.loop_step.read_channels = info["channel"]
         self.loop_step.plot_steps = self.checkBox_plot_steps.isChecked()

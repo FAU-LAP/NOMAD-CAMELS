@@ -310,7 +310,7 @@ class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
         for name in write_names:
             ophyd_string += f"\t\tself.{name}.put_function = self.{name}_put_function\n"
 
-        ophyd_string += "\n"
+        ophyd_string += '\n\tdef finalize_steps(self):\n\t\t"""This function is called when the device is not used anymore. It is used for example to close the connection to the device."""\n\t\tpass\n\n'
 
         for name in open_queries:
             ophyd_string += f"\tdef {name}_query_function(self):\n"
@@ -410,9 +410,9 @@ def make_custom_component(dic):
     write_names = []
     for i, name in enumerate(dic["Name"]):
         channel_type = dic["Channel-Type"][i]
-        read_names.append(name)
         RO = False
         if "read-only" in channel_type:
+            read_names.append(name)
             RO = True
         else:
             write_names.append(name)

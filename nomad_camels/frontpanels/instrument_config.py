@@ -1,6 +1,10 @@
 import importlib
+import sys
 
-import importlib_metadata
+if sys.version_info >= (3, 8):
+    import importlib.metadata as importlib_metadata
+else:
+    import importlib_metadata
 from PySide6.QtWidgets import (
     QWidget,
     QTableWidgetItem,
@@ -64,6 +68,11 @@ class Instrument_Config(Ui_Form, QWidget):
         self.info_widge.setHidden(True)
         self.layout().addWidget(self.info_widge, 0, 5, 3, 1)
 
+        self.pushButton_add.setToolTip("Add an instance of the selected instrument")
+        self.pushButton_remove.setToolTip(
+            "Remove the selected instance of the instrument"
+        )
+
         self.hide_info = False
         self.toggle_info_hidden()
         self.pushButton_info.clicked.connect(self.toggle_info_hidden)
@@ -103,7 +112,7 @@ class Instrument_Config(Ui_Form, QWidget):
                 self.pushButton_remove.setEnabled(True)
                 pack = self.packages[instr]
                 for instrument in self.active_instruments[instr]:
-                    name = instrument.custom_name
+                    name = get_custom_name_w_temp(instrument)
                     inst_widge = pack.subclass_config(
                         parent=self,
                         data=name,
@@ -138,7 +147,7 @@ class Instrument_Config(Ui_Form, QWidget):
         instr = self.tableWidget_instruments.item(ind.row(), 0).text()
 
         if hasattr(conf, "data") and new_name not in self.get_all_names():
-            self.active_instruments[instr][current_tab].custom_name = new_name
+            self.active_instruments[instr][current_tab].temp_custom_name = new_name
             conf.data = new_name
             self.config_tabs.setTabText(current_tab, new_name)
 
@@ -148,8 +157,16 @@ class Instrument_Config(Ui_Form, QWidget):
         instruments = {}
         for instr in self.active_instruments:
             for instrument in self.active_instruments[instr]:
+                instrument.custom_name = get_custom_name_w_temp(instrument)
                 instruments[instrument.custom_name] = instrument
         return instruments
+
+    def remove_temp_custom_names(self):
+        """ """
+        for instr in self.active_instruments:
+            for instrument in self.active_instruments[instr]:
+                if hasattr(instrument, "temp_custom_name"):
+                    del instrument.temp_custom_name
 
     def get_current_config(self):
         """ """
@@ -157,7 +174,9 @@ class Instrument_Config(Ui_Form, QWidget):
             tab = self.config_tabs.widget(i)
             if not hasattr(tab, "data"):
                 continue
-            cust_name = self.active_instruments[self.current_instr][i].custom_name
+            cust_name = get_custom_name_w_temp(
+                self.active_instruments[self.current_instr][i]
+            )
             given_name = tab.lineEdit_custom_name.text()
             if given_name != cust_name:
                 WarnPopup(
@@ -191,7 +210,7 @@ class Instrument_Config(Ui_Form, QWidget):
         instruments = {}
         for instr in self.active_instruments:
             for instrument in self.active_instruments[instr]:
-                instruments[instrument.custom_name] = instrument
+                instruments[get_custom_name_w_temp(instrument)] = instrument
         for key, dev in instruments.items():
             variables_handling.channels.update(dev.get_channels())
             variables_handling.config_channels.update(dev.config_channels)
@@ -215,7 +234,7 @@ class Instrument_Config(Ui_Form, QWidget):
                     name = f"{instr}_{i}"
                     i += 1
             instr_instance = pack.subclass()
-            instr_instance.custom_name = name
+            instr_instance.temp_custom_name = name
             self.active_instruments[instr].append(instr_instance)
             single_widge = pack.subclass_config(
                 data=name,
@@ -236,7 +255,9 @@ class Instrument_Config(Ui_Form, QWidget):
         names = []
         for instr in self.active_instruments:
             if self.active_instruments[instr]:
-                names += [x.custom_name for x in self.active_instruments[instr]]
+                names += [
+                    get_custom_name_w_temp(x) for x in self.active_instruments[instr]
+                ]
                 names += [self.active_instruments[instr][0].ophyd_class_name]
                 names += ["numpy", "np", "StartTime", "ElapsedTime"]
         return names
@@ -293,6 +314,12 @@ class Instrument_Config(Ui_Form, QWidget):
             self.tableWidget_instruments.setItem(i, 1, item_n)
             i += 1
         self.tableWidget_instruments.resizeColumnsToContents()
+
+
+def get_custom_name_w_temp(instrument):
+    if hasattr(instrument, "temp_custom_name"):
+        return instrument.temp_custom_name
+    return instrument.custom_name
 
 
 if __name__ == "__main__":

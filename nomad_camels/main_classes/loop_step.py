@@ -113,13 +113,11 @@ class Loop_Step:
             The string representing the step
         """
         tabs = "\t" * n_tabs
-        desc = self.description.replace("\n", f"\n{tabs}")
-        protocol_string = f'\n{tabs}"""{desc}"""\n'
-        # protocol_string += f'{tabs}print("starting loop_step {self.full_name}")\n'
-        protocol_string += f'{tabs}protocol_step_information["protocol_stepper_signal"].emit(protocol_step_information["protocol_step_counter"] / protocol_step_information["total_protocol_steps"] * 100)\n'
-        protocol_string += (
-            f'{tabs}protocol_step_information["protocol_step_counter"] += 1\n'
-        )
+        desc = self.description.replace("\n", f"\n{tabs}").replace('"', '\\"')
+        desc = f"\n{tabs}{desc}" if desc else ""
+        protocol_string = f'\n{tabs}"""{self.name}{desc}"""\n'
+        protocol_string += f"{tabs}helper_functions.update_protocol_counter(protocol_step_information)\n"
+
         protocol_string += f"{tabs}yield from bps.checkpoint()\n"
         return protocol_string
 
@@ -193,7 +191,10 @@ class Loop_Step_Container(Loop_Step):
         """Overwrites this function to additionally append all children
         to the model."""
         item = super().append_to_model(item_model, parent)
-        item.setDropEnabled(True)
+        if self.has_children:
+            item.setDropEnabled(True)
+        else:
+            item.setDropEnabled(False)
         item.setEditable(False)
         for child in self.children:
             child.append_to_model(item_model, item)
@@ -345,16 +346,26 @@ class Loop_Step_Config(QWidget):
     #     super(QTextEdit, self.textEdit_desc).focusInEvent(event)
     #     event.accept()
 
+    def adjust_text_edit_size(self):
+        """Adjusts the size of the textEdit_desc based on its content."""
+        max_height = 100  # Set your desired maximum height here
+        document = self.textEdit_desc.document()
+        # Calculate the height of the document (plus some padding)
+        document_height = document.size().height() + 5
+        if document_height > max_height:
+            new_height = max_height
+            # Enable scrolling if the content exceeds max height
+            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        else:
+            new_height = document_height
+            # Hide scroll bar if not needed
+            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.textEdit_desc.setFixedHeight(new_height)
+
     def showEvent(self, event):
         """Called when the widget is shown."""
         super().showEvent(event)
         self.adjust_text_edit_size()
-
-    def adjust_text_edit_size(self):
-        """Adjusts the size of the textEdit_desc based on its content."""
-        document = self.textEdit_desc.document()
-        document_height = document.size().height()
-        self.textEdit_desc.setFixedHeight(document_height + 5)  # Add some padding
 
     def change_name(self, name):
         """Changes the name of the loop_step, then emits the

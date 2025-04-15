@@ -8,6 +8,7 @@ from nomad_camels.utility import variables_handling, load_save_functions
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.bluesky_handling import protocol_builder, builder_helper_functions
 from nomad_camels.bluesky_handling import protocol_builder
+import json
 
 
 class Run_Subprotocol(Loop_Step):
@@ -45,6 +46,7 @@ class Run_Subprotocol(Loop_Step):
             step_info["data_output"] if "data_output" in step_info else "sub-stream"
         )
         self.own_plots = step_info["own_plots"] if "own_plots" in step_info else True
+        self._sub_protocol_dict = None
 
     def get_protocol_string(self, n_tabs=1):
         """Overwrites the signal for the progressbar and the number of steps in
@@ -52,58 +54,63 @@ class Run_Subprotocol(Loop_Step):
         them into the subprotocol's namespace and starts the subprotocol's
         _plan_inner function. Afterwards the output variables are written to the
         main namespace."""
-        tabs = "\t" * n_tabs
-        protocol_builder.build_from_path(self.prot_path)
-        prot_name = os.path.basename(self.prot_path)[:-6]
+        protocol = load_save_functions.load_protocol(self.prot_path)
+        if protocol.description and protocol.description not in self.description:
+            self.description += f"\n\t{protocol.description}"
         protocol_string = super().get_protocol_string(n_tabs)
-        protocol_string += f"{tabs}{prot_name}_mod.protocol_step_information = protocol_step_information\n"
-        for i, var in enumerate(self.vars_in["Variable"]):
-            protocol_string += f'{tabs}{prot_name}_mod.{var} = eva.eval("{self.vars_in["Value"][i]}")\n'
-            protocol_string += f'{tabs}{prot_name}_mod.namespace["{var}"] = eva.eval("{self.vars_in["Value"][i]}")\n'
-        protocol_string += (
-            f"{tabs}{prot_name}_eva = Evaluator(namespace={prot_name}_mod.namespace)\n"
+        protocol_string += protocol_builder.sub_protocol_string(
+            protocol_path=self.prot_path,
+            n_tabs=n_tabs,
+            variables_in=self.vars_in,
+            variables_out=self.vars_out,
+            data_output=self.data_output,
+            new_stream=self.name,
         )
-        stream = prot_name
-        if self.data_output == "main stream":
-            stream = "primary"
-        protocol_string += f'{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, {prot_name}_eva, "{stream}")\n'
-        for i, var in enumerate(self.vars_out["Variable"]):
-            protocol_string += f'{tabs}namespace["{self.vars_out["Write to name"][i]}"] = {prot_name}_mod.namespace["{var}"]\n'
+        with open(self.prot_path, "r", encoding="utf-8") as f:
+            self._sub_protocol_dict = json.load(f)
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):
         """Specifies the name / path of the subprotocol."""
         short_string = super().get_protocol_short_string(n_tabs)
-        short_string = f"{short_string[:-1]} - {self.prot_path}"
+        short_string = f"{short_string[:-1]} - {self.prot_path} - {self.description}\n"
         return short_string
 
     def get_outer_string(self):
         """Imports the subprotocol as <protocol_name>_mod."""
-        prot_name = os.path.basename(self.prot_path)[:-6]
-        py_file = f"{self.prot_path[:-6]}.py"
-        if not os.path.isfile(py_file):
-            sub_protocol = load_save_functions.load_protocol(self.prot_path)
-            protocol_builder.build_protocol(sub_protocol, py_file)
-        outer_string = f'spec = importlib.util.spec_from_file_location("{prot_name}", "{py_file}")\n'
-        outer_string += f"{prot_name}_mod = importlib.util.module_from_spec(spec)\n"
-        outer_string += f"sys.modules[spec.name] = {prot_name}_mod\n"
-        outer_string += f"spec.loader.exec_module({prot_name}_mod)\n"
-        return outer_string
+        return protocol_builder.import_protocol_string(self.prot_path)
+        # prot_name = os.path.basename(self.prot_path)[:-6]
+        # py_file = f"{self.prot_path[:-6]}.py"
+        # if not os.path.isfile(py_file):
+        #     sub_protocol = load_save_functions.load_protocol(self.prot_path)
+        #     protocol_builder.build_protocol(sub_protocol, py_file)
+        # outer_string = f'spec = importlib.util.spec_from_file_location("{prot_name}", "{py_file}")\n'
+        # outer_string += f"{prot_name}_mod = importlib.util.module_from_spec(spec)\n"
+        # outer_string += f"sys.modules[spec.name] = {prot_name}_mod\n"
+        # outer_string += f"spec.loader.exec_module({prot_name}_mod)\n"
+        # return outer_string
 
     def get_add_main_string(self):
         """If using its own plots, adds them to the steps. In any case, the
         added steps from the subprotocol are added here as well."""
-        prot_name = os.path.basename(self.prot_path)[:-6]
-        add_main_string = ""
-        if self.own_plots:
-            stream = f'"{prot_name}"'
-            if self.data_output == "main stream":
-                stream = '"primary"'
-            add_main_string += builder_helper_functions.get_plot_add_string(
-                prot_name, stream, True
+        if self.step_type == "Run Subprotocol":
+            return protocol_builder.make_plots_string_of_protocol(
+                self.prot_path, self.own_plots, self.data_output, 1, self.name
             )
-        add_main_string += f'\treturner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs)\n'
-        return add_main_string
+        return protocol_builder.make_plots_string_of_protocol(
+            self.prot_path, self.own_plots, self.data_output, 1, self.name
+        )
+        # prot_name = os.path.basename(self.prot_path)[:-6]
+        # add_main_string = ""
+        # if self.own_plots:
+        #     stream = f'"{prot_name}"'
+        #     if self.data_output == "main stream":
+        #         stream = '"primary"'
+        #     add_main_string += builder_helper_functions.get_plot_add_string(
+        #         prot_name, stream, True
+        #     )
+        # add_main_string += f'\treturner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs)\n'
+        # return add_main_string
 
     def update_used_devices(self):
         """Uses the devices that are used in the subprotocol."""
@@ -141,6 +148,9 @@ class Run_Subprotocol_Config(Loop_Step_Config):
             comboBoxes=comboBoxes,
             checkstrings=[1],
         )
+        self.input_table.setToolTip(
+            "The variables of the subprotocol and the values they should get before the subprotocol is run.\nThis can be used to e.g. give the subprotocol a new value for each run inside a loop."
+        )
         headerLabels = ["Variable", "Write to name"]
         comboBoxes = {"Variable": self.sub_vars.keys()}
         self.output_table = AddRemoveTable(
@@ -148,6 +158,9 @@ class Run_Subprotocol_Config(Loop_Step_Config):
             tableData=loop_step.vars_out,
             title="Variables Out",
             comboBoxes=comboBoxes,
+        )
+        self.output_table.setToolTip(
+            "The variables of the subprotocol and the name in the main protocol's namespace where they should be put.\nThis can be used to e.g. store some value determined by the subprotocol for later use in the main protocol.\n(Hint: it may be useful to define the variables in the main protocol beforehand.)"
         )
 
         label_data = QLabel("Data Output:")

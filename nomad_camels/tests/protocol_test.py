@@ -12,6 +12,58 @@ from nomad_camels.bluesky_handling import make_catalog
 from nomad_camels.frontpanels import instrument_installer
 from nomad_camels.utility import variables_handling
 from nomad_camels.utility.treeView_functions import getItemIndex
+from threading import Thread
+import asyncio
+from zmq.error import ZMQError
+from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
+from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
+
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+
+@pytest.fixture(scope="session", autouse=True)
+def zmq_setup():
+    """
+    Sets up a single ZMQ proxy, dispatcher, and publisher for all tests.
+    Yields a tuple (publisher, dispatcher) for use in tests.
+    Stops the proxy at the end of the session.
+    """
+    try:
+        proxy = Proxy(5577, 5578)
+        proxy_created = True
+    except ZMQError:
+        proxy = None  # Use already running proxy.
+        proxy_created = False
+
+    def start_proxy():
+        if proxy_created and proxy is not None:
+            proxy.start()
+
+    # Setup dispatcher and its thread.
+    dispatcher = RemoteDispatcher("localhost:5578")
+
+    def start_dispatcher():
+        try:
+            dispatcher.start()
+        except asyncio.exceptions.CancelledError:
+            pass  # Ignore cancellation errors on shutdown.
+
+    # Setup publisher.
+    publisher = Publisher("localhost:5577")
+
+    # Start proxy and dispatcher in daemon threads.
+    proxy_thread = Thread(target=start_proxy, daemon=True)
+    dispatcher_thread = Thread(target=start_dispatcher, daemon=True)
+    proxy_thread.start()
+    dispatcher_thread.start()
+
+    # Yield the shared objects for tests.
+    yield publisher, dispatcher
+
+    # Teardown: stop the proxy once all tests have finished.
+    if proxy_created and proxy is not None:
+        proxy.stop()
 
 
 @pytest.fixture(autouse=True)
@@ -25,13 +77,16 @@ def mock_message_box(monkeypatch):
     monkeypatch.setattr(QMessageBox, "question", mock_question)
 
 
-def test_change_dev_config(qtbot, tmp_path):
+def test_change_dev_config(qtbot, tmp_path, zmq_setup):
     """Opens the config for "change device config" tries to configure it for the
     demo instrument and tries to run a protocol with this step."""
     ensure_demo_in_devices()
     from nomad_camels.loop_steps import change_device_config
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_change_dev_config_protocol"
+    )
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Change Device Config")
     action.trigger()
@@ -45,16 +100,18 @@ def test_change_dev_config(qtbot, tmp_path):
     assert "Change Device Config (Change_Device_Config)" in prot.loop_step_dict
     assert prot.loop_steps[0].device == "demo_instrument"
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_for_loop(qtbot, tmp_path):
+def test_for_loop(qtbot, tmp_path, zmq_setup):
     """Opens the config for a "For Loop" tries to configure it looping over a
     wait-step and tries to run a protocol with this step."""
     # ensure_demo_in_devices()
     from nomad_camels.loop_steps import for_while_loops
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_for_loop_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "For Loop")
     action.trigger()
@@ -83,16 +140,20 @@ def test_for_loop(qtbot, tmp_path):
     assert prot.loop_steps[0].has_children
     assert prot.loop_steps[0].children[0].full_name == "Wait (Wait)"
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_gradient_descent(qtbot, tmp_path):
+def test_gradient_descent(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Gradient Descent" tries to configure it for the
     demo instrument and tries to run a protocol with this step."""
     ensure_demo_in_devices()
     from nomad_camels.loop_steps import gradient_descent
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_gradient_descent_protocol"
+    )
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Gradient Descent")
     action.trigger()
@@ -119,15 +180,19 @@ def test_gradient_descent(qtbot, tmp_path):
     prot.name = "test_gradient_descent_protocol"
     assert "Gradient Descent (Gradient_Descent)" in prot.loop_step_dict
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_if_and_set_variables(qtbot, tmp_path):
+def test_if_and_set_variables(qtbot, tmp_path, zmq_setup):
     """Opens the config for "If" tries to configure to run the correct way if
     the variables have the correct value, which is done by a "Set Variables" step."""
     from nomad_camels.loop_steps import set_variables
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_if_and_set_variables_protocol"
+    )
     prot = conf.protocol
     qtbot.addWidget(conf)
     qtbot.mouseClick(
@@ -163,7 +228,8 @@ def test_if_and_set_variables(qtbot, tmp_path):
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
 def test_nd_sweep():
@@ -171,13 +237,14 @@ def test_nd_sweep():
     pass
 
 
-def test_read_channels(qtbot, tmp_path):
+def test_read_channels(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Read Channels" tries to configure it for the
     demo instrument and tries to run a protocol with this step."""
     ensure_demo_in_devices()
     from nomad_camels.loop_steps import read_channels
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_read_channels_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Read Channels")
     action.trigger()
@@ -193,7 +260,8 @@ def test_read_channels(qtbot, tmp_path):
     assert "Read Channels (Read_Channels)" in prot.loop_step_dict
     assert prot.loop_steps[0].channel_list == ["demo_instrument_detectorX"]
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
 def test_run_subprotocol():
@@ -201,13 +269,14 @@ def test_run_subprotocol():
     pass
 
 
-def test_set_channels(qtbot, tmp_path):
+def test_set_channels(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Set Channels" tries to configure it for the
     demo instrument and tries to run a protocol with this step."""
     ensure_demo_in_devices()
     from nomad_camels.loop_steps import set_channels
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_set_channels_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Set Channels")
     action.trigger()
@@ -227,10 +296,11 @@ def test_set_channels(qtbot, tmp_path):
         "Values": ["1"],
     }
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
+def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Simple Sweep" tries to configure it for the
     demo instrument. Further it adds a plot and a fit to the sweep and tries to
     run a protocol with this step."""
@@ -239,6 +309,7 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
     from nomad_camels.frontpanels import plot_definer
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_simple_sweep_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Simple Sweep")
     action.trigger()
@@ -271,10 +342,175 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path):
     prot.name = "test_simple_sweep_protocol"
     assert "Simple Sweep (Simple_Sweep)" in prot.loop_step_dict
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
+    assert "True" == "True"
 
 
-def test_trigger_and_read_channels(qtbot, tmp_path):
+def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
+    """Creates a For Loop from -1 to 1 that, on each iteration,
+    sets the variable 'set_var' to the loop value and waits for 0.001s.
+    The protocol is configured to plot 'set_var' versus the loop value
+    and perform a linear fit that is expected to be perfect (slope=1, intercept=0)."""
+    # Create the protocol config widget and set the protocol name.
+    conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_for_loop_set_var_protocol"
+    )
+    qtbot.addWidget(conf)
+
+    # Add a global variable "set_var" (initial value is arbitrary here).
+    qtbot.mouseClick(
+        conf.general_settings.pushButton_add_variable, Qt.MouseButton.LeftButton
+    )
+    conf.general_settings.variable_table.model.item(0, 0).setText("set_var")
+    conf.general_settings.variable_table.model.item(0, 1).setText("0")
+
+    # --- Add For Loop step ---
+    action = get_action_from_name(conf.add_actions, "For Loop")
+    action.trigger()
+    from nomad_camels.loop_steps import for_while_loops
+
+    conf_widge_loop = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge_loop, for_while_loops.For_Loop_Step_Config)
+    conf_widge_loop.sub_widget.lineEdit_start.setText("-1")
+    conf_widge_loop.sub_widget.lineEdit_stop.setText("1")
+    conf_widge_loop.sub_widget.lineEdit_n_points.setText("21")
+
+    # --- Add child step: Set Variables ---
+    action = get_action_from_name(conf.add_actions, "Set Variables")
+    action.trigger()
+    from nomad_camels.loop_steps import set_variables
+
+    def wait_selection_sv():
+        select_step_by_name(conf, "Set Variables (Set_Variables)")
+        conf.tree_click_sequence()
+        assert isinstance(
+            conf.loop_step_configuration_widget, set_variables.Set_Variables_Config
+        )
+
+    qtbot.waitUntil(wait_selection_sv)
+    conf_widge_sv = conf.loop_step_configuration_widget
+    # Configure the Set Variables step to assign the current for loop value to "set_var".
+    # Here we assume that the expression "for_loop_value" is evaluated at runtime.
+    conf_widge_sv.variables_table.add(["set_var", "For_Loop_Value"])
+
+    # --- Read Channels ---
+    action = get_action_from_name(conf.add_actions, "Read Channels")
+    action.trigger()
+    from nomad_camels.loop_steps import read_channels
+
+    def wait_selection_rc():
+        select_step_by_name(conf, "Read Channels (Read_Channels)")
+        conf.tree_click_sequence()
+        assert isinstance(
+            conf.loop_step_configuration_widget, read_channels.Read_Channels_Config
+        )
+
+    qtbot.waitUntil(wait_selection_rc)
+
+    # --- Add child step: Wait ---
+    action = get_action_from_name(conf.add_actions, "Wait")
+    action.trigger()
+
+    from nomad_camels.loop_steps import wait_loop_step
+
+    def wait_for_wait_widget():
+        select_step_by_name(conf, "Wait (Wait)")
+        conf.tree_click_sequence()
+        return isinstance(
+            conf.loop_step_configuration_widget, wait_loop_step.Wait_Loop_Step_Config
+        )
+
+    qtbot.waitUntil(wait_for_wait_widget)
+    conf_widge_wait = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge_wait, wait_loop_step.Wait_Loop_Step_Config)
+    conf_widge_wait.sub_widget.lineEdit_duration.setText("0.01")
+
+    # --- Add a Plot definition with a linear fit ---
+    from nomad_camels.frontpanels import plot_definer
+
+    fit = plot_definer.Fit_Info(True, "Linear", x="For_Loop_Value", y="set_var")
+    plot = plot_definer.Plot_Info(
+        x_axis="For_Loop_Value",
+        y_axes={"formula": ["set_var"], "axis": ["left"]},
+        fits=[fit],
+    )
+
+    # Accept the protocol configuration.
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.name = "test_for_loop_set_var_protocol"
+    prot.plots.append(plot)
+
+    def wait_for_move_in():
+        """ """
+        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
+        print(len(prot.loop_steps))
+
+    select_step_by_name(conf, "Set Variables (Set_Variables)")
+    qtbot.waitUntil(wait_for_move_in)
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    select_step_by_name(conf, "Read Channels (Read_Channels)")
+    qtbot.waitUntil(wait_for_move_in)
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    select_step_by_name(conf, "Wait (Wait)")
+    qtbot.waitUntil(wait_for_move_in)
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+
+    # Build the catalog and run the protocol.
+    catalog_maker(tmp_path)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
+
+    # --- After the protocol run, open the Nexus file and perform a linear fit ---
+    # We assume that the protocol saves two datasets: one for the for-loop values
+    # (named "for_loop_value") and one for the variable "set_var".
+    import h5py
+    import numpy as np
+
+    if prot.use_nexus:
+        file_ending = ".nxs"
+    else:
+        file_ending = ".h5"
+    savepath = tmp_path / (prot.name + file_ending)
+    with h5py.File(savepath, "r") as f:
+        x_data = f[list(f.keys())[0]]["data"][
+            "test_for_loop_set_var_protocol_variable_signal"
+        ]["For_Loop_Value"][
+            :
+        ]  # for-loop (x-axis) values
+        y_data = f[list(f.keys())[0]]["data"][
+            "test_for_loop_set_var_protocol_variable_signal"
+        ]["set_var"][
+            :
+        ]  # recorded set_var values
+        slope_camels_fit = f[list(f.keys())[0]]["data"]["fits"][
+            "Linear_set_var_v_For_Loop_Value_primary"
+        ]["slope"][
+            :
+        ]  # linear fit values
+        intercept_camels_fit = f[list(f.keys())[0]]["data"]["fits"][
+            "Linear_set_var_v_For_Loop_Value_primary"
+        ]["intercept"][
+            :
+        ]  # linear fit intercept
+
+    # Compute a linear fit on the data.
+    slope, intercept = np.polyfit(x_data, y_data, 1)
+    # Check that the slope and intercept from the CAMELS fit are the same as the ones computed from the data.
+    assert np.isclose(slope_camels_fit, slope, atol=0.05)
+    assert np.isclose(intercept_camels_fit, intercept, atol=0.05)
+    # Check that the slope is 1 and the intercept is 0 (within a small tolerance).
+    assert np.isclose(slope, 1, atol=0.05)
+    assert np.isclose(intercept, 0, atol=0.05)
+
+
+def test_trigger_and_read_channels(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Read Channels" tries to configure it with a split
     triggering of the channels, then configures the trigger-step and tries to
     run a protocol with these steps."""
@@ -282,6 +518,7 @@ def test_trigger_and_read_channels(qtbot, tmp_path):
     from nomad_camels.loop_steps import read_channels
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_trigger_protocol")
     qtbot.addWidget(conf)
     prot = conf.protocol
     variables_handling.current_protocol = prot
@@ -315,16 +552,18 @@ def test_trigger_and_read_channels(qtbot, tmp_path):
     assert prot.loop_steps[0].read_step == "Read Channels (Read_Channels)"
 
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_while_loop(qtbot, tmp_path):
+def test_while_loop(qtbot, tmp_path, zmq_setup):
     """Opens the config for a "While Loop" and tries to configure it with the
     condition being `While_Loop_Count < 5`. Into the loop, a wait-step is added.
     Tries to run a protocol with this step."""
     from nomad_camels.loop_steps import for_while_loops
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_while_loop_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "While Loop")
     action.trigger()
@@ -351,15 +590,17 @@ def test_while_loop(qtbot, tmp_path):
     assert prot.loop_steps[0].has_children
     assert prot.loop_steps[0].children[0].full_name == "Wait (Wait)"
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_wait(qtbot, tmp_path):
+def test_wait(qtbot, tmp_path, zmq_setup):
     """Opens the config for "Wait" tries to configure it to a wait time of
     1.0 second and tries to run a protocol with this step."""
     from nomad_camels.loop_steps import wait_loop_step
 
     conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_wait_protocol")
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Wait")
     action.trigger()
@@ -373,7 +614,8 @@ def test_wait(qtbot, tmp_path):
     assert "Wait (Wait)" in prot.loop_step_dict
     assert prot.loop_steps[0].wait_time == "1.0"
     catalog_maker(tmp_path)
-    run_test_protocol(tmp_path, prot)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
 def single_variable_if(qtbot, conf, wait_in=1, n_prompt=0, n_if=0, len_prot=0):
@@ -520,18 +762,31 @@ def get_row_from_channel_table(name, table):
 
 
 def ensure_demo_in_devices():
-    """ """
+    """Ensure that only the demo_instrument is loaded in the devices dictionary."""
     instr, packs = instrument_installer.getInstalledDevices(True, True)
     if "demo_instrument" not in instr:
         instrument_installer.install_instrument("demo_instrument")
         instr, packs = instrument_installer.getInstalledDevices(True, True)
         assert "demo_instrument" in instr
-    if "demo_instrument" not in variables_handling.devices:
+
+    # Clear all devices and keep only demo_instrument
+    if "demo_instrument" in variables_handling.devices:
+        demo_inst = variables_handling.devices["demo_instrument"]
+        variables_handling.devices.clear()
+        variables_handling.devices["demo_instrument"] = demo_inst
+    else:
+        variables_handling.devices.clear()
         inst = packs["demo_instrument"].subclass()
         variables_handling.devices["demo_instrument"] = inst
+
     assert "demo_instrument" in variables_handling.devices
+    assert (
+        len(variables_handling.devices) == 1
+    ), "Only demo_instrument should be present"
+
+    # Clear and repopulate channels
     variables_handling.channels.clear()
-    for key, dev in variables_handling.devices.items():
+    for dev in variables_handling.devices.values():
         variables_handling.channels.update(dev.get_channels())
 
 
@@ -553,7 +808,7 @@ def catalog_maker(tmp_path):
         make_catalog.make_yml(tmp_path, "test_catalog")
 
 
-def run_test_protocol(tmp_path, protocol):
+def run_test_protocol(tmp_path, protocol, publisher, dispatcher):
     """
 
     Parameters
@@ -570,11 +825,16 @@ def run_test_protocol(tmp_path, protocol):
     from nomad_camels.bluesky_handling import protocol_builder
 
     file = tmp_path / (protocol.name + ".py")
-    savepath = tmp_path / (protocol.name + ".nxs")
+    savepath = tmp_path / protocol.name
     protocol_builder.build_protocol(protocol, file, savepath, "test_catalog")
     sys.path.append(str(tmp_path))
     py_package = importlib.import_module(protocol.name)
-    py_package.main()
+    py_package.main(dispatcher=dispatcher, publisher=publisher)
+    if protocol.use_nexus:
+        file_ending = ".nxs"
+    else:
+        file_ending = ".h5"
+    savepath = f"{savepath}{file_ending}"
     assert os.path.isfile(savepath)
 
 

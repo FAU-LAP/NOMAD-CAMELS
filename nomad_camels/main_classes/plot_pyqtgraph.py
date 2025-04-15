@@ -7,6 +7,7 @@ sys.path.append(os.path.dirname(__file__).split("nomad_camels")[0])
 import numpy as np
 import threading
 from collections import deque
+import logging
 
 from PySide6.QtWidgets import (
     QWidget,
@@ -101,6 +102,92 @@ def activate_dark_mode():
     colors = dark_mode_colors
 
 
+class ListDeque_skip:
+    def __init__(self, iterable=None, maxlen=None, skip_n_points=0):
+        if iterable is None:
+            iterable = []
+        self.maxlen = maxlen
+        self.skip_n_points = skip_n_points
+        self.counter_value = 0
+        if (
+            maxlen is None
+            or maxlen == np.inf
+            or (isinstance(maxlen, str) and maxlen.lower() in ["none", "inf", "np.inf"])
+        ):
+            self.data = list(iterable)
+        else:
+            if not isinstance(maxlen, int):
+                maxlen = int(maxlen)
+            self.data = deque(iterable, maxlen=maxlen)
+
+    def append(self, item):
+        self.counter_value += 1
+        if self.skip_n_points <= 0 or self.counter_value % self.skip_n_points == 0:
+            self.data.append(item)
+
+    def extend(self, iterable):
+        self.data.extend(iterable)
+
+    def __getitem__(self, index):
+        return self.data[index]
+
+    def __setitem__(self, index, value):
+        self.data[index] = value
+
+    def __delitem__(self, index):
+        del self.data[index]
+
+    def __len__(self):
+        return len(self.data)
+
+    def __iter__(self):
+        return iter(self.data)
+
+    def __repr__(self):
+        return repr(self.data)
+
+    def clear(self):
+        self.data.clear()
+
+    def pop(self):
+        return self.data.pop()
+
+    def popleft(self):
+        if isinstance(self.data, deque):
+            return self.data.popleft()
+        else:
+            raise AttributeError("'list' object has no attribute 'popleft'")
+
+    def appendleft(self, item):
+        if isinstance(self.data, deque):
+            self.data.appendleft(item)
+        else:
+            raise AttributeError("'list' object has no attribute 'appendleft'")
+
+    def extendleft(self, iterable):
+        if isinstance(self.data, deque):
+            self.data.extendleft(iterable)
+        else:
+            raise AttributeError("'list' object has no attribute 'extendleft'")
+
+    def rotate(self, n=1):
+        if isinstance(self.data, deque):
+            self.data.rotate(n)
+        else:
+            raise AttributeError("'list' object has no attribute 'rotate'")
+
+    def change_maxlen(self, maxlen):
+        self.maxlen = maxlen
+        if maxlen is None or maxlen == np.inf:
+            self.data = list(self.data)
+        else:
+            self.data = deque(self.data, maxlen=maxlen)
+
+    def change_skip_n_points(self, skip_n_points):
+        self.skip_n_points = skip_n_points
+        self.counter_value = 0
+
+
 class PlotWidget(QWidget):
     """Class for creating a plot widget.
 
@@ -145,6 +232,14 @@ class PlotWidget(QWidget):
         Whether to use a logarithmic y-axis, by default False
     logY2 : bool
         Whether to use a logarithmic y-axis for the right axis, by default False
+    top_left_x : int, optional
+        The x-coordinate of the top left corner of the plot widget, by default None
+    top_left_y : int, optional
+        The y-coordinate of the top left corner of the plot widget, by default None
+    plot_width : int, optional
+        The width of the plot widget, by default None
+    plot_height : int, optional
+        The height of the plot widget, by default None
     maxlen : int
         The maximum number of data points to show, by default np.inf
     use_bluesky : bool
@@ -153,6 +248,7 @@ class PlotWidget(QWidget):
     """
 
     closing = Signal()
+    reopened = Signal()
 
     def __init__(
         self,
@@ -177,10 +273,18 @@ class PlotWidget(QWidget):
         logX=False,
         logY=False,
         logY2=False,
+        manual_plot_position=False,
+        top_left_x="",
+        top_left_y="",
+        plot_width="",
+        plot_height="",
         maxlen=np.inf,
         use_bluesky=True,
         labels=(),
         first_hidden=None,
+        show_in_browser=False,
+        web_port=None,
+        evaluator=None,
         **kwargs,
     ):
         super().__init__(parent=parent)
@@ -189,7 +293,7 @@ class PlotWidget(QWidget):
         self.y_names = y_names or y_axes.keys()
         self.stream_name = stream_name
         self.fits = fits or []
-        self.eva = Evaluator(namespace=namespace)
+        self.eva = evaluator
         self.liveFits = []
         self.liveFitPlots = []
         self.ax2_viewbox = None
@@ -257,6 +361,8 @@ class PlotWidget(QWidget):
                 additional_data=add_data,
                 params=params,
                 stream_name=stream_name,
+                show_in_browser=show_in_browser,
+                web_port=web_port,
             )
             self.liveFits.append(livefit)
             if y_axes and y_axes[fit["y"]] == 2:
@@ -301,7 +407,7 @@ class PlotWidget(QWidget):
                 first_hidden=first_hidden,
             )
         self.livePlot.plotItem.showGrid(True, True)
-        self.livePlot.new_data_signal.connect(self.show)
+        self.livePlot.new_data_signal.connect(self.show_again)
         self.livePlot.setup_done_signal.connect(self.make_toolbar)
         self.toolbar = None
         self.pushButton_show_options = QPushButton("Show Options")
@@ -316,16 +422,34 @@ class PlotWidget(QWidget):
         label_n_data = QLabel("# data points:")
         self.lineEdit_n_data = QLineEdit(str(maxlen))
         self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
+        label_skip_n_points = QLabel("skip n points:")
+        self.lineEdit_skip_n_points = QLineEdit("0")
+        self.lineEdit_skip_n_points.returnPressed.connect(self.change_skip_n_points)
+        skip_tool_tip = "Skip n points in the plot before plotting the next value. This may be useful for long measurements to speed up plotting and free up memory."
+        label_skip_n_points.setToolTip(skip_tool_tip)
+        self.lineEdit_skip_n_points.setToolTip(skip_tool_tip)
         self.setLayout(QGridLayout())
-        self.layout().addWidget(self.plot_widget, 0, 1, 1, 4)
+        self.layout().addWidget(self.plot_widget, 0, 1, 1, 6)
         self.layout().addWidget(self.pushButton_show_options, 2, 1)
         self.layout().addWidget(self.pushButton_clear, 2, 2)
-        self.layout().addWidget(label_n_data, 2, 3)
-        self.layout().addWidget(self.lineEdit_n_data, 2, 4)
+        self.layout().addWidget(label_n_data, 2, 5)
+        self.layout().addWidget(self.lineEdit_n_data, 2, 6)
+        self.layout().addWidget(label_skip_n_points, 2, 3)
+        self.layout().addWidget(self.lineEdit_skip_n_points, 2, 4)
         self.layout().addWidget(self.plot_options, 0, 0, 3, 1)
         self.plot_options.hide()
-        self.adjustSize()
-        place_widget(self)
+        # self.setMinimumSize(500, 400)
+        if manual_plot_position:
+            place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
+        else:
+            place_widget(self)
+        # self.adjustSize()
+        self.change_maxlen()
+
+    def show_again(self):
+        if not self.isVisible():
+            self.show()
+            self.reopened.emit()
 
     def make_toolbar(self):
         """Creates the toolbar for the plot widget. This toolbar is based on the context menu of the plot. The View All is connected with `auto_range`."""
@@ -342,7 +466,7 @@ class PlotWidget(QWidget):
             if action.text() == "View All":
                 action.triggered.connect(self.auto_range)
             self.toolbar.addAction(action)
-        self.layout().addWidget(self.toolbar, 1, 1, 1, 4)
+        self.layout().addWidget(self.toolbar, 1, 1, 1, 6)
         self.plot_options.set_log()
 
     def auto_range(self):
@@ -364,6 +488,17 @@ class PlotWidget(QWidget):
             except ValueError:
                 return
         self.livePlot.change_maxlen(maxlen)
+
+    def change_skip_n_points(self):
+        text = self.lineEdit_skip_n_points.text()
+        if not text:
+            skip_n_points = 0
+        else:
+            try:
+                skip_n_points = int(text)
+            except ValueError:
+                return
+        self.livePlot.change_skip_n_points(skip_n_points)
 
     def show_options(self):
         """
@@ -490,7 +625,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
 
             color = item.opts["pen"].color()
             colorwidge = QPushButton(color.name())
-            colorwidge.clicked.connect(lambda n=i: self.change_color(n))
+            colorwidge.clicked.connect(lambda state, n=i: self.change_color(n))
             self.tableWidget.setCellWidget(i, 3, colorwidge)
 
     def change_symbol(self, symbol, row):
@@ -521,7 +656,7 @@ class Plot_Options(Ui_Plot_Options, QWidget):
         """
         item = self.tableWidget.cellWidget(row, 3)
         if just_update:
-            color = QColor(item.text()) 
+            color = QColor(item.text())
         else:
             color = QColorDialog.getColor()
             if not color.isValid():
@@ -628,6 +763,7 @@ class LivePlot(QObject, CallbackBase):
         self.__setup_lock = threading.Lock()
         self.__setup_event = threading.Event()
         self.use_abs = {"x": False, "y": False, "y2": False}
+        self.setup_is_done = False
 
         def setup():
             # this is the setup function, it is called when the first event is received
@@ -649,8 +785,9 @@ class LivePlot(QObject, CallbackBase):
                 self.plotItem.setTitle(title)
             self._epoch_offset = None
             self._epoch = epoch
+            self.setup_is_done = True
 
-        self.x_data = []
+        self.x_data = ListDeque_skip(maxlen=maxlen)
         self.y_data = {}
         self.y_axes = y_axes or {}
         self.maxlen = maxlen
@@ -659,7 +796,7 @@ class LivePlot(QObject, CallbackBase):
         self.y_names = y_names
         self.ys = get_obj_fields(y_names)
         for y in y_names:
-            self.y_data[y] = []
+            self.y_data[y] = ListDeque_skip(maxlen=maxlen)
         self.current_plots = {}
         self.legend = None
         self.desc = []
@@ -734,7 +871,7 @@ class LivePlot(QObject, CallbackBase):
             try:
                 self.add_plot(y)
             except Exception as e:
-                print(e)
+                logging.warning(e)
         self.legend = pg.LegendItem(
             offset=(1, 1), horSpacing=20, verSpacing=-5, pen="w" if dark_mode else "k"
         )
@@ -744,6 +881,7 @@ class LivePlot(QObject, CallbackBase):
         self.setup_done_signal.emit()
         for fit in self.fitPlots:
             fit.start(doc)
+        self.eva.start(doc)
 
     def descriptor(self, doc):
         """
@@ -754,6 +892,8 @@ class LivePlot(QObject, CallbackBase):
         doc : dict
             The descriptor document
         """
+        if not self.setup_is_done:
+            self.start(doc)
         if doc["name"] == self.stream_name:
             self.desc.append(doc["uid"])
         elif doc["name"].startswith(f"{self.stream_name}_fits_readying_"):
@@ -779,11 +919,21 @@ class LivePlot(QObject, CallbackBase):
             try:
                 pg.PlotWidget.event(self, doc)
             except Exception as e:
-                print(e)
+                logging.warning(e)
             return
         if doc["descriptor"] not in self.desc:
             if doc["descriptor"] in self.descs_fit_readying:
                 self.descs_fit_readying[doc["descriptor"]].get_ready()
+            return
+        # Check to see if doc["data"] contains keys matching any on the self.ys strings
+        if not (
+            any(key in s for key in doc["data"] for s in self.ys)
+            or any(
+                key.endswith("_variable_signal")
+                and any(subkey in s for subkey in doc["data"][key] for s in self.ys)
+                for key in doc["data"]
+            )
+        ):
             return
         try:
             new_x = doc["data"][self.x]
@@ -793,7 +943,7 @@ class LivePlot(QObject, CallbackBase):
             else:
                 if not self.eva.is_to_date(doc["time"]):
                     self.eva.event(doc)
-                new_x = self.eva.eval(self.x)
+                new_x = self.eva.eval(self.x, do_not_reraise=True)
         if self.x == "time" and self._epoch == "run":
             new_x -= self._epoch_offset
 
@@ -804,7 +954,11 @@ class LivePlot(QObject, CallbackBase):
             except KeyError:
                 if not self.eva.is_to_date(doc["time"]):
                     self.eva.event(doc)
-                new_y[y] = self.eva.eval(y)
+                try:
+                    new_y[y] = self.eva.eval(y, do_not_reraise=True)
+                except ValueError as e:
+                    logging.warning("Error getting data for plot", e)
+                    return
         self.update_caches(new_x, new_y)
         for fit in self.fitPlots:
             fit.event(doc)
@@ -820,6 +974,9 @@ class LivePlot(QObject, CallbackBase):
             plot_x = np.abs(self.x_data)
         else:
             plot_x = self.x_data
+        plot_x = np.asarray(plot_x)
+        if plot_x.ndim > 1:
+            plot_x = plot_x[-1]
         for y in self.ys:
             y_abs = False
             y2_abs = False
@@ -835,6 +992,9 @@ class LivePlot(QObject, CallbackBase):
                 plot_y = np.abs(self.y_data[y]) if y2_abs else self.y_data[y]
             else:
                 plot_y = np.abs(self.y_data[y]) if y_abs else self.y_data[y]
+            plot_y = np.asarray(plot_y)
+            if plot_y.ndim > 1:
+                plot_y = plot_y[-1]
             if not y in self.current_plots:
                 self.add_plot(y)
             self.current_plots[y].setData(plot_x, plot_y)
@@ -842,37 +1002,37 @@ class LivePlot(QObject, CallbackBase):
 
     def stop(self, doc):
         if not self.x_data:
-            print(
+            logging.warning(
                 f"LivePlot did not get any data that corresponds to the x axis. {self.x}"
             )
         for y in self.y_data:
             if not self.y_data[y]:
-                print(f"LivePlot did not get any data for {y}")
+                logging.warning(f"LivePlot did not get any data for {y}")
             if len(self.y_data[y]) != len(self.x_data):
-                print(f"LivePlot has a length mismatch for {y}")
+                logging.warning(f"LivePlot has a length mismatch for {y}")
         for fit in self.fitPlots:
             fit.stop(doc)
 
     def clear_plot(self):
         for y in self.current_plots:
             self.current_plots[y].setData([], [])
-        self.x_data = []
+        self.x_data = ListDeque_skip(maxlen=self.maxlen)
         for y in self.y_data:
-            self.y_data[y] = []
+            self.y_data[y] = ListDeque_skip(maxlen=self.maxlen)
         for fit in self.fitPlots:
             fit.clear_plot()
         self.update_plot()
 
     def change_maxlen(self, maxlen):
         self.maxlen = maxlen
-        if maxlen < np.inf:
-            self.x_data = deque(self.x_data, maxlen=maxlen)
-            for y in self.y_data:
-                self.y_data[y] = deque(self.y_data[y], maxlen=maxlen)
-        else:
-            self.x_data = list(self.x_data)
-            for y in self.y_data:
-                self.y_data[y] = list(self.y_data[y])
+        self.x_data.change_maxlen(maxlen)
+        for y in self.y_data:
+            self.y_data[y].change_maxlen(maxlen)
+
+    def change_skip_n_points(self, n):
+        self.x_data.skip_n_points = n
+        for y in self.y_data:
+            self.y_data[y].skip_n_points = n
 
 
 class LiveFitPlot(CallbackBase):
@@ -960,7 +1120,9 @@ class LiveFitPlot(CallbackBase):
     def fit_has_result(self):
         if self.livefit.result is not None:
             x_data = self.livefit.independent_vars_data[self.__x_key]
-            x_points = np.linspace(np.min(x_data), np.max(x_data), self.num_points)
+            x_points = np.linspace(
+                np.min(x_data), np.max(x_data), max(self.num_points, len(x_data))
+            )
             kwargs = {self.__x_key: x_points}
             kwargs.update(self.livefit.result.values)
             self.y_data = self.livefit.result.model.eval(**kwargs)
@@ -988,14 +1150,20 @@ class LiveFitPlot(CallbackBase):
                 legendPos = legend.scenePos()
                 y0 = legendPos.y() + legendRect.height()
             vals = self.livefit.result.values
+            variables = self.livefit.result.var_names
             if self.line_position is None:
                 self.line_position = self.parent_plot.line_number
-                self.parent_plot.line_number += len(vals)
+                self.parent_plot.line_number += len(variables)
             for i, (name, value) in enumerate(vals.items()):
-                error = np.sqrt(self.livefit.result.covar[i, i])
-                text = pg.TextItem(
-                    f"{name}: {value:.3e} ± {error:.3e}", color=self.color
-                )
+                if name not in variables:
+                    continue
+                if self.livefit.result.covar is not None:
+                    error = np.sqrt(self.livefit.result.covar[i, i])
+                    text = pg.TextItem(
+                        f"{name}: {value:.3e} ± {error:.3e}", color=self.color
+                    )
+                else:
+                    text = pg.TextItem(f"{name}: {value:.3e}", color=self.color)
                 text.setParentItem(self.plotItem.vb)
                 text.setPos(5, (i + self.line_position) * 20 + y0)
                 self.text_objects.append(text)
@@ -1020,6 +1188,7 @@ class PlotWidget_2D(QWidget):
     """ """
 
     closing = Signal()
+    reopened = Signal()
 
     def __init__(
         self,
@@ -1027,15 +1196,25 @@ class PlotWidget_2D(QWidget):
         y_name,
         z_name,
         parent=None,
-        namespace=None,
+        evaluator=None,
         xlabel="",
         ylabel="",
         zlabel="",
         title="",
+        maxlen=np.inf,
         stream_name="primary",
+        manual_plot_position=False,
+        top_left_x="",
+        top_left_y="",
+        plot_width="",
+        plot_height="",
         **kwargs,
     ):
         super().__init__(parent=parent)
+        self.setWindowTitle(
+            title or f"{zlabel or z_name} vs. {xlabel or x_name}, {ylabel or y_name}"
+        )
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
         self.graphics_layout = pg.GraphicsLayoutWidget()
         self.plot = self.graphics_layout.addPlot(col=0, row=0)
         self.x_name = x_name
@@ -1046,7 +1225,7 @@ class PlotWidget_2D(QWidget):
         self.stream_name = stream_name
 
         self.toolbar = None
-        eva = Evaluator(namespace=namespace)
+        eva = evaluator
         self.livePlot = LivePlot_2D(
             x_name,
             y_name,
@@ -1058,12 +1237,44 @@ class PlotWidget_2D(QWidget):
             stream_name=stream_name,
             **kwargs,
         )
+        self.livePlot.new_data.connect(self.show_again)
+        label_n_data = QLabel("# data points:")
+        self.lineEdit_n_data = QLineEdit(str(maxlen))
+        self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
+        self.pushButton_clear = QPushButton("Clear Plot")
+        self.pushButton_clear.clicked.connect(self.clear_plot)
 
         self.setLayout(QGridLayout())
-        self.layout().addWidget(self.graphics_layout, 0, 0)
+        self.layout().addWidget(self.graphics_layout, 0, 0, 1, 3)
+        self.layout().addWidget(self.pushButton_clear, 2, 0)
+        self.layout().addWidget(label_n_data, 2, 1)
+        self.layout().addWidget(self.lineEdit_n_data, 2, 2)
         self.make_toolbar()
+        if manual_plot_position:
+            place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
+        else:
+            place_widget(self)
         self.adjustSize()
-        place_widget(self)
+        self.change_maxlen()
+
+    def change_maxlen(self):
+        """
+        Changes the maximum number of data points to show in the plot. Reads the value from the line edit and sets it as the new maximum length.
+        """
+        text = self.lineEdit_n_data.text()
+        if not text or text.lower() in ["none", "inf", "np.inf"]:
+            maxlen = np.inf
+        else:
+            try:
+                maxlen = int(text)
+            except ValueError:
+                return
+        self.livePlot.change_maxlen(maxlen)
+
+    def show_again(self):
+        if not self.isVisible():
+            self.show()
+            self.reopened.emit()
 
     def make_toolbar(self):
         self.toolbar = QMenuBar()
@@ -1077,7 +1288,7 @@ class PlotWidget_2D(QWidget):
         actions = menu.actions()
         for action in actions:
             self.toolbar.addAction(action)
-        self.layout().addWidget(self.toolbar, 1, 0)
+        self.layout().addWidget(self.toolbar, 1, 0, 1, 3)
 
     def clear_plot(self):
         self.livePlot.clear_plot()
@@ -1140,6 +1351,12 @@ class LivePlot_2D(QObject, CallbackBase):
         self.z_data.clear()
         self.scatter_plot = pg.ScatterPlotItem(self.x_data, self.y_data)
         self.dummy_image = pg.ImageItem()
+        # Remove the old colorbar if it exists
+        if hasattr(self, "color_bar") and self.color_bar is not None:
+            self.graphics_layout.removeItem(self.color_bar)
+        # Remove the old hist if it exists
+        if hasattr(self, "hist") and self.hist is not None:
+            self.graphics_layout.removeItem(self.hist)
         self.color_bar = pg.ColorBarItem(label=self.z, interactive=False)
         self.color_bar.setColorMap(self.cmap)
         self.color_bar.setImageItem(self.dummy_image)
@@ -1152,6 +1369,8 @@ class LivePlot_2D(QObject, CallbackBase):
         self.hist.gradient.setColorMap(self.cmap)
         self.hist.axis.setLabel(self.z)
         self.graphics_layout.addItem(self.hist, row=0, col=1)
+        self.hist.hide()
+        self.color_bar.hide()
         self.graphics_layout.addItem(self.color_bar, row=0, col=2)
         self.plotItem.addItem(self.image)
         self._epoch_offset = None
@@ -1180,19 +1399,19 @@ class LivePlot_2D(QObject, CallbackBase):
             else:
                 if not self.eva.is_to_date(doc["time"]):
                     self.eva.event(doc)
-                x = self.eva.eval(self.x)
+                x = self.eva.eval(self.x, do_not_reraise=True)
         try:
             y = doc["data"][self.y]
         except KeyError:
             if not self.eva.is_to_date(doc["time"]):
                 self.eva.event(doc)
-            y = self.eva.eval(self.y)
+            y = self.eva.eval(self.y, do_not_reraise=True)
         try:
             z = doc["data"][self.z]
         except KeyError:
             if not self.eva.is_to_date(doc["time"]):
                 self.eva.event(doc)
-            z = self.eva.eval(self.z)
+            z = self.eva.eval(self.z, do_not_reraise=True)
         self.update(x, y, z)
         self.new_data.emit()
 
@@ -1227,20 +1446,27 @@ class LivePlot_2D(QObject, CallbackBase):
         x_shape = len(set(self.x_data))
         y_shape = len(set(self.y_data))
         mesh = self.make_colormesh(x_shape, y_shape)
+
         if mesh:
             x, y, z = mesh
+            if not self.x_data:
+                return
             self.image.clear()
             self.image.setImage(z)
-            self.image.setRect(pg.QtCore.QRectF(x.min(), y.min(), x.ptp(), y.ptp()))
+            self.image.setRect(pg.QtCore.QRectF(x.min(), y.min(), np.ptp(x), np.ptp(y)))
             self.image.setLookupTable(self.cmap.getLookupTable())
             self.scatter_plot.hide()
             self.color_bar.hide()
             self.image.show()
             self.hist.show()
         else:
-            self.z_normed = (self.z_data - np.min(self.z_data)) / (
-                np.max(self.z_data) - np.min(self.z_data)
-            )
+            # Check for case that all z values are 0
+            if np.all(np.array(self.z_data) == 0):
+                self.z_normed = np.zeros(len(self.z_data))
+            else:
+                self.z_normed = (self.z_data - np.min(self.z_data)) / (
+                    np.max(self.z_data) - np.min(self.z_data)
+                )
             self.dummy_image.setImage(np.array([self.z_data]))
             self.color_bar.setLevels((np.min(self.z_data), np.max(self.z_data)))
             colors = self.cmap.map(self.z_normed)
@@ -1251,7 +1477,21 @@ class LivePlot_2D(QObject, CallbackBase):
             self.color_bar.show()
 
     def clear_plot(self):
-        pass
+        self.x_data.clear()
+        self.y_data.clear()
+        self.z_data.clear()
+        self.update(self.x_data, self.y_data, self.z_data)
+
+    def change_maxlen(self, maxlen):
+        self.maxlen = maxlen
+        if maxlen < np.inf:
+            self.x_data = deque(self.x_data, maxlen=maxlen)
+            self.y_data = deque(self.y_data, maxlen=maxlen)
+            self.z_data = deque(self.z_data, maxlen=maxlen)
+        else:
+            self.x_data = list(self.x_data)
+            self.y_data = list(self.y_data)
+            self.z_data = list(self.z_data)
 
 
 class LivePlot_NoBluesky(QObject):
@@ -1276,7 +1516,8 @@ class LivePlot_NoBluesky(QObject):
         self.plotItem.setLabel("left", ylabel)
         self.ax2_viewbox = ax2_viewbox
         self.ax2_axis = ax2_axis
-        self.ax2_axis.setLabel("right", ylabel2)
+        if self.ax2_axis:
+            self.ax2_axis.setLabel("right", ylabel2)
         self.labels = labels
         self.maxlen = np.inf
         self.x_data = []
@@ -1336,7 +1577,7 @@ class LivePlot_NoBluesky(QObject):
                         self.y_data[y] = []
                     self.n_plots += 1
                 except Exception as e:
-                    print(e)
+                    logging.warning(e)
             self.setup_done_signal.emit()
         if add:
             self.x_data.append(x)
@@ -1367,6 +1608,9 @@ class LivePlot_NoBluesky(QObject):
             plot_x = np.abs(self.x_data)
         else:
             plot_x = self.x_data
+        plot_x = np.asarray(plot_x)
+        if plot_x.ndim > 1:
+            plot_x = plot_x[-1]
         for y in self.labels:
             y_abs = False
             y2_abs = False
@@ -1382,6 +1626,9 @@ class LivePlot_NoBluesky(QObject):
                 plot_y = np.abs(self.y_data[y]) if y2_abs else self.y_data[y]
             else:
                 plot_y = np.abs(self.y_data[y]) if y_abs else self.y_data[y]
+            plot_y = np.asarray(plot_y)
+            if plot_y.ndim > 1:
+                plot_y = plot_y[-1]
             self.current_plots[y].setData(plot_x, plot_y)
         self.new_data_signal.emit()
 

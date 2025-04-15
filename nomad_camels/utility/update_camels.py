@@ -6,21 +6,31 @@ import os
 import sys
 import subprocess
 import re
+import importlib
 import nomad_camels  # has to be imported for the distribution version number!
 from nomad_camels.ui_widgets import warn_popup
+from nomad_camels import graphics
 
-from PySide6.QtWidgets import QMessageBox
+from PySide6.QtWidgets import (
+    QMessageBox,
+    QDialog,
+    QGridLayout,
+    QTextEdit,
+    QDialogButtonBox,
+    QPushButton,
+)
+from PySide6.QtGui import QIcon
 
 
 def get_version():
     """checks the installed version of nomad-camels and returns it."""
     try:
-        return nomad_camels.__version__
-    except AttributeError:
-        try:
-            import pkg_resources
+        import pkg_resources
 
-            return pkg_resources.get_distribution("nomad-camels").version
+        return pkg_resources.get_distribution("nomad-camels").version
+    except (AttributeError, pkg_resources.DistributionNotFound):
+        try:
+            return nomad_camels.__version__
         except Exception:
             return None
 
@@ -173,5 +183,61 @@ def auto_update(parent):
         question_message_box(parent)
 
 
-if __name__ == "__main__":
-    print(get_latest_version())
+def show_release_notes():
+    class MarkdownDialog(QDialog):
+        def __init__(self, markdown_text):
+            super().__init__()
+            self.setWindowTitle("Changelog - NOMAD CAMELS")
+            self.setWindowIcon(QIcon(str(importlib.resources.files(graphics) / "camels_icon.png")))
+
+            layout = QGridLayout(self)
+
+            # Create a QTextEdit to display the Markdown content
+            text_edit = QTextEdit(self)
+            text_edit.setMarkdown(markdown_text)
+            text_edit.setReadOnly(True)
+
+            # Add OK button
+            button_box = QDialogButtonBox(QDialogButtonBox.Ok, self)
+            button_box.accepted.connect(self.accept)
+
+            layout.addWidget(text_edit, 0, 0)
+            layout.addWidget(button_box, 1, 0)
+
+            self.setLayout(layout)
+            self.setMinimumWidth(500)
+
+    # read package's readme file
+    try:
+        readme = read_readme_from_metadata('nomad_camels')
+    except:
+        try:
+            with importlib.resources.open_text("nomad_camels", "README.md") as f:
+                readme = f.read()
+        except (FileNotFoundError, ModuleNotFoundError):
+            try:
+                with open("README.md", "r") as f:
+                    readme = f.read()
+            except FileNotFoundError:
+                try:
+                    with open("../README.md", "r") as f:
+                        readme = f.read()
+                except FileNotFoundError:
+                    return
+    changelog = readme.split("# Changelog\n")[1]
+    while changelog.startswith("\n"):
+        changelog = changelog[1:]
+    # newest_log = changelog.split("\n#")[0]
+    dialog = MarkdownDialog(changelog)
+    dialog.exec_()
+
+
+def read_readme_from_metadata(package_name):
+    try:
+        # Get the metadata for the package
+        metadata = importlib.metadata.metadata(package_name)
+        # Extract the long description (which includes the README content)
+        readme = metadata.get('Description', None)
+        return readme
+    except importlib.metadata.PackageNotFoundError:
+        return None

@@ -1,8 +1,13 @@
-"""The functions in this module may be used inside a protocol. It is much
-simpler to use these than writing them as a string into the protocol-file."""
+"""Functions to be used in protocols.
+
+The functions in this module may be used inside a protocol. It is much
+simpler to use these than writing them as a string into the protocol-file.
+"""
 
 import numpy as np
 from bluesky import plan_stubs as bps
+from bluesky.preprocessors import contingency_wrapper, rewindable_wrapper
+from bluesky.utils import all_safe_rewind, short_uid
 
 from ophyd import SignalRO, Device
 
@@ -16,12 +21,16 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QProgressBar,
     QPushButton,
+    QComboBox,
+    QTextEdit,
+    QCheckBox,
 )
-from PySide6.QtCore import Signal, Qt
-from PySide6.QtGui import QFont
+from PySide6.QtCore import Signal, Qt, QDateTime
+from PySide6.QtGui import QFont, QIcon, QKeyEvent
 
 from nomad_camels.ui_widgets.add_remove_table import AddRemoveTable
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
+from nomad_camels import graphics
 
 from suitcase.nomad_camels_hdf5 import Serializer, export
 
@@ -30,12 +39,59 @@ import os
 import sys
 import glob
 
+from importlib import resources
+
+from nomad_camels.bluesky_handling.loop_step_functions_api_call import (
+    execute_camels_api_call,
+    execute_generic_api_call,
+    save_API_response_to_variable,
+    evaluate_message_body,
+)
+
 
 def get_newest_file(directory):
-    # List all files in the directory
-    files = glob.glob(os.path.join(directory, "*"))
-    # Find the newest file
-    newest_file = max(files, key=os.path.getmtime)
+    """
+    Return the newest '.nxs' or '.h5' file in the specified directory, if one exists.
+
+    This function searches the given directory for files ending with the '.nxs'
+    or '.h5' extension and returns the one with the most recent modification time.
+
+    If the input 'directory' is a file, its parent directory is used for the search.
+    If no '.nxs' or '.h5' files are found, the function returns None.
+
+    Parameters
+    ----------
+    directory : str
+        The directory to search for '.nxs' files. If a file path is provided,
+        the search is performed in the file's parent directory.
+
+    Returns
+    -------
+    str or None
+        The full path to the newest '.nxs' file found in the directory, or None
+        if no such file exists.
+    """
+    # If the given path is a file, use its directory
+    if os.path.isfile(directory):
+        directory = os.path.dirname(directory)
+
+    # Define the search patterns for '.nxs' and '.h5' files
+    pattern_nxs = os.path.join(directory, "*.nxs")
+    pattern_h5 = os.path.join(directory, "*.h5")
+
+    # Retrieve lists of all '.nxs' and '.h5' files in the directory
+    nxs_files = glob.glob(pattern_nxs)
+    h5_files = glob.glob(pattern_h5)
+
+    # Combine the lists of files
+    all_files = nxs_files + h5_files
+
+    # If no files are found, return None
+    if not all_files:
+        return None
+
+    # Return the newest file based on its modification time
+    newest_file = max(all_files, key=os.path.getmtime)
     return newest_file
 
 
@@ -47,8 +103,43 @@ def export_function(
     export_csv=False,
     export_json=False,
     plot_data=None,
+    do_nexus_output=True,
 ):
-    if os.path.splitext(save_path)[1] == ".nxs":
+    """
+    Export the given runs to the given path.
+
+    Parameters
+    ----------
+    runs : list[databroker.core.BlueskyRun]
+        The runs to be exported.
+    save_path : str
+        The path where the files should be saved.
+    do_export : bool
+        Whether the runs should be exported.
+    new_file_each : bool, optional
+        (Default value = True)
+        Whether a new file should be created for each run. If True, the files are
+        padded with the start-time of the run. Ignored if `do_export` is False.
+    export_csv : bool, optional
+        (Default value = False)
+        Whether the data should be exported to a csv file.
+    export_json : bool, optional
+        (Default value = False)
+        Whether the metadata should be exported to a json file.
+    plot_data : dict, optional
+        (Default value = None)
+        The data to be plotted.
+
+    """
+    if do_nexus_output:
+        file_extension = ".nxs"
+    else:
+        file_extension = ".h5"
+    save_path = f"{save_path}{file_extension}"
+    if (
+        os.path.splitext(save_path)[1] == ".nxs"
+        or os.path.splitext(save_path)[1] == ".h5"
+    ):
         fname = os.path.basename(save_path)
         path = os.path.dirname(save_path)
     if do_export:
@@ -56,7 +147,14 @@ def export_function(
             runs = [runs]
         for run in runs:
             docs = run.documents(fill="yes")
-            export(docs, path, fname, new_file_each, plot_data=plot_data)
+            export(
+                docs,
+                path,
+                fname,
+                new_file_each,
+                plot_data=plot_data,
+                do_nexus_output=do_nexus_output,
+            )
     if export_csv or export_json:
         from nomad_camels.utility.databroker_export import export_h5_to_csv_json
 
@@ -64,19 +162,61 @@ def export_function(
         export_h5_to_csv_json(file, export_data=export_csv, export_metadata=export_json)
 
 
-def saving_function(name, start_doc, path, new_file_each=True, plot_data=None):
+def saving_function(
+    name, start_doc, path, new_file_each=True, plot_data=None, do_nexus_output=True
+):
+    """
+    Create a Serializer and return it.
+
+    The serializer is from the suitcase.nomad_camels_hdf5 module and used to save
+    the data during a run.
+
+    Parameters
+    ----------
+    name : str
+        The name of the file.
+    start_doc : dict
+        The start document of the run.
+    path : str
+        The path where the file should be saved.
+    new_file_each : bool, optional
+        (Default value = True)
+        Whether a new file should be created for each run. If True, the files are
+        padded with the start-time of the run.
+    plot_data : dict, optional
+        (Default value = None)
+        The data to be plotted.
+
+    Returns
+    -------
+    serializers : list
+        The serializers to be used.
+    resources : list
+        The resources to be used. In this case, an empty list.
+    """
     fname = start_doc["uid"]
-    if os.path.splitext(path)[1] == ".nxs":
+    if do_nexus_output:
+        file_extension = ".nxs"
+    else:
+        file_extension = ".h5"
+    path = f"{path}{file_extension}"
+    if os.path.splitext(path)[1] == ".nxs" or os.path.splitext(path)[1] == ".h5":
         fname = os.path.basename(path)
         path = os.path.dirname(path)
     return [
-        Serializer(path, fname, new_file_each=new_file_each, plot_data=plot_data)
+        Serializer(
+            path,
+            fname,
+            new_file_each=new_file_each,
+            plot_data=plot_data,
+            do_nexus_output=do_nexus_output,
+        )
     ], []
 
 
 def trigger_multi(devices, grp=None):
     """
-    This function triggers multiple devices
+    Trigger multiple devices.
 
     Parameters
     ----------
@@ -91,10 +231,9 @@ def trigger_multi(devices, grp=None):
             yield from bps.trigger(obj, group=grp)
 
 
-def read_wo_trigger(devices, grp=None, stream="primary"):
+def read_wo_trigger(devices, grp=None, stream="primary", skip_on_exception=None):
     """
-    Used if not reading by trigger_and_read, but splitting both. This function
-    only reads, without triggering.
+    Used if not reading by trigger_and_read, but splitting both. This function only reads, without triggering.
 
     Parameters
     ----------
@@ -108,24 +247,54 @@ def read_wo_trigger(devices, grp=None, stream="primary"):
 
     Returns
     -------
-
+    ret : dict
+        The readings of the devices.
     """
+    skip_on_exception = skip_on_exception or [False] * len(devices)
+    for i, obj in enumerate(devices):
+        if skip_on_exception[i]:
+            obj.__read_w_except__ = True
+        else:
+            obj.__read_w_except__ = False
     if grp is not None:
         yield from bps.wait(grp)
     yield from bps.create(stream)
-    ret = {}  # collect and return readings to give plan access to them
-    for obj in devices:
-        reading = yield from bps.read(obj)
-        if reading is not None:
-            ret.update(reading)
-    yield from bps.save()
+
+    def read_plan():
+        ret = {}  # collect and return readings to give plan access to them
+        for obj in devices:
+            reading = yield from bps.read(obj)
+            if reading is not None:
+                ret.update(reading)
+        return ret
+
+    def standard_path():
+        yield from bps.save()
+
+    def exception_path(ex):
+        yield from bps.drop()
+        raise ex
+
+    ret = yield from contingency_wrapper(
+        read_plan(), except_plan=exception_path, else_plan=standard_path
+    )
     return ret
+
+
+def trigger_and_read(devices, name="primary", skip_on_exception=None):
+    rewindable = all_safe_rewind(devices)
+
+    def inner_trigger_read():
+        grp = short_uid("trigger")
+        yield from trigger_multi(devices, grp)
+        return (yield from read_wo_trigger(devices, grp, name, skip_on_exception))
+
+    return (yield from rewindable_wrapper(inner_trigger_read(), rewindable))
 
 
 def simplify_configs_dict(configs):
     """
-    Returns a simplified version of the given dictionary `configs` by returning
-    confs[key] = configs[key]['value'].
+    Returns a simplified version of the given dictionary `configs` by returning confs[key] = configs[key]['value'].
 
     Parameters
     ----------
@@ -176,8 +345,6 @@ def get_fit_results(fits, namespace, yielding=False, stream="primary"):
                 [fit.read_ready], name=f"{stream}_fits_readying_{name}"
             )
             yield from fit.update_fit()
-            # yield from bps.trigger_and_read(fit.ophyd_fit.used_comps,
-            #                                 name=f'{stream}_fits_{name}')
         if not fit.result:
             continue
         for param in fit.params:
@@ -185,6 +352,16 @@ def get_fit_results(fits, namespace, yielding=False, stream="primary"):
                 namespace[f"{name}_{param}"] = fit.result.best_values[param]
         namespace[f"{name}_covar"] = fit.result.covar
         fit._reset()
+
+
+def make_recoursive_plot_list_of_sub_steps(sub_dict, plot_list=None):
+    plot_list = plot_list or []
+    for key, value in sub_dict.items():
+        if key == "plots":
+            plot_list += value
+        elif isinstance(value, dict):
+            plot_list = make_recoursive_plot_list_of_sub_steps(value, plot_list)
+    return plot_list
 
 
 def clear_plots(plots, stream="primary"):
@@ -278,14 +455,12 @@ def gradient_descent(
         The history of evaluated values
 
     """
-
     if set_channel not in read_channels:
         read_channels += [set_channel]
 
     def obj_func(set_val):
         """
-        This function sets the value and then reads the channels for each
-        iteration of the algorithm.
+        Set the value and then read the channels for each iteration of the algorithm.
 
         Parameters
         ----------
@@ -378,7 +553,8 @@ def get_range(
     use_distance=False,
 ):
     """
-    This is a helper function for steps like sweeps and the for loop.
+    Helper function for steps like sweeps and the for loop.
+
     Using the evaluator, it creates the range of iterations given the other
     values.
 
@@ -415,6 +591,13 @@ def get_range(
     endpoint : bool
          (Default value = True)
          Whether to include the endpoint into the range.
+    distance : float, str
+        (Default value = np.nan)
+        The distance between the points.
+    use_distance : bool
+        (Default value = False)
+        If True, the distance is used to calculate the range.
+
     Returns
     -------
         An array of the calculated range.
@@ -544,7 +727,7 @@ class Prompt_Box(QMessageBox):
         The window-title of the prompt.
     """
 
-    def __init__(self, icon="", text="", title="", parent=None):
+    def __init__(self, icon="", text="", title="", parent=None, abortable=False):
         super().__init__(parent=parent)
         if icon == "Error":
             self.setIcon(QMessageBox.Critical)
@@ -557,6 +740,14 @@ class Prompt_Box(QMessageBox):
         self.helper = BoxHelper()
         self.helper.executor.connect(self.start_execution)
         self.buttonClicked.connect(self.set_done)
+        self.abort_flag = False
+        if abortable:
+            self.ok_button = QPushButton("OK")
+            self.addButton(self.ok_button, QMessageBox.ButtonRole.AcceptRole)
+            self.ok_button.clicked.connect(self.set_done)
+            self.abort_button = QPushButton("Abort Protocol")
+            self.addButton(self.abort_button, QMessageBox.ButtonRole.NoRole)
+            self.abort_button.clicked.connect(self.abort_action)
         self.done_flag = False
 
     def set_done(self):
@@ -568,6 +759,12 @@ class Prompt_Box(QMessageBox):
         self.done_flag = False
         self.exec()
 
+    def abort_action(self):
+        """
+        If the abort button is clicked, the protocol is stopped.
+        """
+        self.abort_flag = True
+
 
 class BoxHelper(QWidget):
     """Helper-class to start the execution of Prompts and other boxes from
@@ -578,7 +775,7 @@ class BoxHelper(QWidget):
 
 class Value_Box(QDialog):
     """
-    This dialog is used to set variables or channels at runtime of a protocol.
+    Dialog to set variables or channels at runtime of a protocol.
 
     Parameters
     ----------
@@ -611,6 +808,7 @@ class Value_Box(QDialog):
         free_channels=False,
         parent=None,
         devs=None,
+        comboboxes=None,
     ):
         super().__init__(parent)
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
@@ -619,24 +817,14 @@ class Value_Box(QDialog):
         self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
+        self.buttonBox.setToolTip(
+            '"OK" will set the values, click "Cancel" to set no new values.'
+        )
         layout = QGridLayout()
 
         self.helper = BoxHelper()
         self.helper.executor.connect(self.start_execution)
         self.done_flag = False
-
-        channels_label = QLabel("Channels")
-        font = QFont()
-        font.setBold(True)
-        channels_label.setStyleSheet("font-size: 9pt")
-        channels_label.setFont(font)
-        layout.addWidget(channels_label, 1, 0, 1, 2)
-        variables_label = QLabel("Variables")
-        font = QFont()
-        font.setBold(True)
-        variables_label.setStyleSheet("font-size: 9pt")
-        variables_label.setFont(font)
-        layout.addWidget(variables_label, 1, 2, 1, 2)
 
         channels = channels or []
         n_channels = len(channels)
@@ -655,10 +843,27 @@ class Value_Box(QDialog):
         self.variables = variables
         for i, variable in enumerate(variables):
             variable_label = QLabel(f"{variable}:")
-            variable_box = QLineEdit()
+            if comboboxes and comboboxes[i]:
+                variable_box = QComboBox()
+                variable_box.addItems([str(x) for x in comboboxes[i]])
+            else:
+                variable_box = QLineEdit()
             self.variable_boxes.append(variable_box)
             layout.addWidget(variable_label, 2 + i, 2)
             layout.addWidget(variable_box, 2 + i, 3)
+
+        font = QFont()
+        font.setBold(True)
+        if channels:
+            channels_label = QLabel("Channels")
+            channels_label.setStyleSheet("font-size: 9pt")
+            channels_label.setFont(font)
+            layout.addWidget(channels_label, 1, 0, 1, 2)
+        if variables:
+            variables_label = QLabel("Variables")
+            variables_label.setStyleSheet("font-size: 9pt")
+            variables_label.setFont(font)
+            layout.addWidget(variables_label, 1, 2, 1, 2)
 
         devs = devs or {}
         self.channel_devs = {}
@@ -676,7 +881,11 @@ class Value_Box(QDialog):
             layout.addWidget(self.channel_table, 2 + n_channels + n_variables, 0, 1, 2)
         if free_variables:
             header = ["variable", "value"]
-            self.variable_table = AddRemoveTable(headerLabels=header)
+            self.variable_table = AddRemoveTable(
+                headerLabels=header,
+                add_tooltip="Add a variable",
+                remove_tooltip="Remove the selected variable",
+            )
             layout.addWidget(self.variable_table, 2 + n_channels + n_variables, 2, 1, 2)
 
         self.buttonBox.rejected.connect(self.reject)
@@ -706,7 +915,10 @@ class Value_Box(QDialog):
         self.set_variables = {}
         self.set_channels = {}
         for i, v_box in enumerate(self.variable_boxes):
-            val = v_box.text()
+            if isinstance(v_box, QLineEdit):
+                val = v_box.text()
+            else:
+                val = v_box.currentText()
             if val:
                 self.set_variables[self.variables[i]] = val
         for i, c_box in enumerate(self.channel_boxes):
@@ -746,8 +958,14 @@ class Value_Box(QDialog):
         Sets `self.done_flag` to True, allowing the protocol to go on before
         rejecting the dialog.
         """
-        self.done_flag = True
-        return super().reject()
+        msg = QMessageBox(
+            icon=QMessageBox.Warning,
+            text="If you cancel, no values will be set.\nDo you want to cancel?",
+        )
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        if msg.exec() == QMessageBox.Yes:
+            self.done_flag = True
+            return super().reject()
 
 
 def get_channels(dev):
@@ -861,8 +1079,8 @@ def get_opyd_and_py_file_contents(classname, md, device_name):
 
 def create_venv_run_file_delete_venv(packages, script_to_run):
     """
-    This function creates a virtual environment, installs the specified packages
-    in it, runs the specified Python script, and then deletes the virtual environment.
+    Create a virtual environment, install the specified packages
+    in it, run the specified Python script, and then delete the virtual environment.
     """
     import venv
     import subprocess
@@ -873,11 +1091,11 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
     try:
         temp_folder = tempfile.mkdtemp()
     except Exception as e:
-        raise Exception(f"Error creating temporary folder: {e}")
+        raise Exception(f"Error creating temporary folder: {e}") from e
     try:
         venv.create(temp_folder, with_pip=True)
     except Exception as e:
-        raise Exception(f"Error creating virtual environment: {e}")
+        raise Exception(f"Error creating virtual environment: {e}") from e
 
     # Path to the virtual environment's Python interpreter
     python_executable = (
@@ -894,14 +1112,16 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
                     [python_executable, "-m", "pip", "install", f"{package}"]
                 )
             except Exception as e:
-                raise Exception(f"Error installing package {package}: {e}")
+                raise Exception(f"Error installing package {package}: {e}") from e
         else:
             try:
                 subprocess.run(
                     [python_executable, "-m", "pip", "install", f"{package}=={version}"]
                 )
             except Exception as e:
-                raise Exception(f"Error installing package {package}=={version}: {e}")
+                raise Exception(
+                    f"Error installing package {package}=={version}: {e}"
+                ) from e
 
     # Step 3: Run the specified Python script
     try:
@@ -909,29 +1129,30 @@ def create_venv_run_file_delete_venv(packages, script_to_run):
             [python_executable, script_to_run], cwd=os.path.dirname(script_to_run)
         )
     except Exception as e:
-        raise Exception(f"Error running script {script_to_run}: {e}")
+        raise Exception(f"Error running script {script_to_run}: {e}") from e
 
     # Step 4: Delete the virtual environment
     try:
         if os.path.exists(temp_folder):
             shutil.rmtree(temp_folder)
     except Exception as e:
-        raise Exception(f"Error deleting temporary folder: {e}")
+        raise Exception(f"Error deleting temporary folder: {e}") from e
     return result_python_file
 
 
 def evaluate_python_file_output(stdout, namespace):
+    """Evaluates the stdout of a Python file execution and writes the returned key value pairs to the namespace, so CAMELS can access their values"""
     import json
     import re
 
-    """Evaluates the stdout of a Python file execution and writes the returned key value pairs to the namespace, so CAMELS can access their values"""
     if stdout:
-        json_pattern = re.compile(r"\{.*\}")  # Extract the dictionary from the stdout
+        json_pattern = re.compile(r"###Start Data(.*?)###End Data", re.DOTALL)
+
         # Search for JSON in the stdout
         match = json_pattern.search(stdout)
 
         if match:
-            json_str = match.group()
+            json_str = match.group(1).strip()
 
             # Load the JSON string into a Python dictionary
             data = json.loads(json_str)
@@ -947,28 +1168,96 @@ def evaluate_python_file_output(stdout, namespace):
 
             for key, value in variables_dict.items():
                 namespace[key] = value
+                print(f"Python File returned:\n{key} = {value}")
 
         if isinstance(data, dict):
             for key, value in data.items():
                 namespace[key] = value
+                print(f"Python File returned:\n{key} = {value}")
 
 
 class Value_Setter(QWidget):
+    """A widget to set a value and a wait-time for a waiting bar."""
+
     set_signal = Signal(float)
     hide_signal = Signal()
 
+    def __init__(self, parent=None):
+        import datetime as dt
+
+        super().__init__(parent)
+        self.start_time = dt.datetime.now()
+        self.end_time = dt.datetime.now()
+        self.timer = 0
+        self.wait_time = 1
+
+    def set_start_time(self, start_time):
+        """Set the start time for the waiting bar."""
+        self.start_time = start_time
+        self.set_wait_time(self.wait_time)
+        self.update_timer()
+
+    def set_wait_time(self, wait_time):
+        """Set the wait time for the waiting bar."""
+        import datetime as dt
+
+        self.wait_time = dt.timedelta(seconds=wait_time).total_seconds()
+        self.update_timer()
+
+    def update_timer(self):
+        """Update the timer of the waiting bar."""
+        import datetime as dt
+
+        self.timer = (dt.datetime.now() - self.start_time).total_seconds()
+        self.set_signal.emit(
+            self.timer / (self.wait_time or 1) * 100
+        )  # Prevent division by zero
+
 
 class Waiting_Bar(QWidget):
-    def __init__(self, parent=None, title="", skipable=False):
+    """A widget to show a waiting bar.
+
+    Used in the wait step with a progress bar or also to wait for a condition and
+    display the list plot of the condition.
+
+    Parameters
+    ----------
+    parent : QWidget
+        The parent widget.
+    title : str
+        The title of the waiting bar.
+    skipable : bool
+        (Default value = True)
+        Whether the waiting bar can be skipped and shows a skip button.
+    with_timer : bool
+        (Default value = False)
+        Whether the waiting bar has a timer.
+    display_bar : bool
+        (Default value = True)
+        Whether the waiting bar should be displayed.
+    plot : QWidget, optional
+        A plot to be displayed together with the waiting bar.
+    """
+
+    def __init__(
+        self,
+        parent=None,
+        title="",
+        skipable=True,
+        with_timer=False,
+        display_bar=True,
+        plot=None,
+    ):
         super().__init__(parent=parent)
         layout = QGridLayout()
         self.progressBar = QProgressBar()
         self.progressBar.setValue(0)
         layout.addWidget(self.progressBar, 0, 0)
+        self.progressBar.setHidden(not display_bar)
 
-        self.skipButton = QPushButton("SKIP")
         self.skip = False
         if skipable:
+            self.skipButton = QPushButton("SKIP")
             layout.addWidget(self.skipButton, 0, 1)
             self.skipButton.clicked.connect(self.skipping)
         self.setLayout(layout)
@@ -979,11 +1268,19 @@ class Waiting_Bar(QWidget):
         self.setter = Value_Setter()
         self.setter.set_signal.connect(self.setValue)
         self.setter.hide_signal.connect(self.hide)
+        self.with_timer = with_timer
+        if plot is not None:
+            self.plot = plot
+            layout.addWidget(self.plot, 1, 0, 1, 2)
+        self.adjustSize()
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
 
     def setValue(self, value):
+        """Set the value of the progress bar."""
         self.progressBar.setValue(value)
 
     def skipping(self):
+        """Set the skip flag to True and hide the waiting bar."""
         self.skip = True
         self.hide()
 
@@ -991,4 +1288,80 @@ class Waiting_Bar(QWidget):
         """Sets `self.done_flag` to False and starts `self.exec()`."""
         self.skip = False
         self.setHidden(False)
+        if self.with_timer:
+            import datetime as dt
+
+            self.setter.set_start_time(dt.datetime.now())
+
         self.show()
+
+
+class TimestampTextEdit(QTextEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        # Flag to track if the first keystroke has been handled.
+        self.first_key_pressed = False
+
+    def insertTimestamp(self):
+        """
+        Inserts the current timestamp followed by a space at the current cursor position.
+        The timestamp is in ISO 8601 format (e.g. "2025-02-05T14:30:00").
+        """
+        timestamp = QDateTime.currentDateTime().toString(Qt.ISODate)
+        self.insertPlainText(timestamp + " ")
+
+    def keyPressEvent(self, event: QKeyEvent):
+        # If this is the very first key press in the widget,
+        # prepend a timestamp.
+        if not self.first_key_pressed:
+            self.insertTimestamp()
+            self.first_key_pressed = True
+
+        # Process the key event normally.
+        super().keyPressEvent(event)
+
+        # If the key pressed is Return or Enter, then insert a new timestamp
+        # on the new line.
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            self.insertTimestamp()
+
+
+class Commenting_Box(QWidget):
+    """A widget to add comments to the protocol."""
+
+    closing = Signal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = QGridLayout()
+        self.comment_box = TimestampTextEdit()
+        self.finished_box = QCheckBox("commenting finished")
+        self.setWindowTitle("Live Measurement Comments - NOMAD CAMELS")
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+        layout.addWidget(self.comment_box, 0, 0)
+        layout.addWidget(self.finished_box, 1, 0)
+        self.setLayout(layout)
+        self.adjustSize()
+        self._is_finished = False
+        self.finished_box.clicked.connect(self.finish_comment)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
+        self.show()
+
+    def finish_comment(self):
+        """Sets the flag `_is_finished` to True."""
+        self._is_finished = True
+
+    def get_metadata(self):
+        """Get the text of the comment."""
+        return {"measurement_comments": self.comment_box.toPlainText()}
+
+    def closeEvent(self, event):
+        self.closing.emit()
+        return super().closeEvent(event)
+
+
+def update_protocol_counter(step_info):
+    step_info["protocol_stepper_signal"].emit(
+        1 + step_info["protocol_step_counter"] / step_info["total_protocol_steps"] * 99
+    )
+    step_info["protocol_step_counter"] += 1

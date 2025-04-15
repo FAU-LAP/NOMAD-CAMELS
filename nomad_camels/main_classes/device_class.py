@@ -7,8 +7,12 @@ from PySide6.QtWidgets import (
     QFrame,
     QCheckBox,
     QTextEdit,
+    QPushButton,
+    QSpacerItem,
+    QSizePolicy,
+    QScrollArea,
 )
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, Qt
 from PySide6.QtCore import Signal
 
 from ophyd import EpicsSignalRO
@@ -16,6 +20,10 @@ from ophyd import Device as OphydDevice
 from ophyd.signal import SignalRO
 
 from nomad_camels.main_classes.measurement_channel import Measurement_Channel
+from nomad_camels.ui_widgets.warn_popup import WarnPopup
+
+from nomad_camels.extensions import extension_contexts
+from nomad_camels.nomad_integration import entry_selection, nomad_communication
 
 
 class Device:
@@ -91,7 +99,6 @@ class Device:
         self.ophyd_class_name = ophyd_class_name
         if ophyd_device is None:
             ophyd_device = OphydDevice
-        # self.ophyd_device = ophyd_device
         self.ophyd_class = ophyd_device
         self.ophyd_instance = ophyd_device(name="test")
         self.get_channels()
@@ -106,6 +113,10 @@ class Device:
                 else:
                     self.passive_config.update({f"{name}": value})
         self.controls = {}
+        config_channel_metadata = {}
+        for chan in self.config_channels:
+            config_channel_metadata[chan] = self.config_channels[chan].get_meta_str()
+        self.additional_info["config_channel_metadata"] = config_channel_metadata
 
     def get_necessary_devices(self):
         """Returns a list of the devices that this device needs to function
@@ -412,18 +423,32 @@ class Device_Config(QWidget):
         self.label_connection = QLabel("Connection-type:")
         self.comboBox_connection_type = QComboBox()
         self.connector = Connection_Config()
-        layout.addWidget(self.label_connection, 4, 0)
-        layout.addWidget(self.comboBox_connection_type, 4, 1, 1, 2)
-        layout.addWidget(self.connector, 6, 0, 1, 5)
         self.comboBox_connection_type.currentTextChanged.connect(
             self.connection_type_changed
         )
 
+        self.label_id = QLabel("ID:")
+        self.lineEdit_id = QLineEdit()
+        if additional_info and "ELN-instrument-id" in additional_info:
+            self.lineEdit_id.setText(additional_info["ELN-instrument-id"])
+        self.pushbutton_id = QPushButton("...")
+        self.pushbutton_id.setFixedWidth(30)
+        id_info_text = "If you use an ELN, you can get the instrument's ID there. The ID can help to connect to other entries in the ELN.\nIn NOMAD Oasis, it is the Lab-ID of the instrument's entry.\nYou can leave this empty if you do not have an ID."
+        self.pushbutton_id.setToolTip(id_info_text)
+        self.label_id.setToolTip(id_info_text)
+        self.lineEdit_id.setToolTip(id_info_text)
+
         layout.addWidget(label_title, 0, 0, 1, 5)
         layout.addWidget(self.label_custom_name, 1, 0)
-        layout.addWidget(self.lineEdit_custom_name, 1, 1, 1, 2)
+        layout.addWidget(self.lineEdit_custom_name, 1, 1, 1, 4)
         layout.addWidget(self.textEdit_desc, 2, 0, 1, 5)
-        layout.addWidget(self.line_2, 3, 0, 1, 5)
+        layout.addWidget(self.label_id, 3, 0)
+        layout.addWidget(self.lineEdit_id, 3, 1, 1, 3)
+        layout.addWidget(self.pushbutton_id, 3, 4)
+        layout.addWidget(self.line_2, 4, 0, 1, 5)
+        layout.addWidget(self.label_connection, 5, 0)
+        layout.addWidget(self.comboBox_connection_type, 5, 1, 1, 4)
+        layout.addWidget(self.connector, 6, 0, 1, 5)
 
         self.settings_dict = settings_dict
         self.config_dict = config_dict
@@ -431,7 +456,60 @@ class Device_Config(QWidget):
         self.lineEdit_custom_name.textChanged.connect(
             lambda x: self.name_change.emit(x)
         )
+        self.ELN_metadata = {}
+        if additional_info and "ELN-metadata" in additional_info:
+            self.ELN_metadata = additional_info["ELN-metadata"]
+        self.pushbutton_id.clicked.connect(self.eln_connection_button_clicked)
         self.load_settings()
+
+    def eln_connection_button_clicked(self):
+        logged_in = check_logged_in()
+        if not logged_in:
+            WarnPopup(
+                self,
+                "You need to be logged in to NOMAD or another ELN to use this feature!\nCannot get instrument ID from ELN.",
+                "Not logged in!",
+                info_icon=True,
+            )
+        elif logged_in == "NOMAD":
+            upload_id = None
+            entry_id = None
+            if self.ELN_metadata is not None:
+                metadata = self.ELN_metadata.get("NOMAD_entry_metadata", {})
+                upload_id = metadata.get("upload_id", None)
+                entry_id = metadata.get("entry_id", None)
+            selector = entry_selection.EntrySelector(
+                self, "Instrument", upload_id=upload_id, entry_id=entry_id
+            )
+            if selector.exec():
+                self.ELN_metadata = selector.return_data
+                self.lineEdit_id.setText(
+                    self.ELN_metadata.pop("identifier")
+                    if "identifier" in self.ELN_metadata
+                    else (
+                        self.ELN_metadata["name"]
+                        if "name" in self.ELN_metadata
+                        else self.ELN_metadata["Name"]
+                    )
+                )
+        elif logged_in == "ELN":
+            try:
+                eln_data = extension_contexts.active_eln_context.selection_function(
+                    self
+                )
+                if eln_data:
+                    self.ELN_metadata = eln_data
+                    self.lineEdit_id.setText(
+                        str(self.ELN_metadata["identifier"])
+                        if "identifier" in self.ELN_metadata
+                        else (
+                            self.ELN_metadata["name"]
+                            if "name" in self.ELN_metadata
+                            else self.ELN_metadata["Name"]
+                        )
+                    )
+            except Exception as e:
+                raise Exception("Selection of ELN entry failed!") from e
 
     def showEvent(self, event):
         """Called when the widget is shown."""
@@ -439,10 +517,20 @@ class Device_Config(QWidget):
         self.adjust_text_edit_size()
 
     def adjust_text_edit_size(self):
-        """Adjusts the size of the textEdit_desc based on its content."""
+        """Adjusts the size of the textEdit_desc based on its content, up to a maximum height."""
+        max_height = 130  # Set your desired maximum height here
         document = self.textEdit_desc.document()
-        document_height = document.size().height()
-        self.textEdit_desc.setFixedHeight(document_height + 5)  # Add some padding
+        # Calculate the height of the document (plus some padding)
+        document_height = document.size().height() + 5
+        if document_height > max_height:
+            new_height = max_height
+            # Enable scrolling if the content exceeds max height
+            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        else:
+            new_height = document_height
+            # Hide scroll bar if not needed
+            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.textEdit_desc.setFixedHeight(new_height)
 
     def connection_type_changed(self):
         """Called when the comboBox_connection_type is changed. Switches
@@ -516,6 +604,12 @@ class Device_Config(QWidget):
     def get_info(self):
         """ """
         self.additional_info["description"] = self.textEdit_desc.toPlainText()
+        self.additional_info["ELN-instrument-id"] = self.lineEdit_id.text()
+        if "ELN-service" in self.ELN_metadata:
+            self.additional_info["ELN-service"] = self.ELN_metadata.pop("ELN-service")
+        else:
+            self.additional_info["ELN-service"] = ""
+        self.additional_info["ELN-metadata"] = self.ELN_metadata
         return self.additional_info
 
 
@@ -579,140 +673,6 @@ class Connection_Config(QWidget):
         pass
 
 
-#
-# class Prologix_Config(Connection_Config):
-#     """Widget for the settings when the connection is via a Prologix
-#     GPIB-Ethernet adapter.
-#
-#     Parameters
-#     ----------
-#
-#     Returns
-#     -------
-#
-#     """
-#     def __init__(self, parent=None):
-#         super().__init__(parent)
-#         layout = self.layout()
-#         label_ip = QLabel('IP-Address:')
-#         label_GPIB = QLabel('GPIB-Address:')
-#         self.lineEdit_ip = QLineEdit()
-#         self.lineEdit_GPIB = QLineEdit()
-#         self.lineEdit_GPIB.textChanged.connect(self.connection_change.emit)
-#         self.lineEdit_ip.textChanged.connect(self.connection_change.emit)
-#
-#         layout.addWidget(label_ip, 0, 0)
-#         layout.addWidget(label_GPIB, 1, 0)
-#         layout.addWidget(self.lineEdit_ip, 0, 1)
-#         layout.addWidget(self.lineEdit_GPIB, 1, 1)
-#
-#     def get_settings(self):
-#         """Returns the set IP-Address and GPIB-Address."""
-#         return {'IP-Address': self.lineEdit_ip.text(),
-#                 'GPIB-Address': self.lineEdit_GPIB.text()}
-#
-#     def load_settings(self, settings_dict):
-#         """Loads the settings_dict, specifically the IP-Address and the
-#         GPIB-Address.
-#
-#         Parameters
-#         ----------
-#         settings_dict :
-#
-#
-#         Returns
-#         -------
-#
-#         """
-#         if 'IP-Address' in settings_dict:
-#             self.lineEdit_ip.setText(settings_dict['IP-Address'])
-#         if 'GPIB-Address' in settings_dict:
-#             self.lineEdit_GPIB.setText(settings_dict['GPIB-Address'])
-#
-#
-# class LAN_Config(Connection_Config):
-#     """ """
-#     def __init__(self, parent=None):
-#         super().__init__(parent)
-#         layout = self.layout()
-#         label_ip = QLabel('IP-Address:')
-#         self.lineEdit_ip = QLineEdit()
-#         self.lineEdit_ip.textChanged.connect(self.connection_change.emit)
-#
-#         layout.addWidget(label_ip, 0, 0)
-#         layout.addWidget(self.lineEdit_ip, 0, 1)
-#
-#     def get_settings(self):
-#         """Returns the set IP-Address and GPIB-Address."""
-#         return {'IP-Address': self.lineEdit_ip.text()}
-#
-#     def load_settings(self, settings_dict):
-#         """Loads the settings_dict, specifically the IP-Address and the
-#         GPIB-Address.
-#
-#         Parameters
-#         ----------
-#         settings_dict :
-#
-#
-#         Returns
-#         -------
-#
-#         """
-#         if 'IP-Address' in settings_dict:
-#             self.lineEdit_ip.setText(settings_dict['IP-Address'])
-#
-
-
-# class USB_Serial_Config(Connection_Config):
-#     """ """
-#     def __init__(self, parent=None):
-#         super().__init__(parent)
-#         label_port = QLabel('COM-Port:')
-#         self.comboBox_port = QComboBox()
-#         self.ports = get_ports()
-#         self.comboBox_port.addItems(self.ports.keys())
-#         self.comboBox_port.currentTextChanged.connect(self.change_desc)
-#
-#         self.label_desc = QLabel()
-#         self.label_desc.setEnabled(False)
-#         self.label_hwid = QLabel()
-#         self.label_hwid.setEnabled(False)
-#
-#         self.layout().addWidget(label_port, 0, 0)
-#         self.layout().addWidget(self.comboBox_port, 0, 1, 1, 4)
-#         self.layout().addWidget(self.label_desc, 1, 0, 1, 2)
-#         self.layout().addWidget(self.label_hwid, 1, 2, 1, 3)
-#         self.change_desc()
-#
-#     def change_desc(self):
-#         """ """
-#         port = self.comboBox_port.currentText()
-#         desc = self.ports[port]['description']
-#         hwid = self.ports[port]['hardware']
-#         self.label_desc.setText(desc)
-#         self.label_hwid.setText(hwid)
-#
-#     def get_settings(self):
-#         """ """
-#         return {'Port': self.comboBox_port.currentText()}
-#
-#     def load_settings(self, settings_dict):
-#         """
-#
-#         Parameters
-#         ----------
-#         settings_dict :
-#
-#
-#         Returns
-#         -------
-#
-#         """
-#         if 'Port' in settings_dict and settings_dict['Port'] in self.ports.keys():
-#             self.comboBox_port.setCurrentText(settings_dict['Port'])
-
-
 class Local_VISA(Connection_Config):
     """ """
 
@@ -722,10 +682,50 @@ class Local_VISA(Connection_Config):
 
         label_port = QLabel("Resource-Name:")
         self.comboBox_port = QComboBox()
-        import pyvisa
+        try:
+            import pyvisa
+        except ImportError:
+            from PySide6.QtWidgets import QMessageBox
 
-        rm = pyvisa.ResourceManager()
+            msg = (
+                f"You need PyVISA for VISA communication.\n\n"
+                "Do you want to install it now?"
+            )
+
+            # Show a question message box.
+            reply_update_modules = QMessageBox.question(
+                None,
+                "Install PyVISA?",
+                msg,
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No,
+            )
+
+            if reply_update_modules == QMessageBox.Yes:
+                import sys
+                import subprocess
+
+                # Build the pip install command.
+                command = [sys.executable, "-m", "pip", "install", "nomad-camels[visa]"]
+                # Optionally, you might show another popup or a console message indicating progress.
+                subprocess.check_call(command)
+                QMessageBox.information(
+                    None,
+                    "Installation Complete",
+                    "The required modules have been installed.\nYou might need to restart CAMELS for the changes to take effect.",
+                )
+
+        try:
+            rm = pyvisa.ResourceManager()
+        except OSError:
+            rm = pyvisa.ResourceManager("@py")
         self.ports = rm.list_resources()
+        if not self.ports:
+            WarnPopup(
+                text="No VISA resources found!\nYou might need to install a VISA library.",
+                title="No VISA resources!",
+                do_not_pause=True,
+            )
         self.comboBox_port.addItems(self.ports)
 
         self.layout().addWidget(label_port, 0, 0)
@@ -851,6 +851,7 @@ class Simple_Config(Device_Config):
         config_types=None,
         labels=None,
     ):
+        config_channel_metadata = additional_info.get("config_channel_metadata", None)
         super().__init__(
             parent,
             device_name=device_name,
@@ -866,8 +867,19 @@ class Simple_Config(Device_Config):
             comboBoxes=comboBoxes,
             config_types=config_types,
             labels=labels,
+            config_channel_metadata=config_channel_metadata,
+            device_name=device_name,
         )
-        self.layout().addWidget(self.sub_widget, 10, 0, 1, 5)
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setWidget(self.sub_widget)
+        self.extra_line = QFrame()
+        self.extra_line.setFrameShape(QFrame.HLine)
+        self.extra_line.setFrameShadow(QFrame.Sunken)
+        self.layout().addWidget(self.extra_line, 10, 0, 1, 5)
+        self.layout().addWidget(self.scroll_area, 11, 0, 1, 5)
+        self.spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.layout().addItem(self.spacer, 12, 0, 1, 5)
         self.load_settings()
 
     def get_settings(self):
@@ -894,12 +906,15 @@ class Simple_Config_Sub(Device_Config_Sub):
         comboBoxes=None,
         config_types=None,
         labels=None,
+        config_channel_metadata=None,
+        device_name="",
     ):
         super().__init__(
             settings_dict=settings_dict, parent=parent, config_dict=config_dict
         )
         settings_dict = settings_dict or {}
         config_dict = config_dict or {}
+        config_channel_metadata = config_channel_metadata or {}
         self.setLayout(QGridLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         comboBoxes = comboBoxes or {}
@@ -1001,80 +1016,173 @@ class Simple_Config_Sub(Device_Config_Sub):
 
         col = 0
         row = 0
+        self.setting_widgets = []
         for name, widge in self.setting_checks.items():
             self.layout().addWidget(widge, row, col, 1, 2)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.setting_widgets.append(widge)
         for name, widge in self.setting_floats.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
 
             self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.setting_widgets.append([label, widge])
         for name, widge in self.setting_strings.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
 
             self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.setting_widgets.append([label, widge])
         for name, widge in self.setting_combos.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
             self.layout().addWidget(widge, row, col + 1)
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.setting_widgets.append([label, widge])
+
+        self.config_widgets = []
         for name, widge in self.config_checks.items():
             self.layout().addWidget(widge, row, col, 1, 2)
+            add_tooltip_from_name(
+                [widge], f"{device_name}_{name}", config_channel_metadata
+            )
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.config_widgets.append(widge)
         for name, widge in self.config_floats.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
             self.layout().addWidget(widge, row, col + 1)
+            add_tooltip_from_name(
+                [widge, label], f"{device_name}_{name}", config_channel_metadata
+            )
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.config_widgets.append([label, widge])
         for name, widge in self.config_strings.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
             self.layout().addWidget(widge, row, col + 1)
+            add_tooltip_from_name(
+                [widge, label], f"{device_name}_{name}", config_channel_metadata
+            )
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.config_widgets.append([label, widge])
         for name, widge in self.config_combos.items():
             if name in labels:
-                self.layout().addWidget(QLabel(labels[name]), row, col)
+                label = QLabel(labels[name])
             else:
-                self.layout().addWidget(QLabel(name), row, col)
+                label = QLabel(name)
+            self.layout().addWidget(label, row, col)
             self.layout().addWidget(widge, row, col + 1)
+            add_tooltip_from_name(
+                [widge, label], f"{device_name}_{name}", config_channel_metadata
+            )
             col += 2
             if col == 4:
                 col = 0
                 row += 1
+            self.config_widgets.append([label, widge])
+        self.line_frame = QFrame(self)
+        self.line_frame.setFrameShape(QFrame.HLine)
+        self.line_frame.setFrameShadow(QFrame.Sunken)
+        self.line_frame.setObjectName("line_frame")
+        self.spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.resize(max(self.width(), self.get_min_width_column() * 2), self.height())
+        self.update_layout()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.update_layout()
+
+    def get_min_width_column(self):
+        """ """
+        min_width = 1
+        for widge in self.setting_widgets + self.config_widgets:
+            if isinstance(widge, list):
+                width = sum([x.sizeHint().width() for x in widge])
+            else:
+                width = widge.sizeHint().width()
+            min_width = max(min_width, width)
+        return min_width
+
+    def update_layout(self):
+        while self.layout().count():
+            item = self.layout().takeAt(0)
+            self.layout().removeItem(item)
+        width = self.width()
+        column_width = self.get_min_width_column()
+        columns = width // column_width
+        columns = max(1, columns)
+        positions = [
+            (i // columns, i % columns) for i in range(len(self.setting_widgets))
+        ]
+        row = -1
+        for i, widge in enumerate(self.setting_widgets):
+            row, col = positions[i]
+            if isinstance(widge, list):
+                for j, widge in enumerate(widge):
+                    self.layout().addWidget(widge, row, 2 * col + j)
+            else:
+                self.layout().addWidget(widge, row, 2 * col, 1, 2)
+        # add a line if there was a row before
+        if row >= 0:
+            row += 1
+            self.layout().addWidget(self.line_frame, row, 0, 1, columns * 2)
+            self.line_frame.setHidden(False)
+            offset = row + 1
+        else:
+            offset = 0
+            self.line_frame.setHidden(True)
+
+        positions = [
+            (i // columns, i % columns) for i in range(len(self.config_widgets))
+        ]
+        row = 0
+        for i, widge in enumerate(self.config_widgets):
+            row, col = positions[i]
+            if isinstance(widge, list):
+                for j, widge in enumerate(widge):
+                    self.layout().addWidget(widge, row + offset, 2 * col + j)
+            else:
+                self.layout().addWidget(widge, row + offset, 2 * col, 1, 2)
+        self.layout().addItem(self.spacer, offset + row + 1, 0)
 
     def get_settings(self):
         """ """
@@ -1107,13 +1215,18 @@ class Simple_Config_Sub(Device_Config_Sub):
         return super().get_config()
 
 
-#
-# def get_ports():
-#     """ """
-#     import serial.tools.list_ports
-#     ports = serial.tools.list_ports.comports()
-#     port_dict = {}
-#     for port, desc, hwid in sorted(ports):
-#         port_dict[port] = {'description': desc, 'hardware': hwid}
-#     return port_dict
-#
+def check_logged_in():
+    if nomad_communication.token:
+        return "NOMAD"
+    if (
+        extension_contexts.active_eln_context
+        and extension_contexts.active_eln_context.extension_user
+    ):
+        return "ELN"
+    return False
+
+
+def add_tooltip_from_name(widgets, name, metadata_dict):
+    if widgets and name in metadata_dict and metadata_dict[name]:
+        for widge in widgets:
+            widge.setToolTip(metadata_dict[name])

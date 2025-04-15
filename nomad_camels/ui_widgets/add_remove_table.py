@@ -58,6 +58,8 @@ class AddRemoveTable(QWidget):
         fixedsize=False,
         enableds=None,
         default_values=None,
+        add_tooltip=None,
+        remove_tooltip=None,
     ):
         """
 
@@ -166,6 +168,8 @@ class AddRemoveTable(QWidget):
         self.enableds = enableds if not isinstance(enableds, int) else [enableds]
 
         self.addButton = QPushButton(addLabel)
+        if add_tooltip:
+            self.addButton.setToolTip(add_tooltip)
         self.addButton.setMaximumHeight(24)
         self.addButton.setStyleSheet(
             "QPushButton {\n"
@@ -192,6 +196,8 @@ class AddRemoveTable(QWidget):
             "                            }"
         )
         self.removeButton = QPushButton(removeLabel)
+        if remove_tooltip:
+            self.removeButton.setToolTip(remove_tooltip)
         self.removeButton.setMaximumHeight(24)
         self.removeButton.setStyleSheet(
             "QPushButton {\n"
@@ -280,7 +286,7 @@ class AddRemoveTable(QWidget):
         elif not self.horizontal:
             self.setMaximumHeight(30 * len(self.headerLabels) + 30)
 
-    def change_table_data(self, tableData):
+    def change_table_data(self, tableData, change_focus=False):
         """
 
         Parameters
@@ -295,9 +301,9 @@ class AddRemoveTable(QWidget):
         if isinstance(tableData, dict):
             tableData = pd.DataFrame(tableData)
         self.tableData = tableData
-        self.load_table_data()
+        self.load_table_data(change_focus)
 
-    def load_table_data(self):
+    def load_table_data(self, change_focus=False):
         """Putting the `tableData` into the table."""
         if self.horizontal:
             while self.table_model.rowCount():
@@ -305,9 +311,11 @@ class AddRemoveTable(QWidget):
         else:
             while self.table_model.columnCount():
                 self.table_model.removeColumn(0)
+        if isinstance(self.tableData, dict):
+            self.tableData = pd.DataFrame(self.tableData)
         data = np.array(self.tableData)
         for dat in data:
-            self.add(dat)
+            self.add(dat, change_focus)
 
     def context_menu(self, pos):
         """Generates the right-click-menu.
@@ -433,14 +441,14 @@ class AddRemoveTable(QWidget):
             self.table_model.indexFromItem(item), QBrush(color), Qt.BackgroundRole
         )
 
-    def add(self, vals=None):
+    def add(self, vals=None, change_focus=False):
         """Add the `vals` to the table as a new line. Checks are done
         for each part, whether there should be a comboBox etc.
 
         Parameters
         ----------
         vals :
-             (Default value = None)
+            (Default value = None)
 
         Returns
         -------
@@ -514,6 +522,11 @@ class AddRemoveTable(QWidget):
             for j, i in enumerate(table_indexes):
                 index = self.table_model.index(self.table_model.rowCount() - 1, i)
                 self.table.setIndexWidget(index, tables[j])
+            # Set focus to the first editable cell in the newly added row
+            focus_index = self.table_model.index(self.table_model.rowCount() - 1, 0)
+            if change_focus:
+                self.table.setCurrentIndex(focus_index)
+                self.table.edit(focus_index)
         else:
             self.table_model.appendColumn(items)
             for j, i in enumerate(box_indexes):
@@ -522,6 +535,11 @@ class AddRemoveTable(QWidget):
             for j, i in enumerate(table_indexes):
                 index = self.table_model.index(i, self.table_model.columnCount() - 1)
                 self.table.setIndexWidget(index, tables[j])
+            # Set focus to the first editable cell in the newly added column
+            focus_index = self.table_model.index(0, self.table_model.columnCount() - 1)
+            if change_focus:
+                self.table.setCurrentIndex(focus_index)
+                self.table.edit(focus_index)
         for item in items:
             self.check_string(item)
         self.table.resizeColumnsToContents()

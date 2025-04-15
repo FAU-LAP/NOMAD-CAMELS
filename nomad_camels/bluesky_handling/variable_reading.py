@@ -1,5 +1,4 @@
 from ophyd import SignalRO
-import numpy as np
 
 
 class Variable_Signal(SignalRO):
@@ -35,17 +34,20 @@ class Variable_Signal(SignalRO):
         self.vars = list(sorted(self.variables_dict.keys()))
 
     def describe(self):
-        info = super().describe()
-        info[self.name]["source"] = "local_NOMAD_CAMELS_variables"
-        # self.vars = list(sorted(self.variables_dict.keys()))
-        info[self.name]["variables"] = self.vars
-        return info
+        return {
+            self.name: {
+                "source": "local_NOMAD_CAMELS_variables",
+                "dtype": "string",
+                "shape": [],  # Scalar string
+                "variables": self.vars,
+            }
+        }
 
     def get(self):
-        data = []
-        for key in sorted(self.variables_dict.keys()):
-            if key not in self.vars:
-                continue
-            data.append(self.variables_dict[key])
-        self._readback = np.asarray(data)
+        data = {
+            key: self.variables_dict[key]
+            for key in sorted(self.variables_dict.keys())
+            if key in self.vars
+        }
+        self._readback = data
         return super().get()

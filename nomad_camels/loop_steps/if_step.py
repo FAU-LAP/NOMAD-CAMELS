@@ -33,6 +33,10 @@ class If_Loop_Step(Loop_Step_Container):
         self.condition = step_info["condition"] if "condition" in step_info else "!"
         self.use_else = step_info["use_else"] if "use_else" in step_info else False
         self.elifs = step_info["elifs"] if "elifs" in step_info else []
+        self.end_protocol = (
+            step_info["end_protocol"] if "end_protocol" in step_info else False
+        )
+        self.break_loop = step_info.get("break_loop", False)
         self.update_children()
 
     def append_to_model(self, item_model: QStandardItemModel, parent=None):
@@ -80,6 +84,12 @@ class If_Loop_Step(Loop_Step_Container):
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f'{tabs}if eva.eval("{self.condition}"):\n'
         protocol_string += self.children[0].get_children_strings(n_tabs + 1)
+        if self.end_protocol:
+            protocol_string += f"{tabs}\treturn\n"
+            return protocol_string
+        elif self.break_loop:
+            protocol_string += f"{tabs}\tbreak\n"
+            return protocol_string
         for i, el in enumerate(self.elifs):
             child = self.children[i + 1]
             protocol_string += f'{tabs}elif eva.eval("{el}"):\n'
@@ -208,6 +218,8 @@ class If_Step_Config_Sub(QWidget):
             title="Elif-cases:",
             checkstrings=0,
             askdelete=True,
+            add_tooltip="Add a new elif-case",
+            remove_tooltip="Remove the selected elif-case",
         )
         self.elif_table.sizechange.connect(self.update_condition)
 
@@ -215,12 +227,26 @@ class If_Step_Config_Sub(QWidget):
         self.checkBox_use_else.setChecked(self.loop_step.use_else)
         self.checkBox_use_else.clicked.connect(self.else_change)
 
+        # Widget to end protocol if the condition is met
+        self.end_protocol_checkbox = QCheckBox("End protocol if condition is true")
+        self.end_protocol_checkbox.setChecked(self.loop_step.end_protocol)
+        self.end_protocol_checkbox.clicked.connect(self.update_end_protocol_checkbox)
+
+        self.checkBox_break_loop = QCheckBox("Break loop if condition is true")
+        self.checkBox_break_loop.setToolTip(
+            "When the condition is met, the loop inside which this step is executed will be broken, i.e. the protocol continues after the loop."
+        )
+        self.checkBox_break_loop.setChecked(self.loop_step.break_loop)
+        self.checkBox_break_loop.clicked.connect(self.update_break_loop)
+
         layout = QGridLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(label, 0, 0)
         layout.addWidget(self.lineEdit_condition, 0, 1)
         layout.addWidget(self.checkBox_use_else, 1, 0, 1, 2)
-        layout.addWidget(self.elif_table, 2, 0, 1, 2)
+        layout.addWidget(self.end_protocol_checkbox, 2, 0, 1, 2)
+        layout.addWidget(self.checkBox_break_loop, 3, 0, 1, 2)
+        layout.addWidget(self.elif_table, 10, 0, 1, 2)
         self.setLayout(layout)
 
     def else_change(self):
@@ -245,6 +271,14 @@ class If_Step_Config_Sub(QWidget):
                 self.checkBox_use_else.setChecked(True)
                 return
         self.update_condition()
+
+    def update_end_protocol_checkbox(self):
+        """Update from the end protocol checkbox"""
+        self.loop_step.end_protocol = self.end_protocol_checkbox.isChecked()
+
+    def update_break_loop(self):
+        """Update from the break loop checkbox"""
+        self.loop_step.break_loop = self.checkBox_break_loop.isChecked()
 
     def update_condition(self, called=False):
         """Updating the loopstep. The signal is not emitted if the

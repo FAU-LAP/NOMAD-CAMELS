@@ -15,45 +15,42 @@ jobs:
   windows_test:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Python 3
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff
-          pip install -r requirements.txt
-          pip install pytest pytest-qt
+          pip install ruff poetry
+          poetry install --all-extras
       - name: List packages
         run: pip list
       - name: Lint with ruff
         run: |
           # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
-      - name: Prepare databroker
-        run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
-        run: pytest -v
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+
   ubuntu_test:
     runs-on: ubuntu-latest
     env:
       DISPLAY: ':99.0'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Python 3
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
       - uses: tlambert03/setup-qt-libs@v1
       - name: Install dependencies
         run: |
-          sudo apt install libgl1-mesa-glx libegl1-mesa libegl1 libopengl0 libpulse0
+          sudo apt install libgl1 libglx-mesa0 libegl1 libopengl0 libpulse0
           python -m pip install --upgrade pip
-          pip install ruff
-          pip install -r requirements.txt
-          pip install pytest pytest-qt pytest-xvfb
+          pip install ruff poetry
+          poetry install --all-extras
           export QT_DEBUG_PLUGINS=1
       - name: List packages
         run: pip list
@@ -61,56 +58,40 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
-      - name: Prepare databroker
-        run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
-        run: pytest -v
+        run: |
+          poetry run pytest -vv --timeout=100 \
+            --cov-config=./nomad_camels/tests/.coveragerc \
+            --cov-report term-missing:skip-covered \
+            --cov=nomad_camels
+
   macos_test:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Python 3
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
       - name: Install dependencies
         run: |
+          if brew list pkg-config@0.29.2 &>/dev/null; then
+            brew unlink pkg-config@0.29.2
+          fi
           brew install hdf5
           echo "HDF5_DIR=$(brew --prefix hdf5)" >> $GITHUB_ENV
           python -m pip install --upgrade pip
-          pip install ruff
-          pip install -r requirements.txt
-          pip install pytest pytest-qt
+          pip install ruff poetry
+          poetry install --all-extras
       - name: List packages
         run: pip list
       - name: Lint with ruff
         run: |
           # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py37 .
-      - name: Prepare databroker
-        run: python -c "exec('from nomad_camels.tests.protocol_test import catalog_maker\ncatalog_maker(None)')"
       - name: Run tests with pytest
-        run: pytest -v
-#  changelog:
-#    needs: [ubuntu_test, macos_test, windows_test]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Install Python 3
-#        uses: actions/setup-python@v4
-#        with:
-#          python-version: 3.11
-#      - name: Install dependency
-#        run: pip install git-changelog
-#      - name: add to log and commit
-#        run: |
-#          previous_content="$(cat changelog.md 2>/dev/null)"
-#          git-changelog -Tio changelog.md -s add,fix,change,remove,merge,doc
-#          updated_content="$(cat changelog.md 2>/dev/null)"
-#          if [ "$updated_content" != "$previous_content" ]; then
-#            git config user.name "NOMAD CAMELS Team"
-#            git config user.email "lap-nomad-camels@fau.de"
-#            git add changelog.md
-#            git commit -m "Update changelog"
-#            git push
-#          fi
+        run: |
+          poetry run pytest -vv --timeout=100 \
+            --cov-config=./nomad_camels/tests/.coveragerc \
+            --cov-report term-missing:skip-covered \
+            --cov=nomad_camels

@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: NOMAD CAMELS API
+  version: 1.0.0
+paths:
+  /protocols:
+    get:
+      summary: Get all protocol names
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create a new protocol from a JSON definition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Protocols"
+      responses:
+        "201":
+          description: Created
+  /protocols/{name}:
+    get:
+      summary: Get a protocols JSON definition by name
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: User not found
+  /actions/{name}:
+    post:
+      summary: Execute the protocol with the given name. Returns the measurement file path.
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file_path:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Protocol not found
+        '500':
+          description: Internal server error
+
+
+components:
+  schemas:
+    Protocols:
+      type: object
+      properties:
+        name:
+          type: string
+        JSON_definition:
+          type: object
+      required:
+        - name
+        - JSON_definition

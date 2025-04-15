@@ -3,9 +3,12 @@ import os
 import requests
 import re
 import importlib
-import importlib_metadata
+
+if sys.version_info >= (3, 8):
+    import importlib.metadata as importlib_metadata
+else:
+    import importlib_metadata
 import pathlib
-import pkg_resources
 import subprocess
 
 sys.path.append(
@@ -93,7 +96,9 @@ def get_local_extensions():
                 version = package.EXTENSION_CONFIG["version"]
                 local_extensions[name] = version
             except Exception as e:
-                print(f, e)
+                import logging
+
+                logging.warning(f"Error loading local extension {f}: {e}")
     return local_extensions
 
 
@@ -365,14 +370,15 @@ class Info_Widget(QSplitter):
             self.license_text.clear()
             try:
                 text = ""
-                for p in pkg_resources.working_set:
-                    if not p.key.startswith(
+                for dist in importlib_metadata.distributions():
+                    name = dist.metadata["Name"]
+                    if not name.startswith(
                         f'nomad-camels-driver-{extension.replace("_", "-")}'
                     ):
                         continue
-                    lic = p.get_metadata_lines("LICENSE.txt")
-                    for l in lic:
-                        text += f"{l}\n"
+                    lic = dist.read_text("LICENSE.txt")
+                    if lic:
+                        text += lic + "\n"
                     break
                 if not text:
                     raise Exception("")

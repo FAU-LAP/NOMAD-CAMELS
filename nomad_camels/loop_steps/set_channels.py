@@ -69,7 +69,8 @@ class Set_Channels(Loop_Step):
     def get_protocol_short_string(self, n_tabs=0):
         """Displays the channels and their values."""
         short_string = super().get_protocol_short_string(n_tabs)
-        short_string = f"{short_string[:-1]} - {self.channels_values}\n"
+        val_dic = {self.channels_values["Channels"][i]: self.channels_values["Values"][i].replace('"', '\'') for i in range(len(self.channels_values["Channels"]))}
+        short_string = f"{short_string[:-1]} - {val_dic}\n"
         return short_string
 
 

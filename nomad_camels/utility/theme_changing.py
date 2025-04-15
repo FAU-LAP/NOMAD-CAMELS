@@ -1,9 +1,15 @@
 """This module is used to change the UI-theme of CAMELS. It provides some
 default color palettes `light_palette` and `dark_palette`."""
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QStyleFactory
+from PySide6.QtWidgets import QApplication, QStyleFactory
 from PySide6.QtGui import QPalette, QColor, QColorConstants
-from qt_material import apply_stylesheet
+
+try:
+    from qt_material import apply_stylesheet
+
+    QT_MATERIAL = True
+except ImportError:
+    QT_MATERIAL = False
 
 
 light_palette = QPalette(QColor(225, 225, 225), QColor(238, 238, 238))
@@ -23,6 +29,28 @@ dark_palette.setColor(QPalette.BrightText, QColorConstants.Red)
 dark_palette.setColor(QPalette.Link, QColor(42, 130, 218))
 dark_palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
 dark_palette.setColor(QPalette.HighlightedText, QColorConstants.Black)
+
+
+tooltip_dark = """
+    QToolTip {
+        background-color: #2a2a2a;
+        color: white;
+        border: 1px solid #3a3a3a;
+        border-radius: 6px;
+        padding: 3px;
+        font: 12px;
+    }
+"""
+tooltip_light = """
+    QToolTip {
+        background-color: #ffffff;
+        color: #000000;
+        border: 1px solid #c0c0c0;
+        border-radius: 6px;
+        padding: 3px;
+        font: 12px;
+    }
+"""
 
 
 def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
@@ -48,21 +76,23 @@ def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
     if main_app is None:
         main_app = QApplication.instance()
         if main_app is None:
-            raise RuntimeError("MainApp not found.")
+            raise RuntimeError("MainApp not found for changing the color theme.")
     if theme in QStyleFactory.keys():
         main_app.setStyleSheet("")
         palette = None
         if dark_mode:
             palette = dark_palette
+            main_app.setStyleSheet(tooltip_dark)
         else:
             palette = light_palette
+            main_app.setStyleSheet(tooltip_light)
         if theme == "windowsvista":
             main_app.setStyle(QStyleFactory.create("windowsvista"))
         main_app.setPalette(palette)
         main_app.setStyle(QStyleFactory.create(theme))
         if palette:
             main_app.setPalette(palette)
-    elif theme == "qt-material":
+    elif theme == "qt-material" and QT_MATERIAL:
         if not isinstance(material_theme, str):
             return
         if dark_mode:
@@ -72,3 +102,6 @@ def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
         else:
             xml = f"light_{material_theme}.xml"
         apply_stylesheet(main_app, theme=xml)
+    elif theme == "qt-material" and not QT_MATERIAL:
+        # TODO: Add a message box to inform the user that qt-material is not installed, make optional
+        raise ImportError("qt-material is not installed!")

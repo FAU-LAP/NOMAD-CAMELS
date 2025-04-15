@@ -102,13 +102,36 @@ class Set_Panel(Manual_Control):
         self.channels = device_handling.get_channels_from_string_list(
             self.channel_list, True
         )
-        control_data = self.control_data
-        t = control_data["readback_time"] if "readback_time" in control_data else 5
-        self.read_thread = Readback_Thread(self, self.channels, t)
-        if "readback" in control_data and control_data["readback"]:
-            self.read_thread.data_sig.connect(self.check_readback)
-            self.read_thread.start()
+        self.start_read_thread()
         super().device_ready()
+
+    def read_error(self, e):
+        """Shows a message box with the error message. And asks wether the read thread should be restarted"""
+        from PySide6.QtWidgets import QMessageBox
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setText("Error in read thread")
+        msg.setInformativeText(
+            f"An error occured in the read thread of {self.name}:\n{e}\nDo you want to restart the read thread?"
+        )
+        msg.setWindowTitle("Error in read thread")
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg.setDefaultButton(QMessageBox.Yes)
+        if msg.exec() == QMessageBox.Yes:
+            self.start_read_thread()
+
+    def start_read_thread(self):
+        t = (
+            self.control_data["readback_time"]
+            if "readback_time" in self.control_data
+            else 5
+        )
+        self.read_thread = Readback_Thread(self, self.channels, t)
+        if "readback" in self.control_data and self.control_data["readback"]:
+            self.read_thread.data_sig.connect(self.check_readback)
+            self.read_thread.exception_signal.connect(self.read_error)
+            self.read_thread.start()
 
     def button_pushed(self):
         for n, group in enumerate(self.buttons):
@@ -161,6 +184,7 @@ def conv_value(value):
 
 class Readback_Thread(QThread):
     data_sig = Signal(dict)
+    exception_signal = Signal(Exception)
 
     def __init__(self, parent=None, channels=None, read_time=5):
         super().__init__(parent=parent)
@@ -169,23 +193,29 @@ class Readback_Thread(QThread):
         self.still_running = True
 
     def run(self):
-        self.do_reading()
-        accum = 0
-        while self.still_running:
-            if self.read_time > 5:
-                if self.read_time - accum > 5:
-                    time.sleep(5)
-                    accum += 5
-                    continue
-                else:
-                    time.sleep(self.read_time - accum)
-                    accum = 0
-            else:
-                time.sleep(self.read_time)
+        try:
             self.do_reading()
+            accum = 0
+            while self.still_running:
+                if self.read_time > 5:
+                    if self.read_time - accum > 5:
+                        time.sleep(5)
+                        accum += 5
+                        continue
+                    else:
+                        time.sleep(self.read_time - accum)
+                        accum = 0
+                else:
+                    time.sleep(self.read_time)
+                self.do_reading()
+        except Exception as e:
+            self.exception_signal.emit(e)
 
     def do_reading(self):
         vals = {}
+        for channel in self.channels.values():
+            if hasattr(channel, "trigger"):
+                channel.trigger()
         for name, channel in self.channels.items():
             vals[name] = channel.get()
         self.data_sig.emit(vals)
@@ -429,7 +459,6 @@ class Button_Group_Tab(QWidget):
         self.buttons["lines"].append(line)
 
     def remove_button(self, n):
-        print(n)
         for i, label in enumerate(self.buttons["labels"]):
             if i < n:
                 continue
