@@ -558,7 +558,7 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
             namespace = {}
             namespace.update(variables_handling.protocol_variables)
             namespace.update(variables_handling.loop_step_variables)
-            for channel in variables_handling.channels:
+            for channel in variables_handling.get_channels():
                 namespace.update({channel: 1})
             try:
                 vals = helper_functions.get_range(

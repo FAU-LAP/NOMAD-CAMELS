@@ -71,14 +71,15 @@ class ND_Sweep(Loop_Step):
     def update_used_devices(self):
         """Includes the devices from the read_channels and the sweep_channels"""
         self.used_devices = []
+        channels = variables_handling.get_channels()
         for channel in self.read_channels:
-            if channel in variables_handling.channels:
-                device = variables_handling.channels[channel].device
+            if channel in channels:
+                device = channels[channel].device
                 if device not in self.used_devices:
                     self.used_devices.append(device)
         for channel in self.sweep_channels:
-            if channel in variables_handling.channels:
-                device = variables_handling.channels[channel].device
+            if channel in channels:
+                device = channels[channel].device
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
@@ -121,17 +122,16 @@ class ND_Sweep(Loop_Step):
             stream = "stream_name"
 
         skip_failed = list(self.skip_failed)
-
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f"{tabs}channels = ["
         for i, channel in enumerate(self.read_channels):
-            if channel not in variables_handling.channels:
+            if channel not in channels:
                 raise Exception(
                     f"Trying to read channel {channel} in {self.full_name}, but it does not exist!"
                 )
             if i > 0:
                 protocol_string += ", "
-            name = variables_handling.channels[channel].name
+            name = channels[channel].name
             if "." in name:
                 dev, chan = name.split(".")
                 protocol_string += f'devs["{dev}"].{chan}'
@@ -197,7 +197,7 @@ class Sweep_Step(For_Loop_Step):
         after setting the channel."""
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
-        name = variables_handling.channels[self.sweep_channel].name
+        name = variables_handling.get_channels()[self.sweep_channel].name
         if "." in name:
             dev, chan = name.split(".")
             setter = f'devs["{dev}"].{chan}'

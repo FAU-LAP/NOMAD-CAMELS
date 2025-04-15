@@ -86,6 +86,17 @@ class Measurement_Protocol:
         )
         self.flyer_data = kwargs.get("flyer_data", [])
 
+        self.instrument_aliases = (
+            kwargs["instrument_aliases"]
+            if "instrument_aliases" in kwargs
+            else {"Instrument": [], "Alias": []}
+        )
+        self.channel_aliases = (
+            kwargs["channel_aliases"]
+            if "channel_aliases" in kwargs
+            else {"channel": [], "Alias": []}
+        )
+        
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -583,6 +594,12 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             self.ending_protocol_selection.setEnabled(True)
         else:
             self.ending_protocol_selection.setEnabled(False)
+            
+        self.pushButton_instrument_aliases.clicked.connect(
+            self.change_instrument_aliases
+        )
+        variables_handling.instrument_aliases = self.protocol.instrument_aliases
+        variables_handling.channel_aliases = self.protocol.channel_aliases
 
     def showEvent(self, event):
         """Called when the widget is shown."""
@@ -750,3 +767,19 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.label_title.setText(f"{name} - General Configuration")
         self.protocol.name = name
         self.name_changed.emit()
+
+    def change_instrument_aliases(self):
+        from nomad_camels.frontpanels.instrument_aliases import Instrument_Alias_Config
+
+        dialog = Instrument_Alias_Config(
+            self,
+            instrument_aliases=self.protocol.instrument_aliases,
+            channel_aliases=self.protocol.channel_aliases,
+        )
+        if dialog.exec_():
+            self.protocol.instrument_aliases = dialog.instrument_aliases
+            self.protocol.channel_aliases = dialog.channel_aliases
+            dialog.close()
+            dialog.deleteLater()
+            variables_handling.instrument_aliases = self.protocol.instrument_aliases
+            variables_handling.channel_aliases = self.protocol.channel_aliases
