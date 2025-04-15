@@ -61,13 +61,12 @@ class Channels_Check_Table(QWidget):
         channels=None,
         use_configs=False,
         checkables=None,
-        use_aliases=True,
     ):
         super().__init__(parent)
         if use_configs:
             self.channels = channels or variables_handling.config_channels
         else:
-            self.channels = channels or variables_handling.get_channels(use_aliases)
+            self.channels = channels or variables_handling.channels
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         self.only_output = only_output

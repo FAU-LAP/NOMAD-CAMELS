@@ -51,10 +51,9 @@ class Read_Channels(Loop_Step):
     def update_used_devices(self):
         """All devices that should be read are added to the used_devices."""
         self.used_devices = []
-        channels = variables_handling.get_channels()
-        for channel in channels:
+        for channel in variables_handling.channels:
             if self.read_all or channel in self.channel_list:
-                device = channels[channel].device
+                device = variables_handling.channels[channel].device
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
@@ -63,7 +62,7 @@ class Read_Channels(Loop_Step):
         Includes all available channels if `self.read_all`."""
         chan_list = []
         if self.read_all:
-            for channel in variables_handling.get_channels():
+            for channel in variables_handling.channels:
                 chan_list.append(channel)
         else:
             chan_list = self.channel_list
@@ -83,7 +82,7 @@ class Read_Channels(Loop_Step):
         if not self.read_all and not self.channel_list and not self.read_variables:
             raise Exception(f"Trying to read no channel in {self.full_name}!")
         if self.read_all:
-            for channel in variables_handling.get_channels():
+            for channel in variables_handling.channels:
                 channel_string += get_channel_string(channel)
         else:
             for channel in self.channel_list:
@@ -150,7 +149,7 @@ def get_channel_string(channel):
     channel : str
         The channel that should be converted.
     """
-    name = variables_handling.get_channels()[channel].name
+    name = variables_handling.channels[channel].name
     if "." in name:
         dev, chan = name.split(".")
         return f'devs["{dev}"].{chan}, '

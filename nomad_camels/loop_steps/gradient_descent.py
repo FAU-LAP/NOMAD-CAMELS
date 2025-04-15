@@ -82,12 +82,11 @@ class Gradient_Descent_Step(Loop_Step):
     def update_used_devices(self):
         """Uses all devices in self.read_channels and of self.out_channel"""
         self.used_devices = []
-        set_device = variables_handling.get_channels()[self.out_channel].device
+        set_device = variables_handling.channels[self.out_channel].device
         self.used_devices.append(set_device)
-        channels = variables_handling.get_channels()
         for channel in self.read_channels:
-            if channel in channels:
-                device = channels[channel].device
+            if channel in variables_handling.channels:
+                device = variables_handling.channels[channel].device
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
@@ -123,17 +122,16 @@ class Gradient_Descent_Step(Loop_Step):
         if self.extremum == "Maximum":
             func_text = f'"-({self.opt_func})"'
 
-        channels = variables_handling.get_channels()
         protocol_string = super().get_protocol_string(n_tabs)
         protocol_string += f"{tabs}channels = ["
         for i, channel in enumerate(self.read_channels):
-            if channel not in channels:
+            if channel not in variables_handling.channels:
                 raise Exception(
                     f"Trying to read channel {channel} in {self.full_name}, but it does not exist!"
                 )
             if i > 0:
                 protocol_string += ", "
-            name = channels[channel].name
+            name = variables_handling.channels[channel].name
             if "." in name:
                 dev, chan = name.split(".")
                 protocol_string += f'devs["{dev}"].{chan}'
@@ -141,7 +139,7 @@ class Gradient_Descent_Step(Loop_Step):
                 protocol_string += f'devs["{name}"]'
         protocol_string += "]\n"
 
-        name = channels[self.out_channel].name
+        name = variables_handling.channels[self.out_channel].name
         if "." in name:
             dev, chan = name.split(".")
             setter = f'devs["{dev}"].{chan}'
