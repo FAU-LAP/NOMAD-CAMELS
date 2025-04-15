@@ -8,9 +8,9 @@ Currently, it only helps with reading the data from the hdf5 file. More function
 
 To install the NOMAD CAMELS toolbox, run
 ```
-pip install nomad-camels-toolbox --all-extras
+pip install nomad-camels-toolbox[all]
 ```
-in the Python environment you use for your evaluation. This installs all optional dependencies to use the full functionality. The following options are all included when using `--all-extras`.
+in the Python environment you use for your evaluation. This installs all optional dependencies to use the full functionality. The following options are all included when using `all`.
 
 Single installation options can be installed by using `pip install nomad-camels-toolbox[option-name]` ([see pip install documentation](https://pip.pypa.io/en/stable/cli/pip_install/)). The options are:
 - `pandas`: This installs `pandas` as a powerful package for data evaluation along with the toolbox, so the data can be read directly as a [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html). Also see [reading data](#reading-data).
