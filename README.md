@@ -18,6 +18,12 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.4
+Features:
+- added functionality to create a new file after a given number of hours (file includes same metadata)
+- can rename channels and instruments for single protocol ("alias") to allow easier sharing of protocols
+
+
 ### 1.8.3
 UI-Improvements:
 - Next to the progress bar is now the elapsed time and an estimated remaining time

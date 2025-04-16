@@ -15,11 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QComboBox,
-    QDialog, QDialogButtonBox, QFrame, QGridLayout,
-    QHBoxLayout, QLabel, QLineEdit, QPushButton,
-    QRadioButton, QSizePolicy, QSpacerItem, QSpinBox,
-    QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QAbstractSpinBox, QApplication, QCheckBox,
+    QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox,
+    QFrame, QGridLayout, QHBoxLayout, QLabel,
+    QLineEdit, QPushButton, QRadioButton, QSizePolicy,
+    QSpacerItem, QSpinBox, QWidget)
 
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 import settings_window_resource_rc
@@ -107,11 +107,30 @@ class Ui_settings_window(object):
         self.gridLayout_2 = QGridLayout(self.saving)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.radioButton_smart_backups = QRadioButton(self.saving)
-        self.radioButton_smart_backups.setObjectName(u"radioButton_smart_backups")
-        self.radioButton_smart_backups.setChecked(True)
+        self.radioButton_n_backups = QRadioButton(self.saving)
+        self.radioButton_n_backups.setObjectName(u"radioButton_n_backups")
 
-        self.gridLayout_2.addWidget(self.radioButton_smart_backups, 3, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.radioButton_n_backups, 3, 1, 1, 1)
+
+        self.checkBox_backup_before_run = QCheckBox(self.saving)
+        self.checkBox_backup_before_run.setObjectName(u"checkBox_backup_before_run")
+
+        self.gridLayout_2.addWidget(self.checkBox_backup_before_run, 2, 2, 1, 1)
+
+        self.spinBox_backup_number = QSpinBox(self.saving)
+        self.spinBox_backup_number.setObjectName(u"spinBox_backup_number")
+
+        self.gridLayout_2.addWidget(self.spinBox_backup_number, 4, 1, 1, 1)
+
+        self.label_12 = QLabel(self.saving)
+        self.label_12.setObjectName(u"label_12")
+
+        self.gridLayout_2.addWidget(self.label_12, 7, 0, 1, 1)
+
+        self.checkBox_autosave = QCheckBox(self.saving)
+        self.checkBox_autosave.setObjectName(u"checkBox_autosave")
+
+        self.gridLayout_2.addWidget(self.checkBox_autosave, 2, 0, 1, 1)
 
         self.label = QLabel(self.saving)
         self.label.setObjectName(u"label")
@@ -123,20 +142,25 @@ class Ui_settings_window(object):
 
         self.gridLayout_2.addWidget(self.label, 0, 0, 1, 3)
 
-        self.checkBox_autosave = QCheckBox(self.saving)
-        self.checkBox_autosave.setObjectName(u"checkBox_autosave")
+        self.checkBox_new_file_each_run = QCheckBox(self.saving)
+        self.checkBox_new_file_each_run.setObjectName(u"checkBox_new_file_each_run")
 
-        self.gridLayout_2.addWidget(self.checkBox_autosave, 2, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.checkBox_new_file_each_run, 5, 0, 1, 3)
 
         self.checkBox_password = QCheckBox(self.saving)
         self.checkBox_password.setObjectName(u"checkBox_password")
 
         self.gridLayout_2.addWidget(self.checkBox_password, 1, 0, 1, 3)
 
-        self.checkBox_new_file_each_run = QCheckBox(self.saving)
-        self.checkBox_new_file_each_run.setObjectName(u"checkBox_new_file_each_run")
+        self.radioButton_all_backups = QRadioButton(self.saving)
+        self.radioButton_all_backups.setObjectName(u"radioButton_all_backups")
 
-        self.gridLayout_2.addWidget(self.checkBox_new_file_each_run, 5, 0, 1, 3)
+        self.gridLayout_2.addWidget(self.radioButton_all_backups, 3, 0, 1, 1)
+
+        self.checkBox_autosave_run = QCheckBox(self.saving)
+        self.checkBox_autosave_run.setObjectName(u"checkBox_autosave_run")
+
+        self.gridLayout_2.addWidget(self.checkBox_autosave_run, 2, 1, 1, 1)
 
         self.line_4 = QFrame(self.saving)
         self.line_4.setObjectName(u"line_4")
@@ -144,42 +168,40 @@ class Ui_settings_window(object):
         self.line_4.setLineWidth(5)
         self.line_4.setFrameShape(QFrame.Shape.HLine)
 
-        self.gridLayout_2.addWidget(self.line_4, 7, 0, 1, 3)
+        self.gridLayout_2.addWidget(self.line_4, 8, 0, 1, 3)
 
-        self.spinBox_backup_number = QSpinBox(self.saving)
-        self.spinBox_backup_number.setObjectName(u"spinBox_backup_number")
+        self.radioButton_smart_backups = QRadioButton(self.saving)
+        self.radioButton_smart_backups.setObjectName(u"radioButton_smart_backups")
+        self.radioButton_smart_backups.setChecked(True)
 
-        self.gridLayout_2.addWidget(self.spinBox_backup_number, 4, 1, 1, 1)
-
-        self.radioButton_all_backups = QRadioButton(self.saving)
-        self.radioButton_all_backups.setObjectName(u"radioButton_all_backups")
-
-        self.gridLayout_2.addWidget(self.radioButton_all_backups, 3, 0, 1, 1)
-
-        self.radioButton_n_backups = QRadioButton(self.saving)
-        self.radioButton_n_backups.setObjectName(u"radioButton_n_backups")
-
-        self.gridLayout_2.addWidget(self.radioButton_n_backups, 3, 1, 1, 1)
-
-        self.label_12 = QLabel(self.saving)
-        self.label_12.setObjectName(u"label_12")
-
-        self.gridLayout_2.addWidget(self.label_12, 6, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.radioButton_smart_backups, 3, 2, 1, 1)
 
         self.pathButton_config_path = Path_Button_Edit(self.saving)
         self.pathButton_config_path.setObjectName(u"pathButton_config_path")
 
-        self.gridLayout_2.addWidget(self.pathButton_config_path, 6, 1, 1, 2)
+        self.gridLayout_2.addWidget(self.pathButton_config_path, 7, 1, 1, 2)
 
-        self.checkBox_autosave_run = QCheckBox(self.saving)
-        self.checkBox_autosave_run.setObjectName(u"checkBox_autosave_run")
+        self.checkBox_new_meas_hours = QCheckBox(self.saving)
+        self.checkBox_new_meas_hours.setObjectName(u"checkBox_new_meas_hours")
 
-        self.gridLayout_2.addWidget(self.checkBox_autosave_run, 2, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.checkBox_new_meas_hours, 6, 0, 1, 1)
 
-        self.checkBox_backup_before_run = QCheckBox(self.saving)
-        self.checkBox_backup_before_run.setObjectName(u"checkBox_backup_before_run")
+        self.label_24 = QLabel(self.saving)
+        self.label_24.setObjectName(u"label_24")
 
-        self.gridLayout_2.addWidget(self.checkBox_backup_before_run, 2, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.label_24, 6, 2, 1, 1)
+
+        self.spinBox_new_meas_hours = QDoubleSpinBox(self.saving)
+        self.spinBox_new_meas_hours.setObjectName(u"spinBox_new_meas_hours")
+        font2 = QFont()
+        font2.setKerning(True)
+        self.spinBox_new_meas_hours.setFont(font2)
+        self.spinBox_new_meas_hours.setDecimals(3)
+        self.spinBox_new_meas_hours.setMinimum(0.001000000000000)
+        self.spinBox_new_meas_hours.setMaximum(1000.000000000000000)
+        self.spinBox_new_meas_hours.setStepType(QAbstractSpinBox.StepType.AdaptiveDecimalStepType)
+
+        self.gridLayout_2.addWidget(self.spinBox_new_meas_hours, 6, 1, 1, 1)
 
 
         self.gridLayout_3.addWidget(self.saving, 0, 0, 1, 1)
@@ -536,10 +558,10 @@ class Ui_settings_window(object):
         self.horizontalLayout.setContentsMargins(-1, -1, -1, 0)
         self.pushButton_generate_Api_key = QPushButton(self.right)
         self.pushButton_generate_Api_key.setObjectName(u"pushButton_generate_Api_key")
-        font2 = QFont()
-        font2.setPointSize(9)
-        font2.setBold(True)
-        self.pushButton_generate_Api_key.setFont(font2)
+        font3 = QFont()
+        font3.setPointSize(9)
+        font3.setBold(True)
+        self.pushButton_generate_Api_key.setFont(font3)
         self.pushButton_generate_Api_key.setStyleSheet(u"QPushButton {\n"
 "    background-color: #0db002;\n"
 "}\n"
@@ -552,7 +574,7 @@ class Ui_settings_window(object):
 
         self.pushButton_delete_Api_keys = QPushButton(self.right)
         self.pushButton_delete_Api_keys.setObjectName(u"pushButton_delete_Api_keys")
-        self.pushButton_delete_Api_keys.setFont(font2)
+        self.pushButton_delete_Api_keys.setFont(font3)
         self.pushButton_delete_Api_keys.setStyleSheet(u"QPushButton {\n"
 "    background-color: #fa0000;\n"
 "}\n"
@@ -650,42 +672,44 @@ class Ui_settings_window(object):
 #endif // QT_CONFIG(tooltip)
         self.label_15.setText(QCoreApplication.translate("settings_window", u"Log-Level", None))
 #if QT_CONFIG(tooltip)
+        self.radioButton_n_backups.setToolTip(QCoreApplication.translate("settings_window", u"keep the defined number of newest backups", None))
+#endif // QT_CONFIG(tooltip)
+        self.radioButton_n_backups.setText(QCoreApplication.translate("settings_window", u"keep only...", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_backup_before_run.setToolTip(QCoreApplication.translate("settings_window", u"also does a backup when autosave before run", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_backup_before_run.setText(QCoreApplication.translate("settings_window", u"backup before run", None))
+        self.label_12.setText(QCoreApplication.translate("settings_window", u"path for configuration files:", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_autosave.setToolTip(QCoreApplication.translate("settings_window", u"When CAMELS is closed, the current state is saved.", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_autosave.setText(QCoreApplication.translate("settings_window", u"autosave on closing", None))
+        self.label.setText(QCoreApplication.translate("settings_window", u"Saving", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_new_file_each_run.setToolTip(QCoreApplication.translate("settings_window", u"creates a new datafile for each measurement instead of saving new entries in the same hdf5 file", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_new_file_each_run.setText(QCoreApplication.translate("settings_window", u"save each measurement run in new file", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_password.setToolTip(QCoreApplication.translate("settings_window", u"The user is not allowed to change protocols or instrument configuration without the password.", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_password.setText(QCoreApplication.translate("settings_window", u"password protection", None))
+#if QT_CONFIG(tooltip)
+        self.radioButton_all_backups.setToolTip(QCoreApplication.translate("settings_window", u"keep all backups of the CAMELS state", None))
+#endif // QT_CONFIG(tooltip)
+        self.radioButton_all_backups.setText(QCoreApplication.translate("settings_window", u"keep all backups", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_autosave_run.setToolTip(QCoreApplication.translate("settings_window", u"autosaves when running a protocol", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_autosave_run.setText(QCoreApplication.translate("settings_window", u"autosave before run", None))
+#if QT_CONFIG(tooltip)
         self.radioButton_smart_backups.setToolTip(QCoreApplication.translate("settings_window", u"keep all backups of the last 7 days,\n"
 "one for for each of the last 30,\n"
 "one for each of the last 12 months\n"
 "and one for each year", None))
 #endif // QT_CONFIG(tooltip)
         self.radioButton_smart_backups.setText(QCoreApplication.translate("settings_window", u"\"smart\" backups", None))
-        self.label.setText(QCoreApplication.translate("settings_window", u"Saving", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_autosave.setToolTip(QCoreApplication.translate("settings_window", u"When CAMELS is closed, the current state is saved.", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_autosave.setText(QCoreApplication.translate("settings_window", u"autosave on closing", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_password.setToolTip(QCoreApplication.translate("settings_window", u"The user is not allowed to change protocols or instrument configuration without the password.", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_password.setText(QCoreApplication.translate("settings_window", u"password protection", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_new_file_each_run.setToolTip(QCoreApplication.translate("settings_window", u"creates a new datafile for each measurement instead of saving new entries in the same hdf5 file", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_new_file_each_run.setText(QCoreApplication.translate("settings_window", u"save each measurement run in new file", None))
-#if QT_CONFIG(tooltip)
-        self.radioButton_all_backups.setToolTip(QCoreApplication.translate("settings_window", u"keep all backups of the CAMELS state", None))
-#endif // QT_CONFIG(tooltip)
-        self.radioButton_all_backups.setText(QCoreApplication.translate("settings_window", u"keep all backups", None))
-#if QT_CONFIG(tooltip)
-        self.radioButton_n_backups.setToolTip(QCoreApplication.translate("settings_window", u"keep the defined number of newest backups", None))
-#endif // QT_CONFIG(tooltip)
-        self.radioButton_n_backups.setText(QCoreApplication.translate("settings_window", u"keep only...", None))
-        self.label_12.setText(QCoreApplication.translate("settings_window", u"path for configuration files:", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_autosave_run.setToolTip(QCoreApplication.translate("settings_window", u"autosaves when running a protocol", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_autosave_run.setText(QCoreApplication.translate("settings_window", u"autosave before run", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_backup_before_run.setToolTip(QCoreApplication.translate("settings_window", u"also does a backup when autosave before run", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_backup_before_run.setText(QCoreApplication.translate("settings_window", u"backup before run", None))
+        self.checkBox_new_meas_hours.setText(QCoreApplication.translate("settings_window", u"save to a new file each", None))
+        self.label_24.setText(QCoreApplication.translate("settings_window", u"hours", None))
         self.label_11.setText(QCoreApplication.translate("settings_window", u"Sounds", None))
 #if QT_CONFIG(tooltip)
         self.checkBox_play_camel_on_error.setToolTip(QCoreApplication.translate("settings_window", u"when an error occurs,\n"

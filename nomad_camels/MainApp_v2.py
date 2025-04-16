@@ -1996,12 +1996,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.run_router = RunRouter(
                 [
                     lambda x, y: saving_function(
-                        x,
-                        y,
-                        self.protocol_module.save_path,
-                        self.protocol_module.new_file_each_run,
-                        self.saving_plot_list,
-                        self.running_protocol.use_nexus,
+                        name=x,
+                        start_doc=y,
+                        path=self.protocol_module.save_path,
+                        new_file_each=self.protocol_module.new_file_each_run,
+                        plot_data=self.saving_plot_list,
+                        do_nexus_output=self.running_protocol.use_nexus,
+                        new_file_hours=self.protocol_module.new_file_hours,
                     )
                 ]
             )
@@ -2245,7 +2246,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "Protocol aborted, waiting for cleanup... - NOMAD CAMELS"
             )
             self.run_engine.abort("Aborted by user")
-        if self.instantiate_devices_thread and self.instantiate_devices_thread.isRunning():
+        if (
+            self.instantiate_devices_thread
+            and self.instantiate_devices_thread.isRunning()
+        ):
             self.instantiate_devices_thread.successful.disconnect()
             self.instantiate_devices_thread.exception_raised.disconnect()
             self.old_devices_thread = self.instantiate_devices_thread

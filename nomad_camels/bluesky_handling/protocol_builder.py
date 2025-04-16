@@ -306,6 +306,13 @@ def build_protocol(
         variable_string += f'new_file_each_run = {variables_handling.preferences["new_file_each_run"]}\n'
     else:
         variable_string += f"new_file_each_run = False\n"
+    if (
+        "new_file_every_x_hours" in variables_handling.preferences
+        and variables_handling.preferences["new_file_every_x_hours"]
+    ):
+        variable_string += f'new_file_hours = {variables_handling.preferences["new_file_every_x_hours_value"]}\n'
+    else:
+        variable_string += f"new_file_hours = 0\n"
     variable_string += f"do_nexus_output = {protocol.use_nexus}\n"
     additional_string_devices = ""
     final_string = "\t\tfor name, device in devs.items():\n"
@@ -520,7 +527,7 @@ def build_protocol(
     protocol_string += "\tdevs = {}\n\tdevice_config = {}\n\ttry:\n"
     protocol_string += devices_string
     if protocol.h5_during_run:
-        protocol_string += "\t\trr = RunRouter([lambda x, y: helper_functions.saving_function(x, y, save_path, new_file_each_run, plots, do_nexus_output)])\n"
+        protocol_string += "\t\trr = RunRouter([lambda x, y: helper_functions.saving_function(x, y, save_path, new_file_each_run, plots, do_nexus_output, new_file_hours)])\n"
         protocol_string += "\t\tsubscription_rr = RE.subscribe(rr)\n"
     protocol_string += standard_start_string2
     protocol_string += standard_final_string
