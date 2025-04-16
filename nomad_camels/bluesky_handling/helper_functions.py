@@ -163,7 +163,13 @@ def export_function(
 
 
 def saving_function(
-    name, start_doc, path, new_file_each=True, plot_data=None, do_nexus_output=True
+    name,
+    start_doc,
+    path,
+    new_file_each=True,
+    plot_data=None,
+    do_nexus_output=True,
+    new_file_hours=0,
 ):
     """
     Create a Serializer and return it.
@@ -210,6 +216,7 @@ def saving_function(
             new_file_each=new_file_each,
             plot_data=plot_data,
             do_nexus_output=do_nexus_output,
+            new_file_hours=new_file_hours,
         )
     ], []
 
