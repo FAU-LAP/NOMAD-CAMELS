@@ -116,7 +116,7 @@ class Measurement_Protocol:
         for i, alias in enumerate(self.instrument_aliases["Alias"]):
             dev = self.instrument_aliases["Instrument"][i]
             for channel in variables_handling.devices[dev].channels:
-                aliases[channel.replace(dev, alias)] = channel
+                aliases[channel.replace(dev, alias, 1)] = channel
         for i, alias in enumerate(self.channel_aliases["Alias"]):
             aliases[alias] = self.channel_aliases["channel"][i]
         return aliases
