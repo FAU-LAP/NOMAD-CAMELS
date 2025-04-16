@@ -127,6 +127,10 @@ class Manual_Control(QWidget):
         """Called when the devices are ready to be used, i.e. when the
         `instantiate_devices_thread` is finished."""
         self.device_list = self.instantiate_devices_thread.devices
+        self.instantiate_devices_thread.quit()
+        self.instantiate_devices_thread.wait()
+        self.instantiate_devices_thread.deleteLater()
+        self.instantiate_devices_thread = None
         if self.device:
             self.ophyd_device = self.device_list[self.device.custom_name]
         self.setCursor(Qt.ArrowCursor)

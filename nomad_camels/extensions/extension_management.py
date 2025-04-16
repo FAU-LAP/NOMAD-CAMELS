@@ -314,6 +314,10 @@ class Extension_Manager(QDialog):
                 self.extension_table.setItem(i, 2, item)
         self.extension_table.resizeColumnsToContents()
         self.setCursor(Qt.ArrowCursor)
+        self.install_thread.quit()
+        self.install_thread.wait()
+        self.install_thread.deleteLater()
+        self.install_thread = None
 
     def accept(self):
         self.update_config()

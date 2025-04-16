@@ -160,11 +160,19 @@ class Set_Panel(Manual_Control):
     def close(self) -> bool:
         if self.read_thread:
             self.read_thread.still_running = False
+            self.read_thread.quit()
+            self.read_thread.wait()
+            self.read_thread.deleteLater()
+            self.read_thread = None
         return super().close()
 
     def closeEvent(self, a0) -> None:
         if self.read_thread:
             self.read_thread.still_running = False
+            self.read_thread.quit()
+            self.read_thread.wait()
+            self.read_thread.deleteLater()
+            self.read_thread = None
         return super().closeEvent(a0)
 
 

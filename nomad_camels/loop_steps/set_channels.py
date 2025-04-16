@@ -40,9 +40,10 @@ class Set_Channels(Loop_Step):
     def update_used_devices(self):
         """All devices with a channel that is to be set are added."""
         self.used_devices = []
+        channels = variables_handling.get_channels()
         for channel in self.channels_values["Channels"]:
-            if channel in variables_handling.channels:
-                device = variables_handling.channels[channel].device
+            if channel in channels:
+                device = channels[channel].device
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
@@ -52,12 +53,13 @@ class Set_Channels(Loop_Step):
         specified value"""
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
+        channels = variables_handling.get_channels()
         for i, channel in enumerate(self.channels_values["Channels"]):
-            if channel not in variables_handling.channels:
+            if channel not in channels:
                 raise Exception(
                     f"Trying to set channel {channel} in {self.full_name}, but it does not exist!"
                 )
-            dev, chan = variables_handling.channels[channel].name.split(".")
+            dev, chan = channels[channel].name.split(".")
             val = self.channels_values["Values"][i]
             protocol_string += f'{tabs}yield from bps.abs_set(devs["{dev}"].{chan}, eva.eval("{val}"), group="A")\n'
         if self.wait_for_set:
@@ -67,7 +69,12 @@ class Set_Channels(Loop_Step):
     def get_protocol_short_string(self, n_tabs=0):
         """Displays the channels and their values."""
         short_string = super().get_protocol_short_string(n_tabs)
-        val_dic = {self.channels_values["Channels"][i]: self.channels_values["Values"][i].replace('"', '\'') for i in range(len(self.channels_values["Channels"]))}
+        val_dic = {
+            self.channels_values["Channels"][i]: self.channels_values["Values"][
+                i
+            ].replace('"', "'")
+            for i in range(len(self.channels_values["Channels"]))
+        }
         short_string = f"{short_string[:-1]} - {val_dic}\n"
         return short_string
 
@@ -87,8 +94,9 @@ class Set_Channels_Config(Loop_Step_Config):
     def __init__(self, loop_step: Set_Channels, parent=None):
         super().__init__(parent, loop_step)
         box = []
-        for channel in variables_handling.channels:
-            if variables_handling.channels[channel].output:
+        channels = variables_handling.get_channels()
+        for channel in channels:
+            if channels[channel].output:
                 box.append(channel)
         info_dict = {
             "channel": self.loop_step.channels_values["Channels"],

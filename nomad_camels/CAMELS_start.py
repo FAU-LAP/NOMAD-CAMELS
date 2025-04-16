@@ -200,7 +200,9 @@ def start_camels(start_proxy_bool=True):
     main_window = MainApp_v2.MainWindow(start_proxy_bool=start_proxy_bool)
     loading_screen.hide()
     main_window.show()
-
+    thread.quit()
+    thread.wait()
+    thread.deleteLater()
     # Start the main Qt application event loop
     app.exec()
 

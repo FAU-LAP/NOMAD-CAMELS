@@ -86,6 +86,17 @@ class Measurement_Protocol:
         )
         self.flyer_data = kwargs.get("flyer_data", [])
 
+        self.instrument_aliases = (
+            kwargs["instrument_aliases"]
+            if "instrument_aliases" in kwargs
+            else {"Instrument": [], "Alias": []}
+        )
+        self.channel_aliases = (
+            kwargs["channel_aliases"]
+            if "channel_aliases" in kwargs
+            else {"channel": [], "Alias": []}
+        )
+
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -99,6 +110,16 @@ class Measurement_Protocol:
         self.use_nexus = use_nexus
         self.measurement_description = ""
         self.tags = []
+
+    def get_aliases(self):
+        aliases = {}
+        for i, alias in enumerate(self.instrument_aliases["Alias"]):
+            dev = self.instrument_aliases["Instrument"][i]
+            for channel in variables_handling.devices[dev].channels:
+                aliases[channel.replace(dev, alias, 1)] = channel
+        for i, alias in enumerate(self.channel_aliases["Alias"]):
+            aliases[alias] = self.channel_aliases["channel"][i]
+        return aliases
 
     def update_variables(self):
         """Update all the variables provided by loopsteps."""
@@ -277,6 +298,8 @@ class Measurement_Protocol:
         plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, stream_name="primary", runEngine=None):\n'
         prot_vars = self.variables
         variables_handling.protocol_variables = prot_vars
+        variables_handling.channel_aliases = self.channel_aliases
+        variables_handling.instrument_aliases = self.instrument_aliases
         if "StartTime" in prot_vars:
             prot_vars.pop("StartTime")
             prot_vars.pop("ElapsedTime")
@@ -507,6 +530,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         # self.variable_model.setHorizontalHeaderLabels(["Name", "Value", "Data-Type"])
         # self.tableView_variables.setModel(self.variable_model)
         # self.load_variables()
+        self.pushButton_instrument_aliases = QPushButton("Instrument Aliases")
 
         self.pushButton_add_variable.clicked.connect(lambda x: self.add_variable())
         self.pushButton_remove_variable.clicked.connect(self.remove_variable)
@@ -567,6 +591,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
         self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
         self.layout().addWidget(self.flyer_button, 7, 0, 1, 6)
+        self.layout().addWidget(self.pushButton_instrument_aliases, 8, 0, 1, 6)
         self.layout().addWidget(self.checkBox_perform_at_end, 20, 0, 1, 6)
         self.layout().addWidget(self.ending_protocol_selection, 21, 0, 1, 6)
         # ! Ui_Protocol_Settings.ui file adds the Variables Table at position 8 and 9 !!!
@@ -583,6 +608,12 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             self.ending_protocol_selection.setEnabled(True)
         else:
             self.ending_protocol_selection.setEnabled(False)
+
+        self.pushButton_instrument_aliases.clicked.connect(
+            self.change_instrument_aliases
+        )
+        variables_handling.instrument_aliases = self.protocol.instrument_aliases
+        variables_handling.channel_aliases = self.protocol.channel_aliases
 
     def showEvent(self, event):
         """Called when the widget is shown."""
@@ -750,3 +781,19 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.label_title.setText(f"{name} - General Configuration")
         self.protocol.name = name
         self.name_changed.emit()
+
+    def change_instrument_aliases(self):
+        from nomad_camels.frontpanels.instrument_aliases import Instrument_Alias_Config
+
+        dialog = Instrument_Alias_Config(
+            self,
+            instrument_aliases=self.protocol.instrument_aliases,
+            channel_aliases=self.protocol.channel_aliases,
+        )
+        if dialog.exec_():
+            self.protocol.instrument_aliases = dialog.instrument_aliases
+            self.protocol.channel_aliases = dialog.channel_aliases
+            dialog.close()
+            dialog.deleteLater()
+            variables_handling.instrument_aliases = self.protocol.instrument_aliases
+            variables_handling.channel_aliases = self.protocol.channel_aliases

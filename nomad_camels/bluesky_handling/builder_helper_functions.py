@@ -147,7 +147,7 @@ def plot_creator(
         plot_string += "\treturn [], [], None, None\n\n"
         return plot_string, False
     plot_string += standard_plot_string
-    plot_string += "\tplot_evaluator=eva\n"
+    plot_string += "\tplot_evaluator = eva\n"
     plot_string += "\tsubs = []\n"
     plotting = False
     for i, plot in enumerate(plot_data):
