@@ -25,6 +25,7 @@ Features:
 
 Fixes:
 - Change config should now work again
+- Made change config a bit clearer by removing settings that were not changed anyway
 
 ### 1.8.3
 UI-Improvements:

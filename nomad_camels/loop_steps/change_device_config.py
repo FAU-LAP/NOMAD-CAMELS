@@ -28,9 +28,6 @@ class Change_DeviceConf(Loop_Step):
         self.config_dict = (
             step_info["config_dict"] if "config_dict" in step_info else {}
         )
-        self.settings_dict = (
-            step_info["settings_dict"] if "settings_dict" in step_info else {}
-        )
 
     def update_used_devices(self):
         """Includes self.device to the used devices."""
@@ -155,34 +152,32 @@ class Change_DeviceConf_Config(Loop_Step_Config):
             )
             additional_info = dict(device.get_additional_info())
             if dev_name == self.loop_step.device:
-                settings = self.loop_step.settings_dict
                 config = self.loop_step.config_dict
             else:
-                settings = dict(device.settings)
                 config = dict(device.config)
             try:
                 config_widge = py_package.subclass_config_sub(
-                    settings_dict=settings,
+                    settings_dict={},
                     config_dict=config,
                     additional_info=additional_info,
                 )
             except TypeError:
                 config_widge = py_package.subclass_config_sub(
-                    settings_dict=settings,
+                    settings_dict={},
                     config_dict=config,
                 )
             except AttributeError:
                 try:
                     additional_info = dict(device.get_additional_info())
                     widge = py_package.subclass_config(
-                        settings_dict=settings,
+                        settings_dict={},
                         config_dict=config,
                         additional_info=additional_info,
                     )
                     config_widge = widge.sub_widget
                 except TypeError:
                     config_widge = py_package.subclass_config_sub(
-                        settings_dict=settings,
+                        settings_dict={},
                         config_dict=config,
                     )
                 except AttributeError:
@@ -203,4 +198,3 @@ class Change_DeviceConf_Config(Loop_Step_Config):
             self.loop_step.config_dict = self.config_widget.get_info()
         else:
             self.loop_step.config_dict = self.config_widget.get_config()
-            self.loop_step.settings_dict = self.config_widget.get_settings()
