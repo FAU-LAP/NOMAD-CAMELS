@@ -110,9 +110,16 @@ class Change_DeviceConf_Config(Loop_Step_Config):
 
         self.config_widget = Device_Config_Sub()
 
-        self.layout().addWidget(label_dev, 1, 0)
-        self.layout().addWidget(self.comboBox_device, 1, 1)
-        self.layout().addWidget(self.config_widget, 2, 0, 1, 5)
+        label_hint = QLabel()
+        label_hint.setText(
+            """Depending on the driver, some settings may show up that cannot actually be changed.<br>
+            For more information on the difference between config and settings, see <a href="https://fau-lap.github.io/NOMAD-CAMELS/doc/programmers_guide/drivers/modifying_drivers.html">the documentation</a>."""
+        )
+        label_hint.setOpenExternalLinks(True)
+        self.layout().addWidget(label_hint, 1, 0, 1, 5)
+        self.layout().addWidget(label_dev, 2, 0)
+        self.layout().addWidget(self.comboBox_device, 2, 1)
+        self.layout().addWidget(self.config_widget, 3, 0, 1, 5)
         self.comboBox_device.currentTextChanged.connect(self.device_changed)
         self.device_changed()
 
@@ -186,7 +193,7 @@ class Change_DeviceConf_Config(Loop_Step_Config):
         self.config_widget.setParent(None)
         self.config_widget.deleteLater()
         self.config_widget = config_widge
-        self.layout().addWidget(self.config_widget, 2, 0, 1, 5)
+        self.layout().addWidget(self.config_widget, 3, 0, 1, 5)
         self.config_widget.setParent(self)
 
     def update_step_config(self):
