@@ -23,6 +23,8 @@ Features:
 - added functionality to create a new file after a given number of hours (file includes same metadata)
 - can rename channels and instruments for single protocol ("alias") to allow easier sharing of protocols
 
+Fixes:
+- Change config should now work again
 
 ### 1.8.3
 UI-Improvements:

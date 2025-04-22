@@ -111,7 +111,7 @@ class Change_DeviceConf_Config(Loop_Step_Config):
         if loop_step.device in devs:
             self.comboBox_device.setCurrentText(loop_step.device)
 
-        self.config_widget = Device_Config_Sub(parent=self)
+        self.config_widget = Device_Config_Sub()
 
         self.layout().addWidget(label_dev, 1, 0)
         self.layout().addWidget(self.comboBox_device, 1, 1)
@@ -153,6 +153,7 @@ class Change_DeviceConf_Config(Loop_Step_Config):
             py_package = importlib.import_module(
                 f"nomad_camels_driver_{dev_type}.{dev_type}"
             )
+            additional_info = dict(device.get_additional_info())
             if dev_name == self.loop_step.device:
                 settings = self.loop_step.settings_dict
                 config = self.loop_step.config_dict
@@ -161,19 +162,37 @@ class Change_DeviceConf_Config(Loop_Step_Config):
                 config = dict(device.config)
             try:
                 config_widge = py_package.subclass_config_sub(
-                    parent=self, settings_dict=settings, config_dict=config
+                    settings_dict=settings,
+                    config_dict=config,
+                    additional_info=additional_info,
+                )
+            except TypeError:
+                config_widge = py_package.subclass_config_sub(
+                    settings_dict=settings,
+                    config_dict=config,
                 )
             except AttributeError:
                 try:
+                    additional_info = dict(device.get_additional_info())
                     widge = py_package.subclass_config(
-                        parent=self, settings_dict=settings, config_dict=config
+                        settings_dict=settings,
+                        config_dict=config,
+                        additional_info=additional_info,
                     )
                     config_widge = widge.sub_widget
+                except TypeError:
+                    config_widge = py_package.subclass_config_sub(
+                        settings_dict=settings,
+                        config_dict=config,
+                    )
                 except AttributeError:
-                    config_widge = Device_Config_Sub(parent=self)
-        self.layout().replaceWidget(self.config_widget, config_widge)
+                    config_widge = Device_Config_Sub()
+        self.layout().removeWidget(self.config_widget)
+        self.config_widget.setParent(None)
         self.config_widget.deleteLater()
         self.config_widget = config_widge
+        self.layout().addWidget(self.config_widget, 2, 0, 1, 5)
+        self.config_widget.setParent(self)
 
     def update_step_config(self):
         """ """

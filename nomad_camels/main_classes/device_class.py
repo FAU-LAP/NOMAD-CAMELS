@@ -851,6 +851,7 @@ class Simple_Config(Device_Config):
         config_types=None,
         labels=None,
     ):
+        additional_info = additional_info or {}
         config_channel_metadata = additional_info.get("config_channel_metadata", None)
         super().__init__(
             parent,
@@ -860,7 +861,8 @@ class Simple_Config(Device_Config):
             config_dict=config_dict,
             additional_info=additional_info,
         )
-        self.sub_widget = Simple_Config_Sub(
+
+        self.sub_widget = Scroll_Sub_Widget(
             settings_dict=settings_dict,
             parent=self,
             config_dict=config_dict,
@@ -870,14 +872,12 @@ class Simple_Config(Device_Config):
             config_channel_metadata=config_channel_metadata,
             device_name=device_name,
         )
-        self.scroll_area = QScrollArea()
-        self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setWidget(self.sub_widget)
+
         self.extra_line = QFrame()
         self.extra_line.setFrameShape(QFrame.HLine)
         self.extra_line.setFrameShadow(QFrame.Sunken)
         self.layout().addWidget(self.extra_line, 10, 0, 1, 5)
-        self.layout().addWidget(self.scroll_area, 11, 0, 1, 5)
+        self.layout().addWidget(self.sub_widget, 11, 0, 1, 5)
         self.spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.layout().addItem(self.spacer, 12, 0, 1, 5)
         self.load_settings()
@@ -891,6 +891,44 @@ class Simple_Config(Device_Config):
         """ """
         self.sub_widget.get_config()
         return super().get_config()
+
+
+class Scroll_Sub_Widget(QScrollArea):
+    """ """
+
+    def __init__(
+        self,
+        settings_dict=None,
+        parent=None,
+        config_dict=None,
+        comboBoxes=None,
+        config_types=None,
+        labels=None,
+        config_channel_metadata=None,
+        device_name="",
+    ):
+        super().__init__(parent)
+
+        self.sub_widget = Simple_Config_Sub(
+            settings_dict=settings_dict,
+            parent=self,
+            config_dict=config_dict,
+            comboBoxes=comboBoxes,
+            config_types=config_types,
+            labels=labels,
+            config_channel_metadata=config_channel_metadata,
+            device_name=device_name,
+        )
+        self.setWidgetResizable(True)
+        self.setWidget(self.sub_widget)
+
+    def get_settings(self):
+        """ """
+        return self.sub_widget.get_settings()
+
+    def get_config(self):
+        """ """
+        return self.sub_widget.get_config()
 
 
 class Simple_Config_Sub(Device_Config_Sub):
