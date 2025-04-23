@@ -189,6 +189,8 @@ class Change_DeviceConf_Config(Loop_Step_Config):
                     )
                 except AttributeError:
                     config_widge = Device_Config_Sub()
+        if hasattr(config_widge, "hide_settings"):
+            config_widge.hide_settings()
         self.layout().removeWidget(self.config_widget)
         self.config_widget.setParent(None)
         self.config_widget.deleteLater()
