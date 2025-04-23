@@ -24,8 +24,9 @@ Features:
 - can rename channels and instruments for single protocol ("alias") to allow easier sharing of protocols
 
 Fixes:
-- Change config should now work again
-- Made change config a bit clearer by removing settings that were not changed anyway
+- `Change device config` protocol step should now work again.
+- Made `Change device config` a bit clearer by removing settings that are not changed.
+- Default API host is 0.0.0.0 instead of 127.0.0.1. This allows all devices on the same network to access the API server. Make sure you firewall settings are adjusted accordingly. 
 
 ### 1.8.3
 UI-Improvements:
