@@ -23,6 +23,9 @@ Features:
 - added functionality to create a new file after a given number of hours (file includes same metadata)
 - can rename channels and instruments for single protocol ("alias") to allow easier sharing of protocols
 
+Changes:
+- added a possible function that instruments can have to hide settings for a config sub-widget for change config step
+
 Fixes:
 - `Change device config` protocol step should now work again.
 - Made `Change device config` a bit clearer by removing settings that are not changed.
