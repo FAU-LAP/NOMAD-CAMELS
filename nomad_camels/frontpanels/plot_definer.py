@@ -311,6 +311,54 @@ class Fit_Info:
 
 
 class Plot_Definer(QDialog):
+    def __init__(self, parent=None, plot_data=None):
+        super().__init__(parent)
+        self.plot_data = plot_data or []
+
+        self.setWindowTitle("Define plot - NOMAD CAMELS")
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
+
+        self.definer_widget = Plot_Definer_Widget(self, self.plot_data)
+
+        # Create OK/Cancel dialog buttons.
+        self.dialog_buttons = QDialogButtonBox()
+        self.dialog_buttons.setOrientation(Qt.Horizontal)
+        self.dialog_buttons.setStandardButtons(
+            QDialogButtonBox.Cancel | QDialogButtonBox.Ok
+        )
+        self.dialog_buttons.accepted.connect(self.accept)
+        self.dialog_buttons.rejected.connect(self.reject)
+
+        layout = QGridLayout()
+
+        layout.addWidget(self.definer_widget, 0, 0)
+        layout.addWidget(self.dialog_buttons, 1, 0)
+        self.setLayout(layout)
+
+    def accept(self) -> None:
+        """
+        Overridden accept method to ensure that the current plot configuration
+        is saved before closing the dialog.
+        """
+        self.definer_widget.get_data()
+        super().accept()
+
+    def reject(self):
+        """
+        Overridden reject method that asks for confirmation before discarding changes.
+        """
+        discard_dialog = QMessageBox.question(
+            self,
+            "Discard Changes?",
+            "All changes to the defined plots/fits will be lost!",
+            QMessageBox.Yes | QMessageBox.No,
+        )
+        if discard_dialog != QMessageBox.Yes:
+            return
+        super().reject()
+
+
+class Plot_Definer_Widget(QWidget):
     """
     Dialog for defining or editing multiple Plot_Info objects.
 
@@ -327,10 +375,9 @@ class Plot_Definer(QDialog):
             plot_data (list of Plot_Info, optional): Initial plot configurations.
         """
         super().__init__(parent)
-        self.plot_data = plot_data or []
-
-        self.setWindowTitle("Define plot - NOMAD CAMELS")
-        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
+        self.plot_data = plot_data
+        if self.plot_data is None:
+            self.plot_data = []
 
         # Define columns and combo-box options for the plot table.
         columns = ["plot-type", "name"]
@@ -361,23 +408,13 @@ class Plot_Definer(QDialog):
         # Placeholder widget; replaced when a plot is selected.
         self.plot_def = QLabel("Select a plot!")
 
-        # Create OK/Cancel dialog buttons.
-        self.dialog_buttons = QDialogButtonBox()
-        self.dialog_buttons.setOrientation(Qt.Horizontal)
-        self.dialog_buttons.setStandardButtons(
-            QDialogButtonBox.Cancel | QDialogButtonBox.Ok
-        )
-        self.dialog_buttons.accepted.connect(self.accept)
-        self.dialog_buttons.rejected.connect(self.reject)
-
         # Arrange all widgets in a grid layout.
         layout = QGridLayout()
         layout.addWidget(self.plot_table, 0, 0)
         layout.addWidget(self.plot_def, 0, 1)
-        layout.addWidget(self.dialog_buttons, 1, 0, 1, 2)
         self.setLayout(layout)
 
-    def accept(self) -> None:
+    def get_data(self) -> None:
         """
         Overridden accept method to ensure that the current plot configuration
         is saved before closing the dialog.
@@ -385,21 +422,7 @@ class Plot_Definer(QDialog):
         # If the current plot definition widget is not just a placeholder, update data.
         if not isinstance(self.plot_def, QLabel):
             self.plot_def.get_data()
-        super().accept()
-
-    def reject(self):
-        """
-        Overridden reject method that asks for confirmation before discarding changes.
-        """
-        discard_dialog = QMessageBox.question(
-            self,
-            "Discard Changes?",
-            "All changes to the defined plots/fits will be lost!",
-            QMessageBox.Yes | QMessageBox.No,
-        )
-        if discard_dialog != QMessageBox.Yes:
-            return
-        super().reject()
+        return self.plot_data
 
     def change_plot_def(self, index):
         """
