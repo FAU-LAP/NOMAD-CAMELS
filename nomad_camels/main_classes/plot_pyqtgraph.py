@@ -350,7 +350,6 @@ class PlotWidget(QWidget):
                     params[param].set(min=lower[param], max=upper[param])
             name = f'{label}_{fit["y"]}_v_{fit["x"]}'
             name = replace_name(name)
-            add_data = fit["additional_data"] or {}
             livefit = LiveFit_Eva(
                 model,
                 fit["y"],
@@ -358,7 +357,6 @@ class PlotWidget(QWidget):
                 self.eva,
                 init_guess,
                 name=name,
-                additional_data=add_data,
                 params=params,
                 stream_name=stream_name,
                 show_in_browser=show_in_browser,
