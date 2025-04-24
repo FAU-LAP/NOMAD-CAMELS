@@ -235,7 +235,7 @@ class Fit_Info:
                                "lower bound", "upper bound" for parameters.
         y (str): Expression or variable representing the dependent data.
         x (str): Expression or variable representing the independent data.
-        additional_data (list): Extra data used for the fit (if any).
+        additional_data (list): DEPRECATED.
         display_values (bool): Whether to display the fit parameter values on the plot.
         name (str): Auto-generated name for the fit.
     """
@@ -268,7 +268,6 @@ class Fit_Info:
             "lower bound": [],
             "upper bound": [],
         }
-        self.additional_data = additional_data or []
         self.y = y
         self.x = x
 
@@ -1126,12 +1125,6 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
             add_tooltip="Add a new parameter",
             remove_tooltip="Remove selected parameter",
         )
-        # Create a table for additional data.
-        self.add_data = AddRemoveTable(
-            headerLabels=[],
-            title="Additional Data",
-            tableData=fit_info.additional_data,
-        )
 
         # Hide add/remove buttons for parameters unless a custom function is used.
         self.start_params.addButton.setHidden(True)
@@ -1150,7 +1143,6 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
 
         # Add the parameter and additional-data tables to the layout.
         self.layout().addWidget(self.start_params, 10, 0, 1, 2)
-        self.layout().addWidget(self.add_data, 0, 3, 11, 2)
 
         # Initial call to configure the UI based on current settings.
         self.change_func()
@@ -1278,7 +1270,6 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
             for key in self.fit_info.initial_params:
                 self.fit_info.initial_params[key].pop(i)
 
-        self.fit_info.additional_data = self.add_data.update_table_data()
         self.fit_info.do_fit = self.checkBox_fit.isChecked()
         self.fit_info.predef_func = self.comboBox_predef_func.currentText()
         self.fit_info.custom_func = self.lineEdit_custom_func.text()
