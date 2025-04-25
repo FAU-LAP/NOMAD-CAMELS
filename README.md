@@ -32,6 +32,7 @@ Fixes:
 - Made `Change device config` a bit clearer by removing settings that are not changed.
 - Default API host is 0.0.0.0 instead of 127.0.0.1. This allows all devices on the same network to access the API server. Make sure you firewall settings are adjusted accordingly. 
 - Removed deprecated additional data from Fit-UI
+- Cannot make a Manual control with a name that is already in use anymore, i.e. not overwriting the old one
 
 ### 1.8.3
 UI-Improvements:

@@ -138,6 +138,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocols_dict = OrderedDict()
         variables_handling.protocols = self.protocols_dict
         self.manual_controls = OrderedDict()
+        variables_handling.manual_controls = self.manual_controls
         self.preset_save_dict = {
             "_current_preset": self._current_preset,
             "active_instruments": self.active_instruments,

@@ -176,7 +176,18 @@ class Manual_Control_Config(QDialog):
 
     def accept(self):
         """ """
-        self.control_data["name"] = self.lineEdit_name.text()
+        name = self.lineEdit_name.text()
+        if name in variables_handling.manual_controls:
+            from nomad_camels.ui_widgets.warn_popup import WarnPopup
+
+            WarnPopup(
+                title="Manual Control Name Conflict",
+                text=f'Manual control name "{name}" is already in use!',
+                parent=self,
+                info_icon=False,
+            )
+            return
+        self.control_data["name"] = name
         self.control_data["control_type"] = self.control_type
         super().accept()
 

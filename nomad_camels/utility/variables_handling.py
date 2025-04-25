@@ -56,6 +56,8 @@ CAMELS_path = ""
 
 preferences = {}
 
+manual_controls = {}
+
 protocols = {}
 protocol_variables = {}
 channels = {}
