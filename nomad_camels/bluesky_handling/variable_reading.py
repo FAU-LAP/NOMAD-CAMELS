@@ -2,6 +2,17 @@ from ophyd import SignalRO
 
 
 class Variable_Signal(SignalRO):
+    """
+    A class to provide a bluesky signal for the variables of a CAMELS protocol.
+
+
+    Parameters
+    ----------
+    variables_dict : dict
+        A dictionary containing the variables to be read. The keys are the variable names,
+        and the values are the corresponding values.
+    """
+
     def __init__(
         self,
         name,
@@ -34,6 +45,9 @@ class Variable_Signal(SignalRO):
         self.vars = list(sorted(self.variables_dict.keys()))
 
     def describe(self):
+        """
+        Describe as the variables.
+        """
         return {
             self.name: {
                 "source": "local_NOMAD_CAMELS_variables",
@@ -44,6 +58,9 @@ class Variable_Signal(SignalRO):
         }
 
     def get(self):
+        """
+        Get the values of the variables from the variables_dict.
+        """
         data = {
             key: self.variables_dict[key]
             for key in sorted(self.variables_dict.keys())

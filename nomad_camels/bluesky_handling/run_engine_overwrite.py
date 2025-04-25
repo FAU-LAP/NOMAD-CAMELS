@@ -3,6 +3,13 @@ import logging
 
 
 def get_nan_value(value):
+    """
+    Returns a NaN value of the same type as the input value.
+    For example:
+    If the input value is a numpy array, it returns an array of NaNs with the same shape.
+    If the input value is a list, it returns a list of NaNs with the same length.
+    If the input value is a dictionary, it returns an empty dictionary.
+    """
     import numpy as np
 
     if isinstance(value, np.ndarray):
@@ -27,6 +34,11 @@ def get_nan_value(value):
 
 
 class RunEngineOverwrite(RunEngine):
+    """
+    A class that overwrites the `RunEngine` class from bluesky to add a custom read method.
+    This class is used to handle the reading of objects in a more robust way, especially when dealing with exceptions. It allows to keep running the run engine even if an object raises an exception during the read process.
+    """
+
     async def _read(self, msg):
         obj = run_engine.check_supports(msg.obj, run_engine.Readable)
         # actually _read_ the object
