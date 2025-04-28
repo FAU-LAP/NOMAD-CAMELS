@@ -27,6 +27,7 @@ Features:
 Changes:
 - added a possible function that instruments can have to hide settings for a config sub-widget for change config step
 - reconfigured design of general protocol config
+- entry name not anymore showing up in filename
 
 Fixes:
 - `Change device config` protocol step should now work again.
