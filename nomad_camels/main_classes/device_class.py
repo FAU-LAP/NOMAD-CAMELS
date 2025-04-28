@@ -682,6 +682,7 @@ class Local_VISA(Connection_Config):
 
         label_port = QLabel("Resource-Name:")
         self.comboBox_port = QComboBox()
+        self.lineEdit_port = QLineEdit()
         try:
             import pyvisa
         except ImportError:
@@ -719,7 +720,8 @@ class Local_VISA(Connection_Config):
             rm = pyvisa.ResourceManager()
         except OSError:
             rm = pyvisa.ResourceManager("@py")
-        self.ports = rm.list_resources()
+        self.ports = list(rm.list_resources())
+        self.ports += ["enter port manually"]
         if not self.ports:
             WarnPopup(
                 text="No VISA resources found!\nYou might need to install a VISA library.",
@@ -730,34 +732,37 @@ class Local_VISA(Connection_Config):
 
         self.layout().addWidget(label_port, 0, 0)
         self.layout().addWidget(self.comboBox_port, 0, 1, 1, 4)
+        self.comboBox_port.currentTextChanged.connect(self.port_changed)
+        self.layout().addWidget(self.lineEdit_port, 1, 1, 1, 4)
+        self.lineEdit_port.setToolTip("Enter the port manually here.")
 
         label_baud = QLabel("Baud-Rate:")
         self.lineEdit_baud = QLineEdit("9600")
-        self.layout().addWidget(label_baud, 1, 0)
-        self.layout().addWidget(self.lineEdit_baud, 1, 1)
+        self.layout().addWidget(label_baud, 10, 0)
+        self.layout().addWidget(self.lineEdit_baud, 10, 1)
 
         label_timeout = QLabel("Timeout (ms):")
         self.lineEdit_timeout = QLineEdit("2000")
-        self.layout().addWidget(label_timeout, 1, 2)
-        self.layout().addWidget(self.lineEdit_timeout, 1, 3)
+        self.layout().addWidget(label_timeout, 10, 2)
+        self.layout().addWidget(self.lineEdit_timeout, 10, 3)
 
         label_in_term = QLabel("In-Terminator:")
         self.lineEdit_in_term = QLineEdit("\\r\\n")
-        self.layout().addWidget(label_in_term, 2, 0)
-        self.layout().addWidget(self.lineEdit_in_term, 2, 1)
+        self.layout().addWidget(label_in_term, 12, 0)
+        self.layout().addWidget(self.lineEdit_in_term, 12, 1)
 
         label_out_term = QLabel("Out-Terminator:")
         self.lineEdit_out_term = QLineEdit("\\r\\n")
-        self.layout().addWidget(label_out_term, 2, 2)
-        self.layout().addWidget(self.lineEdit_out_term, 2, 3)
+        self.layout().addWidget(label_out_term, 12, 2)
+        self.layout().addWidget(self.lineEdit_out_term, 12, 3)
 
         label_error_retry = QLabel("Retries on error:")
         self.lineEdit_error_retry = QLineEdit("0")
-        self.layout().addWidget(label_error_retry, 3, 0)
-        self.layout().addWidget(self.lineEdit_error_retry, 3, 1)
+        self.layout().addWidget(label_error_retry, 13, 0)
+        self.layout().addWidget(self.lineEdit_error_retry, 13, 1)
 
         self.checkbox_retry_on_timeout = QCheckBox("retry on timeout")
-        self.layout().addWidget(self.checkbox_retry_on_timeout, 3, 2, 1, 2)
+        self.layout().addWidget(self.checkbox_retry_on_timeout, 13, 2, 1, 2)
         self.widgets_to_hide = [
             label_baud,
             self.lineEdit_baud,
@@ -772,12 +777,22 @@ class Local_VISA(Connection_Config):
             self.checkbox_retry_on_timeout,
         ]
 
+    def port_changed(self):
+        """ """
+        if self.comboBox_port.currentText() == "enter port manually":
+            self.lineEdit_port.setHidden(False)
+        else:
+            self.lineEdit_port.setHidden(True)
+
     def get_settings(self):
         """ """
+        resource_name = self.comboBox_port.currentText()
+        if resource_name == "enter port manually":
+            resource_name = self.lineEdit_port.text()
         if self.only_resource_name:
-            return {"resource_name": self.comboBox_port.currentText()}
+            return {"resource_name": resource_name}
         return {
-            "resource_name": self.comboBox_port.currentText(),
+            "resource_name": resource_name,
             "baud_rate": int(self.lineEdit_baud.text()),
             "timeout": int(self.lineEdit_timeout.text()),
             "read_termination": self.lineEdit_in_term.text()
@@ -809,6 +824,10 @@ class Local_VISA(Connection_Config):
             and settings_dict["resource_name"] in self.ports
         ):
             self.comboBox_port.setCurrentText(settings_dict["resource_name"])
+        elif "resource_name" in settings_dict:
+            self.comboBox_port.setCurrentText("enter port manually")
+            self.lineEdit_port.setText(settings_dict["resource_name"])
+        self.port_changed()
         if "baud_rate" in settings_dict:
             self.lineEdit_baud.setText(str(settings_dict["baud_rate"]))
         if "timeout" in settings_dict:
