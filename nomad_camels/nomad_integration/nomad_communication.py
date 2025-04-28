@@ -65,7 +65,18 @@ def login_to_nomad(parent=None):
     nomad_url = dialog.url
     if not nomad_url:
         nomad_url = central_url
-    make_correct_url()
+    else:
+        make_correct_url()
+        if (
+            nomad_url == central_url
+            or nomad_url == "https://nomad-lab.eu/prod/v1/api/v1"
+        ):
+            WarnPopup(
+                text="You are trying to use the central NOMAD. Please select central NOMAD instead of NOMAD Oasis to do so.",
+                title="Central NOMAD selected as Oasis",
+                info_icon=False,
+            )
+            return
     if dialog.token:
         local_auth = {"Authorization": f"Bearer {dialog.token}"}
         response = requests.get(f"{nomad_url}/auth/signature_token", headers=local_auth)
