@@ -60,6 +60,7 @@ class AddRemoveTable(QWidget):
         default_values=None,
         add_tooltip=None,
         remove_tooltip=None,
+        check_string_function=None,
     ):
         """
 
@@ -121,6 +122,14 @@ class AddRemoveTable(QWidget):
             a column is not in the dict, the default value is an empty
             string. If None, all default values are empty strings.
             The default values are used for new entries.
+        add_tooltip : str, default None
+            The tooltip for the add button. If None, no tooltip is set.
+        remove_tooltip : str, default None
+            The tooltip for the remove button. If None, no tooltip is set.
+        check_string_function : function, default None
+            A function that is called when the check_string function is called.
+            This can be used to add additional checks for the strings in the table.
+            If None, the check_eval function of CAMELS is used.
         """
         super().__init__(parent)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -135,6 +144,7 @@ class AddRemoveTable(QWidget):
         self.checkstrings = (
             checkstrings if not type(checkstrings) is int else [checkstrings]
         )
+        self.check_string_function = check_string_function
         self.horizontal = horizontal
         self.orderBy = orderBy
         self.comboBoxes = {} if comboBoxes is None else comboBoxes
@@ -431,10 +441,12 @@ class AddRemoveTable(QWidget):
         """
         ind = item.index()
         pos = ind.column() if self.horizontal else ind.row()
+        check_function = self.check_string_function or variables_handling.check_eval
         if pos not in self.checkstrings or item.text() == "":
             color = variables_handling.get_color("white")
-        elif variables_handling.check_eval(item.text()):
-            color = variables_handling.get_color("green")
+        elif check_function(item.text()):
+            if not self.check_string_function:
+                color = variables_handling.get_color("green")
         else:
             color = variables_handling.get_color("red")
         self.table_model.setData(
@@ -674,6 +686,7 @@ class AddRemoveDialoge(QDialog):
         checkstrings=None,
         askdelete=False,
         default_values=None,
+        check_string_function=None,
     ):
         super().__init__(parent)
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
@@ -702,6 +715,7 @@ class AddRemoveDialoge(QDialog):
             checkstrings=checkstrings,
             askdelete=askdelete,
             default_values=default_values,
+            check_string_function=check_string_function,
         )
 
         layout = QGridLayout()

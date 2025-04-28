@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
 from nomad_camels.frontpanels.flyer_window import FlyerButton
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.ui_widgets.variable_table import VariableTable
+from nomad_camels.ui_widgets.variable_tool_tip_box import Variable_Box
 
 class Ui_Protocol_Settings(object):
     def setupUi(self, Protocol_Settings):
@@ -103,7 +104,7 @@ class Ui_Protocol_Settings(object):
 
         self.horizontalLayout_3.addWidget(self.label)
 
-        self.lineEdit_filename = QLineEdit(self.general)
+        self.lineEdit_filename = Variable_Box(self.general)
         self.lineEdit_filename.setObjectName(u"lineEdit_filename")
 
         self.horizontalLayout_3.addWidget(self.lineEdit_filename)

@@ -136,7 +136,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit_filename">
+          <widget class="Variable_Box" name="lineEdit_filename">
            <property name="text">
             <string>Datafile</string>
            </property>
@@ -422,6 +422,11 @@ QPushButton:disabled {
    <class>VariableTable</class>
    <extends>QTableView</extends>
    <header>nomad_camels.ui_widgets.variable_table</header>
+  </customwidget>
+  <customwidget>
+   <class>Variable_Box</class>
+   <extends>QLineEdit</extends>
+   <header>nomad_camels.ui_widgets.variable_tool_tip_box</header>
   </customwidget>
   <customwidget>
    <class>Path_Button_Edit</class>

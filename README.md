@@ -23,6 +23,7 @@ Features:
 - added functionality to create a new file after a given number of hours (file includes same metadata)
 - can rename channels and instruments for single protocol ("alias") to allow easier sharing of protocols
 - can now manually enter resource names for VISA instruments
+- added more visual feedback for boxes that have validity checks
 
 Changes:
 - added a possible function that instruments can have to hide settings for a config sub-widget for change config step

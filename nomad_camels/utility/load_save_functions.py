@@ -658,7 +658,6 @@ def load_devices_dict(string_dict, devices_dict):
                         title="instrument import failed",
                     )
                     continue
-                    # raise Exception(f'Could not import device module {name}\n{e}\n{e2}')
         dev = dev_lib.subclass()
         dev.name = name
         if "connection" in dev_data:

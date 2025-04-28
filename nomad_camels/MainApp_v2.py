@@ -33,7 +33,11 @@ from nomad_camels.utility import (
     qthreads,
     plot_placement,
 )
-from nomad_camels.ui_widgets import options_run_button, warn_popup
+from nomad_camels.ui_widgets import (
+    options_run_button,
+    warn_popup,
+    variable_tool_tip_box,
+)
 from nomad_camels.extensions import extension_contexts
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 from nomad_camels.bluesky_handling import helper_functions
@@ -90,6 +94,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.button_area_manual = RenameTabWidget(self, self.manual_tabs_dict)
         self.meas_widget.layout().addWidget(self.button_area_meas, 2, 0, 1, 4)
         self.manual_widget.layout().addWidget(self.button_area_manual, 2, 0, 1, 3)
+        self.lineEdit_session.set_check_function(
+            check_function=variable_tool_tip_box.check_no_special_characters,
+            tooltip="Session name must not contain special characters.\n"
+            "Please use only letters, numbers and underscores.",
+        )
 
         # Set window title and icon
         self.setWindowTitle(
@@ -862,12 +871,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             "telephone_number",
         ]
         tableData = pd.DataFrame.from_dict(self.userdata, "index")
+
         dialog = add_remove_table.AddRemoveDialoge(
             headerLabels=headers,
             parent=self,
             title="User-Information",
             askdelete=True,
             tableData=tableData,
+            check_string_function=variable_tool_tip_box.check_no_special_characters,
+            checkstrings=[0],
         )
         if dialog.exec():
             # Changing the returned dict to dataframe and back to ensure proper formatting. Dictionary is formatted as {name: {'Name': name,...}, ...}
@@ -958,6 +970,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             | (tableData["owner"].isna())
             | (tableData["owner"] == "")
         ]
+
         dialog = add_remove_table.AddRemoveDialoge(
             headerLabels=headers,
             parent=self,
@@ -965,6 +978,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             askdelete=True,
             tableData=tableData,
             default_values={"owner": self.active_user},
+            check_string_function=variable_tool_tip_box.check_no_special_characters,
+            checkstrings=[0],
         )
         if dialog.exec():
             # Changing the returned dict to dataframe and back to ensure proper formatting.

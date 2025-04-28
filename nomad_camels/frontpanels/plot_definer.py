@@ -66,6 +66,19 @@ def parse_int_field(text, min_value, fallback=""):
     return fallback
 
 
+def check_quotation_backslash(string):
+    """
+    Check if a string is free of any backslashes or quotation marks.
+
+    Parameters:
+        string (str): The string to check.
+
+    Returns:
+        bool: False if the string contains backslashes or quotation marks, True otherwise.
+    """
+    return re.search(r"[\\'\"`]", str(string)) is None
+
+
 class Plot_Info:
     """
     Holds all relevant metadata about a single plot configuration.
@@ -695,6 +708,22 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.lineEdit_title.setText(self.plot_data.title)
         self.lineEdit_n_data_points.setText(str(self.plot_data.maxlen))
 
+        tooltip_text = (
+            "Quotation marks and backslashes are not allowed here.\n ' \" ` \\"
+        )
+        self.lineEdit_xlabel.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+        self.lineEdit_ylabel.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+        self.lineEdit_zlabel.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+        self.lineEdit_title.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+
         self.load_data()
         self.plot_data.update_name()
 
@@ -762,20 +791,23 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         # Validate and update axis labels and title.
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
         if re.search(r"[\\'\"`]", self.plot_data.xlabel):
-            raise ValueError("x-label contains invalid characters (' \" `).")
+            raise ValueError("x-label contains invalid characters (' \" ` \\).")
 
         self.plot_data.ylabel = self.lineEdit_ylabel.text()
         if re.search(r"[\\'\"`]", self.plot_data.ylabel):
-            raise ValueError("y-label contains invalid characters (' \" `).")
+            raise ValueError("y-label contains invalid characters (' \" ` \\).")
 
         self.plot_data.zlabel = self.lineEdit_zlabel.text()
         if re.search(r"[\\'\"`]", self.plot_data.zlabel):
-            raise ValueError("z-label contains invalid characters (' \" `).")
+            raise ValueError("z-label contains invalid characters (' \" ` \\).")
+
+        self.plot_data.title = self.lineEdit_title.text()
+        if re.search(r"[\\'\"`]", self.plot_data.title):
+            raise ValueError("title contains invalid characters (' \" ` \\).")
 
         self.plot_data.x_axis = self.lineEdit_x_axis.text()
         self.plot_data.y_axes["formula"][0] = self.lineEdit_y_axis.text()
         self.plot_data.z_axis = self.lineEdit_z_axis.text()
-        self.plot_data.title = self.lineEdit_title.text()
         max_len_str = self.lineEdit_n_data_points.text()
         self.plot_data.maxlen = max_len_str if max_len_str else "inf"
 
@@ -854,6 +886,22 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         super().__init__(plot_data, parent)
         self.fit_definer = None
         self.setupUi(self)
+
+        tooltip_text = (
+            "Quotation marks and backslashes are not allowed here.\n ' \" ` \\"
+        )
+        self.lineEdit_title.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+        self.lineEdit_xlabel.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+        self.lineEdit_ylabel.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+        self.lineEdit_ylabel2.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
 
         # Create a table for y-axis definitions (formula and axis side).
         cols = ["formula", "axis"]
@@ -960,16 +1008,16 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
 
         # Validate title and axis labels for invalid characters.
         if re.search(r"[\\'\"`]", self.plot_data.title):
-            raise ValueError("Title contains invalid characters (' \" `).")
+            raise ValueError("Title contains invalid characters (' \" ` \\).")
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
         if re.search(r"[\\'\"`]", self.plot_data.xlabel):
-            raise ValueError("x-label contains invalid characters (' \" `).")
+            raise ValueError("x-label contains invalid characters (' \" ` \\).")
         self.plot_data.ylabel = self.lineEdit_ylabel.text()
         if re.search(r"[\\'\"`]", self.plot_data.ylabel):
-            raise ValueError("y-label contains invalid characters (' \" `).")
+            raise ValueError("y-label contains invalid characters (' \" ` \\).")
         self.plot_data.ylabel2 = self.lineEdit_ylabel2.text()
         if re.search(r"[\\'\"`]", self.plot_data.ylabel2):
-            raise ValueError("Second y-label contains invalid characters (' \" `).")
+            raise ValueError("Second y-label contains invalid characters (' \" ` \\).")
 
         # Parse maximum data points; use infinity if invalid.
         try:

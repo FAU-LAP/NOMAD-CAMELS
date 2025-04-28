@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'plot_definer_2d.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.2
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -25,7 +25,7 @@ class Ui_Plot_Definer_2D(object):
     def setupUi(self, Plot_Definer_2D):
         if not Plot_Definer_2D.objectName():
             Plot_Definer_2D.setObjectName(u"Plot_Definer_2D")
-        Plot_Definer_2D.resize(400, 275)
+        Plot_Definer_2D.resize(400, 305)
         self.gridLayout = QGridLayout(Plot_Definer_2D)
         self.gridLayout.setObjectName(u"gridLayout")
         self.label_top_left_x = QLabel(Plot_Definer_2D)
@@ -59,7 +59,7 @@ class Ui_Plot_Definer_2D(object):
 
         self.gridLayout.addWidget(self.label_6, 3, 0, 1, 1)
 
-        self.lineEdit_zlabel = QLineEdit(Plot_Definer_2D)
+        self.lineEdit_zlabel = Variable_Box(Plot_Definer_2D)
         self.lineEdit_zlabel.setObjectName(u"lineEdit_zlabel")
 
         self.gridLayout.addWidget(self.lineEdit_zlabel, 4, 3, 1, 1)
@@ -81,7 +81,7 @@ class Ui_Plot_Definer_2D(object):
 
         self.spinBox_port = QSpinBox(Plot_Definer_2D)
         self.spinBox_port.setObjectName(u"spinBox_port")
-        self.spinBox_port.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self.spinBox_port.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
         self.spinBox_port.setMaximum(65536)
         self.spinBox_port.setValue(8050)
 
@@ -155,12 +155,12 @@ class Ui_Plot_Definer_2D(object):
 
         self.gridLayout.addWidget(self.checkBox_show_in_browser, 11, 0, 1, 1)
 
-        self.lineEdit_title = QLineEdit(Plot_Definer_2D)
+        self.lineEdit_title = Variable_Box(Plot_Definer_2D)
         self.lineEdit_title.setObjectName(u"lineEdit_title")
 
         self.gridLayout.addWidget(self.lineEdit_title, 0, 1, 1, 3)
 
-        self.lineEdit_xlabel = QLineEdit(Plot_Definer_2D)
+        self.lineEdit_xlabel = Variable_Box(Plot_Definer_2D)
         self.lineEdit_xlabel.setObjectName(u"lineEdit_xlabel")
 
         self.gridLayout.addWidget(self.lineEdit_xlabel, 2, 3, 1, 1)
@@ -188,7 +188,7 @@ class Ui_Plot_Definer_2D(object):
 
         self.gridLayout.addWidget(self.label_port, 12, 0, 1, 1)
 
-        self.lineEdit_ylabel = QLineEdit(Plot_Definer_2D)
+        self.lineEdit_ylabel = Variable_Box(Plot_Definer_2D)
         self.lineEdit_ylabel.setObjectName(u"lineEdit_ylabel")
 
         self.gridLayout.addWidget(self.lineEdit_ylabel, 3, 3, 1, 1)
