@@ -80,6 +80,10 @@ class Variable_Box(QLineEdit):
         if tooltip is not None:
             self.setToolTip(tooltip)
         self.provide_context_menu = provide_context_menu
+        if not provide_context_menu:
+            self.setContextMenuPolicy(Qt.DefaultContextMenu)
+        else:
+            self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.check_string()
 
     def setEnabled(self, a0: bool) -> None:
@@ -140,7 +144,7 @@ class Variable_Box(QLineEdit):
 
         """
         if not self.provide_context_menu:
-            super().contextMenuEvent(pos)
+            # super().contextMenuEvent(pos)
             return
         menu = self.createStandardContextMenu()
         search_bar = QLineEdit(menu)
