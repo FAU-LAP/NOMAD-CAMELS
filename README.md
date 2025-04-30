@@ -29,6 +29,7 @@ Changes:
 - added a possible function that instruments can have to hide settings for a config sub-widget for change config step
 - reconfigured design of general protocol config
 - entry name not anymore showing up in filename
+- now only writing packages for startup when file does not exist yet, might improve startup speed
 
 Fixes:
 - `Change device config` protocol step should now work again.
