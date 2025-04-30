@@ -32,7 +32,7 @@ class Ui_Protocol_Settings(object):
         Protocol_Settings.resize(446, 550)
         self.gridLayout = QGridLayout(Protocol_Settings)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout.setContentsMargins(0, 0, 9, 0)
         self.tabWidget = QTabWidget(Protocol_Settings)
         self.tabWidget.setObjectName(u"tabWidget")
         self.general = QWidget()

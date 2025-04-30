@@ -53,6 +53,39 @@ tooltip_light = """
 """
 
 
+splitter_style = """
+    QSplitter::handle {
+        border-radius: 3px;
+    }
+"""
+splitter_style_light = (
+    splitter_style
+    + """
+    QSplitter::handle {
+        background: #aaaaaa;
+        border: 1px solid #0a0a0a;
+    }
+    QSplitter::handle:hover {
+        background-color: #3a3a3a;
+        border: 1px dashed white;
+    }
+"""
+)
+splitter_style_dark = (
+    splitter_style
+    + """
+    QSplitter::handle {
+        background: gray;
+        border: 1px solid #5a5a5a;
+    }
+    QSplitter::handle:hover {
+        background-color: #bababa;
+        border: 1px dashed black;
+    }
+"""
+)
+
+
 def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
     """
 
@@ -99,9 +132,15 @@ def change_theme(theme, main_app=None, material_theme=None, dark_mode=False):
             if material_theme.endswith("500"):
                 material_theme = material_theme[:-4]
             xml = f"dark_{material_theme}.xml"
+            main_app.setStyleSheet(tooltip_dark)
         else:
             xml = f"light_{material_theme}.xml"
+            main_app.setStyleSheet(tooltip_light)
         apply_stylesheet(main_app, theme=xml)
     elif theme == "qt-material" and not QT_MATERIAL:
         # TODO: Add a message box to inform the user that qt-material is not installed, make optional
         raise ImportError("qt-material is not installed!")
+    if dark_mode:
+        main_app.setStyleSheet(main_app.styleSheet() + splitter_style_dark)
+    else:
+        main_app.setStyleSheet(main_app.styleSheet() + splitter_style_light)

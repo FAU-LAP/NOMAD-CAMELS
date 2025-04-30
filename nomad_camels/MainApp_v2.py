@@ -124,8 +124,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_stop.setIcon(icon)
 
         # Apply stylesheet to splitter handles
-        self.setStyleSheet("QSplitter::handle{background: gray;}")
-        self.setStyleSheet("QSplitter::handle{background: gray;}")
+        # self.setStyleSheet("QSplitter::handle{background: gray;}")
+        # self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.protocol_stepper_signal.connect(self.progressBar_protocols.setValue)
         self.protocol_stepper_signal.connect(self._update_remaining_time_label)
         self._protocol_start_time = time.time()
@@ -1167,6 +1167,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         dark = self.preferences["dark_mode"]
         variables_handling.dark_mode = dark
+        self.lineEdit_session.check_string()
 
     def change_catalog_name(self):
         """
