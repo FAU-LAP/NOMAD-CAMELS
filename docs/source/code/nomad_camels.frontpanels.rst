@@ -20,6 +20,14 @@ nomad\_camels.frontpanels.flyer\_window module
    :show-inheritance:
    :undoc-members:
 
+nomad\_camels.frontpanels.instrument\_aliases module
+----------------------------------------------------
+
+.. automodule:: nomad_camels.frontpanels.instrument_aliases
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 nomad\_camels.frontpanels.instrument\_config module
 ---------------------------------------------------
 
