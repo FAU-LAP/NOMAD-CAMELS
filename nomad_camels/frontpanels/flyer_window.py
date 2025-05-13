@@ -16,13 +16,20 @@ from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
 
 class FlyerButton(QPushButton):
-    def __init__(self, parent=None, flyer_data=None):
-        super().__init__(text="Asynchronous measurement during protocol", parent=parent)
+    def __init__(self, parent=None, flyer_data=None, text=None):
+        super().__init__(
+            text=text or "Asynchronous measurement during protocol", parent=parent
+        )
         self.flyer_data = flyer_data
         self.clicked.connect(self.open_flyer_window)
         self.setToolTip(
             "Set channels that should be read asynchronously during the protocol with a defined frequency.\nWarning: If you use read the same channel in the protocol, it might cause a conflict.\nWarning: If you run this as sub-protocol, the asynchronous acquisition will NOT be started."
         )
+        self._update_icon()
+
+    def set_flyer_data(self, flyer_data):
+        """Set the flyer data and update the icon accordingly."""
+        self.flyer_data = flyer_data
         self._update_icon()
 
     def _update_icon(self):

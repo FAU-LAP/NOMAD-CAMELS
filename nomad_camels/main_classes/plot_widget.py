@@ -431,12 +431,6 @@ class LiveFit_Eva(LiveFit):
         self.__stale = True
         self.ready_to_read = False
         self.results = {}
-        if isinstance(additional_data, list):
-            self.additional_data = {}
-            for d in additional_data:
-                self.additional_data[d] = []
-        else:
-            self.additional_data = additional_data or {}
         self.read_ready = Fit_Signal(f"{self.name}_read_ready")
 
     def _reset(self):
@@ -522,8 +516,6 @@ class LiveFit_Eva(LiveFit):
             logging.warning(f"Error in fit {self.name}: {e}")
             return None
         self.results[f"{self.timestamp}"] = self.result
-        for d in self.additional_data:
-            self.additional_data[d].append(self.eva.eval(d))
         self.__stale = False
         if self.show_in_browser:
             try:
@@ -540,7 +532,9 @@ class LiveFit_Eva(LiveFit):
                 if request.status_code != 200:
                     logging.warning(f"Error: {request.status_code}")
             except requests.exceptions.ConnectionError:
-                logging.warning("ConnectionError. Failed to send fit result to browser.")
+                logging.warning(
+                    "ConnectionError. Failed to send fit result to browser."
+                )
         # self.ophyd_fit.update_data(self.result, self.timestamp)
         self.parent_plot.fit_has_result()
 

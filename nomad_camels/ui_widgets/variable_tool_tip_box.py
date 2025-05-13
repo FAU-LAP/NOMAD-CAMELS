@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QLineEdit, QVBoxLayout, QWidget, QWidgetAction
 from PySide6.QtCore import Qt
+import re
 
 # from PySide6.QtGui import QStandardItem
 
@@ -10,6 +11,19 @@ from nomad_camels.utility import variables_handling
 #     def __init__(self, value=None):
 #         super().__init__(value)
 #         self.setToolTip('test')
+
+
+def check_no_special_characters(string):
+    """
+    Check if string is free of special characters.
+
+    Args:
+        string (str): The string to check.
+
+    Returns:
+        bool: True if the string is valid (no special characters), False otherwise.
+    """
+    return re.search(r"[^\w\s]", str(string)) is None
 
 
 class Variable_Box(QLineEdit):
@@ -24,12 +38,52 @@ class Variable_Box(QLineEdit):
 
     """
 
-    def __init__(self, parent=None):
+    def __init__(
+        self,
+        parent=None,
+        check_function=None,
+        provide_context_menu=True,
+        make_green=True,
+    ):
         super().__init__(parent)
-        # self.setToolTip("test")
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         self.textChanged.connect(self.check_string)
+        self.check_function = check_function
+        self.provide_context_menu = provide_context_menu
+        self.make_green = make_green
+        self.check_string()
+
+    def set_check_function(
+        self, check_function, make_green=False, tooltip=None, provide_context_menu=False
+    ):
+        """Set the check function for the variable box.
+
+        Parameters
+        ----------
+        check_function : callable
+            The function to use for checking the validity of the input.
+        make_green : bool, optional
+            If True, the background will be set to green if the input is valid.
+        tooltip : str, optional
+            The tooltip text to display when hovering over the box.
+        provide_context_menu : bool, optional
+            If False, the context menu with variables and channels will be suppressed.
+
+        Returns
+        -------
+        None
+
+        """
+        self.check_function = check_function
+        self.make_green = make_green
+        if tooltip is not None:
+            self.setToolTip(tooltip)
+        self.provide_context_menu = provide_context_menu
+        if not provide_context_menu:
+            self.setContextMenuPolicy(Qt.DefaultContextMenu)
+        else:
+            self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.check_string()
 
     def setEnabled(self, a0: bool) -> None:
@@ -52,13 +106,19 @@ class Variable_Box(QLineEdit):
 
     def check_string(self):
         """Check the string and then set the corresponding background-color."""
+        check_function = (
+            self.check_function
+            if self.check_function
+            else variables_handling.check_eval
+        )
         if not self.text():
             self.setStyleSheet(
                 f'background-color: rgb{variables_handling.get_color("white", True)}'
             )
-        if variables_handling.check_eval(self.text()):
+        elif check_function(self.text()):
+            color = "green" if self.make_green else "white"
             self.setStyleSheet(
-                f'background-color: rgb{variables_handling.get_color("green", True)}'
+                f"background-color: rgb{variables_handling.get_color(color, True)}"
             )
         else:
             self.setStyleSheet(
@@ -83,6 +143,9 @@ class Variable_Box(QLineEdit):
         -------
 
         """
+        if not self.provide_context_menu:
+            # super().contextMenuEvent(pos)
+            return
         menu = self.createStandardContextMenu()
         search_bar = QLineEdit(menu)
         search_bar.setPlaceholderText("Search...")

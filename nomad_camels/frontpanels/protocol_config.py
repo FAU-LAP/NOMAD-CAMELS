@@ -69,6 +69,41 @@ additional_action_list = [
 ]
 
 
+def check_no_invalid_characters(string, return_invalids=False):
+    invalid_characters = [
+        "/",
+        "\\",
+        ":",
+        "*",
+        "?",
+        '"',
+        "<",
+        ">",
+        "|",
+        "+",
+        "%",
+        "&",
+        "#",
+        "@",
+        "!",
+        "$",
+        "^",
+        "`",
+        "~",
+    ]
+    invals = []
+    for char in invalid_characters:
+        if char in string:
+            invals.append(char)
+    if invals:
+        if return_invalids:
+            return False, invals
+        return False
+    if return_invalids:
+        return True, []
+    return True
+
+
 class Protocol_Config(Ui_Protocol_View, QWidget):
     """ """
 
@@ -88,6 +123,12 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
         self.configuration_main_widget.setHidden(True)
         self.general_settings = General_Protocol_Settings(protocol=protocol)
+
+        self.general_settings.lineEdit_filename.set_check_function(
+            check_no_invalid_characters,
+            tooltip="Filename may not contain special characters",
+        )
+
         self.meas_splitter.insertWidget(0, self.general_settings)
 
         class AddButton(QToolButton):
@@ -797,32 +838,8 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
     def check_file_name(self):
         """check if the filename contains any characters that might cause problems"""
         name = self.general_settings.lineEdit_filename.text()
-        invalid_characters = [
-            "/",
-            "\\",
-            ":",
-            "*",
-            "?",
-            '"',
-            "<",
-            ">",
-            "|",
-            "+",
-            "%",
-            "&",
-            "#",
-            "@",
-            "!",
-            "$",
-            "^",
-            "`",
-            "~",
-        ]
-        invals = []
-        for char in invalid_characters:
-            if char in name:
-                invals.append(char)
-        if invals:
+        result, invals = check_no_invalid_characters(name, True)
+        if not result:
             raise Exception(
                 f"Filename contains invalid characters:\n{' '.join(invals)}"
             )

@@ -123,13 +123,25 @@ def plot_creator(
         A list of Plot_Info objects with all information for the plots.
 
     func_name : str
-         (Default value = 'create_plots')
-         The name of the function in the protocol-script.
+        (Default value = 'create_plots')
+        The name of the function in the protocol-script.
 
-    multi_stream :
-         (Default value = False)
-         Passes the multi_stream keyword to the plot-widgets. This is used if
-         the plot should not only react to the stream that's specified exactly.
+    multi_stream : bool
+        (Default value = False)
+        Passes the multi_stream keyword to the plot-widgets. This is used if
+        the plot should not only react to the stream that's specified exactly.
+
+    plot_is_box : bool
+        (Default value = False)
+        If True, the plots are inside a box. This is used for the waiting bar.
+
+    box_names : str
+        (Default value = "")
+        The name of the box. This is used for the waiting bar.
+
+    skip_box : bool
+        (Default value = True)
+        If True, the box will be skipable. This is used for the waiting bar.
 
     Returns
     -------
@@ -147,7 +159,7 @@ def plot_creator(
         plot_string += "\treturn [], [], None, None\n\n"
         return plot_string, False
     plot_string += standard_plot_string
-    plot_string += "\tplot_evaluator=eva\n"
+    plot_string += "\tplot_evaluator = eva\n"
     plot_string += "\tsubs = []\n"
     plotting = False
     for i, plot in enumerate(plot_data):

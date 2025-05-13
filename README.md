@@ -18,6 +18,29 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.4
+Features:
+- added functionality to create a new file after a given number of hours (file includes same metadata)
+- can rename channels and instruments for single protocol ("alias") to allow easier sharing of protocols
+- can now manually enter resource names for VISA instruments
+- added more visual feedback for boxes that have validity checks
+
+Changes:
+- added a possible function that instruments can have to hide settings for a config sub-widget for change config step
+- reconfigured design of general protocol config
+- entry name not anymore showing up in filename
+- now only writing packages for startup when file does not exist yet, might improve startup speed
+- optics of splitters changed to make it easier to see them
+- changed the design of the settings window (not affecting any settings)
+
+Fixes:
+- `Change device config` protocol step should now work again.
+- Made `Change device config` a bit clearer by removing settings that are not changed.
+- Default API host is 0.0.0.0 instead of 127.0.0.1. This allows all devices on the same network to access the API server. Make sure you firewall settings are adjusted accordingly. 
+- Removed deprecated additional data from Fit-UI
+- Cannot make a Manual control with a name that is already in use anymore, i.e. not overwriting the old one
+- now warning when trying to log into central NOMAD as an oasis (which does not work, need to select "central NOMAD" for it)
+
 ### 1.8.3
 UI-Improvements:
 - Next to the progress bar is now the elapsed time and an estimated remaining time

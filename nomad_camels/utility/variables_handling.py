@@ -56,6 +56,8 @@ CAMELS_path = ""
 
 preferences = {}
 
+manual_controls = {}
+
 protocols = {}
 protocol_variables = {}
 channels = {}
@@ -67,6 +69,9 @@ current_protocol = None
 dark_mode = False
 
 copied_step = None
+
+channel_aliases = {"channel": [], "Alias": []}
+instrument_aliases = {"Instrument": [], "Alias": []}
 
 read_channel_sets = []
 read_channel_names = []
@@ -217,6 +222,27 @@ def open_link(link):
             subprocess.call(["xdg-open", link])
 
 
+def get_channels(use_aliases=True):
+    """Returns the channels"""
+    if use_aliases:
+        channels_dict = {}
+        for channel in channels:
+            if channel in channel_aliases["channel"]:
+                i = channel_aliases["channel"].index(channel)
+                channels_dict.update({channel_aliases["Alias"][i]: channels[channel]})
+            elif (instr := channels[channel].device) in instrument_aliases[
+                "Instrument"
+            ]:
+                i = instrument_aliases["Instrument"].index(instr)
+                alias = instrument_aliases["Alias"][i]
+                channel_name = channels[channel].name.split(".")[-1]
+                channels_dict.update({f"{alias}_{channel_name}": channels[channel]})
+            else:
+                channels_dict.update({channel: channels[channel]})
+        return channels_dict
+    return channels
+
+
 def get_non_channel_functions():
     functions = []
     for device in devices.values():
@@ -224,12 +250,13 @@ def get_non_channel_functions():
     return functions
 
 
-def get_output_channels():
+def get_output_channels(use_aliases=True):
     """Goes through all channels and returns a list of the names of those, that
     are outputs."""
     outputs = []
-    for channel in channels:
-        if channels[channel].output:
+    chans = get_channels(use_aliases=use_aliases)
+    for channel in chans:
+        if chans[channel].output:
             outputs.append(channel)
     return outputs
 
@@ -283,7 +310,7 @@ def get_color(color="", string=False):
     return QColor(*rgb)
 
 
-def get_menus(connect_function, pretext="Insert"):
+def get_menus(connect_function, pretext="Insert", use_aliases=True):
     """Providing QMenus with the `connect_function` for each action,
     containing all the variables, channels, functions and operators.
 
@@ -311,7 +338,9 @@ def get_menus(connect_function, pretext="Insert"):
     operator_actions = []
     actions = []
     function_actions = []
-    add_actions_from_dict(channels, channel_actions, connect_function)
+    add_actions_from_dict(
+        get_channels(use_aliases=use_aliases), channel_actions, connect_function
+    )
     add_actions_from_dict(protocol_variables, actions, connect_function)
     add_actions_from_dict(loop_step_variables, actions, connect_function)
     add_actions_from_dict({"StartTime": 1, "ElapsedTime": 1}, actions, connect_function)
@@ -361,7 +390,7 @@ def add_actions_from_dict(dictionary, actions, connect_function, add_string=""):
             actions.append(action)
 
 
-def check_eval(s):
+def check_eval(s, use_aliases=True):
     """Checks, whether the string `s` can be evaluated. Returns True if it is
     possible, otherwise False.
 
@@ -374,7 +403,7 @@ def check_eval(s):
         namespace = dict(evaluation_helper.base_namespace)
         namespace.update(protocol_variables)
         namespace.update(loop_step_variables)
-        for channel in channels:
+        for channel in get_channels(use_aliases=use_aliases):
             namespace.update({channel: 1})
         # utils.call_or_eval_one(s, namespace)
         evaluation_helper.get_eval(s, namespace)
@@ -383,7 +412,7 @@ def check_eval(s):
         return False
 
 
-def get_eval(s):
+def get_eval(s, use_aliases=True):
     """
     Evaluates the string `s` with the namespace of `protocol_variables` and
     `loop_step_variables` in addition to `evaluation_helper.base_namespace`.
@@ -398,7 +427,7 @@ def get_eval(s):
         namespace = dict(evaluation_helper.base_namespace)
         namespace.update(protocol_variables)
         namespace.update(loop_step_variables)
-        for channel in channels:
+        for channel in get_channels(use_aliases=use_aliases):
             namespace.update({channel: 1})
         return evaluation_helper.get_eval(s, namespace)
     except:

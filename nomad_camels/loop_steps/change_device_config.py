@@ -28,9 +28,6 @@ class Change_DeviceConf(Loop_Step):
         self.config_dict = (
             step_info["config_dict"] if "config_dict" in step_info else {}
         )
-        self.settings_dict = (
-            step_info["settings_dict"] if "settings_dict" in step_info else {}
-        )
 
     def update_used_devices(self):
         """Includes self.device to the used devices."""
@@ -111,11 +108,18 @@ class Change_DeviceConf_Config(Loop_Step_Config):
         if loop_step.device in devs:
             self.comboBox_device.setCurrentText(loop_step.device)
 
-        self.config_widget = Device_Config_Sub(parent=self)
+        self.config_widget = Device_Config_Sub()
 
-        self.layout().addWidget(label_dev, 1, 0)
-        self.layout().addWidget(self.comboBox_device, 1, 1)
-        self.layout().addWidget(self.config_widget, 2, 0, 1, 5)
+        label_hint = QLabel()
+        label_hint.setText(
+            """Depending on the driver, some settings may show up that cannot actually be changed.<br>
+            For more information on the difference between config and settings, see <a href="https://fau-lap.github.io/NOMAD-CAMELS/doc/programmers_guide/drivers/modifying_drivers.html">the documentation</a>."""
+        )
+        label_hint.setOpenExternalLinks(True)
+        self.layout().addWidget(label_hint, 1, 0, 1, 5)
+        self.layout().addWidget(label_dev, 2, 0)
+        self.layout().addWidget(self.comboBox_device, 2, 1)
+        self.layout().addWidget(self.config_widget, 3, 0, 1, 5)
         self.comboBox_device.currentTextChanged.connect(self.device_changed)
         self.device_changed()
 
@@ -153,27 +157,46 @@ class Change_DeviceConf_Config(Loop_Step_Config):
             py_package = importlib.import_module(
                 f"nomad_camels_driver_{dev_type}.{dev_type}"
             )
+            additional_info = dict(device.get_additional_info())
             if dev_name == self.loop_step.device:
-                settings = self.loop_step.settings_dict
                 config = self.loop_step.config_dict
             else:
-                settings = dict(device.settings)
                 config = dict(device.config)
             try:
                 config_widge = py_package.subclass_config_sub(
-                    parent=self, settings_dict=settings, config_dict=config
+                    settings_dict={},
+                    config_dict=config,
+                    additional_info=additional_info,
+                )
+            except TypeError:
+                config_widge = py_package.subclass_config_sub(
+                    settings_dict={},
+                    config_dict=config,
                 )
             except AttributeError:
                 try:
+                    additional_info = dict(device.get_additional_info())
                     widge = py_package.subclass_config(
-                        parent=self, settings_dict=settings, config_dict=config
+                        settings_dict={},
+                        config_dict=config,
+                        additional_info=additional_info,
                     )
                     config_widge = widge.sub_widget
+                except TypeError:
+                    config_widge = py_package.subclass_config_sub(
+                        settings_dict={},
+                        config_dict=config,
+                    )
                 except AttributeError:
-                    config_widge = Device_Config_Sub(parent=self)
-        self.layout().replaceWidget(self.config_widget, config_widge)
+                    config_widge = Device_Config_Sub()
+        if hasattr(config_widge, "hide_settings"):
+            config_widge.hide_settings()
+        self.layout().removeWidget(self.config_widget)
+        self.config_widget.setParent(None)
         self.config_widget.deleteLater()
         self.config_widget = config_widge
+        self.layout().addWidget(self.config_widget, 3, 0, 1, 5)
+        self.config_widget.setParent(self)
 
     def update_step_config(self):
         """ """
@@ -184,4 +207,3 @@ class Change_DeviceConf_Config(Loop_Step_Config):
             self.loop_step.config_dict = self.config_widget.get_info()
         else:
             self.loop_step.config_dict = self.config_widget.get_config()
-            self.loop_step.settings_dict = self.config_widget.get_settings()

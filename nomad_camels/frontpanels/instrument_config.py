@@ -50,7 +50,6 @@ class Instrument_Config(Ui_Form, QWidget):
                     text=f'Instrument type "{k}" in active instruments, but is not installed!',
                     title="instrument not installed",
                 )
-                # raise Warning(f'Instrument type "{k}" in active instruments, but is not installed!')
         self.tableWidget_instruments.setColumnCount(2)
 
         self.tableWidget_instruments.verticalHeader().setHidden(True)

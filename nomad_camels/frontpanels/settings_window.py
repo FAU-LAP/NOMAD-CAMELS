@@ -131,6 +131,29 @@ class Settings_Window(Ui_settings_window, QDialog):
                 standard_pref["number_databroker_files"]
             )
         self.spinBox_n_databroker_files.setToolTip("0 files means keep all")
+
+        new_file_hours_tool_tip = (
+            "Create a new file every x hours.\n"
+            "Only takes effect when writing to the hdf5 during the measurement.\n"
+            "This may be useful for long measurements to split the data and / or get started with evaluation."
+        )
+        if "new_file_every_x_hours" in settings:
+            self.checkBox_new_meas_hours.setChecked(settings["new_file_every_x_hours"])
+        else:
+            self.checkBox_new_meas_hours.setChecked(
+                standard_pref["new_file_every_x_hours"]
+            )
+        self.checkBox_new_meas_hours.setToolTip(new_file_hours_tool_tip)
+        if "new_file_every_x_hours_value" in settings:
+            self.spinBox_new_meas_hours.setValue(
+                settings["new_file_every_x_hours_value"]
+            )
+        else:
+            self.spinBox_new_meas_hours.setValue(
+                standard_pref["new_file_every_x_hours_value"]
+            )
+        self.spinBox_new_meas_hours.setToolTip(new_file_hours_tool_tip)
+
         if "play_camel_on_error" in settings:
             self.checkBox_play_camel_on_error.setChecked(
                 settings["play_camel_on_error"]
@@ -307,6 +330,8 @@ class Settings_Window(Ui_settings_window, QDialog):
             "extension_path": self.pathButton_extension_path.get_path(),
             "enable_API": self.checkBox_enable_Api.isChecked(),
             "API_port": self.lineEdit_api_port.text(),
+            "new_file_every_x_hours": self.checkBox_new_meas_hours.isChecked(),
+            "new_file_every_x_hours_value": self.spinBox_new_meas_hours.value(),
         }
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

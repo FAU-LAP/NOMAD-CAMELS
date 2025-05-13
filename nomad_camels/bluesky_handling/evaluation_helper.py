@@ -8,16 +8,12 @@ import scipy.constants as const
 starttime = time.time()
 
 # Create a base namespace with common modules and constants
-base_namespace = {
-    "numpy": np,
-    "np": np,
-    "time": 0,
-    "const": const
-}
+base_namespace = {"numpy": np, "np": np, "time": 0, "const": const}
 # Add all numpy functions to the base namespace
 base_namespace.update({name: getattr(np, name) for name in np.__all__})
 # Add the start time and elapsed time to the base namespace
 base_namespace.update({"StartTime": starttime, "ElapsedTime": time.time() - starttime})
+
 
 class Evaluator(CallbackBase):
     """
@@ -26,7 +22,7 @@ class Evaluator(CallbackBase):
     strings and update the namespace dynamically.
     """
 
-    def __init__(self, *args, namespace=None, **kwargs):
+    def __init__(self, *args, namespace=None, aliases=None, **kwargs):
         """
         Initializes the Evaluator with an optional additional namespace.
 
@@ -36,10 +32,15 @@ class Evaluator(CallbackBase):
             The namespace of the run that is added to the default base_namespace.
         """
         super().__init__(*args, **kwargs)
-        self.add_namespace = {}  # Additional namespace to be merged with the base namespace
+        self.add_namespace = (
+            {}
+        )  # Additional namespace to be merged with the base namespace
         if namespace is not None:
             self.add_namespace = namespace
-        self.namespace = dict(base_namespace)  # Initialize the namespace with the base namespace
+        self.namespace = dict(
+            base_namespace
+        )  # Initialize the namespace with the base namespace
+        self.aliases = aliases or {}
         self.update_namespace()  # Update the namespace with the additional namespace
         self.last_update = 0  # Last update time of the namespace
         self.raised_exceptions = []  # List to store raised exceptions
@@ -113,6 +114,26 @@ class Evaluator(CallbackBase):
         """
         self.namespace["StartTime"] = doc["time"]  # Add the start time to the namespace
         super().start(doc)  # Call the superclass method
+    
+    def exchange_aliases(self, string):
+        """
+        Exchanges the aliases in the given string with their corresponding values
+        from the namespace. This is useful for evaluating strings that contain
+        aliases.
+
+        Parameters
+        ----------
+        string : str
+            The string to be evaluated.
+
+        Returns
+        -------
+        str
+            The evaluated string with aliases replaced.
+        """
+        for alias, value in self.aliases.items():
+            string = string.replace(alias, value)
+        return string
 
     def event(self, doc):
         """
@@ -138,10 +159,16 @@ class Evaluator(CallbackBase):
         This method ensures that the namespace is always up-to-date with the latest
         additions and changes.
         """
-        self.namespace.update(self.add_namespace) # Update the namespace with the additional namespace
+        self.namespace.update(
+            self.add_namespace
+        )  # Update the namespace with the additional namespace
+        if self.aliases:
+            # Update the namespace with aliases if provided
+            for alias, value in self.aliases.items():
+                self.namespace[alias] = self.namespace.get(value, value)
         self.namespace["ElapsedTime"] = (
             self.namespace["time"] - self.namespace["StartTime"]
-        ) # Calculate and add the elapsed time to the namespace
+        )  # Calculate and add the elapsed time to the namespace
 
     def is_to_date(self, t: float) -> bool:
         """
@@ -159,7 +186,8 @@ class Evaluator(CallbackBase):
         """
         return self.last_update == t
 
-def get_eval(eval_str: str, namespace: dict, evaluator: 'Evaluator' = None):
+
+def get_eval(eval_str: str, namespace: dict, evaluator: "Evaluator" = None):
     """
     Evaluates the given string within the given namespace. Most functionality is
     taken from bluesky.utils.call_or_eval_one.

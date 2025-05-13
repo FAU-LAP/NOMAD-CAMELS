@@ -181,13 +181,14 @@ def start_camels(start_proxy_bool=True):
         app.processEvents()
 
     # After the thread finishes, write the names of currently loaded modules to the startup packages file
-    with open(package_file, "w", encoding="utf-8") as f:
-        packages = {key: val for key, val in sys.modules.items()}
-        for i, (mod_name, mod) in enumerate(packages.items()):
-            # Skip private modules and any modules that are None
-            if mod_name.startswith("_") or mod is None:
-                continue
-            f.write(f"{mod_name}\n")
+    if not os.path.isfile(package_file):
+        with open(package_file, "w", encoding="utf-8") as f:
+            packages = {key: val for key, val in sys.modules.items()}
+            for i, (mod_name, mod) in enumerate(packages.items()):
+                # Skip private modules and any modules that are None
+                if mod_name.startswith("_") or mod is None:
+                    continue
+                f.write(f"{mod_name}\n")
 
     # Import the main application and utility modules
     from nomad_camels import MainApp_v2
@@ -200,7 +201,9 @@ def start_camels(start_proxy_bool=True):
     main_window = MainApp_v2.MainWindow(start_proxy_bool=start_proxy_bool)
     loading_screen.hide()
     main_window.show()
-
+    thread.quit()
+    thread.wait()
+    thread.deleteLater()
     # Start the main Qt application event loop
     app.exec()
 

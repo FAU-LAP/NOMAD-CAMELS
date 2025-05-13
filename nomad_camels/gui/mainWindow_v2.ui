@@ -629,7 +629,7 @@ Instruments</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_session">
+              <widget class="Variable_Box" name="lineEdit_session">
                <property name="toolTip">
                 <string>used to distinguish measurements
 adds a sub-folder for the data</string>
@@ -1371,6 +1371,11 @@ adds a sub-folder for the data</string>
    <class>DynamicUploadComboBox</class>
    <extends>QComboBox</extends>
    <header>dynamicuploadcombobox</header>
+  </customwidget>
+  <customwidget>
+   <class>Variable_Box</class>
+   <extends>QLineEdit</extends>
+   <header>nomad_camels.ui_widgets.variable_tool_tip_box</header>
   </customwidget>
  </customwidgets>
  <resources/>

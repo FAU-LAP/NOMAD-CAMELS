@@ -33,7 +33,11 @@ from nomad_camels.utility import (
     qthreads,
     plot_placement,
 )
-from nomad_camels.ui_widgets import options_run_button, warn_popup
+from nomad_camels.ui_widgets import (
+    options_run_button,
+    warn_popup,
+    variable_tool_tip_box,
+)
 from nomad_camels.extensions import extension_contexts
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 from nomad_camels.bluesky_handling import helper_functions
@@ -90,6 +94,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.button_area_manual = RenameTabWidget(self, self.manual_tabs_dict)
         self.meas_widget.layout().addWidget(self.button_area_meas, 2, 0, 1, 4)
         self.manual_widget.layout().addWidget(self.button_area_manual, 2, 0, 1, 3)
+        self.lineEdit_session.set_check_function(
+            check_function=variable_tool_tip_box.check_no_special_characters,
+            tooltip="Session name must not contain special characters.\n"
+            "Please use only letters, numbers and underscores.",
+        )
 
         # Set window title and icon
         self.setWindowTitle(
@@ -115,8 +124,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_stop.setIcon(icon)
 
         # Apply stylesheet to splitter handles
-        self.setStyleSheet("QSplitter::handle{background: gray;}")
-        self.setStyleSheet("QSplitter::handle{background: gray;}")
+        # self.setStyleSheet("QSplitter::handle{background: gray;}")
+        # self.setStyleSheet("QSplitter::handle{background: gray;}")
         self.protocol_stepper_signal.connect(self.progressBar_protocols.setValue)
         self.protocol_stepper_signal.connect(self._update_remaining_time_label)
         self._protocol_start_time = time.time()
@@ -138,6 +147,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.protocols_dict = OrderedDict()
         variables_handling.protocols = self.protocols_dict
         self.manual_controls = OrderedDict()
+        variables_handling.manual_controls = self.manual_controls
         self.preset_save_dict = {
             "_current_preset": self._current_preset,
             "active_instruments": self.active_instruments,
@@ -445,6 +455,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         if hasattr(self, "fastapi_thread") and self.fastapi_thread is not None:
             self.fastapi_thread.stop_server()
+            self.fastapi_thread.deleteLater()
             self.fastapi_thread = None
             self.current_api_port = None
 
@@ -639,6 +650,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.run_engine.subscribe(bec)
         self.importer_thread.wait()
         self.databroker_catalog = self.importer_thread.catalog
+        self.importer_thread.deleteLater()
         self.change_catalog_name()
         self.run_engine.subscribe(self.databroker_catalog.v1.insert)
         self.run_engine.subscribe(self.protocol_finished, "stop")
@@ -859,12 +871,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             "telephone_number",
         ]
         tableData = pd.DataFrame.from_dict(self.userdata, "index")
+
         dialog = add_remove_table.AddRemoveDialoge(
             headerLabels=headers,
             parent=self,
             title="User-Information",
             askdelete=True,
             tableData=tableData,
+            check_string_function=variable_tool_tip_box.check_no_special_characters,
+            checkstrings=[0],
         )
         if dialog.exec():
             # Changing the returned dict to dataframe and back to ensure proper formatting. Dictionary is formatted as {name: {'Name': name,...}, ...}
@@ -955,6 +970,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             | (tableData["owner"].isna())
             | (tableData["owner"] == "")
         ]
+
         dialog = add_remove_table.AddRemoveDialoge(
             headerLabels=headers,
             parent=self,
@@ -962,6 +978,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             askdelete=True,
             tableData=tableData,
             default_values={"owner": self.active_user},
+            check_string_function=variable_tool_tip_box.check_no_special_characters,
+            checkstrings=[0],
         )
         if dialog.exec():
             # Changing the returned dict to dataframe and back to ensure proper formatting.
@@ -1056,7 +1074,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             upload_id = metadata.get("upload_id", None)
             entry_id = metadata.get("entry_id", None)
 
-        dialog = entry_selection.EntrySelector(self, upload_id=upload_id, entry_id=entry_id)
+        dialog = entry_selection.EntrySelector(
+            self, upload_id=upload_id, entry_id=entry_id
+        )
         if dialog.exec():
             self.nomad_sample = dialog.return_data
             if "name" in self.nomad_sample:
@@ -1147,6 +1167,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         dark = self.preferences["dark_mode"]
         variables_handling.dark_mode = dark
+        self.lineEdit_session.check_string()
 
     def change_catalog_name(self):
         """
@@ -1964,6 +1985,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         try:
             devs = self.instantiate_devices_thread.devices
             dev_data = self.instantiate_devices_thread.device_config
+            self.instantiate_devices_thread.quit()
+            self.instantiate_devices_thread.wait()
+            self.instantiate_devices_thread.deleteLater()
+            self.instantiate_devices_thread = None
             additionals = self.protocol_module.steps_add_main(self.run_engine, devs)
             self.add_subs_and_plots_from_dict(additionals)
             self.current_protocol_devices = devs
@@ -1988,12 +2013,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.run_router = RunRouter(
                 [
                     lambda x, y: saving_function(
-                        x,
-                        y,
-                        self.protocol_module.save_path,
-                        self.protocol_module.new_file_each_run,
-                        self.saving_plot_list,
-                        self.running_protocol.use_nexus,
+                        name=x,
+                        start_doc=y,
+                        path=self.protocol_module.save_path,
+                        new_file_each=self.protocol_module.new_file_each_run,
+                        plot_data=self.saving_plot_list,
+                        do_nexus_output=self.running_protocol.use_nexus,
+                        new_file_hours=self.protocol_module.new_file_hours,
                     )
                 ]
             )
@@ -2237,7 +2263,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "Protocol aborted, waiting for cleanup... - NOMAD CAMELS"
             )
             self.run_engine.abort("Aborted by user")
-        if self.instantiate_devices_thread.isRunning():
+        if (
+            self.instantiate_devices_thread
+            and self.instantiate_devices_thread.isRunning()
+        ):
             self.instantiate_devices_thread.successful.disconnect()
             self.instantiate_devices_thread.exception_raised.disconnect()
             self.old_devices_thread = self.instantiate_devices_thread

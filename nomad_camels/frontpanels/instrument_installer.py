@@ -406,6 +406,10 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.all_devs = getAllDevices()
         self.installed_devs = getInstalledDevices(True)
         self.build_table()
+        self.install_thread.quit()
+        self.install_thread.wait()
+        self.install_thread.deleteLater()
+        self.install_thread = None
         self.instruments_updated.emit()
 
     def select_all(self):

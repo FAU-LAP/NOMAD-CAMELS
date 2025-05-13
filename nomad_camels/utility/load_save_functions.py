@@ -149,6 +149,8 @@ standard_pref = {
     "enable_API": False,
     "API_port": "5000",
     "last_shown_notes": "0.0.0",
+    "new_file_every_x_hours": False,
+    "new_file_every_x_hours_value": 24,
 }
 
 
@@ -615,6 +617,10 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.allow_live_comments = prot_data["allow_live_comments"]
         if "flyer_data" in prot_data:
             prot.flyer_data = prot_data["flyer_data"]
+        if "channel_aliases" in prot_data:
+            prot.channel_aliases = prot_data["channel_aliases"]
+        if "instrument_aliases" in prot_data:
+            prot.instrument_aliases = prot_data["instrument_aliases"]
         prot_dict.update({key: prot})
 
 
@@ -652,7 +658,6 @@ def load_devices_dict(string_dict, devices_dict):
                         title="instrument import failed",
                     )
                     continue
-                    # raise Exception(f'Could not import device module {name}\n{e}\n{e2}')
         dev = dev_lib.subclass()
         dev.name = name
         if "connection" in dev_data:

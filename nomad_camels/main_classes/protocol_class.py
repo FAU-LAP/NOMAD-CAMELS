@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit, QMessageBox, QPushButton
 from PySide6.QtCore import Signal, Qt
 
-from nomad_camels.frontpanels.plot_definer import Plot_Button_Overview
+from nomad_camels.frontpanels.plot_definer import Plot_Definer_Widget
 from nomad_camels.loop_steps import make_step_of_type
 from nomad_camels.gui.general_protocol_settings import Ui_Protocol_Settings
 
@@ -86,6 +86,17 @@ class Measurement_Protocol:
         )
         self.flyer_data = kwargs.get("flyer_data", [])
 
+        self.instrument_aliases = (
+            kwargs["instrument_aliases"]
+            if "instrument_aliases" in kwargs
+            else {"Instrument": [], "Alias": []}
+        )
+        self.channel_aliases = (
+            kwargs["channel_aliases"]
+            if "channel_aliases" in kwargs
+            else {"channel": [], "Alias": []}
+        )
+
         self.loop_steps = loop_steps
         self.loop_step_dict = {}
         for step in self.loop_steps:
@@ -99,6 +110,16 @@ class Measurement_Protocol:
         self.use_nexus = use_nexus
         self.measurement_description = ""
         self.tags = []
+
+    def get_aliases(self):
+        aliases = {}
+        for i, alias in enumerate(self.instrument_aliases["Alias"]):
+            dev = self.instrument_aliases["Instrument"][i]
+            for channel in variables_handling.devices[dev].channels:
+                aliases[channel.replace(dev, alias, 1)] = channel
+        for i, alias in enumerate(self.channel_aliases["Alias"]):
+            aliases[alias] = self.channel_aliases["channel"][i]
+        return aliases
 
     def update_variables(self):
         """Update all the variables provided by loopsteps."""
@@ -277,6 +298,8 @@ class Measurement_Protocol:
         plan_string = f'\n\n\ndef {self.name.replace(" ","_")}_plan_inner(devs, stream_name="primary", runEngine=None):\n'
         prot_vars = self.variables
         variables_handling.protocol_variables = prot_vars
+        variables_handling.channel_aliases = self.channel_aliases
+        variables_handling.instrument_aliases = self.instrument_aliases
         if "StartTime" in prot_vars:
             prot_vars.pop("StartTime")
             prot_vars.pop("ElapsedTime")
@@ -503,11 +526,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.set_protocol(self.protocol)
         self.variable_table.editable_names = True
 
-        # self.variable_model = QStandardItemModel()
-        # self.variable_model.setHorizontalHeaderLabels(["Name", "Value", "Data-Type"])
-        # self.tableView_variables.setModel(self.variable_model)
-        # self.load_variables()
-
         self.pushButton_add_variable.clicked.connect(lambda x: self.add_variable())
         self.pushButton_remove_variable.clicked.connect(self.remove_variable)
         self.pushButton_add_variable.setToolTip("Add a new variable to the protocol.")
@@ -517,14 +535,14 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
         # self.variable_model.itemChanged.connect(self.check_variable)
 
-        self.checkBox_perform_at_end = QCheckBox("Perform steps at end of protocol")
         self.checkBox_perform_at_end.setChecked(self.protocol.use_end_protocol)
-        self.ending_protocol_selection = Path_Button_Edit(
-            self,
-            self.protocol.end_protocol,
-            default_dir=variables_handling.preferences.get("py_files_path", "."),
-            file_extension="*.cprot",
+
+        self.ending_protocol_selection.set_path(self.protocol.end_protocol)
+        self.ending_protocol_selection.default_dir = variables_handling.preferences.get(
+            "py_files_path", "."
         )
+        self.ending_protocol_selection.file_extension = "*.cprot"
+
         self.checkBox_perform_at_end.setToolTip(
             "Select a protocol to always be performed at the end of this protocol, no matter whether it runs smoothly or fails or is stopped by the user.\nThis may be useful e.g. to turn something off in a controlled way.\nThis is NOT executed, when the protocol is run as a subprotocol."
         )
@@ -534,14 +552,23 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.checkBox_perform_at_end.stateChanged.connect(self.check_use_ending_steps)
         self.check_use_ending_steps()
 
-        self.plot_widge = Plot_Button_Overview(self, self.protocol.plots)
+        # self.plot_widge = Plot_Button_Overview(self, self.protocol.plots)
+        index = self.tabWidget.indexOf(self.plot_widge)
+        # save text and icon
+        text = self.tabWidget.tabText(index)
+        icon = self.tabWidget.tabIcon(index)
+        self.tabWidget.removeTab(index)
+        self.plot_widge.deleteLater()
+        # insert new widget at the same position
+        self.plot_widge = Plot_Definer_Widget(self, self.protocol.plots)
+        self.tabWidget.insertTab(index, self.plot_widge, icon, text)
 
         self.checkBox_NeXus.setChecked(self.protocol.use_nexus)
         self.lineEdit_protocol_name.textChanged.connect(self.name_change)
         self.name_change()
 
-        self.textEdit_desc_protocol = QTextEdit(parent=self)
-        self.textEdit_desc_protocol.textChanged.connect(self.adjust_text_edit_size_prot)
+        # self.textEdit_desc_protocol = QTextEdit(parent=self)
+        # self.textEdit_desc_protocol.textChanged.connect(self.adjust_text_edit_size_prot)
         self.textEdit_desc_protocol.setPlaceholderText("Enter your description here.")
         if self.protocol.description:
             self.textEdit_desc_protocol.setText(self.protocol.description)
@@ -549,7 +576,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.checkBox_json_exp.setChecked(self.protocol.export_json)
         self.checkBox_no_config.setChecked(self.protocol.skip_config)
         self.checkBox_no_config.clicked.connect(self.enable_disable_config)
-        self.adjust_text_edit_size_prot()
+        # self.adjust_text_edit_size_prot()
 
         self.checkBox_live_variables.setChecked(self.protocol.live_variable_update)
         self.checkBox_live_comments.setChecked(self.protocol.allow_live_comments)
@@ -559,16 +586,15 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         else:
             self.comboBox_h5.setCurrentIndex(1)
 
-        self.flyer_button = FlyerButton(
-            parent=self, flyer_data=self.protocol.flyer_data
-        )
+        self.flyer_button.set_flyer_data(self.protocol.flyer_data)
 
-        self.layout().addWidget(self.textEdit_desc_protocol, 5, 0, 1, 6)
+        # self.layout().addWidget(self.textEdit_desc_protocol, 5, 0, 1, 6)
 
-        self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
-        self.layout().addWidget(self.flyer_button, 7, 0, 1, 6)
-        self.layout().addWidget(self.checkBox_perform_at_end, 20, 0, 1, 6)
-        self.layout().addWidget(self.ending_protocol_selection, 21, 0, 1, 6)
+        # self.layout().addWidget(self.plot_widge, 6, 0, 1, 6)
+        # self.layout().addWidget(self.flyer_button, 7, 0, 1, 6)
+        # self.layout().addWidget(self.pushButton_instrument_aliases, 8, 0, 1, 6)
+        # self.layout().addWidget(self.checkBox_perform_at_end, 20, 0, 1, 6)
+        # self.layout().addWidget(self.ending_protocol_selection, 21, 0, 1, 6)
         # ! Ui_Protocol_Settings.ui file adds the Variables Table at position 8 and 9 !!!
 
         self.update_variable_select()
@@ -584,27 +610,31 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         else:
             self.ending_protocol_selection.setEnabled(False)
 
+        self.pushButton_instrument_aliases.clicked.connect(
+            self.change_instrument_aliases
+        )
+        variables_handling.instrument_aliases = self.protocol.instrument_aliases
+        variables_handling.channel_aliases = self.protocol.channel_aliases
+
     def showEvent(self, event):
         """Called when the widget is shown."""
         super().showEvent(event)
-        self.adjust_text_edit_size_prot()
+        # self.adjust_text_edit_size_prot()
 
     def adjust_text_edit_size_prot(self):
         """Adjusts the size of the textEdit_desc_protocol based on its content."""
-        max_height = 130  # Set your desired maximum height here
+        # max_height = 130  # Set your desired maximum height here
         document = self.textEdit_desc_protocol.document()
         # Calculate the height of the document (plus some padding)
         document_height = document.size().height() + 5
-        if document_height > max_height:
-            new_height = max_height
-            # Enable scrolling if the content exceeds max height
-            self.textEdit_desc_protocol.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        else:
-            new_height = document_height
-            # Hide scroll bar if not needed
-            self.textEdit_desc_protocol.setVerticalScrollBarPolicy(
-                Qt.ScrollBarAlwaysOff
-            )
+        # if document_height > max_height:
+        #     new_height = max_height
+        #     # Enable scrolling if the content exceeds max height
+        #     self.textEdit_desc_protocol.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        # else:
+        new_height = document_height
+        # Hide scroll bar if not needed
+        self.textEdit_desc_protocol.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.textEdit_desc_protocol.setFixedHeight(new_height)
 
     def enable_disable_config(self):
@@ -635,27 +665,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.update_variables()
         self.update_variable_select()
 
-    # def append_variable(self, name="name", value="value"):
-    #     """Append the variable with name and value to the item_model,
-    #     also add an item that shows the datatype of the value.
-
-    #     Parameters
-    #     ----------
-    #     name :
-    #          (Default value = 'name')
-    #     value :
-    #          (Default value = 'value')
-
-    #     Returns
-    #     -------
-
-    #     """
-    #     name_item = QStandardItem(name)
-    #     value_item = QStandardItem(value)
-    #     type_item = QStandardItem(variables_handling.check_data_type(value))
-    #     type_item.setEditable(False)
-    #     self.variable_model.appendRow([name_item, value_item, type_item])
-
     def remove_variable(self):
         """Removes the selected variable."""
         try:
@@ -671,7 +680,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.filename = self.lineEdit_filename.text()
         self.protocol.name = self.lineEdit_protocol_name.text()
         self.protocol.description = self.textEdit_desc_protocol.toPlainText()
-        self.protocol.plots = self.plot_widge.plot_data
+        self.protocol.plots = self.plot_widge.get_data()
         self.protocol.flyer_data = self.flyer_button.flyer_data
         self.protocol.export_csv = self.checkBox_csv_exp.isChecked()
         self.protocol.export_json = self.checkBox_json_exp.isChecked()
@@ -750,3 +759,19 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.label_title.setText(f"{name} - General Configuration")
         self.protocol.name = name
         self.name_changed.emit()
+
+    def change_instrument_aliases(self):
+        from nomad_camels.frontpanels.instrument_aliases import Instrument_Alias_Config
+
+        dialog = Instrument_Alias_Config(
+            self,
+            instrument_aliases=self.protocol.instrument_aliases,
+            channel_aliases=self.protocol.channel_aliases,
+        )
+        if dialog.exec_():
+            self.protocol.instrument_aliases = dialog.instrument_aliases
+            self.protocol.channel_aliases = dialog.channel_aliases
+            dialog.close()
+            dialog.deleteLater()
+            variables_handling.instrument_aliases = self.protocol.instrument_aliases
+            variables_handling.channel_aliases = self.protocol.channel_aliases

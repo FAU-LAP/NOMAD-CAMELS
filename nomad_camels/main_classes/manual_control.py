@@ -127,6 +127,10 @@ class Manual_Control(QWidget):
         """Called when the devices are ready to be used, i.e. when the
         `instantiate_devices_thread` is finished."""
         self.device_list = self.instantiate_devices_thread.devices
+        self.instantiate_devices_thread.quit()
+        self.instantiate_devices_thread.wait()
+        self.instantiate_devices_thread.deleteLater()
+        self.instantiate_devices_thread = None
         if self.device:
             self.ophyd_device = self.device_list[self.device.custom_name]
         self.setCursor(Qt.ArrowCursor)
@@ -172,7 +176,18 @@ class Manual_Control_Config(QDialog):
 
     def accept(self):
         """ """
-        self.control_data["name"] = self.lineEdit_name.text()
+        name = self.lineEdit_name.text()
+        if name in variables_handling.manual_controls:
+            from nomad_camels.ui_widgets.warn_popup import WarnPopup
+
+            WarnPopup(
+                title="Manual Control Name Conflict",
+                text=f'Manual control name "{name}" is already in use!',
+                parent=self,
+                info_icon=False,
+            )
+            return
+        self.control_data["name"] = name
         self.control_data["control_type"] = self.control_type
         super().accept()
 

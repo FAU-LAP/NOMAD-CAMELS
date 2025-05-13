@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'plot_definer.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.2
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -80,7 +80,7 @@ class Ui_Plot_Definer(object):
         self.gridLayout_2 = QGridLayout(self.plotting_group)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.lineEdit_ylabel2 = QLineEdit(self.plotting_group)
+        self.lineEdit_ylabel2 = Variable_Box(self.plotting_group)
         self.lineEdit_ylabel2.setObjectName(u"lineEdit_ylabel2")
 
         self.gridLayout_2.addWidget(self.lineEdit_ylabel2, 4, 3, 1, 1)
@@ -147,17 +147,17 @@ class Ui_Plot_Definer(object):
 
         self.gridLayout_2.addWidget(self.line_3, 7, 0, 1, 4)
 
-        self.lineEdit_xlabel = QLineEdit(self.plotting_group)
+        self.lineEdit_xlabel = Variable_Box(self.plotting_group)
         self.lineEdit_xlabel.setObjectName(u"lineEdit_xlabel")
 
         self.gridLayout_2.addWidget(self.lineEdit_xlabel, 2, 1, 1, 3)
 
-        self.lineEdit_title = QLineEdit(self.plotting_group)
+        self.lineEdit_title = Variable_Box(self.plotting_group)
         self.lineEdit_title.setObjectName(u"lineEdit_title")
 
         self.gridLayout_2.addWidget(self.lineEdit_title, 1, 1, 1, 3)
 
-        self.lineEdit_ylabel = QLineEdit(self.plotting_group)
+        self.lineEdit_ylabel = Variable_Box(self.plotting_group)
         self.lineEdit_ylabel.setObjectName(u"lineEdit_ylabel")
 
         self.gridLayout_2.addWidget(self.lineEdit_ylabel, 4, 1, 1, 1)
@@ -213,7 +213,7 @@ class Ui_Plot_Definer(object):
 
         self.spinBox_port = QSpinBox(self.plotting_group)
         self.spinBox_port.setObjectName(u"spinBox_port")
-        self.spinBox_port.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self.spinBox_port.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
         self.spinBox_port.setMaximum(65536)
         self.spinBox_port.setValue(8050)
 

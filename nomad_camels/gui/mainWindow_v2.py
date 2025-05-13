@@ -27,6 +27,7 @@ from dynamicuploadcombobox import DynamicUploadComboBox
 from nomad_camels.ui_widgets.console_redirect import Console_TextEdit
 from nomad_camels.ui_widgets.run_queue import RunQueue
 from nomad_camels.ui_widgets.variable_table import VariableTable
+from nomad_camels.ui_widgets.variable_tool_tip_box import Variable_Box
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -444,7 +445,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_5.addWidget(self.label_4)
 
-        self.lineEdit_session = QLineEdit(self.session_widget)
+        self.lineEdit_session = Variable_Box(self.session_widget)
         self.lineEdit_session.setObjectName(u"lineEdit_session")
 
         self.horizontalLayout_5.addWidget(self.lineEdit_session)

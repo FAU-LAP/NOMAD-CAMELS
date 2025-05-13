@@ -72,6 +72,7 @@ class ProtocolRunResponse(BaseModel):
     Attributes:
         check_protocol_status_here (str): A URL endpoint to check the status of the protocol run.
     """
+
     check_protocol_status_here: str = Field(
         ..., description="A URL to check the protocol status"
     )
@@ -288,7 +289,7 @@ class FastapiThread(QThread):
         """
         config = uvicorn.Config(
             self.app,
-            host="127.0.0.1",
+            host="0.0.0.0",
             port=int(self.api_port),
             log_level="info",
             reload=False,
@@ -326,7 +327,7 @@ class FastapiThread(QThread):
             settings, running protocols (with and without variables), managing the protocol queue,
             and various helper endpoints (e.g., for user and sample management).
         """
-        
+
         @app.get("/api/v1/protocols")
         async def get_protocols(api_key: str = Depends(validate_credentials)):
             """

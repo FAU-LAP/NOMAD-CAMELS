@@ -350,7 +350,6 @@ class PlotWidget(QWidget):
                     params[param].set(min=lower[param], max=upper[param])
             name = f'{label}_{fit["y"]}_v_{fit["x"]}'
             name = replace_name(name)
-            add_data = fit["additional_data"] or {}
             livefit = LiveFit_Eva(
                 model,
                 fit["y"],
@@ -358,7 +357,6 @@ class PlotWidget(QWidget):
                 self.eva,
                 init_guess,
                 name=name,
-                additional_data=add_data,
                 params=params,
                 stream_name=stream_name,
                 show_in_browser=show_in_browser,
@@ -927,10 +925,18 @@ class LivePlot(QObject, CallbackBase):
             return
         # Check to see if doc["data"] contains keys matching any on the self.ys strings
         if not (
-            any(key in s for key in doc["data"] for s in self.ys)
+            any(
+                key in self.eva.exchange_aliases(s)
+                for key in doc["data"]
+                for s in self.ys
+            )
             or any(
                 key.endswith("_variable_signal")
-                and any(subkey in s for subkey in doc["data"][key] for s in self.ys)
+                and any(
+                    subkey in self.eva.exchange_aliases(s)
+                    for subkey in doc["data"][key]
+                    for s in self.ys
+                )
                 for key in doc["data"]
             )
         ):

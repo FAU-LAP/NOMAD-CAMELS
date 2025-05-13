@@ -66,6 +66,19 @@ def parse_int_field(text, min_value, fallback=""):
     return fallback
 
 
+def check_quotation_backslash(string):
+    """
+    Check if a string is free of any backslashes or quotation marks.
+
+    Parameters:
+        string (str): The string to check.
+
+    Returns:
+        bool: False if the string contains backslashes or quotation marks, True otherwise.
+    """
+    return re.search(r"[\\'\"`]", str(string)) is None
+
+
 class Plot_Info:
     """
     Holds all relevant metadata about a single plot configuration.
@@ -235,7 +248,7 @@ class Fit_Info:
                                "lower bound", "upper bound" for parameters.
         y (str): Expression or variable representing the dependent data.
         x (str): Expression or variable representing the independent data.
-        additional_data (list): Extra data used for the fit (if any).
+        additional_data (list): DEPRECATED.
         display_values (bool): Whether to display the fit parameter values on the plot.
         name (str): Auto-generated name for the fit.
     """
@@ -268,7 +281,6 @@ class Fit_Info:
             "lower bound": [],
             "upper bound": [],
         }
-        self.additional_data = additional_data or []
         self.y = y
         self.x = x
 
@@ -311,6 +323,54 @@ class Fit_Info:
 
 
 class Plot_Definer(QDialog):
+    def __init__(self, parent=None, plot_data=None):
+        super().__init__(parent)
+        self.plot_data = plot_data or []
+
+        self.setWindowTitle("Define plot - NOMAD CAMELS")
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
+
+        self.definer_widget = Plot_Definer_Widget(self, self.plot_data)
+
+        # Create OK/Cancel dialog buttons.
+        self.dialog_buttons = QDialogButtonBox()
+        self.dialog_buttons.setOrientation(Qt.Horizontal)
+        self.dialog_buttons.setStandardButtons(
+            QDialogButtonBox.Cancel | QDialogButtonBox.Ok
+        )
+        self.dialog_buttons.accepted.connect(self.accept)
+        self.dialog_buttons.rejected.connect(self.reject)
+
+        layout = QGridLayout()
+
+        layout.addWidget(self.definer_widget, 0, 0)
+        layout.addWidget(self.dialog_buttons, 1, 0)
+        self.setLayout(layout)
+
+    def accept(self) -> None:
+        """
+        Overridden accept method to ensure that the current plot configuration
+        is saved before closing the dialog.
+        """
+        self.definer_widget.get_data()
+        super().accept()
+
+    def reject(self):
+        """
+        Overridden reject method that asks for confirmation before discarding changes.
+        """
+        discard_dialog = QMessageBox.question(
+            self,
+            "Discard Changes?",
+            "All changes to the defined plots/fits will be lost!",
+            QMessageBox.Yes | QMessageBox.No,
+        )
+        if discard_dialog != QMessageBox.Yes:
+            return
+        super().reject()
+
+
+class Plot_Definer_Widget(QWidget):
     """
     Dialog for defining or editing multiple Plot_Info objects.
 
@@ -327,10 +387,9 @@ class Plot_Definer(QDialog):
             plot_data (list of Plot_Info, optional): Initial plot configurations.
         """
         super().__init__(parent)
-        self.plot_data = plot_data or []
-
-        self.setWindowTitle("Define plot - NOMAD CAMELS")
-        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
+        self.plot_data = plot_data
+        if self.plot_data is None:
+            self.plot_data = []
 
         # Define columns and combo-box options for the plot table.
         columns = ["plot-type", "name"]
@@ -361,23 +420,13 @@ class Plot_Definer(QDialog):
         # Placeholder widget; replaced when a plot is selected.
         self.plot_def = QLabel("Select a plot!")
 
-        # Create OK/Cancel dialog buttons.
-        self.dialog_buttons = QDialogButtonBox()
-        self.dialog_buttons.setOrientation(Qt.Horizontal)
-        self.dialog_buttons.setStandardButtons(
-            QDialogButtonBox.Cancel | QDialogButtonBox.Ok
-        )
-        self.dialog_buttons.accepted.connect(self.accept)
-        self.dialog_buttons.rejected.connect(self.reject)
-
         # Arrange all widgets in a grid layout.
         layout = QGridLayout()
         layout.addWidget(self.plot_table, 0, 0)
         layout.addWidget(self.plot_def, 0, 1)
-        layout.addWidget(self.dialog_buttons, 1, 0, 1, 2)
         self.setLayout(layout)
 
-    def accept(self) -> None:
+    def get_data(self) -> None:
         """
         Overridden accept method to ensure that the current plot configuration
         is saved before closing the dialog.
@@ -385,21 +434,7 @@ class Plot_Definer(QDialog):
         # If the current plot definition widget is not just a placeholder, update data.
         if not isinstance(self.plot_def, QLabel):
             self.plot_def.get_data()
-        super().accept()
-
-    def reject(self):
-        """
-        Overridden reject method that asks for confirmation before discarding changes.
-        """
-        discard_dialog = QMessageBox.question(
-            self,
-            "Discard Changes?",
-            "All changes to the defined plots/fits will be lost!",
-            QMessageBox.Yes | QMessageBox.No,
-        )
-        if discard_dialog != QMessageBox.Yes:
-            return
-        super().reject()
+        return self.plot_data
 
     def change_plot_def(self, index):
         """
@@ -673,6 +708,22 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         self.lineEdit_title.setText(self.plot_data.title)
         self.lineEdit_n_data_points.setText(str(self.plot_data.maxlen))
 
+        tooltip_text = (
+            "Quotation marks and backslashes are not allowed here.\n ' \" ` \\"
+        )
+        self.lineEdit_xlabel.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+        self.lineEdit_ylabel.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+        self.lineEdit_zlabel.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+        self.lineEdit_title.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+
         self.load_data()
         self.plot_data.update_name()
 
@@ -740,20 +791,23 @@ class Single_Plot_Definer_2D(Ui_Plot_Definer_2D, Single_Plot_Definer):
         # Validate and update axis labels and title.
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
         if re.search(r"[\\'\"`]", self.plot_data.xlabel):
-            raise ValueError("x-label contains invalid characters (' \" `).")
+            raise ValueError("x-label contains invalid characters (' \" ` \\).")
 
         self.plot_data.ylabel = self.lineEdit_ylabel.text()
         if re.search(r"[\\'\"`]", self.plot_data.ylabel):
-            raise ValueError("y-label contains invalid characters (' \" `).")
+            raise ValueError("y-label contains invalid characters (' \" ` \\).")
 
         self.plot_data.zlabel = self.lineEdit_zlabel.text()
         if re.search(r"[\\'\"`]", self.plot_data.zlabel):
-            raise ValueError("z-label contains invalid characters (' \" `).")
+            raise ValueError("z-label contains invalid characters (' \" ` \\).")
+
+        self.plot_data.title = self.lineEdit_title.text()
+        if re.search(r"[\\'\"`]", self.plot_data.title):
+            raise ValueError("title contains invalid characters (' \" ` \\).")
 
         self.plot_data.x_axis = self.lineEdit_x_axis.text()
         self.plot_data.y_axes["formula"][0] = self.lineEdit_y_axis.text()
         self.plot_data.z_axis = self.lineEdit_z_axis.text()
-        self.plot_data.title = self.lineEdit_title.text()
         max_len_str = self.lineEdit_n_data_points.text()
         self.plot_data.maxlen = max_len_str if max_len_str else "inf"
 
@@ -832,6 +886,22 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
         super().__init__(plot_data, parent)
         self.fit_definer = None
         self.setupUi(self)
+
+        tooltip_text = (
+            "Quotation marks and backslashes are not allowed here.\n ' \" ` \\"
+        )
+        self.lineEdit_title.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+        self.lineEdit_xlabel.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+        self.lineEdit_ylabel.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
+        self.lineEdit_ylabel2.set_check_function(
+            check_function=check_quotation_backslash, tooltip=tooltip_text
+        )
 
         # Create a table for y-axis definitions (formula and axis side).
         cols = ["formula", "axis"]
@@ -938,16 +1008,16 @@ class Single_Plot_Definer_XY(Ui_Plot_Definer, Single_Plot_Definer):
 
         # Validate title and axis labels for invalid characters.
         if re.search(r"[\\'\"`]", self.plot_data.title):
-            raise ValueError("Title contains invalid characters (' \" `).")
+            raise ValueError("Title contains invalid characters (' \" ` \\).")
         self.plot_data.xlabel = self.lineEdit_xlabel.text()
         if re.search(r"[\\'\"`]", self.plot_data.xlabel):
-            raise ValueError("x-label contains invalid characters (' \" `).")
+            raise ValueError("x-label contains invalid characters (' \" ` \\).")
         self.plot_data.ylabel = self.lineEdit_ylabel.text()
         if re.search(r"[\\'\"`]", self.plot_data.ylabel):
-            raise ValueError("y-label contains invalid characters (' \" `).")
+            raise ValueError("y-label contains invalid characters (' \" ` \\).")
         self.plot_data.ylabel2 = self.lineEdit_ylabel2.text()
         if re.search(r"[\\'\"`]", self.plot_data.ylabel2):
-            raise ValueError("Second y-label contains invalid characters (' \" `).")
+            raise ValueError("Second y-label contains invalid characters (' \" ` \\).")
 
         # Parse maximum data points; use infinity if invalid.
         try:
@@ -1103,12 +1173,6 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
             add_tooltip="Add a new parameter",
             remove_tooltip="Remove selected parameter",
         )
-        # Create a table for additional data.
-        self.add_data = AddRemoveTable(
-            headerLabels=[],
-            title="Additional Data",
-            tableData=fit_info.additional_data,
-        )
 
         # Hide add/remove buttons for parameters unless a custom function is used.
         self.start_params.addButton.setHidden(True)
@@ -1127,7 +1191,6 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
 
         # Add the parameter and additional-data tables to the layout.
         self.layout().addWidget(self.start_params, 10, 0, 1, 2)
-        self.layout().addWidget(self.add_data, 0, 3, 11, 2)
 
         # Initial call to configure the UI based on current settings.
         self.change_func()
@@ -1255,7 +1318,6 @@ class Fit_Definer(Ui_Fit_Definer, QWidget):
             for key in self.fit_info.initial_params:
                 self.fit_info.initial_params[key].pop(i)
 
-        self.fit_info.additional_data = self.add_data.update_table_data()
         self.fit_info.do_fit = self.checkBox_fit.isChecked()
         self.fit_info.predef_func = self.comboBox_predef_func.currentText()
         self.fit_info.custom_func = self.lineEdit_custom_func.text()
