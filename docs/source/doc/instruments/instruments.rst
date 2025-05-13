@@ -117,7 +117,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Epics</td>
                 <td>Instrument</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-epics-instrument'>0.1.2</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-epics-instrument'>0.1.3</a></td>
             </tr>
             <tr>
                 <td>Eurotherm</td>
@@ -165,7 +165,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Keysight / Agilent</td>
                 <td><a href='keysight_b2912a/keysight_b2912a'>B2912a</a></td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-keysight-b2912a'>0.1.1</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-keysight-b2912a'>0.1.2</a></td>
             </tr>
             <tr>
                 <td>Keysight / Agilent</td>
@@ -207,7 +207,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td></td>
                 <td><a href='PID/PID'>PID</a></td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-PID'>0.1.10</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-PID'>0.2.2</a></td>
             </tr>
             <tr>
                 <td>Pi</td>
