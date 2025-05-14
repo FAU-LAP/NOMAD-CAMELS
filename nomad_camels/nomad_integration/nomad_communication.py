@@ -120,6 +120,10 @@ def ensure_login(parent=None):
     make_correct_url()
     if not token:
         login_to_nomad(parent)
+        if "NOMAD_URL" in variables_handling.preferences:
+            url = variables_handling.preferences["NOMAD_URL"]
+            if url and url != nomad_url and nomad_url != central_url:
+                variables_handling.preferences["NOMAD_URL"] = nomad_url
 
 
 def make_correct_url(url=None):

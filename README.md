@@ -21,6 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.8.5
 Fixes:
 - Fixed NOMAD entry selection, now not destroying communication anymore
+- fixed changing NOMAD Oasis URL in login dialog, now being saved
 
 ### 1.8.4
 Features:
