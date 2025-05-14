@@ -1,7 +1,6 @@
 """This module provides functions for communicating with NOMAD."""
 
 import os.path
-import requests
 from PySide6.QtWidgets import QDialog
 
 from nomad_camels.nomad_integration.nomad_login import LoginDialog
@@ -10,6 +9,11 @@ from nomad_camels.utility import variables_handling
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
 import re
 import logging
+import requests
+
+import faulthandler
+
+faulthandler.enable()
 
 
 def correct_timestamp(file_path):
@@ -116,6 +120,10 @@ def ensure_login(parent=None):
     make_correct_url()
     if not token:
         login_to_nomad(parent)
+        if "NOMAD_URL" in variables_handling.preferences:
+            url = variables_handling.preferences["NOMAD_URL"]
+            if url and url != nomad_url and nomad_url != central_url:
+                variables_handling.preferences["NOMAD_URL"] = nomad_url
 
 
 def make_correct_url(url=None):
@@ -140,7 +148,7 @@ def check_response(response, fail_info=""):
 
     Parameters
     ----------
-    response : requests.Response
+    response : httpx.Response
         Response from the server. Its status code will be checked.
     fail_info : str
         (Default value = '')
@@ -148,13 +156,13 @@ def check_response(response, fail_info=""):
         raised exception. Useful to specify, what went wrong.
     """
     if response.status_code != 200:
-        info = response.json()
-        if fail_info:
-            except_string = f"{fail_info}\n"
-        else:
-            except_string = ""
-        except_string += dict_recursive_string(info)
-        raise Exception(except_string)
+        try:
+            info = response.json()
+        except ValueError:
+            info = {"error": response.text}
+        msg = (fail_info + "\n") if fail_info else ""
+        msg += dict_recursive_string(info)
+        raise Exception(msg)
 
 
 def logout_of_nomad():
@@ -222,7 +230,7 @@ def _iterate_pagination(url, params, error_message):
         check_response(response, error_message)
         try:
             response_json = response.json()
-        except requests.exceptions.JSONDecodeError as e:
+        except ValueError as e:
             logging.error(f"Failed to decode JSON response: {e}")
             logging.error(f"Response content: {response.content}")
             raise e
@@ -259,7 +267,7 @@ def get_entry_archive(parent=None, entry_id=""):
     check_response(response, "Could not get entry from NOMAD!")
     try:
         response_json = response.json()
-    except requests.exceptions.JSONDecodeError as e:
+    except ValueError as e:
         logging.error(f"Failed to decode JSON response: {e}")
         logging.error(f"Response content: {response.content}")
         raise e

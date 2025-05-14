@@ -803,6 +803,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         nomad_communication.ensure_login(self)
         if not nomad_communication.token:
             return
+        load_save_functions.save_preferences(self.preferences)
         self.pushButton_login_nomad.setText("NOMAD logout")
         user_data = nomad_communication.get_user_information(self)
         for key in ["created", "is_admin", "is_oasis_admin"]:
