@@ -1,7 +1,6 @@
 """This module provides functions for communicating with NOMAD."""
 
 import os.path
-import requests
 from PySide6.QtWidgets import QDialog
 
 from nomad_camels.nomad_integration.nomad_login import LoginDialog
@@ -10,6 +9,13 @@ from nomad_camels.utility import variables_handling
 from nomad_camels.ui_widgets.warn_popup import WarnPopup
 import re
 import logging
+import httpx
+
+client = httpx.Client(trust_env=False, timeout=10, follow_redirects=True)
+
+import faulthandler
+
+faulthandler.enable()
 
 
 def correct_timestamp(file_path):
@@ -79,13 +85,13 @@ def login_to_nomad(parent=None):
             return
     if dialog.token:
         local_auth = {"Authorization": f"Bearer {dialog.token}"}
-        response = requests.get(f"{nomad_url}/auth/signature_token", headers=local_auth)
+        response = client.get(f"{nomad_url}/auth/signature_token", headers=local_auth)
         check_response(response, "Login failed!")
         token = dialog.token
         auth = local_auth
     else:
         login = {"username": dialog.username, "password": dialog.password}
-        response = requests.get(f"{nomad_url}/auth/token", params=login)
+        response = client.get(f"{nomad_url}/auth/token", params=login)
         check_response(response, "Login failed!")
         token = response.json()["access_token"]
         auth = {"Authorization": f"Bearer {token}"}
@@ -140,7 +146,7 @@ def check_response(response, fail_info=""):
 
     Parameters
     ----------
-    response : requests.Response
+    response : httpx.Response
         Response from the server. Its status code will be checked.
     fail_info : str
         (Default value = '')
@@ -148,13 +154,13 @@ def check_response(response, fail_info=""):
         raised exception. Useful to specify, what went wrong.
     """
     if response.status_code != 200:
-        info = response.json()
-        if fail_info:
-            except_string = f"{fail_info}\n"
-        else:
-            except_string = ""
-        except_string += dict_recursive_string(info)
-        raise Exception(except_string)
+        try:
+            info = response.json()
+        except ValueError:
+            info = {"error": response.text}
+        msg = (fail_info + "\n") if fail_info else ""
+        msg += dict_recursive_string(info)
+        raise Exception(msg)
 
 
 def logout_of_nomad():
@@ -218,11 +224,11 @@ def _iterate_pagination(url, params, error_message):
     params = params or {}
     full_response_data = []
     while True:
-        response = requests.get(url, headers=auth, params=params)
+        response = client.get(url, headers=auth, params=params)
         check_response(response, error_message)
         try:
             response_json = response.json()
-        except requests.exceptions.JSONDecodeError as e:
+        except ValueError as e:
             logging.error(f"Failed to decode JSON response: {e}")
             logging.error(f"Response content: {response.content}")
             raise e
@@ -255,11 +261,11 @@ def get_entry_archive(parent=None, entry_id=""):
     the archive of the entry
     """
     ensure_login(parent)
-    response = requests.get(f"{nomad_url}/entries/{entry_id}/archive", headers=auth)
+    response = client.get(f"{nomad_url}/entries/{entry_id}/archive", headers=auth)
     check_response(response, "Could not get entry from NOMAD!")
     try:
         response_json = response.json()
-    except requests.exceptions.JSONDecodeError as e:
+    except ValueError as e:
         logging.error(f"Failed to decode JSON response: {e}")
         logging.error(f"Response content: {response.content}")
         raise e
@@ -330,7 +336,7 @@ def upload_file(
     head = {"accept": "application/json"}
     head.update(auth)
     with open(file, "rb") as f:
-        response = requests.put(
+        response = client.put(
             f"{nomad_url}/uploads/{upload_id}/raw/{upload_path}",
             data=f,
             headers=head,
@@ -353,7 +359,7 @@ def get_user_information(parent=None):
     the response's data, i.e. the user information
     """
     ensure_login(parent)
-    response = requests.get(f"{nomad_url}/users/me", headers=auth)
+    response = client.get(f"{nomad_url}/users/me", headers=auth)
     check_response(response, "Could not get user information from NOMAD")
     return response.json()
 
@@ -373,6 +379,6 @@ def get_entries(parent=None, owner="user"):
     params = {"owner": owner, "page_size": 1000}
     head = {"accept": "application/json"}
     head.update(auth)
-    response = requests.get(f"{nomad_url}/entries/archive", headers=head, params=params)
+    response = client.get(f"{nomad_url}/entries/archive", headers=head, params=params)
     check_response(response, "Could not retrieve entry-information from NOMAD")
     return response.json()
