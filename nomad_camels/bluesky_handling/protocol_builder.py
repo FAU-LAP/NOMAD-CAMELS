@@ -607,6 +607,7 @@ def sub_protocol_string(
     for i, var in enumerate(variables_out["Variable"]):
         protocol_string += f'{tabs}namespace["{variables_out["Write to name"][i]}"] = {prot_name}_mod.namespace["{var}"]\n'
     protocol_string += f"{tabs}runEngine.unsubscribe(sub_eva_{prot_name})\n"
+    protocol_string += f'{tabs}yield from helper_functions.get_fit_results({prot_name}_mod.all_fits, namespace, True, "{stream}")\n'
     return protocol_string
 
 

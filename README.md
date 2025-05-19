@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.6
+Fixes:
+- now correctly triggering fits of subprotocols
+
 ### 1.8.5
 Fixes:
 - Fixed NOMAD entry selection, now not destroying communication anymore
