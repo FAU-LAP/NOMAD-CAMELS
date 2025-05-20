@@ -19,6 +19,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.8.6
+Changes:
+- hiding data-output selection for sub-protocol, simple- and ND-sweep, as only sub-stream works well
+
 Fixes:
 - now correctly triggering fits of subprotocols
 - app symbol now shows correctly in task bar
