@@ -21,6 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.8.6
 Fixes:
 - now correctly triggering fits of subprotocols
+- app symbol now shows correctly in task bar
 
 ### 1.8.5
 Fixes:
