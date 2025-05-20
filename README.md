@@ -21,6 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.8.6
 Changes:
 - hiding data-output selection for sub-protocol, simple- and ND-sweep, as only sub-stream works well
+- made sample selection NOMAD / non-NOMAD more clear
 
 Fixes:
 - now correctly triggering fits of subprotocols

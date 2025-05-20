@@ -1099,6 +1099,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         use_nomad = self.checkBox_use_nomad_sample.isChecked()
         use_nomad_sample = active_sample and use_nomad and nomad
         self.sample_widget_default.setHidden(use_nomad_sample)
+        self.sample_widget_default.setEnabled(not use_nomad)
         self.pushButton_nomad_sample.setEnabled(use_nomad)
 
     # --------------------------------------------------

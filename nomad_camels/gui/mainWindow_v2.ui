@@ -459,6 +459,9 @@ Instruments</string>
 
     QPushButton:hover {
         background-color: #1a3cbf;
+    }
+QPushButton:disabled {
+        background-color: #808080;
     }</string>
                </property>
                <property name="text">
@@ -496,6 +499,9 @@ Instruments</string>
              </item>
              <item>
               <widget class="QPushButton" name="pushButton_nomad_sample">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>-1</pointsize>
@@ -523,6 +529,10 @@ Instruments</string>
 
     QPushButton:hover {
         background-color: #1a3cbf;
+    }
+
+QPushButton:disabled {
+        background-color: #808080;
     }</string>
                </property>
                <property name="text">

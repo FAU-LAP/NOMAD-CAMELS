@@ -354,6 +354,9 @@ class Ui_MainWindow(object):
 "\n"
 "    QPushButton:hover {\n"
 "        background-color: #1a3cbf;\n"
+"    }\n"
+"QPushButton:disabled {\n"
+"        background-color: #808080;\n"
 "    }")
 
         self.horizontalLayout_4.addWidget(self.pushButton_editSampleInfo)
@@ -373,6 +376,7 @@ class Ui_MainWindow(object):
 
         self.pushButton_nomad_sample = QPushButton(self.sample_widget_nomad)
         self.pushButton_nomad_sample.setObjectName(u"pushButton_nomad_sample")
+        self.pushButton_nomad_sample.setEnabled(True)
         self.pushButton_nomad_sample.setFont(font1)
         self.pushButton_nomad_sample.setStyleSheet(u"QPushButton {\n"
 "        background-color: #2a4cdf;\n"
@@ -389,6 +393,10 @@ class Ui_MainWindow(object):
 "\n"
 "    QPushButton:hover {\n"
 "        background-color: #1a3cbf;\n"
+"    }\n"
+"\n"
+"QPushButton:disabled {\n"
+"        background-color: #808080;\n"
 "    }")
 
         self.horizontalLayout_3.addWidget(self.pushButton_nomad_sample)
