@@ -52,11 +52,33 @@ For more information see the [code reference](https://fau-lap.github.io/NOMAD-CA
 
 
 ## Data Viewer
-The data viewer can be used for more functionalities than the h5-viewer can provide.
-To start the viewer, run:
+This tool is for a quick look at data plots. Besides simple x-y plots, it also provides functionalities for 2D plots and filtering. It is possible to plot expressions of the data.
+
+To start the viewer, run one of the following in your command line:
+
+`camels-viewer` or `python -m nomad_camels_toolbox`.
+
+Alternatively, you can run it from inside python:
 ```python
 import nomad_camels_toolbox as nct
 
-figures = nct.run_viewer()
+nct.run_viewer()
 ```
-To open your file, you can drag and drop it into the viewer window, once it is running.
+To open your file, you can drag and drop it into the viewer window (on the right part), once it is running.
+
+The UI is split into the configuration on the left, and the plot on the right. You can drag the line in the middle.
+
+On the left side, you can select which datasets to plot, and how they should look. You can add a second plot by loading another file. If you want to compare two values from the same file, just load it again.
+
+
+### Multi-Dimensional Data
+
+If you select as "x" and "y" two datasets with dimension 2, more selection possibilities appear at the bottom. (For example wavelength and intensity of optical spectra.)
+You can select an "image X" and "image Y" axis of the remaining values of the dataset (for example x and y values of a spacial scan). If the data can be processed, an image appears, and you can select for which pixel of the image the x-y data is plotted by dragging the red box.
+
+At the top image, two red lines will appear. Dragging those will change the color of the image below. It is color-coded by the integrated intensity between these lines.
+
+Selecting "None" for "image Y", you can also just plot the integrated intensity over one value, if it has no duplicates.
+
+
+
