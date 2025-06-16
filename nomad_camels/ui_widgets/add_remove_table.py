@@ -447,6 +447,8 @@ class AddRemoveTable(QWidget):
         elif check_function(item.text()):
             if not self.check_string_function:
                 color = variables_handling.get_color("green")
+            else:
+                color = variables_handling.get_color("white")
         else:
             color = variables_handling.get_color("red")
         self.table_model.setData(
