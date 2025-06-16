@@ -92,6 +92,7 @@ class Options_Run_Button(QFrame):
     data_path_asked = Signal()
     del_asked = Signal()
     move_asked = Signal()
+    duplicate_asked = Signal()
 
     def __init__(self, text="", size=120, small_text="run", protocol_options=True):
         super().__init__()
@@ -126,7 +127,9 @@ class Options_Run_Button(QFrame):
             self.small_button.setIconSize(QSize(int(size / 4), int(size / 4)))
             self.small_button.setGeometry(5, 5, size - 10, int(size / 3))
             self.queue_button = None
-            self.button.setToolTip("open the settings of the manual control\nright-click for more options")
+            self.button.setToolTip(
+                "open the settings of the manual control\nright-click for more options"
+            )
             self.small_button.setToolTip("start the manual control")
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.options_menu)
@@ -138,6 +141,7 @@ class Options_Run_Button(QFrame):
         self.del_function = None
         self.move_function = None
         self.queue_function = None
+        self.duplicate_function = None
 
         self.setFixedSize(size, size)
         self.setFrameStyle(1)
@@ -156,6 +160,8 @@ class Options_Run_Button(QFrame):
             self.del_asked.disconnect()
         if self.receivers(SIGNAL("move_asked()")) > 0:
             self.move_asked.disconnect()
+        if self.receivers(SIGNAL("duplicate_asked()")) > 0:
+            self.duplicate_asked.disconnect()
         if self.config_function is not None:
             self.button.clicked.connect(self.config_function)
         if self.run_function is not None:
@@ -170,6 +176,8 @@ class Options_Run_Button(QFrame):
             self.del_asked.connect(self.del_function)
         if self.move_function is not None:
             self.move_asked.connect(self.move_function)
+        if self.duplicate_function is not None:
+            self.duplicate_asked.connect(self.duplicate_function)
         if self.queue_function is not None:
             self.queue_button.clicked.connect(self.queue_function)
 
@@ -197,11 +205,13 @@ class Options_Run_Button(QFrame):
             actions += [action_export, action_open, action_datapath]
         action_move = QAction("Move to other Tab")
         action_move.triggered.connect(self.move_button)
+        action_duplicate = QAction("Duplicate")
+        action_duplicate.triggered.connect(self.duplicate_asked.emit)
         action_delete = QAction("Delete")
         action_delete.triggered.connect(self.delete_button)
         menu.addActions(actions)
         menu.addSeparator()
-        menu.addActions([action_move, action_delete])
+        menu.addActions([action_duplicate, action_move, action_delete])
         menu.exec_(self.mapToGlobal(pos))
 
     def move_button(self):
@@ -262,6 +272,10 @@ class Options_Run_Button(QFrame):
             self.del_asked.disconnect(self.del_function)
         if self.move_function is not None:
             self.move_asked.disconnect(self.move_function)
+        if self.duplicate_function is not None:
+            self.duplicate_asked.disconnect(self.duplicate_function)
+        if self.data_path_function is not None:
+            self.data_path_asked.disconnect(self.data_path_function)
         if self.queue_function is not None:
             self.queue_button.clicked.disconnect(self.queue_function)
 

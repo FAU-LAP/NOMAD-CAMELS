@@ -19,6 +19,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.8.6
+Features:
+- the protocol buttons now have the option to duplicate the protocol (a new protocol-configuration opens with a copy of the old protocol)
+
 Changes:
 - hiding data-output selection for sub-protocol, simple- and ND-sweep, as only sub-stream works well
 - made sample selection NOMAD / non-NOMAD more clear

@@ -833,6 +833,8 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
     def accept(self) -> None:
         """ """
         self._update_information()
+        self.check_protocol_name()
+        self.check_file_name()
         self.accepted.emit(self.protocol)
         self.is_accepted = True
         self.close()
@@ -840,8 +842,6 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
     def _update_information(self):
         self.update_loop_step_order()
         self.get_step_config()
-        self.check_protocol_name()
-        self.check_file_name()
 
     def check_file_name(self):
         """check if the filename contains any characters that might cause problems"""

@@ -1641,7 +1641,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     # --------------------------------------------------
     # Protocols
     # --------------------------------------------------
-    def add_measurement_protocol(self):
+    def add_measurement_protocol(self, *, copied_protocol=None):
         """
         Open an empty protocol configuration dialog.
 
@@ -1650,7 +1650,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # IMPORT Protocol_Config only if needed
         from nomad_camels.frontpanels.protocol_config import Protocol_Config
 
-        dialog = Protocol_Config()
+        if copied_protocol is not None:
+            from copy import deepcopy
+
+            protocol = deepcopy(copied_protocol)
+            protocol.name = f"{protocol.name}_copy_"
+            # If an old protocol is provided, open it in the dialog
+            dialog = Protocol_Config(protocol)
+        else:
+            dialog = Protocol_Config()
         dialog.show()
         dialog.accepted.connect(self.add_prot_to_data)
         self.add_to_open_windows(dialog)
@@ -1814,6 +1822,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         button.data_path_function = lambda x=name: self.open_data_path(x)
         button.del_function = lambda x=name: self.remove_protocol(x)
         button.move_function = lambda x=name: self.move_protocol(x)
+        button.duplicate_function = lambda x=name: self.add_measurement_protocol(
+            copied_protocol=self.protocols_dict[x]
+        )
         button.queue_function = lambda state=None, x=name: self.queue_protocol(x)
         button.update_functions()
 
