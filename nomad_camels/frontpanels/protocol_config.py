@@ -832,13 +832,16 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
     def accept(self) -> None:
         """ """
+        self._update_information()
+        self.accepted.emit(self.protocol)
+        self.is_accepted = True
+        self.close()
+
+    def _update_information(self):
         self.update_loop_step_order()
         self.get_step_config()
         self.check_protocol_name()
         self.check_file_name()
-        self.accepted.emit(self.protocol)
-        self.is_accepted = True
-        self.close()
 
     def check_file_name(self):
         """check if the filename contains any characters that might cause problems"""
@@ -870,6 +873,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         """
         name = self.general_settings.lineEdit_protocol_name.text()
         if not self.is_accepted:
+            self._update_information()
             s1 = load_save_functions.get_save_str(self.protocol)
             s2 = load_save_functions.get_save_str(self.old_protocol)
             if not compare_dicts(s1, s2):
@@ -926,7 +930,6 @@ def compare_dicts(dict1, dict2):
                     return False
                 for i in range(len(dict1[key])):
                     if not compare_dicts(dict1[key][i], dict2[key][i]):
-                        print(key, i)
                         return False
                 continue
             if isinstance(dict1[key], dict):
