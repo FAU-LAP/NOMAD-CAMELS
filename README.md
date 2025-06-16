@@ -27,6 +27,7 @@ Fixes:
 - now correctly triggering fits of subprotocols
 - app symbol now shows correctly in task bar
 - fixed error "color" for edit sample and edit user info
+- installation of instruments was broken because of infinite waiting, now fixed
 
 ### 1.8.5
 Fixes:
