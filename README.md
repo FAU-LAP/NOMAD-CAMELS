@@ -22,6 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Changes:
 - hiding data-output selection for sub-protocol, simple- and ND-sweep, as only sub-stream works well
 - made sample selection NOMAD / non-NOMAD more clear
+- not asking whether to discard changes in protocol if no changes were made (works in most cases, sometimes still asking)
 
 Fixes:
 - now correctly triggering fits of subprotocols
