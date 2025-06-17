@@ -1,4 +1,4 @@
-# Combination with EPICS
+# Combination with EPICS - EPICS Guides
 
 These pages are meant to give an overview of a view examples on how EPICS can be used with CAMELS. 
 
