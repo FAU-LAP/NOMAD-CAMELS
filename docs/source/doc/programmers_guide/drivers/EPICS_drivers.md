@@ -11,8 +11,10 @@ The easiest way to control your EPICS infrastructure is using the already existi
 
 1. Go to `Manage Instruments` -> `Install Instruments`
 2. Select `epics_instrument` and install it
+
    ![Slected EPICS instrument and install button](../assets/image.png)
 3. Under `Manage Instruments` you can now add instances of EPICS instruments and add PVs to each instrument by simply writing their full PV path into the `PV Full Name` field (e.g. `S:MPS:srBeamCurrentCC`).
+
    ![EPICS instrument with selected PVs](../assets/image-1.png)
 
 Make sure to select the correct type of PV: Either `read-only` or `set` depending on if you only want to read the PV or actually change its value.
