@@ -189,7 +189,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Mechonics</td>
                 <td>Cu30cl</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-mechonics-cu30cl'>0.1.0</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-mechonics-cu30cl'>0.1.1</a></td>
             </tr>
             <tr>
                 <td>Ni</td>
@@ -201,7 +201,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Opc</td>
                 <td>Ua_instrument</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-opc-ua-instrument'>0.1.6</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-opc-ua-instrument'>0.1.8</a></td>
             </tr>
             <tr>
                 <td></td>
@@ -522,6 +522,18 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
+                <td>Jevatec (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Jevametvcu</a></td>
+                <td>Logger</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Jevatec (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Jevametvcuactive</a></td>
+                <td>Logger</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
                 <td>Jyetech (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Capmeter</a></td>
                 <td>Logger</td>
@@ -554,6 +566,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             <tr>
                 <td>Keithley (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>6485</a></td>
+                <td>Logger</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Keithley (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>6487</a></td>
                 <td>Logger</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
@@ -1008,6 +1026,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
+                <td>Gwinstek (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Gpp-4323</a></td>
+                <td>SMU</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
                 <td>Hp (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>4141b</a></td>
                 <td>SMU</td>
@@ -1112,6 +1136,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             <tr>
                 <td>Tdklambda (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Genesys</a></td>
+                <td>SMU</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Voltcraft (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Dsp-3005</a></td>
                 <td>SMU</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
@@ -1221,6 +1251,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Rgbphotonics (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Qwave</a></td>
                 <td>Spectrometer</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Hp (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>859xe</a></td>
+                <td>SpectrumAnalyzer</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
@@ -1616,6 +1652,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             <tr>
                 <td>Mpi (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Sentio</a></td>
+                <td>WaferProber</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Semiprobe (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Pilot</a></td>
                 <td>WaferProber</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
