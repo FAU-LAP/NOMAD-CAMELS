@@ -1,4 +1,4 @@
-# Code Descriptions
+# Code Description
 
 CAMELS builds upon well established Python packages. The GUI uses [PySide6](https://doc.qt.io/qtforpython-6/index.html) to provide a platform independent user interface with Qt. The orchestration of measurements is handled with [bluesky](https://blueskyproject.io/bluesky/main/index.html) and the abstraction of instrument communication with [ophyd](https://blueskyproject.io/ophyd/).
 
@@ -8,7 +8,8 @@ When starting a protocol, a Python script is generated that runs this protocol. 
 The protocols run with the bluesky RunEngine, which is also spawned from the main window.
 
 
-## Project Structure
+<p style="font-size: 1.5em; font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; padding-bottom: 0.25em;">Project Structure</p>
+
 - **Core Classes** (nomad_camels/main_classes)  
 These files define the core classes, for example, the protocol class and main class for all steps in the protocol.
 
@@ -33,6 +34,7 @@ Each module is interconnected: the GUI components let users configure and arrang
 
 This layered and modular design helps keep code for UI, protocol building, and external system communications separate while still forming a cohesive measurement application.
 
+__In more detail:__
 
 ```{toctree}
 :maxdepth: 1

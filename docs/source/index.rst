@@ -176,7 +176,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    :caption: Developer Documentation
 
    Maintain CAMELS <doc/programmers_guide/programmers_guide.md>
-   Code Descriptions <doc/programmers_guide/components/components.md>
+   Code Description <doc/programmers_guide/components/components.md>
    Contributing <doc/contribute/general_process.md>
    Running Tests <doc/contribute/running_tests.md>
    Code of Conduct <doc/contribute/code_of_conduct.md>
