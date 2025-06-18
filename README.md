@@ -18,7 +18,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 1.8.6
+### 1.8.5
 Features:
 - the protocol buttons now have the option to duplicate the protocol (a new protocol-configuration opens with a copy of the old protocol)
 
@@ -32,9 +32,6 @@ Fixes:
 - app symbol now shows correctly in task bar
 - fixed error "color" for edit sample and edit user info
 - installation of instruments was broken because of infinite waiting, now fixed
-
-### 1.8.5
-Fixes:
 - Fixed NOMAD entry selection, now not destroying communication anymore
 - fixed changing NOMAD Oasis URL in login dialog, now being saved
 
