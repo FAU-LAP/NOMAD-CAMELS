@@ -19,7 +19,19 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.8.5
+Features:
+- the protocol buttons now have the option to duplicate the protocol (a new protocol-configuration opens with a copy of the old protocol)
+
+Changes:
+- hiding data-output selection for sub-protocol, simple- and ND-sweep, as only sub-stream works well
+- made sample selection NOMAD / non-NOMAD more clear
+- not asking whether to discard changes in protocol if no changes were made (works in most cases, sometimes still asking)
+
 Fixes:
+- now correctly triggering fits of subprotocols
+- app symbol now shows correctly in task bar
+- fixed error "color" for edit sample and edit user info
+- installation of instruments was broken because of infinite waiting, now fixed
 - Fixed NOMAD entry selection, now not destroying communication anymore
 - fixed changing NOMAD Oasis URL in login dialog, now being saved
 

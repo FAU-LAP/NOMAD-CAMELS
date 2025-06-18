@@ -255,6 +255,11 @@ class ND_Sweep_Config(Loop_Step_Config):
         if not self.tabs:
             self.add_sweep_channel()
 
+        # this hides the selection as only sub-stream works well
+        self.comboBox_data_output.hide()
+        label_data.hide()
+        self.comboBox_data_output.setCurrentText("sub-stream")
+
         self.layout().addWidget(self.plot_widge, 1, 0, 1, 5)
         self.layout().addWidget(label_data, 2, 0)
         self.layout().addWidget(self.comboBox_data_output, 2, 1, 1, 4)

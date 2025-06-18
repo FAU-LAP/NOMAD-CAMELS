@@ -188,6 +188,11 @@ class Simple_Sweep_Config(Loop_Step_Config):
         font = QFont()
         font.setBold(True)
 
+        # this hides the selection as only sub-stream works well
+        self.comboBox_data_output.hide()
+        label_data.hide()
+        self.comboBox_data_output.setCurrentText("sub-stream")
+
         self.layout().addWidget(label_sweep_channel, 1, 0)
         self.layout().addWidget(self.comboBox_sweep_channel, 1, 1, 1, 4)
         self.layout().addWidget(label_data, 2, 0)

@@ -18,7 +18,11 @@ from nomad_camels.main_classes.protocol_class import (
     General_Protocol_Settings,
 )
 from nomad_camels.loop_steps import make_step_of_type
-from nomad_camels.utility import variables_handling, treeView_functions
+from nomad_camels.utility import (
+    variables_handling,
+    treeView_functions,
+    load_save_functions,
+)
 from nomad_camels.ui_widgets import drag_drop_tree_view
 from nomad_camels.commands import change_sequence
 
@@ -113,6 +117,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
     def __init__(self, protocol=None, parent=None):
         super().__init__(parent=parent)
         self.old_name = None
+        self.old_protocol = protocol
         if protocol is None:
             protocol = Measurement_Protocol()
         else:
@@ -827,13 +832,16 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
     def accept(self) -> None:
         """ """
-        self.update_loop_step_order()
-        self.get_step_config()
+        self._update_information()
         self.check_protocol_name()
         self.check_file_name()
         self.accepted.emit(self.protocol)
         self.is_accepted = True
         self.close()
+
+    def _update_information(self):
+        self.update_loop_step_order()
+        self.get_step_config()
 
     def check_file_name(self):
         """check if the filename contains any characters that might cause problems"""
@@ -865,15 +873,19 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         """
         name = self.general_settings.lineEdit_protocol_name.text()
         if not self.is_accepted:
-            discard_dialog = QMessageBox.question(
-                self,
-                f"{name} - Discard Changes?",
-                f"All changes to {name} will be lost!",
-                QMessageBox.Yes | QMessageBox.No,
-            )
-            if discard_dialog != QMessageBox.Yes:
-                a0.ignore()
-                return
+            self._update_information()
+            s1 = load_save_functions.get_save_str(self.protocol)
+            s2 = load_save_functions.get_save_str(self.old_protocol)
+            if not compare_dicts(s1, s2):
+                discard_dialog = QMessageBox.question(
+                    self,
+                    f"{name} - Discard Changes?",
+                    f"All changes to {name} will be lost!",
+                    QMessageBox.Yes | QMessageBox.No,
+                )
+                if discard_dialog != QMessageBox.Yes:
+                    a0.ignore()
+                    return
         a0.accept()
         super().closeEvent(a0)
         self.closing.emit()
@@ -900,6 +912,34 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
             return
         super().keyPressEvent(a0)
+
+
+def compare_dicts(dict1, dict2):
+    if not isinstance(dict1, dict) and not isinstance(dict2, dict):
+        return dict1 == dict2
+    if not isinstance(dict1, dict) or not isinstance(dict2, dict):
+        return False
+    for key in dict1:
+        if key not in dict2:
+            return False
+        if dict1[key] != dict2[key]:
+            if key == "used_devices":
+                continue  # Ignore device changes as they may happen at runtime
+            if isinstance(dict1[key], list):
+                if len(dict1[key]) != len(dict2[key]):
+                    return False
+                for i in range(len(dict1[key])):
+                    if not compare_dicts(dict1[key][i], dict2[key][i]):
+                        return False
+                continue
+            if isinstance(dict1[key], dict):
+                if not compare_dicts(dict1[key], dict2[key]):
+                    return False
+            return False
+    for key in dict2:
+        if key not in dict1:
+            return False
+    return True
 
 
 def filtered_menu_from_actions(actions, menu_name):

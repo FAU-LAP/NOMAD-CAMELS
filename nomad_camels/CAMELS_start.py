@@ -153,6 +153,7 @@ def start_camels(start_proxy_bool=True):
     if app is None:
         # sys.argv += ['-platform', 'windows:darkmode=1']
         app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
 
     # Create and display the loading screen
     loading_screen = LoadingScreen()

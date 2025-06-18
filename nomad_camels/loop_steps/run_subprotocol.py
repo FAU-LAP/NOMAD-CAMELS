@@ -169,6 +169,11 @@ class Run_Subprotocol_Config(Loop_Step_Config):
         self.comboBox_data_output.addItems(output_types)
         self.comboBox_data_output.setCurrentText(loop_step.data_output)
 
+        # this hides the selection as only sub-stream works well
+        self.comboBox_data_output.hide()
+        label_data.hide()
+        self.comboBox_data_output.setCurrentText("sub-stream")
+
         self.checkBox_plots = QCheckBox("Use own plots")
         self.checkBox_plots.setChecked(loop_step.own_plots)
 
