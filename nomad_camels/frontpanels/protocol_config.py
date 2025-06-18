@@ -924,7 +924,7 @@ def compare_dicts(dict1, dict2):
             return False
         if dict1[key] != dict2[key]:
             if key == "used_devices":
-                continue  # Ignore device changes as they may happen at runt
+                continue  # Ignore device changes as they may happen at runtime
             if isinstance(dict1[key], list):
                 if len(dict1[key]) != len(dict2[key]):
                     return False
