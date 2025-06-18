@@ -280,7 +280,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#reading-data">Reading Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#recreating-plots">Recreating Plots</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#data-viewer">Data Viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#data-viewer">Data Viewer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../doc/nomad_camels_toolbox.html#multi-dimensional-data">Multi-Dimensional Data</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/api/api_landing.html">CAMELS API</a><ul>
@@ -411,13 +414,17 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../doc/programmers_guide/drivers/EPICS_drivers.html">EPICS Instrument Drivers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../doc/programmers_guide/drivers/EPICS_drivers.html#how-to-use-the-builder">How to use the builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../doc/programmers_guide/drivers/EPICS_drivers.html#generic-epics-instrument">1. Generic EPICS Instrument</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../doc/programmers_guide/drivers/EPICS_drivers.html#custom-epics-instrument-driver">2. Custom EPICS Instrument Driver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../doc/programmers_guide/drivers/EPICS_drivers.html#how-to-use-the-builder">How to use the builder</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../doc/programmers_guide/drivers/EPICS_drivers.html#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../doc/epics/epics_overview.html">Combine with EPICS</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../doc/epics/epics_overview.html">Combination with EPICS - EPICS Guides</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../doc/epics/new_ioc.html">Create New EPICS IOC</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../doc/epics/new_ioc.html#epics-installation-for-unix">EPICS Installation for UNIX</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../doc/epics/new_ioc.html#create-folder-structure-for-ioc">Create folder structure for IOC</a></li>
@@ -773,6 +780,7 @@
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.frontpanels.html#module-nomad_camels.frontpanels.protocol_config">nomad_camels.frontpanels.protocol_config module</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.protocol_config.Protocol_Config"><code class="docutils literal notranslate"><span class="pre">Protocol_Config</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.protocol_config.check_no_invalid_characters"><code class="docutils literal notranslate"><span class="pre">check_no_invalid_characters()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.protocol_config.compare_dicts"><code class="docutils literal notranslate"><span class="pre">compare_dicts()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.frontpanels.html#nomad_camels.frontpanels.protocol_config.filtered_menu_from_actions"><code class="docutils literal notranslate"><span class="pre">filtered_menu_from_actions()</span></code></a></li>
 </ul>
 </li>
@@ -1110,9 +1118,7 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels.nomad_integration.html">nomad_camels.nomad_integration package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.nomad_integration.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.nomad_integration.html#module-nomad_camels.nomad_integration.entry_selection">nomad_camels.nomad_integration.entry_selection module</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.entry_selection.Entries_Getter_Thread"><code class="docutils literal notranslate"><span class="pre">Entries_Getter_Thread</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.entry_selection.EntrySelector"><code class="docutils literal notranslate"><span class="pre">EntrySelector</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.entry_selection.Upload_Getter_Thread"><code class="docutils literal notranslate"><span class="pre">Upload_Getter_Thread</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.entry_selection.compute_combo_max_width"><code class="docutils literal notranslate"><span class="pre">compute_combo_max_width()</span></code></a></li>
 </ul>
 </li>
@@ -1614,7 +1620,49 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.html#nomad-camels-toolbox-plotting-module">nomad_camels_toolbox.plotting module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.html#nomad-camels-toolbox-qt-viewer-module">nomad_camels_toolbox.qt_viewer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.html#module-nomad_camels_toolbox.qt_viewer">nomad_camels_toolbox.qt_viewer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Box_and_Line_Widget"><code class="docutils literal notranslate"><span class="pre">Box_and_Line_Widget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Box_and_Line_Widget.addItems"><code class="docutils literal notranslate"><span class="pre">Box_and_Line_Widget.addItems()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Box_and_Line_Widget.clear"><code class="docutils literal notranslate"><span class="pre">Box_and_Line_Widget.clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Box_and_Line_Widget.currentText"><code class="docutils literal notranslate"><span class="pre">Box_and_Line_Widget.currentText()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Box_and_Line_Widget.setText"><code class="docutils literal notranslate"><span class="pre">Box_and_Line_Widget.setText()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Box_and_Line_Widget.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Box_and_Line_Widget.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Box_and_Line_Widget.textChanged"><code class="docutils literal notranslate"><span class="pre">Box_and_Line_Widget.textChanged</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.CAMELS_Viewer"><code class="docutils literal notranslate"><span class="pre">CAMELS_Viewer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.CAMELS_Viewer.add_table_row"><code class="docutils literal notranslate"><span class="pre">CAMELS_Viewer.add_table_row()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.CAMELS_Viewer.check_change"><code class="docutils literal notranslate"><span class="pre">CAMELS_Viewer.check_change()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.CAMELS_Viewer.load_data"><code class="docutils literal notranslate"><span class="pre">CAMELS_Viewer.load_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.CAMELS_Viewer.load_measurement"><code class="docutils literal notranslate"><span class="pre">CAMELS_Viewer.load_measurement()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.CAMELS_Viewer.make_multi_selection_widget"><code class="docutils literal notranslate"><span class="pre">CAMELS_Viewer.make_multi_selection_widget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.CAMELS_Viewer.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">CAMELS_Viewer.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.CAMELS_Viewer.update_image"><code class="docutils literal notranslate"><span class="pre">CAMELS_Viewer.update_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.CAMELS_Viewer.update_intensity_line"><code class="docutils literal notranslate"><span class="pre">CAMELS_Viewer.update_intensity_line()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.CAMELS_Viewer.update_plot"><code class="docutils literal notranslate"><span class="pre">CAMELS_Viewer.update_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.DragDropGraphicLayoutWidget"><code class="docutils literal notranslate"><span class="pre">DragDropGraphicLayoutWidget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.DragDropGraphicLayoutWidget.dragEnterEvent"><code class="docutils literal notranslate"><span class="pre">DragDropGraphicLayoutWidget.dragEnterEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.DragDropGraphicLayoutWidget.dragMoveEvent"><code class="docutils literal notranslate"><span class="pre">DragDropGraphicLayoutWidget.dragMoveEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.DragDropGraphicLayoutWidget.dropEvent"><code class="docutils literal notranslate"><span class="pre">DragDropGraphicLayoutWidget.dropEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.DragDropGraphicLayoutWidget.dropped"><code class="docutils literal notranslate"><span class="pre">DragDropGraphicLayoutWidget.dropped</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.DragDropGraphicLayoutWidget.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">DragDropGraphicLayoutWidget.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Multi_Selection_Widget"><code class="docutils literal notranslate"><span class="pre">Multi_Selection_Widget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Multi_Selection_Widget.filter_signal"><code class="docutils literal notranslate"><span class="pre">Multi_Selection_Widget.filter_signal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Multi_Selection_Widget.get_filters"><code class="docutils literal notranslate"><span class="pre">Multi_Selection_Widget.get_filters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Multi_Selection_Widget.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Multi_Selection_Widget.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Multi_Selection_Widget.x_selection_signal"><code class="docutils literal notranslate"><span class="pre">Multi_Selection_Widget.x_selection_signal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.Multi_Selection_Widget.y_selection_signal"><code class="docutils literal notranslate"><span class="pre">Multi_Selection_Widget.y_selection_signal</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.ask_for_input_box"><code class="docutils literal notranslate"><span class="pre">ask_for_input_box()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.run_viewer"><code class="docutils literal notranslate"><span class="pre">run_viewer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nomad_camels_toolbox.html#nomad_camels_toolbox.qt_viewer.set_theme"><code class="docutils literal notranslate"><span class="pre">set_theme()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="nomad_camels_toolbox.html#module-nomad_camels_toolbox">Module contents</a></li>
 </ul>
 </li>
@@ -3233,7 +3281,6 @@
 <li class="toctree-l3"><a class="reference internal" href="nomad_camels_driver_mechonics_cu30cl.html#module-nomad_camels_driver_mechonics_cu30cl.mechonics_cu30cl_ophyd">nomad_camels_driver_mechonics_cu30cl.mechonics_cu30cl_ophyd module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels_driver_mechonics_cu30cl.html#nomad_camels_driver_mechonics_cu30cl.mechonics_cu30cl_ophyd.Mechonics_CU30CL"><code class="docutils literal notranslate"><span class="pre">Mechonics_CU30CL</span></code></a><ul>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels_driver_mechonics_cu30cl.html#nomad_camels_driver_mechonics_cu30cl.mechonics_cu30cl_ophyd.Mechonics_CU30CL.component_names"><code class="docutils literal notranslate"><span class="pre">Mechonics_CU30CL.component_names</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="nomad_camels_driver_mechonics_cu30cl.html#nomad_camels_driver_mechonics_cu30cl.mechonics_cu30cl_ophyd.Mechonics_CU30CL.eeprom_data"><code class="docutils literal notranslate"><span class="pre">Mechonics_CU30CL.eeprom_data</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels_driver_mechonics_cu30cl.html#nomad_camels_driver_mechonics_cu30cl.mechonics_cu30cl_ophyd.Mechonics_CU30CL.finalize_steps"><code class="docutils literal notranslate"><span class="pre">Mechonics_CU30CL.finalize_steps()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels_driver_mechonics_cu30cl.html#nomad_camels_driver_mechonics_cu30cl.mechonics_cu30cl_ophyd.Mechonics_CU30CL.find_reference"><code class="docutils literal notranslate"><span class="pre">Mechonics_CU30CL.find_reference()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels_driver_mechonics_cu30cl.html#nomad_camels_driver_mechonics_cu30cl.mechonics_cu30cl_ophyd.Mechonics_CU30CL.manual_move_start_x"><code class="docutils literal notranslate"><span class="pre">Mechonics_CU30CL.manual_move_start_x()</span></code></a></li>
@@ -4676,6 +4723,11 @@ emits the dragdrop signal when something is dragged / dropped.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.ui_widgets.options_run_button.Options_Run_Button.duplicate_asked">
+<span class="sig-name descname"><span class="pre">duplicate_asked</span></span><a class="headerlink" href="#nomad_camels.ui_widgets.options_run_button.Options_Run_Button.duplicate_asked" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.ui_widgets.options_run_button.Options_Run_Button.external_asked">
 <span class="sig-name descname"><span class="pre">external_asked</span></span><a class="headerlink" href="#nomad_camels.ui_widgets.options_run_button.Options_Run_Button.external_asked" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -4722,7 +4774,7 @@ emits the dragdrop signal when something is dragged / dropped.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.ui_widgets.options_run_button.Options_Run_Button.staticMetaObject">
-<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Options_Run_Button&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QFrame&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=build_asked()</span>&#160;&#160; <span class="pre">#34</span> <span class="pre">type=Signal,</span> <span class="pre">signature=external_asked()</span>&#160;&#160; <span class="pre">#35</span> <span class="pre">type=Signal,</span> <span class="pre">signature=data_path_asked()</span>&#160;&#160; <span class="pre">#36</span> <span class="pre">type=Signal,</span> <span class="pre">signature=del_asked()</span>&#160;&#160; <span class="pre">#37</span> <span class="pre">type=Signal,</span> <span class="pre">signature=move_asked()</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.ui_widgets.options_run_button.Options_Run_Button.staticMetaObject" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Options_Run_Button&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QFrame&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=build_asked()</span>&#160;&#160; <span class="pre">#34</span> <span class="pre">type=Signal,</span> <span class="pre">signature=external_asked()</span>&#160;&#160; <span class="pre">#35</span> <span class="pre">type=Signal,</span> <span class="pre">signature=data_path_asked()</span>&#160;&#160; <span class="pre">#36</span> <span class="pre">type=Signal,</span> <span class="pre">signature=del_asked()</span>&#160;&#160; <span class="pre">#37</span> <span class="pre">type=Signal,</span> <span class="pre">signature=move_asked()</span>&#160;&#160; <span class="pre">#38</span> <span class="pre">type=Signal,</span> <span class="pre">signature=duplicate_asked()</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.ui_widgets.options_run_button.Options_Run_Button.staticMetaObject" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
