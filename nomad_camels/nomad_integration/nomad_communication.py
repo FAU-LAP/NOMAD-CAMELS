@@ -14,12 +14,17 @@ import requests
 import faulthandler
 import sys
 
-if sys.stdout.isatty():
-    with open("faulthandler.log", "w") as f:
-        faulthandler.enable(file=f)
-# Enable faulthandler to log uncaught exceptions to a file if stdout is a TTY (usually when pythonw is used), preventing it from crashing
-else:
-    faulthandler.enable()
+try:
+    # Attempt to check sys.__stdout__
+    if not sys.__stdout__.isatty():
+        fh = open("faulthandler.log", "w")
+        faulthandler.enable(file=fh)
+    else:
+        faulthandler.enable()
+except Exception:
+    # Fallback if the check fails
+    fh = open("faulthandler.log", "w")
+    faulthandler.enable(file=fh)
 
 
 def correct_timestamp(file_path):
