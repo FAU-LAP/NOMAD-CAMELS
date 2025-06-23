@@ -17,14 +17,14 @@ import sys
 try:
     # Attempt to check sys.__stdout__
     if not sys.__stdout__.isatty():
-        fh = open("faulthandler.log", "w")
-        faulthandler.enable(file=fh)
+        with open("faulthandler.log", "w") as fh:
+            faulthandler.enable(file=fh)
     else:
         faulthandler.enable()
 except Exception:
     # Fallback if the check fails
-    fh = open("faulthandler.log", "w")
-    faulthandler.enable(file=fh)
+    with open("faulthandler.log", "w") as fh:
+        faulthandler.enable(file=fh)
 
 
 def correct_timestamp(file_path):
