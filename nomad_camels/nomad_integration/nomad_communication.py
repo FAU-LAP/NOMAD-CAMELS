@@ -12,8 +12,19 @@ import logging
 import requests
 
 import faulthandler
+import sys
 
-faulthandler.enable()
+try:
+    # Attempt to check sys.__stdout__
+    if not sys.__stdout__.isatty():
+        with open("faulthandler.log", "w") as fh:
+            faulthandler.enable(file=fh)
+    else:
+        faulthandler.enable()
+except Exception:
+    # Fallback if the check fails
+    with open("faulthandler.log", "w") as fh:
+        faulthandler.enable(file=fh)
 
 
 def correct_timestamp(file_path):

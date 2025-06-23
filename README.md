@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.6
+Fixes:
+- fixed not starting up when using pythonw.exe
+
 ### 1.8.5
 Features:
 - the protocol buttons now have the option to duplicate the protocol (a new protocol-configuration opens with a copy of the old protocol)
