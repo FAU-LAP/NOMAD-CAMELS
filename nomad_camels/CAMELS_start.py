@@ -119,11 +119,8 @@ class ImportThread(QThread):
             try:
                 # Attempt to import the package
                 import_module(package)
-            except ModuleNotFoundError:
-                # If the module is not found, continue without interruption
-                pass
-            except AttributeError:
-                # If there is an attribute error during import, continue without interruption
+            except (ModuleNotFoundError, AttributeError):
+                # If the module is not found or an attribute error occurs, continue without interruption
                 pass
         # Final update message before starting the main application
         self.update_text.emit("starting NOMAD CAMELS...")
