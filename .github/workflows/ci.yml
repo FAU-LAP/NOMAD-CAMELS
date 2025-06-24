@@ -35,10 +35,7 @@ jobs:
       - name: Run tests with pytest
         run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
       - name: Rename coverage file (Windows)
-        run: |
-          if exist .coverage (
-            ren .coverage .coverage.windows
-          )
+        run: ren .coverage .coverage.windows
       - name: Upload coverage artifact (Windows)
         uses: actions/upload-artifact@v4
         with:
@@ -73,8 +70,7 @@ jobs:
         run: |
           poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
       - name: Rename coverage file (Ubuntu)
-        run: |
-          if [ -f .coverage ]; then mv .coverage .coverage.ubuntu; fi
+        run: mv .coverage .coverage.ubuntu
       - name: Upload coverage artifact (Ubuntu)
         uses: actions/upload-artifact@v4
         with:
@@ -109,8 +105,7 @@ jobs:
         run: |
           poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
       - name: Rename coverage file (macOS)
-        run: |
-          if [ -f .coverage ]; then mv .coverage .coverage.macos; fi
+        run: mv .coverage .coverage.macos
       - name: Upload coverage artifact (macOS)
         uses: actions/upload-artifact@v4
         with:
@@ -122,7 +117,7 @@ jobs:
     needs: [windows_test, ubuntu_test, macos_test]
     steps:
       - uses: actions/checkout@v4
-      - name: Download coverage artifacts
+      - name: Download Windows coverage artifact
         uses: actions/download-artifact@v3
         with:
           name: coverage-windows
@@ -143,13 +138,17 @@ jobs:
           python-version: 3.11
       - name: Install coverage
         run: pip install coverage
-      - name: Combine coverage files
+      - name: Combine coverage files and display report
         run: |
           ls -la coverage_files
           # Move to workspace root and copy all coverage files.
           cp coverage_files/* .
           coverage combine
           coverage report --omit=*/site-packages/*
+      - name: Generate HTML Coverage Report
+        run: |
+          coverage html --omit=*/site-packages/*
+          ls -la htmlcov
       - name: display coverage report
         run: coverage report --show-missing
       - name: Upload Combined Coverage Report
