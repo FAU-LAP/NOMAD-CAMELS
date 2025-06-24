@@ -35,7 +35,9 @@ jobs:
       - name: Run tests with pytest
         run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
       - name: Rename coverage file (Windows)
-        run: ren .coverage .coverage.windows
+        run: |
+          ren .coverage .coverage.windows
+          dir
       - name: Upload coverage artifact (Windows)
         uses: actions/upload-artifact@v4
         with:
@@ -70,7 +72,9 @@ jobs:
         run: |
           poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
       - name: Rename coverage file (Ubuntu)
-        run: mv .coverage .coverage.ubuntu
+        run:  |
+          mv .coverage .coverage.macos
+          ls -la
       - name: Upload coverage artifact (Ubuntu)
         uses: actions/upload-artifact@v4
         with:
@@ -105,7 +109,9 @@ jobs:
         run: |
           poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
       - name: Rename coverage file (macOS)
-        run: mv .coverage .coverage.macos
+        run: |
+          mv .coverage .coverage.macos
+          ls -la
       - name: Upload coverage artifact (macOS)
         uses: actions/upload-artifact@v4
         with:
