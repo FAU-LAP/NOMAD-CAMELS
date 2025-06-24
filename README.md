@@ -21,6 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.8.7
 Fixes:
 - fixed changing settings of manual controls
+- stopping stage control now more stable
 
 ### 1.8.6
 Fixes:
