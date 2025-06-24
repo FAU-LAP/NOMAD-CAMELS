@@ -40,7 +40,7 @@ jobs:
             ren .coverage .coverage.windows
           )
       - name: Upload coverage artifact (Windows)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-windows
           path: .coverage.windows
@@ -76,7 +76,7 @@ jobs:
         run: |
           if [ -f .coverage ]; then mv .coverage .coverage.ubuntu; fi
       - name: Upload coverage artifact (Ubuntu)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-ubuntu
           path: .coverage.ubuntu
@@ -112,7 +112,7 @@ jobs:
         run: |
           if [ -f .coverage ]; then mv .coverage .coverage.macos; fi
       - name: Upload coverage artifact (macOS)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-macos
           path: .coverage.macos
@@ -150,8 +150,10 @@ jobs:
           cp coverage_files/* .
           coverage combine
           coverage report --omit=*/site-packages/*
+      - name: display coverage report
+        run: coverage report --show-missing
       - name: Upload Combined Coverage Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: combined-coverage-report
           path: coverage.xml
