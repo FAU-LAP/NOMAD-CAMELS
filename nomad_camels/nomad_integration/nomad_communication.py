@@ -14,18 +14,19 @@ import requests
 import faulthandler
 import sys
 
-try:
-    # Attempt to check sys.__stdout__
-    if not sys.__stdout__.isatty():
-        with open("faulthandler.log", "w") as fh:
-            faulthandler.enable(file=fh)
-    else:
-        faulthandler.enable()
-except Exception:
-    # Fallback if the check fails
-    with open("faulthandler.log", "w") as fh:
-        faulthandler.enable(file=fh)
+# try:
+#     # Attempt to check sys.__stdout__
+#     if not sys.__stdout__.isatty():
+#         with open("faulthandler.log", "w") as fh:
+#             faulthandler.enable(file=fh)
+#     else:
+#         faulthandler.enable()
+# except Exception:
+#     # Fallback if the check fails
+#     with open("faulthandler.log", "w") as fh:
+#         faulthandler.enable(file=fh)
 
+faulthandler.enable()
 
 def correct_timestamp(file_path):
     """Corrects the timestamp in the file path to be compatible with NOMAD. Replaces the plus symbol with p."""
