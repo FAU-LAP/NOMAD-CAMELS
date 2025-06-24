@@ -1,4 +1,5 @@
 name: Run Python Tests
+
 on:
   push:
     branches:
@@ -33,6 +34,16 @@ jobs:
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py39 .
       - name: Run tests with pytest
         run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+      - name: Rename coverage file (Windows)
+        run: |
+          if exist .coverage (
+            ren .coverage .coverage.windows
+          )
+      - name: Upload coverage artifact (Windows)
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-windows
+          path: .coverage.windows
 
   ubuntu_test:
     runs-on: ubuntu-latest
@@ -60,10 +71,15 @@ jobs:
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py39 .
       - name: Run tests with pytest
         run: |
-          poetry run pytest -vv --timeout=100 \
-            --cov-config=./nomad_camels/tests/.coveragerc \
-            --cov-report term-missing:skip-covered \
-            --cov=nomad_camels
+          poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+      - name: Rename coverage file (Ubuntu)
+        run: |
+          if [ -f .coverage ]; then mv .coverage .coverage.ubuntu; fi
+      - name: Upload coverage artifact (Ubuntu)
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-ubuntu
+          path: .coverage.ubuntu
 
   macos_test:
     runs-on: macos-latest
@@ -91,7 +107,51 @@ jobs:
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py39 .
       - name: Run tests with pytest
         run: |
-          poetry run pytest -vv --timeout=100 \
-            --cov-config=./nomad_camels/tests/.coveragerc \
-            --cov-report term-missing:skip-covered \
-            --cov=nomad_camels
+          poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+      - name: Rename coverage file (macOS)
+        run: |
+          if [ -f .coverage ]; then mv .coverage .coverage.macos; fi
+      - name: Upload coverage artifact (macOS)
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-macos
+          path: .coverage.macos
+
+  coverage_report:
+    runs-on: ubuntu-latest
+    needs: [windows_test, ubuntu_test, macos_test]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-windows
+          path: coverage_files
+      - name: Download Ubuntu coverage artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-ubuntu
+          path: coverage_files
+      - name: Download macOS coverage artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-macos
+          path: coverage_files
+      - name: Install Python and coverage
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+      - name: Install coverage
+        run: pip install coverage
+      - name: Combine coverage files
+        run: |
+          ls -la coverage_files
+          # Move to workspace root and copy all coverage files.
+          cp coverage_files/* .
+          coverage combine
+          coverage report --omit=*/site-packages/*
+      - name: Upload Combined Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: combined-coverage-report
+          path: coverage.xml
