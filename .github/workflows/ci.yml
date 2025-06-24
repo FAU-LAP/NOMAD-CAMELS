@@ -33,9 +33,10 @@ jobs:
           # stop the build if there are Python syntax errors or undefined names
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py39 .
       - name: Run tests with pytest
-        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+        run: poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report=term-missing:skip-covered --cov=nomad_camels
       - name: Rename coverage file (Windows)
         run: |
+          dir
           ren .coverage .coverage.windows
           dir
       - name: Upload coverage artifact (Windows)
@@ -70,9 +71,10 @@ jobs:
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py39 .
       - name: Run tests with pytest
         run: |
-          poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+          poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report=term-missing:skip-covered --cov=nomad_camels
       - name: Rename coverage file (Ubuntu)
         run:  |
+          ls -la
           mv .coverage .coverage.macos
           ls -la
       - name: Upload coverage artifact (Ubuntu)
@@ -107,9 +109,10 @@ jobs:
           ruff check --output-format=github --select=E9,F63,F7,F82 --target-version=py39 .
       - name: Run tests with pytest
         run: |
-          poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report term-missing:skip-covered --cov=nomad_camels
+          poetry run pytest -vv --timeout=100 --cov-config=./nomad_camels/tests/.coveragerc --cov-report=term-missing:skip-covered --cov=nomad_camels
       - name: Rename coverage file (macOS)
         run: |
+          ls -la
           mv .coverage .coverage.macos
           ls -la
       - name: Upload coverage artifact (macOS)
