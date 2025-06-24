@@ -124,6 +124,13 @@ def test_start_camels(qtbot, capfd):
                 qtbot.waitUntil(lambda: not main_window.isVisible())
 
 
+@pytest.mark.order(1)
+def test_start_camels_second_start():
+    """Test the startup of the CAMELS application a second time."""
+    window = start_camels(start_proxy_bool=False, actually_exec=False)
+    assert isinstance(window, MainWindow)
+
+
 @pytest.fixture(scope="module")
 def app():
     app = QApplication.instance()

@@ -208,7 +208,7 @@ def start_camels(start_proxy_bool=True, actually_exec=True):
     else:
         # If not executing the app, just return the main window
         app.processEvents()
-        return 0
+        return main_window
 
 
 if __name__ == "__main__":
