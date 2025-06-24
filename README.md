@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.7
+Fixes:
+- fixed changing settings of manual controls
+
 ### 1.8.6
 Fixes:
 - fixed not starting up when using pythonw.exe
