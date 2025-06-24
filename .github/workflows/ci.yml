@@ -118,17 +118,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download Windows coverage artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: coverage-windows
           path: coverage_files
       - name: Download Ubuntu coverage artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: coverage-ubuntu
           path: coverage_files
       - name: Download macOS coverage artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: coverage-macos
           path: coverage_files
