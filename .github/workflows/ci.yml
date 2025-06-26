@@ -146,11 +146,9 @@ jobs:
         run: pip install coverage
       - name: Combine coverage files and display report
         run: |
-          ls -la coverage_files
-          # Move to workspace root and copy all coverage files.
-          cp coverage_files/.* .
+          shopt -s dotglob && cp coverage_files/* .
           coverage combine
-          coverage report --source=nomad_camels --omit=*/site-packages/*
+          coverage report --include="nomad_camels/*" --omit=*/site-packages/*
       - name: Generate HTML Coverage Report
         run: |
           coverage html --omit=*/site-packages/*
