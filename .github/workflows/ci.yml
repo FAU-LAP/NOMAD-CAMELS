@@ -44,6 +44,7 @@ jobs:
         with:
           name: coverage-windows
           path: .coverage.windows
+          include-hidden-files: true
 
   ubuntu_test:
     runs-on: ubuntu-latest
@@ -82,6 +83,7 @@ jobs:
         with:
           name: coverage-ubuntu
           path: .coverage.ubuntu
+          include-hidden-files: true
 
   macos_test:
     runs-on: macos-latest
@@ -120,6 +122,7 @@ jobs:
         with:
           name: coverage-macos
           path: .coverage.macos
+          include-hidden-files: true
 
   coverage_report:
     runs-on: ubuntu-latest
