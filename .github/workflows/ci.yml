@@ -151,10 +151,10 @@ jobs:
           coverage report --include="nomad_camels/*" --omit=*/site-packages/*
       - name: Generate HTML Coverage Report
         run: |
-          coverage html --omit=*/site-packages/*
+          coverage html --include="nomad_camels/*" --omit=*/site-packages/*
           ls -la htmlcov
       - name: display coverage report
-        run: coverage report --show-missing
+        run: coverage report --show-missing --include="nomad_camels/*"
       - name: Upload Combined Coverage Report
         uses: actions/upload-artifact@v4
         with:
