@@ -150,7 +150,7 @@ jobs:
           # Move to workspace root and copy all coverage files.
           cp coverage_files/.* .
           coverage combine
-          coverage report --omit=*/site-packages/*
+          coverage report --source=nomad_camels --omit=*/site-packages/*
       - name: Generate HTML Coverage Report
         run: |
           coverage html --omit=*/site-packages/*
