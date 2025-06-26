@@ -76,7 +76,7 @@ jobs:
       - name: Rename coverage file (Ubuntu)
         run:  |
           ls -la
-          mv .coverage .coverage.macos
+          mv .coverage .coverage.ubuntu
           ls -la
       - name: Upload coverage artifact (Ubuntu)
         uses: actions/upload-artifact@v4
