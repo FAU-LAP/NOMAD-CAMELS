@@ -648,13 +648,27 @@ def test_protocol_with_flyer(qtbot, tmp_path, zmq_setup):
     )
     with qtbot.waitSignal(flyer_window.accepted) as blocker:
         flyer_window.accept()
-    flyer_data = flyer_window.flyer_data
+    conf.general_settings.flyer_button.flyer_data = flyer_window.flyer_data
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
     catalog_maker(tmp_path)
     publisher, dispatcher = zmq_setup
     prot = conf.protocol
-    run_test_protocol(tmp_path, prot, publisher, dispatcher)
+    savepath = run_test_protocol(
+        tmp_path, prot, publisher, dispatcher, return_savepath=True
+    )
+    import h5py
+
+    with h5py.File(savepath, "r") as f:
+        data = f["CAMELS_entry"]["data"]
+        assert "flyer1" in data
+        flyer_data = data["flyer1"]
+        assert "demo_instrument_detectorComm" in flyer_data
+        assert "time" in flyer_data
+        assert len(flyer_data["time"]) > 20
+        assert len(flyer_data["demo_instrument_detectorComm"]) == len(
+            flyer_data["time"]
+        )
 
 
 def single_variable_if(qtbot, conf, wait_in=1, n_prompt=0, n_if=0, len_prot=0):
@@ -818,7 +832,7 @@ def catalog_maker(tmp_path):
         make_catalog.make_yml(tmp_path, "test_catalog")
 
 
-def run_test_protocol(tmp_path, protocol, publisher, dispatcher):
+def run_test_protocol(tmp_path, protocol, publisher, dispatcher, return_savepath=False):
     """
 
     Parameters
@@ -846,6 +860,8 @@ def run_test_protocol(tmp_path, protocol, publisher, dispatcher):
         file_ending = ".h5"
     savepath = f"{savepath}{file_ending}"
     assert os.path.isfile(savepath)
+    if return_savepath:
+        return savepath
 
 
 def get_action_from_name(actions, name):
