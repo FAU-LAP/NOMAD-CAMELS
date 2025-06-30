@@ -618,6 +618,45 @@ def test_wait(qtbot, tmp_path, zmq_setup):
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
+def test_protocol_with_flyer(qtbot, tmp_path, zmq_setup):
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import wait_loop_step
+
+    conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_flyer_protocol")
+    qtbot.addWidget(conf)
+    action = get_action_from_name(conf.add_actions, "Wait")
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge, wait_loop_step.Wait_Loop_Step_Config)
+    conf_widge.sub_widget.lineEdit_duration.setText("3.0")
+
+    from nomad_camels.frontpanels.flyer_window import FlyerWindow
+
+    flyer_window = FlyerWindow()
+    qtbot.addWidget(flyer_window)
+    flyer_window.flyer_table.add("flyer1", 0.1)
+    flyer_window.change_flyer_def(flyer_window.flyer_table.table_model.index(0, 0))
+    flyer_window.flyer_def.lineEdit_name.setText("flyer1")
+    flyer_window.flyer_def.lineEdit_read_rate.setText("0.1")
+    flyer_window.flyer_def.channels_table.lineEdit_search.setText(
+        "demo_instrument_detectorComm"
+    )
+    flyer_window.flyer_def.channels_table.change_search()
+    flyer_window.flyer_def.channels_table.tableWidget_channels.item(0, 0).setCheckState(
+        Qt.CheckState.Checked
+    )
+    with qtbot.waitSignal(flyer_window.accepted) as blocker:
+        flyer_window.accept()
+    flyer_data = flyer_window.flyer_data
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    catalog_maker(tmp_path)
+    publisher, dispatcher = zmq_setup
+    prot = conf.protocol
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
+
+
 def single_variable_if(qtbot, conf, wait_in=1, n_prompt=0, n_if=0, len_prot=0):
     """
 

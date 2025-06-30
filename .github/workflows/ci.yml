@@ -148,7 +148,7 @@ jobs:
         run: |
           shopt -s dotglob && cp coverage_files/* .
           coverage combine
-          coverage report --include="nomad_camels/*" --omit=*/site-packages/*
+          coverage report --include="nomad_camels/*" --omit=*/site-packages/* --show-missing
       - name: Generate HTML Coverage Report
         run: |
           coverage html --include="nomad_camels/*" --omit=*/site-packages/*
