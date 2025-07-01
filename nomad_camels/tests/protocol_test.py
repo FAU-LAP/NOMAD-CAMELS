@@ -671,6 +671,55 @@ def test_protocol_with_flyer(qtbot, tmp_path, zmq_setup):
         )
 
 
+def test_simple_sweep_with_plotly(qtbot, tmp_path, zmq_setup):
+    """Opens the config for "Simple Sweep" tries to configure it for the
+    demo instrument. Further it adds a plot and a fit to the sweep and tries to
+    run a protocol with this step."""
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import simple_sweep
+    from nomad_camels.frontpanels import plot_definer
+
+    conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_simple_sweep_protocol")
+    qtbot.addWidget(conf)
+    action = get_action_from_name(conf.add_actions, "Simple Sweep")
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge, simple_sweep.Simple_Sweep_Config)
+    conf_widge.sweep_widget.lineEdit_start.setText("-10")
+    conf_widge.sweep_widget.lineEdit_stop.setText("10")
+    conf_widge.sweep_widget.lineEdit_n_points.setText("21")
+    conf_widge.comboBox_sweep_channel.setCurrentText("demo_instrument_motorY")
+
+    table = conf_widge.read_table.tableWidget_channels
+    row = get_row_from_channel_table("demo_instrument_detectorY", table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+    row = get_row_from_channel_table("demo_instrument_motorY", table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+
+    fit = plot_definer.Fit_Info(
+        True, "Gaussian", x="demo_instrument_motorY", y="demo_instrument_detectorY"
+    )
+    plot = plot_definer.Plot_Info(
+        x_axis="demo_instrument_motorY",
+        y_axes={"formula": ["demo_instrument_detectorY"], "axis": ["left"]},
+        fits=[fit],
+        checkbox_show_in_browser=True,
+        browser_port=8050,
+    )
+    conf_widge.plot_widge.plot_data = [plot]
+
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.name = "test_simple_sweep_protocol"
+    assert "Simple Sweep (Simple_Sweep)" in prot.loop_step_dict
+    catalog_maker(tmp_path)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
+    assert "True" == "True"
+
+
 def single_variable_if(qtbot, conf, wait_in=1, n_prompt=0, n_if=0, len_prot=0):
     """
 
