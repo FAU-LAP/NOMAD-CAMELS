@@ -22,6 +22,9 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
+subprotocol_path = None
+
+
 @pytest.fixture(scope="session", autouse=True)
 def zmq_setup():
     """
@@ -184,6 +187,7 @@ def test_gradient_descent(qtbot, tmp_path, zmq_setup):
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
+@pytest.mark.order(1)
 def test_if_and_set_variables(qtbot, tmp_path, zmq_setup):
     """Opens the config for "If" tries to configure to run the correct way if
     the variables have the correct value, which is done by a "Set Variables" step."""
@@ -230,6 +234,9 @@ def test_if_and_set_variables(qtbot, tmp_path, zmq_setup):
     catalog_maker(tmp_path)
     publisher, dispatcher = zmq_setup
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
+    global subprotocol_path
+    if subprotocol_path is None:
+        subprotocol_path = str((tmp_path / (prot.name + ".cprot")).as_posix())
 
 
 def test_nd_sweep(qtbot, tmp_path, zmq_setup):
@@ -314,9 +321,113 @@ def test_read_channels(qtbot, tmp_path, zmq_setup):
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_run_subprotocol():
+@pytest.mark.order(2)
+def test_run_subprotocol(qtbot, tmp_path, zmq_setup, monkeypatch):
     """ """
-    pass
+    global subprotocol_path
+    if subprotocol_path is None:
+        raise ValueError(
+            "No subprotocol for test found! Make sure the test_if_and_set_variables is run first and works."
+        )
+
+    from nomad_camels.loop_steps import run_subprotocol, read_channels
+    from nomad_camels.utility.load_save_functions import standard_pref
+    from nomad_camels.utility import variables_handling
+
+    variables_handling.preferences = standard_pref
+
+    conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_run_subprotocol_protocol"
+    )
+    qtbot.addWidget(conf)
+    qtbot.mouseClick(
+        conf.general_settings.pushButton_add_variable, Qt.MouseButton.LeftButton
+    )
+    conf.general_settings.variable_table.model.item(0, 0).setText("condition_out")
+    conf.general_settings.variable_table.model.item(0, 1).setText("1")
+
+    action = get_action_from_name(conf.add_actions, "Read Channels")
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    conf_widge.sub_widget.checkBox_read_variables.setChecked(True)
+
+    action = get_action_from_name(conf.add_actions, "Run Subprotocol")
+    action.trigger()
+
+    def wait_selection():
+        """ """
+        select_step_by_name(conf, f"Run Subprotocol (Run_Subprotocol)")
+        conf.tree_click_sequence()
+        assert isinstance(
+            conf.loop_step_configuration_widget, run_subprotocol.Run_Subprotocol_Config
+        )
+
+    qtbot.waitUntil(wait_selection)
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge, run_subprotocol.Run_Subprotocol_Config)
+    conf_widge.path_button.set_path(subprotocol_path)
+    conf_widge.input_table.add(vals=["condition", "4"])
+    conf_widge.output_table.add(vals=["condition", "condition_out"])
+
+    action = get_action_from_name(conf.add_actions, "Read Channels")
+    action.trigger()
+
+    def wait_selection():
+        """ """
+        select_step_by_name(conf, f"Read Channels (Read_Channels)")
+        conf.tree_click_sequence()
+        assert isinstance(
+            conf.loop_step_configuration_widget, read_channels.Read_Channels_Config
+        )
+
+    qtbot.waitUntil(wait_selection)
+    conf_widge = conf.loop_step_configuration_widget
+    conf_widge.sub_widget.checkBox_read_variables.setChecked(True)
+
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.name = "test_run_subprotocol_protocol"
+    catalog_maker(tmp_path)
+    publisher, dispatcher = zmq_setup
+
+    # Import the original Prompt_Box so we can use it as a specification.
+    from unittest.mock import MagicMock
+    from nomad_camels.bluesky_handling.helper_functions import Prompt_Box
+
+    # Create a fake prompt instance (the mock) with the same interface as Prompt_Box.
+    fake_prompt = MagicMock(spec=Prompt_Box)
+    fake_prompt.done_flag = False
+    fake_prompt.helper = MagicMock()
+    fake_prompt.helper.executor = MagicMock()
+
+    # Define a side effect for the executor's emit() method:
+    def fake_emit():
+        fake_prompt.done_flag = True
+
+    fake_prompt.helper.executor.emit.side_effect = fake_emit
+
+    # Monkeypatch the Prompt_Box constructor so that whenever it is instantiated,
+    # it returns our fake_prompt
+    monkeypatch.setattr(
+        "nomad_camels.bluesky_handling.helper_functions.Prompt_Box",
+        lambda *args, **kwargs: fake_prompt,
+    )
+
+    savepath = run_test_protocol(
+        tmp_path, prot, publisher, dispatcher, return_savepath=True
+    )
+    import h5py
+
+    with h5py.File(savepath, "r") as f:
+        # Check if the output variable is set correctly
+        variable_data = f["CAMELS_entry"]["data"][
+            "test_run_subprotocol_protocol_variable_signal"
+        ]["condition_out"]
+        assert len(variable_data) == 2
+        assert variable_data[0] == 1
+        assert variable_data[1] == 0
 
 
 def test_set_channels(qtbot, tmp_path, zmq_setup):
