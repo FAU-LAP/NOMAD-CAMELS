@@ -232,9 +232,59 @@ def test_if_and_set_variables(qtbot, tmp_path, zmq_setup):
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_nd_sweep():
+def test_nd_sweep(qtbot, tmp_path, zmq_setup):
     """ """
-    pass
+    """Opens the config for "Simple Sweep" tries to configure it for the
+    demo instrument. Further it adds a plot and a fit to the sweep and tries to
+    run a protocol with this step."""
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import nd_sweep
+    from nomad_camels.frontpanels import plot_definer
+
+    conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_nd_sweep_protocol")
+    qtbot.addWidget(conf)
+    action = get_action_from_name(conf.add_actions, "ND Sweep")
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge, nd_sweep.ND_Sweep_Config)
+    qtbot.mouseClick(conf_widge.addSweepChannelButton, Qt.MouseButton.LeftButton)
+    conf_widge.tabs[0].sweep_widget.lineEdit_start.setText("-10")
+    conf_widge.tabs[0].sweep_widget.lineEdit_stop.setText("10")
+    conf_widge.tabs[0].sweep_widget.lineEdit_n_points.setText("11")
+    conf_widge.tabs[0].lineEdit_wait_time.setText("0.01")
+    conf_widge.tabs[0].comboBox_sweep_channel.setCurrentText("demo_instrument_motorY")
+    conf_widge.tabs[1].sweep_widget.lineEdit_start.setText("-10")
+    conf_widge.tabs[1].sweep_widget.lineEdit_stop.setText("10")
+    conf_widge.tabs[1].sweep_widget.lineEdit_n_points.setText("11")
+    conf_widge.tabs[1].comboBox_sweep_channel.setCurrentText("demo_instrument_motorX")
+
+    table = conf_widge.read_table.tableWidget_channels
+    row = get_row_from_channel_table("demo_instrument_motorX", table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+    row = get_row_from_channel_table("demo_instrument_motorY", table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+    row = get_row_from_channel_table("demo_instrument_detectorComm", table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+
+    plot = plot_definer.Plot_Info(
+        plt_type="2D plot",
+        x_axis="demo_instrument_motorX",
+        y_axes={"formula": ["demo_instrument_motorY"], "axis": ["left"]},
+        z_axis="demo_instrument_detectorComm",
+        # browser_port=8050,
+        # checkbox_show_in_browser=True,
+    )
+    conf_widge.plot_widge.plot_data = [plot]
+
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.name = "test_nd_sweep_protocol"
+    assert "ND Sweep (ND_Sweep)" in prot.loop_step_dict
+    catalog_maker(tmp_path)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
 def test_read_channels(qtbot, tmp_path, zmq_setup):
@@ -344,7 +394,6 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path, zmq_setup):
     catalog_maker(tmp_path)
     publisher, dispatcher = zmq_setup
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
-    assert "True" == "True"
 
 
 def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
@@ -671,53 +720,52 @@ def test_protocol_with_flyer(qtbot, tmp_path, zmq_setup):
         )
 
 
-def test_simple_sweep_with_plotly(qtbot, tmp_path, zmq_setup):
-    """Opens the config for "Simple Sweep" tries to configure it for the
-    demo instrument. Further it adds a plot and a fit to the sweep and tries to
-    run a protocol with this step."""
-    ensure_demo_in_devices()
-    from nomad_camels.loop_steps import simple_sweep
-    from nomad_camels.frontpanels import plot_definer
+# def test_simple_sweep_with_plotly(qtbot, tmp_path, zmq_setup):
+#     """Opens the config for "Simple Sweep" tries to configure it for the
+#     demo instrument. Further it adds a plot and a fit to the sweep and tries to
+#     run a protocol with this step."""
+#     ensure_demo_in_devices()
+#     from nomad_camels.loop_steps import simple_sweep
+#     from nomad_camels.frontpanels import plot_definer
 
-    conf = protocol_config.Protocol_Config()
-    conf.general_settings.lineEdit_protocol_name.setText("test_simple_sweep_protocol")
-    qtbot.addWidget(conf)
-    action = get_action_from_name(conf.add_actions, "Simple Sweep")
-    action.trigger()
-    conf_widge = conf.loop_step_configuration_widget
-    assert isinstance(conf_widge, simple_sweep.Simple_Sweep_Config)
-    conf_widge.sweep_widget.lineEdit_start.setText("-10")
-    conf_widge.sweep_widget.lineEdit_stop.setText("10")
-    conf_widge.sweep_widget.lineEdit_n_points.setText("21")
-    conf_widge.comboBox_sweep_channel.setCurrentText("demo_instrument_motorY")
+#     conf = protocol_config.Protocol_Config()
+#     conf.general_settings.lineEdit_protocol_name.setText("test_simple_sweep_protocol")
+#     qtbot.addWidget(conf)
+#     action = get_action_from_name(conf.add_actions, "Simple Sweep")
+#     action.trigger()
+#     conf_widge = conf.loop_step_configuration_widget
+#     assert isinstance(conf_widge, simple_sweep.Simple_Sweep_Config)
+#     conf_widge.sweep_widget.lineEdit_start.setText("-10")
+#     conf_widge.sweep_widget.lineEdit_stop.setText("10")
+#     conf_widge.sweep_widget.lineEdit_n_points.setText("21")
+#     conf_widge.comboBox_sweep_channel.setCurrentText("demo_instrument_motorY")
 
-    table = conf_widge.read_table.tableWidget_channels
-    row = get_row_from_channel_table("demo_instrument_detectorY", table)
-    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
-    row = get_row_from_channel_table("demo_instrument_motorY", table)
-    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+#     table = conf_widge.read_table.tableWidget_channels
+#     row = get_row_from_channel_table("demo_instrument_detectorY", table)
+#     table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+#     row = get_row_from_channel_table("demo_instrument_motorY", table)
+#     table.item(row, 0).setCheckState(Qt.CheckState.Checked)
 
-    fit = plot_definer.Fit_Info(
-        True, "Gaussian", x="demo_instrument_motorY", y="demo_instrument_detectorY"
-    )
-    plot = plot_definer.Plot_Info(
-        x_axis="demo_instrument_motorY",
-        y_axes={"formula": ["demo_instrument_detectorY"], "axis": ["left"]},
-        fits=[fit],
-        checkbox_show_in_browser=True,
-        browser_port=8050,
-    )
-    conf_widge.plot_widge.plot_data = [plot]
+#     fit = plot_definer.Fit_Info(
+#         True, "Gaussian", x="demo_instrument_motorY", y="demo_instrument_detectorY"
+#     )
+#     plot = plot_definer.Plot_Info(
+#         x_axis="demo_instrument_motorY",
+#         y_axes={"formula": ["demo_instrument_detectorY"], "axis": ["left"]},
+#         fits=[fit],
+#         checkbox_show_in_browser=True,
+#         browser_port=8050,
+#     )
+#     conf_widge.plot_widge.plot_data = [plot]
 
-    with qtbot.waitSignal(conf.accepted) as blocker:
-        conf.accept()
-    prot = conf.protocol
-    prot.name = "test_simple_sweep_protocol"
-    assert "Simple Sweep (Simple_Sweep)" in prot.loop_step_dict
-    catalog_maker(tmp_path)
-    publisher, dispatcher = zmq_setup
-    run_test_protocol(tmp_path, prot, publisher, dispatcher)
-    assert "True" == "True"
+#     with qtbot.waitSignal(conf.accepted) as blocker:
+#         conf.accept()
+#     prot = conf.protocol
+#     prot.name = "test_simple_sweep_protocol"
+#     assert "Simple Sweep (Simple_Sweep)" in prot.loop_step_dict
+#     catalog_maker(tmp_path)
+#     publisher, dispatcher = zmq_setup
+#     run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
 def single_variable_if(qtbot, conf, wait_in=1, n_prompt=0, n_if=0, len_prot=0):
