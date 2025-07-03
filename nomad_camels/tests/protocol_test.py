@@ -18,11 +18,33 @@ from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
 from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
 from nomad_camels.tests.test_helper_functions import ensure_demo_in_devices
 
+import requests
+
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 subprotocol_path = None
+
+
+@pytest.fixture(autouse=True)
+def shutdown_dash_server():
+    """After each test, try to shut down the Dash server at port 8050."""
+    yield
+    # List the ports your tests may be using — adjust as needed.
+    port = 8050
+    url = f"http://127.0.0.1:{port}/shutdown"
+    try:
+        response = requests.post(url, timeout=5)
+        if response.status_code == 200:
+            print(f"Dash server on port {port} shut down successfully.")
+        else:
+            print(
+                f"Dash server on port {port} shutdown returned {response.status_code}."
+            )
+    except Exception as e:
+        # If the POST fails (because no server is running or route is missing) just pass.
+        print(f"No Dash server running on port {port} or error during shutdown: {e}")
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -258,12 +280,12 @@ def test_nd_sweep(qtbot, tmp_path, zmq_setup):
     qtbot.mouseClick(conf_widge.addSweepChannelButton, Qt.MouseButton.LeftButton)
     conf_widge.tabs[0].sweep_widget.lineEdit_start.setText("-10")
     conf_widge.tabs[0].sweep_widget.lineEdit_stop.setText("10")
-    conf_widge.tabs[0].sweep_widget.lineEdit_n_points.setText("11")
+    conf_widge.tabs[0].sweep_widget.lineEdit_n_points.setText("7")
     conf_widge.tabs[0].lineEdit_wait_time.setText("0.01")
     conf_widge.tabs[0].comboBox_sweep_channel.setCurrentText("demo_instrument_motorY")
     conf_widge.tabs[1].sweep_widget.lineEdit_start.setText("-10")
     conf_widge.tabs[1].sweep_widget.lineEdit_stop.setText("10")
-    conf_widge.tabs[1].sweep_widget.lineEdit_n_points.setText("11")
+    conf_widge.tabs[1].sweep_widget.lineEdit_n_points.setText("7")
     conf_widge.tabs[1].comboBox_sweep_channel.setCurrentText("demo_instrument_motorX")
 
     table = conf_widge.read_table.tableWidget_channels

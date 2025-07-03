@@ -46,6 +46,7 @@ default_colors = [
     "#17becf",
 ]
 
+
 def run_dash_app(
     web_port,
     wait_for_dash_app_event,
@@ -165,6 +166,14 @@ def run_dash_app(
         except ValueError:
             # The error here might happen if the JSON is malformed or data is missing.
             return f"Invalid data value: {fit_result}", 400
+
+    @dash_app.server.route("/shutdown", methods=["GET"])
+    def shutdown():
+        func = flask_request.environ.get("werkzeug.server.shutdown")
+        if func is None:
+            raise RuntimeError("Not running with the Werkzeug Server")
+        func()
+        return "Server shutting down..."
 
     @dash_app.server.route("/add_data", methods=["GET"])
     def add_data():
@@ -296,6 +305,7 @@ def run_dash_app(
     # Run the Dash server (blocking call).
     dash_app.run(host="127.0.0.1", port=web_port, debug=False, use_reloader=False)
 
+
 class PlotlyLiveCallback(CallbackBase):
     """
     A Bluesky callback that caches x- and y-values whenever an event is emitted.
@@ -413,9 +423,7 @@ class PlotlyLiveCallback(CallbackBase):
             return
 
         # Check to see if doc["data"] contains keys matching any on the self.ys strings or self.x. This means that plots are only tried to be updated if the data is present.
-        if not (
-            any(key in s for key in doc["data"] for s in self.y_names)
-        ):
+        if not (any(key in s for key in doc["data"] for s in self.y_names)):
             return
         # Try to retrieve x value from doc["data"], or fallback to evaluator if missing.
         try:
@@ -571,6 +579,14 @@ def run_dash_app_2d(
     def status():
         return "OK", 200
 
+    @dash_app.server.route("/shutdown", methods=["GET"])
+    def shutdown():
+        func = flask_request.environ.get("werkzeug.server.shutdown")
+        if func is None:
+            raise RuntimeError("Not running with the Werkzeug Server")
+        func()
+        return "Server shutting down..."
+
     @dash_app.server.route("/add_data_2d", methods=["GET"])
     def add_data_2d():
         """
@@ -619,11 +635,7 @@ def run_dash_app_2d(
             )
         )
         # Update layout to include axis labels and title
-        fig.update_layout(
-            title=title,
-            xaxis_title=xlabel,
-            yaxis_title=ylabel
-        )
+        fig.update_layout(title=title, xaxis_title=xlabel, yaxis_title=ylabel)
         return fig
 
     # Signal that the Dash server has started.
