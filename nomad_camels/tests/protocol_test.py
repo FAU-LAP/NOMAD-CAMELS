@@ -279,8 +279,8 @@ def test_nd_sweep(qtbot, tmp_path, zmq_setup):
         x_axis="demo_instrument_motorX",
         y_axes={"formula": ["demo_instrument_motorY"], "axis": ["left"]},
         z_axis="demo_instrument_detectorComm",
-        # browser_port=8050,
-        # checkbox_show_in_browser=True,
+        browser_port=8050,
+        checkbox_show_in_browser=True,
     )
     conf_widge.plot_widge.plot_data = [plot]
 
@@ -494,6 +494,8 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path, zmq_setup):
         x_axis="demo_instrument_motorY",
         y_axes={"formula": ["demo_instrument_detectorY"], "axis": ["left"]},
         fits=[fit],
+        browser_port=8050,
+        checkbox_show_in_browser=True,
     )
     conf_widge.plot_widge.plot_data = [plot]
 
