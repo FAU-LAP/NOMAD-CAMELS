@@ -18,10 +18,16 @@ from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
 from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
 from nomad_camels.tests.test_helper_functions import ensure_demo_in_devices
 
-import requests
+import socket
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+
+def get_available_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
 
 
 subprotocol_path = None
@@ -281,7 +287,7 @@ def test_nd_sweep(qtbot, tmp_path, zmq_setup):
         x_axis="demo_instrument_motorX",
         y_axes={"formula": ["demo_instrument_motorY"], "axis": ["left"]},
         z_axis="demo_instrument_detectorComm",
-        browser_port=8050,
+        browser_port=get_available_port(),
         checkbox_show_in_browser=True,
     )
     conf_widge.plot_widge.plot_data = [plot]
@@ -496,7 +502,7 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path, zmq_setup):
         x_axis="demo_instrument_motorY",
         y_axes={"formula": ["demo_instrument_detectorY"], "axis": ["left"]},
         fits=[fit],
-        browser_port=8051,
+        browser_port=get_available_port(),
         checkbox_show_in_browser=True,
     )
     conf_widge.plot_widge.plot_data = [plot]
