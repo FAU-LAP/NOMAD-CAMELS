@@ -848,7 +848,9 @@ def test_simple_sweep_with_plotly(qtbot, tmp_path, zmq_setup):
     from nomad_camels.frontpanels import plot_definer
 
     conf = protocol_config.Protocol_Config()
-    conf.general_settings.lineEdit_protocol_name.setText("test_simple_sweep_protocol")
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_simple_sweep_plotly_protocol"
+    )
     qtbot.addWidget(conf)
     action = get_action_from_name(conf.add_actions, "Simple Sweep")
     action.trigger()
@@ -880,7 +882,7 @@ def test_simple_sweep_with_plotly(qtbot, tmp_path, zmq_setup):
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
     prot = conf.protocol
-    prot.name = "test_simple_sweep_protocol"
+    prot.name = "test_simple_sweep_plotly_protocol"
     assert "Simple Sweep (Simple_Sweep)" in prot.loop_step_dict
     catalog_maker(tmp_path)
     publisher, dispatcher = zmq_setup
