@@ -22,6 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Fixes:
 - fixed changing settings of manual controls
 - stopping stage control now more stable
+- fixed renaming instruments not taking effect sometimes
 
 ### 1.8.6
 Fixes:
