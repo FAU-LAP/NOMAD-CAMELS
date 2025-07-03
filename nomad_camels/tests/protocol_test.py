@@ -27,26 +27,6 @@ if sys.platform == "win32":
 subprotocol_path = None
 
 
-@pytest.fixture(autouse=True)
-def shutdown_dash_server():
-    """After each test, try to shut down the Dash server at port 8050."""
-    yield
-    # List the ports your tests may be using — adjust as needed.
-    port = 8050
-    url = f"http://127.0.0.1:{port}/shutdown"
-    try:
-        response = requests.post(url, timeout=5)
-        if response.status_code == 200:
-            print(f"Dash server on port {port} shut down successfully.")
-        else:
-            print(
-                f"Dash server on port {port} shutdown returned {response.status_code}."
-            )
-    except Exception as e:
-        # If the POST fails (because no server is running or route is missing) just pass.
-        print(f"No Dash server running on port {port} or error during shutdown: {e}")
-
-
 @pytest.fixture(scope="session", autouse=True)
 def zmq_setup():
     """

@@ -167,13 +167,13 @@ def run_dash_app(
             # The error here might happen if the JSON is malformed or data is missing.
             return f"Invalid data value: {fit_result}", 400
 
-    @dash_app.server.route("/shutdown", methods=["GET"])
-    def shutdown():
-        func = flask_request.environ.get("werkzeug.server.shutdown")
-        if func is None:
-            raise RuntimeError("Not running with the Werkzeug Server")
-        func()
-        return "Server shutting down..."
+    # @dash_app.server.route("/shutdown", methods=["GET"])
+    # def shutdown():
+    #     func = flask_request.environ.get("werkzeug.server.shutdown")
+    #     if func is None:
+    #         raise RuntimeError("Not running with the Werkzeug Server")
+    #     func()
+    #     return "Server shutting down..."
 
     @dash_app.server.route("/add_data", methods=["GET"])
     def add_data():
@@ -579,13 +579,13 @@ def run_dash_app_2d(
     def status():
         return "OK", 200
 
-    @dash_app.server.route("/shutdown", methods=["GET"])
-    def shutdown():
-        func = flask_request.environ.get("werkzeug.server.shutdown")
-        if func is None:
-            raise RuntimeError("Not running with the Werkzeug Server")
-        func()
-        return "Server shutting down..."
+    # @dash_app.server.route("/shutdown", methods=["GET"])
+    # def shutdown():
+    #     func = flask_request.environ.get("werkzeug.server.shutdown")
+    #     if func is None:
+    #         raise RuntimeError("Not running with the Werkzeug Server")
+    #     func()
+    #     return "Server shutting down..."
 
     @dash_app.server.route("/add_data_2d", methods=["GET"])
     def add_data_2d():
