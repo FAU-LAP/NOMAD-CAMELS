@@ -962,7 +962,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         from nomad_camels.ui_widgets.toast_notification import handle_validation_error
 
         self.active_sample = self.comboBox_sample.currentText()
-        headers = ["name", "sample_id", "description", "owner"]
+        headers = ["sample_id", "name", "description", "owner"]
         tableData = pd.DataFrame.from_dict(self.sampledata, "index")
         if not "owner" in tableData.columns:
             tableData["owner"] = ""
@@ -981,14 +981,26 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             tableData=tableData,
             default_values={"owner": self.active_user},
             check_string_function=variable_tool_tip_box.check_no_special_characters,
-            checkstrings=[0],
+            checkstrings=[1],  # Now checks 'name' column (index 1)
         )
         if dialog.exec():
             # Changing the returned dict to dataframe and back to ensure proper formatting.
             dat = dialog.get_data()
             
+            # Validate sample_id uniqueness
+            sample_ids = [str(sid).strip() for sid in dat["sample_id"]]
+            if len(sample_ids) != len(set(sample_ids)):
+                error_message = "Each Sample ID must be unique. Please ensure there are no duplicate Sample IDs."
+                handle_validation_error(
+                    error_message=error_message,
+                    title="Duplicate Sample ID",
+                    parent=self
+                )
+                # Reload the sample data to remove the duplicate from the table
+                self.load_sample_data()
+                return
+            
             # Validate sample names and show toast notifications for errors
-            validation_failed = False
             for i, d in enumerate(dat["name"]):
                 if re.search(r"[^\w\s]", str(d)):
                     error_message = f'Sample name "{d}" contains special characters.\nPlease use only letters, numbers and whitespace.'
@@ -997,25 +1009,29 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         title="Invalid Sample Name",
                         parent=self
                     )
-                    validation_failed = True
-                    break
+                    return
                 dat["name"][i] = d.strip()
             
-            # Only proceed if validation passed
-            if validation_failed:
-                return
-            
-            dat["Name2"] = dat["name"]
+            # Create a unique index for the DataFrame to avoid pandas error
+            # Use sample_id as the unique identifier instead of name
+            dat["unique_index"] = dat["sample_id"]
             data = pd.DataFrame(dat)
-            data.set_index("Name2", inplace=True)
-            data_dict = data.to_dict("index")
+            data.set_index("unique_index", inplace=True)
+            
+            # Convert to dictionary format expected by the rest of the code
+            data_dict = {}
+            for idx, row in data.iterrows():
+                sample_name = row["name"]
+                data_dict[sample_name] = row.to_dict()
+            
+            # Update the sample data
             removers = []
             for key, value in self.sampledata.items():
                 if value["owner"] == self.active_user and key not in data_dict:
                     removers.append(key)
             for key in removers:
                 self.sampledata.pop(key)
-            self.sampledata.update(data.to_dict("index"))
+            self.sampledata.update(data_dict)
             self.update_shown_samples()
             self.save_sample_data()
 
