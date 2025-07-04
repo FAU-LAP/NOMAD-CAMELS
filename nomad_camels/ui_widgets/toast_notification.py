@@ -1,16 +1,16 @@
 """
 Toast Notification System for NOMAD CAMELS
 
-This module provides a professional toast notification system that can be used
-throughout the application for better user experience. It includes both toast
-notifications and enhanced error handling capabilities.
+This module provides an elegant toast notification system based on QMessageBox
+for better user experience. It includes both toast notifications and enhanced 
+error handling capabilities.
 
 Features:
 - Toast notifications with different types (info, warning, error, success)
 - Auto-dismiss functionality
-- Customizable duration and styling
 - Non-blocking notifications
 - Enhanced error handling with toast integration
+- Elegant UI using native QMessageBox styling
 - Modular design for easy integration
 """
 
@@ -19,28 +19,18 @@ from typing import Optional, Union, Callable, Dict, Any
 from enum import Enum
 from dataclasses import dataclass
 from PySide6.QtWidgets import (
-    QWidget,
-    QLabel,
-    QVBoxLayout,
-    QHBoxLayout,
-    QFrame,
-    QGraphicsOpacityEffect,
-    QApplication,
     QMessageBox,
-    QGraphicsDropShadowEffect,
+    QApplication,
+    QWidget,
 )
 from PySide6.QtCore import (
     Qt,
     QTimer,
-    QPropertyAnimation,
-    QEasingCurve,
-    QPoint,
-    Signal,
-    QThread,
     QObject,
-    QRect,
+    Signal,
+    QEvent,
 )
-from PySide6.QtGui import QFont, QPalette, QColor, QIcon, QPixmap, QPainter, QPen
+from PySide6.QtGui import QIcon
 
 
 class ToastType(Enum):
@@ -54,24 +44,20 @@ class ToastType(Enum):
 @dataclass
 class ToastConfig:
     """Configuration class for toast notifications."""
-    duration: int = 5000  # milliseconds
+    duration: int = 2000  # milliseconds (2 seconds)
     position: str = "top-right"  # top-right, top-left, bottom-right, bottom-left, center
-    max_width: int = 400
-    min_width: int = 300
     auto_dismiss: bool = True
     show_icon: bool = True
-    show_close_button: bool = True
-    animation_duration: int = 300
     stack_notifications: bool = True
     max_stack_count: int = 5
 
 
-class ToastNotification(QFrame):
+class ToastMessageBox(QMessageBox):
     """
-    A professional toast notification widget.
+    A toast notification widget based on QMessageBox for elegant UI.
     
-    This widget provides a modern, non-blocking notification system that can be
-    used throughout the application for better user experience.
+    This widget provides a modern, non-blocking notification system that uses
+    the native QMessageBox styling for consistency and elegance.
     """
     
     # Signals
@@ -106,18 +92,15 @@ class ToastNotification(QFrame):
         self.config = config or ToastConfig()
         self.callback = callback
         self.dismiss_timer = None
-        self.animation = None
         self.is_dismissed = False
         self.main_window = self._find_main_window()
-        self.opacity_effect = None
-        self.shadow_effect = None
         
         self._setup_ui()
-        self._setup_styling()
-        self._setup_effects()
         
         if self.config.auto_dismiss:
             self._start_dismiss_timer()
+        
+        self._setup_window_resize_handling()
     
     def _find_main_window(self) -> Optional[QWidget]:
         """Find the main application window."""
@@ -128,187 +111,48 @@ class ToastNotification(QFrame):
                 if hasattr(current, 'windowTitle') and 'NOMAD CAMELS' in current.windowTitle():
                     return current
                 current = current.parent()
+        
+        # If no parent with NOMAD CAMELS title, try to find any top-level window
+        app = QApplication.instance()
+        if app:
+            for widget in app.topLevelWidgets():
+                if widget.isVisible() and hasattr(widget, 'windowTitle'):
+                    return widget
         return None
     
     def _setup_ui(self):
         """Setup the user interface components."""
-        self.setWindowFlags(Qt.ToolTip | Qt.FramelessWindowHint)
-        # Remove translucent background to make it completely opaque
-        # self.setAttribute(Qt.WA_TranslucentBackground)
+        # Set window flags for toast-like behavior
+        self.setWindowFlags(self.windowFlags() | Qt.ToolTip | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_ShowWithoutActivating)
         
-        # Main layout
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(16, 16, 16, 16)
-        layout.setSpacing(12)
+        # Set text and title
+        self.setText(self.message)
+        if self.title:
+            self.setWindowTitle(f"{self.title} - NOMAD CAMELS")
+        else:
+            self.setWindowTitle("NOMAD CAMELS")
         
-        # Header row (title + close button)
-        if self.title or self.config.show_close_button:
-            header_layout = QHBoxLayout()
-            header_layout.setSpacing(12)
-            
-            # Icon
-            if self.config.show_icon:
-                icon_label = QLabel()
-                icon_label.setFixedSize(28, 28)
-                icon_label.setPixmap(self._get_icon_pixmap())
-                header_layout.addWidget(icon_label)
-            
-            # Title
-            if self.title:
-                title_label = QLabel(self.title)
-                title_label.setFont(QFont("Segoe UI", 18, QFont.Weight.Bold))
-                title_label.setWordWrap(True)
-                header_layout.addWidget(title_label)
-            
-            header_layout.addStretch()
-            
-            # Close button
-            if self.config.show_close_button:
-                close_button = QLabel("✕")
-                close_button.setFixedSize(28, 28)
-                close_button.setAlignment(Qt.AlignCenter)
-                close_button.setStyleSheet("""
-                    QLabel {
-                        color: #999;
-                        font-size: 18px;
-                        font-weight: bold;
-                        background: transparent;
-                        border: none;
-                        border-radius: 14px;
-                    }
-                    QLabel:hover {
-                        color: #fff;
-                        background-color: rgba(255, 255, 255, 0.2);
-                    }
-                """)
-                close_button.mousePressEvent = lambda e: self.dismiss()
-                header_layout.addWidget(close_button)
-            
-            layout.addLayout(header_layout)
+        # Set icon based on toast type
+        if self.config.show_icon:
+            self._set_icon()
         
-        # Message
-        message_label = QLabel(self.message)
-        message_label.setWordWrap(True)
-        message_label.setFont(QFont("Segoe UI", 14))
-        layout.addWidget(message_label)
+        # Remove standard buttons for toast-like appearance
+        self.setStandardButtons(QMessageBox.NoButton)
         
-        # Set size constraints
-        self.setMaximumWidth(self.config.max_width)
-        self.setMinimumWidth(self.config.min_width)
-        self.adjustSize()
+        # Connect signals
+        self.accepted.connect(self._on_clicked)
+        self.rejected.connect(self._on_clicked)
     
-    def _setup_styling(self):
-        """Setup the visual styling based on toast type."""
-        # Color schemes for different toast types with improved colors
-        color_schemes = {
-            ToastType.INFO: {
-                "bg": "#000000",
-                "border": "#2196F3",
-                "text": "#FFFFFF",
-                "icon_bg": "#2196F3"
-            },
-            ToastType.SUCCESS: {
-                "bg": "#000000",
-                "border": "#4CAF50",
-                "text": "#FFFFFF",
-                "icon_bg": "#4CAF50"
-            },
-            ToastType.WARNING: {
-                "bg": "#000000",
-                "border": "#FF9800",
-                "text": "#FFFFFF",
-                "icon_bg": "#FF9800"
-            },
-            ToastType.ERROR: {
-                "bg": "#000000",
-                "border": "#FF4444",
-                "text": "#FFFFFF",
-                "icon_bg": "#FF4444"
-            }
+    def _set_icon(self):
+        """Set the appropriate icon for the toast type."""
+        icon_map = {
+            ToastType.INFO: QMessageBox.Information,
+            ToastType.SUCCESS: QMessageBox.Information,  # Use Information for success
+            ToastType.WARNING: QMessageBox.Warning,
+            ToastType.ERROR: QMessageBox.Critical
         }
-        
-        colors = color_schemes[self.toast_type]
-        
-        # Modern styling with completely opaque black background
-        style = f"""
-            QFrame {{
-                background-color: {colors['bg']};
-                border: 2px solid {colors['border']};
-                border-radius: 12px;
-                color: {colors['text']};
-                font-family: 'Segoe UI', Arial, sans-serif;
-                font-size: 14px;
-                line-height: 1.5;
-            }}
-            QLabel {{
-                color: {colors['text']};
-                background: transparent;
-                border: none;
-            }}
-        """
-        
-        self.setStyleSheet(style)
-    
-    def _setup_effects(self):
-        """Setup both shadow and opacity effects properly."""
-        # Create a combined effect container
-        self.shadow_effect = QGraphicsDropShadowEffect()
-        self.shadow_effect.setBlurRadius(20)
-        self.shadow_effect.setColor(QColor(0, 0, 0, 60))
-        self.shadow_effect.setOffset(0, 4)
-        
-        self.opacity_effect = QGraphicsOpacityEffect()
-        self.opacity_effect.setOpacity(0.0)
-        
-        # Apply shadow effect first
-        self.setGraphicsEffect(self.shadow_effect)
-    
-    def _get_icon_pixmap(self) -> QPixmap:
-        """Get the appropriate icon pixmap for the toast type."""
-        # Create a modern circular icon
-        pixmap = QPixmap(24, 24)
-        pixmap.fill(Qt.transparent)
-        
-        painter = QPainter(pixmap)
-        painter.setRenderHint(QPainter.Antialiasing)
-        
-        # Color mapping for icons
-        color_map = {
-            ToastType.INFO: QColor("#2196F3"),     # Blue
-            ToastType.SUCCESS: QColor("#4CAF50"),  # Green
-            ToastType.WARNING: QColor("#FF9800"),  # Orange
-            ToastType.ERROR: QColor("#D32F2F")     # Dark Red (a shade of red)
-        }
-        color = color_map[self.toast_type]
-        
-        # Draw circular background
-        painter.setBrush(color)
-        painter.setPen(QPen(color, 1))
-        painter.drawEllipse(2, 2, 20, 20)
-        
-        # Draw icon symbol based on type
-        painter.setPen(QPen(Qt.white, 2))
-        if self.toast_type == ToastType.INFO:
-            # Info icon (i)
-            painter.drawText(QRect(0, 0, 24, 24), Qt.AlignCenter, "i")
-        elif self.toast_type == ToastType.SUCCESS:
-            # Checkmark
-            painter.drawLine(7, 12, 11, 16)
-            painter.drawLine(11, 16, 17, 8)
-        elif self.toast_type == ToastType.WARNING:
-            # Warning triangle
-            painter.drawLine(12, 5, 5, 19)
-            painter.drawLine(5, 19, 19, 19)
-            painter.drawLine(19, 19, 12, 5)
-            painter.drawEllipse(11, 13, 2, 2)
-        elif self.toast_type == ToastType.ERROR:
-            # X mark
-            painter.drawLine(7, 7, 17, 17)
-            painter.drawLine(17, 7, 7, 17)
-        
-        painter.end()
-        return pixmap
+        self.setIcon(icon_map.get(self.toast_type, QMessageBox.Information))
     
     def _start_dismiss_timer(self):
         """Start the auto-dismiss timer."""
@@ -317,73 +161,73 @@ class ToastNotification(QFrame):
         self.dismiss_timer.start(self.config.duration)
     
     def show_notification(self):
-        """Show the notification with entrance animation."""
+        """Show the notification with proper positioning."""
+        # Make sure the toast is visible and properly sized
+        self.adjustSize()
         self._position_notification()
         self.show()
-        
-        # Create a new opacity effect for animation
-        self.opacity_effect = QGraphicsOpacityEffect()
-        self.opacity_effect.setOpacity(0.0)
-        self.setGraphicsEffect(self.opacity_effect)
-        
-        # Entrance animation
-        self.animation = QPropertyAnimation(self.opacity_effect, b"opacity")
-        self.animation.setDuration(self.config.animation_duration)
-        self.animation.setStartValue(0.0)
-        self.animation.setEndValue(1.0)
-        self.animation.setEasingCurve(QEasingCurve.OutCubic)
-        self.animation.start()
+        self.raise_()  # Bring to front
+        self.activateWindow()  # Ensure it's active
     
     def _position_notification(self):
-        """Position the notification relative to the main window or screen."""
-        if self.main_window and self.main_window.isVisible():
-            # Position relative to main window
-            window_geometry = self.main_window.geometry()
+        """Position the notification inside the main window."""
+        # Get the notification size first
+        notification_size = self.size()
+        if notification_size.width() <= 0 or notification_size.height() <= 0:
+            # If size is not valid, adjust size first
+            self.adjustSize()
             notification_size = self.size()
+        
+        if self.main_window and self.main_window.isVisible():
+            # Get the main window's position and size
+            window_geometry = self.main_window.geometry()
             
-            # Calculate positions relative to main window
+            # Calculate positions inside the main window with margins
+            margin = 20  # Small margin from window edges
             positions = {
-                "top-right": QPoint(
-                    window_geometry.x() + window_geometry.width() - notification_size.width() - 20,
-                    window_geometry.y() + 20
+                "top-right": (
+                    window_geometry.x() + window_geometry.width() - notification_size.width() - margin,
+                    window_geometry.y() + margin
                 ),
-                "top-left": QPoint(
-                    window_geometry.x() + 20,
-                    window_geometry.y() + 20
+                "top-left": (
+                    window_geometry.x() + margin,
+                    window_geometry.y() + margin
                 ),
-                "bottom-right": QPoint(
-                    window_geometry.x() + window_geometry.width() - notification_size.width() - 20,
-                    window_geometry.y() + window_geometry.height() - notification_size.height() - 20
+                "bottom-right": (
+                    window_geometry.x() + window_geometry.width() - notification_size.width() - margin,
+                    window_geometry.y() + window_geometry.height() - notification_size.height() - margin
                 ),
-                "bottom-left": QPoint(
-                    window_geometry.x() + 20,
-                    window_geometry.y() + window_geometry.height() - notification_size.height() - 20
+                "bottom-left": (
+                    window_geometry.x() + margin,
+                    window_geometry.y() + window_geometry.height() - notification_size.height() - margin
                 ),
-                "center": QPoint(
+                "center": (
                     window_geometry.x() + (window_geometry.width() - notification_size.width()) // 2,
                     window_geometry.y() + (window_geometry.height() - notification_size.height()) // 2
                 )
             }
+            
+            pos = positions.get(self.config.position, positions["top-right"])
+            self.move(pos[0], pos[1])
         else:
             # Fallback to screen positioning
             screen = QApplication.primaryScreen().geometry()
-            notification_size = self.size()
             
             positions = {
-                "top-right": QPoint(screen.width() - notification_size.width() - 20, 20),
-                "top-left": QPoint(20, 20),
-                "bottom-right": QPoint(screen.width() - notification_size.width() - 20, 
-                                     screen.height() - notification_size.height() - 20),
-                "bottom-left": QPoint(20, screen.height() - notification_size.height() - 20),
-                "center": QPoint((screen.width() - notification_size.width()) // 2,
-                               (screen.height() - notification_size.height()) // 2)
+                "top-right": (screen.width() - notification_size.width() - 20, 20),
+                "top-left": (20, 20),
+                "bottom-right": (screen.width() - notification_size.width() - 20, 
+                               screen.height() - notification_size.height() - 20),
+                "bottom-left": (20, screen.height() - notification_size.height() - 20),
+                "center": ((screen.width() - notification_size.width()) // 2,
+                          (screen.height() - notification_size.height()) // 2)
             }
-        
-        pos = positions.get(self.config.position, positions["top-right"])
-        self.move(pos)
+            
+            pos = positions.get(self.config.position, positions["top-right"])
+            self.move(pos[0], pos[1])
     
     def dismiss(self):
-        """Dismiss the notification with exit animation."""
+        """Dismiss the notification."""
         if self.is_dismissed:
             return
         
@@ -392,33 +236,48 @@ class ToastNotification(QFrame):
         if self.dismiss_timer:
             self.dismiss_timer.stop()
         
-        # Create a new opacity effect for exit animation
-        if self.opacity_effect is None:
-            self.opacity_effect = QGraphicsOpacityEffect()
-            self.opacity_effect.setOpacity(1.0)
-            self.setGraphicsEffect(self.opacity_effect)
-        
-        # Exit animation
-        self.animation = QPropertyAnimation(self.opacity_effect, b"opacity")
-        self.animation.setDuration(self.config.animation_duration)
-        self.animation.setStartValue(1.0)
-        self.animation.setEndValue(0.0)
-        self.animation.setEasingCurve(QEasingCurve.InCubic)
-        self.animation.finished.connect(self._on_dismiss_finished)
-        self.animation.start()
-    
-    def _on_dismiss_finished(self):
-        """Handle the completion of dismiss animation."""
         self.hide()
         self.dismissed.emit()
         self.deleteLater()
     
-    def mousePressEvent(self, event):
-        """Handle mouse press events."""
-        if event.button() == Qt.LeftButton and self.callback:
+    def _on_clicked(self):
+        """Handle click events."""
+        if self.callback:
             self.callback()
-            self.clicked.emit()
-        super().mousePressEvent(event)
+        self.clicked.emit()
+        self.dismiss()
+    
+    def _setup_window_resize_handling(self):
+        """Setup window resize event handling for dynamic positioning."""
+        if self.main_window:
+            # Install event filter on main window to catch resize events
+            self.main_window.installEventFilter(self)
+    
+    def eventFilter(self, obj, event):
+        """Filter events to handle window resize."""
+        if obj == self.main_window and event.type() == QEvent.Resize:
+            # Reposition toast when main window is resized
+            self._position_notification()
+        elif obj == self.main_window and event.type() == QEvent.Move:
+            # Reposition toast when main window is moved
+            self._position_notification()
+        elif obj == self.main_window and event.type() == QEvent.WindowStateChange:
+            # Handle window state changes (minimize/maximize/restore)
+            self._handle_window_state_change()
+        elif event.type() == QEvent.ScreenChangeInternal:
+            # Handle screen geometry changes
+            self._position_notification()
+        return super().eventFilter(obj, event)
+    
+    def _handle_window_state_change(self):
+        """Handle window state changes."""
+        if self.main_window.isMinimized():
+            # Hide toast when window is minimized
+            self.hide()
+        else:
+            # Show and reposition toast when window is restored
+            self.show()
+            self._position_notification()
 
 
 class ToastManager(QObject):
@@ -432,9 +291,73 @@ class ToastManager(QObject):
     def __init__(self, parent: Optional[QWidget] = None):
         """Initialize the toast manager."""
         super().__init__(parent)
-        self.active_toasts: Dict[int, ToastNotification] = {}
+        self.active_toasts: Dict[int, ToastMessageBox] = {}
         self.toast_counter = 0
         self.default_config = ToastConfig()
+        self.main_window = self._find_main_window()
+        self._setup_window_resize_handling()
+    
+    def _find_main_window(self) -> Optional[QWidget]:
+        """Find the main application window."""
+        if self.parent():
+            # Walk up the parent hierarchy to find the main window
+            current = self.parent()
+            while current:
+                if hasattr(current, 'windowTitle') and 'NOMAD CAMELS' in current.windowTitle():
+                    return current
+                current = current.parent()
+        
+        # If no parent with NOMAD CAMELS title, try to find any top-level window
+        app = QApplication.instance()
+        if app:
+            for widget in app.topLevelWidgets():
+                if widget.isVisible() and hasattr(widget, 'windowTitle'):
+                    return widget
+        return None
+    
+    def _setup_window_resize_handling(self):
+        """Setup window resize event handling for dynamic positioning."""
+        if self.main_window:
+            # Install event filter on main window to catch resize events
+            self.main_window.installEventFilter(self)
+    
+    def eventFilter(self, obj, event):
+        """Filter events to handle window resize."""
+        if obj == self.main_window and event.type() == QEvent.Resize:
+            # Reposition all active toasts when main window is resized
+            self._reposition_all_toasts()
+        elif obj == self.main_window and event.type() == QEvent.Move:
+            # Reposition all active toasts when main window is moved
+            self._reposition_all_toasts()
+        elif obj == self.main_window and event.type() == QEvent.WindowStateChange:
+            # Handle window state changes (minimize/maximize/restore)
+            self._handle_window_state_change()
+        elif event.type() == QEvent.ScreenChangeInternal:
+            # Handle screen geometry changes
+            self._reposition_all_toasts()
+        return super().eventFilter(obj, event)
+    
+    def _reposition_all_toasts(self):
+        """Reposition all active toast notifications."""
+        if not self.active_toasts:
+            return
+        
+        # Get all toasts and their configurations
+        toasts_with_configs = []
+        for toast_id, toast in self.active_toasts.items():
+            toasts_with_configs.append((toast_id, toast))
+        
+        # Clear active toasts temporarily
+        self.active_toasts.clear()
+        
+        # Reposition each toast
+        for toast_id, toast in toasts_with_configs:
+            if toast.isVisible():
+                self.active_toasts[toast_id] = toast
+                if toast.config.stack_notifications:
+                    self._stack_notification(toast)
+                else:
+                    self._position_notification(toast)
     
     def show_toast(
         self,
@@ -460,7 +383,7 @@ class ToastManager(QObject):
         toast_config = config or self.default_config
         
         # Create toast notification
-        toast = ToastNotification(
+        toast = ToastMessageBox(
             message=message,
             title=title,
             toast_type=toast_type,
@@ -488,73 +411,88 @@ class ToastManager(QObject):
         
         return toast_id
     
-    def _stack_notification(self, toast: ToastNotification):
+    def _stack_notification(self, toast: ToastMessageBox):
         """Stack the notification with existing ones."""
         if len(self.active_toasts) >= toast.config.max_stack_count:
             # Remove oldest toast
             oldest_id = min(self.active_toasts.keys())
             self._remove_toast(oldest_id)
         
-        # Adjust position for stacking
+        # Calculate position based on current stack
         main_window = toast.main_window
         if main_window and main_window.isVisible():
             window_geometry = main_window.geometry()
             toast_size = toast.size()
             
-            # Calculate position based on stack
-            stack_index = len(self.active_toasts)
-            offset_y = stack_index * (toast_size.height() + 10)
+            # Count visible toasts for this position
+            visible_count = 0
+            for existing_toast in self.active_toasts.values():
+                if (existing_toast.isVisible() and 
+                    existing_toast.config.position == toast.config.position):
+                    visible_count += 1
+            
+            # Calculate offset based on visible count
+            offset_y = visible_count * (toast_size.height() + 10)
+            margin = 20  # Small margin from window edges
             
             if toast.config.position == "top-right":
-                pos = QPoint(
-                    window_geometry.x() + window_geometry.width() - toast_size.width() - 20,
-                    window_geometry.y() + 20 + offset_y
+                pos = (
+                    window_geometry.x() + window_geometry.width() - toast_size.width() - margin,
+                    window_geometry.y() + margin + offset_y
                 )
             elif toast.config.position == "top-left":
-                pos = QPoint(
-                    window_geometry.x() + 20,
-                    window_geometry.y() + 20 + offset_y
+                pos = (
+                    window_geometry.x() + margin,
+                    window_geometry.y() + margin + offset_y
                 )
             elif toast.config.position == "bottom-right":
-                pos = QPoint(
-                    window_geometry.x() + window_geometry.width() - toast_size.width() - 20,
-                    window_geometry.y() + window_geometry.height() - toast_size.height() - 20 - offset_y
+                pos = (
+                    window_geometry.x() + window_geometry.width() - toast_size.width() - margin,
+                    window_geometry.y() + window_geometry.height() - toast_size.height() - margin - offset_y
                 )
             elif toast.config.position == "bottom-left":
-                pos = QPoint(
-                    window_geometry.x() + 20,
-                    window_geometry.y() + window_geometry.height() - toast_size.height() - 20 - offset_y
+                pos = (
+                    window_geometry.x() + margin,
+                    window_geometry.y() + window_geometry.height() - toast_size.height() - margin - offset_y
                 )
             else:  # center
-                pos = QPoint(
+                pos = (
                     window_geometry.x() + (window_geometry.width() - toast_size.width()) // 2,
                     window_geometry.y() + (window_geometry.height() - toast_size.height()) // 2
                 )
+            
+            toast.move(pos[0], pos[1])
         else:
             # Fallback to screen positioning
             screen = QApplication.primaryScreen().geometry()
             toast_size = toast.size()
             
-            # Calculate position based on stack
-            stack_index = len(self.active_toasts)
-            offset_y = stack_index * (toast_size.height() + 10)
+            # Count visible toasts for this position
+            visible_count = 0
+            for existing_toast in self.active_toasts.values():
+                if (existing_toast.isVisible() and 
+                    existing_toast.config.position == toast.config.position):
+                    visible_count += 1
+            
+            # Calculate offset based on visible count
+            offset_y = visible_count * (toast_size.height() + 10)
             
             if toast.config.position == "top-right":
-                pos = QPoint(screen.width() - toast_size.width() - 20, 20 + offset_y)
+                pos = (screen.width() - toast_size.width() - 20, 20 + offset_y)
             elif toast.config.position == "top-left":
-                pos = QPoint(20, 20 + offset_y)
+                pos = (20, 20 + offset_y)
             elif toast.config.position == "bottom-right":
-                pos = QPoint(screen.width() - toast_size.width() - 20,
-                            screen.height() - toast_size.height() - 20 - offset_y)
+                pos = (screen.width() - toast_size.width() - 20,
+                      screen.height() - toast_size.height() - 20 - offset_y)
             elif toast.config.position == "bottom-left":
-                pos = QPoint(20, screen.height() - toast_size.height() - 20 - offset_y)
+                pos = (20, screen.height() - toast_size.height() - 20 - offset_y)
             else:  # center
-                pos = QPoint((screen.width() - toast_size.width()) // 2,
-                            (screen.height() - toast_size.height()) // 2)
-        
-        toast.move(pos)
+                pos = ((screen.width() - toast_size.width()) // 2,
+                      (screen.height() - toast_size.height()) // 2)
+            
+            toast.move(pos[0], pos[1])
     
-    def _position_notification(self, toast: ToastNotification):
+    def _position_notification(self, toast: ToastMessageBox):
         """Position a single notification."""
         toast._position_notification()
     
@@ -572,6 +510,20 @@ class ToastManager(QObject):
         """Dismiss a specific toast notification."""
         if toast_id in self.active_toasts:
             self.active_toasts[toast_id].dismiss()
+    
+    def _handle_window_state_change(self):
+        """Handle window state changes."""
+        if self.main_window.isMinimized():
+            # Hide all toasts when window is minimized
+            for toast in self.active_toasts.values():
+                if toast.isVisible():
+                    toast.hide()
+        else:
+            # Show and reposition all toasts when window is restored
+            self._reposition_all_toasts()
+            for toast in self.active_toasts.values():
+                if not toast.isVisible():
+                    toast.show()
 
 
 class EnhancedErrorHandler:
@@ -621,7 +573,7 @@ class EnhancedErrorHandler:
             message=error_message,
             title=title,
             toast_type=ToastType.ERROR,
-            config=ToastConfig(duration=8000, auto_dismiss=True)
+            config=ToastConfig(duration=2000, auto_dismiss=True)
         )
         
         # Optionally show dialog
@@ -657,7 +609,7 @@ class EnhancedErrorHandler:
             message=error_message,
             title=title,
             toast_type=ToastType.ERROR,
-            config=ToastConfig(duration=10000, auto_dismiss=True)
+            config=ToastConfig(duration=2000, auto_dismiss=True)
         )
         
         # Optionally show dialog
