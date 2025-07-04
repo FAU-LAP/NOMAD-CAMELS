@@ -11,7 +11,7 @@ sys.path.append(os.path.dirname(__file__))
 import json
 import pathlib
 
-from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog
+from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog, QLabel
 from PySide6.QtCore import Qt, Signal, QThread, QTimer
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
@@ -973,6 +973,38 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             | (tableData["owner"] == "")
         ]
 
+        # Create a custom validation function that checks for special characters and duplicates
+        def validate_sample_field(value):
+            """Custom validation function that checks for special characters and duplicates in sample fields."""
+            if not value or str(value).strip() == "":
+                return True  # Empty is valid (will be handled later)
+            
+            # Check for special characters first
+            if re.search(r"[^\w\s]", str(value)):
+                return False
+            
+            # For sample_id column, also check for duplicates
+            # We need to get the current column being validated
+            # Since we can't pass column info directly, we'll use a different approach
+            # We'll create a closure that captures the dialog reference and checks duplicates
+            try:
+                # Get current table data to check for duplicates
+                current_data = dialog.table.update_table_data()
+                sample_ids = [str(sid).strip() for sid in current_data.get("sample_id", [])]
+                
+                # Count how many times this value appears
+                count = sample_ids.count(str(value).strip())
+                
+                # If it appears more than once, it's a duplicate
+                if count > 1:
+                    return False
+                    
+            except Exception:
+                # If we can't get current data, just check special characters
+                pass
+            
+            return True
+
         dialog = add_remove_table.AddRemoveDialoge(
             headerLabels=headers,
             parent=self,
@@ -980,9 +1012,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             askdelete=True,
             tableData=tableData,
             default_values={"owner": self.active_user},
-            check_string_function=variable_tool_tip_box.check_no_special_characters,
-            checkstrings=[1],  # Now checks 'name' column (index 1)
+            check_string_function=validate_sample_field,
+            checkstrings=[0, 1],  # Check both sample_id (index 0) and name (index 1) columns
         )
+
+        
+        # Add a status label to the dialog layout
+        status_label = QLabel("Red = invalid/duplicate, Green/White = valid")
+        status_label.setStyleSheet("color: #4CAF50; font-weight: bold; padding: 5px;")
+        dialog.layout().addWidget(status_label, 2, 0)  # Add below the table and buttons
+        
         if dialog.exec():
             # Changing the returned dict to dataframe and back to ensure proper formatting.
             dat = dialog.get_data()
