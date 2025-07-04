@@ -298,7 +298,7 @@ class PlotWidget(QWidget):
         self.liveFitPlots = []
         self.ax2_viewbox = None
         self.setWindowTitle(title or f"{x_name} vs. {y_names[0]}")
-        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
 
         ax2 = None
         plotItem = self.plot_widget.getPlotItem()
@@ -1220,7 +1220,7 @@ class PlotWidget_2D(QWidget):
         self.setWindowTitle(
             title or f"{zlabel or z_name} vs. {xlabel or x_name}, {ylabel or y_name}"
         )
-        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
         self.graphics_layout = pg.GraphicsLayoutWidget()
         self.plot = self.graphics_layout.addPlot(col=0, row=0)
         self.x_name = x_name

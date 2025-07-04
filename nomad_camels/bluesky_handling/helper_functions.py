@@ -1344,7 +1344,7 @@ class Commenting_Box(QWidget):
         self.comment_box = TimestampTextEdit()
         self.finished_box = QCheckBox("commenting finished")
         self.setWindowTitle("Live Measurement Comments - NOMAD CAMELS")
-        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
         layout.addWidget(self.comment_box, 0, 0)
         layout.addWidget(self.finished_box, 1, 0)
         self.setLayout(layout)

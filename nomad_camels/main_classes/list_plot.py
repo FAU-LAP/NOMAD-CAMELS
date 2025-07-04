@@ -60,7 +60,7 @@ class Values_List_Plot(QWidget):
             self.setWindowTitle(f"{value_list[0]} ...")
         else:
             self.setWindowTitle("Current Value List")
-        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
         self.stream_name = stream_name
         place_widget(self, top_left_x, top_left_y, plot_width, plot_height)
 

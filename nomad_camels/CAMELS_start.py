@@ -41,7 +41,7 @@ class LoadingScreen(QDialog):
         # Set custom window flags to disable some default decorations
         self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
         # Set the window icon using a resource from the graphics package
-        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
 
         # Load and set the image on the loading screen
         image = QPixmap()
@@ -153,7 +153,7 @@ def start_camels(start_proxy_bool=True):
     if app is None:
         # sys.argv += ['-platform', 'windows:darkmode=1']
         app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+    app.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
 
     # Create and display the loading screen
     loading_screen = LoadingScreen()

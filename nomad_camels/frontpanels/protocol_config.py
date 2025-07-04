@@ -125,7 +125,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             self.old_name = protocol.name
         self.setupUi(self)
         self.setWindowTitle(f"{protocol.name} - Measurement Protocol - NOMAD CAMELS")
-        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
         self.configuration_main_widget.setHidden(True)
         self.general_settings = General_Protocol_Settings(protocol=protocol)
 
