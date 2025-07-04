@@ -688,6 +688,98 @@ def show_toast(
     return toast_manager.show_toast(message, title, toast_type, config, callback)
 
 
+def show_success_toast(
+    message: str,
+    title: str = "Success",
+    config: Optional[ToastConfig] = None,
+    callback: Optional[Callable] = None,
+    parent: Optional[QWidget] = None
+) -> int:
+    """
+    Convenience function to show a success toast notification.
+    
+    Args:
+        message: The success message to display
+        title: Optional title (defaults to "Success")
+        config: Optional configuration
+        callback: Optional callback function
+        parent: Parent widget
+        
+    Returns:
+        The toast ID
+    """
+    return show_toast(message, title, ToastType.SUCCESS, config, callback, parent)
+
+
+def show_warning_toast(
+    message: str,
+    title: str = "Warning",
+    config: Optional[ToastConfig] = None,
+    callback: Optional[Callable] = None,
+    parent: Optional[QWidget] = None
+) -> int:
+    """
+    Convenience function to show a warning toast notification.
+    
+    Args:
+        message: The warning message to display
+        title: Optional title (defaults to "Warning")
+        config: Optional configuration
+        callback: Optional callback function
+        parent: Parent widget
+        
+    Returns:
+        The toast ID
+    """
+    return show_toast(message, title, ToastType.WARNING, config, callback, parent)
+
+
+def show_error_toast(
+    message: str,
+    title: str = "Error",
+    config: Optional[ToastConfig] = None,
+    callback: Optional[Callable] = None,
+    parent: Optional[QWidget] = None
+) -> int:
+    """
+    Convenience function to show an error toast notification.
+    
+    Args:
+        message: The error message to display
+        title: Optional title (defaults to "Error")
+        config: Optional configuration
+        callback: Optional callback function
+        parent: Parent widget
+        
+    Returns:
+        The toast ID
+    """
+    return show_toast(message, title, ToastType.ERROR, config, callback, parent)
+
+
+def show_info_toast(
+    message: str,
+    title: str = "Information",
+    config: Optional[ToastConfig] = None,
+    callback: Optional[Callable] = None,
+    parent: Optional[QWidget] = None
+) -> int:
+    """
+    Convenience function to show an info toast notification.
+    
+    Args:
+        message: The info message to display
+        title: Optional title (defaults to "Information")
+        config: Optional configuration
+        callback: Optional callback function
+        parent: Parent widget
+        
+    Returns:
+        The toast ID
+    """
+    return show_toast(message, title, ToastType.INFO, config, callback, parent)
+
+
 def handle_validation_error(
     error_message: str,
     title: str = "Validation Error",
