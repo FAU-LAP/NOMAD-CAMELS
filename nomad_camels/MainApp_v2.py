@@ -959,6 +959,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # IMPORT pandas and add_remove_table only if it is needed
         import pandas as pd
         from nomad_camels.ui_widgets import add_remove_table
+        from nomad_camels.ui_widgets.toast_notification import handle_validation_error
 
         self.active_sample = self.comboBox_sample.currentText()
         headers = ["name", "sample_id", "description", "owner"]
@@ -985,12 +986,25 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if dialog.exec():
             # Changing the returned dict to dataframe and back to ensure proper formatting.
             dat = dialog.get_data()
+            
+            # Validate sample names and show toast notifications for errors
+            validation_failed = False
             for i, d in enumerate(dat["name"]):
                 if re.search(r"[^\w\s]", str(d)):
-                    raise ValueError(
-                        f'Sample name "{d}" contains special characters.\nPlease use only letters, numbers and whitespace.'
+                    error_message = f'Sample name "{d}" contains special characters.\nPlease use only letters, numbers and whitespace.'
+                    handle_validation_error(
+                        error_message=error_message,
+                        title="Invalid Sample Name",
+                        parent=self
                     )
+                    validation_failed = True
+                    break
                 dat["name"][i] = d.strip()
+            
+            # Only proceed if validation passed
+            if validation_failed:
+                return
+            
             dat["Name2"] = dat["name"]
             data = pd.DataFrame(dat)
             data.set_index("Name2", inplace=True)
