@@ -987,8 +987,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # Changing the returned dict to dataframe and back to ensure proper formatting.
             dat = dialog.get_data()
             
-            # Validate sample_id uniqueness
+            # Validate sample_id uniqueness (check against existing samples and new samples)
             sample_ids = [str(sid).strip() for sid in dat["sample_id"]]
+            
+            # Check for duplicates within the current dialog data
             if len(sample_ids) != len(set(sample_ids)):
                 error_message = "Each Sample ID must be unique. Please ensure there are no duplicate Sample IDs."
                 handle_validation_error(
@@ -999,6 +1001,54 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 # Reload the sample data to remove the duplicate from the table
                 self.load_sample_data()
                 return
+            
+            # Check for duplicates against existing sample data (from all users)
+            existing_sample_ids = set()
+            for sample_name, sample_data in self.sampledata.items():
+                if "sample_id" in sample_data:
+                    existing_sample_ids.add(str(sample_data["sample_id"]).strip())
+            
+            # Find duplicates between new samples and existing samples
+            new_sample_ids = set(sample_ids)
+            duplicates = new_sample_ids.intersection(existing_sample_ids)
+            
+            if duplicates:
+                duplicate_list = ", ".join(f'"{dup}"' for dup in duplicates)
+                error_message = f"Sample ID(s) {duplicate_list} already exist(s). Please use unique Sample IDs."
+                handle_validation_error(
+                    error_message=error_message,
+                    title="Duplicate Sample ID",
+                    parent=self
+                )
+                # Filter out duplicate samples and keep valid ones
+                filtered_data = {}
+                for i, sample_id in enumerate(sample_ids):
+                    if sample_id not in duplicates:
+                        # Keep this sample - it's valid
+                        for key in dat.keys():
+                            if key not in filtered_data:
+                                filtered_data[key] = []
+                            filtered_data[key].append(dat[key][i])
+                
+                # Update dat with filtered data (only valid samples)
+                dat = filtered_data
+                
+                # Update sample_ids list to match filtered data
+                sample_ids = [str(sid).strip() for sid in dat["sample_id"]]
+            
+            # Validate sample_id for special characters
+            for i, d in enumerate(dat["sample_id"]):
+                if re.search(r"[^\w\s]", str(d)):
+                    error_message = f'Sample ID "{d}" contains special characters.\nPlease use only letters, numbers and whitespace.'
+                    handle_validation_error(
+                        error_message=error_message,
+                        title="Invalid Sample ID",
+                        parent=self
+                    )
+                    # Reload the sample data to remove the invalid data from the table
+                    self.load_sample_data()
+                    return
+                dat["sample_id"][i] = d.strip()
             
             # Validate sample names and show toast notifications for errors
             for i, d in enumerate(dat["name"]):
@@ -1021,6 +1071,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # Convert to dictionary format expected by the rest of the code
             data_dict = {}
             for idx, row in data.iterrows():
+                # Use the sample name as the key (not sample_id)
                 sample_name = row["name"]
                 data_dict[sample_name] = row.to_dict()
             
