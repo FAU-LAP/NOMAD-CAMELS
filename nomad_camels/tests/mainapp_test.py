@@ -55,13 +55,26 @@ def test_set_user(app):
 
 
 def test_set_sample(app):
-    """Test setting the sample."""
-    app.sampledata = {"sample1": {"name": "Sample One"}}
+    """Test setting a sample."""
+    # Create sample data using the new hierarchical structure
+    # Global key format: "user::sample_id" for user-owned samples
+    app.sampledata = {
+        "default_user::sample1": {
+            "sample_id": "sample1",
+            "name": "Sample One",
+            "description": "Test sample",
+            "owner": "default_user"
+        }
+    }
+    app.active_user = "default_user"
+    
+    # Test setting an existing sample
     app.set_sample("sample1")
     assert app.active_sample == "Sample One"
-
-    with pytest.raises(ValueError):
-        app.set_sample("non_existent_sample")
+    
+    # Test setting a non-existent sample
+    with pytest.raises(ValueError, match="Sample ID nonexistent can not be set"):
+        app.set_sample("nonexistent")
 
 
 def test_show_hide_log(app, qtbot):

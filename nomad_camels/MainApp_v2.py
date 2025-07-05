@@ -431,16 +431,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             sample_id (str): The sample ID to set as active.
 
         Raises:
-            ValueError: If the sample ID does not exist in the current data structure.
+            ValueError: If the sample ID does not exist in the current user's accessible samples.
         """
-        # Check if the sample ID exists in the current data structure
-        if sample_id not in self.sampledata:
+        # Get samples accessible to the current user
+        user_samples = self.get_user_samples()
+        
+        # Check if the sample ID exists in the current user's accessible samples
+        if sample_id not in user_samples:
             raise ValueError(
-                f"Sample ID {sample_id} can not be set as it does not exist. Please create this sample first."
+                f"Sample ID {sample_id} can not be set as it does not exist or is not accessible to user {self.active_user}. Please create this sample first."
             )
         
         # Set the active sample to the sample name for backward compatibility
-        sample_name = self.sampledata[sample_id].get("name", sample_id)
+        sample_name = user_samples[sample_id].get("name", sample_id)
         self.active_sample = sample_name
         self.comboBox_sample.setCurrentText(sample_id)  # Display sample ID in combobox
 
@@ -958,7 +961,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Open a dialog to edit sample information.
 
         The dialog displays sample data such as name, identifier, and description.
-        On acceptance, updates the sample data.
+        On acceptance, updates the sample data using the new hierarchical structure.
         """
         # IMPORT pandas and add_remove_table only if it is needed
         import pandas as pd
@@ -967,39 +970,30 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         # Get the currently selected sample ID and convert to sample name for active_sample
         current_sample_id = self.comboBox_sample.currentText()
-        if current_sample_id in self.sampledata:
-            self.active_sample = self.sampledata[current_sample_id].get("name", current_sample_id)
+        user_samples = self.get_user_samples()
+        if current_sample_id in user_samples:
+            self.active_sample = user_samples[current_sample_id].get("name", current_sample_id)
         else:
             self.active_sample = current_sample_id
         headers = ["sample_id", "name", "description", "owner"]
         
-        # Convert sampledata to DataFrame format for the dialog
-        # Use sample_id as the key instead of sample name
+        # Convert user's sample data to DataFrame format for the dialog
         tableData = []
         original_sample_ids = set()  # Track original sample IDs being edited
-        for sample_id, sample_data in self.sampledata.items():
+        
+        for sample_id, sample_data in user_samples.items():
             row = {
-                "sample_id": sample_id,  # Use the key as sample_id
-                "name": sample_data.get("name", sample_id),  # Use the name from data
+                "sample_id": sample_id,
+                "name": sample_data.get("name", sample_id),
                 "description": sample_data.get("description", ""),
-                "owner": sample_data.get("owner", "")
+                "owner": sample_data.get("owner", self.active_user)
             }
             tableData.append(row)
-        
+            original_sample_ids.add(str(sample_id).strip())
+
         tableData = pd.DataFrame(tableData)
         if not "owner" in tableData.columns:
-            tableData["owner"] = ""
-            
-        # Filter tableData so that only samples owned by the active user (or with no owner) are kept.
-        tableData = tableData[
-            (tableData["owner"] == self.active_user)
-            | (tableData["owner"].isna())
-            | (tableData["owner"] == "")
-        ]
-        
-        # Remember which sample IDs were originally in the dialog for editing
-        for _, row in tableData.iterrows():
-            original_sample_ids.add(str(row["sample_id"]).strip())
+            tableData["owner"] = self.active_user
 
         # Create a simple validation function that only checks for special characters
         def validate_sample_field(value):
@@ -1067,11 +1061,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # Check for duplicates against existing sample data (from the same user only)
             # BUT exclude the samples that were originally being edited
             existing_sample_ids = set()
-            for sample_id, sample_data in self.sampledata.items():
-                if sample_data.get("owner") == self.active_user:
-                    # Only add to existing set if it wasn't part of the original edit
-                    if str(sample_id).strip() not in original_sample_ids:
-                        existing_sample_ids.add(str(sample_id).strip())
+            current_user_samples = self.get_user_samples()
+            for sample_id in current_user_samples.keys():
+                # Only add to existing set if it wasn't part of the original edit
+                if str(sample_id).strip() not in original_sample_ids:
+                    existing_sample_ids.add(str(sample_id).strip())
             
             # Find duplicates between new samples and existing samples (excluding original samples)
             new_sample_ids = set(sample_ids)
@@ -1112,56 +1106,62 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         return
                     dat["name"][i] = d.strip()
             
-            # Create a unique index for the DataFrame to avoid pandas error
-            # Use sample_id as the unique identifier
-            dat["unique_index"] = dat["sample_id"]
-            data = pd.DataFrame(dat)
-            data.set_index("unique_index", inplace=True)
+            # Remove old samples that were being edited from the global data structure
+            for sample_id in original_sample_ids:
+                # Find and remove the global key for this sample
+                global_key_to_remove = None
+                for global_key in self.sampledata.keys():
+                    if "::" in global_key:
+                        user, sid = global_key.split("::", 1)
+                        if user == self.active_user and sid == sample_id:
+                            global_key_to_remove = global_key
+                            break
+                    else:
+                        # Shared sample
+                        if global_key == sample_id:
+                            sample_data = self.sampledata[global_key]
+                            if sample_data.get("owner") == self.active_user:
+                                global_key_to_remove = global_key
+                                break
+                
+                if global_key_to_remove:
+                    del self.sampledata[global_key_to_remove]
             
-            # Convert to dictionary format expected by the rest of the code
-            # Use sample_id as the key instead of sample name
-            data_dict = {}
-            for idx, row in data.iterrows():
-                # Use the sample_id as the key (not sample name)
-                sample_id = str(idx).strip()
-                if sample_id:  # Only add if sample_id is not empty
-                    data_dict[sample_id] = {
-                        "sample_id": sample_id,
-                        "name": row["name"],
-                        "description": row["description"],
-                        "owner": row["owner"]
-                    }
+            # Add the new/updated samples to the global data structure
+            for i in range(len(dat["sample_id"])):
+                sample_id = dat["sample_id"][i]
+                sample_data = {
+                    "sample_id": sample_id,
+                    "name": dat["name"][i],
+                    "description": dat["description"][i],
+                    "owner": dat["owner"][i]
+                }
+                
+                # Create global key based on owner
+                owner = sample_data["owner"]
+                if owner and owner != "shared":
+                    global_key = f"{owner}::{sample_id}"
+                else:
+                    global_key = sample_id
+                
+                self.sampledata[global_key] = sample_data
             
-            # Update the sample data
-            # Remove samples that were owned by the active user but are no longer in the new data
-            removers = []
-            for sample_id, sample_data in self.sampledata.items():
-                if sample_data.get("owner") == self.active_user:
-                    # Check if this sample was originally being edited and is no longer in the new data
-                    if str(sample_id).strip() in original_sample_ids and sample_id not in data_dict:
-                        removers.append(sample_id)
-            
-            for key in removers:
-                self.sampledata.pop(key)
-            
-            # Add/update the new sample data
-            self.sampledata.update(data_dict)
             self.update_shown_samples()
             self.save_sample_data()
 
     def update_shown_samples(self):
         """
-        Refresh the sample combobox with sample IDs that are owned by the active user or have no owner.
+        Refresh the sample combobox with sample IDs that are owned by the active user or are shared.
         """
         self.comboBox_sample.clear()
         sample_items = []
         
-        for sample_id, sample_data in self.sampledata.items():
-            # Check if this sample is owned by the active user or has no owner
-            owner = sample_data.get("owner", "")
-            if owner == self.active_user or not owner:
-                # Use the sample ID for display in the combobox
-                sample_items.append(sample_id)
+        # Get samples accessible to the current user (returns clean sample IDs as keys)
+        user_samples = self.get_user_samples()
+        
+        for sample_id, sample_data in user_samples.items():
+            # Use the clean sample ID for display in the combobox
+            sample_items.append(sample_id)
         
         # Sort the items alphabetically (case-insensitive)
         sample_items.sort(key=lambda x: x.lower())
@@ -1169,9 +1169,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         
         # Set the current sample if it exists
         if self.active_sample:
-            # Find the sample ID by name in the current data
+            # Find the sample ID by name in the current user's data
             current_sample_id = None
-            for sample_id, sample_data in self.sampledata.items():
+            for sample_id, sample_data in user_samples.items():
                 if sample_data.get("name") == self.active_sample:
                     current_sample_id = sample_id
                     break
@@ -1181,30 +1181,63 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def save_sample_data(self):
         """
-        Save the current sample data to a JSON file.
+        Save the current sample data to a JSON file using hierarchical user-based storage.
 
         The active sample is saved along with the complete sample data dictionary.
+        Data structure: {
+            "active_sample": "sample_name",
+            "users": {
+                "user1": {
+                    "sample_id_1": {...},
+                    "sample_id_2": {...}
+                },
+                "user2": {
+                    "sample_id_1": {...}  # Same ID as user1, but different namespace
+                }
+            }
+        }
         """
         # Get the currently selected sample ID from the combobox
         current_sample_id = self.comboBox_sample.currentText()
         # Find the sample name for this ID and set it as active_sample
-        if current_sample_id in self.sampledata:
-            self.active_sample = self.sampledata[current_sample_id].get("name", current_sample_id)
+        if current_sample_id in self.get_user_samples():
+            self.active_sample = self.get_user_samples()[current_sample_id].get("name", current_sample_id)
         else:
             self.active_sample = current_sample_id
         
-        sampledic = {"active_sample": self.active_sample}
-        sampledic.update(self.sampledata)
+        # Create hierarchical structure
+        sampledic = {
+            "active_sample": self.active_sample,
+            "users": {}
+        }
+        
+        # Organize samples by user
+        for global_key, sample_data in self.sampledata.items():
+            owner = sample_data.get("owner", "")
+            if not owner:
+                owner = "shared"  # Samples without owner go to shared namespace
+            
+            if owner not in sampledic["users"]:
+                sampledic["users"][owner] = {}
+            
+            # Extract the actual sample_id from the global key
+            if "::" in global_key:
+                user, sample_id = global_key.split("::", 1)
+            else:
+                sample_id = global_key
+            
+            sampledic["users"][owner][sample_id] = sample_data
+        
         load_save_functions.save_dictionary(
             os.path.join(load_save_functions.appdata_path, "sampledata.json"), sampledic
         )
 
     def load_sample_data(self):
         """
-        Load sample data from a JSON file.
+        Load sample data from a JSON file with support for both old and new hierarchical formats.
 
         Sets the active sample and updates the sample data dictionary.
-        Handles migration from old data structure to new structure.
+        Handles migration from old flat structure to new hierarchical structure.
         """
         sampledat = {}
         samplefile = os.path.join(load_save_functions.appdata_path, "sampledata.json")
@@ -1215,45 +1248,92 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 string_dict, sampledat, update_missing_key=True
             )
         
-        # Handle migration from old data structure to new structure
+        # Extract active sample
+        if "active_sample" in sampledat:
+            self.active_sample = sampledat["active_sample"]
+        
+        # Handle both old flat structure and new hierarchical structure
         migrated_data = {}
-        for key, value in sampledat.items():
-            if key == "active_sample":
-                self.active_sample = value
-                continue
-                
-            # Check if this is the old structure (sample name as key)
-            if isinstance(value, dict) and "sample_id" in value:
-                # This is already in the new structure
-                sample_id = value["sample_id"]
-                if sample_id:
-                    migrated_data[sample_id] = value
-                else:
-                    # If sample_id is empty, use the key as sample_id
-                    migrated_data[key] = value
-            elif isinstance(value, dict):
-                # This is the old structure, migrate it
-                sample_id = value.get("sample_id", key)
-                if sample_id:
-                    migrated_data[sample_id] = {
-                        "sample_id": sample_id,
-                        "name": key,  # Use the old key as the name
-                        "description": value.get("description", ""),
-                        "owner": value.get("owner", "")
-                    }
-                else:
-                    # If no sample_id, use the key as both sample_id and name
-                    migrated_data[key] = {
-                        "sample_id": key,
-                        "name": key,
-                        "description": value.get("description", ""),
-                        "owner": value.get("owner", "")
-                    }
+        
+        if "users" in sampledat:
+            # New hierarchical structure
+            for user, user_samples in sampledat["users"].items():
+                for sample_id, sample_data in user_samples.items():
+                    # Create a globally unique key for internal storage
+                    # Format: "user::sample_id" for user-owned samples, just "sample_id" for shared
+                    if user == "shared":
+                        global_key = sample_id
+                    else:
+                        global_key = f"{user}::{sample_id}"
+                    
+                    migrated_data[global_key] = sample_data
+        else:
+            # Old flat structure - migrate to new format
+            for key, value in sampledat.items():
+                if key == "active_sample":
+                    continue
+                    
+                if isinstance(value, dict):
+                    # Check if this is already in the new structure
+                    if "sample_id" in value:
+                        sample_id = value["sample_id"]
+                        owner = value.get("owner", "")
+                        
+                        # Create global key
+                        if owner and owner != "shared":
+                            global_key = f"{owner}::{sample_id}"
+                        else:
+                            global_key = sample_id
+                            
+                        migrated_data[global_key] = value
+                    else:
+                        # Very old structure, migrate it
+                        sample_id = value.get("sample_id", key)
+                        owner = value.get("owner", "")
+                        
+                        sample_data = {
+                            "sample_id": sample_id,
+                            "name": key,  # Use the old key as the name
+                            "description": value.get("description", ""),
+                            "owner": owner
+                        }
+                        
+                        # Create global key
+                        if owner and owner != "shared":
+                            global_key = f"{owner}::{sample_id}"
+                        else:
+                            global_key = sample_id
+                            
+                        migrated_data[global_key] = sample_data
         
         self.sampledata = migrated_data
         
         # Update the combobox with the migrated data
         self.update_shown_samples()
+
+    def get_user_samples(self):
+        """
+        Get samples that belong to the current active user or are shared.
+        
+        Returns:
+            dict: Dictionary of sample_id -> sample_data for the current user
+        """
+        user_samples = {}
+        
+        for global_key, sample_data in self.sampledata.items():
+            # Parse the global key to extract user and sample_id
+            if "::" in global_key:
+                user, sample_id = global_key.split("::", 1)
+                if user == self.active_user:
+                    user_samples[sample_id] = sample_data  # Use clean sample_id as key
+            else:
+                # Shared sample (no user prefix)
+                sample_id = global_key
+                owner = sample_data.get("owner", "")
+                if not owner or owner == "shared":
+                    user_samples[sample_id] = sample_data  # Use clean sample_id as key
+        
+        return user_samples
 
     def select_nomad_sample(self):
         """
@@ -2747,10 +2827,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # The combobox now contains sample IDs, not sample names
             sample_id = self.comboBox_sample.currentText() or "default_sample"
             sampledata = {"name": "default_sample"}
-            if sample_id != "default_sample" and sample_id in self.sampledata:
-                # Get the sample data using the sample ID
-                sampledata = self.sampledata[sample_id]
-                sample = sampledata.get("name", sample_id)
+            if sample_id != "default_sample":
+                # Get samples accessible to the current user
+                user_samples = self.get_user_samples()
+                if sample_id in user_samples:
+                    # Get the sample data using the sample ID from user's accessible samples
+                    sampledata = user_samples[sample_id]
+                    sample = sampledata.get("name", sample_id)
+                else:
+                    sample = "default_sample"
             else:
                 sample = "default_sample"
         return sample, sampledata
