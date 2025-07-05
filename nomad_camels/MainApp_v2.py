@@ -975,7 +975,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.active_sample = user_samples[current_sample_id].get("name", current_sample_id)
         else:
             self.active_sample = current_sample_id
-        headers = ["sample_id", "name", "description", "owner"]
+        headers = ["sample_id", "name", "description"]
         
         # Convert user's sample data to DataFrame format for the dialog
         tableData = []
@@ -986,7 +986,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "sample_id": sample_id,
                 "name": sample_data.get("name", sample_id),
                 "description": sample_data.get("description", ""),
-                "owner": sample_data.get("owner", self.active_user)
+                "owner": self.active_user
             }
             tableData.append(row)
             original_sample_ids.add(str(sample_id).strip())
