@@ -916,26 +916,28 @@ class FastapiThread(QThread):
             """
             return JSONResponse(content=self.main_window.sampledata)
 
-        @app.get("/api/v1/actions/set/samples/{sample_name}")
+        @app.get("/api/v1/actions/set/samples/{sample_id}")
         async def set_samples(
-            sample_name: str, api_key: str = Depends(validate_credentials)
+            sample_id: str, api_key: str = Depends(validate_credentials)
         ):
             """
             Set the active sample for the application.
 
             Args:
-                sample_name (str): The name of the sample to activate.
+                sample_id (str): The ID of the sample to activate.
                 api_key (str): API key for authentication.
 
             Returns:
                 JSONResponse: A JSON response indicating whether the sample was successfully set.
             """
-            self.set_sample_signal.emit(str(sample_name))
+            self.set_sample_signal.emit(str(sample_id))
             await asyncio.sleep(0.01)
-            if self.main_window.active_sample == sample_name:
-                return JSONResponse(content={"status": "success setting sample name"})
-            else:
-                return JSONResponse(content={"status": "failed setting sample name"})
+            # Check if the sample was set by comparing the sample name (since active_sample stores the name)
+            if sample_id in self.main_window.sampledata:
+                expected_name = self.main_window.sampledata[sample_id].get("name", sample_id)
+                if self.main_window.active_sample == expected_name:
+                    return JSONResponse(content={"status": "success setting sample ID"})
+            return JSONResponse(content={"status": "failed setting sample ID"})
 
         @app.get("/api/v1/users")
         async def get_users(api_key: str = Depends(validate_credentials)):

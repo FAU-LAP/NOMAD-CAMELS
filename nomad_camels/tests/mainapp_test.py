@@ -56,9 +56,9 @@ def test_set_user(app):
 
 def test_set_sample(app):
     """Test setting the sample."""
-    app.sampledata = {"sample1": {}}
+    app.sampledata = {"sample1": {"name": "Sample One"}}
     app.set_sample("sample1")
-    assert app.active_sample == "sample1"
+    assert app.active_sample == "Sample One"
 
     with pytest.raises(ValueError):
         app.set_sample("non_existent_sample")

@@ -895,7 +895,7 @@ class Ui_MainWindow(object):
         self.pushButton_login_nomad.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.pushButton_login_nomad.setText(QCoreApplication.translate("MainWindow", u"NOMAD login", None))
-        self.label_8.setText(QCoreApplication.translate("MainWindow", u"Sample:", None))
+        self.label_8.setText(QCoreApplication.translate("MainWindow", u"Sample ID:", None))
         self.label_no_instruments.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">You are currently using no instruments.</span></p><p><span style=\" font-size:12pt; font-weight:600;\">Click &quot;Manage Instruments&quot; to configure your</span></p><p><span style=\" font-size:12pt; font-weight:600;\">first instrument and start with NOMAD CAMELS!</span></p></body></html>", None))
         self.label_arrow.setText("")
 #if QT_CONFIG(tooltip)

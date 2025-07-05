@@ -423,22 +423,26 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.active_user = user_name
         self.comboBox_user.setCurrentText(user_name)
 
-    def set_sample(self, sample_name):
+    def set_sample(self, sample_id):
         """
-        Set the active sample to the specified sample name (called by the API).
+        Set the active sample based on the provided sample ID (called by the API).
 
         Args:
-            sample_name (str): The name of the sample to set.
+            sample_id (str): The sample ID to set as active.
 
         Raises:
-            ValueError: If the given sample does not exist in the sample data.
+            ValueError: If the sample ID does not exist in the current data structure.
         """
-        if sample_name not in self.sampledata:
+        # Check if the sample ID exists in the current data structure
+        if sample_id not in self.sampledata:
             raise ValueError(
-                f"Sample {sample_name} can not be set as it does not exist. Please create this sample first."
+                f"Sample ID {sample_id} can not be set as it does not exist. Please create this sample first."
             )
+        
+        # Set the active sample to the sample name for backward compatibility
+        sample_name = self.sampledata[sample_id].get("name", sample_id)
         self.active_sample = sample_name
-        self.comboBox_sample.setCurrentText(sample_name)
+        self.comboBox_sample.setCurrentText(sample_id)  # Display sample ID in combobox
 
     def set_session(self, session_name):
         """
@@ -961,47 +965,51 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         from nomad_camels.ui_widgets import add_remove_table
         from nomad_camels.ui_widgets.toast_notification import handle_validation_error
 
-        self.active_sample = self.comboBox_sample.currentText()
+        # Get the currently selected sample ID and convert to sample name for active_sample
+        current_sample_id = self.comboBox_sample.currentText()
+        if current_sample_id in self.sampledata:
+            self.active_sample = self.sampledata[current_sample_id].get("name", current_sample_id)
+        else:
+            self.active_sample = current_sample_id
         headers = ["sample_id", "name", "description", "owner"]
-        tableData = pd.DataFrame.from_dict(self.sampledata, "index")
+        
+        # Convert sampledata to DataFrame format for the dialog
+        # Use sample_id as the key instead of sample name
+        tableData = []
+        original_sample_ids = set()  # Track original sample IDs being edited
+        for sample_id, sample_data in self.sampledata.items():
+            row = {
+                "sample_id": sample_id,  # Use the key as sample_id
+                "name": sample_data.get("name", sample_id),  # Use the name from data
+                "description": sample_data.get("description", ""),
+                "owner": sample_data.get("owner", "")
+            }
+            tableData.append(row)
+        
+        tableData = pd.DataFrame(tableData)
         if not "owner" in tableData.columns:
             tableData["owner"] = ""
+            
         # Filter tableData so that only samples owned by the active user (or with no owner) are kept.
         tableData = tableData[
             (tableData["owner"] == self.active_user)
             | (tableData["owner"].isna())
             | (tableData["owner"] == "")
         ]
+        
+        # Remember which sample IDs were originally in the dialog for editing
+        for _, row in tableData.iterrows():
+            original_sample_ids.add(str(row["sample_id"]).strip())
 
-        # Create a custom validation function that checks for special characters and duplicates
+        # Create a simple validation function that only checks for special characters
         def validate_sample_field(value):
-            """Custom validation function that checks for special characters and duplicates in sample fields."""
+            """Custom validation function that checks for special characters in sample fields."""
             if not value or str(value).strip() == "":
                 return True  # Empty is valid (will be handled later)
             
-            # Check for special characters first
+            # Check for special characters
             if re.search(r"[^\w\s]", str(value)):
                 return False
-            
-            # For sample_id column, also check for duplicates
-            # We need to get the current column being validated
-            # Since we can't pass column info directly, we'll use a different approach
-            # We'll create a closure that captures the dialog reference and checks duplicates
-            try:
-                # Get current table data to check for duplicates
-                current_data = dialog.table.update_table_data()
-                sample_ids = [str(sid).strip() for sid in current_data.get("sample_id", [])]
-                
-                # Count how many times this value appears
-                count = sample_ids.count(str(value).strip())
-                
-                # If it appears more than once, it's a duplicate
-                if count > 1:
-                    return False
-                    
-            except Exception:
-                # If we can't get current data, just check special characters
-                pass
             
             return True
 
@@ -1016,20 +1024,37 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             checkstrings=[0, 1],  # Check both sample_id (index 0) and name (index 1) columns
         )
 
-        
         # Add a status label to the dialog layout
-        status_label = QLabel("Red = invalid/duplicate, Green/White = valid")
+        status_label = QLabel("Red = invalid, Green/White = valid")
         status_label.setStyleSheet("color: #4CAF50; font-weight: bold; padding: 5px;")
         dialog.layout().addWidget(status_label, 2, 0)  # Add below the table and buttons
         
         if dialog.exec():
-            # Changing the returned dict to dataframe and back to ensure proper formatting.
+            # Get the data from the dialog
             dat = dialog.get_data()
             
-            # Validate sample_id uniqueness (check against existing samples and new samples)
-            sample_ids = [str(sid).strip() for sid in dat["sample_id"]]
+            # Validate that we have data and required fields
+            if not dat or "sample_id" not in dat or "name" not in dat:
+                return
             
-            # Check for duplicates within the current dialog data
+            # Filter out empty sample_ids
+            valid_indices = []
+            for i, sample_id in enumerate(dat["sample_id"]):
+                if sample_id and str(sample_id).strip():
+                    valid_indices.append(i)
+            
+            if not valid_indices:
+                return  # No valid samples to process
+            
+            # Create filtered data with only valid samples
+            filtered_dat = {}
+            for key in dat.keys():
+                filtered_dat[key] = [dat[key][i] for i in valid_indices]
+            
+            dat = filtered_dat
+            
+            # Validate sample_id uniqueness within the dialog data
+            sample_ids = [str(sid).strip() for sid in dat["sample_id"]]
             if len(sample_ids) != len(set(sample_ids)):
                 error_message = "Each Sample ID must be unique. Please ensure there are no duplicate Sample IDs."
                 handle_validation_error(
@@ -1037,17 +1062,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     title="Duplicate Sample ID",
                     parent=self
                 )
-                # Reload the sample data to remove the duplicate from the table
-                self.load_sample_data()
                 return
             
-            # Check for duplicates against existing sample data (from all users)
+            # Check for duplicates against existing sample data (from the same user only)
+            # BUT exclude the samples that were originally being edited
             existing_sample_ids = set()
-            for sample_name, sample_data in self.sampledata.items():
-                if "sample_id" in sample_data:
-                    existing_sample_ids.add(str(sample_data["sample_id"]).strip())
+            for sample_id, sample_data in self.sampledata.items():
+                if sample_data.get("owner") == self.active_user:
+                    # Only add to existing set if it wasn't part of the original edit
+                    if str(sample_id).strip() not in original_sample_ids:
+                        existing_sample_ids.add(str(sample_id).strip())
             
-            # Find duplicates between new samples and existing samples
+            # Find duplicates between new samples and existing samples (excluding original samples)
             new_sample_ids = set(sample_ids)
             duplicates = new_sample_ids.intersection(existing_sample_ids)
             
@@ -1059,21 +1085,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     title="Duplicate Sample ID",
                     parent=self
                 )
-                # Filter out duplicate samples and keep valid ones
-                filtered_data = {}
-                for i, sample_id in enumerate(sample_ids):
-                    if sample_id not in duplicates:
-                        # Keep this sample - it's valid
-                        for key in dat.keys():
-                            if key not in filtered_data:
-                                filtered_data[key] = []
-                            filtered_data[key].append(dat[key][i])
-                
-                # Update dat with filtered data (only valid samples)
-                dat = filtered_data
-                
-                # Update sample_ids list to match filtered data
-                sample_ids = [str(sid).strip() for sid in dat["sample_id"]]
+                return
             
             # Validate sample_id for special characters
             for i, d in enumerate(dat["sample_id"]):
@@ -1084,65 +1096,88 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         title="Invalid Sample ID",
                         parent=self
                     )
-                    # Reload the sample data to remove the invalid data from the table
-                    self.load_sample_data()
                     return
                 dat["sample_id"][i] = d.strip()
             
-            # Validate sample names and show toast notifications for errors
+            # Validate sample names for special characters
             for i, d in enumerate(dat["name"]):
-                if re.search(r"[^\w\s]", str(d)):
-                    error_message = f'Sample name "{d}" contains special characters.\nPlease use only letters, numbers and whitespace.'
-                    handle_validation_error(
-                        error_message=error_message,
-                        title="Invalid Sample Name",
-                        parent=self
-                    )
-                    return
-                dat["name"][i] = d.strip()
+                if d and str(d).strip():  # Only validate non-empty names
+                    if re.search(r"[^\w\s]", str(d)):
+                        error_message = f'Sample name "{d}" contains special characters.\nPlease use only letters, numbers and whitespace.'
+                        handle_validation_error(
+                            error_message=error_message,
+                            title="Invalid Sample Name",
+                            parent=self
+                        )
+                        return
+                    dat["name"][i] = d.strip()
             
             # Create a unique index for the DataFrame to avoid pandas error
-            # Use sample_id as the unique identifier instead of name
+            # Use sample_id as the unique identifier
             dat["unique_index"] = dat["sample_id"]
             data = pd.DataFrame(dat)
             data.set_index("unique_index", inplace=True)
             
             # Convert to dictionary format expected by the rest of the code
+            # Use sample_id as the key instead of sample name
             data_dict = {}
             for idx, row in data.iterrows():
-                # Use the sample name as the key (not sample_id)
-                sample_name = row["name"]
-                data_dict[sample_name] = row.to_dict()
+                # Use the sample_id as the key (not sample name)
+                sample_id = str(idx).strip()
+                if sample_id:  # Only add if sample_id is not empty
+                    data_dict[sample_id] = {
+                        "sample_id": sample_id,
+                        "name": row["name"],
+                        "description": row["description"],
+                        "owner": row["owner"]
+                    }
             
             # Update the sample data
+            # Remove samples that were owned by the active user but are no longer in the new data
             removers = []
-            for key, value in self.sampledata.items():
-                if value["owner"] == self.active_user and key not in data_dict:
-                    removers.append(key)
+            for sample_id, sample_data in self.sampledata.items():
+                if sample_data.get("owner") == self.active_user:
+                    # Check if this sample was originally being edited and is no longer in the new data
+                    if str(sample_id).strip() in original_sample_ids and sample_id not in data_dict:
+                        removers.append(sample_id)
+            
             for key in removers:
                 self.sampledata.pop(key)
+            
+            # Add/update the new sample data
             self.sampledata.update(data_dict)
             self.update_shown_samples()
             self.save_sample_data()
 
     def update_shown_samples(self):
         """
-        Refresh the sample combobox with samples that are owned by the active user or have no owner.
+        Refresh the sample combobox with sample IDs that are owned by the active user or have no owner.
         """
         self.comboBox_sample.clear()
-        self.comboBox_sample.addItems(
-            sorted(
-                [
-                    key
-                    for key in self.sampledata.keys()
-                    if self.sampledata[key].get("owner", "") == self.active_user
-                    or not self.sampledata[key].get("owner", "")
-                ],
-                key=lambda x: x.lower(),
-            )
-        )
-        if self.active_sample in self.sampledata.keys():
-            self.comboBox_sample.setCurrentText(self.active_sample)
+        sample_items = []
+        
+        for sample_id, sample_data in self.sampledata.items():
+            # Check if this sample is owned by the active user or has no owner
+            owner = sample_data.get("owner", "")
+            if owner == self.active_user or not owner:
+                # Use the sample ID for display in the combobox
+                sample_items.append(sample_id)
+        
+        # Sort the items alphabetically (case-insensitive)
+        sample_items.sort(key=lambda x: x.lower())
+        self.comboBox_sample.addItems(sample_items)
+        
+        # Set the current sample if it exists
+        if self.active_sample:
+            # Find the sample ID by name in the current data
+            current_sample_id = None
+            for sample_id, sample_data in self.sampledata.items():
+                if sample_data.get("name") == self.active_sample:
+                    current_sample_id = sample_id
+                    break
+            
+            if current_sample_id:
+                self.comboBox_sample.setCurrentText(current_sample_id)
 
     def save_sample_data(self):
         """
@@ -1150,7 +1185,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         The active sample is saved along with the complete sample data dictionary.
         """
-        self.active_sample = self.comboBox_sample.currentText()
+        # Get the currently selected sample ID from the combobox
+        current_sample_id = self.comboBox_sample.currentText()
+        # Find the sample name for this ID and set it as active_sample
+        if current_sample_id in self.sampledata:
+            self.active_sample = self.sampledata[current_sample_id].get("name", current_sample_id)
+        else:
+            self.active_sample = current_sample_id
+        
         sampledic = {"active_sample": self.active_sample}
         sampledic.update(self.sampledata)
         load_save_functions.save_dictionary(
@@ -1162,6 +1204,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Load sample data from a JSON file.
 
         Sets the active sample and updates the sample data dictionary.
+        Handles migration from old data structure to new structure.
         """
         sampledat = {}
         samplefile = os.path.join(load_save_functions.appdata_path, "sampledata.json")
@@ -1171,13 +1214,46 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             load_save_functions.load_save_dict(
                 string_dict, sampledat, update_missing_key=True
             )
-        if "active_sample" in sampledat:
-            self.active_sample = sampledat["active_sample"]
-            sampledat.pop("active_sample")
-        self.sampledata = sampledat
-        self.comboBox_sample.addItems(sampledat.keys())
-        if not self.active_sample == "default_sample":
-            self.comboBox_sample.setCurrentText(self.active_sample)
+        
+        # Handle migration from old data structure to new structure
+        migrated_data = {}
+        for key, value in sampledat.items():
+            if key == "active_sample":
+                self.active_sample = value
+                continue
+                
+            # Check if this is the old structure (sample name as key)
+            if isinstance(value, dict) and "sample_id" in value:
+                # This is already in the new structure
+                sample_id = value["sample_id"]
+                if sample_id:
+                    migrated_data[sample_id] = value
+                else:
+                    # If sample_id is empty, use the key as sample_id
+                    migrated_data[key] = value
+            elif isinstance(value, dict):
+                # This is the old structure, migrate it
+                sample_id = value.get("sample_id", key)
+                if sample_id:
+                    migrated_data[sample_id] = {
+                        "sample_id": sample_id,
+                        "name": key,  # Use the old key as the name
+                        "description": value.get("description", ""),
+                        "owner": value.get("owner", "")
+                    }
+                else:
+                    # If no sample_id, use the key as both sample_id and name
+                    migrated_data[key] = {
+                        "sample_id": key,
+                        "name": key,
+                        "description": value.get("description", ""),
+                        "owner": value.get("owner", "")
+                    }
+        
+        self.sampledata = migrated_data
+        
+        # Update the combobox with the migrated data
+        self.update_shown_samples()
 
     def select_nomad_sample(self):
         """
@@ -2668,12 +2744,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             sampledata = self.extension_sample
             sample = sampledata["name"]
         else:
-            sample = self.comboBox_sample.currentText() or "default_sample"
-            sampledata = (
-                {"name": "default_sample"}
-                if sample == "default_sample"
-                else self.sampledata[sample]
-            )
+            # The combobox now contains sample IDs, not sample names
+            sample_id = self.comboBox_sample.currentText() or "default_sample"
+            sampledata = {"name": "default_sample"}
+            if sample_id != "default_sample" and sample_id in self.sampledata:
+                # Get the sample data using the sample ID
+                sampledata = self.sampledata[sample_id]
+                sample = sampledata.get("name", sample_id)
+            else:
+                sample = "default_sample"
         return sample, sampledata
 
     def open_protocol(self, protocol_name):
