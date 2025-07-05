@@ -11,7 +11,7 @@ sys.path.append(os.path.dirname(__file__))
 import json
 import pathlib
 
-from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog, QLabel
+from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog, QLabel, QStyledItemDelegate, QHeaderView
 from PySide6.QtCore import Qt, Signal, QThread, QTimer
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
@@ -1010,7 +1010,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         dialog = add_remove_table.AddRemoveDialoge(
             headerLabels=headers,
             parent=self,
-            title=f"Sample-Information User:{self.active_user}",
+            title="Sample-Information",
             askdelete=True,
             tableData=tableData,
             default_values={"owner": self.active_user},
@@ -1053,6 +1053,48 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # Also override the clicked signal connection that triggers resize
         dialog.table.table.clicked.disconnect()
         dialog.table.table.clicked.connect(lambda: None)  # Do nothing on click
+        
+        # Enable text wrapping and auto row height adjustment
+        from PySide6.QtCore import Qt
+        from PySide6.QtWidgets import QStyledItemDelegate, QHeaderView
+        
+        class WordWrapDelegate(QStyledItemDelegate):
+            def paint(self, painter, option, index):
+                # Enable word wrapping for text display
+                option.displayAlignment = Qt.AlignTop | Qt.AlignLeft
+                super().paint(painter, option, index)
+            
+            def sizeHint(self, option, index):
+                # Calculate size hint based on wrapped text
+                size = super().sizeHint(option, index)
+                if index.column() == 2:  # Description column
+                    # Get the text and calculate wrapped height
+                    text = index.data()
+                    if text:
+                        # Use the column width to calculate wrapped text height
+                        column_width = dialog.table.table.columnWidth(index.column())
+                        font_metrics = option.fontMetrics
+                        text_rect = font_metrics.boundingRect(
+                            0, 0, column_width - 10, 0,  # -10 for padding
+                            Qt.TextWordWrap, str(text)
+                        )
+                        size.setHeight(max(size.height(), text_rect.height() + 10))
+                return size
+        
+        # Set the delegate for text wrapping
+        word_wrap_delegate = WordWrapDelegate()
+        dialog.table.table.setItemDelegate(word_wrap_delegate)
+        
+        # Enable word wrap in the table
+        dialog.table.table.setWordWrap(True)
+        
+        # Set text elide mode to none so full text is shown when wrapped
+        dialog.table.table.setTextElideMode(Qt.ElideNone)
+        
+        # Enable automatic row height adjustment
+        dialog.table.table.verticalHeader().setSectionResizeMode(
+            QHeaderView.ResizeToContents
+        )
         
         # Add a status label to the dialog layout
         status_label = QLabel("Red = invalid, Green/White = valid")
