@@ -1010,7 +1010,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         dialog = add_remove_table.AddRemoveDialoge(
             headerLabels=headers,
             parent=self,
-            title="Sample-Information",
+            title=f"Sample-Information User:{self.active_user}",
             askdelete=True,
             tableData=tableData,
             default_values={"owner": self.active_user},
@@ -1018,6 +1018,42 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             checkstrings=[0, 1],  # Check both sample_id (index 0) and name (index 1) columns
         )
 
+        dialog.resize(800, 600) 
+        dialog.table.table.setColumnWidth(0, 150)   
+        dialog.table.table.setColumnWidth(1, 150)   
+        dialog.table.table.setColumnWidth(2, 500)  
+        
+        # Store the desired column widths (initially set to default values)
+        desired_widths = [150, 150, 500]
+        
+        # Function to update desired widths when user manually resizes columns
+        def update_desired_widths():
+            for i in range(dialog.table.table.model().columnCount()):
+                desired_widths[i] = dialog.table.table.columnWidth(i)
+        
+        # Connect to header section resized signal to capture manual resizing
+        dialog.table.table.horizontalHeader().sectionResized.connect(
+            lambda logical_index, old_size, new_size: update_desired_widths()
+        )
+        
+        # Override the resizeColumnsToContents method to maintain current widths
+        original_resize = dialog.table.table.resizeColumnsToContents
+        
+        def custom_resize():
+            # Update desired widths to current widths before any auto-resize
+            update_desired_widths()
+            # Then restore our current column widths (don't call original resize)
+            for i, width in enumerate(desired_widths):
+                if i < dialog.table.table.model().columnCount():
+                    dialog.table.table.setColumnWidth(i, width)
+        
+        # Replace the method
+        dialog.table.table.resizeColumnsToContents = custom_resize
+        
+        # Also override the clicked signal connection that triggers resize
+        dialog.table.table.clicked.disconnect()
+        dialog.table.table.clicked.connect(lambda: None)  # Do nothing on click
+        
         # Add a status label to the dialog layout
         status_label = QLabel("Red = invalid, Green/White = valid")
         status_label.setStyleSheet("color: #4CAF50; font-weight: bold; padding: 5px;")
