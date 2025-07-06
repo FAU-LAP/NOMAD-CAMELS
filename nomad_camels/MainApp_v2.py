@@ -13,7 +13,7 @@ import pathlib
 
 from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog, QLabel, QStyledItemDelegate, QHeaderView
 from PySide6.QtCore import Qt, Signal, QThread, QTimer
-from PySide6.QtGui import QIcon, QPixmap, QShortcut
+from PySide6.QtGui import QIcon, QPixmap, QShortcut, QBrush
 
 from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from nomad_camels.gui.tags_ui import TagWidget, FlowLayout
@@ -995,9 +995,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if not "owner" in tableData.columns:
             tableData["owner"] = self.active_user
 
-        # Create a simple validation function that only checks for special characters
+        # Create a comprehensive validation function that checks for special characters and duplicates
         def validate_sample_field(value):
-            """Custom validation function that checks for special characters in sample fields."""
+            """Custom validation function that checks for special characters and duplicates in sample fields."""
             if not value or str(value).strip() == "":
                 return True  # Empty is valid (will be handled later)
             
@@ -1006,6 +1006,120 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 return False
             
             return True
+        
+        # Create a function to check for duplicates specifically for sample_id column
+        def check_sample_id_duplicates():
+            """Check for duplicate sample IDs and special characters in the table and highlight them in red."""
+            if not hasattr(dialog, 'table') or not dialog.table:
+                return
+            
+            # Temporarily disconnect the signal to prevent recursion
+            dialog.table.table_model.itemChanged.disconnect()
+            
+            try:
+                # Get all sample IDs from the table
+                sample_ids = []
+                sample_id_items = []
+                name_items = []
+                
+                for row in range(dialog.table.table_model.rowCount()):
+                    # Check sample_id column (index 0)
+                    sample_id_item = dialog.table.table_model.item(row, 0)
+                    if sample_id_item:
+                        sample_id = str(sample_id_item.text()).strip()
+                        if sample_id:  # Only check non-empty sample IDs
+                            sample_ids.append(sample_id)
+                            sample_id_items.append(sample_id_item)
+                    
+                    # Check name column (index 1) for special characters
+                    name_item = dialog.table.table_model.item(row, 1)
+                    if name_item:
+                        name_items.append(name_item)
+                
+                # Find duplicates in sample IDs
+                seen = set()
+                duplicates = set()
+                for sample_id in sample_ids:
+                    if sample_id in seen:
+                        duplicates.add(sample_id)
+                    else:
+                        seen.add(sample_id)
+                
+                # Check against existing samples (excluding those being edited)
+                existing_sample_ids = set()
+                current_user_samples = self.get_user_samples()
+                for sample_id in current_user_samples.keys():
+                    # Only add to existing set if it wasn't part of the original edit
+                    if str(sample_id).strip() not in original_sample_ids:
+                        existing_sample_ids.add(str(sample_id).strip())
+                
+                # Add existing conflicts to duplicates
+                for sample_id in sample_ids:
+                    if sample_id in existing_sample_ids:
+                        duplicates.add(sample_id)
+                
+                # Update the color of items based on validation status
+                from PySide6.QtGui import QBrush
+                from PySide6.QtCore import Qt
+                
+                # Check sample_id items for duplicates and special characters
+                for i, item in enumerate(sample_id_items):
+                    sample_id = str(item.text()).strip()
+                    has_special_chars = re.search(r"[^\w\s]", sample_id) is not None
+                    is_duplicate = sample_id in duplicates
+                    
+                    if has_special_chars or is_duplicate:
+                        # Set red background for invalid entries
+                        color = variables_handling.get_color("red")
+                        dialog.table.table_model.setData(
+                            dialog.table.table_model.indexFromItem(item), 
+                            QBrush(color), 
+                            Qt.BackgroundRole
+                        )
+                    else:
+                        # Set white/default background for valid entries
+                        color = variables_handling.get_color("white")
+                        dialog.table.table_model.setData(
+                            dialog.table.table_model.indexFromItem(item), 
+                            QBrush(color), 
+                            Qt.BackgroundRole
+                        )
+                
+                # Check name items for special characters
+                for item in name_items:
+                    name = str(item.text()).strip()
+                    if name:  # Only check non-empty names
+                        has_special_chars = re.search(r"[^\w\s]", name) is not None
+                        
+                        if has_special_chars:
+                            # Set red background for invalid entries
+                            color = variables_handling.get_color("red")
+                            dialog.table.table_model.setData(
+                                dialog.table.table_model.indexFromItem(item), 
+                                QBrush(color), 
+                                Qt.BackgroundRole
+                            )
+                        else:
+                            # Set white/default background for valid entries
+                            color = variables_handling.get_color("white")
+                            dialog.table.table_model.setData(
+                                dialog.table.table_model.indexFromItem(item), 
+                                QBrush(color), 
+                                Qt.BackgroundRole
+                            )
+                    else:
+                        # Empty names get white background
+                        color = variables_handling.get_color("white")
+                        dialog.table.table_model.setData(
+                            dialog.table.table_model.indexFromItem(item), 
+                            QBrush(color), 
+                            Qt.BackgroundRole
+                        )
+            finally:
+                # Reconnect the signals
+                dialog.table.table_model.itemChanged.connect(lambda item: check_sample_id_duplicates())
+                # Also reconnect the original check_string function
+                dialog.table.table_model.itemChanged.connect(dialog.table.check_string)
 
         dialog = add_remove_table.AddRemoveDialoge(
             headerLabels=headers,
@@ -1018,13 +1132,23 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             checkstrings=[0, 1],  # Check both sample_id (index 0) and name (index 1) columns
         )
 
+        # Connect the itemChanged signal to our duplicate checker
+        dialog.table.table_model.itemChanged.connect(lambda item: check_sample_id_duplicates())
+        
+        # Also check duplicates when rows are added or removed
+        dialog.table.added.connect(lambda: check_sample_id_duplicates())
+        dialog.table.removed.connect(lambda: check_sample_id_duplicates())
+        
+        # Initial check for duplicates
+        check_sample_id_duplicates()
+
         dialog.resize(800, 600) 
         dialog.table.table.setColumnWidth(0, 150)   
         dialog.table.table.setColumnWidth(1, 150)   
-        dialog.table.table.setColumnWidth(2, 500)  
+        dialog.table.table.setColumnWidth(2, 450)  
         
         # Store the desired column widths (initially set to default values)
-        desired_widths = [150, 150, 500]
+        desired_widths = [150, 150, 450]
         
         # Function to update desired widths when user manually resizes columns
         def update_desired_widths():
@@ -1097,8 +1221,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         )
         
         # Add a status label to the dialog layout
-        status_label = QLabel("Red = invalid, Green/White = valid")
-        status_label.setStyleSheet("color: #4CAF50; font-weight: bold; padding: 5px;")
+        status_label = QLabel('<span style="color: #FF3333; font-weight: bold;">Red = invalid entry</span>, <span style="color: #4CAF50; font-weight: bold;">Green/White = valid</span>')
+        status_label.setStyleSheet("padding: 5px;")
         dialog.layout().addWidget(status_label, 2, 0)  # Add below the table and buttons
         
         if dialog.exec():
@@ -1212,7 +1336,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     "sample_id": sample_id,
                     "name": dat["name"][i],
                     "description": dat["description"][i],
-                    "owner": dat["owner"][i]
+                    "owner": self.active_user
                 }
                 
                 # Create global key based on owner
