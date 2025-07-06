@@ -11,12 +11,13 @@ sys.path.append(os.path.dirname(__file__))
 import json
 import pathlib
 
-from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog
+from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog, QTabWidget, QPushButton
 from PySide6.QtCore import Qt, Signal, QThread, QTimer
-from PySide6.QtGui import QIcon, QPixmap, QShortcut
+from PySide6.QtGui import QIcon, QPixmap, QShortcut, QAction
 
 from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from nomad_camels.gui.tags_ui import TagWidget, FlowLayout
+from nomad_camels.gui.chat_interface import ChatInterface, ChatWindow
 from importlib import resources
 from nomad_camels import graphics
 
@@ -79,6 +80,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         super().__init__(parent=parent)
         self.setupUi(self)
+        
+        # Create tabbed interface for console and chat
+        self.setup_chat_and_console_tabs()
+        
+        # Initialize chat window
+        self.chat_window = None
+        
         sys.stdout = self.textEdit_console_output.text_writer
         sys.stderr = self.textEdit_console_output.error_writer
 
@@ -280,6 +288,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionManage_Extensions.triggered.connect(self.manage_extensions)
 
         self.actionWatchdogs.triggered.connect(self.open_watchdog_definition)
+        
+        # Connect chat interface action
+        self.actionAI_Assistant = QAction("AI Assistant", self)
+        self.actionAI_Assistant.setToolTip("Open AI Assistant Chat Interface")
+        self.actionAI_Assistant.triggered.connect(self.open_chat_window)
+        self.menuTools.addSeparator()
+        self.menuTools.addAction(self.actionAI_Assistant)
+        
         self.eva = Evaluator()
         self.update_watchdogs()
 
@@ -345,6 +361,59 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             dispatcher_thread = Thread(target=start_dispatcher, daemon=True)
             proxy_thread.start()
             dispatcher_thread.start()
+
+    def setup_chat_and_console_tabs(self):
+        """Setup tabbed interface combining console output and chat interface"""
+        # Get the parent widget and layout where console output currently resides
+        parent_widget = self.textEdit_console_output.parent()
+        parent_layout = parent_widget.layout()
+        
+        # Find the position of the console output in the layout
+        console_position = None
+        for i in range(parent_layout.count()):
+            item = parent_layout.itemAt(i)
+            if item.widget() == self.textEdit_console_output:
+                console_position = parent_layout.getItemPosition(i)
+                break
+        
+        if console_position is None:
+            return  # Couldn't find console position, skip setup
+        
+        # Remove the console output from the layout
+        parent_layout.removeWidget(self.textEdit_console_output)
+        
+        # Create tab widget
+        self.console_chat_tabs = QTabWidget()
+        
+        # Add console output as first tab
+        self.console_chat_tabs.addTab(self.textEdit_console_output, "Console")
+        
+        # Create and add chat interface as second tab
+        self.chat_interface = ChatInterface(self)
+        self.console_chat_tabs.addTab(self.chat_interface, "AI Assistant")
+        
+        # Set tab icons
+        console_icon = self.style().standardIcon(QStyle.SP_ComputerIcon)
+        chat_icon = self.style().standardIcon(QStyle.SP_MessageBoxInformation)
+        self.console_chat_tabs.setTabIcon(0, console_icon)
+        self.console_chat_tabs.setTabIcon(1, chat_icon)
+        
+        # Add the tab widget to the layout at the same position
+        row, col, rowspan, colspan = console_position
+        parent_layout.addWidget(self.console_chat_tabs, row, col, rowspan, colspan)
+        
+        # Set initial tab
+        self.console_chat_tabs.setCurrentIndex(0)  # Start with console tab
+
+    def open_chat_window(self):
+        """Open the chat window"""
+        if self.chat_window is None:
+            self.chat_window = ChatWindow(self, self)
+        
+        # Show and raise the chat window
+        self.chat_window.show()
+        self.chat_window.raise_()
+        self.chat_window.activateWindow()
 
     def add_tag(self):
         """
@@ -544,14 +613,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def show_hide_log(self):
         """
-        Toggle the visibility of the console log and clear log button.
+        Toggle the visibility of the console/chat tabs and clear log button.
 
-        If the log is hidden, it becomes visible, and vice versa. Also updates the text of the show/hide button.
+        If the tabs are hidden, they become visible, and vice versa. Also updates the text of the show/hide button.
         """
-        is_hidden = self.textEdit_console_output.isHidden()
-        self.textEdit_console_output.setHidden(not is_hidden)
-        self.pushButton_clear_log.setHidden(not is_hidden)
-        self.pushButton_show_log.setText("Hide Log" if is_hidden else "Show Log")
+        # Check if we have the tabbed interface
+        if hasattr(self, 'console_chat_tabs'):
+            is_hidden = self.console_chat_tabs.isHidden()
+            self.console_chat_tabs.setHidden(not is_hidden)
+            self.pushButton_clear_log.setHidden(not is_hidden)
+            self.pushButton_show_log.setText("Hide Log" if is_hidden else "Show Log")
+        else:
+            # Fallback to original behavior if tabs not set up
+            is_hidden = self.textEdit_console_output.isHidden()
+            self.textEdit_console_output.setHidden(not is_hidden)
+            self.pushButton_clear_log.setHidden(not is_hidden)
+            self.pushButton_show_log.setText("Hide Log" if is_hidden else "Show Log")
 
     def check_password_protection(self):
         """
@@ -762,6 +839,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if self.open_windows:
             a0.ignore()
             return
+        
+        # Close chat window if it exists
+        if self.chat_window is not None:
+            self.chat_window.close()
+            
         self.stop_API_server()
         super().closeEvent(a0)
         if self.preferences["autosave"]:
