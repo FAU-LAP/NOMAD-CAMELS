@@ -126,6 +126,9 @@ class ChatWorker(QThread):
             from openai import OpenAI
             client = OpenAI(api_key=self.api_key)
             
+            # Log the user message for debugging
+            print(f"[Chat Debug] User message: {self.message}")
+            
             # Prepare system prompt
             system_prompt = """You are an AI assistant for NOMAD-CAMELS, a configurable measurement software for experimental solid-state physics. 
 
@@ -135,18 +138,27 @@ You can help users with:
 - Setting up measurements
 - Troubleshooting issues
 
-When a user asks to add a new sample, respond with a helpful message asking for the sample details, then call the add_sample function.
-
 For sample creation, you need these details:
 - Sample name (required)
 - Sample ID (optional)
 - Description (optional)
 - Owner (will be set to current user)
 
-If the user wants to add a sample, ask for the required information and then use the following format to trigger the action:
-ACTION:add_sample:{"name": "sample_name", "sample_id": "optional_id", "description": "optional_description"}
+IMPORTANT SAMPLE CREATION RULES:
+1. If the user provides a sample name or ID (like "Aug114", "sample with id Aug114", "add sample Aug114", etc.), IMMEDIATELY create the sample using the ACTION format.
+2. Use the provided name/ID for both the name and sample_id fields if only one is given.
+3. Only ask for more information if the user's request is completely vague (like just "add sample" with no name/ID).
+4. When you detect sample creation intent with a name/ID, respond with the ACTION format immediately.
 
-Always be helpful and guide users through the process step by step."""
+To create a sample, use this exact format:
+ACTION:add_sample:{"name": "sample_name", "sample_id": "sample_id", "description": "description"}
+
+Examples:
+- User: "Adding new sample with id Aug114" → ACTION:add_sample:{"name": "Aug114", "sample_id": "Aug114", "description": ""}
+- User: "Add sample Silicon Wafer" → ACTION:add_sample:{"name": "Silicon Wafer", "sample_id": "Silicon_Wafer", "description": ""}
+- User: "Create sample X with description test material" → ACTION:add_sample:{"name": "X", "sample_id": "X", "description": "test material"}
+
+Always be helpful and create samples immediately when you have enough information."""
             
             # Prepare messages
             messages = [{"role": "system", "content": system_prompt}]
@@ -168,6 +180,9 @@ Always be helpful and guide users through the process step by step."""
             
             reply = response.choices[0].message.content.strip()
             
+            # Log the AI response for debugging
+            print(f"[Chat Debug] AI response: {reply}")
+            
             # Check if response contains an action
             if reply.startswith("ACTION:"):
                 parts = reply.split(":", 2)
@@ -177,13 +192,28 @@ Always be helpful and guide users through the process step by step."""
                         parameters = json.loads(parts[2])
                         self.action_requested.emit(action_type, parameters)
                         # Also send a user-friendly message
-                        self.message_received.emit("I'll help you add that sample now. Opening the sample dialog...")
-                    except json.JSONDecodeError:
+                        self.message_received.emit("I'll help you add that sample now...")
+                    except json.JSONDecodeError as e:
+                        self.message_received.emit(f"I tried to create a sample but there was an error parsing the action: {e}. Here's what I wanted to do: {reply}")
+                else:
+                    self.message_received.emit(f"I tried to create a sample but the action format was incomplete: {reply}")
+            else:
+                # Check if the reply contains action-like content but doesn't start with ACTION:
+                if "add_sample" in reply.lower() and "{" in reply and "}" in reply:
+                    # Try to extract JSON from the reply
+                    import re
+                    json_match = re.search(r'\{[^}]+\}', reply)
+                    if json_match:
+                        try:
+                            parameters = json.loads(json_match.group())
+                            self.action_requested.emit("add_sample", parameters)
+                            self.message_received.emit("I'll help you add that sample now...")
+                        except json.JSONDecodeError:
+                            self.message_received.emit(reply)
+                    else:
                         self.message_received.emit(reply)
                 else:
                     self.message_received.emit(reply)
-            else:
-                self.message_received.emit(reply)
                 
         except Exception as e:
             self.error_occurred.emit(f"Error communicating with OpenAI: {str(e)}")
@@ -424,8 +454,22 @@ class ChatInterface(QWidget):
             sample_id = parameters.get('sample_id', '')
             description = parameters.get('description', '')
             
+            # Handle case where only sample_id is provided
+            if not sample_name and sample_id:
+                sample_name = sample_id
+            elif not sample_id and sample_name:
+                sample_id = sample_name
+            
             if not sample_name:
                 self.add_message("I need a sample name to create the sample. Please provide a name.", False)
+                return
+            
+            # Use sample_name as the key in sampledata (this is how NOMAD-CAMELS stores samples)
+            sample_key = sample_name
+            
+            # Check if sample already exists
+            if sample_key in self.main_window.sampledata:
+                self.add_message(f"A sample with the name '{sample_key}' already exists. Please use a different name.", False)
                 return
             
             # Add sample to the main window's sample data
@@ -436,20 +480,20 @@ class ChatInterface(QWidget):
                 'owner': self.main_window.active_user
             }
             
-            # Add to sampledata
-            self.main_window.sampledata[sample_name] = sample_data
+            # Add to sampledata using sample_name as key
+            self.main_window.sampledata[sample_key] = sample_data
             
             # Update UI
             self.main_window.update_shown_samples()
             self.main_window.save_sample_data()
             
             # Set as active sample
-            self.main_window.active_sample = sample_name
-            self.main_window.comboBox_sample.setCurrentText(sample_name)
+            self.main_window.active_sample = sample_key
+            self.main_window.comboBox_sample.setCurrentText(sample_key)
             
             # Show success message
             success_message = f"✅ Sample '{sample_name}' has been successfully added!"
-            if sample_id:
+            if sample_id and sample_id != sample_name:
                 success_message += f"\nSample ID: {sample_id}"
             if description:
                 success_message += f"\nDescription: {description}"
@@ -463,6 +507,8 @@ class ChatInterface(QWidget):
         except Exception as e:
             self.add_message(f"Error adding sample: {str(e)}", False)
             logging.error(f"Error in handle_add_sample_action: {e}")
+            import traceback
+            traceback.print_exc()
             
     def show_sample_dialog(self):
         """Show the sample edit dialog"""
