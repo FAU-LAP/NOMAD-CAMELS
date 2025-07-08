@@ -118,7 +118,7 @@ class VariableBox(QWidget):
         super().__init__(parent)
         name = name or (protocol.name if protocol else "protocol")
         self.setWindowTitle(f"Live variable control - {name} - NOMAD CAMELS")
-        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.table = VariableTable(

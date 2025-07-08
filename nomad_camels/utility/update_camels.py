@@ -188,7 +188,7 @@ def show_release_notes():
         def __init__(self, markdown_text):
             super().__init__()
             self.setWindowTitle("Changelog - NOMAD CAMELS")
-            self.setWindowIcon(QIcon(str(importlib.resources.files(graphics) / "camels_icon.png")))
+            self.setWindowIcon(QIcon(str(importlib.resources.files(graphics) / "CAMELS_Icon.png")))
 
             layout = QGridLayout(self)
 

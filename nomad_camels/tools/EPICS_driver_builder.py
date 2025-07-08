@@ -26,7 +26,7 @@ class EPICS_Driver_Builder(QDialog):
 
         try:
             self.setWindowIcon(
-                QIcon(str(resources.files(graphics) / "camels_icon.png"))
+                QIcon(str(resources.files(graphics) / "CAMELS_Icon.png"))
             )
         except:
             pass
