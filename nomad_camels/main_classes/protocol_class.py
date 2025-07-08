@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit, QMessageBox, QPushButton
+from PySide6.QtWidgets import QWidget, QMessageBox, QStyle
 from PySide6.QtCore import Signal, Qt
+from PySide6.QtGui import QIcon
 
 from nomad_camels.frontpanels.plot_definer import Plot_Definer_Widget
 from nomad_camels.loop_steps import make_step_of_type
@@ -601,6 +602,32 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.selectionModel().selectionChanged.connect(
             self.update_variable_select
         )
+        self.check_aliases_defined()
+
+    def check_aliases_defined(self):
+        if (
+            not self.protocol.instrument_aliases["Instrument"]
+            and not self.protocol.channel_aliases["channel"]
+        ):
+            self.pushButton_instrument_aliases.setIcon(QIcon())
+        else:
+            defined = True
+            for instrument in self.protocol.instrument_aliases["Instrument"]:
+                if not instrument in variables_handling.devices:
+                    defined = False
+                    break
+            for channel in self.protocol.channel_aliases["channel"]:
+                if not channel in variables_handling.get_channels(use_aliases=False):
+                    defined = False
+                    break
+            if defined:
+                self.pushButton_instrument_aliases.setIcon(
+                    self.style().standardIcon(QStyle.SP_DialogApplyButton)
+                )
+            else:
+                self.pushButton_instrument_aliases.setIcon(
+                    self.style().standardIcon(QStyle.SP_MessageBoxWarning)
+                )
 
     def check_use_ending_steps(self):
         """If the checkBox_perform_at_end is checked, the ending_protocol_selection
@@ -775,3 +802,4 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             dialog.deleteLater()
             variables_handling.instrument_aliases = self.protocol.instrument_aliases
             variables_handling.channel_aliases = self.protocol.channel_aliases
+            self.check_aliases_defined()
