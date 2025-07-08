@@ -11,14 +11,15 @@ sys.path.append(os.path.dirname(__file__))
 import json
 import pathlib
 
-from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog, QLabel, QStyledItemDelegate, QHeaderView
+from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog, QLabel
 from PySide6.QtCore import Qt, Signal, QThread, QTimer
-from PySide6.QtGui import QIcon, QPixmap, QShortcut, QBrush
+from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
 from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from nomad_camels.gui.tags_ui import TagWidget, FlowLayout
 from importlib import resources
 from nomad_camels import graphics
+from nomad_camels.utility.databroker_export import clean_filename
 
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import (
     RenameTabWidget,
@@ -423,29 +424,34 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.active_user = user_name
         self.comboBox_user.setCurrentText(user_name)
 
-    def set_sample(self, sample_id):
+    def set_sample(self, sample_name):
         """
-        Set the active sample based on the provided sample ID (called by the API).
+        Set the active sample to the specified sample name (called by the API).
 
         Args:
-            sample_id (str): The sample ID to set as active.
+            sample_name (str): The name of the sample to set.
 
         Raises:
-            ValueError: If the sample ID does not exist in the current user's accessible samples.
+            ValueError: If the given sample does not exist in the sample data..
         """
-        # Get samples accessible to the current user
-        user_samples = self.get_user_samples()
-        
-        # Check if the sample ID exists in the current user's accessible samples
-        if sample_id not in user_samples:
-            raise ValueError(
-                f"Sample ID {sample_id} can not be set as it does not exist or is not accessible to user {self.active_user}. Please create this sample first."
-            )
-        
-        # Set the active sample to the sample name for backward compatibility
-        sample_name = user_samples[sample_id].get("name", sample_id)
+        # Check if the sample exists
+        if sample_name not in self.sampledata:
+            import pandas as pd
+
+            # make dataframe with keys of sampledata as index and the values as columns
+            df = pd.DataFrame.from_dict(self.sampledata, orient="index")
+            if sample_name in df["name"]:
+                sample_name = df[df["name"] == sample_name].index[0]
+            elif sample_name in df["sample_id"]:
+                sample_name = df[df["sample_id"] == sample_name].index[0]
+            else:
+                raise ValueError(
+                    f"Sample {sample_name} can not be set as it does not exist or is not accessible to user {self.active_user}. Please create this sample first."
+                )
+
+        # Set the active sample to the sample name
         self.active_sample = sample_name
-        self.comboBox_sample.setCurrentText(sample_id)  # Display sample ID in combobox
+        self.comboBox_sample.setCurrentText(sample_name)
 
     def set_session(self, session_name):
         """
@@ -968,158 +974,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         from nomad_camels.ui_widgets import add_remove_table
         from nomad_camels.ui_widgets.toast_notification import handle_validation_error
 
-        # Get the currently selected sample ID and convert to sample name for active_sample
-        current_sample_id = self.comboBox_sample.currentText()
-        user_samples = self.get_user_samples()
-        if current_sample_id in user_samples:
-            self.active_sample = user_samples[current_sample_id].get("name", current_sample_id)
-        else:
-            self.active_sample = current_sample_id
-        headers = ["sample_id", "name", "description"]
-        
-        # Convert user's sample data to DataFrame format for the dialog
-        tableData = []
-        original_sample_ids = set()  # Track original sample IDs being edited
-        
-        for sample_id, sample_data in user_samples.items():
-            row = {
-                "sample_id": sample_id,
-                "name": sample_data.get("name", sample_id),
-                "description": sample_data.get("description", ""),
-                "owner": self.active_user
-            }
-            tableData.append(row)
-            original_sample_ids.add(str(sample_id).strip())
+        self.active_sample = self.comboBox_sample.currentText()
+        headers = ["name", "sample_id", "description", "owner"]
+        tableData = pd.DataFrame.from_dict(self.sampledata, "index")
 
-        tableData = pd.DataFrame(tableData)
         if not "owner" in tableData.columns:
             tableData["owner"] = self.active_user
-
-        # Create a comprehensive validation function that checks for special characters and duplicates
-        def validate_sample_field(value):
-            """Custom validation function that checks for special characters and duplicates in sample fields."""
-            if not value or str(value).strip() == "":
-                return True  # Empty is valid (will be handled later)
-            
-            # Check for special characters
-            if re.search(r"[^\w\s]", str(value)):
-                return False
-            
-            return True
-        
-        # Create a function to check for duplicates specifically for sample_id column
-        def check_sample_id_duplicates():
-            """Check for duplicate sample IDs and special characters in the table and highlight them in red."""
-            if not hasattr(dialog, 'table') or not dialog.table:
-                return
-            
-            # Temporarily disconnect the signal to prevent recursion
-            dialog.table.table_model.itemChanged.disconnect()
-            
-            try:
-                # Get all sample IDs from the table
-                sample_ids = []
-                sample_id_items = []
-                name_items = []
-                
-                for row in range(dialog.table.table_model.rowCount()):
-                    # Check sample_id column (index 0)
-                    sample_id_item = dialog.table.table_model.item(row, 0)
-                    if sample_id_item:
-                        sample_id = str(sample_id_item.text()).strip()
-                        if sample_id:  # Only check non-empty sample IDs
-                            sample_ids.append(sample_id)
-                            sample_id_items.append(sample_id_item)
-                    
-                    # Check name column (index 1) for special characters
-                    name_item = dialog.table.table_model.item(row, 1)
-                    if name_item:
-                        name_items.append(name_item)
-                
-                # Find duplicates in sample IDs
-                seen = set()
-                duplicates = set()
-                for sample_id in sample_ids:
-                    if sample_id in seen:
-                        duplicates.add(sample_id)
-                    else:
-                        seen.add(sample_id)
-                
-                # Check against existing samples (excluding those being edited)
-                existing_sample_ids = set()
-                current_user_samples = self.get_user_samples()
-                for sample_id in current_user_samples.keys():
-                    # Only add to existing set if it wasn't part of the original edit
-                    if str(sample_id).strip() not in original_sample_ids:
-                        existing_sample_ids.add(str(sample_id).strip())
-                
-                # Add existing conflicts to duplicates
-                for sample_id in sample_ids:
-                    if sample_id in existing_sample_ids:
-                        duplicates.add(sample_id)
-                
-                # Update the color of items based on validation status
-                from PySide6.QtGui import QBrush
-                from PySide6.QtCore import Qt
-                
-                # Check sample_id items for duplicates and special characters
-                for i, item in enumerate(sample_id_items):
-                    sample_id = str(item.text()).strip()
-                    has_special_chars = re.search(r"[^\w\s]", sample_id) is not None
-                    is_duplicate = sample_id in duplicates
-                    
-                    if has_special_chars or is_duplicate:
-                        # Set red background for invalid entries
-                        color = variables_handling.get_color("red")
-                        dialog.table.table_model.setData(
-                            dialog.table.table_model.indexFromItem(item), 
-                            QBrush(color), 
-                            Qt.BackgroundRole
-                        )
-                    else:
-                        # Set white/default background for valid entries
-                        color = variables_handling.get_color("white")
-                        dialog.table.table_model.setData(
-                            dialog.table.table_model.indexFromItem(item), 
-                            QBrush(color), 
-                            Qt.BackgroundRole
-                        )
-                
-                # Check name items for special characters
-                for item in name_items:
-                    name = str(item.text()).strip()
-                    if name:  # Only check non-empty names
-                        has_special_chars = re.search(r"[^\w\s]", name) is not None
-                        
-                        if has_special_chars:
-                            # Set red background for invalid entries
-                            color = variables_handling.get_color("red")
-                            dialog.table.table_model.setData(
-                                dialog.table.table_model.indexFromItem(item), 
-                                QBrush(color), 
-                                Qt.BackgroundRole
-                            )
-                        else:
-                            # Set white/default background for valid entries
-                            color = variables_handling.get_color("white")
-                            dialog.table.table_model.setData(
-                                dialog.table.table_model.indexFromItem(item), 
-                                QBrush(color), 
-                                Qt.BackgroundRole
-                            )
-                    else:
-                        # Empty names get white background
-                        color = variables_handling.get_color("white")
-                        dialog.table.table_model.setData(
-                            dialog.table.table_model.indexFromItem(item), 
-                            QBrush(color), 
-                            Qt.BackgroundRole
-                        )
-            finally:
-                # Reconnect the signals
-                dialog.table.table_model.itemChanged.connect(lambda item: check_sample_id_duplicates())
-                # Also reconnect the original check_string function
-                dialog.table.table_model.itemChanged.connect(dialog.table.check_string)
 
         dialog = add_remove_table.AddRemoveDialoge(
             headerLabels=headers,
@@ -1128,41 +988,35 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             askdelete=True,
             tableData=tableData,
             default_values={"owner": self.active_user},
-            check_string_function=validate_sample_field,
-            checkstrings=[0, 1],  # Check both sample_id (index 0) and name (index 1) columns
+            check_duplicates=[0, 1],
+            editables=[0, 1, 2],
         )
 
-        # Connect the itemChanged signal to our duplicate checker
-        dialog.table.table_model.itemChanged.connect(lambda item: check_sample_id_duplicates())
-        
-        # Also check duplicates when rows are added or removed
-        dialog.table.added.connect(lambda: check_sample_id_duplicates())
-        dialog.table.removed.connect(lambda: check_sample_id_duplicates())
-        
         # Initial check for duplicates
-        check_sample_id_duplicates()
+        # check_sample_id_duplicates()
 
-        dialog.resize(800, 600) 
-        dialog.table.table.setColumnWidth(0, 150)   
-        dialog.table.table.setColumnWidth(1, 150)   
-        dialog.table.table.setColumnWidth(2, 450)  
-        
+        dialog.resize(800, 600)
+        dialog.table.table.setColumnWidth(0, 150)
+        dialog.table.table.setColumnWidth(1, 150)
+        dialog.table.table.setColumnWidth(2, 350)
+        dialog.table.table.setColumnWidth(3, 150)
+
         # Store the desired column widths (initially set to default values)
-        desired_widths = [150, 150, 450]
-        
+        desired_widths = [150, 150, 350, 150]
+
         # Function to update desired widths when user manually resizes columns
         def update_desired_widths():
             for i in range(dialog.table.table.model().columnCount()):
                 desired_widths[i] = dialog.table.table.columnWidth(i)
-        
+
         # Connect to header section resized signal to capture manual resizing
         dialog.table.table.horizontalHeader().sectionResized.connect(
             lambda logical_index, old_size, new_size: update_desired_widths()
         )
-        
+
         # Override the resizeColumnsToContents method to maintain current widths
         original_resize = dialog.table.table.resizeColumnsToContents
-        
+
         def custom_resize():
             # Update desired widths to current widths before any auto-resize
             update_desired_widths()
@@ -1170,24 +1024,24 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             for i, width in enumerate(desired_widths):
                 if i < dialog.table.table.model().columnCount():
                     dialog.table.table.setColumnWidth(i, width)
-        
+
         # Replace the method
         dialog.table.table.resizeColumnsToContents = custom_resize
-        
+
         # Also override the clicked signal connection that triggers resize
         dialog.table.table.clicked.disconnect()
         dialog.table.table.clicked.connect(lambda: None)  # Do nothing on click
-        
+
         # Enable text wrapping and auto row height adjustment
         from PySide6.QtCore import Qt
         from PySide6.QtWidgets import QStyledItemDelegate, QHeaderView
-        
+
         class WordWrapDelegate(QStyledItemDelegate):
             def paint(self, painter, option, index):
                 # Enable word wrapping for text display
                 option.displayAlignment = Qt.AlignTop | Qt.AlignLeft
                 super().paint(painter, option, index)
-            
+
             def sizeHint(self, option, index):
                 # Calculate size hint based on wrapped text
                 size = super().sizeHint(option, index)
@@ -1199,247 +1053,102 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         column_width = dialog.table.table.columnWidth(index.column())
                         font_metrics = option.fontMetrics
                         text_rect = font_metrics.boundingRect(
-                            0, 0, column_width - 10, 0,  # -10 for padding
-                            Qt.TextWordWrap, str(text)
+                            0,
+                            0,
+                            column_width - 10,
+                            0,  # -10 for padding
+                            Qt.TextWordWrap,
+                            str(text),
                         )
                         size.setHeight(max(size.height(), text_rect.height() + 10))
                 return size
-        
+
         # Set the delegate for text wrapping
         word_wrap_delegate = WordWrapDelegate()
         dialog.table.table.setItemDelegate(word_wrap_delegate)
-        
+
         # Enable word wrap in the table
         dialog.table.table.setWordWrap(True)
-        
+
         # Set text elide mode to none so full text is shown when wrapped
         dialog.table.table.setTextElideMode(Qt.ElideNone)
-        
+
         # Enable automatic row height adjustment
         dialog.table.table.verticalHeader().setSectionResizeMode(
             QHeaderView.ResizeToContents
         )
-        
+
         # Add a status label to the dialog layout
-        status_label = QLabel('<span style="color: #FF3333; font-weight: bold;">Red = invalid entry</span>, <span style="color: #4CAF50; font-weight: bold;">Green/White = valid</span>')
+        status_label = QLabel(
+            '<span style="color: #FF3333; font-weight: bold;">Red = invalid entry</span>, <span style="color: #4CAF50; font-weight: bold;">Green/White = valid</span>'
+        )
         status_label.setStyleSheet("padding: 5px;")
         dialog.layout().addWidget(status_label, 2, 0)  # Add below the table and buttons
-        
+
         if dialog.exec():
-            # Get the data from the dialog
+            # Changing the returned dict to dataframe and back to ensure proper formatting.
             dat = dialog.get_data()
-            
-            # Validate that we have data and required fields
-            if not dat or "sample_id" not in dat or "name" not in dat:
-                return
-            
-            # Filter out empty sample_ids
-            valid_indices = []
-            for i, sample_id in enumerate(dat["sample_id"]):
-                if sample_id and str(sample_id).strip():
-                    valid_indices.append(i)
-            
-            if not valid_indices:
-                return  # No valid samples to process
-            
-            # Create filtered data with only valid samples
-            filtered_dat = {}
-            for key in dat.keys():
-                filtered_dat[key] = [dat[key][i] for i in valid_indices]
-            
-            dat = filtered_dat
-            
-            # Validate sample_id uniqueness within the dialog data
-            sample_ids = [str(sid).strip() for sid in dat["sample_id"]]
-            if len(sample_ids) != len(set(sample_ids)):
-                error_message = "Each Sample ID must be unique. Please ensure there are no duplicate Sample IDs."
-                handle_validation_error(
-                    error_message=error_message,
-                    title="Duplicate Sample ID",
-                    parent=self
-                )
-                return
-            
-            # Check for duplicates against existing sample data (from the same user only)
-            # BUT exclude the samples that were originally being edited
-            existing_sample_ids = set()
-            current_user_samples = self.get_user_samples()
-            for sample_id in current_user_samples.keys():
-                # Only add to existing set if it wasn't part of the original edit
-                if str(sample_id).strip() not in original_sample_ids:
-                    existing_sample_ids.add(str(sample_id).strip())
-            
-            # Find duplicates between new samples and existing samples (excluding original samples)
-            new_sample_ids = set(sample_ids)
-            duplicates = new_sample_ids.intersection(existing_sample_ids)
-            
-            if duplicates:
-                duplicate_list = ", ".join(f'"{dup}"' for dup in duplicates)
-                error_message = f"Sample ID(s) {duplicate_list} already exist(s). Please use unique Sample IDs."
-                handle_validation_error(
-                    error_message=error_message,
-                    title="Duplicate Sample ID",
-                    parent=self
-                )
-                return
-            
-            # Validate sample_id for special characters
-            for i, d in enumerate(dat["sample_id"]):
-                if re.search(r"[^\w\s]", str(d)):
-                    error_message = f'Sample ID "{d}" contains special characters.\nPlease use only letters, numbers and whitespace.'
-                    handle_validation_error(
-                        error_message=error_message,
-                        title="Invalid Sample ID",
-                        parent=self
-                    )
-                    return
-                dat["sample_id"][i] = d.strip()
-            
-            # Validate sample names for special characters
             for i, d in enumerate(dat["name"]):
-                if d and str(d).strip():  # Only validate non-empty names
-                    if re.search(r"[^\w\s]", str(d)):
-                        error_message = f'Sample name "{d}" contains special characters.\nPlease use only letters, numbers and whitespace.'
-                        handle_validation_error(
-                            error_message=error_message,
-                            title="Invalid Sample Name",
-                            parent=self
-                        )
-                        return
-                    dat["name"][i] = d.strip()
-            
-            # Remove old samples that were being edited from the global data structure
-            for sample_id in original_sample_ids:
-                # Find and remove the global key for this sample
-                global_key_to_remove = None
-                for global_key in self.sampledata.keys():
-                    if "::" in global_key:
-                        user, sid = global_key.split("::", 1)
-                        if user == self.active_user and sid == sample_id:
-                            global_key_to_remove = global_key
-                            break
-                    else:
-                        # Shared sample
-                        if global_key == sample_id:
-                            sample_data = self.sampledata[global_key]
-                            if sample_data.get("owner") == self.active_user:
-                                global_key_to_remove = global_key
-                                break
-                
-                if global_key_to_remove:
-                    del self.sampledata[global_key_to_remove]
-            
-            # Add the new/updated samples to the global data structure
-            for i in range(len(dat["sample_id"])):
-                sample_id = dat["sample_id"][i]
-                sample_data = {
-                    "sample_id": sample_id,
-                    "name": dat["name"][i],
-                    "description": dat["description"][i],
-                    "owner": self.active_user
-                }
-                
-                # Create global key based on owner
-                owner = sample_data["owner"]
-                if owner and owner != "shared":
-                    global_key = f"{owner}::{sample_id}"
-                else:
-                    global_key = sample_id
-                
-                self.sampledata[global_key] = sample_data
-            
+                dat["name"][i] = d.strip()
+                if not dat["name"][i] and dat["sample_id"][i]:
+                    dat["name"][i] = dat["sample_id"][i]
+            dat = pd.DataFrame(dat)
+            dat["Name2"] = dat.apply(
+                lambda row: (
+                    f'{row["name"]} / {row["sample_id"]}'
+                    if row["name"] != row["sample_id"] and row["sample_id"]
+                    else row["name"]
+                ),
+                axis=1,
+            )
+            dat.set_index("Name2", inplace=True)
+            data_dict = dat.to_dict("index")
+            removers = []
+            for key, value in self.sampledata.items():
+                if value["owner"] == self.active_user and key not in data_dict:
+                    removers.append(key)
+            for key in removers:
+                self.sampledata.pop(key)
+            self.sampledata.update(dat.to_dict("index"))
+
             self.update_shown_samples()
             self.save_sample_data()
 
     def update_shown_samples(self):
         """
-        Refresh the sample combobox with sample IDs that are owned by the active user or are shared.
+        Refresh the sample combobox with samples that are owned by the active user or have no owner.
         """
         self.comboBox_sample.clear()
-        sample_items = []
-        
-        # Get samples accessible to the current user (returns clean sample IDs as keys)
-        user_samples = self.get_user_samples()
-        
-        for sample_id, sample_data in user_samples.items():
-            # Use the clean sample ID for display in the combobox
-            sample_items.append(sample_id)
-        
-        # Sort the items alphabetically (case-insensitive)
-        sample_items.sort(key=lambda x: x.lower())
-        self.comboBox_sample.addItems(sample_items)
-        
-        # Set the current sample if it exists
-        if self.active_sample:
-            # Find the sample ID by name in the current user's data
-            current_sample_id = None
-            for sample_id, sample_data in user_samples.items():
-                if sample_data.get("name") == self.active_sample:
-                    current_sample_id = sample_id
-                    break
-            
-            if current_sample_id:
-                self.comboBox_sample.setCurrentText(current_sample_id)
+        self.comboBox_sample.addItems(
+            sorted(
+                [
+                    key
+                    for key in self.sampledata.keys()
+                    if self.sampledata[key].get("owner", "") == self.active_user
+                    or not self.sampledata[key].get("owner", "")
+                ],
+                key=lambda x: x.lower(),
+            )
+        )
+        if self.active_sample in self.sampledata.keys():
+            self.comboBox_sample.setCurrentText(self.active_sample)
 
     def save_sample_data(self):
         """
-        Save the current sample data to a JSON file using hierarchical user-based storage.
-
-        The active sample is saved along with the complete sample data dictionary.
-        Data structure: {
-            "active_sample": "sample_name",
-            "users": {
-                "user1": {
-                    "sample_id_1": {...},
-                    "sample_id_2": {...}
-                },
-                "user2": {
-                    "sample_id_1": {...}  # Same ID as user1, but different namespace
-                }
-            }
-        }
+        Save the current sample data to a JSON file.
         """
-        # Get the currently selected sample ID from the combobox
-        current_sample_id = self.comboBox_sample.currentText()
-        # Find the sample name for this ID and set it as active_sample
-        if current_sample_id in self.get_user_samples():
-            self.active_sample = self.get_user_samples()[current_sample_id].get("name", current_sample_id)
-        else:
-            self.active_sample = current_sample_id
-        
-        # Create hierarchical structure
-        sampledic = {
-            "active_sample": self.active_sample,
-            "users": {}
-        }
-        
-        # Organize samples by user
-        for global_key, sample_data in self.sampledata.items():
-            owner = sample_data.get("owner", "")
-            if not owner:
-                owner = "shared"  # Samples without owner go to shared namespace
-            
-            if owner not in sampledic["users"]:
-                sampledic["users"][owner] = {}
-            
-            # Extract the actual sample_id from the global key
-            if "::" in global_key:
-                user, sample_id = global_key.split("::", 1)
-            else:
-                sample_id = global_key
-            
-            sampledic["users"][owner][sample_id] = sample_data
-        
+        self.active_sample = self.comboBox_sample.currentText()
+        sampledic = {"active_sample": self.active_sample}
+        sampledic.update(self.sampledata)
         load_save_functions.save_dictionary(
             os.path.join(load_save_functions.appdata_path, "sampledata.json"), sampledic
         )
 
     def load_sample_data(self):
         """
-        Load sample data from a JSON file with support for both old and new hierarchical formats.
+        Load sample data from a JSON file.
 
         Sets the active sample and updates the sample data dictionary.
-        Handles migration from old flat structure to new hierarchical structure.
         """
         sampledat = {}
         samplefile = os.path.join(load_save_functions.appdata_path, "sampledata.json")
@@ -1449,79 +1158,25 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             load_save_functions.load_save_dict(
                 string_dict, sampledat, update_missing_key=True
             )
-        
+
         # Extract active sample
         if "active_sample" in sampledat:
             self.active_sample = sampledat["active_sample"]
-        
-        # Handle both old flat structure and new hierarchical structure
-        migrated_data = {}
-        
-        if "users" in sampledat:
-            # New hierarchical structure
-            for user, user_samples in sampledat["users"].items():
-                for sample_id, sample_data in user_samples.items():
-                    # Create a globally unique key for internal storage
-                    # Format: "user::sample_id" for user-owned samples, just "sample_id" for shared
-                    if user == "shared":
-                        global_key = sample_id
-                    else:
-                        global_key = f"{user}::{sample_id}"
-                    
-                    migrated_data[global_key] = sample_data
-        else:
-            # Old flat structure - migrate to new format
-            for key, value in sampledat.items():
-                if key == "active_sample":
-                    continue
-                    
-                if isinstance(value, dict):
-                    # Check if this is already in the new structure
-                    if "sample_id" in value:
-                        sample_id = value["sample_id"]
-                        owner = value.get("owner", "")
-                        
-                        # Create global key
-                        if owner and owner != "shared":
-                            global_key = f"{owner}::{sample_id}"
-                        else:
-                            global_key = sample_id
-                            
-                        migrated_data[global_key] = value
-                    else:
-                        # Very old structure, migrate it
-                        sample_id = value.get("sample_id", key)
-                        owner = value.get("owner", "")
-                        
-                        sample_data = {
-                            "sample_id": sample_id,
-                            "name": key,  # Use the old key as the name
-                            "description": value.get("description", ""),
-                            "owner": owner
-                        }
-                        
-                        # Create global key
-                        if owner and owner != "shared":
-                            global_key = f"{owner}::{sample_id}"
-                        else:
-                            global_key = sample_id
-                            
-                        migrated_data[global_key] = sample_data
-        
-        self.sampledata = migrated_data
-        
-        # Update the combobox with the migrated data
-        self.update_shown_samples()
+            sampledat.pop("active_sample")
+        self.sampledata = sampledat
+        self.comboBox_sample.addItems(sampledat.keys())
+        if not self.active_sample == "default_sample":
+            self.comboBox_sample.setCurrentText(self.active_sample)
 
     def get_user_samples(self):
         """
         Get samples that belong to the current active user or are shared.
-        
+
         Returns:
             dict: Dictionary of sample_id -> sample_data for the current user
         """
         user_samples = {}
-        
+
         for global_key, sample_data in self.sampledata.items():
             # Parse the global key to extract user and sample_id
             if "::" in global_key:
@@ -1534,7 +1189,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 owner = sample_data.get("owner", "")
                 if not owner or owner == "shared":
                     user_samples[sample_id] = sample_data  # Use clean sample_id as key
-        
+
         return user_samples
 
     def select_nomad_sample(self):
@@ -3005,6 +2660,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 if user == "default_user"
                 else self.userdata[user]
             )
+        user = clean_filename(user)
         return user, userdata
 
     def get_sample_name_data(self):
@@ -3026,20 +2682,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             sampledata = self.extension_sample
             sample = sampledata["name"]
         else:
-            # The combobox now contains sample IDs, not sample names
-            sample_id = self.comboBox_sample.currentText() or "default_sample"
-            sampledata = {"name": "default_sample"}
-            if sample_id != "default_sample":
-                # Get samples accessible to the current user
-                user_samples = self.get_user_samples()
-                if sample_id in user_samples:
-                    # Get the sample data using the sample ID from user's accessible samples
-                    sampledata = user_samples[sample_id]
-                    sample = sampledata.get("name", sample_id)
-                else:
-                    sample = "default_sample"
-            else:
-                sample = "default_sample"
+            sample = self.comboBox_sample.currentText() or "default_sample"
+            sampledata = (
+                {"name": "default_sample"}
+                if sample == "default_sample"
+                else self.sampledata[sample]
+            )
+            sample = sampledata["name"]
+        sample = clean_filename(sample)
         return sample, sampledata
 
     def open_protocol(self, protocol_name):

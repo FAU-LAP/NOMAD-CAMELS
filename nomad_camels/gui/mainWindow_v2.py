@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'mainWindow_v2.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.9.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -330,6 +330,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.setContentsMargins(0, 3, 0, 3)
         self.comboBox_sample = QComboBox(self.sample_widget_default)
         self.comboBox_sample.setObjectName(u"comboBox_sample")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBox_sample.sizePolicy().hasHeightForWidth())
+        self.comboBox_sample.setSizePolicy(sizePolicy)
+        self.comboBox_sample.setMaximumSize(QSize(230, 16777215))
         font2 = QFont()
         font2.setPointSize(10)
         self.comboBox_sample.setFont(font2)
@@ -338,6 +344,11 @@ class Ui_MainWindow(object):
 
         self.pushButton_editSampleInfo = QPushButton(self.sample_widget_default)
         self.pushButton_editSampleInfo.setObjectName(u"pushButton_editSampleInfo")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.pushButton_editSampleInfo.sizePolicy().hasHeightForWidth())
+        self.pushButton_editSampleInfo.setSizePolicy(sizePolicy1)
         self.pushButton_editSampleInfo.setFont(font1)
         self.pushButton_editSampleInfo.setStyleSheet(u"QPushButton {\n"
 "        background-color: #2a4cdf;\n"
@@ -377,6 +388,8 @@ class Ui_MainWindow(object):
         self.pushButton_nomad_sample = QPushButton(self.sample_widget_nomad)
         self.pushButton_nomad_sample.setObjectName(u"pushButton_nomad_sample")
         self.pushButton_nomad_sample.setEnabled(True)
+        sizePolicy1.setHeightForWidth(self.pushButton_nomad_sample.sizePolicy().hasHeightForWidth())
+        self.pushButton_nomad_sample.setSizePolicy(sizePolicy1)
         self.pushButton_nomad_sample.setFont(font1)
         self.pushButton_nomad_sample.setStyleSheet(u"QPushButton {\n"
 "        background-color: #2a4cdf;\n"
@@ -474,7 +487,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 129, 22))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 54, 24))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
         self.horizontalLayout_5.addWidget(self.scrollArea)
@@ -608,11 +621,8 @@ class Ui_MainWindow(object):
 
         self.pushButton_add_manual = QPushButton(self.manual_widget)
         self.pushButton_add_manual.setObjectName(u"pushButton_add_manual")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButton_add_manual.sizePolicy().hasHeightForWidth())
-        self.pushButton_add_manual.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.pushButton_add_manual.sizePolicy().hasHeightForWidth())
+        self.pushButton_add_manual.setSizePolicy(sizePolicy1)
         self.pushButton_add_manual.setMinimumSize(QSize(32, 32))
         self.pushButton_add_manual.setMaximumSize(QSize(32, 32))
         self.pushButton_add_manual.setFont(font1)
@@ -673,8 +683,8 @@ class Ui_MainWindow(object):
 
         self.pushButton_add_meas = QPushButton(self.meas_widget)
         self.pushButton_add_meas.setObjectName(u"pushButton_add_meas")
-        sizePolicy.setHeightForWidth(self.pushButton_add_meas.sizePolicy().hasHeightForWidth())
-        self.pushButton_add_meas.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.pushButton_add_meas.sizePolicy().hasHeightForWidth())
+        self.pushButton_add_meas.setSizePolicy(sizePolicy1)
         self.pushButton_add_meas.setMinimumSize(QSize(32, 32))
         self.pushButton_add_meas.setMaximumSize(QSize(32, 32))
         self.pushButton_add_meas.setFont(font1)
@@ -700,8 +710,8 @@ class Ui_MainWindow(object):
 
         self.pushButton_import_protocol = QPushButton(self.meas_widget)
         self.pushButton_import_protocol.setObjectName(u"pushButton_import_protocol")
-        sizePolicy.setHeightForWidth(self.pushButton_import_protocol.sizePolicy().hasHeightForWidth())
-        self.pushButton_import_protocol.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.pushButton_import_protocol.sizePolicy().hasHeightForWidth())
+        self.pushButton_import_protocol.setSizePolicy(sizePolicy1)
         self.pushButton_import_protocol.setMinimumSize(QSize(32, 32))
         self.pushButton_import_protocol.setMaximumSize(QSize(60, 32))
         self.pushButton_import_protocol.setStyleSheet(u"QPushButton {\n"
@@ -895,7 +905,7 @@ class Ui_MainWindow(object):
         self.pushButton_login_nomad.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.pushButton_login_nomad.setText(QCoreApplication.translate("MainWindow", u"NOMAD login", None))
-        self.label_8.setText(QCoreApplication.translate("MainWindow", u"Sample ID:", None))
+        self.label_8.setText(QCoreApplication.translate("MainWindow", u"Sample:", None))
         self.label_no_instruments.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">You are currently using no instruments.</span></p><p><span style=\" font-size:12pt; font-weight:600;\">Click &quot;Manage Instruments&quot; to configure your</span></p><p><span style=\" font-size:12pt; font-weight:600;\">first instrument and start with NOMAD CAMELS!</span></p></body></html>", None))
         self.label_arrow.setText("")
 #if QT_CONFIG(tooltip)
