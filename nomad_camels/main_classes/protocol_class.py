@@ -113,6 +113,11 @@ class Measurement_Protocol:
         self.tags = []
 
     def get_aliases(self):
+        if not self.check_aliases_defined():
+            raise Exception(
+                "Not all aliases are defined! Please check the instrument and channel aliases."
+                '\nSee at "Advanced" --> "Instrument Aliases".'
+            )
         aliases = {}
         for i, alias in enumerate(self.instrument_aliases["Alias"]):
             dev = self.instrument_aliases["Instrument"][i]
@@ -431,6 +436,19 @@ class Measurement_Protocol:
             )
         return outer_string
 
+    def get_used_channels(self):
+        channels = []
+        for step in self.loop_steps:
+            if not step.is_active:
+                continue
+            channels += step.get_used_channels()
+        if self.flyer_data:
+            for channel in variables_handling.get_channels():
+                for flyer in self.flyer_data:
+                    if channel in flyer["channels"]["channel"]:
+                        channels.append(channel)
+        return list(set(channels))
+
     def get_used_devices(self):
         """Get a list of all devices needed by any loopstep."""
         devices = []
@@ -443,7 +461,7 @@ class Measurement_Protocol:
         for dev in devices:
             if dev is None:
                 raise Exception(
-                    f'Device is None!\nThis may be due to an undefined alias!\nCheck your protocol under "Advanced" --> "Instrument Aliases".'
+                    f'A device is None!\nThis may be due to an undefined alias!\nCheck your protocol under "Advanced" --> "Instrument Aliases".'
                 )
             adds += variables_handling.devices[dev].get_necessary_devices()
         devices += adds
@@ -462,6 +480,19 @@ class Measurement_Protocol:
         devices = list(set(devices))
         devices = sorted(devices, key=lambda x: x in adds, reverse=True)
         return devices
+
+    def check_aliases_defined(self):
+        """Checks whether all aliases are defined."""
+        defined = True
+        for instrument in self.instrument_aliases["Instrument"]:
+            if not instrument in variables_handling.devices:
+                defined = False
+                break
+        for channel in self.channel_aliases["channel"]:
+            if not channel in variables_handling.get_channels(use_aliases=False):
+                defined = False
+                break
+        return defined
 
 
 def append_all_children(child_list, step, step_dict):
@@ -615,16 +646,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         ):
             self.pushButton_instrument_aliases.setIcon(QIcon())
         else:
-            defined = True
-            for instrument in self.protocol.instrument_aliases["Instrument"]:
-                if not instrument in variables_handling.devices:
-                    defined = False
-                    break
-            for channel in self.protocol.channel_aliases["channel"]:
-                if not channel in variables_handling.get_channels(use_aliases=False):
-                    defined = False
-                    break
-            if defined:
+            if self.protocol.check_aliases_defined():
                 self.pushButton_instrument_aliases.setIcon(
                     self.style().standardIcon(QStyle.SP_DialogApplyButton)
                 )
@@ -798,6 +820,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             self,
             instrument_aliases=self.protocol.instrument_aliases,
             channel_aliases=self.protocol.channel_aliases,
+            used_channels=self.protocol.get_used_channels(),
         )
         if dialog.exec_():
             self.protocol.instrument_aliases = dialog.instrument_aliases

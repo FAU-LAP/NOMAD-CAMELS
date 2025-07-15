@@ -25,6 +25,8 @@ Fixes:
 - fixed renaming instruments not taking effect sometimes
 - fixed new version of PySide6 breaking the plots
 - fixed tables sometimes loading in wrong order
+- aliases now "survive" when they are undefined
+- usage of an undefined alias in a protocol now throw an error before starting execution
 
 ### 1.8.6
 Fixes:

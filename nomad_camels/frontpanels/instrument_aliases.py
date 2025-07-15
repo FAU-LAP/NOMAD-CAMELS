@@ -22,7 +22,13 @@ from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
 
 class Instrument_Alias_Config(QDialog):
-    def __init__(self, parent=None, instrument_aliases=None, channel_aliases=None):
+    def __init__(
+        self,
+        parent=None,
+        instrument_aliases=None,
+        channel_aliases=None,
+        used_channels=None,
+    ):
         super().__init__(parent=parent)
         self.buttonBox = QDialogButtonBox()
         self.buttonBox.setOrientation(Qt.Horizontal)
@@ -35,6 +41,7 @@ class Instrument_Alias_Config(QDialog):
         self.layout().addWidget(self.buttonBox, 20, 0, 1, 2)
 
         self.initial_undefined_instrument_aliases = {"Instrument": [], "Alias": []}
+
         # Check if all instrument aliases are defined in the variables_handling.devices
         for n, instrument in enumerate(instrument_aliases["Instrument"]) or []:
             if not instrument in variables_handling.devices:
@@ -50,9 +57,13 @@ class Instrument_Alias_Config(QDialog):
             instrument_aliases["Instrument"].pop(index)
 
         self.initial_undefined_channel_aliases = {"Alias": [], "channel": []}
-        # Check if all channel aliases are defined in the variables_handling.channels
+
+        # Check if all channel aliases are defined
         for n, channel in enumerate(channel_aliases["channel"]) or []:
-            if not channel in variables_handling.get_channels(use_aliases=False):
+            if (
+                not channel in variables_handling.get_channels(use_aliases=False)
+                and channel_aliases["Alias"][n] in used_channels
+            ):
                 self.initial_undefined_channel_aliases["Alias"].append(
                     channel_aliases["Alias"][n]
                 )

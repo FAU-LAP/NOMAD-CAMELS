@@ -160,6 +160,10 @@ class Loop_Step:
         """Should update `used_devices` to include all necessary devices."""
         pass
 
+    def get_used_channels(self):
+        """Returns a list of all used channels in this step."""
+        return []
+
     def update_time_weight(self):
         """The number of calls for this step. It is used to set the scaling for
         the progress bar of the protocol."""
@@ -297,6 +301,14 @@ class Loop_Step_Container(Loop_Step):
             child.update_used_devices()
             self.used_devices += child.used_devices
         self.used_devices = list(set(self.used_devices))
+
+    def get_used_channels(self):
+        """Returns a list of all used channels in this step, including
+        the children."""
+        used_channels = []
+        for child in self.children:
+            used_channels += child.get_used_channels()
+        return list(set(used_channels))
 
 
 class Loop_Step_Config(QWidget):

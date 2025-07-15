@@ -47,6 +47,11 @@ class Set_Channels(Loop_Step):
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
+    def get_used_channels(self):
+        """Returns a list of all used channels in this step, including
+        the channels that are to be set."""
+        return self.channels_values["Channels"].copy()
+
     def get_protocol_string(self, n_tabs=1):
         """If `wait_for_set` is True, then after setting, bps.wait for
         the set group is called. In any case, all the channels are set to their
