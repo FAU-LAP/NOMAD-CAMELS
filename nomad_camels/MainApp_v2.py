@@ -979,7 +979,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         tableData = pd.DataFrame.from_dict(self.sampledata, "index")
 
         if not "owner" in tableData.columns:
-            tableData["owner"] = self.active_user
+            tableData["owner"] = ""
+
+        # Filter tableData to only include samples owned by the active user or with no owner
+        tableData = tableData[
+            (tableData["owner"] == self.active_user) | (tableData["owner"] == "")
+        ]
 
         dialog = add_remove_table.AddRemoveDialoge(
             headerLabels=headers,
@@ -1093,7 +1098,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 if not dat["name"][i] and dat["sample_id"][i]:
                     dat["name"][i] = dat["sample_id"][i]
             dat = pd.DataFrame(dat)
-            dat["Name2"] = dat.apply(
+            dat["unique_name"] = dat.apply(
+                lambda row: (
+                    f'{row["name"]} / {row["sample_id"]}, {row["owner"]}'
+                    if row["name"] != row["sample_id"] and row["sample_id"]
+                    else f'{row["name"]}, {row["owner"]}'
+                ),
+                axis=1,
+            )
+            dat["display_name"] = dat.apply(
                 lambda row: (
                     f'{row["name"]} / {row["sample_id"]}'
                     if row["name"] != row["sample_id"] and row["sample_id"]
@@ -1101,7 +1114,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 ),
                 axis=1,
             )
-            dat.set_index("Name2", inplace=True)
+            dat.set_index("unique_name", inplace=True)
             data_dict = dat.to_dict("index")
             removers = []
             for key, value in self.sampledata.items():
@@ -1122,7 +1135,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.comboBox_sample.addItems(
             sorted(
                 [
-                    key
+                    (
+                        self.sampledata[key]["display_name"]
+                        if "display_name" in self.sampledata[key]
+                        else key
+                    )
                     for key in self.sampledata.keys()
                     if self.sampledata[key].get("owner", "") == self.active_user
                     or not self.sampledata[key].get("owner", "")
@@ -1130,8 +1147,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 key=lambda x: x.lower(),
             )
         )
-        if self.active_sample in self.sampledata.keys():
-            self.comboBox_sample.setCurrentText(self.active_sample)
+        self.comboBox_sample.setCurrentText(self.active_sample)
 
     def save_sample_data(self):
         """
@@ -1164,9 +1180,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.active_sample = sampledat["active_sample"]
             sampledat.pop("active_sample")
         self.sampledata = sampledat
-        self.comboBox_sample.addItems(sampledat.keys())
-        if not self.active_sample == "default_sample":
-            self.comboBox_sample.setCurrentText(self.active_sample)
+        self.update_shown_samples()
+        # self.comboBox_sample.addItems(sampledat.keys())
+        # if not self.active_sample == "default_sample":
+        #     self.comboBox_sample.setCurrentText(self.active_sample)
 
     def get_user_samples(self):
         """
@@ -2683,11 +2700,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             sample = sampledata["name"]
         else:
             sample = self.comboBox_sample.currentText() or "default_sample"
-            sampledata = (
-                {"name": "default_sample"}
-                if sample == "default_sample"
-                else self.sampledata[sample]
-            )
+            if not sample in self.sampledata:
+                for s in self.sampledata:
+                    if (
+                        "display_name" in self.sampledata[s]
+                        and self.sampledata[s]["display_name"] == sample
+                    ):
+                        sampledata = self.sampledata[s]
+                        break
+            else:
+                sampledata = (
+                    {"name": "default_sample"}
+                    if sample == "default_sample"
+                    else self.sampledata[sample]
+                )
             sample = sampledata["name"]
         sample = clean_filename(sample)
         return sample, sampledata
