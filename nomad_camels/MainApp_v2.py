@@ -104,7 +104,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.setWindowTitle(
             "NOMAD CAMELS - Configurable Application for Measurements, Experiments and Laboratory-Systems"
         )
-        self.setWindowIcon(QIcon(str(resources.files(graphics) / "camels_icon.png")))
+        self.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
 
         # Set the logo image
         image = QPixmap()
