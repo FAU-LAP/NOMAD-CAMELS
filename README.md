@@ -24,6 +24,7 @@ Fixes:
 - stopping stage control now more stable
 - fixed renaming instruments not taking effect sometimes
 - fixed new version of PySide6 breaking the plots
+- fixed tables sometimes loading in wrong order
 
 ### 1.8.6
 Fixes:
