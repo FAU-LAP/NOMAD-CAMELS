@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QMenu,
     QVBoxLayout,
     QWidgetAction,
+    QPushButton,
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QFont, QStandardItem
@@ -110,6 +111,7 @@ class Channels_Check_Table(QWidget):
         self.tableWidget_channels.clicked.connect(self.check_change)
         self.tableWidget_channels.setSortingEnabled(True)
         self.tableWidget_channels.sortByColumn(1, Qt.AscendingOrder)
+        self._revertable_last_checks = {}
 
     def context_menu(self, pos):
         """Generates the right-click-menu.
@@ -125,8 +127,29 @@ class Channels_Check_Table(QWidget):
         -------
 
         """
-        ind = self.tableWidget_channels.selectedIndexes()[0]
-        if ind.column() < 2 or ind.column() in self.checkables:
+        ind = self.tableWidget_channels.selectedIndexes()
+        if not ind:
+            return
+        ind = ind[0]
+        if ind.column() == 1:
+            return
+        if ind.column() == 0 or ind.column() in self.checkables:
+            self.menu = QMenu()
+            action_check = self.menu.addAction("Check whole column")
+            action_check.triggered.connect(
+                lambda: self._check_uncheck_all(ind.column(), uncheck=False)
+            )
+            action_uncheck = self.menu.addAction("Uncheck whole column")
+            action_uncheck.triggered.connect(
+                lambda: self._check_uncheck_all(ind.column(), uncheck=True)
+            )
+            if ind.column() in self._revertable_last_checks:
+                self.menu.addSeparator()
+                action_revert = self.menu.addAction("Revert last (un-)check all")
+                action_revert.triggered.connect(
+                    lambda: self._revert_last_checks(ind.column())
+                )
+            self.menu.exec_(self.mapToGlobal(pos))
             return
         if self.parent() and hasattr(self.parent(), "loop_step"):
             prot = self.parent().loop_step.protocol
@@ -360,7 +383,9 @@ class Channels_Check_Table(QWidget):
             # else:
             #     item.setCheckState(Qt.CheckState.Unchecked)
             if metadata:
-                item.setToolTip(metadata)
+                item.setToolTip(
+                    f"Hint: right-click to (un-)check complete column\n\n{metadata}"
+                )
             self.tableWidget_channels.setItem(n, 0, item)
             item = QTableWidgetItem(channel)
             item.setFlags(item.flags() ^ Qt.ItemIsEditable)
@@ -398,16 +423,45 @@ class Channels_Check_Table(QWidget):
                     #     else Qt.CheckState.Unchecked
                     # )
                     self.tableWidget_channels.setItem(n, j + 2, item)
+                    item.setToolTip("Hint: right-click to (un-)check complete column")
                 else:
                     item = QTableWidgetItem(vals[j] if vals else "")
                     self.tableWidget_channels.setItem(n, j + 2, item)
                     self.check_string(item)
                 if metadata:
-                    item.setToolTip(metadata)
+                    item.setToolTip(item.toolTip() + metadata)
             n += 1
         self.tableWidget_channels.resizeColumnsToContents()
         self.tableWidget_channels.setSortingEnabled(True)
         self.tableWidget_channels.sortByColumn(sort_column, sort_order)
+
+    def _get_column_check_state(self, column):
+        """Get the check state of all items in a specific column."""
+        states = []
+        for row in range(self.tableWidget_channels.rowCount()):
+            item = self.tableWidget_channels.item(row, column)
+            states.append(item.checkState())
+        return states
+
+    def _revert_last_checks(self, column):
+        """Revert the last check/uncheck action for a specific column."""
+        if column not in self._revertable_last_checks:
+            return
+        last_states = self._revertable_last_checks.pop(column)
+        for row in range(self.tableWidget_channels.rowCount()):
+            item = self.tableWidget_channels.item(row, column)
+            if item:
+                item.setCheckState(last_states[row])
+                self.check_change(self.tableWidget_channels.model().index(row, column))
+
+    def _check_uncheck_all(self, column, uncheck=False):
+        """Check or uncheck all items in a specific column."""
+        self._revertable_last_checks[column] = self._get_column_check_state(column)
+        for row in range(self.tableWidget_channels.rowCount()):
+            item = self.tableWidget_channels.item(row, column)
+            if item:
+                item.setCheckState(Qt.Unchecked if uncheck else Qt.Checked)
+                self.check_change(self.tableWidget_channels.model().index(row, column))
 
 
 class Call_Functions_Table(QWidget):
