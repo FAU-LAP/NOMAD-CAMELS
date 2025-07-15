@@ -14,7 +14,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 # == Core/required dependencies (installed by default) ==
-pyside6 = ">=6.6.0"
+pyside6 = ">=6.6.0,<6.9"
 bluesky = ">=1.9.0"
 ophyd = ">=1.6.4"
 lmfit = ">=1.0.2"
