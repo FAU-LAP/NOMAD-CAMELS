@@ -323,8 +323,8 @@ class AddRemoveTable(QWidget):
                 self.table_model.removeColumn(0)
         if isinstance(self.tableData, dict):
             self.tableData = pd.DataFrame(self.tableData)
-        # sort tableData by headerlabels
-        self.tableData = self.tableData[self.headerLabels]
+            # sort tableData by headerlabels
+            self.tableData = self.tableData[self.headerLabels]
 
         data = np.array(self.tableData)
         for dat in data:
