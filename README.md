@@ -23,6 +23,7 @@ Fixes:
 - fixed changing settings of manual controls
 - stopping stage control now more stable
 - fixed renaming instruments not taking effect sometimes
+- fixed new version of PySide6 breaking the plots
 
 ### 1.8.6
 Fixes:
