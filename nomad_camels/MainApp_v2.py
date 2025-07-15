@@ -1082,13 +1082,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             QHeaderView.ResizeToContents
         )
 
-        # Add a status label to the dialog layout
-        status_label = QLabel(
-            '<span style="color: #FF3333; font-weight: bold;">Red = invalid entry</span>, <span style="color: #4CAF50; font-weight: bold;">Green/White = valid</span>'
-        )
-        status_label.setStyleSheet("padding: 5px;")
-        dialog.layout().addWidget(status_label, 2, 0)  # Add below the table and buttons
-
         if dialog.exec():
             # Changing the returned dict to dataframe and back to ensure proper formatting.
             dat = dialog.get_data()
