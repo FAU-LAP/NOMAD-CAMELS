@@ -441,6 +441,10 @@ class Measurement_Protocol:
             devices += step.used_devices
         adds = []
         for dev in devices:
+            if dev is None:
+                raise Exception(
+                    f'Device is None!\nThis may be due to an undefined alias!\nCheck your protocol under "Advanced" --> "Instrument Aliases".'
+                )
             adds += variables_handling.devices[dev].get_necessary_devices()
         devices += adds
         if self.flyer_data:
