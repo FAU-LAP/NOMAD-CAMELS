@@ -972,7 +972,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # IMPORT pandas and add_remove_table only if it is needed
         import pandas as pd
         from nomad_camels.ui_widgets import add_remove_table
-        from nomad_camels.ui_widgets.toast_notification import handle_validation_error
 
         self.active_sample = self.comboBox_sample.currentText()
         headers = ["name", "sample_id", "description", "owner"]
@@ -1097,6 +1096,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 dat["name"][i] = d.strip()
                 if not dat["name"][i] and dat["sample_id"][i]:
                     dat["name"][i] = dat["sample_id"][i]
+                elif not dat["name"][i] and not dat["sample_id"][i]:
+                    n = 1
+                    while f"sample_{n}" in dat["name"]:
+                        n += 1
+                    dat["name"][i] = f"sample_{n}"
+                    from nomad_camels.ui_widgets.toast_notification import (
+                        show_warning_toast,
+                    )
+
+                    show_warning_toast(
+                        f'Sample name was empty. Set to "{dat['name'][i]}".',
+                        title="Set empty sample name",
+                        parent=self,
+                    )
             dat = pd.DataFrame(dat)
             dat["unique_name"] = dat.apply(
                 lambda row: (
