@@ -1106,7 +1106,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     )
 
                     show_warning_toast(
-                        f'Sample name was empty. Set to "{dat['name'][i]}".',
+                        f"Sample name was empty. Set to \"{dat['name'][i]}\".",
                         title="Set empty sample name",
                         parent=self,
                     )
