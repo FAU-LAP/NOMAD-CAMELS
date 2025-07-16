@@ -29,13 +29,17 @@ jobs:
                 poetry show
             - name: Run tests with retry
               run: |
-                if (& poetry run pytest -vv --timeout=100) {
+                & poetry run pytest -vv --timeout=100
+                if ($LASTEXITCODE -eq 0) {
                   Write-Host "Tests passed on the first run."
+                  exit 0
                 }
                 else {
                   Write-Host "Tests failed on the first run. Retrying..."
-                  if (& poetry run pytest -vv --timeout=100) {
+                  & poetry run pytest -vv --timeout=100
+                  if ($LASTEXITCODE -eq 0) {
                     Write-Host "Tests passed on the retry."
+                    exit 0
                   }
                   else {
                     Write-Host "Tests failed on both attempts."
@@ -48,6 +52,7 @@ jobs:
                 pip install toml packaging
                 python ./dev_tools/package_version_testing.py --max
             - name: Upload test results
+              if: failure()
               uses: actions/upload-artifact@v4
               with:
                 name: test-results-${{ matrix.python-version }}
@@ -78,13 +83,17 @@ jobs:
                 pip list
             - name: Run tests with retry
               run: |
-                if (& python -m pytest -vv --timeout=100) {
+                & python -m pytest -vv --timeout=100
+                if ($LASTEXITCODE -eq 0) {
                   Write-Host "Tests passed on the first run."
+                  exit 0
                 }
                 else {
                   Write-Host "Tests failed on the first run. Retrying..."
-                  if (& python -m pytest -vv --timeout=100) {
+                  & python -m pytest -vv --timeout=100
+                  if ($LASTEXITCODE -eq 0) {
                     Write-Host "Tests passed on the retry."
+                    exit 0
                   }
                   else {
                     Write-Host "Tests failed on both attempts."
@@ -96,6 +105,7 @@ jobs:
               run: |
                 python ./dev_tools/package_version_testing.py
             - name: Upload test results
+              if: failure()
               uses: actions/upload-artifact@v4
               with:
                 name: test-results-${{ matrix.python-version }}
