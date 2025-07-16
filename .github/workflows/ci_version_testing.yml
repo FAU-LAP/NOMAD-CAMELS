@@ -29,12 +29,12 @@ jobs:
                 poetry show
             - name: Run tests with retry
               run: |
-                if (& python -m pytest -vv --timeout=100) {
+                if (& poetry run pytest -vv --timeout=100) {
                   Write-Host "Tests passed on the first run."
                 }
                 else {
                   Write-Host "Tests failed on the first run. Retrying..."
-                  if (& python -m pytest -vv --timeout=100) {
+                  if (& poetry run pytest -vv --timeout=100) {
                     Write-Host "Tests passed on the retry."
                   }
                   else {
