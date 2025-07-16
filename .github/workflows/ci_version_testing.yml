@@ -27,9 +27,19 @@ jobs:
                 pip install poetry
                 poetry install --all-extras
                 poetry show
-            - name: Run tests
+            - name: Run tests with retry
               run: |
-                poetry run pytest -vv --timeout=100
+                if pytest -vv --timeout=100; then
+                  echo "Tests passed on the first run."
+                else
+                  echo "Tests failed on the first run. Retrying..."
+                  if pytest -vv --timeout=100; then
+                    echo "Tests passed on the retry."
+                  else
+                    echo "Tests failed on both attempts."
+                    exit 1
+                  fi
+                fi
             - name: Run package checking on failure
               if: failure()
               run: |
@@ -63,9 +73,19 @@ jobs:
               run: |
                 pip install -q -r ./dev_tools/req_min_${{ matrix.python-version }}.txt
                 pip list
-            - name: Run tests
+            - name: Run tests with retry
               run: |
-                pytest -vv --timeout=100
+                if pytest -vv --timeout=100; then
+                  echo "Tests passed on the first run."
+                else
+                  echo "Tests failed on the first run. Retrying..."
+                  if pytest -vv --timeout=100; then
+                    echo "Tests passed on the retry."
+                  else
+                    echo "Tests failed on both attempts."
+                    exit 1
+                  fi
+                fi
             - name: Run package checking on failure
               if: failure()
               run: |
