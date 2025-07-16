@@ -55,7 +55,7 @@ jobs:
                 python-version: ${{ matrix.python-version }}
             - name: update min versions
               run: |
-                pip install toml
+                pip install toml packaging
                 python ./dev_tools/min_versions_from_toml.py
             - name: Install dependencies
               run: |
