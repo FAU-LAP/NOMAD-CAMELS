@@ -8,6 +8,7 @@ import shutil
 from pathlib import Path
 from packaging.version import Version
 from packaging.specifiers import SpecifierSet
+from packaging.markers import Marker
 import logging
 import time
 import toml
@@ -588,6 +589,41 @@ def find_min_version_going_up(
 #         print(f"{py_exe} - {dep}: min={mn}, max={mx}")
 
 
+def resolve_constraint(constraint, current_python_version):
+    """
+    Given a dependency constraint (which can be a string, dict, or list),
+    returns the version constraint that applies for the current Python version.
+    If the constraint has a marker (like "sys_platform == 'linux'") that is not
+    satisfied, returns an empty string.
+    current_python_version: string, e.g. "3.10"
+    """
+    current_ver = Version(current_python_version)
+    if isinstance(constraint, str):
+        return constraint
+    elif isinstance(constraint, dict):
+        # If there is a marker and it doesn't evaluate to True, skip this dependency.
+        if "markers" in constraint:
+            m = Marker(constraint["markers"])
+            if not m.evaluate():
+                return "skip!"
+        return constraint.get("version", "")
+    elif isinstance(constraint, list):
+        for entry in constraint:
+            # Check marker if it exists.
+            if "markers" in entry:
+                m = Marker(entry["markers"])
+                if not m.evaluate():
+                    continue
+            py_spec = entry.get("python", "")
+            if py_spec:
+                spec = SpecifierSet(py_spec)
+                if current_ver in spec:
+                    return entry.get("version", "")
+        # Fallback: return the version from the first entry (even if its marker is false)
+        return constraint[0].get("version", "")
+    return ""
+
+
 def main():
     """
     Reads package constraints from pyproject.toml and then tests each dependency using the current Python.
@@ -600,6 +636,7 @@ def main():
     """
     # Use the python that is running this script
     python_executable = sys.executable
+    current_python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
     # Determine mode from command-line
     mode = "min"
@@ -642,6 +679,13 @@ def main():
             # Otherwise, just add the package name
             other_constraints.append(dep)
 
+    # Print out resolved dependencies based on the current Python version:
+    print(f"Current Python version: {current_python_version}")
+    print("Resolved dependency constraints from pyproject.toml:")
+    for dep, constraint in poetry_deps.items():
+        resolved = resolve_constraint(constraint, current_python_version)
+        print(f"  {dep}: {resolved}")
+
     # A test command – adjust if needed.
     test_command = ["pytest", "--timeout=60"]
 
@@ -658,10 +702,11 @@ def main():
     for dep, constraint in poetry_deps.items():
         # 'constraint' may be a simple version string or a dict with markers – we assume simple version strings.
         # If it is a dict, pick the constraint that applies (this example is simplistic).
-        if isinstance(constraint, dict):
-            broad_spec = constraint.get("version", "")
-        else:
-            broad_spec = constraint
+        broad_spec = resolve_constraint(constraint, current_python_version)
+        if broad_spec == "skip!":
+            logging.info(f"Skipping {dep} due to marker constraints.")
+            print(f"Skipping {dep} due to marker constraints.")
+            continue
 
         logging.info(f"\nTesting dependency: {dep} with broad spec '{broad_spec}'")
         print(f"\nTesting dependency: {dep} with broad spec '{broad_spec}'")

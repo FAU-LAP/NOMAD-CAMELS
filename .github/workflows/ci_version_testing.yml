@@ -29,20 +29,23 @@ jobs:
                 poetry show
             - name: Run tests with retry
               run: |
-                if pytest -vv --timeout=100; then
-                  echo "Tests passed on the first run."
-                else
-                  echo "Tests failed on the first run. Retrying..."
-                  if pytest -vv --timeout=100; then
-                    echo "Tests passed on the retry."
-                  else
-                    echo "Tests failed on both attempts."
+                if (pytest -vv --timeout=100) {
+                  Write-Host "Tests passed on the first run."
+                }
+                else {
+                  Write-Host "Tests failed on the first run. Retrying..."
+                  if (pytest -vv --timeout=100) {
+                    Write-Host "Tests passed on the retry."
+                  }
+                  else {
+                    Write-Host "Tests failed on both attempts."
                     exit 1
-                  fi
-                fi
+                  }
+                }
             - name: Run package checking on failure
               if: failure()
               run: |
+                pip install toml packaging
                 python ./dev_tools/package_version_testing.py --max
             - name: Upload test results
               uses: actions/upload-artifact@v4
@@ -75,17 +78,19 @@ jobs:
                 pip list
             - name: Run tests with retry
               run: |
-                if pytest -vv --timeout=100; then
-                  echo "Tests passed on the first run."
-                else
-                  echo "Tests failed on the first run. Retrying..."
-                  if pytest -vv --timeout=100; then
-                    echo "Tests passed on the retry."
-                  else
-                    echo "Tests failed on both attempts."
+                if (pytest -vv --timeout=100) {
+                  Write-Host "Tests passed on the first run."
+                }
+                else {
+                  Write-Host "Tests failed on the first run. Retrying..."
+                  if (pytest -vv --timeout=100) {
+                    Write-Host "Tests passed on the retry."
+                  }
+                  else {
+                    Write-Host "Tests failed on both attempts."
                     exit 1
-                  fi
-                fi
+                  }
+                }
             - name: Run package checking on failure
               if: failure()
               run: |
