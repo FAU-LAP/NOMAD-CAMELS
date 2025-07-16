@@ -53,6 +53,9 @@ jobs:
               uses: actions/setup-python@v5
               with:
                 python-version: ${{ matrix.python-version }}
+            - name: update min versions
+              run: |
+                python ./dev_tools/min_versions_from_toml.py
             - name: Install dependencies
               run: |
                 pip install -q -r ./dev_tools/req_min_${{ matrix.python-version }}.txt
