@@ -29,6 +29,17 @@ jobs:
             - name: Run tests
               run: |
                 poetry run pytest -vv --timeout=100
+            - name: Run package checking on failure
+              if: failure()
+              run: |
+                python ./dev_tools/package_version_testing.py --max
+            - name: Upload test results
+              uses: actions/upload-artifact@v4
+              with:
+                name: test-results-${{ matrix.python-version }}
+                path: |
+                  test_output.txt
+                  test_log.txt
     run_low_tests:
         runs-on: windows-latest
         env:
@@ -49,3 +60,14 @@ jobs:
             - name: Run tests
               run: |
                 pytest -vv --timeout=100
+            - name: Run package checking on failure
+              if: failure()
+              run: |
+                python ./dev_tools/package_version_testing.py
+            - name: Upload test results
+              uses: actions/upload-artifact@v4
+              with:
+                name: test-results-${{ matrix.python-version }}
+                path: |
+                  test_output.txt
+                  test_log.txt
