@@ -134,7 +134,8 @@ def update_venv(
     # 2) Install all other constraints
     # 3) Install your test framework (pytest, etc.)
     # 4) (Optionally) install your actual project
-    install_cmd = [pip_exe, "install", f"{dependency}=={version}"]
+    # install quietly, no output
+    install_cmd = [pip_exe, "install", f"{dependency}=={version}", "--quiet"]
     if last_package != dependency or force_new:
         install_cmd += new_other_constraints
         install_cmd += ["--no-cache-dir"]
@@ -418,10 +419,14 @@ def find_max_version_going_down(
         logging.info(
             f"Testing {dependency}=={v} on {python_executable} ... (max candidate)"
         )
+        print(
+            f"\nTesting {dependency}=={v} on {python_executable} ... (max candidate)\n"
+        )
         if test_dependency_version(
             python_executable, dependency, v, other_constraints, test_command
         ):
             logging.info(f"  --> WORKED at {v}")
+            print(f"\n  --> WORKED at {v}\n")
             return v
     return None
 
@@ -461,10 +466,14 @@ def find_min_version_going_up(
         logging.info(
             f"Testing {dependency}=={v} on {python_executable} ... (min candidate)"
         )
+        print(
+            f"\nTesting {dependency}=={v} on {python_executable} ... (min candidate)\n"
+        )
         if test_dependency_version(
             python_executable, dependency, v, other_constraints, test_command
         ):
             logging.info(f"  --> WORKED at {v}")
+            print(f"\n  --> WORKED at {v}\n")
             return v
     return None
 
@@ -618,7 +627,7 @@ def main():
         for dep, constraint in opt_deps.items():
             if dep not in poetry_deps:
                 poetry_deps[dep] = constraint
-    
+
     # add all packages without constraints to other_constraints
     for dep, constraint in poetry_deps.items():
         if isinstance(constraint, str) and constraint.startswith("=="):
