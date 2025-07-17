@@ -162,7 +162,7 @@ jobs:
 
   run_high_tests:
     runs-on: windows-latest
-    if: ${{ github.ref == 'refs/head/main' }}
+    if: ${{ github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main') }}
     needs: [windows_test, ubuntu_test, macos_test]
     env:
         DISPLAY: ':99.0'
@@ -215,7 +215,7 @@ jobs:
               test_log.txt
   run_low_tests:
     runs-on: windows-latest
-    if: ${{ github.ref == 'refs/head/main' }}
+    if: ${{ github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main') }}
     needs: [windows_test, ubuntu_test, macos_test]
     env:
         DISPLAY: ':99.0'
