@@ -1,5 +1,15 @@
 # Troubleshooting
 
+## General Hints
+Sometimes packages that CAMELS depends have specific versions that do not work for CAMELS, although they lie within the specified version-range.
+
+To fix such issues try running the following in your CAMELS python environment:
+```
+pip install --upgrade nomad-camels --upgrade-strategy eager
+```
+
+Please [contact us](../../contact.md) if it still does not work!
+
 ## Instrument not recognized
 
 When CAMELS does not recognize your instrument being connected, this may come from missing libraries on your computer.

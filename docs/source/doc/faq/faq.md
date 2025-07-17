@@ -23,7 +23,11 @@ Here you can find help for the most frequently asked questions regarding all asp
     </a>
     <a href="" class="box">
     <span class="box-title">The plots show no data</span>
-    <p class="box-content">This may be due to an incorrect installation of a dependent package. Try updating:<code>pip install pyside6<span>&#60;</span>3.6 --upgrade</code>.</p>
+    <p class="box-content">This may be due to an incorrect installation of a dependent package. Try updating:<code>pip install pyside6<span>&#60;</span>6.9 --upgrade</code>.</p>
+    </a>
+    <a href="troubleshooting.html" class="box">
+    <span class="box-title">Any other problem</span>
+    <p class="box-content">Click here to see general troubleshooting help.</p>
     </a>
 </div>
 
