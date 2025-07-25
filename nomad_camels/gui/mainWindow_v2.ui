@@ -423,6 +423,18 @@ Instruments</string>
              </property>
              <item>
               <widget class="QComboBox" name="comboBox_sample">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>230</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
@@ -432,6 +444,12 @@ Instruments</string>
              </item>
              <item>
               <widget class="QPushButton" name="pushButton_editSampleInfo">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>-1</pointsize>
@@ -501,6 +519,12 @@ QPushButton:disabled {
               <widget class="QPushButton" name="pushButton_nomad_sample">
                <property name="enabled">
                 <bool>true</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
                </property>
                <property name="font">
                 <font>
@@ -676,8 +700,8 @@ adds a sub-folder for the data</string>
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>129</width>
-                  <height>22</height>
+                  <width>54</width>
+                  <height>24</height>
                  </rect>
                 </property>
                </widget>
