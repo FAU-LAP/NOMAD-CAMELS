@@ -166,8 +166,10 @@ class Manual_Control_Config(QDialog):
         self.control_data = control_data or {}
         if "name" in self.control_data:
             name = self.control_data["name"]
+            self.old_name = name
         else:
             name = self.control_type
+            self.old_name = None
         self.lineEdit_name = QLineEdit(name)
 
         layout.addWidget(name_label, 0, 0)
@@ -177,7 +179,7 @@ class Manual_Control_Config(QDialog):
     def accept(self):
         """ """
         name = self.lineEdit_name.text()
-        if name in variables_handling.manual_controls:
+        if name in variables_handling.manual_controls and name != self.old_name:
             from nomad_camels.ui_widgets.warn_popup import WarnPopup
 
             WarnPopup(

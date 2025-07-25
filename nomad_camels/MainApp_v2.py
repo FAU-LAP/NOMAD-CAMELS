@@ -697,6 +697,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if dialog.exec():
             self.active_instruments.clear()
             self.active_instruments.update(dialog.active_instruments)
+            self.update_channels()
         self.with_or_without_instruments()
 
     def add_to_open_windows(self, window):

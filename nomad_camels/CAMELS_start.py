@@ -119,11 +119,8 @@ class ImportThread(QThread):
             try:
                 # Attempt to import the package
                 import_module(package)
-            except ModuleNotFoundError:
-                # If the module is not found, continue without interruption
-                pass
-            except AttributeError:
-                # If there is an attribute error during import, continue without interruption
+            except (ModuleNotFoundError, AttributeError):
+                # If the module is not found or an attribute error occurs, continue without interruption
                 pass
         # Final update message before starting the main application
         self.update_text.emit("starting NOMAD CAMELS...")
@@ -132,7 +129,7 @@ class ImportThread(QThread):
         from nomad_camels import MainApp_v2
 
 
-def start_camels(start_proxy_bool=True):
+def start_camels(start_proxy_bool=True, actually_exec=True):
     """
     Launch the NOMAD CAMELS application with a loading screen.
 
@@ -206,7 +203,12 @@ def start_camels(start_proxy_bool=True):
     thread.wait()
     thread.deleteLater()
     # Start the main Qt application event loop
-    app.exec()
+    if actually_exec:
+        app.exec()
+    else:
+        # If not executing the app, just return the main window
+        app.processEvents()
+        return main_window
 
 
 if __name__ == "__main__":

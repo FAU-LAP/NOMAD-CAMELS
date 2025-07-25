@@ -82,6 +82,12 @@ class ND_Sweep(Loop_Step):
                 device = channels[channel].device
                 if device not in self.used_devices:
                     self.used_devices.append(device)
+    
+    def get_used_channels(self):
+        """Returns a list of all used channels in this step, including
+        the read_channels and the sweep_channels."""
+        used_channels = self.read_channels + self.sweep_channels
+        return list(set(used_channels))
 
     def update_variables(self):
         """Adds the fit variables from the plots."""

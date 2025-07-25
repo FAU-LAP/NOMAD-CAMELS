@@ -66,6 +66,12 @@ class Simple_Sweep(For_Loop_Step):
                 device = channels[channel].device
                 if device not in self.used_devices:
                     self.used_devices.append(device)
+    
+    def get_used_channels(self):
+        """Returns a list of all used channels in this step, including
+        the sweep_channel and the read_channels."""
+        used_channels = [self.sweep_channel] + self.read_channels
+        return list(set(used_channels))
 
     def update_variables(self):
         """Adds the fit variables from the plots."""

@@ -434,6 +434,7 @@ class Stage_Control(Manual_Control, Ui_Form):
 
     def stop_moving(self):
         """ """
+        self.move_thread.movers = [False, False, False]
         for func in self.stop_funcs:
             if func:
                 func()

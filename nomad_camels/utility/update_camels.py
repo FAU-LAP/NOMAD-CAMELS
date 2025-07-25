@@ -188,7 +188,9 @@ def show_release_notes():
         def __init__(self, markdown_text):
             super().__init__()
             self.setWindowTitle("Changelog - NOMAD CAMELS")
-            self.setWindowIcon(QIcon(str(importlib.resources.files(graphics) / "CAMELS_Icon.png")))
+            self.setWindowIcon(
+                QIcon(str(importlib.resources.files(graphics) / "CAMELS_Icon.png"))
+            )
 
             layout = QGridLayout(self)
 
@@ -209,7 +211,7 @@ def show_release_notes():
 
     # read package's readme file
     try:
-        readme = read_readme_from_metadata('nomad_camels')
+        readme = read_readme_from_metadata("nomad_camels")
     except:
         try:
             with importlib.resources.open_text("nomad_camels", "README.md") as f:
@@ -237,7 +239,7 @@ def read_readme_from_metadata(package_name):
         # Get the metadata for the package
         metadata = importlib.metadata.metadata(package_name)
         # Extract the long description (which includes the README content)
-        readme = metadata.get('Description', None)
+        readme = metadata.get("Description", None)
         return readme
     except importlib.metadata.PackageNotFoundError:
         return None

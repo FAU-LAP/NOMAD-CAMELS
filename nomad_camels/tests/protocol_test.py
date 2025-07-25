@@ -9,7 +9,6 @@ from PySide6.QtWidgets import QMessageBox
 
 from nomad_camels.frontpanels import protocol_config
 from nomad_camels.bluesky_handling import make_catalog
-from nomad_camels.frontpanels import instrument_installer
 from nomad_camels.utility import variables_handling
 from nomad_camels.utility.treeView_functions import getItemIndex
 from threading import Thread
@@ -17,9 +16,21 @@ import asyncio
 from zmq.error import ZMQError
 from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
 from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
+from nomad_camels.tests.test_helper_functions import ensure_demo_in_devices
+
+import socket
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+
+def get_available_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
+
+subprotocol_path = None
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -184,6 +195,7 @@ def test_gradient_descent(qtbot, tmp_path, zmq_setup):
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
+@pytest.mark.order(1)
 def test_if_and_set_variables(qtbot, tmp_path, zmq_setup):
     """Opens the config for "If" tries to configure to run the correct way if
     the variables have the correct value, which is done by a "Set Variables" step."""
@@ -230,11 +242,64 @@ def test_if_and_set_variables(qtbot, tmp_path, zmq_setup):
     catalog_maker(tmp_path)
     publisher, dispatcher = zmq_setup
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
+    global subprotocol_path
+    if subprotocol_path is None:
+        subprotocol_path = str((tmp_path / (prot.name + ".cprot")).as_posix())
 
 
-def test_nd_sweep():
+def test_nd_sweep(qtbot, tmp_path, zmq_setup):
     """ """
-    pass
+    """Opens the config for "Simple Sweep" tries to configure it for the
+    demo instrument. Further it adds a plot and a fit to the sweep and tries to
+    run a protocol with this step."""
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import nd_sweep
+    from nomad_camels.frontpanels import plot_definer
+
+    conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_nd_sweep_protocol")
+    qtbot.addWidget(conf)
+    action = get_action_from_name(conf.add_actions, "ND Sweep")
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge, nd_sweep.ND_Sweep_Config)
+    qtbot.mouseClick(conf_widge.addSweepChannelButton, Qt.MouseButton.LeftButton)
+    conf_widge.tabs[0].sweep_widget.lineEdit_start.setText("-10")
+    conf_widge.tabs[0].sweep_widget.lineEdit_stop.setText("10")
+    conf_widge.tabs[0].sweep_widget.lineEdit_n_points.setText("7")
+    conf_widge.tabs[0].lineEdit_wait_time.setText("0.01")
+    conf_widge.tabs[0].comboBox_sweep_channel.setCurrentText("demo_instrument_motorY")
+    conf_widge.tabs[1].sweep_widget.lineEdit_start.setText("-10")
+    conf_widge.tabs[1].sweep_widget.lineEdit_stop.setText("10")
+    conf_widge.tabs[1].sweep_widget.lineEdit_n_points.setText("7")
+    conf_widge.tabs[1].comboBox_sweep_channel.setCurrentText("demo_instrument_motorX")
+
+    table = conf_widge.read_table.tableWidget_channels
+    row = get_row_from_channel_table("demo_instrument_motorX", table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+    row = get_row_from_channel_table("demo_instrument_motorY", table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+    row = get_row_from_channel_table("demo_instrument_detectorComm", table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+
+    plot = plot_definer.Plot_Info(
+        plt_type="2D plot",
+        x_axis="demo_instrument_motorX",
+        y_axes={"formula": ["demo_instrument_motorY"], "axis": ["left"]},
+        z_axis="demo_instrument_detectorComm",
+        browser_port=get_available_port(),
+        checkbox_show_in_browser=True,
+    )
+    conf_widge.plot_widge.plot_data = [plot]
+
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.name = "test_nd_sweep_protocol"
+    assert "ND Sweep (ND_Sweep)" in prot.loop_step_dict
+    catalog_maker(tmp_path)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
 def test_read_channels(qtbot, tmp_path, zmq_setup):
@@ -264,9 +329,113 @@ def test_read_channels(qtbot, tmp_path, zmq_setup):
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
-def test_run_subprotocol():
+@pytest.mark.order(2)
+def test_run_subprotocol(qtbot, tmp_path, zmq_setup, monkeypatch):
     """ """
-    pass
+    global subprotocol_path
+    if subprotocol_path is None:
+        raise ValueError(
+            "No subprotocol for test found! Make sure the test_if_and_set_variables is run first and works."
+        )
+
+    from nomad_camels.loop_steps import run_subprotocol, read_channels
+    from nomad_camels.utility.load_save_functions import standard_pref
+    from nomad_camels.utility import variables_handling
+
+    variables_handling.preferences = standard_pref
+
+    conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_run_subprotocol_protocol"
+    )
+    qtbot.addWidget(conf)
+    qtbot.mouseClick(
+        conf.general_settings.pushButton_add_variable, Qt.MouseButton.LeftButton
+    )
+    conf.general_settings.variable_table.model.item(0, 0).setText("condition_out")
+    conf.general_settings.variable_table.model.item(0, 1).setText("1")
+
+    action = get_action_from_name(conf.add_actions, "Read Channels")
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    conf_widge.sub_widget.checkBox_read_variables.setChecked(True)
+
+    action = get_action_from_name(conf.add_actions, "Run Subprotocol")
+    action.trigger()
+
+    def wait_selection():
+        """ """
+        select_step_by_name(conf, f"Run Subprotocol (Run_Subprotocol)")
+        conf.tree_click_sequence()
+        assert isinstance(
+            conf.loop_step_configuration_widget, run_subprotocol.Run_Subprotocol_Config
+        )
+
+    qtbot.waitUntil(wait_selection)
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge, run_subprotocol.Run_Subprotocol_Config)
+    conf_widge.path_button.set_path(subprotocol_path)
+    conf_widge.input_table.add(vals=["condition", "4"])
+    conf_widge.output_table.add(vals=["condition", "condition_out"])
+
+    action = get_action_from_name(conf.add_actions, "Read Channels")
+    action.trigger()
+
+    def wait_selection():
+        """ """
+        select_step_by_name(conf, f"Read Channels (Read_Channels)")
+        conf.tree_click_sequence()
+        assert isinstance(
+            conf.loop_step_configuration_widget, read_channels.Read_Channels_Config
+        )
+
+    qtbot.waitUntil(wait_selection)
+    conf_widge = conf.loop_step_configuration_widget
+    conf_widge.sub_widget.checkBox_read_variables.setChecked(True)
+
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.name = "test_run_subprotocol_protocol"
+    catalog_maker(tmp_path)
+    publisher, dispatcher = zmq_setup
+
+    # Import the original Prompt_Box so we can use it as a specification.
+    from unittest.mock import MagicMock
+    from nomad_camels.bluesky_handling.helper_functions import Prompt_Box
+
+    # Create a fake prompt instance (the mock) with the same interface as Prompt_Box.
+    fake_prompt = MagicMock(spec=Prompt_Box)
+    fake_prompt.done_flag = False
+    fake_prompt.helper = MagicMock()
+    fake_prompt.helper.executor = MagicMock()
+
+    # Define a side effect for the executor's emit() method:
+    def fake_emit():
+        fake_prompt.done_flag = True
+
+    fake_prompt.helper.executor.emit.side_effect = fake_emit
+
+    # Monkeypatch the Prompt_Box constructor so that whenever it is instantiated,
+    # it returns our fake_prompt
+    monkeypatch.setattr(
+        "nomad_camels.bluesky_handling.helper_functions.Prompt_Box",
+        lambda *args, **kwargs: fake_prompt,
+    )
+
+    savepath = run_test_protocol(
+        tmp_path, prot, publisher, dispatcher, return_savepath=True
+    )
+    import h5py
+
+    with h5py.File(savepath, "r") as f:
+        # Check if the output variable is set correctly
+        variable_data = f["CAMELS_entry"]["data"][
+            "test_run_subprotocol_protocol_variable_signal"
+        ]["condition_out"]
+        assert len(variable_data) == 2
+        assert variable_data[0] == 1
+        assert variable_data[1] == 0
 
 
 def test_set_channels(qtbot, tmp_path, zmq_setup):
@@ -344,7 +513,6 @@ def test_simple_sweep_with_plot_and_fit(qtbot, tmp_path, zmq_setup):
     catalog_maker(tmp_path)
     publisher, dispatcher = zmq_setup
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
-    assert "True" == "True"
 
 
 def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
@@ -618,6 +786,109 @@ def test_wait(qtbot, tmp_path, zmq_setup):
     run_test_protocol(tmp_path, prot, publisher, dispatcher)
 
 
+def test_protocol_with_flyer(qtbot, tmp_path, zmq_setup):
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import wait_loop_step
+
+    conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText("test_flyer_protocol")
+    qtbot.addWidget(conf)
+    action = get_action_from_name(conf.add_actions, "Wait")
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge, wait_loop_step.Wait_Loop_Step_Config)
+    conf_widge.sub_widget.lineEdit_duration.setText("3.0")
+
+    from nomad_camels.frontpanels.flyer_window import FlyerWindow
+
+    flyer_window = FlyerWindow()
+    qtbot.addWidget(flyer_window)
+    flyer_window.flyer_table.add("flyer1", 0.1)
+    flyer_window.change_flyer_def(flyer_window.flyer_table.table_model.index(0, 0))
+    flyer_window.flyer_def.lineEdit_name.setText("flyer1")
+    flyer_window.flyer_def.lineEdit_read_rate.setText("0.1")
+    flyer_window.flyer_def.channels_table.lineEdit_search.setText(
+        "demo_instrument_detectorComm"
+    )
+    flyer_window.flyer_def.channels_table.change_search()
+    flyer_window.flyer_def.channels_table.tableWidget_channels.item(0, 0).setCheckState(
+        Qt.CheckState.Checked
+    )
+    with qtbot.waitSignal(flyer_window.accepted) as blocker:
+        flyer_window.accept()
+    conf.general_settings.flyer_button.flyer_data = flyer_window.flyer_data
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    catalog_maker(tmp_path)
+    publisher, dispatcher = zmq_setup
+    prot = conf.protocol
+    savepath = run_test_protocol(
+        tmp_path, prot, publisher, dispatcher, return_savepath=True
+    )
+    import h5py
+
+    with h5py.File(savepath, "r") as f:
+        data = f["CAMELS_entry"]["data"]
+        assert "flyer1" in data
+        flyer_data = data["flyer1"]
+        assert "demo_instrument_detectorComm" in flyer_data
+        assert "time" in flyer_data
+        assert len(flyer_data["time"]) > 20
+        assert len(flyer_data["demo_instrument_detectorComm"]) == len(
+            flyer_data["time"]
+        )
+
+
+def test_simple_sweep_with_plotly(qtbot, tmp_path, zmq_setup):
+    """Opens the config for "Simple Sweep" tries to configure it for the
+    demo instrument. Further it adds a plot and a fit to the sweep and tries to
+    run a protocol with this step."""
+    ensure_demo_in_devices()
+    from nomad_camels.loop_steps import simple_sweep
+    from nomad_camels.frontpanels import plot_definer
+
+    conf = protocol_config.Protocol_Config()
+    conf.general_settings.lineEdit_protocol_name.setText(
+        "test_simple_sweep_plotly_protocol"
+    )
+    qtbot.addWidget(conf)
+    action = get_action_from_name(conf.add_actions, "Simple Sweep")
+    action.trigger()
+    conf_widge = conf.loop_step_configuration_widget
+    assert isinstance(conf_widge, simple_sweep.Simple_Sweep_Config)
+    conf_widge.sweep_widget.lineEdit_start.setText("-10")
+    conf_widge.sweep_widget.lineEdit_stop.setText("10")
+    conf_widge.sweep_widget.lineEdit_n_points.setText("21")
+    conf_widge.comboBox_sweep_channel.setCurrentText("demo_instrument_motorY")
+
+    table = conf_widge.read_table.tableWidget_channels
+    row = get_row_from_channel_table("demo_instrument_detectorY", table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+    row = get_row_from_channel_table("demo_instrument_motorY", table)
+    table.item(row, 0).setCheckState(Qt.CheckState.Checked)
+
+    fit = plot_definer.Fit_Info(
+        True, "Gaussian", x="demo_instrument_motorY", y="demo_instrument_detectorY"
+    )
+    plot = plot_definer.Plot_Info(
+        x_axis="demo_instrument_motorY",
+        y_axes={"formula": ["demo_instrument_detectorY"], "axis": ["left"]},
+        fits=[fit],
+        checkbox_show_in_browser=True,
+        browser_port=get_available_port(),
+    )
+    conf_widge.plot_widge.plot_data = [plot]
+
+    with qtbot.waitSignal(conf.accepted) as blocker:
+        conf.accept()
+    prot = conf.protocol
+    prot.name = "test_simple_sweep_plotly_protocol"
+    assert "Simple Sweep (Simple_Sweep)" in prot.loop_step_dict
+    catalog_maker(tmp_path)
+    publisher, dispatcher = zmq_setup
+    run_test_protocol(tmp_path, prot, publisher, dispatcher)
+
+
 def single_variable_if(qtbot, conf, wait_in=1, n_prompt=0, n_if=0, len_prot=0):
     """
 
@@ -761,35 +1032,6 @@ def get_row_from_channel_table(name, table):
             return i
 
 
-def ensure_demo_in_devices():
-    """Ensure that only the demo_instrument is loaded in the devices dictionary."""
-    instr, packs = instrument_installer.getInstalledDevices(True, True)
-    if "demo_instrument" not in instr:
-        instrument_installer.install_instrument("demo_instrument")
-        instr, packs = instrument_installer.getInstalledDevices(True, True)
-        assert "demo_instrument" in instr
-
-    # Clear all devices and keep only demo_instrument
-    if "demo_instrument" in variables_handling.devices:
-        demo_inst = variables_handling.devices["demo_instrument"]
-        variables_handling.devices.clear()
-        variables_handling.devices["demo_instrument"] = demo_inst
-    else:
-        variables_handling.devices.clear()
-        inst = packs["demo_instrument"].subclass()
-        variables_handling.devices["demo_instrument"] = inst
-
-    assert "demo_instrument" in variables_handling.devices
-    assert (
-        len(variables_handling.devices) == 1
-    ), "Only demo_instrument should be present"
-
-    # Clear and repopulate channels
-    variables_handling.channels.clear()
-    for dev in variables_handling.devices.values():
-        variables_handling.channels.update(dev.get_channels())
-
-
 def catalog_maker(tmp_path):
     """
 
@@ -808,7 +1050,7 @@ def catalog_maker(tmp_path):
         make_catalog.make_yml(tmp_path, "test_catalog")
 
 
-def run_test_protocol(tmp_path, protocol, publisher, dispatcher):
+def run_test_protocol(tmp_path, protocol, publisher, dispatcher, return_savepath=False):
     """
 
     Parameters
@@ -836,6 +1078,8 @@ def run_test_protocol(tmp_path, protocol, publisher, dispatcher):
         file_ending = ".h5"
     savepath = f"{savepath}{file_ending}"
     assert os.path.isfile(savepath)
+    if return_savepath:
+        return savepath
 
 
 def get_action_from_name(actions, name):

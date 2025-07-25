@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QWidget, QCheckBox, QTextEdit, QMessageBox, QPushButton
+from PySide6.QtWidgets import QWidget, QMessageBox, QStyle
 from PySide6.QtCore import Signal, Qt
+from PySide6.QtGui import QIcon
 
 from nomad_camels.frontpanels.plot_definer import Plot_Definer_Widget
 from nomad_camels.loop_steps import make_step_of_type
@@ -112,6 +113,11 @@ class Measurement_Protocol:
         self.tags = []
 
     def get_aliases(self):
+        if not self.check_aliases_defined():
+            raise Exception(
+                "Not all aliases are defined! Please check the instrument and channel aliases."
+                '\nSee at "Advanced" --> "Instrument Aliases".'
+            )
         aliases = {}
         for i, alias in enumerate(self.instrument_aliases["Alias"]):
             dev = self.instrument_aliases["Instrument"][i]
@@ -430,6 +436,19 @@ class Measurement_Protocol:
             )
         return outer_string
 
+    def get_used_channels(self):
+        channels = []
+        for step in self.loop_steps:
+            if not step.is_active:
+                continue
+            channels += step.get_used_channels()
+        if self.flyer_data:
+            for channel in variables_handling.get_channels():
+                for flyer in self.flyer_data:
+                    if channel in flyer["channels"]["channel"]:
+                        channels.append(channel)
+        return list(set(channels))
+
     def get_used_devices(self):
         """Get a list of all devices needed by any loopstep."""
         devices = []
@@ -440,6 +459,10 @@ class Measurement_Protocol:
             devices += step.used_devices
         adds = []
         for dev in devices:
+            if dev is None:
+                raise Exception(
+                    f'A device is None!\nThis may be due to an undefined alias!\nCheck your protocol under "Advanced" --> "Instrument Aliases".'
+                )
             adds += variables_handling.devices[dev].get_necessary_devices()
         devices += adds
         if self.flyer_data:
@@ -457,6 +480,19 @@ class Measurement_Protocol:
         devices = list(set(devices))
         devices = sorted(devices, key=lambda x: x in adds, reverse=True)
         return devices
+
+    def check_aliases_defined(self):
+        """Checks whether all aliases are defined."""
+        defined = True
+        for instrument in self.instrument_aliases["Instrument"]:
+            if not instrument in variables_handling.devices:
+                defined = False
+                break
+        for channel in self.channel_aliases["channel"]:
+            if not channel in variables_handling.get_channels(use_aliases=False):
+                defined = False
+                break
+        return defined
 
 
 def append_all_children(child_list, step, step_dict):
@@ -601,6 +637,23 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.selectionModel().selectionChanged.connect(
             self.update_variable_select
         )
+        self.check_aliases_defined()
+
+    def check_aliases_defined(self):
+        if (
+            not self.protocol.instrument_aliases["Instrument"]
+            and not self.protocol.channel_aliases["channel"]
+        ):
+            self.pushButton_instrument_aliases.setIcon(QIcon())
+        else:
+            if self.protocol.check_aliases_defined():
+                self.pushButton_instrument_aliases.setIcon(
+                    self.style().standardIcon(QStyle.SP_DialogApplyButton)
+                )
+            else:
+                self.pushButton_instrument_aliases.setIcon(
+                    self.style().standardIcon(QStyle.SP_MessageBoxWarning)
+                )
 
     def check_use_ending_steps(self):
         """If the checkBox_perform_at_end is checked, the ending_protocol_selection
@@ -767,6 +820,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             self,
             instrument_aliases=self.protocol.instrument_aliases,
             channel_aliases=self.protocol.channel_aliases,
+            used_channels=self.protocol.get_used_channels(),
         )
         if dialog.exec_():
             self.protocol.instrument_aliases = dialog.instrument_aliases
@@ -775,3 +829,4 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             dialog.deleteLater()
             variables_handling.instrument_aliases = self.protocol.instrument_aliases
             variables_handling.channel_aliases = self.protocol.channel_aliases
+            self.check_aliases_defined()

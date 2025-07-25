@@ -91,6 +91,13 @@ class Gradient_Descent_Step(Loop_Step):
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
+    def get_used_channels(self):
+        """Returns a list of all used channels in this step, including
+        the read_channels and the out_channel."""
+        used_channels = [self.out_channel]
+        used_channels += self.read_channels
+        return used_channels
+
     def get_outer_string(self):
         """Adds the plot, if self.plot_steps is True. The plot displays the
         formula to be optimized vs the out_channel."""

@@ -58,6 +58,15 @@ class Read_Channels(Loop_Step):
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
+    def get_used_channels(self):
+        """Returns a list of all used channels in this step, including
+        the read_channels and the read_variables."""
+        if self.read_all:
+            used_channels = variables_handling.get_channels().keys()
+        else:
+            used_channels = self.channel_list.copy()
+        return used_channels
+
     def get_channels_set(self):
         """Provides a set of `self.channel_list` to remove possible duplicates.
         Includes all available channels if `self.read_all`."""

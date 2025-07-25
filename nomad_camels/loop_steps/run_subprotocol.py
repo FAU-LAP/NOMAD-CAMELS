@@ -117,6 +117,13 @@ class Run_Subprotocol(Loop_Step):
         sub_protocol = load_save_functions.load_protocol(self.prot_path)
         self.used_devices = sub_protocol.get_used_devices()
 
+    def get_used_channels(self):
+        """Returns a list of all used channels in this step, including
+        the read_channels and the out_channels."""
+        used_channels = []
+        sub_protocol = load_save_functions.load_protocol(self.prot_path)
+        return sub_protocol.get_used_channels()
+
     def update_time_weight(self):
         """The time weight in the end is the weight of the subprotocol + 1."""
         super().update_time_weight()

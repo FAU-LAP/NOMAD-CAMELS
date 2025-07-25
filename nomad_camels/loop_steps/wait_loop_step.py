@@ -86,6 +86,11 @@ class Wait_Loop_Step(Loop_Step):
                 if device not in self.used_devices:
                     self.used_devices.append(device)
 
+    def get_used_channels(self):
+        """Returns a list of all used channels in this step, including
+        the read_channels."""
+        return self.read_channels.copy()
+
     def get_protocol_string(self, n_tabs=1):
         """The protocol just calls `bps.wait(`wait_time`)`, where `wait_time` is
         evaluated by the protocol's evaluator."""

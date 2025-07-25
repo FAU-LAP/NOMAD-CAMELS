@@ -18,6 +18,19 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.7
+Features:
+- right click on channel-table now allows to (un-)check all boxes in a column (can be reverted!)
+
+Fixes:
+- fixed changing settings of manual controls
+- stopping stage control now more stable
+- fixed renaming instruments not taking effect sometimes
+- fixed new version of PySide6 breaking the plots
+- fixed tables sometimes loading in wrong order
+- aliases now "survive" when they are undefined
+- usage of an undefined alias in a protocol now throw an error before starting execution
+
 ### 1.8.6
 Fixes:
 - fixed not starting up when using pythonw.exe

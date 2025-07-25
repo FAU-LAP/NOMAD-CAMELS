@@ -239,6 +239,21 @@ def get_channels(use_aliases=True):
                 channels_dict.update({f"{alias}_{channel_name}": channels[channel]})
             else:
                 channels_dict.update({channel: channels[channel]})
+        for alias in channel_aliases["Alias"]:
+            if alias not in channels_dict:
+                from nomad_camels.main_classes import measurement_channel
+
+                channels_dict.update(
+                    {
+                        alias: measurement_channel.Measurement_Channel(
+                            name=alias,
+                            output=True,
+                            metadata={
+                                "This is an undefined alias!": "Please define it."
+                            },
+                        )
+                    }
+                )
         return channels_dict
     return channels
 

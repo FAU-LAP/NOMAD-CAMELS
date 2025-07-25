@@ -8,8 +8,10 @@ import shutil
 from pathlib import Path
 from packaging.version import Version
 from packaging.specifiers import SpecifierSet
+from packaging.markers import Marker
 import logging
 import time
+import toml
 
 # set log file
 logging.basicConfig(filename="test_log.txt", level=logging.INFO)
@@ -133,7 +135,8 @@ def update_venv(
     # 2) Install all other constraints
     # 3) Install your test framework (pytest, etc.)
     # 4) (Optionally) install your actual project
-    install_cmd = [pip_exe, "install", f"{dependency}=={version}"]
+    # install quietly, no output
+    install_cmd = [pip_exe, "install", f"{dependency}=={version}", "--quiet"]
     if last_package != dependency or force_new:
         install_cmd += new_other_constraints
         install_cmd += ["--no-cache-dir"]
@@ -417,10 +420,14 @@ def find_max_version_going_down(
         logging.info(
             f"Testing {dependency}=={v} on {python_executable} ... (max candidate)"
         )
+        print(
+            f"\nTesting {dependency}=={v} on {python_executable} ... (max candidate)\n"
+        )
         if test_dependency_version(
             python_executable, dependency, v, other_constraints, test_command
         ):
             logging.info(f"  --> WORKED at {v}")
+            print(f"\n  --> WORKED at {v}\n")
             return v
     return None
 
@@ -460,118 +467,268 @@ def find_min_version_going_up(
         logging.info(
             f"Testing {dependency}=={v} on {python_executable} ... (min candidate)"
         )
+        print(
+            f"\nTesting {dependency}=={v} on {python_executable} ... (min candidate)\n"
+        )
         if test_dependency_version(
             python_executable, dependency, v, other_constraints, test_command
         ):
             logging.info(f"  --> WORKED at {v}")
+            print(f"\n  --> WORKED at {v}\n")
             return v
     return None
 
 
-###############################################################################
-# 4. Main driver - example usage
-###############################################################################
+# ###############################################################################
+# # 4. Main driver - example usage
+# ###############################################################################
+# def main():
+#     """
+#     Example usage: For each Python version in `python_versions`,
+#     check the min and max supported versions of each dependency in `dependencies`.
+#     """
+#     python_versions = [
+#         r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.11.9\python.exe",
+#         r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.12.4\python.exe",
+#         r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.10.11\python.exe",
+#         r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.9.13\python.exe",
+#     ]  # Adjust for your environment
+#     # under the broad constraints below:
+#     dependencies = {
+#         "PySide6": ">=6.6.0",
+#         "numpy": ">=1.22.0",
+#         "bluesky": ">=1.9.0",
+#         "ophyd": ">=1.6.4",
+#         "lmfit": ">=1.0.2",
+#         "pyyaml": ">=3.10",
+#         "requests": ">=2.26.0",
+#         "databroker": ">=1.2.5",
+#         "setuptools": ">=36.0.1",
+#         "matplotlib": ">=3.6.2",
+#         "pyqtgraph": ">=0.13.3",
+#         "fastapi": ">=0.110.1",
+#         "uvicorn": ">=0.19.0",
+#         "httpx": ">=0.21.0",
+#         "pytest": ">=7.0.0",
+#         "pytest-qt": ">=4.2.0",
+#         "pytest-order": ">=0.7.1",
+#         "pytest-mock": ">=0.4.0",
+#         "pytest-timeout": ">=1.3.1",
+#         "pytest-cov": ">=6.0.0",
+#         "pyvisa": ">=1.12.0",
+#         "pyvisa-py": ">=0.5.3",
+#         "pyzmq": ">=22.1.0",
+#     }
+
+#     # You might also have a broad constraint for your other dependencies,
+#     # so that they get installed in each environment as well. For instance:
+#     other_constraints = [
+#         "suitcase-nomad-camels-hdf5>=0.6.3",
+#         "PySide6",
+#         "numpy",
+#         "bluesky",
+#         "ophyd",
+#         "lmfit",
+#         "pyyaml",
+#         "requests",
+#         "databroker",
+#         "setuptools",
+#         "matplotlib",
+#         "pyqtgraph",
+#         "fastapi",
+#         "uvicorn",
+#         "httpx",
+#         "pytest",
+#         "pytest-qt",
+#         "pytest-order",
+#         "pytest-mock",
+#         "pytest-timeout",
+#         "pyvisa",
+#         "pyvisa-py",
+#         "pytest-cov",
+#         "pyzmq",
+#     ]
+#     # In a real scenario, you might want to exclude the package you're testing from `other_constraints`
+#     # or maintain a more granular matrix. This is just an example for demonstration.
+
+#     # A test command, e.g. "pytest" on a 'tests' folder:
+#     test_command = ["pytest", "--timeout=60"]
+
+#     results = {}
+
+#     for py_exe in python_versions:
+#         logging.info(f"Testing on {py_exe}")
+#         print(f"\n===== Testing on {py_exe} =====\n")
+#         for dep, broad_spec in dependencies.items():
+#             min_v = find_min_version_going_up(
+#                 python_executable=py_exe,
+#                 dependency=dep,
+#                 broad_spec=broad_spec,
+#                 other_constraints=other_constraints,
+#                 test_command=test_command,
+#                 # check_below_valid=True,
+#             )
+#             print(f"\nResult for {dep} on {py_exe}:")
+#             print(f"  Minimum passing version: {min_v}")
+#             max_v = min_v
+#             # max_v = find_max_version_going_down(
+#             #     python_executable=py_exe,
+#             #     dependency=dep,
+#             #     broad_spec=broad_spec,
+#             #     other_constraints=other_constraints,
+#             #     test_command=test_command,
+#             # )
+#             # print(f"\nResult for {dep} on {py_exe}:")
+#             # print(f"  Maximum passing version: {max_v}")
+#             results[(py_exe, dep)] = (min_v, max_v)
+#         logging.info(f"Finished testing on {py_exe}\n\n")
+
+#     # After the loop, you could print a summary or write the results to a file
+#     print("\n===== FINAL RESULTS =====")
+#     for (py_exe, dep), (mn, mx) in results.items():
+#         print(f"{py_exe} - {dep}: min={mn}, max={mx}")
+
+
+def resolve_constraint(constraint, current_python_version):
+    """
+    Given a dependency constraint (which can be a string, dict, or list),
+    returns the version constraint that applies for the current Python version.
+    If the constraint has a marker (like "sys_platform == 'linux'") that is not
+    satisfied, returns an empty string.
+    current_python_version: string, e.g. "3.10"
+    """
+    current_ver = Version(current_python_version)
+    if isinstance(constraint, str):
+        return constraint
+    elif isinstance(constraint, dict):
+        # If there is a marker and it doesn't evaluate to True, skip this dependency.
+        if "markers" in constraint:
+            m = Marker(constraint["markers"])
+            if not m.evaluate():
+                return "skip!"
+        return constraint.get("version", "")
+    elif isinstance(constraint, list):
+        for entry in constraint:
+            # Check marker if it exists.
+            if "markers" in entry:
+                m = Marker(entry["markers"])
+                if not m.evaluate():
+                    continue
+            py_spec = entry.get("python", "")
+            if py_spec:
+                spec = SpecifierSet(py_spec)
+                if current_ver in spec:
+                    return entry.get("version", "")
+        # Fallback: return the version from the first entry (even if its marker is false)
+        return constraint[0].get("version", "")
+    return ""
+
+
 def main():
     """
-    Example usage: For each Python version in `python_versions`,
-    check the min and max supported versions of each dependency in `dependencies`.
+    Reads package constraints from pyproject.toml and then tests each dependency using the current Python.
+
+    You can pass a command-line argument:
+       --mode=min   (default) test for the lowest possible passing version.
+       --mode=max   test for the highest possible passing version.
+
+    The constraints are read from the [tool.poetry.dependencies] section of pyproject.toml.
     """
-    python_versions = [
-        # r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.11.9\python.exe",
-        # r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.12.4\python.exe",
-        # r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.10.11\python.exe",
-        r"C:\Users\od93yces\.pyenv\pyenv-win\versions\3.9.13\python.exe"
-    ]  # Adjust for your environment
-    # Suppose we want to discover min/max for 'requests' and 'pydantic'
-    # under the broad constraints below:
-    dependencies = {
-        # "PySide6": ">=6.6.0",
-        # "numpy": ">=1.23.0",
-        # "bluesky": ">=1.9.0",
-        # "ophyd": ">=1.6.2",
-        # "lmfit": ">=1.0.2",
-        # "pyyaml": ">=6.0",
-        # "requests": ">=2.26.0",
-        # "databroker": ">=1.2.0",
-        # "setuptools": ">=54.2.0",
-        # "matplotlib": ">=3.6.2",
-        # "pyqtgraph": ">=0.13.3",
-        # "fastapi": ">=0.110.1",
-        # "uvicorn": ">=0.19.0",
-        # "httpx": ">=0.28.1",
-        # "pytest": ">=7.3.2",
-        # "pytest-qt": ">=4.2.0",
-        # "pytest-order": ">=0.7.1",
-        # "pytest-mock": ">=0.4.0",
-        # "pytest-timeout": ">=1.3.1",
-        "pyvisa": ">=1.6.2",
-        "pyvisa-py": ">=0.1",
-    }
+    # Use the python that is running this script
+    python_executable = sys.executable
+    current_python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
-    # You might also have a broad constraint for your other dependencies,
-    # so that they get installed in each environment as well. For instance:
-    other_constraints = [
-        "suitcase-nomad-camels-hdf5>=0.4.4",
-        "PySide6",
-        "numpy",
-        "bluesky",
-        "ophyd",
-        "lmfit",
-        "pyyaml",
-        "requests",
-        "databroker",
-        "setuptools",
-        "matplotlib",
-        "pyqtgraph",
-        "fastapi",
-        "uvicorn",
-        "httpx",
-        "pytest",
-        "pytest-qt",
-        "pytest-order",
-        "pytest-mock",
-        "pytest-timeout",
-        "pyvisa",
-        "pyvisa-py",
-    ]
-    # In a real scenario, you might want to exclude the package you're testing from `other_constraints`
-    # or maintain a more granular matrix. This is just an example for demonstration.
+    # Determine mode from command-line
+    mode = "min"
+    if len(sys.argv) > 1:
+        arg = sys.argv[1].lower()
+        if arg in ("--mode=max", "--mode=maximal", "--max"):
+            mode = "max"
 
-    # A test command, e.g. "pytest" on a 'tests' folder:
+    # Read pyproject.toml for dependencies
+    pyproj = toml.load("pyproject.toml")
+    # Access dependencies under tool.poetry.dependencies
+    poetry_deps = pyproj.get("tool", {}).get("poetry", {}).get("dependencies", {})
+    # Remove "python" dependency – we use the current interpreter.
+    poetry_deps.pop("python", None)
+
+    # For clarity, we also extract other constraints from the extras or elsewhere as needed
+    # (Here we simply use all dependencies as constraints for demonstration)
+    other_constraints = []  # You can modify this list if you need extra constraints
+
+    # add optional dependencies to poetry_deps
+    optional_deps = (
+        pyproj.get("tool", {}).get("poetry", {}).get("optional-dependencies", {})
+    )
+    for opt_name, opt_deps in optional_deps.items():
+        for dep, constraint in opt_deps.items():
+            if dep not in poetry_deps:
+                poetry_deps[dep] = constraint
+
+    # add all packages without constraints to other_constraints
+    for dep, constraint in poetry_deps.items():
+        if isinstance(constraint, str) and constraint.startswith("=="):
+            # If the constraint is a specific version, we can add it to other_constraints
+            other_constraints.append(f"{dep}{constraint}")
+        elif isinstance(constraint, dict):
+            # If it's a dict (e.g., with extras), we can add the version if available
+            version = constraint.get("version", "")
+            if version:
+                other_constraints.append(f"{dep}{version}")
+        else:
+            # Otherwise, just add the package name
+            other_constraints.append(dep)
+
+    # Print out resolved dependencies based on the current Python version:
+    print(f"Current Python version: {current_python_version}")
+    print("Resolved dependency constraints from pyproject.toml:")
+    for dep, constraint in poetry_deps.items():
+        resolved = resolve_constraint(constraint, current_python_version)
+        print(f"  {dep}: {resolved}")
+
+    # A test command – adjust if needed.
     test_command = ["pytest", "--timeout=60"]
+
+    print(f"found the following dependencies in pyproject.toml:\n{poetry_deps}")
 
     results = {}
 
-    for py_exe in python_versions:
-        logging.info(f"Testing on {py_exe}")
-        print(f"\n===== Testing on {py_exe} =====\n")
-        for dep, broad_spec in dependencies.items():
-            min_v = find_min_version_going_down(
-                python_executable=py_exe,
-                dependency=dep,
-                broad_spec=broad_spec,
-                other_constraints=other_constraints,
-                test_command=test_command,
-                check_below_valid=True,
-            )
-            print(f"\nResult for {dep} on {py_exe}:")
-            print(f"  Minimum passing version: {min_v}")
-            max_v = find_max_version_going_down(
-                python_executable=py_exe,
-                dependency=dep,
-                broad_spec=broad_spec,
-                other_constraints=other_constraints,
-                test_command=test_command,
-            )
-            print(f"\nResult for {dep} on {py_exe}:")
-            print(f"  Maximum passing version: {max_v}")
-            results[(py_exe, dep)] = (min_v, max_v)
-        logging.info(f"Finished testing on {py_exe}\n\n")
+    logging.info(
+        f"\n===== Testing dependencies with mode '{mode}' using {python_executable} =====\n"
+    )
+    print(
+        f"\n===== Testing dependencies with mode '{mode}' using {python_executable} =====\n"
+    )
+    for dep, constraint in poetry_deps.items():
+        # 'constraint' may be a simple version string or a dict with markers – we assume simple version strings.
+        # If it is a dict, pick the constraint that applies (this example is simplistic).
+        broad_spec = resolve_constraint(constraint, current_python_version)
+        if broad_spec == "skip!":
+            logging.info(f"Skipping {dep} due to marker constraints.")
+            print(f"Skipping {dep} due to marker constraints.")
+            continue
 
-    # After the loop, you could print a summary or write the results to a file
+        logging.info(f"\nTesting dependency: {dep} with broad spec '{broad_spec}'")
+        print(f"\nTesting dependency: {dep} with broad spec '{broad_spec}'")
+        if mode == "min":
+            version_found = find_min_version_going_up(
+                python_executable, dep, broad_spec, other_constraints, test_command
+            )
+        else:
+            version_found = find_max_version_going_down(
+                python_executable, dep, broad_spec, other_constraints, test_command
+            )
+        results[dep] = version_found
+        logging.info(f"Result for {dep}: Passing version: {version_found}\n")
+        print(f"Result for {dep}: Passing version: {version_found}\n")
+
+    logging.info("\n===== FINAL RESULTS =====")
     print("\n===== FINAL RESULTS =====")
-    for (py_exe, dep), (mn, mx) in results.items():
-        print(f"{py_exe} - {dep}: min={mn}, max={mx}")
+    for dep, ver in results.items():
+        logging.info(f"{dep}: {ver}")
+        print(f"{dep}: {ver}")
+    logging.info("\n===== Testing Completed =====\n")
+    print("\n===== Testing Completed =====\n")
 
 
 if __name__ == "__main__":

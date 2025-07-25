@@ -16,7 +16,7 @@ import sys
 
 try:
     # Attempt to check sys.__stdout__
-    if not sys.__stdout__.isatty():
+    if sys.__stdout__ is None:
         with open("faulthandler.log", "w") as fh:
             faulthandler.enable(file=fh)
     else:
