@@ -15,6 +15,7 @@ Drivers
    nomad_camels_driver_demo_digital_multimeter
    nomad_camels_driver_demo_instrument
    nomad_camels_driver_demo_source_measure_unit
+   nomad_camels_driver_derived_channels
    nomad_camels_driver_epics_instrument
    nomad_camels_driver_eurotherm_bisynch
    nomad_camels_driver_iBeam_smart
