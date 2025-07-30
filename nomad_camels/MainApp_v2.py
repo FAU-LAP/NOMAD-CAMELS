@@ -433,7 +433,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             sample_name (str): The name of the sample to set.
 
         Raises:
-            ValueError: If the given sample does not exist in the sample data..
+            ValueError: If the given sample does not exist in the sample data.
         """
         # Check if the sample exists
         if sample_name not in self.sampledata:
