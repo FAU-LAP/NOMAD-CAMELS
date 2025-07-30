@@ -85,9 +85,10 @@ Instruments
 
 Below is a list of instruments that have drivers for NOMAD CAMELS. The table is sortable by clicking on the column headers. You can also search for specific instruments using the search bar.
 
-Please note that this page is currently under construction and the information may not be up-to-date.
-
 The table includes instruments from SweepMe! as well. These instruments are not all tested with NOMAD CAMELS yet, if you find any issues, please let us know.
+
+.. note::
+    Click on the version number to be redirected to the driver's PyPI page, where you can find more information and download the driver.
 
 .. raw:: html
 
