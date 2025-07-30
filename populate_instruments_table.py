@@ -115,7 +115,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             color: #000;
         }
     </style>
-    <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+    <script src="_static/sorttable.js"></script>
     <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search for instruments..">
     <table class="sortable" id="instrumentTable">
         <thead>
