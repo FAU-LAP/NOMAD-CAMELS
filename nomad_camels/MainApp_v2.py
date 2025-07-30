@@ -11,7 +11,7 @@ sys.path.append(os.path.dirname(__file__))
 import json
 import pathlib
 
-from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog
+from PySide6.QtWidgets import QMainWindow, QStyle, QFileDialog, QLabel
 from PySide6.QtCore import Qt, Signal, QThread, QTimer
 from PySide6.QtGui import QIcon, QPixmap, QShortcut
 
@@ -19,6 +19,7 @@ from nomad_camels.gui.mainWindow_v2 import Ui_MainWindow
 from nomad_camels.gui.tags_ui import TagWidget, FlowLayout
 from importlib import resources
 from nomad_camels import graphics
+from nomad_camels.utility.databroker_export import clean_filename
 
 from nomad_camels.frontpanels.helper_panels.button_move_scroll_area import (
     RenameTabWidget,
@@ -81,6 +82,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.setupUi(self)
         sys.stdout = self.textEdit_console_output.text_writer
         sys.stderr = self.textEdit_console_output.error_writer
+
+        # Initialize extension contexts
+        self.extension_user = {}
+        self.extension_sample = {}
+        self.eln_context = extension_contexts.ELN_Context(self)
+        extension_contexts.active_eln_context = self.eln_context
+        self.extension_contexts = {"ELN_Context": self.eln_context}
+        self.extensions = []
 
         # Set alignment for various widgets
         self.sample_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
@@ -199,7 +208,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.comboBox_user.currentTextChanged.connect(self.change_user)
         self.comboBox_user_type.addItems(["local user", "NOMAD user"])
         self.comboBox_user_type.currentTextChanged.connect(self.change_user_type)
-        self.change_user()
         self.change_user_type()
 
         self.pushButton_login_nomad.clicked.connect(self.login_logout_nomad)
@@ -269,13 +277,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.label_queue.setHidden(True)
         self.devices_from_queue = []
 
-        # Initialize extension contexts
-        self.extension_user = {}
-        self.extension_sample = {}
-        self.eln_context = extension_contexts.ELN_Context(self)
-        extension_contexts.active_eln_context = self.eln_context
-        self.extension_contexts = {"ELN_Context": self.eln_context}
-        self.extensions = []
+        # load extensions
         self.load_extensions()
         self.actionManage_Extensions.triggered.connect(self.manage_extensions)
 
@@ -431,12 +433,24 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             sample_name (str): The name of the sample to set.
 
         Raises:
-            ValueError: If the given sample does not exist in the sample data.
+            ValueError: If the given sample does not exist in the sample data..
         """
+        # Check if the sample exists
         if sample_name not in self.sampledata:
-            raise ValueError(
-                f"Sample {sample_name} can not be set as it does not exist. Please create this sample first."
-            )
+            import pandas as pd
+
+            # make dataframe with keys of sampledata as index and the values as columns
+            df = pd.DataFrame.from_dict(self.sampledata, orient="index")
+            if sample_name in df["name"]:
+                sample_name = df[df["name"] == sample_name].index[0]
+            elif sample_name in df["sample_id"]:
+                sample_name = df[df["sample_id"] == sample_name].index[0]
+            else:
+                raise ValueError(
+                    f"Sample {sample_name} can not be set as it does not exist or is not accessible to user {self.get_user_name_data()[0]}. Please create this sample first."
+                )
+
+        # Set the active sample to the sample name
         self.active_sample = sample_name
         self.comboBox_sample.setCurrentText(sample_name)
 
@@ -851,6 +865,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.login_nomad()
         self.show_nomad_sample()
         self.show_nomad_upload()
+        self.change_user()
 
     def edit_user_info(self):
         """
@@ -955,7 +970,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Open a dialog to edit sample information.
 
         The dialog displays sample data such as name, identifier, and description.
-        On acceptance, updates the sample data.
+        On acceptance, updates the sample data using the new hierarchical structure.
         """
         # IMPORT pandas and add_remove_table only if it is needed
         import pandas as pd
@@ -964,12 +979,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.active_sample = self.comboBox_sample.currentText()
         headers = ["name", "sample_id", "description", "owner"]
         tableData = pd.DataFrame.from_dict(self.sampledata, "index")
+
         if not "owner" in tableData.columns:
             tableData["owner"] = ""
-        # Filter tableData so that only samples owned by the active user (or with no owner) are kept.
+
+        # Filter tableData to only include samples owned by the active user or with no owner
         tableData = tableData[
-            (tableData["owner"] == self.active_user)
-            | (tableData["owner"].isna())
+            (tableData["owner"] == self.get_user_name_data()[0])
             | (tableData["owner"] == "")
         ]
 
@@ -979,30 +995,148 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             title="Sample-Information",
             askdelete=True,
             tableData=tableData,
-            default_values={"owner": self.active_user},
-            check_string_function=variable_tool_tip_box.check_no_special_characters,
-            checkstrings=[0],
+            default_values={"owner": self.get_user_name_data()[0]},
+            check_duplicates=[0, 1],
+            editables=[0, 1, 2],
         )
+
+        # Initial check for duplicates
+        # check_sample_id_duplicates()
+
+        dialog.resize(800, 600)
+        dialog.table.table.setColumnWidth(0, 150)
+        dialog.table.table.setColumnWidth(1, 150)
+        dialog.table.table.setColumnWidth(2, 350)
+        dialog.table.table.setColumnWidth(3, 150)
+
+        # Store the desired column widths (initially set to default values)
+        desired_widths = [150, 150, 350, 150]
+
+        # Function to update desired widths when user manually resizes columns
+        def update_desired_widths():
+            for i in range(dialog.table.table.model().columnCount()):
+                desired_widths[i] = dialog.table.table.columnWidth(i)
+
+        # Connect to header section resized signal to capture manual resizing
+        dialog.table.table.horizontalHeader().sectionResized.connect(
+            lambda logical_index, old_size, new_size: update_desired_widths()
+        )
+
+        # Override the resizeColumnsToContents method to maintain current widths
+        original_resize = dialog.table.table.resizeColumnsToContents
+
+        def custom_resize():
+            # Update desired widths to current widths before any auto-resize
+            update_desired_widths()
+            # Then restore our current column widths (don't call original resize)
+            for i, width in enumerate(desired_widths):
+                if i < dialog.table.table.model().columnCount():
+                    dialog.table.table.setColumnWidth(i, width)
+
+        # Replace the method
+        dialog.table.table.resizeColumnsToContents = custom_resize
+
+        # Also override the clicked signal connection that triggers resize
+        dialog.table.table.clicked.disconnect()
+        dialog.table.table.clicked.connect(lambda: None)  # Do nothing on click
+
+        # Enable text wrapping and auto row height adjustment
+        from PySide6.QtCore import Qt
+        from PySide6.QtWidgets import QStyledItemDelegate, QHeaderView
+
+        class WordWrapDelegate(QStyledItemDelegate):
+            def paint(self, painter, option, index):
+                # Enable word wrapping for text display
+                option.displayAlignment = Qt.AlignTop | Qt.AlignLeft
+                super().paint(painter, option, index)
+
+            def sizeHint(self, option, index):
+                # Calculate size hint based on wrapped text
+                size = super().sizeHint(option, index)
+                if index.column() == 2:  # Description column
+                    # Get the text and calculate wrapped height
+                    text = index.data()
+                    if text:
+                        # Use the column width to calculate wrapped text height
+                        column_width = dialog.table.table.columnWidth(index.column())
+                        font_metrics = option.fontMetrics
+                        text_rect = font_metrics.boundingRect(
+                            0,
+                            0,
+                            column_width - 10,
+                            0,  # -10 for padding
+                            Qt.TextWordWrap,
+                            str(text),
+                        )
+                        size.setHeight(max(size.height(), text_rect.height() + 10))
+                return size
+
+        # Set the delegate for text wrapping
+        word_wrap_delegate = WordWrapDelegate()
+        dialog.table.table.setItemDelegate(word_wrap_delegate)
+
+        # Enable word wrap in the table
+        dialog.table.table.setWordWrap(True)
+
+        # Set text elide mode to none so full text is shown when wrapped
+        dialog.table.table.setTextElideMode(Qt.ElideNone)
+
+        # Enable automatic row height adjustment
+        dialog.table.table.verticalHeader().setSectionResizeMode(
+            QHeaderView.ResizeToContents
+        )
+
         if dialog.exec():
             # Changing the returned dict to dataframe and back to ensure proper formatting.
             dat = dialog.get_data()
             for i, d in enumerate(dat["name"]):
-                if re.search(r"[^\w\s]", str(d)):
-                    raise ValueError(
-                        f'Sample name "{d}" contains special characters.\nPlease use only letters, numbers and whitespace.'
-                    )
                 dat["name"][i] = d.strip()
-            dat["Name2"] = dat["name"]
-            data = pd.DataFrame(dat)
-            data.set_index("Name2", inplace=True)
-            data_dict = data.to_dict("index")
+                if not dat["name"][i] and dat["sample_id"][i]:
+                    dat["name"][i] = dat["sample_id"][i]
+                elif not dat["name"][i] and not dat["sample_id"][i]:
+                    n = 1
+                    while f"sample_{n}" in dat["name"]:
+                        n += 1
+                    dat["name"][i] = f"sample_{n}"
+                    from nomad_camels.ui_widgets.toast_notification import (
+                        show_warning_toast,
+                    )
+
+                    show_warning_toast(
+                        f"Sample name was empty. Set to \"{dat['name'][i]}\".",
+                        title="Set empty sample name",
+                        parent=self,
+                    )
+            dat = pd.DataFrame(dat)
+            dat["unique_name"] = dat.apply(
+                lambda row: (
+                    f'{row["name"]} / {row["sample_id"]}, {row["owner"]}'
+                    if row["name"] != row["sample_id"] and row["sample_id"]
+                    else f'{row["name"]}, {row["owner"]}'
+                ),
+                axis=1,
+            )
+            dat["display_name"] = dat.apply(
+                lambda row: (
+                    f'{row["name"]} / {row["sample_id"]}'
+                    if row["name"] != row["sample_id"] and row["sample_id"]
+                    else row["name"]
+                ),
+                axis=1,
+            )
+            dat.set_index("unique_name", inplace=True)
+            data_dict = dat.to_dict("index")
             removers = []
             for key, value in self.sampledata.items():
-                if value["owner"] == self.active_user and key not in data_dict:
+                if not "owner" in value or (
+                    value["owner"] == self.get_user_name_data()[0]
+                    and key not in data_dict
+                ):
                     removers.append(key)
             for key in removers:
                 self.sampledata.pop(key)
-            self.sampledata.update(data.to_dict("index"))
+            self.sampledata.update(dat.to_dict("index"))
+
             self.update_shown_samples()
             self.save_sample_data()
 
@@ -1014,22 +1148,24 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.comboBox_sample.addItems(
             sorted(
                 [
-                    key
+                    (
+                        self.sampledata[key]["display_name"]
+                        if "display_name" in self.sampledata[key]
+                        else key
+                    )
                     for key in self.sampledata.keys()
-                    if self.sampledata[key].get("owner", "") == self.active_user
+                    if self.sampledata[key].get("owner", "")
+                    == self.get_user_name_data()[0]
                     or not self.sampledata[key].get("owner", "")
                 ],
                 key=lambda x: x.lower(),
             )
         )
-        if self.active_sample in self.sampledata.keys():
-            self.comboBox_sample.setCurrentText(self.active_sample)
+        self.comboBox_sample.setCurrentText(self.active_sample)
 
     def save_sample_data(self):
         """
         Save the current sample data to a JSON file.
-
-        The active sample is saved along with the complete sample data dictionary.
         """
         self.active_sample = self.comboBox_sample.currentText()
         sampledic = {"active_sample": self.active_sample}
@@ -1052,13 +1188,40 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             load_save_functions.load_save_dict(
                 string_dict, sampledat, update_missing_key=True
             )
+
+        # Extract active sample
         if "active_sample" in sampledat:
             self.active_sample = sampledat["active_sample"]
             sampledat.pop("active_sample")
         self.sampledata = sampledat
-        self.comboBox_sample.addItems(sampledat.keys())
-        if not self.active_sample == "default_sample":
-            self.comboBox_sample.setCurrentText(self.active_sample)
+        self.update_shown_samples()
+        # self.comboBox_sample.addItems(sampledat.keys())
+        # if not self.active_sample == "default_sample":
+        #     self.comboBox_sample.setCurrentText(self.active_sample)
+
+    def get_user_samples(self):
+        """
+        Get samples that belong to the current active user or are shared.
+
+        Returns:
+            dict: Dictionary of sample_id -> sample_data for the current user
+        """
+        user_samples = {}
+
+        for global_key, sample_data in self.sampledata.items():
+            # Parse the global key to extract user and sample_id
+            if "::" in global_key:
+                user, sample_id = global_key.split("::", 1)
+                if user == self.get_user_name_data()[0]:
+                    user_samples[sample_id] = sample_data  # Use clean sample_id as key
+            else:
+                # Shared sample (no user prefix)
+                sample_id = global_key
+                owner = sample_data.get("owner", "")
+                if not owner or owner == "shared":
+                    user_samples[sample_id] = sample_data  # Use clean sample_id as key
+
+        return user_samples
 
     def select_nomad_sample(self):
         """
@@ -2082,7 +2245,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             return
         while self.still_running:
             time.sleep(0.1)
-        if self.nomad_sample:
+        if self.nomad_sample and self.checkBox_use_nomad_sample.isChecked():
             if "name" in self.nomad_sample:
                 name = f"/{self.nomad_sample['name']}"
             elif "Name" in self.nomad_sample:
@@ -2528,6 +2691,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 if user == "default_user"
                 else self.userdata[user]
             )
+        user = clean_filename(user)
         return user, userdata
 
     def get_sample_name_data(self):
@@ -2550,11 +2714,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             sample = sampledata["name"]
         else:
             sample = self.comboBox_sample.currentText() or "default_sample"
-            sampledata = (
-                {"name": "default_sample"}
-                if sample == "default_sample"
-                else self.sampledata[sample]
-            )
+            if not sample in self.sampledata:
+                for s in self.sampledata:
+                    if (
+                        "display_name" in self.sampledata[s]
+                        and self.sampledata[s]["display_name"] == sample
+                    ):
+                        sampledata = self.sampledata[s]
+                        break
+            else:
+                sampledata = (
+                    {"name": "default_sample"}
+                    if sample == "default_sample"
+                    else self.sampledata[sample]
+                )
+            sample = sampledata["name"]
+        sample = clean_filename(sample)
         return sample, sampledata
 
     def open_protocol(self, protocol_name):

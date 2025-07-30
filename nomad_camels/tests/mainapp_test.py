@@ -55,8 +55,9 @@ def test_set_user(app):
 
 
 def test_set_sample(app):
-    """Test setting the sample."""
-    app.sampledata = {"sample1": {}}
+    """Test setting a sample."""
+    app.sampledata = {"sample1": {"name": "sample1", "sample_id": ""}}
+
     app.set_sample("sample1")
     assert app.active_sample == "sample1"
 

@@ -54,6 +54,7 @@ class AddRemoveTable(QWidget):
         subtables=None,
         growsize=False,
         checkstrings=None,
+        check_duplicates=None,
         askdelete=False,
         fixedsize=False,
         enableds=None,
@@ -143,6 +144,13 @@ class AddRemoveTable(QWidget):
             checkstrings = []
         self.checkstrings = (
             checkstrings if not type(checkstrings) is int else [checkstrings]
+        )
+        if check_duplicates is None:
+            check_duplicates = []
+        self.check_duplicates = (
+            check_duplicates
+            if not type(check_duplicates) is int
+            else [check_duplicates]
         )
         self.check_string_function = check_string_function
         self.horizontal = horizontal
@@ -458,6 +466,53 @@ class AddRemoveTable(QWidget):
             self.table_model.indexFromItem(item), QBrush(color), Qt.BackgroundRole
         )
 
+    def check_for_duplicates(self):
+        """Check for duplicates and highlight them in red and raise an error."""
+        self.table_model.itemChanged.disconnect()
+        try:
+            duplicate_dict = {}
+            for column in self.check_duplicates:
+                values = []
+                items = []
+                for row in range(self.table_model.rowCount()):
+                    # Check sample_id column (index 1)
+                    item = self.table_model.item(row, column)
+                    if item:
+                        value = item.text()
+                        if value:  # Only check non-empty values
+                            values.append(value)
+                            items.append(item)
+
+                # Find duplicates
+                seen = set()
+                duplicates = set()
+                for value in values:
+                    if value in seen:
+                        duplicates.add(value)
+                    else:
+                        seen.add(value)
+                for i, value in enumerate(values):
+                    if value in duplicates:
+                        # Set red background for invalid entries
+                        color = variables_handling.get_color("red")
+                    else:
+                        # Set white/default background for valid entries
+                        color = variables_handling.get_color("white")
+                    self.table_model.setData(
+                        self.table_model.indexFromItem(items[i]),
+                        QBrush(color),
+                        Qt.BackgroundRole,
+                    )
+                if duplicates:
+                    duplicate_dict[self.headerLabels[column]] = list(duplicates)
+            if duplicate_dict:
+                error_message = "Duplicate entries found:\n"
+                for column, duplicates in duplicate_dict.items():
+                    error_message += f"{column}: {', '.join(duplicates)}\n"
+                raise ValueError(error_message)
+        finally:
+            self.table_model.itemChanged.connect(self.check_string)
+
     def add(self, vals=None, change_focus=False):
         """Add the `vals` to the table as a new line. Checks are done
         for each part, whether there should be a comboBox etc.
@@ -668,6 +723,8 @@ class AddRemoveTable(QWidget):
                         self.tableData.append(float(self.table_model.item(0, j).text()))
                     except:
                         self.tableData.append(self.table_model.item(0, j).text())
+        if self.check_duplicates:
+            self.check_for_duplicates()
         return self.tableData
 
 
@@ -689,6 +746,7 @@ class AddRemoveDialoge(QDialog):
         comboBoxes=None,
         subtables=None,
         checkstrings=None,
+        check_duplicates=None,
         askdelete=False,
         default_values=None,
         check_string_function=None,
@@ -718,6 +776,7 @@ class AddRemoveDialoge(QDialog):
             subtables=subtables,
             growsize=False,
             checkstrings=checkstrings,
+            check_duplicates=check_duplicates,
             askdelete=askdelete,
             default_values=default_values,
             check_string_function=check_string_function,
@@ -735,6 +794,17 @@ class AddRemoveDialoge(QDialog):
     def get_data(self):
         """ """
         return self.table.update_table_data()
+
+    def accept(self):
+        """Overwrites the accept method of the QDialog to check for
+        integrity of the data before accepting the dialog.
+
+        Returns
+        -------
+
+        """
+        self.get_data()
+        super().accept()
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:
         """Overwrites the keyPressEvent of the QDialog so that it does
