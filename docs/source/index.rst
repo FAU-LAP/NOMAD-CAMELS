@@ -167,6 +167,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    :caption: Instruments
 
    Available Instruments <doc/instruments/instruments.rst>
+   Special Instruments Drivers <doc/instruments/special_instruments.md>
    Create New Instrument Drivers <doc/programmers_guide/instrument_drivers.md>
    Combination with EPICS - EPICS Guides <doc/epics/epics_overview.md>
    
