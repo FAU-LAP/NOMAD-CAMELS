@@ -5,9 +5,10 @@ Instruments
 
 Below is a list of instruments that have drivers for NOMAD CAMELS. The table is sortable by clicking on the column headers. You can also search for specific instruments using the search bar.
 
-Please note that this page is currently under construction and the information may not be up-to-date.
-
 The table includes instruments from SweepMe! as well. These instruments are not all tested with NOMAD CAMELS yet, if you find any issues, please let us know.
+
+.. note::
+    Click on the version number to be redirected to the driver's PyPI page, where you can find more information and download the driver.
 
 .. raw:: html
 
@@ -35,7 +36,6 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             color: #000;
         }
     </style>
-    <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
     <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search for instruments..">
     <table class="sortable" id="instrumentTable">
         <thead>
@@ -47,6 +47,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <td></td>
+                <td>ADALM1000</td>
+                <td></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-ADALM1000'>0.1.0</a></td>
+            </tr>
             <tr>
                 <td>Keysight / Agilent</td>
                 <td>33220a</td>
@@ -114,6 +120,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td><a href='https://pypi.org/project/nomad-camels-driver-demo-source-measure-unit'>0.1.6</a></td>
             </tr>
             <tr>
+                <td>Derived</td>
+                <td>Channels</td>
+                <td></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-derived-channels'>0.1.0</a></td>
+            </tr>
+            <tr>
                 <td>Epics</td>
                 <td>Instrument</td>
                 <td></td>
@@ -153,7 +165,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Keithley</td>
                 <td>2400</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-keithley-2400'>0.1.2</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-keithley-2400'>0.1.3</a></td>
             </tr>
             <tr>
                 <td>Keithley</td>
@@ -202,6 +214,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Ua_instrument</td>
                 <td></td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-opc-ua-instrument'>0.1.8</a></td>
+            </tr>
+            <tr>
+                <td>OpenCV</td>
+                <td>Instrument</td>
+                <td></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-openCV-instrument'>0.1.2</a></td>
             </tr>
             <tr>
                 <td></td>
@@ -274,6 +292,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Rst240b_e08</td>
                 <td></td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-zaber-rst240b-e08'>0.1.0</a></td>
+            </tr>
+            <tr>
+                <td>Zurichinstruments</td>
+                <td>Uhfli_600</td>
+                <td></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-zurichinstruments-uhfli-600'>0.1.0</a></td>
             </tr>
             <tr>
                 <td>Zurich</td>
@@ -536,6 +560,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             <tr>
                 <td>Jyetech (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Capmeter</a></td>
+                <td>Logger</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Keithley (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>199</a></td>
                 <td>Logger</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
