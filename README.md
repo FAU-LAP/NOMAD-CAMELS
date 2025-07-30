@@ -22,6 +22,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Features:
 - right click on channel-table now allows to (un-)check all boxes in a column (can be reverted!)
 
+Changes:
+- many improvements regarding the sample selection
+
 Fixes:
 - fixed changing settings of manual controls
 - stopping stage control now more stable
