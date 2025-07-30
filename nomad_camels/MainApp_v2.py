@@ -2244,7 +2244,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             return
         while self.still_running:
             time.sleep(0.1)
-        if self.nomad_sample:
+        if self.nomad_sample and self.checkBox_use_nomad_sample.isChecked():
             if "name" in self.nomad_sample:
                 name = f"/{self.nomad_sample['name']}"
             elif "Name" in self.nomad_sample:
