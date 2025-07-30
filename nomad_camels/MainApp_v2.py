@@ -83,6 +83,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         sys.stdout = self.textEdit_console_output.text_writer
         sys.stderr = self.textEdit_console_output.error_writer
 
+        # Initialize extension contexts
+        self.extension_user = {}
+        self.extension_sample = {}
+        self.eln_context = extension_contexts.ELN_Context(self)
+        extension_contexts.active_eln_context = self.eln_context
+        self.extension_contexts = {"ELN_Context": self.eln_context}
+        self.extensions = []
+
         # Set alignment for various widgets
         self.sample_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
         self.user_widget.layout().setAlignment(Qt.AlignmentFlag.AlignVCenter)
@@ -200,7 +208,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.comboBox_user.currentTextChanged.connect(self.change_user)
         self.comboBox_user_type.addItems(["local user", "NOMAD user"])
         self.comboBox_user_type.currentTextChanged.connect(self.change_user_type)
-        self.change_user()
         self.change_user_type()
 
         self.pushButton_login_nomad.clicked.connect(self.login_logout_nomad)
@@ -270,13 +277,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.label_queue.setHidden(True)
         self.devices_from_queue = []
 
-        # Initialize extension contexts
-        self.extension_user = {}
-        self.extension_sample = {}
-        self.eln_context = extension_contexts.ELN_Context(self)
-        extension_contexts.active_eln_context = self.eln_context
-        self.extension_contexts = {"ELN_Context": self.eln_context}
-        self.extensions = []
+        # load extensions
         self.load_extensions()
         self.actionManage_Extensions.triggered.connect(self.manage_extensions)
 
@@ -446,7 +447,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 sample_name = df[df["sample_id"] == sample_name].index[0]
             else:
                 raise ValueError(
-                    f"Sample {sample_name} can not be set as it does not exist or is not accessible to user {self.active_user}. Please create this sample first."
+                    f"Sample {sample_name} can not be set as it does not exist or is not accessible to user {self.get_user_name_data()[0]}. Please create this sample first."
                 )
 
         # Set the active sample to the sample name
@@ -863,6 +864,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.login_nomad()
         self.show_nomad_sample()
         self.show_nomad_upload()
+        self.change_user()
 
     def edit_user_info(self):
         """
@@ -982,7 +984,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         # Filter tableData to only include samples owned by the active user or with no owner
         tableData = tableData[
-            (tableData["owner"] == self.active_user) | (tableData["owner"] == "")
+            (tableData["owner"] == self.get_user_name_data()[0])
+            | (tableData["owner"] == "")
         ]
 
         dialog = add_remove_table.AddRemoveDialoge(
@@ -991,7 +994,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             title="Sample-Information",
             askdelete=True,
             tableData=tableData,
-            default_values={"owner": self.active_user},
+            default_values={"owner": self.get_user_name_data()[0]},
             check_duplicates=[0, 1],
             editables=[0, 1, 2],
         )
@@ -1124,7 +1127,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             data_dict = dat.to_dict("index")
             removers = []
             for key, value in self.sampledata.items():
-                if value["owner"] == self.active_user and key not in data_dict:
+                if not "owner" in value or (
+                    value["owner"] == self.get_user_name_data()[0]
+                    and key not in data_dict
+                ):
                     removers.append(key)
             for key in removers:
                 self.sampledata.pop(key)
@@ -1147,7 +1153,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         else key
                     )
                     for key in self.sampledata.keys()
-                    if self.sampledata[key].get("owner", "") == self.active_user
+                    if self.sampledata[key].get("owner", "")
+                    == self.get_user_name_data()[0]
                     or not self.sampledata[key].get("owner", "")
                 ],
                 key=lambda x: x.lower(),
@@ -1204,7 +1211,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # Parse the global key to extract user and sample_id
             if "::" in global_key:
                 user, sample_id = global_key.split("::", 1)
-                if user == self.active_user:
+                if user == self.get_user_name_data()[0]:
                     user_samples[sample_id] = sample_data  # Use clean sample_id as key
             else:
                 # Shared sample (no user prefix)
