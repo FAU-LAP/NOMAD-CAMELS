@@ -83,6 +83,9 @@ jobs:
 
   macos_test:
     runs-on: macos-latest
+    env:
+      # tell Qt to use the offscreen plugin
+      QT_QPA_PLATFORM: offscreen
     steps:
       - uses: actions/checkout@v4
       - name: Install Python 3
