@@ -1000,9 +1000,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             editables=[0, 1, 2],
         )
 
-        # Initial check for duplicates
-        # check_sample_id_duplicates()
-
         dialog.resize(800, 600)
         dialog.table.table.setColumnWidth(0, 150)
         dialog.table.table.setColumnWidth(1, 150)
