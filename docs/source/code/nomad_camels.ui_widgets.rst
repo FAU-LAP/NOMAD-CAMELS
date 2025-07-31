@@ -60,6 +60,14 @@ nomad\_camels.ui\_widgets.run\_queue module
    :show-inheritance:
    :undoc-members:
 
+nomad\_camels.ui\_widgets.toast\_notification module
+----------------------------------------------------
+
+.. automodule:: nomad_camels.ui_widgets.toast_notification
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 nomad\_camels.ui\_widgets.variable\_table module
 ------------------------------------------------
 

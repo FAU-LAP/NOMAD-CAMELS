@@ -44,6 +44,14 @@ nomad\_camels.tests.startup\_test module
    :show-inheritance:
    :undoc-members:
 
+nomad\_camels.tests.test\_helper\_functions module
+--------------------------------------------------
+
+.. automodule:: nomad_camels.tests.test_helper_functions
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 Module contents
 ---------------
 
