@@ -343,6 +343,22 @@
 <p class="caption" role="heading"><span class="caption-text">Instruments</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../doc/instruments/instruments.html">Available Instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/instruments/special_instruments.html">Special Instruments Drivers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../doc/instruments/special_instruments.html#generic-drivers">Generic Drivers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../doc/instruments/special_instruments.html#epics">EPICS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../doc/instruments/special_instruments.html#opc-ua">OPC UA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../doc/instruments/special_instruments.html#ni-daq">NI DAQ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../doc/instruments/special_instruments.html#opencv">openCV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../doc/instruments/special_instruments.html#cam-control-pylablib">Cam-Control PyLabLib</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../doc/instruments/special_instruments.html#virtual-instruments">Virtual Instruments</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../doc/instruments/special_instruments.html#pid-controller">PID Controller</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../doc/instruments/special_instruments.html#derived-channels">Derived Channels</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/programmers_guide/instrument_drivers.html">Create New Instrument Drivers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../doc/programmers_guide/drivers/drivers_tutorial.html">Tutorial: Creating your own Instrument Driver</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../doc/programmers_guide/drivers/drivers_tutorial.html#create-the-core-structure">1. Create the Core Structure</a></li>
@@ -1172,8 +1188,8 @@
 </li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.tests.html#module-nomad_camels.tests.protocol_test">nomad_camels.tests.protocol_test module</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.catalog_maker"><code class="docutils literal notranslate"><span class="pre">catalog_maker()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.ensure_demo_in_devices"><code class="docutils literal notranslate"><span class="pre">ensure_demo_in_devices()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.get_action_from_name"><code class="docutils literal notranslate"><span class="pre">get_action_from_name()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.get_available_port"><code class="docutils literal notranslate"><span class="pre">get_available_port()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.get_row_from_channel_table"><code class="docutils literal notranslate"><span class="pre">get_row_from_channel_table()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.mock_message_box"><code class="docutils literal notranslate"><span class="pre">mock_message_box()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.run_test_protocol"><code class="docutils literal notranslate"><span class="pre">run_test_protocol()</span></code></a></li>
@@ -1185,10 +1201,12 @@
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.test_gradient_descent"><code class="docutils literal notranslate"><span class="pre">test_gradient_descent()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.test_if_and_set_variables"><code class="docutils literal notranslate"><span class="pre">test_if_and_set_variables()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.test_nd_sweep"><code class="docutils literal notranslate"><span class="pre">test_nd_sweep()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.test_protocol_with_flyer"><code class="docutils literal notranslate"><span class="pre">test_protocol_with_flyer()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.test_read_channels"><code class="docutils literal notranslate"><span class="pre">test_read_channels()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.test_run_subprotocol"><code class="docutils literal notranslate"><span class="pre">test_run_subprotocol()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.test_set_channels"><code class="docutils literal notranslate"><span class="pre">test_set_channels()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.test_simple_sweep_with_plot_and_fit"><code class="docutils literal notranslate"><span class="pre">test_simple_sweep_with_plot_and_fit()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.test_simple_sweep_with_plotly"><code class="docutils literal notranslate"><span class="pre">test_simple_sweep_with_plotly()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.test_trigger_and_read_channels"><code class="docutils literal notranslate"><span class="pre">test_trigger_and_read_channels()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.test_wait"><code class="docutils literal notranslate"><span class="pre">test_wait()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.protocol_test.test_while_loop"><code class="docutils literal notranslate"><span class="pre">test_while_loop()</span></code></a></li>
@@ -1203,6 +1221,12 @@
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.startup_test.test_set_progress"><code class="docutils literal notranslate"><span class="pre">test_set_progress()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.startup_test.test_set_text"><code class="docutils literal notranslate"><span class="pre">test_set_text()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.startup_test.test_start_camels"><code class="docutils literal notranslate"><span class="pre">test_start_camels()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.startup_test.test_start_camels_second_start"><code class="docutils literal notranslate"><span class="pre">test_start_camels_second_start()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.startup_test.test_start_camels_with_pythonw"><code class="docutils literal notranslate"><span class="pre">test_start_camels_with_pythonw()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.tests.html#module-nomad_camels.tests.test_helper_functions">nomad_camels.tests.test_helper_functions module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#nomad_camels.tests.test_helper_functions.ensure_demo_in_devices"><code class="docutils literal notranslate"><span class="pre">ensure_demo_in_devices()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.tests.html#module-nomad_camels.tests">Module contents</a></li>
@@ -1270,6 +1294,23 @@
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.ui_widgets.html#module-nomad_camels.ui_widgets.run_queue">nomad_camels.ui_widgets.run_queue module</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.run_queue.RunQueue"><code class="docutils literal notranslate"><span class="pre">RunQueue</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.run_queue.RunWidget"><code class="docutils literal notranslate"><span class="pre">RunWidget</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.ui_widgets.html#module-nomad_camels.ui_widgets.toast_notification">nomad_camels.ui_widgets.toast_notification module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.EnhancedErrorHandler"><code class="docutils literal notranslate"><span class="pre">EnhancedErrorHandler</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.ToastConfig"><code class="docutils literal notranslate"><span class="pre">ToastConfig</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.ToastManager"><code class="docutils literal notranslate"><span class="pre">ToastManager</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.ToastMessageBox"><code class="docutils literal notranslate"><span class="pre">ToastMessageBox</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.ToastType"><code class="docutils literal notranslate"><span class="pre">ToastType</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.get_error_handler"><code class="docutils literal notranslate"><span class="pre">get_error_handler()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.get_toast_manager"><code class="docutils literal notranslate"><span class="pre">get_toast_manager()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.handle_general_error"><code class="docutils literal notranslate"><span class="pre">handle_general_error()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.handle_validation_error"><code class="docutils literal notranslate"><span class="pre">handle_validation_error()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.show_error_toast"><code class="docutils literal notranslate"><span class="pre">show_error_toast()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.show_info_toast"><code class="docutils literal notranslate"><span class="pre">show_info_toast()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.show_success_toast"><code class="docutils literal notranslate"><span class="pre">show_success_toast()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.show_toast"><code class="docutils literal notranslate"><span class="pre">show_toast()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.toast_notification.show_warning_toast"><code class="docutils literal notranslate"><span class="pre">show_warning_toast()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.ui_widgets.html#module-nomad_camels.ui_widgets.variable_table">nomad_camels.ui_widgets.variable_table module</a><ul>
@@ -1513,6 +1554,7 @@
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.fake_signal"><code class="docutils literal notranslate"><span class="pre">MainWindow.fake_signal</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_sample_name_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_sample_name_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_user_name_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_user_name_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_user_samples"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_user_samples()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.import_measurement_protocol"><code class="docutils literal notranslate"><span class="pre">MainWindow.import_measurement_protocol()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.launch_data_exporter"><code class="docutils literal notranslate"><span class="pre">MainWindow.launch_data_exporter()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.launch_device_builder"><code class="docutils literal notranslate"><span class="pre">MainWindow.launch_device_builder()</span></code></a></li>
@@ -1859,6 +1901,7 @@
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#module-nomad_camels.tests.mainapp_test">nomad_camels.tests.mainapp_test module</a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#module-nomad_camels.tests.protocol_test">nomad_camels.tests.protocol_test module</a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#module-nomad_camels.tests.startup_test">nomad_camels.tests.startup_test module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#module-nomad_camels.tests.test_helper_functions">nomad_camels.tests.test_helper_functions module</a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.tests.html#module-nomad_camels.tests">Module contents</a></li>
 </ul>
 </li>
@@ -1880,6 +1923,7 @@
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#module-nomad_camels.ui_widgets.options_run_button">nomad_camels.ui_widgets.options_run_button module</a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#module-nomad_camels.ui_widgets.path_button_edit">nomad_camels.ui_widgets.path_button_edit module</a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#module-nomad_camels.ui_widgets.run_queue">nomad_camels.ui_widgets.run_queue module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#module-nomad_camels.ui_widgets.toast_notification">nomad_camels.ui_widgets.toast_notification module</a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#module-nomad_camels.ui_widgets.variable_table">nomad_camels.ui_widgets.variable_table module</a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#module-nomad_camels.ui_widgets.variable_tool_tip_box">nomad_camels.ui_widgets.variable_tool_tip_box module</a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.ui_widgets.html#module-nomad_camels.ui_widgets.warn_popup">nomad_camels.ui_widgets.warn_popup module</a></li>
@@ -1964,6 +2008,7 @@
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.fake_signal"><code class="docutils literal notranslate"><span class="pre">MainWindow.fake_signal</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_sample_name_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_sample_name_data()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_user_name_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_user_name_data()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_user_samples"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_user_samples()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.import_measurement_protocol"><code class="docutils literal notranslate"><span class="pre">MainWindow.import_measurement_protocol()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.launch_data_exporter"><code class="docutils literal notranslate"><span class="pre">MainWindow.launch_data_exporter()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.launch_device_builder"><code class="docutils literal notranslate"><span class="pre">MainWindow.launch_device_builder()</span></code></a></li>
@@ -4544,7 +4589,7 @@ the config_dict.</p>
 <span id="nomad-camels-loop-steps-execute-python-file-module"></span><h2>nomad_camels.loop_steps.execute_python_file module<a class="headerlink" href="#module-nomad_camels.loop_steps.execute_python_file" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.loop_steps.execute_python_file.AddRemoveTable_Returned_Variables">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.loop_steps.execute_python_file.</span></span><span class="sig-name descname"><span class="pre">AddRemoveTable_Returned_Variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">addLabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'+'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removeLabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headerLabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orderBy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tableData</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comboBoxes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">growsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkstrings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">askdelete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixedsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enableds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_string_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.execute_python_file.AddRemoveTable_Returned_Variables" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.loop_steps.execute_python_file.</span></span><span class="sig-name descname"><span class="pre">AddRemoveTable_Returned_Variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">addLabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'+'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removeLabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headerLabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orderBy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tableData</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comboBoxes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">growsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkstrings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_duplicates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">askdelete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixedsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enableds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_tooltip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_string_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.execute_python_file.AddRemoveTable_Returned_Variables" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="nomad_camels.ui_widgets.html#nomad_camels.ui_widgets.add_remove_table.AddRemoveTable" title="nomad_camels.ui_widgets.add_remove_table.AddRemoveTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddRemoveTable</span></code></a></p>
 <p>Subclasses AddRemoveTable and changes the remove method to also remove the variable from the loop step variable dict.</p>
 <dl class="py method">
@@ -5277,6 +5322,13 @@ calls the helper function gradient_descent to perform the algorithm.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.loop_steps.gradient_descent.Gradient_Descent_Step.get_used_channels">
+<span class="sig-name descname"><span class="pre">get_used_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.gradient_descent.Gradient_Descent_Step.get_used_channels" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of all used channels in this step, including
+the read_channels and the out_channel.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.loop_steps.gradient_descent.Gradient_Descent_Step.update_used_devices">
 <span class="sig-name descname"><span class="pre">update_used_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.gradient_descent.Gradient_Descent_Step.update_used_devices" title="Link to this definition"></a></dt>
 <dd><p>Uses all devices in self.read_channels and of self.out_channel</p>
@@ -5618,6 +5670,13 @@ started, with the channels each being set inside it.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.loop_steps.nd_sweep.ND_Sweep.get_used_channels">
+<span class="sig-name descname"><span class="pre">get_used_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.nd_sweep.ND_Sweep.get_used_channels" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of all used channels in this step, including
+the read_channels and the sweep_channels.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.loop_steps.nd_sweep.ND_Sweep.update_used_devices">
 <span class="sig-name descname"><span class="pre">update_used_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.nd_sweep.ND_Sweep.update_used_devices" title="Link to this definition"></a></dt>
 <dd><p>Includes the devices from the read_channels and the sweep_channels</p>
@@ -5936,6 +5995,13 @@ only allows reading the same channels inside one stream.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.loop_steps.read_channels.Read_Channels.get_used_channels">
+<span class="sig-name descname"><span class="pre">get_used_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.read_channels.Read_Channels.get_used_channels" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of all used channels in this step, including
+the read_channels and the read_variables.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.loop_steps.read_channels.Read_Channels.update_used_devices">
 <span class="sig-name descname"><span class="pre">update_used_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.read_channels.Read_Channels.update_used_devices" title="Link to this definition"></a></dt>
 <dd><p>All devices that should be read are added to the used_devices.</p>
@@ -6162,6 +6228,13 @@ main namespace.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.loop_steps.run_subprotocol.Run_Subprotocol.get_used_channels">
+<span class="sig-name descname"><span class="pre">get_used_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.run_subprotocol.Run_Subprotocol.get_used_channels" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of all used channels in this step, including
+the read_channels and the out_channels.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.loop_steps.run_subprotocol.Run_Subprotocol.update_time_weight">
 <span class="sig-name descname"><span class="pre">update_time_weight</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.run_subprotocol.Run_Subprotocol.update_time_weight" title="Link to this definition"></a></dt>
 <dd><p>The time weight in the end is the weight of the subprotocol + 1.</p>
@@ -6247,6 +6320,13 @@ status.</p>
 <dd><p>If <cite>wait_for_set</cite> is True, then after setting, bps.wait for
 the set group is called. In any case, all the channels are set to their
 specified value</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.loop_steps.set_channels.Set_Channels.get_used_channels">
+<span class="sig-name descname"><span class="pre">get_used_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.set_channels.Set_Channels.get_used_channels" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of all used channels in this step, including
+the channels that are to be set.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -6497,6 +6577,13 @@ started, setting the channel, then reading.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.loop_steps.simple_sweep.Simple_Sweep.get_used_channels">
+<span class="sig-name descname"><span class="pre">get_used_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.simple_sweep.Simple_Sweep.get_used_channels" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of all used channels in this step, including
+the sweep_channel and the read_channels.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.loop_steps.simple_sweep.Simple_Sweep.update_used_devices">
 <span class="sig-name descname"><span class="pre">update_used_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.simple_sweep.Simple_Sweep.update_used_devices" title="Link to this definition"></a></dt>
 <dd><p>Includes the devices from the read_channels and the sweep_channel.</p>
@@ -6582,6 +6669,13 @@ for the step are created.</p>
 <span class="sig-name descname"><span class="pre">get_protocol_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_tabs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.wait_loop_step.Wait_Loop_Step.get_protocol_string" title="Link to this definition"></a></dt>
 <dd><p>The protocol just calls <cite>bps.wait(`wait_time</cite>)`, where <cite>wait_time</cite> is
 evaluated by the protocol’s evaluator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.loop_steps.wait_loop_step.Wait_Loop_Step.get_used_channels">
+<span class="sig-name descname"><span class="pre">get_used_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.loop_steps.wait_loop_step.Wait_Loop_Step.get_used_channels" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of all used channels in this step, including
+the read_channels.</p>
 </dd></dl>
 
 <dl class="py method">
