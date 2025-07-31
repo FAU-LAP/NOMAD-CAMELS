@@ -932,7 +932,10 @@ class FastapiThread(QThread):
             """
             self.set_sample_signal.emit(str(sample_name))
             await asyncio.sleep(0.01)
-            if self.main_window.active_sample == sample_name:
+            if (
+                self.main_window.active_sample == sample_name
+                or sample_name in self.main_window.active_sample.split(" / ")
+            ):
                 return JSONResponse(content={"status": "success setting sample name"})
             else:
                 return JSONResponse(content={"status": "failed setting sample name"})

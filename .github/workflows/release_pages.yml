@@ -35,9 +35,9 @@ jobs:
         run: |
           python go_through_camels_packages.py
           python apidoc_for_camels_suitcase.py
-      - name: Sphinx build
+      - name: make instrument table
         run: |
-          sphinx-build -b html ./docs/source/ ./docs/html_out/
+          python populate_instruments_table.py
       - name: Commit and push if changed
         run: |
           git diff
@@ -45,9 +45,9 @@ jobs:
           git config --global user.name "GitHub Action"
           git commit -am "Update code documentation" || true
           git push origin HEAD:documentation
-      - name: make instrument table
+      - name: Sphinx build
         run: |
-          python populate_instruments_table.py
+          sphinx-build -b html ./docs/source/ ./docs/html_out/
       - name: Commit and push if changed
         run: |
           git diff

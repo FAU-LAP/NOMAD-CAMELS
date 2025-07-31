@@ -5,6 +5,9 @@ from nomad_camels.manual_controls.stage_control.stage_control import (
 )
 from nomad_camels.tests.test_helper_functions import ensure_demo_in_devices
 
+import time
+import pytest
+
 expected_control_data = {
     "name": "Stage_Control",
     "control_type": "Stage_Control",
@@ -17,6 +20,12 @@ expected_control_data = {
     "manual_function": ["None", "None", "None"],
     "auto_reference": [False, False, False],
 }
+
+
+@pytest.fixture(autouse=True)
+def fast_sleep(monkeypatch):
+    # Override time.sleep to skip delays
+    monkeypatch.setattr(time, "sleep", lambda s: None)
 
 
 def test_stage_control_config(qtbot):
