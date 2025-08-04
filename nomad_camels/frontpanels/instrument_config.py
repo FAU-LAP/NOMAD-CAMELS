@@ -308,7 +308,7 @@ class Instrument_Config(Ui_Form, QWidget):
             ["instrument", "number of instruments"]
         )
         i = 0
-        for dev in sorted(self.installed_instr.keys()):
+        for dev in sorted(self.installed_instr.keys(), key=lambda x: x.lower()):
             if dev in device_handling.from_manual_controls:
                 continue
             if search_text.lower() not in dev.lower():

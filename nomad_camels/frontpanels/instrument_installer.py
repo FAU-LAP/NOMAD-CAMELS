@@ -485,7 +485,7 @@ class Instrument_Installer(Ui_Form, QWidget):
             ["instrument", "available", "installed"]
         )
         i = 0
-        for dev in sorted(self.all_devs.keys()):
+        for dev in sorted(self.all_devs.keys(), key=lambda x: x.lower()):
             if search_text.lower() not in dev.lower():
                 continue
             self.device_table.setRowCount(i + 1)
