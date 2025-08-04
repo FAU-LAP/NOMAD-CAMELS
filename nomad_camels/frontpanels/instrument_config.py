@@ -10,7 +10,8 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QLabel,
     QMessageBox,
-    QTextBrowser,
+    QSplitter,
+    QGridLayout,
 )
 from PySide6.QtCore import Qt
 
@@ -32,6 +33,16 @@ class Instrument_Config(Ui_Form, QWidget):
     def __init__(self, active_instruments=None, parent=None):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
+        old_layout = self.layout()
+        container = QWidget()
+        container.setLayout(old_layout)
+        self.splitter = QSplitter(Qt.Horizontal, self)
+        new_layout = QGridLayout()
+        new_layout.setContentsMargins(0, 0, 0, 0)
+        new_layout.addWidget(self.splitter, 0, 0)
+        self.splitter.addWidget(container)
+        self.setLayout(new_layout)
+
         self.installed_instr, self.packages = getInstalledDevices(return_packages=True)
         active_instruments = active_instruments or {}
         self.active_instruments = {}
@@ -65,27 +76,29 @@ class Instrument_Config(Ui_Form, QWidget):
         self.pushButton_remove.clicked.connect(self.remove_instance)
         self.info_widge = Info_Widget(self)
         self.info_widge.setHidden(True)
-        self.layout().addWidget(self.info_widge, 0, 5, 3, 1)
+        self.splitter.addWidget(self.info_widge)
 
         self.pushButton_add.setToolTip("Add an instance of the selected instrument")
         self.pushButton_remove.setToolTip(
             "Remove the selected instance of the instrument"
         )
 
-        self.hide_info = False
-        self.toggle_info_hidden()
         self.pushButton_info.clicked.connect(self.toggle_info_hidden)
+        self.pushButton_license.clicked.connect(self.toggle_license_hidden)
 
     def toggle_info_hidden(self):
-        if self.hide_info:
+        info_shown = self.info_widge.toggle_info()
+        if info_shown:
             self.pushButton_info.setText("hide info")
         else:
             self.pushButton_info.setText("show info")
-        self.hide_info = not self.hide_info
-        self.show_hide_info()
 
-    def show_hide_info(self):
-        self.info_widge.setHidden(self.hide_info)
+    def toggle_license_hidden(self):
+        license_shown = self.info_widge.toggle_license()
+        if license_shown:
+            self.pushButton_license.setText("hide license")
+        else:
+            self.pushButton_license.setText("show license")
 
     def table_click(self):
         """ """
@@ -124,7 +137,6 @@ class Instrument_Config(Ui_Form, QWidget):
             self.pushButton_add.setEnabled(True)
             self.info_widge.update_texts(instr)
             self.pushButton_info.setHidden(not self.info_widge.info)
-            self.show_hide_info()
         finally:
             self.setCursor(Qt.ArrowCursor)
 

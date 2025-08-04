@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.8.8
+Fixes:
+- fixed displaying readme and license of instruments
+
 ### 1.8.7
 Features:
 - right click on channel-table now allows to (un-)check all boxes in a column (can be reverted!)
