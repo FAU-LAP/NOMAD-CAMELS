@@ -21,6 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.8.8
 Fixes:
 - fixed displaying readme and license of instruments
+- protocols with while-loops that went too far above 100% progress could break because of a negative estimated remaining time; now fixed
 
 ### 1.8.7
 Features:

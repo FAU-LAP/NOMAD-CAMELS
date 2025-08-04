@@ -135,8 +135,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # Apply stylesheet to splitter handles
         # self.setStyleSheet("QSplitter::handle{background: gray;}")
         # self.setStyleSheet("QSplitter::handle{background: gray;}")
-        self.protocol_stepper_signal.connect(self.progressBar_protocols.setValue)
-        self.protocol_stepper_signal.connect(self._update_remaining_time_label)
+        self.protocol_stepper_signal.connect(self._update_remaining_time_progress_bar)
         self._protocol_start_time = time.time()
 
         # Initialize fastAPI server variables
@@ -2576,11 +2575,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             except Exception as e:
                 logging.warning(f"Error playing sound: {e}")
 
-    def _update_remaining_time_label(self, step):
+    def _update_remaining_time_progress_bar(self, step):
+        self.progressBar_protocols.setValue(step)
         now = time.time()
         elapsed_time = now - self._protocol_start_time
         remaining_time = (elapsed_time / step) * (100 - step)
-        if remaining_time > 3600 or elapsed_time > 3600:
+        if step > 100:
+            self.progressBar_protocols.setValue(99)
+            if elapsed_time > 3600:
+                elapsed_time_str = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
+                remaining_time_str = "??:??:??"
+            else:
+                elapsed_time_str = time.strftime("%M:%S", time.gmtime(elapsed_time))
+                remaining_time_str = "??:??"
+        elif remaining_time > 3600 or elapsed_time > 3600:
             remaining_time_str = time.strftime("%H:%M:%S", time.gmtime(remaining_time))
             elapsed_time_str = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
         else:
