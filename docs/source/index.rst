@@ -1,5 +1,12 @@
 .. image:: assets/camels-horizontal.svg
 
+
+
+NOMAD CAMELS - Your Simple Path to FAIR Experimental Data
+######################################################################################
+
+
+
 .. raw:: html
 
     <script>
@@ -22,15 +29,12 @@
       }
     </script>
 
-    <div style="text-align: center; margin: 20px;">
+    <div style="text-align: left; margin: 20px;">
         <button onclick="goToInstallation()" style="display:inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">
             Install CAMELS
         </button>
     </div>
 
-
-NOMAD CAMELS - Your Simple Path to FAIR Experimental Data
-######################################################################################
 
 What is NOMAD CAMELS?
 =========================
