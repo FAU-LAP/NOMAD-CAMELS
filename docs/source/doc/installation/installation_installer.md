@@ -1,5 +1,8 @@
 # Using the CAMELS Installer on Windows
-[Download the CAMELS installer (.exe file)](https://raw.githubusercontent.com/A-D-Fuchs/CAMELS_installer/main/Output/NOMAD-CAMELS_installer.exe).\
+<a href="https://raw.githubusercontent.com/A-D-Fuchs/CAMELS_installer/main/Output/NOMAD-CAMELS_installer.exe" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0;">
+    Download CAMELS Installer (.exe)
+</a>
+
 Run the installer. Admin rights should not be required. 
 
 The installer automatically does the following steps:
