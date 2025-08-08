@@ -146,12 +146,14 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
 .. toctree::
     :maxdepth: 2
+    :hidden:
 
     Home <self>
 
 .. toctree::
    :maxdepth: 2
    :caption: User Documentation
+   :hidden:
 
    Installing CAMELS <doc/installation/installation.md>
    Getting Started <doc/tutorials/quick_start.md>
@@ -165,6 +167,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 .. toctree::
    :maxdepth: 2
    :caption: Instruments
+   :hidden:
 
    Available Instruments <doc/instruments/instruments.rst>
    Special Instruments Drivers <doc/instruments/special_instruments.md>
@@ -175,6 +178,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 .. toctree::
    :maxdepth: 2
    :caption: Developer Documentation
+   :hidden:
 
    Maintain CAMELS <doc/programmers_guide/programmers_guide.md>
    Code Description <doc/programmers_guide/components/components.md>
@@ -185,6 +189,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 .. toctree::
    :maxdepth: 2
    :caption: Videos
+   :hidden:
 
    User Feedback <doc/videos/user_feedback.md>
    Developer Statements <doc/videos/developer_statements.md>
@@ -192,6 +197,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 .. toctree::
    :maxdepth: 2
    :caption: Code Reference
+   :hidden:
 
    nomad-camels <code/nomad_camels.rst>
    nomad-camels-toolbox <code/nomad_camels_toolbox.rst>
@@ -204,6 +210,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 .. toctree::
    :caption: Imprint/Contact
    :maxdepth: 1
+   :hidden:
 
    Imprint <https://www.lap.physik.nat.fau.de/impressum/>
    Contact <contact.md>
