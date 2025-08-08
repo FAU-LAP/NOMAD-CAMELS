@@ -46,6 +46,8 @@ class Path_Button_Edit(QWidget):
         self.button.setIcon(
             QApplication.style().standardIcon(QStyle.SP_DialogOpenButton)
         )
+        self.button.setMaximumWidth(50)
+
         self.line = QLineEdit()
         layout.addWidget(self.line, 0, 0)
         layout.addWidget(self.button, 0, 1)

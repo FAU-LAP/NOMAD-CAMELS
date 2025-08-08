@@ -1429,9 +1429,9 @@ class LivePlot_2D(QObject, CallbackBase):
         elif x_shape is None and y_shape is not None:
             x_shape = int(np.array(self.y_data).size / y_shape)
         try:
-            x = np.array(self.x_data).reshape((x_shape, y_shape))
-            y = np.array(self.y_data).reshape((x_shape, y_shape))
-            c = np.array(self.z_data).reshape((x_shape, y_shape))
+            x = np.array(self.x_data).reshape((y_shape, x_shape)).transpose()
+            y = np.array(self.y_data).reshape((y_shape, x_shape)).transpose()
+            c = np.array(self.z_data).reshape((y_shape, x_shape)).transpose()
             return x, y, c
         except Exception as e:
             return None
