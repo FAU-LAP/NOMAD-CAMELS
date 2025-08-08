@@ -1,5 +1,34 @@
 .. image:: assets/camels-horizontal.svg
 
+.. raw:: html
+
+    <script>
+      function goToInstallation() {
+          // Check the platform using navigator.platform
+          var platform = navigator.platform.toLowerCase();
+          if (platform.indexOf('win') > -1) {
+              // Redirect Windows users to the installer page
+              window.location.href = "doc/installation/installation_installer.html";  // e.g., Windows installer URL
+          } else if (platform.indexOf('mac') > -1) {
+              // Redirect Mac users to a custom installation page (if available)
+              window.location.href = "doc/installation/installation_custom_macos.html";
+          } else if (platform.indexOf('linux') > -1) {
+              // Redirect Linux users to a custom installation page (if available)
+              window.location.href = "doc/installation/installation_custom_unix.html";
+          } else {
+              // Fallback page if OS detection is inconclusive
+              window.location.href = "doc/installation/installation.html";
+          }
+      }
+    </script>
+
+    <div style="text-align: center; margin: 20px;">
+        <button onclick="goToInstallation()" style="display:inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">
+            Install CAMELS
+        </button>
+    </div>
+
+
 NOMAD CAMELS - Your Simple Path to FAIR Experimental Data
 ######################################################################################
 
