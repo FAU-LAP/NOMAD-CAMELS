@@ -22,7 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Fixes:
 - fixed displaying readme and license of instruments
 - protocols with while-loops that went too far above 100% progress could break because of a negative estimated remaining time; now fixed
-- fixed mesh of 2D plot not always being calculated correctly
+- removed mesh of 2D plot, as it is not calculated correctly, depending whether x or y is the "inner loop"
 
 ### 1.8.7
 Features:
