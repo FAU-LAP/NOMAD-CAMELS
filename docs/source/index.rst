@@ -56,17 +56,6 @@ What is NOMAD CAMELS?
 
 CAMELS provides a graphical user interface (GUI) that can be used to setup instrument control and measurement protocols. The GUI then generates Python code that interfaces with `bluesky <https://blueskyproject.io/>`_ to communicate with the instruments and orchestrate the measurement. CAMELS can also be used to communicate with large-scale, distributed systems implemented with `EPICS <https://epics-controls.org/>`_.
 
-CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_ (see also: `NOMAD <https://nomad-lab.eu/nomad-lab/>`_) at the `FAU Erlangen-Nürnberg <https://www.lap.physik.nat.fau.eu/>`_. 
-
-.. image:: assets/fairmat_horizontal.png
-   :target: https://www.fairmat-nfdi.eu/fairmat
-   :width: 200px
-.. image:: assets/nomad-horizontal.svg
-   :target: https://nomad-lab.eu/nomad-lab/
-   :width: 200px
-.. image:: assets/FAU_LAP.png
-   :target: https://www.lap.physik.nat.fau.eu/
-   :width: 200px
 
 
 Cite NOMAD CAMELS
@@ -140,6 +129,35 @@ How to get started?
 ===================
 To get started with CAMELS first `install <https://fau-lap.github.io/NOMAD-CAMELS/doc/installation/installation.html>`_ it and learn how to use it with our "Getting started" `tutorial <https://fau-lap.github.io/NOMAD-CAMELS/doc/tutorials/quick_start.html>`_.
 
+
+Who is behind CAMELS?
+========================
+CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <https://www.fairmat-nfdi.eu/fairmat/>`_ (see also: `NOMAD <https://nomad-lab.eu/nomad-lab/>`_) at the `FAU Erlangen-Nürnberg <https://www.lap.physik.nat.fau.eu/>`_. 
+
+
+.. raw:: html
+
+   <style>
+     .spacer {
+         margin-right: 20px;
+     }
+     .spacer-last {
+         margin-right: 0;
+     }
+   </style>
+
+.. image:: assets/fairmat_horizontal.png
+   :target: https://www.fairmat-nfdi.eu/fairmat
+   :width: 200px
+   :class: spacer
+.. image:: assets/nomad-horizontal.svg
+   :target: https://nomad-lab.eu/nomad-lab/
+   :width: 200px
+   :class: spacer
+.. image:: assets/FAU_LAP.png
+   :target: https://www.lap.physik.nat.fau.eu/
+   :width: 200px
+   :class: spacer
 
 Contact and Community
 =====================
