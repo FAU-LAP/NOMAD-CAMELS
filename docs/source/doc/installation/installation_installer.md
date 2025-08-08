@@ -1,9 +1,15 @@
 # Using the CAMELS Installer on Windows
-<a href="https://raw.githubusercontent.com/A-D-Fuchs/CAMELS_installer/main/Output/NOMAD-CAMELS_installer.exe" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0;">
-    Download CAMELS Installer (.exe)
+<a href="https://raw.githubusercontent.com/A-D-Fuchs/CAMELS_installer/main/Output/NOMAD-CAMELS_installer.exe" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0; font-weight: bold;">
+    Download the<br>CAMELS Installer (.exe)
 </a>
 
 Run the installer. Admin rights should not be required. 
+
+```{note}
+When you are done with the installation, get started with our guide. <a href="../tutorials//quick_start.html" style="display: inline-block; padding: 12px 20px; background-color: #9ff0a1ff; color: white; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0;">
+    Go to the Guide
+</a>
+```
 
 The installer automatically does the following steps:
 - Creates all necessary folders and files

@@ -30,7 +30,7 @@ NOMAD CAMELS - Your Simple Path to FAIR Experimental Data
     </script>
 
     <div style="text-align: left; margin: 20px;">
-        <button onclick="goToInstallation()" style="display:inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">
+        <button onclick="goToInstallation()" style="display:inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold;">
             Install CAMELS
         </button>
     </div>
@@ -203,7 +203,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
 .. toctree::
    :maxdepth: 2
-   :caption: User Documentation
+   :caption: User's Guide
    :hidden:
 
    Installing CAMELS <doc/installation/installation.md>
@@ -228,7 +228,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
 
 .. toctree::
    :maxdepth: 2
-   :caption: Developer Documentation
+   :caption: Developer's Guide
    :hidden:
 
    Maintain CAMELS <doc/programmers_guide/programmers_guide.md>
