@@ -32,3 +32,8 @@ Remove pyenv by deleting the `/.pyenv/` folder or by running
   in the terminal. The `install-pyenv-win.ps1` script is located in `/.pyenv/pyenv-win/`.
 
   Remove the `/NOMAD-CAMELS/` folder as well and restart the installer.
+
+
+```{hint}
+If you cannot get the installer to work, try following the `guide for manual installation <installation_custom_windows.html>`__.
+```
