@@ -85,6 +85,13 @@ To install CAMELS run this command:
 pip install nomad-camels 
 ```
 
+```{note}
+<a href="../tutorials/quick_start.html" target="_blank" style="display: inline-block; padding: 12px 20px; background-color: #ffffff; color: #4CAF50; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0; font-weight: bold; border: 4px solid #4CAF50">
+    Getting Started
+</a>
+When you are done with the installation, get started with our guide. 
+```
+
 ## 5. Run CAMELS
 
 You can then run 

@@ -6,9 +6,10 @@
 Run the installer. Admin rights should not be required. 
 
 ```{note}
-When you are done with the installation, get started with our guide. <a href="../tutorials//quick_start.html" style="display: inline-block; padding: 12px 20px; background-color: #9ff0a1ff; color: white; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0;">
-    Go to the Guide
+<a href="../tutorials/quick_start.html" target="_blank" style="display: inline-block; padding: 12px 20px; background-color: #ffffff; color: #4CAF50; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0; font-weight: bold; border: 4px solid #4CAF50">
+    Getting Started
 </a>
+When you are done with the installation, get started with our guide. 
 ```
 
 The installer automatically does the following steps:
