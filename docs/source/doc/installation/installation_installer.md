@@ -35,5 +35,5 @@ Remove pyenv by deleting the `/.pyenv/` folder or by running
 
 
 ```{hint}
-If you cannot get the installer to work, try following the `guide for manual installation <installation_custom_windows.html>`__.
+If you cannot get the installer to work, try following the <a href="installation_custom_windows.html">guide for manual installation</a>.
 ```
