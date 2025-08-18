@@ -1449,8 +1449,10 @@ class LivePlot_2D(QObject, CallbackBase):
         self.x_data.extend(x)
         self.y_data.extend(y)
         self.z_data.extend(z)
-        x_shape = len(set(self.x_data))
-        y_shape = len(set(self.y_data))
+        if not self.x_data or not self.y_data or not self.z_data:
+            return
+        # x_shape = len(set(self.x_data))
+        # y_shape = len(set(self.y_data))
         # mesh = self.make_colormesh(x_shape, y_shape)
 
         # if mesh:
