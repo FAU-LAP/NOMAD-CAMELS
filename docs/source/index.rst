@@ -1,4 +1,5 @@
 .. raw:: html
+    
    <style>
        .block-image {
            display: block;
