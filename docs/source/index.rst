@@ -30,13 +30,13 @@ NOMAD CAMELS - Your Simple Path to FAIR Experimental Data
     </script>
 
     <div style="text-align: left; margin: 20px;">
-        <button onclick="goToInstallation()" style="display:inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold;">
+        <button onclick="goToInstallation()" style="flex: 1; padding: 12px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold;">
             Install CAMELS
         </button>
+        <a href="./doc/tutorials/quick_start.html" rel="noopener noreferrer" style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 12px 20px; background-color: #ffffff; color: #4CAF50; text-decoration: none; font-size: 16px; border-radius: 4px; font-weight: bold; border: 4px solid #4CAF50;">
+            Getting Started
+        </a>
     </div>
-    <a href="../tutorials/quick_start.html" target="_blank" style="display: inline-block; padding: 12px 20px; background-color: #ffffff; color: #4CAF50; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0; font-weight: bold; border: 4px solid #4CAF50">
-        Getting Started
-    </a>
 
 
 What is NOMAD CAMELS?
