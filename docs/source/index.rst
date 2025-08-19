@@ -1,8 +1,11 @@
 .. image:: assets/camels-horizontal.svg
+    :align: right
 
+.. |br| raw:: html
+    <br>
 
-
-NOMAD CAMELS - Your Simple Path to FAIR Experimental Data
+######################################################################################
+NOMAD CAMELS |br| Your Simple Path to FAIR Experimental Data
 ######################################################################################
 
 
@@ -27,7 +30,7 @@ NOMAD CAMELS - Your Simple Path to FAIR Experimental Data
     </script>
 
     <div style="text-align: left; margin: 20px;">
-        <a id="installCamelsLink" rel="noopener noreferrer" style="flex: 1; display: inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0; font-weight: bold; border: 2px solid #000;">
+        <a id="installCamelsLink" rel="noopener noreferrer" style="flex: 1; display: inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0; font-weight: bold; border: 2px solid #4CAF50;">
             Install CAMELS
         </a>
         <a href="./doc/tutorials/quick_start.html" rel="noopener noreferrer" style="flex: 1; display: inline-block; padding: 12px 20px; background-color: #ffffff; color: #4CAF50; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0; font-weight: bold; border: 4px solid #4CAF50;">
