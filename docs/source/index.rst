@@ -10,30 +10,27 @@ NOMAD CAMELS - Your Simple Path to FAIR Experimental Data
 .. raw:: html
 
     <script>
-      function goToInstallation() {
-          // Check the platform using navigator.platform
+      document.addEventListener('DOMContentLoaded', function() {
           var platform = navigator.platform.toLowerCase();
+          var href;
           if (platform.indexOf('win') > -1) {
-              // Redirect Windows users to the installer page
-              window.location.href = "doc/installation/installation_installer.html";  // e.g., Windows installer URL
+              href = "doc/installation/installation_installer.html";
           } else if (platform.indexOf('mac') > -1) {
-              // Redirect Mac users to a custom installation page (if available)
-              window.location.href = "doc/installation/installation_custom_macos.html";
+              href = "doc/installation/installation_custom_macos.html";
           } else if (platform.indexOf('linux') > -1) {
-              // Redirect Linux users to a custom installation page (if available)
-              window.location.href = "doc/installation/installation_custom_unix.html";
+              href = "doc/installation/installation_custom_unix.html";
           } else {
-              // Fallback page if OS detection is inconclusive
-              window.location.href = "doc/installation/installation.html";
+              href = "doc/installation/installation.html";
           }
-      }
+          document.getElementById("installCamelsLink").setAttribute("href", href);
+      });
     </script>
 
     <div style="text-align: left; margin: 20px;">
-        <button onclick="goToInstallation()" style="flex: 1; padding: 12px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold;">
+        <a id="installCamelsLink" rel="noopener noreferrer" style="flex: 1; display: inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0; font-weight: bold; border: 2px solid #000;">
             Install CAMELS
-        </button>
-        <a href="./doc/tutorials/quick_start.html" rel="noopener noreferrer" style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 12px 20px; background-color: #ffffff; color: #4CAF50; text-decoration: none; font-size: 16px; border-radius: 4px; font-weight: bold; border: 4px solid #4CAF50;">
+        </a>
+        <a href="./doc/tutorials/quick_start.html" rel="noopener noreferrer" style="flex: 1; display: inline-block; padding: 12px 20px; background-color: #ffffff; color: #4CAF50; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0; font-weight: bold; border: 4px solid #4CAF50;">
             Getting Started
         </a>
     </div>
