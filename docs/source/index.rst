@@ -1,6 +1,5 @@
 .. raw:: html
-
-   <img src="assets/camels-horizontal.svg" style="float: right;"/>
+   <img src="assets/camels-horizontal.svg" style="float: right; display: block; margin: 0 0 0 auto;" alt="CAMELS Logo" />
 
 ###############################
 NOMAD CAMELS
