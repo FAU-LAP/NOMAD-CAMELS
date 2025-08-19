@@ -1,19 +1,13 @@
 .. raw:: html
-    
-   <style>
-       .block-image {
-           display: block;
-           margin: 0 0 0 auto;
-           float: right;
-       }
-   </style>
-   <image class="block-image" src="assets/camels-horizontal.svg" />
-   
+
+   <image src="assets/camels-horizontal.svg" style="float: right;"/>
 
 ###############################
 NOMAD CAMELS
 ###############################
+
 .. raw:: html
+
     <h1 style="float: left;">Your Simple Path to FAIR Experimental Data</h1>
 
 
