@@ -1,6 +1,6 @@
 .. raw:: html
 
-   <image src="assets/camels-horizontal.svg" style="float: right;"/>
+   <img src="assets/camels-horizontal.svg" style="float: right;"/>
 
 ###############################
 NOMAD CAMELS
@@ -8,11 +8,9 @@ NOMAD CAMELS
 
 .. raw:: html
 
-    <h1 style="float: left;">Your Simple Path to FAIR Experimental Data</h1>
+    <h2 style="float: left;">Your Simple Path to FAIR Experimental Data</h2>
 
-
-
-.. raw:: html
+    <br>
 
     <script>
       document.addEventListener('DOMContentLoaded', function() {
