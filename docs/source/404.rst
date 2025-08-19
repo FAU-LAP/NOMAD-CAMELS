@@ -1,0 +1,8 @@
+.. meta::
+   :permalink: /404.html
+
+404 - Page not found
+====================
+
+.. image:: https://fau-lap.github.io/NOMAD-CAMELS/_static/404_camel.svg
+   :alt: This is not the CAMEL you are looking for.
