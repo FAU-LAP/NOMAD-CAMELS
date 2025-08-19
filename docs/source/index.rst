@@ -6,14 +6,14 @@
            float: right;
        }
    </style>
+   <image class="block-image" src="assets/camels-horizontal.svg" />
+   
 
-.. image:: assets/camels-horizontal.svg
-   :class: block-image
-
-
+###############################
+NOMAD CAMELS
+###############################
 .. raw:: html
-
-   <h1 style="font-size: 3em; text-align: center;">NOMAD CAMELS <br> Your Simple Path to FAIR Experimental Data</h1>
+    <h1 style="float: left;">Your Simple Path to FAIR Experimental Data</h1>
 
 
 
