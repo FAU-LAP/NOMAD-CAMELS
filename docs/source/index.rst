@@ -1,5 +1,5 @@
 .. raw:: html
-   <img src="https://fau-lap.github.io/NOMAD-CAMELS/_images/camels-horizontal.svg" style="float: right; display: block; margin: 0 0 0 auto;" alt="CAMELS Logo" />
+   <img src="https://fau-lap.github.io/NOMAD-CAMELS/_static/camels-horizontal.svg" style="float: right; display: block; margin: 0 0 0 auto;" alt="CAMELS Logo" />
 
 ###############################
 NOMAD CAMELS
