@@ -1,8 +1,8 @@
-.. image:: assets/camels-horizontal.svg
+.. figure:: assets/camels-horizontal.svg
     :align: right
 
 .. |br| raw:: html
-    <br>
+    <br />
 
 ######################################################################################
 NOMAD CAMELS |br| Your Simple Path to FAIR Experimental Data
