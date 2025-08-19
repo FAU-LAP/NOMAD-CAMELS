@@ -4,6 +4,10 @@ To assist with the evaluation of data, we provide the package [`nomad_camels_too
 
 Currently, it only helps with reading the data from the hdf5 file. More functionality is planned for the future.
 
+```{hint}
+For more information on how to use the toolbox, see the [code reference](https://fau-lap.github.io/NOMAD-CAMELS/code/nomad_camels_toolbox.html).
+```
+
 ## Installation
 
 To install the NOMAD CAMELS toolbox, run
@@ -24,10 +28,10 @@ import nomad_camels_toolbox as nct
 
 data = nct.read_camels_file(your_file_path)
 ```
-If there is only one entry in the hdf5 file, it will automatically read the main dataset with this code.
+If there is only one entry in the hdf5 file, it will automatically read the main dataset (if there is no other dataset, otherwise you will be asked to select one).
 
-```{note}
-For more information, see the [code reference](https://fau-lap.github.io/NOMAD-CAMELS/code/nomad_camels_toolbox.html).
+```{hint}
+For more information on how to use the toolbox, see the [code reference](https://fau-lap.github.io/NOMAD-CAMELS/code/nomad_camels_toolbox.html).
 ```
 
 Your data will then be in a pandas DataFrame and can be accessed like:
@@ -36,6 +40,20 @@ detector_data = data['demo_instrument_detectorComm']
 motorx_data = data['demo_instrument_motorX']
 motory_data = data['demo_instrument_motorY']
 ```
+
+If you want to read the data from a sub-dataset, like a Simple Sweep (in this example named "Simple_Sweep"), one possibility is:
+```python
+data = nct.read_camels_file(your_file_path, data_set_key="Simple_Sweep")
+```
+Another way is to read all datasets and then select the one you want to investigate further:
+```python
+data = nct.read_camels_file(your_file_path, read_all_datasets=True)
+primary_data = data["primary"]
+simple_sweep_data = data["Simple_Sweep"]
+```
+Here `data` is a dictionary of dataframes with all your data.
+
+
 You can find more examples for data evaluation in the [documentation part regarding h5py](handling_hdf5.md#using-h5py).
 
 
