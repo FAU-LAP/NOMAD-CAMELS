@@ -16,7 +16,7 @@ Apart from a protocol, learn how to use your instruments manually, e.g. for test
 
 
 Deeper information can for example be found in the following areas:
-<div class="box_container">
+<div class="box-container">
   <a href="../protocol_steps/protocol_steps_landing.html" class="box">
     <span class="box-title">Protocol Steps Explained</span>
     <p class="box-content">You can learn which protocol steps exist and how to use them. Protocol steps are the actions you can perform during a measurement sequence, like setting and reading an instrument channel, or creating a loop, waiting for a specified time.</p>
