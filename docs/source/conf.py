@@ -34,6 +34,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_tabs.tabs",
     "sphinx.ext.mathjax",
+    "notfound.extension",
 ]
 
 templates_path = ["_templates"]
