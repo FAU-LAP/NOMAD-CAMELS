@@ -2,7 +2,7 @@
    <style>
        .block-image {
            display: block;
-           margin: auto;
+           margin: 0 0 0 auto;
            float: right;
        }
    </style>
@@ -11,9 +11,9 @@
    :class: block-image
 
 
-######################################################################################
-NOMAD CAMELS - Your Simple Path to FAIR Experimental Data
-######################################################################################
+.. raw:: html
+
+   <h1 style="font-size: 3em; text-align: center;">NOMAD CAMELS <br> Your Simple Path to FAIR Experimental Data</h1>
 
 
 
