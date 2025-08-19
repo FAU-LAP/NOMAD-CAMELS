@@ -1,11 +1,18 @@
-.. figure:: assets/camels-horizontal.svg
-    :align: right
+.. raw:: html
+   <style>
+       .block-image {
+           display: block;
+           margin: auto;
+           float: right;
+       }
+   </style>
 
-.. |br| raw:: html
-    <br />
+.. image:: assets/camels-horizontal.svg
+   :class: block-image
+
 
 ######################################################################################
-NOMAD CAMELS |br| Your Simple Path to FAIR Experimental Data
+NOMAD CAMELS - Your Simple Path to FAIR Experimental Data
 ######################################################################################
 
 
