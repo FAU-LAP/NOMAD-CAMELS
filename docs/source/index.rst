@@ -33,7 +33,7 @@ NOMAD CAMELS
 
     <div style="clear: both;"></div>
     <div style="display: flex; justify-content: flex-start; gap: 20px; margin: 20px;">
-        <a id="installCamelsLink" rel="noopener noreferrer" style="display: inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0; font-weight: bold; border: 2px solid #4CAF50;">
+        <a id="installCamelsLink" rel="noopener noreferrer" style="display: inline-block; padding: 12px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0; font-weight: bold; border: 4px solid #4CAF50;">
             Install CAMELS
         </a>
         <a href="./doc/tutorials/quick_start.html" rel="noopener noreferrer" style="display: inline-block; padding: 12px 20px; background-color: #ffffff; color: #4CAF50; text-align: center; text-decoration: none; font-size: 16px; border-radius: 4px; margin: 10px 0; font-weight: bold; border: 4px solid #4CAF50;">
