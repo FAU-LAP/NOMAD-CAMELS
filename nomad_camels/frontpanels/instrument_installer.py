@@ -145,19 +145,21 @@ def getAllDevices():
 
 def get_instr_readme_text(instr_name):
     url = f"{repo_url}/{instr_name}/README.md"
-    text = requests.get(url).text
-    if text.startswith("404"):
+    response = requests.get(url)
+    if response.status_code == 404:
         url = f"{repo_url.replace('main', 'development')}/{instr_name}/README.md"
-        text = requests.get(url).text
+        response = requests.get(url)
+    text = response.text
     return text
 
 
 def get_instr_license_text(instr_name):
     url = f"{repo_url}/{instr_name}/LICENSE.txt"
-    text = requests.get(url).text
-    if text.startswith("404"):
+    response = requests.get(url)
+    if response.status_code == 404:
         url = f"{repo_url.replace('main', 'development')}/{instr_name}/LICENSE.txt"
-        text = requests.get(url).text
+        response = requests.get(url)
+    text = response.text
     return text
 
 

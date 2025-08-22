@@ -2694,7 +2694,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             userdata = (
                 {"name": "default_user"}
                 if user == "default_user"
-                else self.userdata[user]
+                else self.userdata.get(user, {})
             )
         user = clean_filename(user)
         return user, userdata
