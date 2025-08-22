@@ -42,9 +42,6 @@ jobs:
           brew install hdf5
           python -m pip install --upgrade pip
           pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs
-      - name: copy 404.md into all subfolders and their subfolders
-        run: |
-          find ./docs/source/ -type d -exec cp ./docs/source/404.md {} \;
       - name: install camels packages
         run: |
           python install_camels_packages.py
