@@ -145,12 +145,22 @@ def getAllDevices():
 
 def get_instr_readme_text(instr_name):
     url = f"{repo_url}/{instr_name}/README.md"
-    return requests.get(url).text
+    response = requests.get(url)
+    if response.status_code == 404:
+        url = f"{repo_url.replace('main', 'development')}/{instr_name}/README.md"
+        response = requests.get(url)
+    text = response.text
+    return text
 
 
 def get_instr_license_text(instr_name):
     url = f"{repo_url}/{instr_name}/LICENSE.txt"
-    return requests.get(url).text
+    response = requests.get(url)
+    if response.status_code == 404:
+        url = f"{repo_url.replace('main', 'development')}/{instr_name}/LICENSE.txt"
+        response = requests.get(url)
+    text = response.text
+    return text
 
 
 bold_font = QFont()
@@ -180,6 +190,8 @@ class Info_Widget(QSplitter):
         )
         self.addWidget(self.license_text)
         self.info = False
+        self._show_info_bool = False
+        self._show_license_bool = False
 
         self.setContentsMargins(0, 0, 0, 0)
 
@@ -207,12 +219,14 @@ class Info_Widget(QSplitter):
                 for dist in importlib_metadata.distributions():
                     if not dist.metadata["Name"].startswith(
                         f'nomad-camels-driver-{instr.replace("_", "-")}'
+                    ) and not dist.metadata["Name"].startswith(
+                        f"nomad_camels_driver_{instr}"
                     ):
                         continue
                     lic = dist.read_text("LICENSE.txt")
                     if lic:
                         text += f"{lic}\n"
-                    break
+                        break
                 if not text:
                     raise Exception("")
                 self.license_text.setText(text)
@@ -223,8 +237,45 @@ class Info_Widget(QSplitter):
             hidden = False
         except:
             pass
+        self.setHidden(not (self._show_info_bool or self._show_license_bool))
+        self.info_text.setHidden(not self._show_info_bool)
+        self.license_text.setHidden(not self._show_license_bool)
         self.info = not hidden
-        self.setHidden(hidden)
+
+    def toggle_info(self):
+        """
+        Toggle the visibility of the info text.
+        """
+        if not self._show_info_bool:
+            self.info_text.setHidden(False)
+            self._show_info_bool = True
+        else:
+            self.info_text.setHidden(True)
+            self._show_info_bool = False
+        self.show_hide_info_license()
+        return self._show_info_bool
+
+    def toggle_license(self):
+        """
+        Toggle the visibility of the license text.
+        """
+        if not self._show_license_bool:
+            self.license_text.setHidden(False)
+            self._show_license_bool = True
+        else:
+            self.license_text.setHidden(True)
+            self._show_license_bool = False
+        self.show_hide_info_license()
+        return self._show_license_bool
+
+    def show_hide_info_license(self):
+        """
+        Show or hide the info and license text based on their visibility states.
+        """
+        if self._show_info_bool or self._show_license_bool:
+            self.setHidden(False)
+        else:
+            self.setHidden(True)
 
 
 class Instrument_Installer(Ui_Form, QWidget):
@@ -247,7 +298,6 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.textEdit_device_info.setParent(None)
         self.textEdit_device_info.deleteLater()
         self.textEdit_device_info = textEdit_device_info
-        self.show_info_bool = False
         self.active_instruments = active_instruments or {}
 
         self.device_table.setColumnCount(3)
@@ -281,6 +331,7 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.pushButton_uninstall.clicked.connect(self.uninstall_selected)
         self.pushButton_update_drivers.clicked.connect(self.update_installed)
         self.pushButton_info.clicked.connect(self.show_hide_info)
+        self.pushButton_license.clicked.connect(self.show_hide_license)
 
         self.device_table.clicked.connect(self.table_click)
 
@@ -288,18 +339,22 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.info_widge.setHidden(True)
         self.layout().addWidget(self.info_widge, 0, 5, 8, 1)
         self.info_widge.setHidden(True)
+        self.info_widge.info_text.setHidden(True)
+        self.info_widge.license_text.setHidden(True)
 
     def show_hide_info(self):
-        if self.info_widge.isHidden():
-            self.info_widge.setHidden(False)
-            self.adjustSize()
+        info_shown = self.info_widge.toggle_info()
+        if info_shown:
             self.pushButton_info.setText("hide info")
-            self.show_info_bool = True
         else:
-            self.info_widge.setHidden(True)
-            self.adjustSize()
             self.pushButton_info.setText("show info")
-            self.show_info_bool = False
+
+    def show_hide_license(self):
+        license_shown = self.info_widge.toggle_license()
+        if license_shown:
+            self.pushButton_license.setText("hide license")
+        else:
+            self.pushButton_license.setText("show license")
 
     def checkBox_change(self, row):
         """
@@ -432,7 +487,7 @@ class Instrument_Installer(Ui_Form, QWidget):
             ["instrument", "available", "installed"]
         )
         i = 0
-        for dev in sorted(self.all_devs.keys()):
+        for dev in sorted(self.all_devs.keys(), key=lambda x: x.lower()):
             if search_text.lower() not in dev.lower():
                 continue
             self.device_table.setRowCount(i + 1)
@@ -471,11 +526,6 @@ class Instrument_Installer(Ui_Form, QWidget):
             ind = self.device_table.selectedIndexes()[0]
             instr = self.device_table.item(ind.row(), 0).data(3)
             self.info_widge.update_texts(instr)
-            self.adjustSize()
-            if self.show_info_bool:
-                self.info_widge.setHidden(False)
-            else:
-                self.info_widge.setHidden(True)
         finally:
             self.setCursor(Qt.ArrowCursor)
 

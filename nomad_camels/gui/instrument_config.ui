@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>483</width>
-    <height>231</height>
+    <width>579</width>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,8 +26,12 @@
    <property name="bottomMargin">
     <number>9</number>
    </property>
-   <item row="1" column="0" rowspan="2" colspan="2">
-    <widget class="QTableWidget" name="tableWidget_instruments"/>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="lineEdit_search">
+     <property name="placeholderText">
+      <string>Search</string>
+     </property>
+    </widget>
    </item>
    <item row="0" column="3">
     <widget class="QLabel" name="label_config">
@@ -42,54 +46,14 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="4">
-    <widget class="QPushButton" name="pushButton_remove">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>89999</width>
-       <height>27</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>-1</pointsize>
-       <bold>true</bold>
-       <underline>false</underline>
-       <strikeout>false</strikeout>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-                                background-color:  #FF3333; 
-                                color: white; 
-                                border: none; 
-                                padding: 0px; 
-                                padding-bottom: 5px;
-                                text-align: center; 
-                                text-decoration: none; 
-                                font-size: 18px; 
-                                margin: 2px 2px; 
-                                border-radius: 6px;
-								font-weight: bold;
-                            }
-
-            QPushButton:hover {
-                background-color: #B22222;
-            }
-QPushButton:disabled {
-        background-color:#808080;
-    }</string>
-     </property>
-     <property name="text">
-      <string>-</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="4">
     <widget class="QPushButton" name="pushButton_info">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
     background-color: #2a4cdf; /* This is a lighter shade of blue */
@@ -109,7 +73,38 @@ QPushButton:hover {
 }</string>
      </property>
      <property name="text">
-      <string>hide info</string>
+      <string>show info</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <widget class="QPushButton" name="pushButton_license">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: #2a4cdf; /* This is a lighter shade of blue */
+    color: white;
+    border: none;
+    padding: 2px 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 13px;
+    margin: 2px 2px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #1a3cbf; /* This is a darker shade of the lighter blue for hover effect */
+}</string>
+     </property>
+     <property name="text">
+      <string>show license</string>
      </property>
     </widget>
    </item>
@@ -120,14 +115,7 @@ QPushButton:hover {
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="lineEdit_search">
-     <property name="placeholderText">
-      <string>Search</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3" colspan="2">
+   <item row="3" column="3" colspan="3">
     <widget class="QTabWidget" name="config_tabs">
      <property name="currentIndex">
       <number>0</number>
@@ -148,27 +136,32 @@ QPushButton:hover {
      </widget>
     </widget>
    </item>
-   <item row="1" column="3">
-    <widget class="QPushButton" name="pushButton_add">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>99999</width>
-       <height>27</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>-1</pointsize>
-       <bold>true</bold>
-       <underline>false</underline>
-       <strikeout>false</strikeout>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
+   <item row="1" column="0" rowspan="3" colspan="2">
+    <widget class="QTableWidget" name="tableWidget_instruments"/>
+   </item>
+   <item row="2" column="3" colspan="3">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton_add">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>99999</width>
+         <height>27</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <bold>true</bold>
+         <underline>false</underline>
+         <strikeout>false</strikeout>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
                                 background-color: #4CAF50; 
                                 color: white; 
                                 border: none; 
@@ -188,11 +181,59 @@ QPushButton:hover {
 QPushButton:disabled {
         background-color: #808080;
     }</string>
-     </property>
-     <property name="text">
-      <string>+</string>
-     </property>
-    </widget>
+       </property>
+       <property name="text">
+        <string>+</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_remove">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>89999</width>
+         <height>27</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize>
+         <bold>true</bold>
+         <underline>false</underline>
+         <strikeout>false</strikeout>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+                                background-color:  #FF3333; 
+                                color: white; 
+                                border: none; 
+                                padding: 0px; 
+                                padding-bottom: 5px;
+                                text-align: center; 
+                                text-decoration: none; 
+                                font-size: 18px; 
+                                margin: 2px 2px; 
+                                border-radius: 6px;
+								font-weight: bold;
+                            }
+
+            QPushButton:hover {
+                background-color: #B22222;
+            }
+QPushButton:disabled {
+        background-color:#808080;
+    }</string>
+       </property>
+       <property name="text">
+        <string>-</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

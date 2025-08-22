@@ -1429,9 +1429,9 @@ class LivePlot_2D(QObject, CallbackBase):
         elif x_shape is None and y_shape is not None:
             x_shape = int(np.array(self.y_data).size / y_shape)
         try:
-            x = np.array(self.x_data).reshape((x_shape, y_shape))
-            y = np.array(self.y_data).reshape((x_shape, y_shape))
-            c = np.array(self.z_data).reshape((x_shape, y_shape))
+            x = np.array(self.x_data).reshape((y_shape, x_shape)).transpose()
+            y = np.array(self.y_data).reshape((y_shape, x_shape)).transpose()
+            c = np.array(self.z_data).reshape((y_shape, x_shape)).transpose()
             return x, y, c
         except Exception as e:
             return None
@@ -1449,38 +1449,40 @@ class LivePlot_2D(QObject, CallbackBase):
         self.x_data.extend(x)
         self.y_data.extend(y)
         self.z_data.extend(z)
-        x_shape = len(set(self.x_data))
-        y_shape = len(set(self.y_data))
-        mesh = self.make_colormesh(x_shape, y_shape)
+        if not self.x_data or not self.y_data or not self.z_data:
+            return
+        # x_shape = len(set(self.x_data))
+        # y_shape = len(set(self.y_data))
+        # mesh = self.make_colormesh(x_shape, y_shape)
 
-        if mesh:
-            x, y, z = mesh
-            if not self.x_data:
-                return
-            self.image.clear()
-            self.image.setImage(z)
-            self.image.setRect(pg.QtCore.QRectF(x.min(), y.min(), np.ptp(x), np.ptp(y)))
-            self.image.setLookupTable(self.cmap.getLookupTable())
-            self.scatter_plot.hide()
-            self.color_bar.hide()
-            self.image.show()
-            self.hist.show()
+        # if mesh:
+        #     x, y, z = mesh
+        #     if not self.x_data:
+        #         return
+        #     self.image.clear()
+        #     self.image.setImage(z)
+        #     self.image.setRect(pg.QtCore.QRectF(x.min(), y.min(), np.ptp(x), np.ptp(y)))
+        #     self.image.setLookupTable(self.cmap.getLookupTable())
+        #     self.scatter_plot.hide()
+        #     self.color_bar.hide()
+        #     self.image.show()
+        #     self.hist.show()
+        # else:
+        # Check for case that all z values are 0
+        if np.all(np.array(self.z_data) == 0):
+            self.z_normed = np.zeros(len(self.z_data))
         else:
-            # Check for case that all z values are 0
-            if np.all(np.array(self.z_data) == 0):
-                self.z_normed = np.zeros(len(self.z_data))
-            else:
-                self.z_normed = (self.z_data - np.min(self.z_data)) / (
-                    np.max(self.z_data) - np.min(self.z_data)
-                )
-            self.dummy_image.setImage(np.array([self.z_data]))
-            self.color_bar.setLevels((np.min(self.z_data), np.max(self.z_data)))
-            colors = self.cmap.map(self.z_normed)
-            self.scatter_plot.setData(x=self.x_data, y=self.y_data, brush=colors)
-            self.image.hide()
-            self.hist.hide()
-            self.scatter_plot.show()
-            self.color_bar.show()
+            self.z_normed = (self.z_data - np.min(self.z_data)) / (
+                np.max(self.z_data) - np.min(self.z_data)
+            )
+        self.dummy_image.setImage(np.array([self.z_data]))
+        self.color_bar.setLevels((np.min(self.z_data), np.max(self.z_data)))
+        colors = self.cmap.map(self.z_normed)
+        self.scatter_plot.setData(x=self.x_data, y=self.y_data, brush=colors)
+        self.image.hide()
+        self.hist.hide()
+        self.scatter_plot.show()
+        self.color_bar.show()
 
     def clear_plot(self):
         self.x_data.clear()

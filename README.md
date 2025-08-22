@@ -1,4 +1,4 @@
-<img src="https://fau-lap.github.io/NOMAD-CAMELS/_images/camels-horizontal.svg" alt="NOMAD CAMELS" width="300"/>
+<img src="https://fau-lap.github.io/NOMAD-CAMELS/_static/camels-horizontal.svg" alt="NOMAD CAMELS" width="300"/>
 
 ## Configurable Application for Measurements, Experiments and Laboratory Systems  
 
@@ -17,6 +17,12 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.06371/status.svg)](https://doi.org/10.21105/joss.06371)
 
 # Changelog
+
+### 1.8.8
+Fixes:
+- fixed displaying readme and license of instruments
+- protocols with while-loops that went too far above 100% progress could break because of a negative estimated remaining time; now fixed
+- removed mesh of 2D plot, as it is not calculated correctly, depending whether x or y is the "inner loop"
 
 ### 1.8.7
 Features:
