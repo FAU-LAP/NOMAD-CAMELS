@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs requests pytest pytest-qt pytest-order pytest-mock pytest-timeout nomad-camels
+          pip install sphinx sphinx_rtd_theme myst-parser sphinx-copybutton sphinx-tabs sphinx-notfound-page requests pytest pytest-qt pytest-order pytest-mock pytest-timeout nomad-camels
           python -m pip install --upgrade nomad-camels
       - name: make apidoc
         run: |
