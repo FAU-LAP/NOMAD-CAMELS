@@ -57,7 +57,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Keysight / Agilent</td>
                 <td>33220a</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-agilent-33220a'>0.1.1</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-agilent-33220a'>0.1.2</a></td>
             </tr>
             <tr>
                 <td>Keysight / Agilent</td>
@@ -81,13 +81,13 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Andor</td>
                 <td><a href='andor_newton/andor_newton'>Newton</a></td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-andor-newton'>0.1.4</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-andor-newton'>0.1.5</a></td>
             </tr>
             <tr>
                 <td>Andor</td>
                 <td>Shamrock_500</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-andor-shamrock-500'>0.1.3</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-andor-shamrock-500'>0.1.4</a></td>
             </tr>
             <tr>
                 <td>Cam</td>
@@ -123,7 +123,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Derived</td>
                 <td>Channels</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-derived-channels'>0.1.0</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-derived-channels'>0.1.2</a></td>
             </tr>
             <tr>
                 <td>Epics</td>
@@ -225,7 +225,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td></td>
                 <td><a href='PID/PID'>PID</a></td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-PID'>0.2.2</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-PID'>0.2.3</a></td>
             </tr>
             <tr>
                 <td>Pi</td>
@@ -1178,6 +1178,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             <tr>
                 <td>Aspectsystems (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Idsmux</a></td>
+                <td>SMU</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Iseg (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Shr</a></td>
                 <td>SMU</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
