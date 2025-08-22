@@ -38,6 +38,8 @@ extensions = [
     "notfound.extension",
 ]
 
+html_baseurl = "https://fau-lap.github.io/NOMAD-CAMELS/"
+
 templates_path = ["_templates"]
 
 notfound_urls_prefix = "https://fau-lap.github.io/NOMAD-CAMELS/"
