@@ -1,4 +1,4 @@
-<img src="https://fau-lap.github.io/NOMAD-CAMELS/_images/camels-horizontal.svg" alt="NOMAD CAMELS" width="300"/>
+<img src="https://fau-lap.github.io/NOMAD-CAMELS/_static/camels-horizontal.svg" alt="NOMAD CAMELS" width="300"/>
 
 ## Configurable Application for Measurements, Experiments and Laboratory Systems  
 
