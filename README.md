@@ -19,6 +19,9 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 # Changelog
 
 ### 1.9.0
+Features:
+- data structure may now be nested like protocol
+
 Fixes:
 - made watchdog stream naming more robust
 

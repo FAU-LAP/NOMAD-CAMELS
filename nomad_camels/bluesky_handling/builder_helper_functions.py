@@ -6,6 +6,7 @@ called by the classes of the single protocol-steps.
 
 import copy
 from nomad_camels.loop_steps.read_channels import get_channel_string
+from nomad_camels.utility import variables_handling
 
 standard_plot_string = "\tglobal app\n"
 standard_plot_string += "\tapp = QCoreApplication.instance()\n"
@@ -55,10 +56,14 @@ def get_plot_add_string(name, stream, subprotocol=False, n_tabs=1):
     add_main_string += f'{tabs}\treturner["plots"] = []\n'
     add_main_string += f'{tabs}if "plots_plotly" not in returner:\n'
     add_main_string += f'{tabs}\treturner["plots_plotly"] = []\n'
-    if subprotocol:
-        add_main_string += f"{tabs}plots, subs, app, plots_plotly = {name}_mod.create_plots(RE, {stream})\n"
+    if variables_handling.preferences["nested_data"]:
+        stream_str = f"{stream} if stream == 'primary' else f'{{stream}}||sub_stream||{stream.replace('\"', '')}'"
     else:
-        add_main_string += f"{tabs}plots, subs, app, plots_plotly = create_plots_{name}(RE, {stream})\n"
+        stream_str = stream
+    if subprotocol:
+        add_main_string += f"{tabs}plots, subs, app, plots_plotly = {name}_mod.create_plots(RE, {stream_str})\n"
+    else:
+        add_main_string += f"{tabs}plots, subs, app, plots_plotly = create_plots_{name}(RE, {stream_str})\n"
     add_main_string += f'{tabs}returner["subs"] += subs\n'
     add_main_string += f'{tabs}returner["plots"] += plots\n'
     add_main_string += f"{tabs}if plots_plotly:\n"

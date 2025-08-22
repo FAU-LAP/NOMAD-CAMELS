@@ -901,7 +901,13 @@ class LivePlot(QObject, CallbackBase):
                     == f"{self.stream_name}_fits_readying_{fit.livefit.name}"
                 ):
                     self.descs_fit_readying[doc["uid"]] = fit
-        elif self.multi_stream and doc["name"].startswith(self.stream_name):
+        elif (
+            self.multi_stream
+            and doc["name"].startswith(self.stream_name)
+            and not doc["name"][len(self.stream_name) :].startswith("||sub_stream||")
+            # check if the next part of the string after self.stream name is `||sub_stream||`,
+            # if so it is a sub-stream inside a subprotocol and should be ignored
+        ):
             self.desc.append(doc["uid"])
 
     def event(self, doc):

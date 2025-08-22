@@ -211,6 +211,10 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.checkBox_new_file_each_run.setChecked(
                 standard_pref["new_file_each_run"]
             )
+        if "nested_data" in settings:
+            self.checkBox_nested_data_structure.setChecked(settings["nested_data"])
+        else:
+            self.checkBox_nested_data_structure.setChecked(standard_pref["nested_data"])
 
         if "password_protection" in settings:
             self.checkBox_password.setChecked(settings["password_protection"])
@@ -332,6 +336,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             "API_port": self.lineEdit_api_port.text(),
             "new_file_every_x_hours": self.checkBox_new_meas_hours.isChecked(),
             "new_file_every_x_hours_value": self.spinBox_new_meas_hours.value(),
+            "nested_data": self.checkBox_nested_data_structure.isChecked(),
         }
 
     def keyPressEvent(self, a0: QKeyEvent) -> None:

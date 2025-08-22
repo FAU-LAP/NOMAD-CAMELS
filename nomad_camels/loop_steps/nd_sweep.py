@@ -82,7 +82,7 @@ class ND_Sweep(Loop_Step):
                 device = channels[channel].device
                 if device not in self.used_devices:
                     self.used_devices.append(device)
-    
+
     def get_used_channels(self):
         """Returns a list of all used channels in this step, including
         the read_channels and the sweep_channels."""
@@ -124,6 +124,8 @@ class ND_Sweep(Loop_Step):
         tabs = "\t" * n_tabs
 
         stream = f'"{self.name}"'
+        if variables_handling.preferences.get("nested_data", True):
+            stream = f'{stream} if stream_name == "primary" else f"{{stream_name}}||sub_stream||{stream.replace('"', '')}"'
         if self.data_output == "main stream":
             stream = "stream_name"
 

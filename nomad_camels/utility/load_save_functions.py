@@ -151,6 +151,7 @@ standard_pref = {
     "last_shown_notes": "0.0.0",
     "new_file_every_x_hours": False,
     "new_file_every_x_hours_value": 24,
+    "nested_data": True,
 }
 
 
