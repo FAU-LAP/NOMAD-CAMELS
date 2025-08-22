@@ -47,6 +47,7 @@ What is NOMAD CAMELS?
 
 Automating your measurements, easy usage, rich metadata and FAIR-compliant data are what NOMAD CAMELS is all about. **CAMELS** (\ **C**\ onfigurable \ **A**\ pplication for \ **M**\ easurements, \ **E**\ xperiments and \ **L**\ aboratory \ **S**\ ystems) is an open-source measurement software that simplifies the process of data acquisition and analysis for you.
 
+CAMELS provides a graphical user interface (GUI) that can be used to setup instrument control and measurement protocols. The GUI then generates Python code that interfaces with `bluesky <https://blueskyproject.io/>`_ to communicate with the instruments and orchestrate the measurement. CAMELS can also be used to communicate with large-scale, distributed systems implemented with `EPICS <https://epics-controls.org/>`_.
 
 .. raw:: html
 
@@ -58,7 +59,6 @@ Automating your measurements, easy usage, rich metadata and FAIR-compliant data 
 
     <br><br>
 
-CAMELS provides a graphical user interface (GUI) that can be used to setup instrument control and measurement protocols. The GUI then generates Python code that interfaces with `bluesky <https://blueskyproject.io/>`_ to communicate with the instruments and orchestrate the measurement. CAMELS can also be used to communicate with large-scale, distributed systems implemented with `EPICS <https://epics-controls.org/>`_.
 
 
 
