@@ -1,0 +1,6 @@
+{% extends "!layout.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  <base href="{{ pathto('', 1) }}">
+{% endblock %}

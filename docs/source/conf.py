@@ -40,6 +40,8 @@ extensions = [
 
 templates_path = ["_templates"]
 
+notfound_urls_prefix = ""
+
 source_suffix = [".rst", ".md"]
 
 master_doc = "index"
