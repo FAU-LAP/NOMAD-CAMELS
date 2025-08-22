@@ -2360,7 +2360,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             spec.loader.exec_module(module)
             if not watchdog.plots:
                 plots, subs, app, plots_plotly = module.create_plots(
-                    self.run_engine, stream="watchdog_triggered"
+                    self.run_engine, stream=f"watchdog_triggered_{watchdog.name}"
                 )
                 watchdog.plots = plots
             else:
@@ -2385,7 +2385,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     module.namespace.update(namespace)
                     self.eva.namespace = module.namespace
                     yield from getattr(module, f"{protocol_name}_plan_inner")(
-                        devs, self.eva, stream_name="watchdog_triggered"
+                        devs, self.eva, stream_name=f"watchdog_triggered_{watchdog.name}"
                     )
                     yield from bps.checkpoint()
                     yield from bps.pause()

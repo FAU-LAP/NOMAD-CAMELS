@@ -18,6 +18,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.9.0
+Fixes:
+- made watchdog stream naming more robust
+
 ### 1.8.8
 Fixes:
 - fixed displaying readme and license of instruments
