@@ -35,11 +35,14 @@ extensions = [
     "sphinx_tabs.tabs",
     "sphinx.ext.mathjax",
     "sphinx.ext.githubpages",
+    "notfound.extension",
 ]
 
 html_baseurl = "https://fau-lap.github.io/NOMAD-CAMELS/"
 
 templates_path = ["_templates"]
+
+notfound_urls_prefix = "/NOMAD-CAMELS/"
 
 source_suffix = [".rst", ".md"]
 
