@@ -40,7 +40,7 @@ extensions = [
 
 templates_path = ["_templates"]
 
-notfound_urls_prefix = ""
+notfound_urls_prefix = "https://fau-lap.github.io/NOMAD-CAMELS/"
 
 source_suffix = [".rst", ".md"]
 
