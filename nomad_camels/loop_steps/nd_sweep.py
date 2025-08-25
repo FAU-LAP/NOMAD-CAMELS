@@ -125,7 +125,11 @@ class ND_Sweep(Loop_Step):
 
         stream = f'"{self.name}"'
         if variables_handling.preferences.get("nested_data", True):
-            stream = f'{stream} if stream_name == "primary" else f"{{stream_name}}||sub_stream||{stream.replace('"', '')}"'
+            stream = (
+                f'{stream} if stream_name == "primary" else f"{{stream_name}}||sub_stream||'
+                + stream.replace('"', "")
+                + '"'
+            )
         if self.data_output == "main stream":
             stream = "stream_name"
 

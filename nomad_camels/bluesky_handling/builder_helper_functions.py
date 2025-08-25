@@ -57,7 +57,11 @@ def get_plot_add_string(name, stream, subprotocol=False, n_tabs=1):
     add_main_string += f'{tabs}if "plots_plotly" not in returner:\n'
     add_main_string += f'{tabs}\treturner["plots_plotly"] = []\n'
     if variables_handling.preferences["nested_data"]:
-        stream_str = f"{stream} if stream == 'primary' else f'{{stream}}||sub_stream||{stream.replace('\"', '')}'"
+        stream_str = (
+            f"{stream} if stream == 'primary' else f'{{stream}}||sub_stream||"
+            + stream.replace('"', "")
+            + "'"
+        )
     else:
         stream_str = stream
     if subprotocol:

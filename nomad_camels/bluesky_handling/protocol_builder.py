@@ -661,7 +661,11 @@ def make_plots_string_of_protocol(
             prot_name, stream, True, n_tabs
         )
     if variables_handling.preferences.get("nested_data", True):
-        stream_str = f'{stream} if stream == "primary" else f"{{stream}}||sub_stream||{stream.replace('"', '')}"'
+        stream_str = (
+            f'{stream} if stream == "primary" else f"{{stream}}||sub_stream||'
+            + stream.replace('"', "")
+            + '"'
+        )
     else:
         stream_str = stream
     if name:
