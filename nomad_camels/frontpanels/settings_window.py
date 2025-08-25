@@ -215,6 +215,10 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.checkBox_nested_data_structure.setChecked(settings["nested_data"])
         else:
             self.checkBox_nested_data_structure.setChecked(standard_pref["nested_data"])
+        self.checkBox_nested_data_structure.setToolTip(
+            "When enabled, the data is nested as in the protocol.\n"
+            "Leave this unchecked if you want your data to look exactly like before CAMELS 1.9.0"
+        )
 
         if "password_protection" in settings:
             self.checkBox_password.setChecked(settings["password_protection"])
