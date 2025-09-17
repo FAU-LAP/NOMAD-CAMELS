@@ -16,6 +16,7 @@ import yaml
 
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.nomad_integration import nomad_communication
+import re
 
 
 def compute_combo_max_width(combo):
@@ -218,7 +219,18 @@ class EntrySelector(QDialog):
                 data = archive.get("data", {})
                 self.entry_metadata = archive.get("metadata", {})
                 self.entry_data = data
-                self.entry_info.setText(yaml.dump(data))
+                data_yaml_dump = yaml.dump(data)
+                # 3. Regular Expression for finding base64 images in HTML <img> tags:
+                # It looks for:
+                # <img src="data:image/ANYTHING;base64,HUGE_BASE64_STRING" ...>
+                # Group 1 captures the full matched string (the <img> tag).
+                # Group 2 captures the file type (e.g., 'png', 'jpeg').
+                # Group 3 captures the huge base64 string.
+                # The '?' makes the quantifier non-greedy, stopping at the next ">".
+                # The 's' flag (re.DOTALL) allows '.' to match newlines, important for huge strings.
+                img_regex = re.compile(r'(<img\s+[^>]*src\s*=\s*["\']data:image/([^;]+);base64,([a-zA-Z0-9+/=]+)["\'][^>]*>)', re.DOTALL)
+                cleaned_data_yaml_dump = img_regex.sub('Image', data_yaml_dump)
+                self.entry_info.setText(cleaned_data_yaml_dump)
             except Exception as e:
                 QMessageBox.critical(self, "Error fetching entry", str(e))
             finally:
