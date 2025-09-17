@@ -20,10 +20,13 @@ from nomad_camels.nomad_integration import nomad_communication
 
 def compute_combo_max_width(combo):
     fm = combo.fontMetrics()
-    max_width = max(
-        fm.horizontalAdvance(combo.itemText(i)) for i in range(combo.count())
-    )
-    return max_width + 40
+    if not combo.count():
+        return fm.horizontalAdvance("W" * 8) + 40
+    else:
+        max_width = max(
+            fm.horizontalAdvance(combo.itemText(i)) for i in range(combo.count())
+        )
+        return max_width + 40
 
 
 class EntrySelector(QDialog):
@@ -206,18 +209,22 @@ class EntrySelector(QDialog):
         if self.reloading:
             return
         self._block_ui()
-        try:
-            name = self.entry_box.currentText()
-            idx = self.entry_names.index(name)
-            eid = self.entry_ids[idx]
-            archive = nomad_communication.get_entry_archive(entry_id=eid)
-            data = archive.get("data", {})
-            self.entry_metadata = archive.get("metadata", {})
-            self.entry_data = data
-            self.entry_info.setText(yaml.dump(data))
-        except Exception as e:
-            QMessageBox.critical(self, "Error fetching entry", str(e))
-        finally:
+        if self.entry_box.currentText():
+            try:
+                name = self.entry_box.currentText()
+                idx = self.entry_names.index(name)
+                eid = self.entry_ids[idx]
+                archive = nomad_communication.get_entry_archive(entry_id=eid)
+                data = archive.get("data", {})
+                self.entry_metadata = archive.get("metadata", {})
+                self.entry_data = data
+                self.entry_info.setText(yaml.dump(data))
+            except Exception as e:
+                QMessageBox.critical(self, "Error fetching entry", str(e))
+            finally:
+                self._unblock_ui()
+        else:
+            self.entry_info.setText("No entry selected.")
             self._unblock_ui()
 
     def accept(self):
@@ -230,7 +237,7 @@ class EntrySelector(QDialog):
         url = nomad_communication.nomad_url
         meta = rd["NOMAD_entry_metadata"]
         rd["full_identifier"] = (
-            f'{url}/upload/id/{meta["upload_id"]}/entry/id/{meta["entry_id"]}'
+            f"{url}/upload/id/{meta['upload_id']}/entry/id/{meta['entry_id']}"
         )
         rd["identifier"] = meta.get("lab_id", rd["full_identifier"])
         self.return_data = rd
