@@ -2536,8 +2536,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.devices_from_queue.append(self.current_protocol_device_list)
         if self.run_queue_widget.check_next_protocol():
             return
-        self.run_queue_widget.setHidden(True)
-        self.label_queue.setHidden(True)
+        if self.run_queue_widget.count() == 0:
+            self.run_queue_widget.setHidden(True)
+            self.label_queue.setHidden(True)
         self.current_protocol_device_list = []
         self.close_old_queue_devices()
         self.pushButton_stop.setEnabled(False)

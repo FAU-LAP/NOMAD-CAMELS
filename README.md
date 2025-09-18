@@ -22,6 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 Fixes:
 - fixed CAMELS not starting up if README was missing or not found. 
 - fixed error message popping up if there is no entry in the selected NOMAD upload when choosing a sample from NOMAD
+- fixed suddenly hidden protocol queue when running a protocol. Now only hides the queue when it is empty.
 
 Changes:
 - Now does not display the large string from base64 encoded images in the entry description when selecting a sample. Long string is replaced with "Image". 
