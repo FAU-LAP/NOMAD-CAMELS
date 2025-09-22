@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'mainWindow_v2.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.1
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -487,7 +487,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 54, 24))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 71, 24))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
         self.horizontalLayout_5.addWidget(self.scrollArea)
@@ -833,6 +833,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.textEdit_console_output.setToolTip(QCoreApplication.translate("MainWindow", u"These are messages from the running CAMELS, mostly useful for debugging", None))
 #endif // QT_CONFIG(tooltip)
+        self.textEdit_console_output.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Log is currently empty.", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_close_plots.setToolTip(QCoreApplication.translate("MainWindow", u"close all open plots\n"
 "plots from a running protocol reopen with new data", None))
@@ -854,9 +855,10 @@ class Ui_MainWindow(object):
         self.pushButton_show_log.setToolTip(QCoreApplication.translate("MainWindow", u"open / close the log with advanced system messages", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_show_log.setText(QCoreApplication.translate("MainWindow", u"Show Log", None))
+        self.textEdit_meas_description.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Add a measurmeent description here.", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Measurement Description", None))
 #if QT_CONFIG(tooltip)
-        self.run_queue_widget.setToolTip(QCoreApplication.translate("MainWindow", u"Add descriptions to the specific measurement, i.e. the next protocol run", None))
+        self.run_queue_widget.setToolTip(QCoreApplication.translate("MainWindow", u"Add a new protocol to the queue or customize queued protocols, e.g. modify variables ", None))
 #endif // QT_CONFIG(tooltip)
         self.label_queue.setText(QCoreApplication.translate("MainWindow", u"Queue", None))
 #if QT_CONFIG(tooltip)
@@ -875,7 +877,10 @@ class Ui_MainWindow(object):
         self.pushButton_manage_instr.setText(QCoreApplication.translate("MainWindow", u"Manage\n"
 "Instruments", None))
 #if QT_CONFIG(tooltip)
-        self.pushButton_editSampleInfo.setToolTip(QCoreApplication.translate("MainWindow", u"Change the information of the users or add new ones", None))
+        self.comboBox_sample.setToolTip(QCoreApplication.translate("MainWindow", u"Select the sample you are currently measuring.", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.pushButton_editSampleInfo.setToolTip(QCoreApplication.translate("MainWindow", u"Add or modify samples. ", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_editSampleInfo.setText(QCoreApplication.translate("MainWindow", u"Edit Sample-Information", None))
 #if QT_CONFIG(tooltip)
@@ -887,17 +892,35 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.pushButton_nomad_sample.setText(QCoreApplication.translate("MainWindow", u"select NOMAD sample", None))
         self.label_nomad_upload.setText(QCoreApplication.translate("MainWindow", u"NOMAD Upload:", None))
+#if QT_CONFIG(tooltip)
+        self.label_4.setToolTip(QCoreApplication.translate("MainWindow", u"- Optional -\n"
+"Adds a sub-folder for the saved data with the name of the session\n"
+"Used to distinguish different measurements", None))
+#endif // QT_CONFIG(tooltip)
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Session:", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_session.setToolTip(QCoreApplication.translate("MainWindow", u"used to distinguish measurements\n"
-"adds a sub-folder for the data", None))
+        self.lineEdit_session.setToolTip(QCoreApplication.translate("MainWindow", u"- Optional -\n"
+"Adds a sub-folder for the saved data with the name of the session\n"
+"Used to distinguish different measurements", None))
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_session.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Add optional Session name", None))
+#if QT_CONFIG(tooltip)
+        self.label_6.setToolTip(QCoreApplication.translate("MainWindow", u"Press Enter to add Tags. Remove Tags by pressing the red x on the tag.", None))
 #endif // QT_CONFIG(tooltip)
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"Tags", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_tags.setToolTip(QCoreApplication.translate("MainWindow", u"useful to identify / search measurements", None))
+        self.lineEdit_tags.setToolTip(QCoreApplication.translate("MainWindow", u"Press Enter to add Tags. Remove Tags by pressing the black x on the tag. \n"
+"Useful to identify / filter measurements", None))
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_tags.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Press Enter to add Tag", None))
+#if QT_CONFIG(tooltip)
+        self.scrollArea.setToolTip(QCoreApplication.translate("MainWindow", u"Currently used Tags. Remove by pressing the black x", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
-        self.pushButton_editUserInfo.setToolTip(QCoreApplication.translate("MainWindow", u"Change the information of the users or add new ones", None))
+        self.comboBox_user.setToolTip(QCoreApplication.translate("MainWindow", u"Select the user that is currently measuring.", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.pushButton_editUserInfo.setToolTip(QCoreApplication.translate("MainWindow", u"Add or modify users. ", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_editUserInfo.setText(QCoreApplication.translate("MainWindow", u"Edit User-Information", None))
         self.label_nomad_user.setText(QCoreApplication.translate("MainWindow", u"not logged in", None))
