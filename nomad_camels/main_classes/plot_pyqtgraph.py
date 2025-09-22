@@ -1361,7 +1361,7 @@ class LivePlot_2D(QObject, CallbackBase):
         self.x_data.clear()
         self.y_data.clear()
         self.z_data.clear()
-        self.scatter_plot = pg.ScatterPlotItem(self.x_data, self.y_data)
+        self.scatter_plot = pg.ScatterPlotItem(self.x_data, self.y_data, symbol='s')
         self.dummy_image = pg.ImageItem()
         # Remove the old colorbar if it exists
         if hasattr(self, "color_bar") and self.color_bar is not None:
