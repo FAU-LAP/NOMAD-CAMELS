@@ -135,11 +135,19 @@ class Read_Channels(Loop_Step):
         stream = variables_handling.read_channel_names[n]
 
         if variables_handling.preferences.get("nested_data", True):
-            stream = (
-                f'{stream} if stream_name == {stream} else f"{{stream_name}}||sub_stream||'
-                + stream.replace('"', "")
-                + '"'
-            )
+            if stream.startswith('f"'):
+                inner = stream[2:-1]
+                stream = (
+                    f'{stream} if stream_name == {stream} else f"{{stream_name}}||sub_stream||'
+                    + inner
+                    + '"'
+                )
+            else:
+                stream = (
+                    f'{stream} if stream_name == {stream} else f"{{stream_name}}||sub_stream||'
+                    + stream.replace('"', "")
+                    + '"'
+                )
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.split_trigger:
