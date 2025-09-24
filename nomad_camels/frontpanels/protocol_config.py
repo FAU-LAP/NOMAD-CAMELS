@@ -228,6 +228,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
 
         self.build_protocol_sequence()
         self.check_movability()
+        self.protocol.update_variables()
 
     def update_add_step_actions(self):
         """Called when the devices change, updating the possible
