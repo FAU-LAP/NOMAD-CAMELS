@@ -2637,7 +2637,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             try:
                 protocol.update_variables()
             except Exception as e:
-                if e == "Variable already defined!":
+                if str(e) == "Variable already defined!":
                     pass
                 else:
                     raise e
