@@ -1099,22 +1099,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     )
 
                     show_warning_toast(
-                        f"Sample name was empty. Set to \"{dat['name'][i]}\".",
+                        f'Sample name was empty. Set to "{dat["name"][i]}".',
                         title="Set empty sample name",
                         parent=self,
                     )
             dat = pd.DataFrame(dat)
             dat["unique_name"] = dat.apply(
                 lambda row: (
-                    f'{row["name"]} / {row["sample_id"]}, {row["owner"]}'
+                    f"{row['name']} / {row['sample_id']}, {row['owner']}"
                     if row["name"] != row["sample_id"] and row["sample_id"]
-                    else f'{row["name"]}, {row["owner"]}'
+                    else f"{row['name']}, {row['owner']}"
                 ),
                 axis=1,
             )
             dat["display_name"] = dat.apply(
                 lambda row: (
-                    f'{row["name"]} / {row["sample_id"]}'
+                    f"{row['name']} / {row['sample_id']}"
                     if row["name"] != row["sample_id"] and row["sample_id"]
                     else row["name"]
                 ),
@@ -2385,7 +2385,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     module.namespace.update(namespace)
                     self.eva.namespace = module.namespace
                     yield from getattr(module, f"{protocol_name}_plan_inner")(
-                        devs, self.eva, stream_name=f"watchdog_triggered_{watchdog.name}"
+                        devs,
+                        self.eva,
+                        stream_name=f"watchdog_triggered_{watchdog.name}",
                     )
                     yield from bps.checkpoint()
                     yield from bps.pause()
@@ -2631,7 +2633,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.progressBar_protocols.setValue(0)
         self._protocol_start_time = time.time()
         protocol = deepcopy(self.protocols_dict[protocol_name])
-        protocol.variables = variables or protocol.variables
+        if not protocol.variables:
+            try:
+                protocol.update_variables()
+            except Exception as e:
+                if e == "Variable already defined!":
+                    pass
+                else:
+                    raise e
+        protocol.variables = variables or protocol.variables or variables_handling.loop_step_variables
         protocol.session_name = self.lineEdit_session.text()
         if re.search(r"[^\w\s]", protocol.session_name):
             raise ValueError(
