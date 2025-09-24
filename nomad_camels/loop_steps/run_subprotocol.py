@@ -64,7 +64,7 @@ class Run_Subprotocol(Loop_Step):
             variables_in=self.vars_in,
             variables_out=self.vars_out,
             data_output=self.data_output,
-            new_stream=self.name,
+            new_stream=f"Subprotocol_{self.name}",
         )
         with open(self.prot_path, "r", encoding="utf-8") as f:
             self._sub_protocol_dict = json.load(f)
@@ -95,7 +95,7 @@ class Run_Subprotocol(Loop_Step):
         added steps from the subprotocol are added here as well."""
         if self.step_type == "Run Subprotocol":
             return protocol_builder.make_plots_string_of_protocol(
-                self.prot_path, self.own_plots, self.data_output, 1, self.name
+                self.prot_path, self.own_plots, self.data_output, 1, f"Subprotocol_{self.name}"
             )
         return protocol_builder.make_plots_string_of_protocol(
             self.prot_path, self.own_plots, self.data_output, 1, self.name
