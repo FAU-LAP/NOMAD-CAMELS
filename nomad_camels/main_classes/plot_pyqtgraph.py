@@ -348,7 +348,7 @@ class PlotWidget(QWidget):
             else:
                 for i, param in enumerate(fit["initial_params"]["name"]):
                     params[param].set(min=lower[param], max=upper[param])
-            name = f'{label}_{fit["y"]}_v_{fit["x"]}'
+            name = f"{label}_{fit['y']}_v_{fit['x']}"
             name = replace_name(name)
             livefit = LiveFit_Eva(
                 model,
@@ -893,7 +893,8 @@ class LivePlot(QObject, CallbackBase):
         if not self.setup_is_done:
             self.start(doc)
         if doc["name"] == self.stream_name:
-            self.desc.append(doc["uid"])
+            if self.check_if_plot_data_in_descriptor_doc(doc):
+                self.desc.append(doc["uid"])
         elif doc["name"].startswith(f"{self.stream_name}_fits_readying_"):
             for fit in self.fitPlots:
                 if (
@@ -904,11 +905,14 @@ class LivePlot(QObject, CallbackBase):
         elif (
             self.multi_stream
             and doc["name"].startswith(self.stream_name)
-            and not doc["name"][len(self.stream_name) :].startswith("||sub_stream||")
+            and not doc["name"][len(self.stream_name) :].startswith(
+                "||sub_stream||Subprotocol"
+            )
             # check if the next part of the string after self.stream name is `||sub_stream||`,
             # if so it is a sub-stream inside a subprotocol and should be ignored
         ):
-            self.desc.append(doc["uid"])
+            if self.check_if_plot_data_in_descriptor_doc(doc):
+                self.desc.append(doc["uid"])
 
     def event(self, doc):
         """
@@ -930,29 +934,33 @@ class LivePlot(QObject, CallbackBase):
                 self.descs_fit_readying[doc["descriptor"]].get_ready()
             return
         # Check to see if doc["data"] contains keys matching any on the self.ys strings
-        if not (
-            any(
-                key in self.eva.exchange_aliases(s)
-                for key in doc["data"]
-                for s in self.ys
-            )
-            or any(
-                key.endswith("_variable_signal")
-                and any(
-                    subkey in self.eva.exchange_aliases(s)
-                    for subkey in doc["data"][key]
-                    for s in self.ys
-                )
-                for key in doc["data"]
-            )
-        ):
-            return
+        # if not (
+        #     any(
+        #         key in self.eva.exchange_aliases(s)
+        #         for key in doc["data"]
+        #         for s in self.ys
+        #     )
+        #     or any(
+        #         key.endswith("_variable_signal")
+        #         and any(
+        #             subkey in self.eva.exchange_aliases(s)
+        #             for subkey in doc["data"][key]
+        #             for s in self.ys
+        #         )
+        #         for key in doc["data"]
+        #     )
+        # ):
+        #     return
         try:
             new_x = doc["data"][self.x]
         except KeyError:
             if self.x in ("time", "seq_num"):
                 new_x = doc[self.x]
             else:
+                for key in doc["data"]:
+                    if key.endswith("_variable_signal") and self.x in doc["data"][key]:
+                        new_x = doc["data"][key][self.x]
+                        break
                 if not self.eva.is_to_date(doc["time"]):
                     self.eva.event(doc)
                 new_x = self.eva.eval(self.x, do_not_reraise=True)
@@ -975,6 +983,32 @@ class LivePlot(QObject, CallbackBase):
         for fit in self.fitPlots:
             fit.event(doc)
         self.update_plot()
+
+    def check_if_plot_data_in_descriptor_doc(self, doc):
+        # This check becomes True if any y-signal is found in either of the two possible locations.
+        y_signal_found = any(
+            key in self.eva.exchange_aliases(s)
+            for key in doc["data_keys"]
+            for s in self.ys
+        ) or any(
+            key.endswith("_variable_signal")
+            and any(
+                subkey in self.eva.exchange_aliases(s)
+                for subkey in doc["data_keys"].get(key, {})
+                for s in self.ys
+            )
+            for key in doc["data_keys"]
+        )
+
+        # This check becomes True if the x-signal is found.
+        # Using .get('variables', []) prevents an error if 'variables' doesn't exist.
+        x_signal_found = any(
+            self.x in doc["data_keys"][key].get("variables", [])
+            for key in doc["data_keys"]
+            if key.endswith("_variable_signal")
+        ) or self.x in doc["data_keys"]
+
+        return y_signal_found and x_signal_found
 
     def update_caches(self, new_x, new_y):
         for y in new_y:
@@ -1361,7 +1395,7 @@ class LivePlot_2D(QObject, CallbackBase):
         self.x_data.clear()
         self.y_data.clear()
         self.z_data.clear()
-        self.scatter_plot = pg.ScatterPlotItem(self.x_data, self.y_data, symbol='s')
+        self.scatter_plot = pg.ScatterPlotItem(self.x_data, self.y_data, symbol="s")
         self.dummy_image = pg.ImageItem()
         # Remove the old colorbar if it exists
         if hasattr(self, "color_bar") and self.color_bar is not None:
