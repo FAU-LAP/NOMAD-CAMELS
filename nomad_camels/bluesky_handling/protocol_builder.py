@@ -604,7 +604,10 @@ def sub_protocol_string(
     if new_stream:
         stream = new_stream
     if variables_handling.preferences.get("nested_data", True):
-        stream_str = f'"{stream}" if stream_name == "primary" else f"{{stream_name}}||sub_stream||{stream}"'
+        if stream.startswith("Subprotocol_"):
+            stream_str = f'f"{{stream_name}}||subprotocol_stream||{stream}"'
+        else:
+            stream_str = f'"{stream}" if stream_name == "primary" else f"{{stream_name}}||sub_stream||{stream}"'
     else:
         stream_str = f'"{stream}"'
     protocol_string += f"{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, {stream_str}, runEngine)\n"
@@ -661,11 +664,10 @@ def make_plots_string_of_protocol(
             prot_name, stream, True, n_tabs
         )
     if variables_handling.preferences.get("nested_data", True):
-        stream_str = (
-            f'{stream} if stream == "primary" else f"{{stream}}||sub_stream||'
-            + stream.replace('"', "")
-            + '"'
-        )
+        if stream.startswith('"Subprotocol_'):
+            stream_str = f'f"{{stream}}||subprotocol_stream||{stream[1:]}'
+        else:
+            stream_str = f'{stream} if stream == "primary" else f"{{stream}}||sub_stream||{stream[1:]}'
     else:
         stream_str = stream
     if name:

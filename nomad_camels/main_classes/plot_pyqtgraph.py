@@ -906,7 +906,7 @@ class LivePlot(QObject, CallbackBase):
             self.multi_stream
             and doc["name"].startswith(self.stream_name)
             and not doc["name"][len(self.stream_name) :].startswith(
-                "||sub_stream||Subprotocol"
+                "||subprotocol_stream||"
             )
             # check if the next part of the string after self.stream name is `||sub_stream||`,
             # if so it is a sub-stream inside a subprotocol and should be ignored
@@ -1254,6 +1254,7 @@ class PlotWidget_2D(QWidget):
         top_left_y="",
         plot_width="",
         plot_height="",
+        multi_stream=False,
         **kwargs,
     ):
         super().__init__(parent=parent)
@@ -1281,6 +1282,7 @@ class PlotWidget_2D(QWidget):
             cmap="viridis",
             evaluator=eva,
             stream_name=stream_name,
+            multi_stream=multi_stream,
             **kwargs,
         )
         self.livePlot.new_data.connect(self.show_again)
@@ -1360,6 +1362,7 @@ class LivePlot_2D(QObject, CallbackBase):
         cmap="viridis",
         evaluator=None,
         stream_name="primary",
+        multi_stream=False,
         **kwargs,
     ):
         CallbackBase.__init__(self)
@@ -1379,11 +1382,12 @@ class LivePlot_2D(QObject, CallbackBase):
         self.scatter_plot = None
         self.image = None
         self.hist = None
-        self.desc = None
+        self.desc = []
         self._epoch_offset = None
         self._epoch = "run"
         self._minx = self._miny = np.inf
         self._maxx = self._maxy = -np.inf
+        self.multi_stream = multi_stream
 
     def __call__(self, name, doc, *, escape=False):
         if not escape and self.__teleporter is not None:
@@ -1432,10 +1436,22 @@ class LivePlot_2D(QObject, CallbackBase):
 
     def descriptor(self, doc):
         if doc["name"] == self.stream_name:
-            self.desc = doc["uid"]
+            if self.check_if_2d_plot_data_in_descriptor_doc(doc):
+                self.desc = doc["uid"]
+        elif (
+            self.multi_stream
+            and doc["name"].startswith(self.stream_name)
+            and not doc["name"][len(self.stream_name) :].startswith(
+                "||sub_stream||Subprotocol"
+            )
+            # check if the next part of the string after self.stream name is `||sub_stream||`,
+            # if so it is a sub-stream inside a subprotocol and should be ignored
+        ):
+            if self.check_if_2d_plot_data_in_descriptor_doc(doc):
+                self.desc.append(doc["uid"])
 
     def event(self, doc):
-        if doc["descriptor"] != self.desc:
+        if doc["descriptor"] not in self.desc:
             return
         try:
             x = doc["data"][self.x]
@@ -1540,6 +1556,53 @@ class LivePlot_2D(QObject, CallbackBase):
             self.x_data = list(self.x_data)
             self.y_data = list(self.y_data)
             self.z_data = list(self.z_data)
+
+    def check_if_2d_plot_data_in_descriptor_doc(self, doc):
+        # This check becomes True if any y-signal is found in either of the two possible locations.
+        x_signal_found = any(
+            key in self.eva.exchange_aliases(s)
+            for key in doc["data_keys"]
+            for s in [self.x]
+        ) or any(
+            key.endswith("_variable_signal")
+            and any(
+                subkey in self.eva.exchange_aliases(s)
+                for subkey in doc["data_keys"].get(key, {})
+                for s in [self.x]
+            )
+            for key in doc["data_keys"]
+        )
+
+        y_signal_found = any(
+            key in self.eva.exchange_aliases(s)
+            for key in doc["data_keys"]
+            for s in [self.y]
+        ) or any(
+            key.endswith("_variable_signal")
+            and any(
+                subkey in self.eva.exchange_aliases(s)
+                for subkey in doc["data_keys"].get(key, {})
+                for s in [self.y]
+            )
+            for key in doc["data_keys"]
+        )
+
+        z_signal_found = any(
+            key in self.eva.exchange_aliases(s)
+            for key in doc["data_keys"]
+            for s in [self.z]
+        ) or any(
+            key.endswith("_variable_signal")
+            and any(
+                subkey in self.eva.exchange_aliases(s)
+                for subkey in doc["data_keys"].get(key, {})
+                for s in [self.z]
+            )
+            for key in doc["data_keys"]
+        )
+
+        return x_signal_found and y_signal_found and z_signal_found
+
 
 
 class LivePlot_NoBluesky(QObject):
