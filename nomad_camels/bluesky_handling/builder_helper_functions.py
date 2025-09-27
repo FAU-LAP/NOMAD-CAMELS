@@ -6,6 +6,7 @@ called by the classes of the single protocol-steps.
 
 import copy
 from nomad_camels.loop_steps.read_channels import get_channel_string
+from nomad_camels.utility import variables_handling
 
 standard_plot_string = "\tglobal app\n"
 standard_plot_string += "\tapp = QCoreApplication.instance()\n"
@@ -55,10 +56,22 @@ def get_plot_add_string(name, stream, subprotocol=False, n_tabs=1):
     add_main_string += f'{tabs}\treturner["plots"] = []\n'
     add_main_string += f'{tabs}if "plots_plotly" not in returner:\n'
     add_main_string += f'{tabs}\treturner["plots_plotly"] = []\n'
-    if subprotocol:
-        add_main_string += f"{tabs}plots, subs, app, plots_plotly = {name}_mod.create_plots(RE, {stream})\n"
+    if variables_handling.preferences["nested_data"]:
+        if stream.startswith('"Subprotocol_'):
+            stream_str = f'f"{{stream}}||subprotocol_stream||{stream[1:]}'
+        else:
+            stream_str = f'{stream} if stream == "primary" else f"{{stream}}||sub_stream||{stream[1:]}'
+        # stream_str = (
+        #     f"{stream} if stream == 'primary' else f'{{stream}}||sub_stream||"
+        #     + stream.replace('"', "")
+        #     + "'"
+        # )
     else:
-        add_main_string += f"{tabs}plots, subs, app, plots_plotly = create_plots_{name}(RE, {stream})\n"
+        stream_str = stream
+    if subprotocol:
+        add_main_string += f"{tabs}plots, subs, app, plots_plotly = {name}_mod.create_plots(RE, {stream_str})\n"
+    else:
+        add_main_string += f"{tabs}plots, subs, app, plots_plotly = create_plots_{name}(RE, {stream_str})\n"
     add_main_string += f'{tabs}returner["subs"] += subs\n'
     add_main_string += f'{tabs}returner["plots"] += plots\n'
     add_main_string += f"{tabs}if plots_plotly:\n"
@@ -213,12 +226,12 @@ def plot_creator(
             plot_string += f"\tplot_{i}.show()\n"
         elif plot.plt_type == "2D plot":
             plotting = True
-            plot_string += f'\tplot_{i} = plot_pyqtgraph.PlotWidget_2D("{plot.x_axis}", "{plot.y_axes["formula"][0]}", "{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", title="{plot.title}", maxlen="{plot.maxlen}", stream_name=stream, evaluator=eva, manual_plot_position={plot.checkbox_manual_plot_position}, top_left_x="{plot.top_left_x}", top_left_y="{plot.top_left_y}", plot_width="{plot.plot_width}", plot_height="{plot.plot_height}")\n'
+            plot_string += f'\tplot_{i} = plot_pyqtgraph.PlotWidget_2D("{plot.x_axis}", "{plot.y_axes["formula"][0]}", "{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", title="{plot.title}", maxlen="{plot.maxlen}", stream_name=stream, evaluator=eva, manual_plot_position={plot.checkbox_manual_plot_position}, top_left_x="{plot.top_left_x}", top_left_y="{plot.top_left_y}", plot_width="{plot.plot_width}", plot_height="{plot.plot_height}", multi_stream={multi_stream})\n'
             plot_string += f"\tplots.append(plot_{i})\n"
             plot_string += f"\tplot_{i}.show()\n"
             if plot.checkbox_show_in_browser:
                 plot_string += f"\tweb_ports.append({plot.browser_port})\n"
-                plot_string += f'\tplot_plotly_{i} = plot_plotly.PlotlyLiveCallback_2d(x_name="{plot.x_axis}", y_name="{plot.y_axes["formula"][0]}", z_name="{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", web_port={plot.browser_port}, evaluator=eva, title="{plot.title}", maxlen="{plot.maxlen}", stream_name=stream, namespace=namespace, top_left_x="{plot.top_left_x}", top_left_y="{plot.top_left_y}", plot_width="{plot.plot_width}", plot_height="{plot.plot_height}")\n'
+                plot_string += f'\tplot_plotly_{i} = plot_plotly.PlotlyLiveCallback_2d(x_name="{plot.x_axis}", y_name="{plot.y_axes["formula"][0]}", z_name="{plot.z_axis}", xlabel="{plot.xlabel}", ylabel="{plot.ylabel}", zlabel="{plot.zlabel}", web_port={plot.browser_port}, evaluator=eva, title="{plot.title}", maxlen="{plot.maxlen}", stream_name=stream, namespace=namespace, top_left_x="{plot.top_left_x}", top_left_y="{plot.top_left_y}", plot_width="{plot.plot_width}", plot_height="{plot.plot_height}", multi_stream={multi_stream})\n'
                 plot_string += f"\tplots_plotly.append(plot_plotly_{i})\n"
         if plot_is_box:
             plot_string += f"\tboxes['{box_names}_{i}'] = helper_functions.Waiting_Bar(title='{plot.title}', skipable={skip_box}, display_bar=False, plot=plot_{i})\n"

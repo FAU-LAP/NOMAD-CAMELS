@@ -226,12 +226,13 @@ def show_release_notes():
                         readme = f.read()
                 except FileNotFoundError:
                     return
-    changelog = readme.split("# Changelog\n")[1]
-    while changelog.startswith("\n"):
-        changelog = changelog[1:]
-    # newest_log = changelog.split("\n#")[0]
-    dialog = MarkdownDialog(changelog)
-    dialog.exec_()
+    if readme:
+        changelog = readme.split("# Changelog\n")[1]
+        while changelog.startswith("\n"):
+            changelog = changelog[1:]
+        # newest_log = changelog.split("\n#")[0]
+        dialog = MarkdownDialog(changelog)
+        dialog.exec_()
 
 
 def read_readme_from_metadata(package_name):

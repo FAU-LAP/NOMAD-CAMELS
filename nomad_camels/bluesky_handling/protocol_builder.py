@@ -603,7 +603,14 @@ def sub_protocol_string(
         stream = "primary"
     if new_stream:
         stream = new_stream
-    protocol_string += f'{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, "{stream}", runEngine)\n'
+    if variables_handling.preferences.get("nested_data", True):
+        if stream.startswith("Subprotocol_"):
+            stream_str = f'f"{{stream_name}}||subprotocol_stream||{stream}"'
+        else:
+            stream_str = f'"{stream}" if stream_name == "primary" else f"{{stream_name}}||sub_stream||{stream}"'
+    else:
+        stream_str = f'"{stream}"'
+    protocol_string += f"{tabs}yield from {prot_name}_mod.{prot_name}_plan_inner(devs, {stream_str}, runEngine)\n"
     for i, var in enumerate(variables_out["Variable"]):
         protocol_string += f'{tabs}namespace["{variables_out["Write to name"][i]}"] = {prot_name}_mod.namespace["{var}"]\n'
     protocol_string += f"{tabs}runEngine.unsubscribe(sub_eva_{prot_name})\n"
@@ -656,8 +663,15 @@ def make_plots_string_of_protocol(
         plot_string += builder_helper_functions.get_plot_add_string(
             prot_name, stream, True, n_tabs
         )
-    if name:
-        plot_string += f'{tabs}returner["{name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs)\n'
+    if variables_handling.preferences.get("nested_data", True):
+        if stream.startswith('"Subprotocol_'):
+            stream_str = f'f"{{stream}}||subprotocol_stream||{stream[1:]}'
+        else:
+            stream_str = f'{stream} if stream == "primary" else f"{{stream}}||sub_stream||{stream[1:]}'
     else:
-        plot_string += f'{tabs}returner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs)\n'
+        stream_str = stream
+    if name:
+        plot_string += f'{tabs}returner["{name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs, {stream_str})\n'
+    else:
+        plot_string += f'{tabs}returner["{prot_name}_steps"] = {prot_name}_mod.steps_add_main(RE, devs, {stream_str})\n'
     return plot_string

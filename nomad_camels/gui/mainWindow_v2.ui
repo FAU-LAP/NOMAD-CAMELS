@@ -84,6 +84,9 @@ QPushButton:disabled {
          <property name="textInteractionFlags">
           <set>Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
          </property>
+         <property name="placeholderText">
+          <string>Log is currently empty.</string>
+         </property>
         </widget>
        </item>
        <item row="3" column="0" colspan="2">
@@ -209,7 +212,11 @@ QPushButton:disabled {
        <item row="0" column="0" colspan="3">
         <layout class="QGridLayout" name="gridLayout_7">
          <item row="1" column="0">
-          <widget class="QTextEdit" name="textEdit_meas_description"/>
+          <widget class="QTextEdit" name="textEdit_meas_description">
+           <property name="placeholderText">
+            <string>Add a measurmeent description here.</string>
+           </property>
+          </widget>
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label">
@@ -226,7 +233,7 @@ QPushButton:disabled {
          <item row="1" column="1">
           <widget class="RunQueue" name="run_queue_widget">
            <property name="toolTip">
-            <string>Add descriptions to the specific measurement, i.e. the next protocol run</string>
+            <string>Add a new protocol to the queue or customize queued protocols, e.g. modify variables </string>
            </property>
           </widget>
          </item>
@@ -440,6 +447,9 @@ Instruments</string>
                  <pointsize>10</pointsize>
                 </font>
                </property>
+               <property name="toolTip">
+                <string>Select the sample you are currently measuring.</string>
+               </property>
               </widget>
              </item>
              <item>
@@ -459,7 +469,7 @@ Instruments</string>
                 </font>
                </property>
                <property name="toolTip">
-                <string>Change the information of the users or add new ones</string>
+                <string>Add or modify samples. </string>
                </property>
                <property name="styleSheet">
                 <string notr="true">QPushButton {
@@ -654,6 +664,11 @@ QPushButton:disabled {
                  <bold>true</bold>
                 </font>
                </property>
+               <property name="toolTip">
+                <string>- Optional -
+Adds a sub-folder for the saved data with the name of the session
+Used to distinguish different measurements</string>
+               </property>
                <property name="text">
                 <string>Session:</string>
                </property>
@@ -665,8 +680,12 @@ QPushButton:disabled {
              <item>
               <widget class="Variable_Box" name="lineEdit_session">
                <property name="toolTip">
-                <string>used to distinguish measurements
-adds a sub-folder for the data</string>
+                <string>- Optional -
+Adds a sub-folder for the saved data with the name of the session
+Used to distinguish different measurements</string>
+               </property>
+               <property name="placeholderText">
+                <string>Add optional Session name</string>
                </property>
               </widget>
              </item>
@@ -678,6 +697,9 @@ adds a sub-folder for the data</string>
                  <bold>true</bold>
                 </font>
                </property>
+               <property name="toolTip">
+                <string>Press Enter to add Tags. Remove Tags by pressing the red x on the tag.</string>
+               </property>
                <property name="text">
                 <string>Tags</string>
                </property>
@@ -686,12 +708,19 @@ adds a sub-folder for the data</string>
              <item>
               <widget class="QLineEdit" name="lineEdit_tags">
                <property name="toolTip">
-                <string>useful to identify / search measurements</string>
+                <string>Press Enter to add Tags. Remove Tags by pressing the black x on the tag. 
+Useful to identify / filter measurements</string>
+               </property>
+               <property name="placeholderText">
+                <string>Press Enter to add Tag</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QScrollArea" name="scrollArea">
+               <property name="toolTip">
+                <string>Currently used Tags. Remove by pressing the black x</string>
+               </property>
                <property name="widgetResizable">
                 <bool>true</bool>
                </property>
@@ -700,7 +729,7 @@ adds a sub-folder for the data</string>
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>54</width>
+                  <width>71</width>
                   <height>24</height>
                  </rect>
                 </property>
@@ -753,6 +782,9 @@ adds a sub-folder for the data</string>
                  <pointsize>10</pointsize>
                 </font>
                </property>
+               <property name="toolTip">
+                <string>Select the user that is currently measuring.</string>
+               </property>
               </widget>
              </item>
              <item>
@@ -766,7 +798,7 @@ adds a sub-folder for the data</string>
                 </font>
                </property>
                <property name="toolTip">
-                <string>Change the information of the users or add new ones</string>
+                <string>Add or modify users. </string>
                </property>
                <property name="styleSheet">
                 <string notr="true">QPushButton {

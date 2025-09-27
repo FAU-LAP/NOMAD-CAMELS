@@ -155,7 +155,12 @@ class Gradient_Descent_Step(Loop_Step):
         else:
             setter = f'devs["{name}"]'
 
-        protocol_string += f'{tabs}yield from helper_functions.gradient_descent(eva.eval("{self.n_steps}"), eva.eval("{self.threshold}"), eva.eval("{self.start_val}"), {func_text}, eva, {setter}, channels, eva.eval("{self.min_step}"), eva.eval("{self.max_step}"), eva.eval("{self.min_val}"), eva.eval("{self.max_val}"), "{self.name}", eva.eval("{self.learning_rate}"), eva.eval("{self.momentum}"))\n'
+        if variables_handling.preferences.get("nested_data", True):
+            stream = f'"{self.name}" if stream_name == "primary" else f"{{stream_name}}||sub_stream||{self.name}"'
+        else:
+            stream = f'"{self.name}"'
+
+        protocol_string += f'{tabs}yield from helper_functions.gradient_descent(eva.eval("{self.n_steps}"), eva.eval("{self.threshold}"), eva.eval("{self.start_val}"), {func_text}, eva, {setter}, channels, eva.eval("{self.min_step}"), eva.eval("{self.max_step}"), eva.eval("{self.min_val}"), eva.eval("{self.max_val}"), {stream}, eva.eval("{self.learning_rate}"), eva.eval("{self.momentum}"))\n'
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>455</width>
-    <height>435</height>
+    <width>452</width>
+    <height>464</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,69 +39,13 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item row="3" column="1">
-           <widget class="QRadioButton" name="radioButton_n_backups">
+          <item row="1" column="0" colspan="3">
+           <widget class="QCheckBox" name="checkBox_password">
             <property name="toolTip">
-             <string>keep the defined number of newest backups</string>
+             <string>The user is not allowed to change protocols or instrument configuration without the password.</string>
             </property>
             <property name="text">
-             <string>keep only...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QCheckBox" name="checkBox_backup_before_run">
-            <property name="toolTip">
-             <string>also does a backup when autosave before run</string>
-            </property>
-            <property name="text">
-             <string>backup before run</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" colspan="3">
-           <widget class="QCheckBox" name="checkBox_new_file_each_run">
-            <property name="toolTip">
-             <string>creates a new datafile for each measurement instead of saving new entries in the same hdf5 file</string>
-            </property>
-            <property name="text">
-             <string>save each measurement run in new file</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QCheckBox" name="checkBox_new_meas_hours">
-            <property name="text">
-             <string>save to a new file each</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0" colspan="3">
-           <widget class="Line" name="line_4">
-            <property name="frameShadow">
-             <enum>QFrame::Shadow::Raised</enum>
-            </property>
-            <property name="lineWidth">
-             <number>5</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QRadioButton" name="radioButton_smart_backups">
-            <property name="toolTip">
-             <string>keep all backups of the last 7 days,
-one for for each of the last 30,
-one for each of the last 12 months
-and one for each year</string>
-            </property>
-            <property name="text">
-             <string>&quot;smart&quot; backups</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
+             <string>password protection</string>
             </property>
            </widget>
           </item>
@@ -126,21 +70,12 @@ and one for each year</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="checkBox_autosave">
-            <property name="toolTip">
-             <string>When CAMELS is closed, the current state is saved.</string>
-            </property>
+          <item row="6" column="2">
+           <widget class="QLabel" name="label_24">
             <property name="text">
-             <string>autosave on closing</string>
+             <string>hours</string>
             </property>
            </widget>
-          </item>
-          <item row="7" column="1" colspan="2">
-           <widget class="Path_Button_Edit" name="pathButton_config_path" native="true"/>
-          </item>
-          <item row="4" column="1">
-           <widget class="QSpinBox" name="spinBox_backup_number"/>
           </item>
           <item row="3" column="0">
            <widget class="QRadioButton" name="radioButton_all_backups">
@@ -149,30 +84,6 @@ and one for each year</string>
             </property>
             <property name="text">
              <string>keep all backups</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="3">
-           <widget class="QCheckBox" name="checkBox_password">
-            <property name="toolTip">
-             <string>The user is not allowed to change protocols or instrument configuration without the password.</string>
-            </property>
-            <property name="text">
-             <string>password protection</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="2">
-           <widget class="QLabel" name="label_24">
-            <property name="text">
-             <string>hours</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_12">
-            <property name="text">
-             <string>path for configuration files:</string>
             </property>
            </widget>
           </item>
@@ -202,6 +113,102 @@ and one for each year</string>
             </property>
             <property name="text">
              <string>Saving</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0" colspan="3">
+           <widget class="Line" name="line_4">
+            <property name="frameShadow">
+             <enum>QFrame::Shadow::Raised</enum>
+            </property>
+            <property name="lineWidth">
+             <number>5</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QCheckBox" name="checkBox_new_meas_hours">
+            <property name="text">
+             <string>save to a new file each</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QSpinBox" name="spinBox_backup_number"/>
+          </item>
+          <item row="2" column="2">
+           <widget class="QCheckBox" name="checkBox_backup_before_run">
+            <property name="toolTip">
+             <string>also does a backup when autosave before run</string>
+            </property>
+            <property name="text">
+             <string>backup before run</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QRadioButton" name="radioButton_smart_backups">
+            <property name="toolTip">
+             <string>keep all backups of the last 7 days,
+one for for each of the last 30,
+one for each of the last 12 months
+and one for each year</string>
+            </property>
+            <property name="text">
+             <string>&quot;smart&quot; backups</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QRadioButton" name="radioButton_n_backups">
+            <property name="toolTip">
+             <string>keep the defined number of newest backups</string>
+            </property>
+            <property name="text">
+             <string>keep only...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="3">
+           <widget class="QCheckBox" name="checkBox_new_file_each_run">
+            <property name="toolTip">
+             <string>creates a new datafile for each measurement instead of saving new entries in the same hdf5 file</string>
+            </property>
+            <property name="text">
+             <string>save each measurement run in new file</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1" colspan="2">
+           <widget class="Path_Button_Edit" name="pathButton_config_path" native="true"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="checkBox_autosave">
+            <property name="toolTip">
+             <string>When CAMELS is closed, the current state is saved.</string>
+            </property>
+            <property name="text">
+             <string>autosave on closing</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>path for configuration files:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0" colspan="3">
+           <widget class="QCheckBox" name="checkBox_nested_data_structure">
+            <property name="text">
+             <string>nested data structure</string>
             </property>
            </widget>
           </item>

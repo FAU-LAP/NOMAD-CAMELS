@@ -132,14 +132,29 @@ class Read_Channels(Loop_Step):
                 variables_handling.read_channel_names.append(f'f"{{stream_name}}_{n}"')
             else:
                 variables_handling.read_channel_names.append("stream_name")
-        stream_name = variables_handling.read_channel_names[n]
+        stream = variables_handling.read_channel_names[n]
+
+        if variables_handling.preferences.get("nested_data", True):
+            if stream.startswith('f"'):
+                inner = stream[2:-1]
+                stream = (
+                    f'{stream} if stream_name == {stream} else f"{{stream_name}}||sub_stream||'
+                    + inner
+                    + '"'
+                )
+            else:
+                stream = (
+                    f'{stream} if stream_name == {stream} else f"{{stream_name}}||sub_stream||'
+                    + stream.replace('"', "")
+                    + '"'
+                )
         tabs = "\t" * n_tabs
         protocol_string = super().get_protocol_string(n_tabs)
         if self.split_trigger:
-            protocol_string += f"{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream_name}, skip_on_exception={skip_failed})\n"
+            protocol_string += f"{tabs}yield from helper_functions.read_wo_trigger(channels_{self.variable_name()}, grp_{self.variable_name()}, stream={stream}, skip_on_exception={skip_failed})\n"
         else:
             protocol_string += self.get_channels_string(tabs)
-            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, name={stream_name}, skip_on_exception={skip_failed})\n"
+            protocol_string += f"{tabs}yield from helper_functions.trigger_and_read(channels_{self.variable_name()}, name={stream}, skip_on_exception={skip_failed})\n"
         return protocol_string
 
     def get_protocol_short_string(self, n_tabs=0):

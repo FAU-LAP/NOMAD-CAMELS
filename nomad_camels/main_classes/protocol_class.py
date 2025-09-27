@@ -370,7 +370,7 @@ class Measurement_Protocol:
     def get_add_main_string(self):
         """Gets all the steps that should be executed in the protocol's main
         function."""
-        add_main_string = "def steps_add_main(RE, devs):\n"
+        add_main_string = 'def steps_add_main(RE, devs, stream="primary"):\n'
         add_main_string += "\treturner = {}\n"
         for step in self.loop_steps:
             if not step.is_active:
