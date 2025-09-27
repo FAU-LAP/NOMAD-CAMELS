@@ -18,21 +18,27 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 1.9.1
-Fixes:
-- fixed CAMELS not starting up if README was missing or not found. 
-- fixed error message popping up if there is no entry in the selected NOMAD upload when choosing a sample from NOMAD
-- fixed suddenly hidden protocol queue when running a protocol. Now only hides the queue when it is empty.
-
-Changes:
-- Now does not display the large string from base64 encoded images in the entry description when selecting a sample. Long string is replaced with "Image". 
-
 ### 1.9.0
 Features:
 - data structure may now be nested like protocol
+- plots are now much more robust and are only updated if a single "Read Channels"-step contains both the x and y data (x, y and z for 2D plots). Now respects subprotocol data space and does not update its data with data from subprotocols.
+
 
 Fixes:
+- plots much more robust when reading multiple times and using subprotocols
+- now uses updated suitcase-nomad-camels-hdf5 version 0.8.0 which now supports the plot annotation for deeply nested data.
+- fixed CAMELS not starting up if README was missing or not found. 
+- fixed error message popping up if there is no entry in the selected NOMAD upload when choosing a sample from NOMAD
+- fixed suddenly hidden protocol queue when running a protocol. Now only hides the queue when it is empty.
 - made watchdog stream naming more robust
+- fixed variables not always appearing in the protocol when starting CAMELS and running the protocol without opening it first.
+
+Changes:
+- Now does not display the large string from base64 encoded images in the entry description when selecting a sample. Long string is replaced with "Image". 
+- Added more help messages and tooltips.
+
+
+
 
 ### 1.8.8
 Fixes:
