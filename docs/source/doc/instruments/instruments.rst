@@ -105,7 +105,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Demo</td>
                 <td>Digital_multimeter</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-demo-digital-multimeter'>0.1.3</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-demo-digital-multimeter'>0.1.4</a></td>
             </tr>
             <tr>
                 <td>Demo</td>
@@ -117,13 +117,13 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Demo</td>
                 <td>Source_measure_unit</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-demo-source-measure-unit'>0.1.6</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-demo-source-measure-unit'>0.1.7</a></td>
             </tr>
             <tr>
                 <td>Derived</td>
                 <td>Channels</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-derived-channels'>0.1.2</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-derived-channels'>0.1.3</a></td>
             </tr>
             <tr>
                 <td>Epics</td>
@@ -165,7 +165,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Keithley</td>
                 <td>2400</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-keithley-2400'>0.1.3</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-keithley-2400'>0.1.4</a></td>
             </tr>
             <tr>
                 <td>Keithley</td>
@@ -225,7 +225,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td></td>
                 <td><a href='PID/PID'>PID</a></td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-PID'>0.2.3</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-PID'>0.3.1</a></td>
             </tr>
             <tr>
                 <td>Pi</td>
@@ -243,7 +243,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Swabianinstruments</td>
                 <td>Timetagger</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-swabianinstruments-timetagger'>0.1.1</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-swabianinstruments-timetagger'>0.1.2</a></td>
             </tr>
             <tr>
                 <td>Thorlabs</td>
@@ -255,37 +255,37 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Thorlabs</td>
                 <td>K10CR1</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-thorlabs-K10CR1'>0.1.1</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-thorlabs-K10CR1'>0.1.2</a></td>
             </tr>
             <tr>
                 <td>Thorlabs</td>
                 <td>MFF</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-thorlabs-MFF'>0.1.0</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-thorlabs-MFF'>0.1.1</a></td>
             </tr>
             <tr>
                 <td>Thorlabs</td>
                 <td>TLPM</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-thorlabs-TLPM'>0.1.0</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-thorlabs-TLPM'>0.1.1</a></td>
             </tr>
             <tr>
                 <td>Trinamic</td>
                 <td>Tmcm_1110</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-trinamic-tmcm-1110'>0.1.0</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-trinamic-tmcm-1110'>0.1.1</a></td>
             </tr>
             <tr>
                 <td>Voltcraft</td>
                 <td><a href='voltcraft_pps/voltcraft_pps'>Pps</a></td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-voltcraft-pps'>0.1.2</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-voltcraft-pps'>0.1.3</a></td>
             </tr>
             <tr>
                 <td>Voltcraft</td>
                 <td>Psp</td>
                 <td></td>
-                <td><a href='https://pypi.org/project/nomad-camels-driver-voltcraft-psp'>0.1.0</a></td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-voltcraft-psp'>0.1.1</a></td>
             </tr>
             <tr>
                 <td>Zaber</td>
@@ -1544,6 +1544,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             <tr>
                 <td>Picardindustries (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Usb-filterwheel</a></td>
+                <td>Switch</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Rohde&schwarz (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Ngpv</a></td>
                 <td>Switch</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>

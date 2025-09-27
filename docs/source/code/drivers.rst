@@ -19,6 +19,7 @@ Drivers
    nomad_camels_driver_epics_instrument
    nomad_camels_driver_eurotherm_bisynch
    nomad_camels_driver_iBeam_smart
+   nomad_camels_driver_keithley_197a
    nomad_camels_driver_keithley_2000
    nomad_camels_driver_keithley_237
    nomad_camels_driver_keithley_2400
