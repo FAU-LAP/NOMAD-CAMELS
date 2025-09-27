@@ -994,7 +994,7 @@ class LivePlot(QObject, CallbackBase):
             key.endswith("_variable_signal")
             and any(
                 subkey in self.eva.exchange_aliases(s)
-                for subkey in doc["data_keys"].get(key, {})
+                for subkey in doc["data_keys"][key].get("variables", [])
                 for s in self.ys
             )
             for key in doc["data_keys"]
