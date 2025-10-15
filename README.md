@@ -18,6 +18,11 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.9.1
+
+Changes:
+- Now always saves the current state (so the existing protocols and instruments) when clicking `OK` in the protocol configuration.
+
 ### 1.9.0
 Features:
 - data structure may now be nested like protocol

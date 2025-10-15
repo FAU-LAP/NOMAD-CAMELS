@@ -1862,6 +1862,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.add_button_to_meas(protocol.name)
         if self.button_area_meas.isHidden():
             self.button_area_meas.setHidden(False)
+        self.save_state()
 
     def remove_protocol(self, prot_name):
         """
