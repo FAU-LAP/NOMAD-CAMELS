@@ -51,24 +51,12 @@ CAMELS provides a graphical user interface (GUI) that can be used to setup instr
 
 .. raw:: html
 
-    <div style="position: relative; width: 70%; max-width: 70%; aspect-ratio: 16/9; overflow: hidden; margin: 0 auto;">
-        <iframe src="https://www.youtube.com/embed/rVmxgwhoEVg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allow="autoplay" frameborder="0" allowfullscreen></iframe>
-    </div>
-
-.. raw:: html
-
-    <br><br>
+   <video autoplay loop muted playsinline width="640">
+       <source src="assets/CAMELS_basic_usage.mp4" type="video/mp4">
+       Your browser does not support the video tag.
+   </video>
 
 
-
-
-Cite NOMAD CAMELS
------------------
-
-Learn more about CAMELS in our peer-reviewed paper:
-
-.. image:: https://joss.theoj.org/papers/10.21105/joss.06371/status.svg
-   :target: https://doi.org/10.21105/joss.06371
 
 Why CAMELS?
 ===========
@@ -129,6 +117,18 @@ CAMELS is suited for any researcher not wanting to deal with measurement orchest
 As CAMELS takes care of saving all available metadata, you can share understandable measurement data with colleagues and other researchers with just a few clicks.
 
 
+.. raw:: html
+
+    <div style="position: relative; width: 70%; max-width: 70%; aspect-ratio: 16/9; overflow: hidden; margin: 0 auto;">
+        <iframe src="https://www.youtube.com/embed/rVmxgwhoEVg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allow="autoplay" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+.. raw:: html
+
+    <br><br>
+
+
+
 How to get started?
 ===================
 To get started with CAMELS first `install <https://fau-lap.github.io/NOMAD-CAMELS/doc/installation/installation.html>`_ it and learn how to use it with our "Getting started" `tutorial <https://fau-lap.github.io/NOMAD-CAMELS/doc/tutorials/quick_start.html>`_.
@@ -162,6 +162,15 @@ CAMELS is being developed in the framework of the NFDI consortium `FAIRmat <http
    :target: https://www.lap.physik.nat.fau.eu/
    :width: 200px
    :class: spacer
+
+
+Cite NOMAD CAMELS
+-----------------
+
+Learn more about CAMELS in our peer-reviewed paper:
+
+.. image:: https://joss.theoj.org/papers/10.21105/joss.06371/status.svg
+   :target: https://doi.org/10.21105/joss.06371
 
 Contact and Community
 =====================
