@@ -49,12 +49,22 @@ Automating your measurements, easy usage, rich metadata and FAIR-compliant data 
 
 CAMELS provides a graphical user interface (GUI) that can be used to setup instrument control and measurement protocols. The GUI then generates Python code that interfaces with `bluesky <https://blueskyproject.io/>`_ to communicate with the instruments and orchestrate the measurement. CAMELS can also be used to communicate with large-scale, distributed systems implemented with `EPICS <https://epics-controls.org/>`_.
 
+Measure and Visualize Data
+============================
+
+
 .. raw:: html
 
    <video autoplay loop muted playsinline controls style="width: 75%; height: auto; display: block; margin: 0 auto;">
        <source src="_static/CAMELS_basic_usage.mp4" type="video/mp4">
        Your browser does not support the video tag.
    </video>
+
+.. raw:: html
+    
+    <br>
+
+This video displays how to create a basic measurement in CAMELS. In this example a source measure unit (SMU) applies a voltage (-5V to 5V) to a diode while measuring the current. The measured data is visualized in real-time and saved in an HDF5 file together with rich metadata.
 
 
 
