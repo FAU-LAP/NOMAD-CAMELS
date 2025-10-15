@@ -52,7 +52,7 @@ CAMELS provides a graphical user interface (GUI) that can be used to setup instr
 .. raw:: html
 
    <video autoplay loop muted playsinline width="640">
-       <source src="assets/CAMELS_basic_usage.mp4" type="video/mp4">
+       <source src="_static/CAMELS_basic_usage.mp4" type="video/mp4">
        Your browser does not support the video tag.
    </video>
 
