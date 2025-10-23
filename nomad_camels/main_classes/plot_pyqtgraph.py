@@ -1002,11 +1002,14 @@ class LivePlot(QObject, CallbackBase):
 
         # This check becomes True if the x-signal is found.
         # Using .get('variables', []) prevents an error if 'variables' doesn't exist.
-        x_signal_found = any(
-            self.x in doc["data_keys"][key].get("variables", [])
-            for key in doc["data_keys"]
-            if key.endswith("_variable_signal")
-        ) or self.x in doc["data_keys"]
+        x_signal_found = (
+            any(
+                self.x in doc["data_keys"][key].get("variables", [])
+                for key in doc["data_keys"]
+                if key.endswith("_variable_signal")
+            )
+            or self.x in doc["data_keys"]
+        )
 
         return y_signal_found and x_signal_found
 
@@ -1602,7 +1605,6 @@ class LivePlot_2D(QObject, CallbackBase):
         )
 
         return x_signal_found and y_signal_found and z_signal_found
-
 
 
 class LivePlot_NoBluesky(QObject):
