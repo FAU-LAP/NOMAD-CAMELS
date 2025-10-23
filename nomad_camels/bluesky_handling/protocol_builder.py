@@ -591,13 +591,13 @@ def sub_protocol_string(
             f'{tabs}{prot_name}_mod.{var} = eva.eval("{variables_in["Value"][i]}")\n'
         )
         protocol_string += f'{tabs}{prot_name}_mod.namespace["{var}"] = eva.eval("{variables_in["Value"][i]}")\n'
+    # protocol_string += (
+    #     f"{tabs}{prot_name}_eva = Evaluator(namespace={prot_name}_mod.namespace)\n"
+    # )
     protocol_string += (
-        f"{tabs}{prot_name}_eva = Evaluator(namespace={prot_name}_mod.namespace)\n"
+        f"{tabs}sub_eva_{prot_name} = runEngine.subscribe({prot_name}_mod.eva)\n"
     )
-    protocol_string += (
-        f"{tabs}sub_eva_{prot_name} = runEngine.subscribe({prot_name}_eva)\n"
-    )
-    protocol_string += f"{tabs}{prot_name}_mod.eva = {prot_name}_eva\n"
+    # protocol_string += f"{tabs}{prot_name}_mod.eva = {prot_name}_eva\n"
     stream = prot_name
     if data_output == "main stream":
         stream = "primary"
