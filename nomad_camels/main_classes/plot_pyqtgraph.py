@@ -1272,7 +1272,7 @@ class PlotWidget_2D(QWidget):
         self.stream_name = stream_name
 
         self.toolbar = None
-        eva = evaluator
+        self.eva = evaluator
         self.livePlot = LivePlot_2D(
             x_name,
             y_name,
@@ -1280,7 +1280,7 @@ class PlotWidget_2D(QWidget):
             plotItem=self.plot,
             graphics_layout=self.graphics_layout,
             cmap="viridis",
-            evaluator=eva,
+            evaluator=self.eva,
             stream_name=stream_name,
             multi_stream=multi_stream,
             **kwargs,
