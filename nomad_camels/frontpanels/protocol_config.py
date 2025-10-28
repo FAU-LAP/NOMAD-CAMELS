@@ -28,7 +28,7 @@ from nomad_camels.commands import change_sequence
 
 from importlib import resources
 from nomad_camels import graphics
-
+from suitcase.nomad_camels_hdf5 import get_variables_from_expression
 
 # loop_step_display_order = [
 #     "Read Channels",
@@ -836,9 +836,36 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self._update_information()
         self.check_protocol_name()
         self.check_file_name()
+        self.check_if_plot_data_is_read()
         self.accepted.emit(self.protocol)
         self.is_accepted = True
         self.close()
+
+    def check_if_plot_data_is_read(self):
+        """ """
+        all_read_channels = []
+        for step in self.protocol.loop_step_dict.values():
+            if step.step_type == "Read Channels":
+                all_read_channels.extend(step.channel_list)
+        # get variables of the protocol
+        variables = self.protocol.variables
+        # Add the loop_step_variables
+        variables.update(self.protocol.loop_step_variables)
+        # parse the plot axes expression to extract the actual channels
+        for plot in self.protocol.plots:
+            x_vars = get_variables_from_expression(plot.x_axis)
+            for var in x_vars:
+                if var not in all_read_channels and var not in variables and not isinstance(var, (int, float)):
+                    raise Exception(
+                        f'The expression "{var}" used in the X-Axis of plot "{plot.name}" is not understood.\nMake sure you read this channel in the protocol or add it as a variable.'
+                    )
+            for y_expression in plot.y_axes["formula"]:
+                y_vars = get_variables_from_expression(y_expression)
+                for var in y_vars:
+                    if var not in all_read_channels and var not in variables and not isinstance(var, (int, float)):
+                        raise Exception(
+                            f'The expression "{var}" used in the Y-Axis of plot "{plot.name}" is not understood.\nMake sure you read this channel in the protocol or add it as a variable.'
+                        )
 
     def _update_information(self):
         self.update_loop_step_order()
