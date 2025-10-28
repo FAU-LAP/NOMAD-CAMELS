@@ -2050,6 +2050,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             variables (dict): The variables for the protocol.
             api_uuid (Optional[str]): The API unique identifier, defaults to None.
         """
+        # Add a 2 second wait time to ensure that the run engine has fully stopped. This makes long queues more stable.
+        if self.run_engine and self.run_engine.state != "idle":
+            import time
+            time.sleep(2)
         if self.run_engine and self.run_engine.state != "idle":
             return
         if api_uuid == "":
@@ -2642,7 +2646,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     pass
                 else:
                     raise e
-        protocol.variables = variables or protocol.variables or variables_handling.loop_step_variables
+        protocol.variables = (
+            variables or protocol.variables or variables_handling.loop_step_variables
+        )
         protocol.session_name = self.lineEdit_session.text()
         if re.search(r"[^\w\s]", protocol.session_name):
             raise ValueError(
