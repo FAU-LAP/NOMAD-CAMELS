@@ -18,10 +18,17 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 1.9.1
+### 2.0.0
+
+#### Major Change:
+Now uses the v1.0.0 of the suitcase-nomad-camels-hdf5 package for saving data. Major restructuring of the way plots are added to the measurement data.
+Now adds a `plot_n` where `n` is the number of the plot to each (nested) data group it was created in. This means plots of subprotocols are now where the subprotocol data is saved. Each plot (NXdata) entry contains the required x, y (and z) data. If it simply a plot of a measured channel it is an HDF5 SoftLink. If it is an arithmetic operation of multiple channels or plots, the newly calculated data is saved as a new dataset in the plot entry. This now enables users to immideatly view every plot they defined in CAMELS in the HDF5 file.
 
 Changes:
 - Now always saves the current state (so the existing protocols and instruments) when clicking `OK` in the protocol configuration.
+- Every protocol checks to see if the plotted data can be visualized by checking the read channels and variables used in the plot axes expressions. 
+Fixes:
+- Added a short wait time before trying to start the next queued protocol if the previous run is not fully finished yet. Should make running long queues more stable.
 
 ### 1.9.0
 Features:
