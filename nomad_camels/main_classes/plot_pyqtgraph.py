@@ -297,6 +297,7 @@ class PlotWidget(QWidget):
         self.liveFits = []
         self.liveFitPlots = []
         self.ax2_viewbox = None
+        self.y_axes = y_axes
         self.setWindowTitle(title or f"{x_name} vs. {y_names[0]}")
         self.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
 
