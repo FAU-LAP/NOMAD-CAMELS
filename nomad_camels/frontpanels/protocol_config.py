@@ -1,5 +1,5 @@
 from copy import deepcopy
-
+import numpy as np
 from PySide6.QtWidgets import QWidget, QToolButton, QMenu, QMessageBox, QDialogButtonBox
 from PySide6.QtCore import QItemSelectionModel, Qt, Signal
 from PySide6.QtGui import (
@@ -855,14 +855,14 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         for plot in self.protocol.plots:
             x_vars = get_variables_from_expression(plot.x_axis)
             for var in x_vars:
-                if var not in all_read_channels and var not in variables and not isinstance(var, (int, float)):
+                if var not in all_read_channels and var not in variables and not isinstance(var, (int, float)) and not hasattr(np, var):
                     raise Exception(
                         f'The expression "{var}" used in the X-Axis of plot "{plot.name}" is not understood.\nMake sure you read this channel in the protocol or add it as a variable.'
                     )
             for y_expression in plot.y_axes["formula"]:
                 y_vars = get_variables_from_expression(y_expression)
                 for var in y_vars:
-                    if var not in all_read_channels and var not in variables and not isinstance(var, (int, float)):
+                    if var not in all_read_channels and var not in variables and not isinstance(var, (int, float)) and not hasattr(np, var):
                         raise Exception(
                             f'The expression "{var}" used in the Y-Axis of plot "{plot.name}" is not understood.\nMake sure you read this channel in the protocol or add it as a variable.'
                         )
