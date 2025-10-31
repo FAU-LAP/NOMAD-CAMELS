@@ -1005,11 +1005,11 @@ class LivePlot(QObject, CallbackBase):
         # Using .get('variables', []) prevents an error if 'variables' doesn't exist.
         x_signal_found = (
             any(
-                self.x in doc["data_keys"][key].get("variables", [])
+                self.eva.exchange_aliases(self.x) in doc["data_keys"][key].get("variables", [])
                 for key in doc["data_keys"]
                 if key.endswith("_variable_signal")
             )
-            or self.x in doc["data_keys"]
+            or self.eva.exchange_aliases(self.x) in doc["data_keys"]
         )
 
         return y_signal_found and x_signal_found
