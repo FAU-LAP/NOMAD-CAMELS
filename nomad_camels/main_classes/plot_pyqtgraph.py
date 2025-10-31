@@ -1009,7 +1009,7 @@ class LivePlot(QObject, CallbackBase):
                 for key in doc["data_keys"]
                 if key.endswith("_variable_signal")
             )
-            or self.eva.exchange_aliases(self.x) in doc["data_keys"]
+            or any(key in self.eva.exchange_aliases(self.x) for key in doc["data_keys"])
         )
 
         return y_signal_found and x_signal_found
