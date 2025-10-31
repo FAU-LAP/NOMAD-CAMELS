@@ -8,7 +8,9 @@ from PySide6.QtWidgets import (
     QDialogButtonBox,
     QComboBox,
 )
-
+from PySide6.QtCore import QThread
+import traceback
+import logging
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.nomad_integration import nomad_communication
 
@@ -70,6 +72,31 @@ class UploadDialog(QDialog):
         nomad_communication.upload_file(f, upload, path)
         super().accept()
 
+class UploadThread(QThread):
+    """
+    QThread wrapper to run nomad_communication.upload_file in a background thread.
+    Emits 'success' with the response object on success and 'error' with a string
+    on failure.
+    """
+
+    def __init__(self, file_path, upload_name, upload_path, parent_widget=None):
+        super().__init__(parent=parent_widget)
+        self.file_path = file_path
+        self.upload_name = upload_name
+        self.upload_path = upload_path
+        # keep a reference to the UI parent (MainWindow) to pass to ensure_login if needed
+        self.parent_widget = parent_widget
+
+    def run(self):
+        try:
+            # import inside thread to avoid any UI-thread import side effects
+            from nomad_camels.nomad_integration import nomad_communication
+            resp = nomad_communication.upload_file(
+                self.file_path, self.upload_name, self.upload_path, parent=self.parent_widget
+            )
+        except Exception:
+            tb = traceback.format_exc()
+            logging.error(f"UploadThread failed:\n{tb}")
 
 if __name__ == "__main__":
     import sys
