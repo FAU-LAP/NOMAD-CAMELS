@@ -591,13 +591,13 @@ def sub_protocol_string(
             f'{tabs}{prot_name}_mod.{var} = eva.eval("{variables_in["Value"][i]}")\n'
         )
         protocol_string += f'{tabs}{prot_name}_mod.namespace["{var}"] = eva.eval("{variables_in["Value"][i]}")\n'
+    # protocol_string += (
+    #     f"{tabs}{prot_name}_eva = Evaluator(namespace={prot_name}_mod.namespace)\n"
+    # )
     protocol_string += (
-        f"{tabs}{prot_name}_eva = Evaluator(namespace={prot_name}_mod.namespace)\n"
+        f"{tabs}sub_eva_{prot_name} = runEngine.subscribe({prot_name}_mod.eva)\n"
     )
-    protocol_string += (
-        f"{tabs}sub_eva_{prot_name} = runEngine.subscribe({prot_name}_eva)\n"
-    )
-    protocol_string += f"{tabs}{prot_name}_mod.eva = {prot_name}_eva\n"
+    # protocol_string += f"{tabs}{prot_name}_mod.eva = {prot_name}_eva\n"
     stream = prot_name
     if data_output == "main stream":
         stream = "primary"
@@ -614,7 +614,7 @@ def sub_protocol_string(
     for i, var in enumerate(variables_out["Variable"]):
         protocol_string += f'{tabs}namespace["{variables_out["Write to name"][i]}"] = {prot_name}_mod.namespace["{var}"]\n'
     protocol_string += f"{tabs}runEngine.unsubscribe(sub_eva_{prot_name})\n"
-    protocol_string += f'{tabs}yield from helper_functions.get_fit_results({prot_name}_mod.all_fits, namespace, True, "{stream}")\n'
+    protocol_string += f'{tabs}yield from helper_functions.get_fit_results({prot_name}_mod.all_fits, namespace, True, {stream_str})\n'
     return protocol_string
 
 

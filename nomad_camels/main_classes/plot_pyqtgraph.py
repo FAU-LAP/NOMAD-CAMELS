@@ -297,6 +297,7 @@ class PlotWidget(QWidget):
         self.liveFits = []
         self.liveFitPlots = []
         self.ax2_viewbox = None
+        self.y_axes = y_axes
         self.setWindowTitle(title or f"{x_name} vs. {y_names[0]}")
         self.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
 
@@ -1002,11 +1003,14 @@ class LivePlot(QObject, CallbackBase):
 
         # This check becomes True if the x-signal is found.
         # Using .get('variables', []) prevents an error if 'variables' doesn't exist.
-        x_signal_found = any(
-            self.x in doc["data_keys"][key].get("variables", [])
-            for key in doc["data_keys"]
-            if key.endswith("_variable_signal")
-        ) or self.x in doc["data_keys"]
+        x_signal_found = (
+            any(
+                self.x in doc["data_keys"][key].get("variables", [])
+                for key in doc["data_keys"]
+                if key.endswith("_variable_signal")
+            )
+            or self.x in doc["data_keys"]
+        )
 
         return y_signal_found and x_signal_found
 
@@ -1272,7 +1276,7 @@ class PlotWidget_2D(QWidget):
         self.stream_name = stream_name
 
         self.toolbar = None
-        eva = evaluator
+        self.eva = evaluator
         self.livePlot = LivePlot_2D(
             x_name,
             y_name,
@@ -1280,7 +1284,7 @@ class PlotWidget_2D(QWidget):
             plotItem=self.plot,
             graphics_layout=self.graphics_layout,
             cmap="viridis",
-            evaluator=eva,
+            evaluator=self.eva,
             stream_name=stream_name,
             multi_stream=multi_stream,
             **kwargs,
@@ -1602,7 +1606,6 @@ class LivePlot_2D(QObject, CallbackBase):
         )
 
         return x_signal_found and y_signal_found and z_signal_found
-
 
 
 class LivePlot_NoBluesky(QObject):

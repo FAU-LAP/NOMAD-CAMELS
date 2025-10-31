@@ -1862,6 +1862,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.add_button_to_meas(protocol.name)
         if self.button_area_meas.isHidden():
             self.button_area_meas.setHidden(False)
+        self.save_state()
 
     def remove_protocol(self, prot_name):
         """
@@ -2049,6 +2050,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             variables (dict): The variables for the protocol.
             api_uuid (Optional[str]): The API unique identifier, defaults to None.
         """
+        # Add a 2 second wait time to ensure that the run engine has fully stopped. This makes long queues more stable.
+        import time    
+        while self.run_engine and self.run_engine.state != "idle":
+            time.sleep(0.1)
+        time.sleep(1)
         if self.run_engine and self.run_engine.state != "idle":
             return
         if api_uuid == "":
@@ -2239,8 +2245,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             write_protocol_result_path_to_db(api_uuid, message=file)
         if not nomad:
             return
-        while self.still_running:
-            time.sleep(0.1)
         if self.nomad_sample and self.checkBox_use_nomad_sample.isChecked():
             if "name" in self.nomad_sample:
                 name = f"/{self.nomad_sample['name']}"
@@ -2252,12 +2256,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             name = f"/{self.active_sample}"
         if self.comboBox_upload_type.currentText() == "auto upload":
             # IMPORT nomad_communication only if needed
-            from nomad_camels.nomad_integration import nomad_communication
+            from nomad_camels.nomad_integration import file_uploading
 
             upload = self.comboBox_upload_choice.currentText()
-            nomad_communication.upload_file(
-                file, upload, f"CAMELS_data{name}", parent=self
-            )
+            # nomad_communication.upload_file(
+            #     file, upload, f"CAMELS_data{name}", parent=self
+            # )
+            self.nomad_upload_thread = file_uploading.UploadThread(file, upload, f"CAMELS_data{name}", parent_widget=self)
+            # ensure cleanup after thread finishes
+            self.nomad_upload_thread.finished.connect(lambda: setattr(self, "nomad_upload_thread", None))
+            self.nomad_upload_thread.start()
         elif self.comboBox_upload_type.currentText() == "ask after run":
             # IMPORT file_uploading only if needed
             from nomad_camels.nomad_integration import file_uploading
@@ -2536,11 +2544,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.run_engine.unsubscribe(sub)
         self.re_subs.clear()
         self.devices_from_queue.append(self.current_protocol_device_list)
-        if self.run_queue_widget.check_next_protocol():
-            return
-        if self.run_queue_widget.count() == 0:
-            self.run_queue_widget.setHidden(True)
-            self.label_queue.setHidden(True)
         self.current_protocol_device_list = []
         self.close_old_queue_devices()
         self.pushButton_stop.setEnabled(False)
@@ -2563,6 +2566,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                             os.remove(f"{catalog_dir}/{file}")
         self.still_running = False
         self.protocol_finished_signal.emit()
+        if self.run_queue_widget.check_next_protocol():
+            return
+        if self.run_queue_widget.count() == 0:
+            self.run_queue_widget.setHidden(True)
+            self.label_queue.setHidden(True)
 
     def play_finished_sound(self):
         if variables_handling.preferences["finished_sound"]:
@@ -2641,7 +2649,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     pass
                 else:
                     raise e
-        protocol.variables = variables or protocol.variables or variables_handling.loop_step_variables
+        protocol.variables = (
+            variables or protocol.variables or variables_handling.loop_step_variables
+        )
         protocol.session_name = self.lineEdit_session.text()
         if re.search(r"[^\w\s]", protocol.session_name):
             raise ValueError(
