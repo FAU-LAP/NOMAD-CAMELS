@@ -1142,6 +1142,7 @@
 </li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.nomad_integration.html#module-nomad_camels.nomad_integration.file_uploading">nomad_camels.nomad_integration.file_uploading module</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.file_uploading.UploadDialog"><code class="docutils literal notranslate"><span class="pre">UploadDialog</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.nomad_integration.html#nomad_camels.nomad_integration.file_uploading.UploadThread"><code class="docutils literal notranslate"><span class="pre">UploadThread</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.nomad_integration.html#module-nomad_camels.nomad_integration.nomad_communication">nomad_camels.nomad_integration.nomad_communication module</a><ul>
@@ -1741,6 +1742,7 @@
 <li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.descriptor"><code class="docutils literal notranslate"><span class="pre">Serializer.descriptor()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.ensure_open"><code class="docutils literal notranslate"><span class="pre">Serializer.ensure_open()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.event_page"><code class="docutils literal notranslate"><span class="pre">Serializer.event_page()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.find_dataset_matches_in_group"><code class="docutils literal notranslate"><span class="pre">Serializer.find_dataset_matches_in_group()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.get_length_of_stream"><code class="docutils literal notranslate"><span class="pre">Serializer.get_length_of_stream()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.handle_event_page"><code class="docutils literal notranslate"><span class="pre">Serializer.handle_event_page()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.make_nexus_structure"><code class="docutils literal notranslate"><span class="pre">Serializer.make_nexus_structure()</span></code></a></li>
@@ -1751,9 +1753,9 @@
 <li class="toctree-l4"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.clean_filename"><code class="docutils literal notranslate"><span class="pre">clean_filename()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.export"><code class="docutils literal notranslate"><span class="pre">export()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.get_param_dict"><code class="docutils literal notranslate"><span class="pre">get_param_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.get_variables_from_expression"><code class="docutils literal notranslate"><span class="pre">get_variables_from_expression()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.nxcollection_default_class"><code class="docutils literal notranslate"><span class="pre">nxcollection_default_class()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.recourse_entry_dict"><code class="docutils literal notranslate"><span class="pre">recourse_entry_dict()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.same_until_last"><code class="docutils literal notranslate"><span class="pre">same_until_last()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.sort_by_list"><code class="docutils literal notranslate"><span class="pre">sort_by_list()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.timestamp_to_ISO8601"><code class="docutils literal notranslate"><span class="pre">timestamp_to_ISO8601()</span></code></a></li>
 </ul>
@@ -4508,6 +4510,38 @@ whatever resources are produced by the Manager)</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="suitcase.nomad_camels_hdf5.Serializer.find_dataset_matches_in_group">
+<span class="sig-name descname"><span class="pre">find_dataset_matches_in_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_strings_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_strings_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#suitcase.nomad_camels_hdf5.Serializer.find_dataset_matches_in_group" title="Link to this definition"></a></dt>
+<dd><p>Finds if a set of datasets exists that collectively contain all specified
+search strings from two lists. It then returns the results as two dictionaries.</p>
+<p>It first checks <cite>start_group</cite>. If no match for the combined list is found,
+it looks for a subgroup “primary” and checks each group inside it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_group</strong> (<em>h5py.Group</em>) – The h5py Group object to search within.</p></li>
+<li><p><strong>search_strings_a</strong> (<em>list</em><em> of </em><em>str</em>) – The first list of substrings.</p></li>
+<li><p><strong>search_strings_b</strong> (<em>list</em><em> of </em><em>str</em>) – The second list of substrings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>A tuple of two dictionaries.</dt><dd><ul class="simple">
+<li><p>The first maps strings from list A to their found dataset paths.</p></li>
+<li><p>The second maps strings from list B to their found dataset paths.</p></li>
+</ul>
+<p>Returns ({}, {}) if no complete match is found.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[dict[str, str], dict[str, str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="suitcase.nomad_camels_hdf5.Serializer.get_length_of_stream">
 <span class="sig-name descname"><span class="pre">get_length_of_stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#suitcase.nomad_camels_hdf5.Serializer.get_length_of_stream" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -4616,6 +4650,13 @@ whatever resources are produced by the Manager)</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="suitcase.nomad_camels_hdf5.get_variables_from_expression">
+<span class="sig-prename descclassname"><span class="pre">suitcase.nomad_camels_hdf5.</span></span><span class="sig-name descname"><span class="pre">get_variables_from_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#suitcase.nomad_camels_hdf5.get_variables_from_expression" title="Link to this definition"></a></dt>
+<dd><p>Parses an expression and returns a set of all
+variable names and numeric constants.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="suitcase.nomad_camels_hdf5.nxcollection_default_class">
 <span class="sig-prename descclassname"><span class="pre">suitcase.nomad_camels_hdf5.</span></span><span class="sig-name descname"><span class="pre">nxcollection_default_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#suitcase.nomad_camels_hdf5.nxcollection_default_class" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -4633,11 +4674,6 @@ whatever resources are produced by the Manager)</p>
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="suitcase.nomad_camels_hdf5.same_until_last">
-<span class="sig-prename descclassname"><span class="pre">suitcase.nomad_camels_hdf5.</span></span><span class="sig-name descname"><span class="pre">same_until_last</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#suitcase.nomad_camels_hdf5.same_until_last" title="Link to this definition"></a></dt>
-<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="suitcase.nomad_camels_hdf5.sort_by_list">
