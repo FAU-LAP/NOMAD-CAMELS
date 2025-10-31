@@ -657,12 +657,12 @@ def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
         ]["set_var"][
             :
         ]  # recorded set_var values
-        slope_camels_fit = f[list(f.keys())[0]]["data"]["fits"][
+        slope_camels_fit = f[list(f.keys())[0]]["data/plot_1/fit"][
             "Linear_set_var_v_For_Loop_Value_primary"
         ]["slope"][
             :
         ]  # linear fit values
-        intercept_camels_fit = f[list(f.keys())[0]]["data"]["fits"][
+        intercept_camels_fit = f[list(f.keys())[0]]["data/plot_1/fit"][
             "Linear_set_var_v_For_Loop_Value_primary"
         ]["intercept"][
             :
