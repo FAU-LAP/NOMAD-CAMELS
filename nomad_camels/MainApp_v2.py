@@ -2245,8 +2245,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             write_protocol_result_path_to_db(api_uuid, message=file)
         if not nomad:
             return
-        while self.still_running:
-            time.sleep(0.1)
         if self.nomad_sample and self.checkBox_use_nomad_sample.isChecked():
             if "name" in self.nomad_sample:
                 name = f"/{self.nomad_sample['name']}"
