@@ -18,6 +18,11 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.10.1
+
+Fixes:
+- Fixed aliases not being correctly removed when unchecking a channel
+
 ### 1.10.0
 
 #### Major Change:
