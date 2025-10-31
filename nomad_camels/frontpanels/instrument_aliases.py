@@ -159,6 +159,21 @@ class Instrument_Alias_Config(QDialog):
     def channel_alias_item_changed(self, item):
         if item.column() == 2:
             self.update_undefined_channels()
+        if item.column() == 0:
+            # checkState() returns Qt.Checked or Qt.Unchecked for a QTableWidgetItem with a checkbox
+            if item.checkState() == Qt.Unchecked:
+                row = item.row()
+                alias_item = self.channel_alias_table.tableWidget_channels.item(row, 2)
+                if alias_item and alias_item.text():
+                    # Clear the alias text; this will trigger itemChanged for column 2,
+                    # which will call update_undefined_channels().
+                    
+                    # remove the channel and alias from the channel_aliases list
+                    # get index in list of the alias
+                    index = self.channel_aliases["Alias"].index(alias_item.text())
+                    self.channel_aliases["Alias"].pop(index)
+                    self.channel_aliases["channel"].pop(index)
+                    alias_item.setText("")
 
     def update_undefined_instrument_aliases(self):
         """
