@@ -18,7 +18,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
-### 2.0.0
+### 1.10.0
 
 #### Major Change:
 Now uses the v1.0.0 of the suitcase-nomad-camels-hdf5 package for saving data. Major restructuring of the way plots are added to the measurement data.
@@ -29,6 +29,7 @@ Changes:
 - Every protocol checks to see if the plotted data can be visualized by checking the read channels and variables used in the plot axes expressions. 
 Fixes:
 - Added a short wait time before trying to start the next queued protocol if the previous run is not fully finished yet. Should make running long queues more stable.
+- Removed while loop with time.sleep at the end of protocol execution that could freeze CAMELS when queuing multiple protocols.
 
 ### 1.9.0
 Features:
