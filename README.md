@@ -27,6 +27,7 @@ Now adds a `plot_n` where `n` is the number of the plot to each (nested) data gr
 Changes:
 - Now always saves the current state (so the existing protocols and instruments) when clicking `OK` in the protocol configuration.
 - Every protocol checks to see if the plotted data can be visualized by checking the read channels and variables used in the plot axes expressions. 
+
 Fixes:
 - Added a short wait time before trying to start the next queued protocol if the previous run is not fully finished yet. Should make running long queues more stable.
 - Removed while loop with time.sleep at the end of protocol execution that could freeze CAMELS when queuing multiple protocols.
