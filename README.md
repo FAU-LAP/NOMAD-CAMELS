@@ -22,6 +22,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 Fixes:
 - Fixed aliases not being correctly removed when unchecking a channel
+- Fixed login issue with new version of NOMAD Oasis
 
 ### 1.10.0
 
