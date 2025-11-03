@@ -94,7 +94,7 @@ def login_to_nomad(parent=None):
             return
     if dialog.token:
         local_auth = {"Authorization": f"Bearer {dialog.token}"}
-        response = requests.get(f"{nomad_url}/auth/signature_token", headers=local_auth)
+        response = requests.get(f"{nomad_url}/uploads", headers=local_auth)
         check_response(response, "Login failed!")
         token = dialog.token
         auth = local_auth
