@@ -18,8 +18,14 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.10.2
+Fixes:
+- Fixed missing plot when trying to plot `ElapsedTime` or `StartTime`. 
+- Fixed check of plottable data when configuring plots.
+- Updated dependency on suitcase-nomad-camels-hdf5 to version 1.3.0 (1.2.0 had a missing dependency of `numexpr`)
+  
 ### 1.10.1
-
+> ⚠️ **Warning:** This version uses suitcase-nomad-camels-hdf5 v1.2.0 which is missing a dependency on `numexpr`. You can add it manually if you like with `pip install numexpr`. This was fixed in the next release.
 Fixes:
 - Fixed aliases not being correctly removed when unchecking a channel
 - Fixed login issue with new version of NOMAD Oasis
