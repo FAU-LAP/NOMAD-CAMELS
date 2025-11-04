@@ -39,6 +39,7 @@ from nomad_camels.utility.fit_variable_renaming import replace_name
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 from nomad_camels.main_classes.plot_widget import LiveFit_Eva
 from nomad_camels.utility.plot_placement import place_widget
+from nomad_camels.bluesky_handling.evaluation_helper import base_namespace as evaluator_base_namespace
 
 # recognized by pyqtgraph: r, g, b, c, m, y, k, w
 dark_mode_colors = ["w", "r", (0, 100, 255), "g", "c", "m", "y", "k"]
@@ -999,18 +1000,19 @@ class LivePlot(QObject, CallbackBase):
                 for s in self.ys
             )
             for key in doc["data_keys"]
-        )
+        ) or any("ElapsedTime" in s for s in self.ys) or any("StartTime" in s for s in self.ys)
 
         # This check becomes True if the x-signal is found.
         # Using .get('variables', []) prevents an error if 'variables' doesn't exist.
         x_signal_found = (
             any(
-                self.eva.exchange_aliases(self.x) in doc["data_keys"][key].get("variables", [])
+                var_key in self.eva.exchange_aliases(self.x)
                 for key in doc["data_keys"]
                 if key.endswith("_variable_signal")
+                for var_key in doc["data_keys"][key].get("variables", [])
             )
             or any(key in self.eva.exchange_aliases(self.x) for key in doc["data_keys"])
-        )
+        ) or "ElapsedTime" in self.x or "StartTime" in self.x
 
         return y_signal_found and x_signal_found
 
