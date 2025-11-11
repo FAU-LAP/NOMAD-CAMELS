@@ -21,6 +21,7 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.10.3
 Fixes:
 - Fixed issue where the Current Value plot would not update correctly when reading multiple different times or running subprotocols. 
+- Updated suitcase-nomad-camels-hdf5 dependency to version 1.3.1 which fixes errors when saving measurements using Current Values plots
 
 
 ### 1.10.2
