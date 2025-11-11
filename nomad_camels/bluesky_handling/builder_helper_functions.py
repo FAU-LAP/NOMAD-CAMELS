@@ -221,7 +221,7 @@ def plot_creator(
             plot_string += "\t\tall_fits[fit.name] = fit\n"
         elif plot.plt_type == "Value-List":
             plotting = True
-            plot_string += f'\tplot_{i} = list_plot.Values_List_Plot({plot.y_axes["formula"]}, title="{plot.title}", stream_name=stream, namespace=namespace, plot_all_available={plot.plot_all_available}, top_left_x="{plot.top_left_x}", top_left_y="{plot.top_left_y}", plot_width="{plot.plot_width}", plot_height="{plot.plot_height}")\n'
+            plot_string += f'\tplot_{i} = list_plot.Values_List_Plot({plot.y_axes["formula"]}, title="{plot.title}", stream_name=stream, namespace=namespace, plot_all_available={plot.plot_all_available}, top_left_x="{plot.top_left_x}", top_left_y="{plot.top_left_y}", plot_width="{plot.plot_width}", plot_height="{plot.plot_height}", multi_stream={multi_stream})\n'
             plot_string += f"\tplots.append(plot_{i})\n"
             plot_string += f"\tplot_{i}.show()\n"
         elif plot.plt_type == "2D plot":
