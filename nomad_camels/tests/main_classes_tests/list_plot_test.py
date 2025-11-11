@@ -78,7 +78,7 @@ def test_live_list_add_to_table(live_list):
 def test_live_list_descriptor(live_list):
     doc = {"name": "primary", "uid": "test_uid"}
     live_list.descriptor(doc)
-    assert live_list.desc == "test_uid"
+    assert "test_uid" in live_list.desc
 
 
 def test_live_list_start(live_list):

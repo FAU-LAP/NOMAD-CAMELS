@@ -125,6 +125,7 @@ class Live_List(QObject, CallbackBase):
         self.table = table
         self.plot_all_available = plot_all_available
         self.eva = Evaluator(namespace=namespace)
+        self.multi_stream = kwargs.get("multi_stream", False)
 
         self.table.setRowCount(len(value_list))
         self.table.setColumnCount(2)
@@ -140,7 +141,7 @@ class Live_List(QObject, CallbackBase):
             self.table.setItem(i, 1, item)
             self.val_items.append(item)
         self.add_items = {}
-        self.desc = ""
+        self.desc = []
         self.epoch_offset = 0
         self.epoch = epoch
         self.table.resizeColumnsToContents()
@@ -169,7 +170,17 @@ class Live_List(QObject, CallbackBase):
 
         """
         if doc["name"] == self.stream_name:
-            self.desc = doc["uid"]
+            self.desc.append(doc["uid"])
+        elif (
+            self.multi_stream
+            and doc["name"].startswith(self.stream_name)
+            and not doc["name"][len(self.stream_name) :].startswith(
+                "||subprotocol_stream||"
+            )
+            # check if the next part of the string after self.stream name is `||sub_stream||`,
+            # if so it is a sub-stream inside a subprotocol and should be ignored
+        ):
+            self.desc.append(doc["uid"])
 
     def start(self, doc):
         """
@@ -201,7 +212,7 @@ class Live_List(QObject, CallbackBase):
         """
         if isinstance(doc, QEvent):
             return QWidget.event(self, doc)
-        if doc["descriptor"] != self.desc:
+        if doc["descriptor"] not in self.desc:
             return
 
         for i, val in enumerate(self.value_list):
