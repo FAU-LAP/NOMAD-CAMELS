@@ -8,7 +8,13 @@ import numpy as np
 import threading
 from collections import deque
 import logging
-
+from scipy.spatial import KDTree
+from scipy.interpolate import (
+    CloughTocher2DInterpolator,
+    LinearNDInterpolator,
+    NearestNDInterpolator,
+)
+from scipy.spatial.qhull import QhullError
 from PySide6.QtWidgets import (
     QWidget,
     QGridLayout,
@@ -23,7 +29,7 @@ from PySide6.QtWidgets import (
     QApplication,
 )
 from PySide6.QtCore import Signal, QObject, QEvent, Qt, QCoreApplication
-from PySide6.QtGui import QIcon, QColor
+from PySide6.QtGui import QIcon, QColor, QTransform
 import PySide6
 import pyqtgraph as pg
 from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
@@ -39,7 +45,9 @@ from nomad_camels.utility.fit_variable_renaming import replace_name
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 from nomad_camels.main_classes.plot_widget import LiveFit_Eva
 from nomad_camels.utility.plot_placement import place_widget
-from nomad_camels.bluesky_handling.evaluation_helper import base_namespace as evaluator_base_namespace
+from nomad_camels.bluesky_handling.evaluation_helper import (
+    base_namespace as evaluator_base_namespace,
+)
 
 # recognized by pyqtgraph: r, g, b, c, m, y, k, w
 dark_mode_colors = ["w", "r", (0, 100, 255), "g", "c", "m", "y", "k"]
@@ -988,31 +996,42 @@ class LivePlot(QObject, CallbackBase):
 
     def check_if_plot_data_in_descriptor_doc(self, doc):
         # This check becomes True if any y-signal is found in either of the two possible locations.
-        y_signal_found = any(
-            key in self.eva.exchange_aliases(s)
-            for key in doc["data_keys"]
-            for s in self.ys
-        ) or any(
-            key.endswith("_variable_signal")
-            and any(
-                subkey in self.eva.exchange_aliases(s)
-                for subkey in doc["data_keys"][key].get("variables", [])
+        y_signal_found = (
+            any(
+                key in self.eva.exchange_aliases(s)
+                for key in doc["data_keys"]
                 for s in self.ys
             )
-            for key in doc["data_keys"]
-        ) or any("ElapsedTime" in s for s in self.ys) or any("StartTime" in s for s in self.ys)
+            or any(
+                key.endswith("_variable_signal")
+                and any(
+                    subkey in self.eva.exchange_aliases(s)
+                    for subkey in doc["data_keys"][key].get("variables", [])
+                    for s in self.ys
+                )
+                for key in doc["data_keys"]
+            )
+            or any("ElapsedTime" in s for s in self.ys)
+            or any("StartTime" in s for s in self.ys)
+        )
 
         # This check becomes True if the x-signal is found.
         # Using .get('variables', []) prevents an error if 'variables' doesn't exist.
         x_signal_found = (
-            any(
-                var_key in self.eva.exchange_aliases(self.x)
-                for key in doc["data_keys"]
-                if key.endswith("_variable_signal")
-                for var_key in doc["data_keys"][key].get("variables", [])
+            (
+                any(
+                    var_key in self.eva.exchange_aliases(self.x)
+                    for key in doc["data_keys"]
+                    if key.endswith("_variable_signal")
+                    for var_key in doc["data_keys"][key].get("variables", [])
+                )
+                or any(
+                    key in self.eva.exchange_aliases(self.x) for key in doc["data_keys"]
+                )
             )
-            or any(key in self.eva.exchange_aliases(self.x) for key in doc["data_keys"])
-        ) or "ElapsedTime" in self.x or "StartTime" in self.x
+            or "ElapsedTime" in self.x
+            or "StartTime" in self.x
+        )
 
         return y_signal_found and x_signal_found
 
@@ -1235,6 +1254,37 @@ class Teleporter(QObject):
 def handle_teleport(name, doc, obj):
     obj(name, doc, escape=True)
 
+class HeatmapWindow(QWidget):
+    """
+    Separate window to display the interpolated heatmap.
+    Code to calculate the interpolation adapted from https://github.com/bec-project/bec_widgets/tree/main/bec_widgets/widgets/plots/heatmap @3c6aa8e138f3ae0d3c67934e10436a6f93d3a133
+    """
+    def __init__(self, parent=None, title="Heatmap", cmap="viridis", zlabel="z"):
+        super().__init__(parent=parent)
+        self.setWindowTitle(title)
+        self.layout = QGridLayout()
+        self.setLayout(self.layout)
+        self.graphics = pg.GraphicsLayoutWidget()
+        self.plot = self.graphics.addPlot(0, 0)
+        self.plot.setLabel("bottom", "x")
+        self.plot.setLabel("left", "y")
+        self.image_item = pg.ImageItem()
+        self.plot.addItem(self.image_item)
+        self.cmap = pg.colormap.get(cmap)
+        # color bar
+        self.color_bar = pg.ColorBarItem(label=zlabel, interactive=False)
+        self.color_bar.setImageItem(self.image_item)
+        self.color_bar.setColorMap(self.cmap)
+        self.graphics.addItem(self.color_bar, row=0, col=1)
+        self.layout.addWidget(self.graphics, 0, 0)
+        self.resize(500, 400)
+
+    def update_image(self, img: np.ndarray, transform: QTransform, zmin: float, zmax: float):
+        if img is None:
+            return
+        self.image_item.setImage(img, autoLevels=False)
+        self.image_item.setTransform(transform)
+        self.color_bar.setLevels((zmin, zmax))
 
 class PlotWidget_2D(QWidget):
     """ """
@@ -1348,6 +1398,9 @@ class PlotWidget_2D(QWidget):
         self.livePlot.clear_plot()
 
     def closeEvent(self, event):
+        # Close the heatmap window if it is open
+        if self.livePlot.heatmap_window is not None:
+            self.livePlot.heatmap_window.close()
         self.closing.emit()
         super().closeEvent(event)
 
@@ -1394,6 +1447,7 @@ class LivePlot_2D(QObject, CallbackBase):
         self._minx = self._miny = np.inf
         self._maxx = self._maxy = -np.inf
         self.multi_stream = multi_stream
+        self.heatmap_window = None            # NEW: external window
 
     def __call__(self, name, doc, *, escape=False):
         if not escape and self.__teleporter is not None:
@@ -1431,6 +1485,7 @@ class LivePlot_2D(QObject, CallbackBase):
         self.plotItem.addItem(self.image)
         self._epoch_offset = None
         self._epoch = "run"
+        self.heatmap_window = None
 
     def update_scatter(self):
         try:
@@ -1545,12 +1600,32 @@ class LivePlot_2D(QObject, CallbackBase):
         self.hist.hide()
         self.scatter_plot.show()
         self.color_bar.show()
+        if len(self.x_data) > 4:
+            img, transform = self.get_step_scan_image(
+                x_data=self.x_data, y_data=self.y_data, z_data=self.z_data
+            )
+            if self.heatmap_window is None:
+                self.heatmap_window = HeatmapWindow(
+                        title=f"Heatmap: {self.z}",
+                        cmap="viridis",
+                        zlabel=self.z,
+                    )
+                self.heatmap_window.show()
+            self.heatmap_window.update_image(
+                img,
+                transform,
+                float(np.min(self.z_data)),
+                float(np.max(self.z_data)),
+            )
 
     def clear_plot(self):
         self.x_data.clear()
         self.y_data.clear()
         self.z_data.clear()
         self.update(self.x_data, self.y_data, self.z_data)
+        if self.heatmap_window:
+            # Clear external window image
+            self.heatmap_window.image_item.clear()
 
     def change_maxlen(self, maxlen):
         self.maxlen = maxlen
@@ -1608,6 +1683,121 @@ class LivePlot_2D(QObject, CallbackBase):
         )
 
         return x_signal_found and y_signal_found and z_signal_found
+
+    def get_step_scan_image(
+        self,
+        x_data: list[float],
+        y_data: list[float],
+        z_data: list[float],
+    ) -> tuple[np.ndarray, QTransform]:
+        """
+        Get the image data for an arbitrary step scan.
+
+        Args:
+            x_data (list[float]): The x data.
+            y_data (list[float]): The y data.
+            z_data (list[float]): The z data.
+            msg (messages.ScanStatusMessage): The scan status message.
+
+        Returns:
+            tuple[np.ndarray, QTransform]: The image data and the QTransform.
+        """
+        xy_data = np.column_stack((x_data, y_data))
+        grid_x, grid_y, transform = self.get_image_grid(xy_data)
+
+        # Interpolate the z data onto the grid
+        # Interpolate the z data onto the grid
+        self.interpolation = "nearest"
+        try:
+            if self.interpolation == "linear":
+                interp = LinearNDInterpolator(xy_data, z_data)
+            elif self.interpolation == "nearest":
+                interp = NearestNDInterpolator(xy_data, z_data)
+            elif self.interpolation == "clough":
+                interp = CloughTocher2DInterpolator(xy_data, z_data)
+            else:
+                raise ValueError(
+                    "Interpolation method must be either 'linear', 'nearest', or 'clough'."
+                )
+            grid_z = interp(grid_x, grid_y)
+        
+        except (QhullError, ValueError):
+            # This happens when points are collinear (e.g., first line of a scan)
+            # or there are not enough points.
+            # We'll return a grid full of NaNs to avoid crashing.
+            grid_z = np.full(grid_x.shape, np.nan)
+
+        return grid_z, transform
+
+    def get_image_grid(self, positions) -> tuple[np.ndarray, np.ndarray, QTransform]:
+        """
+        LRU-cached calculation of the grid for the image. The lru cache is indexed by the scan_id
+        to avoid recalculating the grid for the same scan.
+
+        Args:
+            _scan_id (str): The scan ID. Needed for caching but not used in the function.
+
+        Returns:
+            tuple[np.ndarray, np.ndarray, QTransform]: The grid x and y coordinates and the QTransform.
+        """
+        base_width, base_height = self.estimate_image_resolution(positions)
+
+        # Apply oversampling factor
+        factor = 10  # TODO hard coded sampling factor. modify this.
+
+        # Apply oversampling
+        width = int(base_width * factor)
+        height = int(base_height * factor)
+
+        # Create grid
+        grid_x, grid_y = np.mgrid[
+            min(positions[:, 0]) : max(positions[:, 0]) : width * 1j,
+            min(positions[:, 1]) : max(positions[:, 1]) : height * 1j,
+        ]
+
+        # Calculate transform
+        x_min, x_max = min(positions[:, 0]), max(positions[:, 0])
+        y_min, y_max = min(positions[:, 1]), max(positions[:, 1])
+        x_range = x_max - x_min
+        y_range = y_max - y_min
+        x_scale = x_range / width
+        y_scale = y_range / height
+
+        transform = QTransform()
+        transform.scale(x_scale, y_scale)
+        transform.translate(x_min / x_scale - 0.5, y_min / y_scale - 0.5)
+
+        return grid_x, grid_y, transform
+
+    @staticmethod
+    def estimate_image_resolution(coords: np.ndarray) -> tuple[int, int]:
+        """
+        Estimate the number of pixels needed for the image based on the coordinates.
+
+        Args:
+            coords (np.ndarray): The coordinates of the points.
+
+        Returns:
+            tuple[int, int]: The estimated width and height of the image."""
+        if coords.ndim != 2 or coords.shape[1] != 2:
+            raise ValueError("Input must be an (m x 2) array of (x, y) coordinates.")
+
+        x_min, x_max = coords[:, 0].min(), coords[:, 0].max()
+        y_min, y_max = coords[:, 1].min(), coords[:, 1].max()
+
+        tree = KDTree(coords)
+        distances, _ = tree.query(coords, k=2)
+        distances = distances[:, 1]  # Get the second nearest neighbor distance
+        avg_distance = np.mean(distances)
+
+        width_extent = x_max - x_min
+        height_extent = y_max - y_min
+
+        # Calculate the number of pixels needed based on the average distance
+        width_pixels = int(np.ceil(width_extent / avg_distance))
+        height_pixels = int(np.ceil(height_extent / avg_distance))
+
+        return max(1, width_pixels), max(1, height_pixels)
 
 
 class LivePlot_NoBluesky(QObject):
