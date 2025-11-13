@@ -27,6 +27,8 @@ from PySide6.QtWidgets import (
     QComboBox,
     QColorDialog,
     QApplication,
+    QWidgetAction,
+    QHBoxLayout,
 )
 from PySide6.QtCore import Signal, QObject, QEvent, Qt
 from PySide6.QtGui import QIcon, QColor, QTransform, QAction, QActionGroup
@@ -1460,17 +1462,64 @@ class PlotWidget_2D(QWidget):
         # Connect the checkbox's 'toggled' signal to the 'setEnabled' slot
         self.show_heatmap_action.toggled.connect(self.linear_action.setEnabled)
         self.show_heatmap_action.toggled.connect(self.nearest_action.setEnabled)
+        
+        # Add changeable interpolation oversampling factor
+        heatmap_menu.addSeparator()
+
+        # Create the QWidgetAction
+        self.factor_action = QWidgetAction(self)
+        
+        # Create the container widget and layout
+        factor_widget = QWidget()
+        factor_layout = QHBoxLayout(factor_widget)
+        factor_layout.setContentsMargins(4, 2, 4, 2) # Tweak spacing
+
+        # Create the label and line edit
+        factor_label = QLabel("Oversampling Factor:")
+        self.interp_factor_edit = FactorLineEdit("10") # Default value
+        self.interp_factor_edit.setFixedWidth(40) # Keep it small
+        
+        # Add widgets to layout
+        factor_layout.addWidget(factor_label)
+        factor_layout.addWidget(self.interp_factor_edit)
+        
+        # Set the widget for the QWidgetAction
+        self.factor_action.setDefaultWidget(factor_widget)
+        heatmap_menu.addAction(self.factor_action)
+
+        # Connect the QLineEdit's "Enter" signal
+        self.interp_factor_edit.returnPressed.connect(self.on_interp_factor_changed)
+        self.factor_action.setEnabled(False) # Disabled by default   
+        self.show_heatmap_action.toggled.connect(self.factor_action.setEnabled)  
+        
         self.layout().addWidget(self.toolbar, 1, 0, 1, 3)
 
+    def on_interp_factor_changed(self):
+        """
+        Called when user presses Enter in the factor line edit.
+        Validates the text and sends the integer to LivePlot_2D.
+        """
+        try:
+            # Try to convert text to a positive integer
+            factor = int(self.interp_factor_edit.text())
+            if factor > 0:
+                # If valid, send it to the live plot
+                self.livePlot.set_interpolation_factor(factor)
+            else:
+                # If 0 or negative, reset text to the current good value
+                current_factor = self.livePlot.interpolation_factor
+                self.interp_factor_edit.setText(str(current_factor))
+        except ValueError:
+            # If not an integer (e.g., "abc"), reset to current good value
+            current_factor = self.livePlot.interpolation_factor
+            self.interp_factor_edit.setText(str(current_factor))
+    
     def on_heatmap_closed_by_user(self):
         """
         This slot is called when the LivePlot_2D class emits 'heatmap_closed'.
         It unchecks the action to keep the UI in sync with the closed heatmap.
         """
-        # Block signals to prevent a loop (unchecking emits toggled(False))
-        self.show_heatmap_action.blockSignals(True)
         self.show_heatmap_action.setChecked(False)
-        self.show_heatmap_action.blockSignals(False)
     
     def clear_plot(self):
         self.livePlot.clear_plot()
@@ -1529,6 +1578,7 @@ class LivePlot_2D(QObject, CallbackBase):
         self.heatmap_window = None
         self.show_heatmap = False # Flag to control heatmap visibility
         self.interpolation_method = "linear" # Default interpolation for heatmap
+        self.interpolation_factor = 10 # Default interpolation factor is 10. Can be changed by the Heatmap menu
 
     def __call__(self, name, doc, *, escape=False):
         if not escape and self.__teleporter is not None:
@@ -1711,6 +1761,7 @@ class LivePlot_2D(QObject, CallbackBase):
                 zlabel=self.z,
             )
             # Connect the window's destroyed signal to our slot
+            self.heatmap_window.setAttribute(Qt.WA_DeleteOnClose)
             self.heatmap_window.destroyed.connect(self.on_heatmap_window_closed)
 
         # Show and update the window
@@ -1722,6 +1773,16 @@ class LivePlot_2D(QObject, CallbackBase):
             float(np.max(self.z_data)),
         )
 
+    def set_interpolation_factor(self, factor: int):
+        """
+        Slot to update the interpolation oversampling factor
+        from PlotWidget_2D.
+        """
+        self.interpolation_factor = factor
+        # If heatmap is active, redraw it with the new factor
+        if self.show_heatmap:
+            self.update_heatmap_window()
+    
     def set_interpolation(self, method):
         """Slot called by PlotWidget_2D's radio buttons setting the interpolation type"""
         self.interpolation_method = method
@@ -1878,7 +1939,7 @@ class LivePlot_2D(QObject, CallbackBase):
         base_width, base_height = self.estimate_image_resolution(positions)
 
         # Apply oversampling factor
-        factor = 10  # TODO hard coded sampling factor. modify this.
+        factor = self.interpolation_factor  # TODO hard coded sampling factor. modify this.
 
         # Apply oversampling
         width = int(base_width * factor)
@@ -1934,6 +1995,23 @@ class LivePlot_2D(QObject, CallbackBase):
 
         return max(1, width_pixels), max(1, height_pixels)
 
+class FactorLineEdit(QLineEdit):
+    """
+    A QLineEdit that consumes the Enter/Return key press
+    to prevent it from propagating to a parent QMenu.
+    """
+    def keyPressEvent(self, event):
+        key = event.key()
+        
+        # Check if the pressed key is Enter or Return
+        if key == Qt.Key_Return or key == Qt.Key_Enter:
+            # We got the key, so emit the signal we care about
+            self.returnPressed.emit()
+            # CRITICAL: Accept the event to stop it from bubbling up
+            event.accept()
+        else:
+            # For all other keys, behave like a normal QLineEdit
+            super().keyPressEvent(event)
 
 class LivePlot_NoBluesky(QObject):
     new_data_signal = Signal()

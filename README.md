@@ -20,10 +20,11 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 ### 1.10.4
 Features:
-- Added the option to display an interpolated heatmap to 2D plots. The toolbar now has the option `Heatmap` where you can enable/disable the heatmap and also choose from three different interpolation methods: 
+- Added the option to display an oversampled and interpolated heatmap to the 2D plots. The toolbar now has the option `Heatmap` where you can enable/disable the heatmap and also choose from three different interpolation methods: 
     1. Linear
     2. Nearest Neighbor
     3. Clough-Tocher
+  You can also set the oversampling factor (default: 10) which defines how many interpolated points are created between the measured points in each direction. Higher values lead to smoother heatmaps but also increase computation time. Nearest Neighbor interpolation does NOT use the oversampling factor.
   ![CAMELS heatmap](./assets/CAMELS_heatmap.png)
 
 ### 1.10.3
