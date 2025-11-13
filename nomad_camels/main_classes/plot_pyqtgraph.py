@@ -28,8 +28,8 @@ from PySide6.QtWidgets import (
     QColorDialog,
     QApplication,
 )
-from PySide6.QtCore import Signal, QObject, QEvent, Qt, QCoreApplication
-from PySide6.QtGui import QIcon, QColor, QTransform
+from PySide6.QtCore import Signal, QObject, QEvent, Qt
+from PySide6.QtGui import QIcon, QColor, QTransform, QAction, QActionGroup
 import PySide6
 import pyqtgraph as pg
 from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
@@ -1342,6 +1342,8 @@ class PlotWidget_2D(QWidget):
             **kwargs,
         )
         self.livePlot.new_data.connect(self.show_again)
+        # Connect to the signal from LivePlot_2D. Emited when the user closes the main 2D plot window. Then also clsoes the heatmap.
+        self.livePlot.heatmap_closed.connect(self.on_heatmap_closed_by_user)
         label_n_data = QLabel("# data points:")
         self.lineEdit_n_data = QLineEdit(str(maxlen))
         self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
@@ -1392,8 +1394,84 @@ class PlotWidget_2D(QWidget):
         actions = menu.actions()
         for action in actions:
             self.toolbar.addAction(action)
+
+        # Create the "Heatmap" menu itself
+        heatmap_menu = self.toolbar.addMenu("Heatmap")
+
+        self.show_heatmap_action = QAction("Show interpolated heatmap", self)
+        self.show_heatmap_action.setCheckable(True)
+        self.show_heatmap_action.setChecked(False) # Default to off
+        heatmap_menu.addAction(self.show_heatmap_action) # Add to the menu
+
+        heatmap_menu.addSeparator()
+
+        # Radio Button Group (to make them exclusive)
+        self.interpolation_group = QActionGroup(self)
+        self.interpolation_group.setExclusive(True)
+
+        # Linear Interpolation Radio Action
+        self.linear_action = QAction("Linear Interpolation", self)
+        self.linear_action.setCheckable(True)
+        self.linear_action.setChecked(True) # Default to linear
+        self.interpolation_group.addAction(self.linear_action) # Add to group
+        heatmap_menu.addAction(self.linear_action)          # Add to menu
+
+        # Nearest Neighbour Interpolation Radio Action
+        self.nearest_action = QAction("Nearest Neighbour Interpolation", self)
+        self.nearest_action.setCheckable(True)
+        self.nearest_action.setChecked(False)
+        self.interpolation_group.addAction(self.nearest_action) # Add to group
+        heatmap_menu.addAction(self.nearest_action)          # Add to menu
+
+        # Clough-Toucher Interpolation Radio Action
+        self.clough_action = QAction("Clough Interpolation", self)
+        self.clough_action.setCheckable(True)
+        self.clough_action.setChecked(False)
+        self.interpolation_group.addAction(self.clough_action) # Add to group
+        heatmap_menu.addAction(self.clough_action)          # Add to menu
+
+        # Enable/disable radio buttons based on the checkbox
+        # Set initial state (disabled, since checkbox is off)
+        self.linear_action.setEnabled(False)
+        self.nearest_action.setEnabled(False)
+        self.clough_action.setEnabled(False)
+
+        # Connect the checkbox's 'toggled' signal to the 'setEnabled' slot
+        # of each radio button. Only if we check the checkbox to use heatmap, are the actions enabled.
+        self.show_heatmap_action.toggled.connect(self.linear_action.setEnabled)
+        self.show_heatmap_action.toggled.connect(self.nearest_action.setEnabled)
+        self.show_heatmap_action.toggled.connect(self.clough_action.setEnabled)
+        # Connect to LivePlot_2D (self.livePlot) to acutally show the heatmap
+        # 1. Connect the main checkbox to LivePlot_2D
+        self.show_heatmap_action.toggled.connect(self.livePlot.set_heatmap_visible)
+
+        # 2. Connect the radio buttons to LivePlot_2D
+        #    (Using lambda to pass the specific interpolation string)
+        self.linear_action.triggered.connect(
+            lambda: self.livePlot.set_interpolation("linear")
+        )
+        self.nearest_action.triggered.connect(
+            lambda: self.livePlot.set_interpolation("nearest")
+        )
+        self.clough_action.triggered.connect(
+            lambda: self.livePlot.set_interpolation("clough")
+        )
+
+        # Connect the checkbox's 'toggled' signal to the 'setEnabled' slot
+        self.show_heatmap_action.toggled.connect(self.linear_action.setEnabled)
+        self.show_heatmap_action.toggled.connect(self.nearest_action.setEnabled)
         self.layout().addWidget(self.toolbar, 1, 0, 1, 3)
 
+    def on_heatmap_closed_by_user(self):
+        """
+        This slot is called when the LivePlot_2D class emits 'heatmap_closed'.
+        It unchecks the action to keep the UI in sync with the closed heatmap.
+        """
+        # Block signals to prevent a loop (unchecking emits toggled(False))
+        self.show_heatmap_action.blockSignals(True)
+        self.show_heatmap_action.setChecked(False)
+        self.show_heatmap_action.blockSignals(False)
+    
     def clear_plot(self):
         self.livePlot.clear_plot()
 
@@ -1409,6 +1487,7 @@ class LivePlot_2D(QObject, CallbackBase):
     """ """
 
     new_data = Signal()
+    heatmap_closed = Signal()
 
     def __init__(
         self,
@@ -1447,7 +1526,9 @@ class LivePlot_2D(QObject, CallbackBase):
         self._minx = self._miny = np.inf
         self._maxx = self._maxy = -np.inf
         self.multi_stream = multi_stream
-        self.heatmap_window = None            # NEW: external window
+        self.heatmap_window = None
+        self.show_heatmap = False # Flag to control heatmap visibility
+        self.interpolation_method = "linear" # Default interpolation for heatmap
 
     def __call__(self, name, doc, *, escape=False):
         if not escape and self.__teleporter is not None:
@@ -1600,24 +1681,80 @@ class LivePlot_2D(QObject, CallbackBase):
         self.hist.hide()
         self.scatter_plot.show()
         self.color_bar.show()
-        if len(self.x_data) > 4:
-            img, transform = self.get_step_scan_image(
-                x_data=self.x_data, y_data=self.y_data, z_data=self.z_data
-            )
-            if self.heatmap_window is None:
-                self.heatmap_window = HeatmapWindow(
-                        title=f"Heatmap: {self.z}",
-                        cmap="viridis",
-                        zlabel=self.z,
-                    )
-                self.heatmap_window.show()
-            self.heatmap_window.update_image(
-                img,
-                transform,
-                float(np.min(self.z_data)),
-                float(np.max(self.z_data)),
-            )
+        self.update_heatmap_window()
 
+    def update_heatmap_window(self):
+        """
+        Creates, updates, and shows the heatmap window 
+        if self.show_heatmap is True and data is sufficient.
+        """
+        # Do nothing if the checkbox isn't checked
+        if not self.show_heatmap:
+            return
+        
+        # Do nothing if there isn't enough data to interpolate
+        if len(self.x_data) <= 4:
+            return
+
+        img, transform = self.get_step_scan_image(
+            x_data=self.x_data, y_data=self.y_data, z_data=self.z_data
+        )
+        
+        # get_step_scan_image can fail (e.g., QhullError)
+        if img is None:
+            return
+
+        if self.heatmap_window is None:
+            self.heatmap_window = HeatmapWindow(
+                title=f"Heatmap: {self.z}",
+                cmap="viridis",
+                zlabel=self.z,
+            )
+            # Connect the window's destroyed signal to our slot
+            self.heatmap_window.destroyed.connect(self.on_heatmap_window_closed)
+
+        # Show and update the window
+        self.heatmap_window.show()
+        self.heatmap_window.update_image(
+            img,
+            transform,
+            float(np.min(self.z_data)),
+            float(np.max(self.z_data)),
+        )
+
+    def set_interpolation(self, method):
+        """Slot called by PlotWidget_2D's radio buttons setting the interpolation type"""
+        self.interpolation_method = method
+        # Re-draw the heatmap if it's visible
+        if self.show_heatmap:
+            self.update_heatmap_window()
+    
+    def set_heatmap_visible(self, visible):
+        """Slot called by PlotWidget_2D's checkbox. Sets the heatmap to visible or invisible."""
+        self.show_heatmap = visible
+        if visible:
+            # Try to show it now
+            self.update_heatmap_window()
+        else:
+            # Close it
+            if self.heatmap_window:
+                # Disconnect the signal first to prevent
+                # on_heatmap_window_closed from firing and signaling back
+                try:
+                    self.heatmap_window.destroyed.disconnect(self.on_heatmap_window_closed)
+                except (TypeError, RuntimeError):
+                    pass # Already disconnected or object gone
+                
+                self.heatmap_window.close()
+                self.heatmap_window = None # We closed it, so we know it's gone
+
+    def on_heatmap_window_closed(self):
+        """Slot for when the heatmap window is closed (by user 'X' or .close())."""
+        # self.heatmap_window is now destroyed
+        self.heatmap_window = None
+        # Emit signal so PlotWidget_2D can uncheck the box
+        self.heatmap_closed.emit()
+    
     def clear_plot(self):
         self.x_data.clear()
         self.y_data.clear()
@@ -1706,14 +1843,12 @@ class LivePlot_2D(QObject, CallbackBase):
         grid_x, grid_y, transform = self.get_image_grid(xy_data)
 
         # Interpolate the z data onto the grid
-        # Interpolate the z data onto the grid
-        self.interpolation = "nearest"
         try:
-            if self.interpolation == "linear":
+            if self.interpolation_method == "linear":
                 interp = LinearNDInterpolator(xy_data, z_data)
-            elif self.interpolation == "nearest":
+            elif self.interpolation_method == "nearest":
                 interp = NearestNDInterpolator(xy_data, z_data)
-            elif self.interpolation == "clough":
+            elif self.interpolation_method == "clough":
                 interp = CloughTocher2DInterpolator(xy_data, z_data)
             else:
                 raise ValueError(

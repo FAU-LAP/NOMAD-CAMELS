@@ -18,6 +18,14 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.10.4
+Features:
+- Added the option to display an interpolated heatmap to 2D plots. The toolbar now has the option `Heatmap` where you can enable/disable the heatmap and also choose from three different interpolation methods: 
+    1. Linear
+    2. Nearest Neighbor
+    3. Clough-Tocher
+  ![CAMELS heatmap](./assets/CAMELS_heatmap.png)
+
 ### 1.10.3
 Fixes:
 - Fixed issue where the Current Value plot would not update correctly when reading multiple different times or running subprotocols. 
