@@ -21,6 +21,8 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 ### 1.10.4
 Fixes:
 - Added 1s timeouts to all `requests`operations to prevent crashes/infinite waits when no internet is available.
+- Correctly checks if the values in the Current Values plot can be displayed (when not using `Plot all available channels`).
+- If the evaluation of the plot expression fails, it is now logged.
 
 
 Features:
