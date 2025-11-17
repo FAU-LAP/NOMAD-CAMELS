@@ -48,6 +48,7 @@ Fixes:
   
 ### 1.10.1
 > ⚠️ **Warning:** This version uses suitcase-nomad-camels-hdf5 v1.2.0 which is missing a dependency on `numexpr`. You can add it manually if you like with `pip install numexpr`. This was fixed in the next release.
+
 Fixes:
 - Fixed aliases not being correctly removed when unchecking a channel
 - Fixed login issue with new version of NOMAD Oasis
