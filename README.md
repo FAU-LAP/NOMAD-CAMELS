@@ -208,6 +208,7 @@ Fixed:
 
 Features:
 - can now asynchronously read channels during a running protocol
+  ![CAMELS async reading](./assets/CAMELS_async_reading.png)
 
 Changes:
 - Plots now use a different backend. Should make the run engine faster and more stable. Plots now run in their own threads and should not interefere as much with the main protocol execution.
