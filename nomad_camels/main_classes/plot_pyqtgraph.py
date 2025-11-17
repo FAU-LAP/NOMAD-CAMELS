@@ -1717,7 +1717,9 @@ class LivePlot_2D(QObject, CallbackBase):
         #     self.hist.show()
         # else:
         # Check for case that all z values are 0
-        if np.all(np.array(self.z_data) == 0):
+        if len(self.z_data) < 2:
+            self.z_normed = [0]
+        elif np.all(np.array(self.z_data) == 0):
             self.z_normed = np.zeros(len(self.z_data))
         else:
             self.z_normed = (self.z_data - np.min(self.z_data)) / (
