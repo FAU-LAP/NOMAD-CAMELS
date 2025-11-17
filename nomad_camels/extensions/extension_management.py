@@ -47,7 +47,10 @@ def get_online_extensions():
     """Returns a list of all extensions."""
     online_extensions = {}
     try:
-        extension_str = requests.get(url).text
+        extension_str = requests.get(
+            url,
+            timeout=1,
+        ).text
         for x in extension_str.splitlines():
             if "==" not in x:
                 continue
@@ -104,12 +107,18 @@ def get_local_extensions():
 
 def get_readme_text(extension):
     text_url = f"{repo_url}/{extension}/README.md"
-    return requests.get(text_url).text
+    return requests.get(
+        text_url,
+        timeout=1,
+    ).text
 
 
 def get_license_text(extension):
     text_url = f"{repo_url}/{extension}/LICENSE.txt"
-    return requests.get(text_url).text
+    return requests.get(
+        text_url,
+        timeout=1,
+    ).text
 
 
 class Extension_Manager(QDialog):
@@ -220,7 +229,7 @@ class Extension_Manager(QDialog):
             )
         package = importlib.import_module(f"nomad_camels_extension_{ext}")
         # if checkbox checked, add to self.extensions if not already there
-        name = f'nomad_camels_extension_{ext.replace("-", "_")}'
+        name = f"nomad_camels_extension_{ext.replace('-', '_')}"
         if self.checkbox_active.isChecked():
             if name not in self.extensions:
                 self.extensions.append(name)
@@ -249,7 +258,7 @@ class Extension_Manager(QDialog):
                 self.selection_label.setText(f"Local extension: {ext}")
             else:
                 self.selection_label.setText(f"Extension: {ext}")
-            name = f'nomad_camels_extension_{ext.replace("-", "_")}'
+            name = f"nomad_camels_extension_{ext.replace('-', '_')}"
             self.checkbox_active.setChecked(name in self.extensions)
             if local or installed:
                 self.update_config()
@@ -378,7 +387,7 @@ class Info_Widget(QSplitter):
                 for dist in importlib_metadata.distributions():
                     name = dist.metadata["Name"]
                     if not name.startswith(
-                        f'nomad-camels-driver-{extension.replace("_", "-")}'
+                        f"nomad-camels-driver-{extension.replace('_', '-')}"
                     ):
                         continue
                     lic = dist.read_text("LICENSE.txt")

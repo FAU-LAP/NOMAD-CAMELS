@@ -41,6 +41,7 @@ def execute_camels_api_call(
             result = requests.get(
                 f"{host}:{port}{selected_function['formatted_path']}",
                 headers={"Authorization": f"Bearer {authentication_string}"},
+                timeout=1,
             )
         elif authentication_type == "HTTP Basic":
             raise ValueError(
@@ -56,6 +57,7 @@ def execute_camels_api_call(
                 f"{host}:{port}{selected_function['formatted_path']}",
                 headers={"Authorization": f"Bearer {authentication_string}"},
                 json=message_body,
+                timeout=1,
             )
         elif authentication_type == "HTTP Basic":
             raise ValueError(
@@ -77,7 +79,6 @@ def execute_generic_api_call(
     authentication_type: str,
     authentication_string: str,
     http_parameters: dict,
-
 ):
     """
     This function executes the generic API call and returns the results.
@@ -95,20 +96,19 @@ def execute_generic_api_call(
         raise ValueError(
             "The API type is not Generic. This function is only for executing Generic API functions."
         )
-    
+
     # Add the http_parameters to the api_url
     if http_parameters:
         print(http_parameters)
         api_url = api_url + "?"
-        parameters = http_parameters['Parameter']
-        values = http_parameters['Value']
+        parameters = http_parameters["Parameter"]
+        values = http_parameters["Value"]
         for param, value in zip(parameters, values):
             api_url = api_url + f"{param}={value}&"
         api_url = api_url[:-1]
         print(api_url)
-        print('_'   * 50)
-    
-    
+        print("_" * 50)
+
     # Check the HTTP method
     if http_method == "GET":
         # Check the authentication type
@@ -116,14 +116,19 @@ def execute_generic_api_call(
             result = requests.get(
                 f"{host}:{port}{api_url}",
                 headers={"Authorization": f"Bearer {authentication_string}"},
+                timeout=1,
             )
         elif authentication_type == "HTTP Basic":
             result = requests.get(
                 f"{host}:{port}{api_url}",
                 auth=HTTPBasicAuth(*authentication_string.split(":")),
+                timeout=1,
             )
         elif authentication_type == "None":
-            result = requests.get(f"{host}:{port}{api_url}")
+            result = requests.get(
+                f"{host}:{port}{api_url}",
+                timeout=1,
+            )
 
     elif http_method == "POST":
         # Check the authentication type
@@ -132,17 +137,20 @@ def execute_generic_api_call(
                 f"{host}:{port}{api_url}",
                 headers={"Authorization": f"Bearer {authentication_string}"},
                 json=message_body,
+                timeout=1,
             )
         elif authentication_type == "HTTP Basic":
             result = requests.post(
                 f"{host}:{port}{api_url}",
                 auth=HTTPBasicAuth(*authentication_string.split(":")),
                 json=message_body,
+                timeout=1,
             )
         elif authentication_type == "None":
             result = requests.post(
                 f"{host}:{port}{api_url}",
                 json=message_body,
+                timeout=1,
             )
     elif http_method == "DELETE":
         # Check the authentication type
@@ -150,14 +158,19 @@ def execute_generic_api_call(
             result = requests.delete(
                 f"{host}:{port}{api_url}",
                 headers={"Authorization": f"Bearer {authentication_string}"},
+                timeout=1,
             )
         elif authentication_type == "HTTP Basic":
             result = requests.delete(
                 f"{host}:{port}{api_url}",
                 auth=HTTPBasicAuth(*authentication_string.split(":")),
+                timeout=1,
             )
         elif authentication_type == "None":
-            result = requests.delete(f"{host}:{port}{api_url}")
+            result = requests.delete(
+                f"{host}:{port}{api_url}",
+                timeout=1,
+            )
 
         elif http_method == "PATCH":
             # Check the authentication type
@@ -166,17 +179,20 @@ def execute_generic_api_call(
                     f"{host}:{port}{api_url}",
                     headers={"Authorization": f"Bearer {authentication_string}"},
                     json=message_body,
+                    timeout=1,
                 )
             elif authentication_type == "HTTP Basic":
                 result = requests.patch(
                     f"{host}:{port}{api_url}",
                     auth=HTTPBasicAuth(*authentication_string.split(":")),
                     json=message_body,
+                    timeout=1,
                 )
             elif authentication_type == "None":
                 result = requests.patch(
                     f"{host}:{port}{api_url}",
                     json=message_body,
+                    timeout=1,
                 )
 
             elif http_method == "PUT":
@@ -186,17 +202,20 @@ def execute_generic_api_call(
                         f"{host}:{port}{api_url}",
                         headers={"Authorization": f"Bearer {authentication_string}"},
                         json=message_body,
+                        timeout=1,
                     )
                 elif authentication_type == "HTTP Basic":
                     result = requests.put(
                         f"{host}:{port}{api_url}",
                         auth=HTTPBasicAuth(*authentication_string.split(":")),
                         json=message_body,
+                        timeout=1,
                     )
                 elif authentication_type == "None":
                     result = requests.put(
                         f"{host}:{port}{api_url}",
                         json=message_body,
+                        timeout=1,
                     )
     if result.status_code == 403:
         raise ValueError("The authentication failed. Please check your credentials.")
@@ -230,7 +249,10 @@ def get_available_camels_api_functions(host, port, camels_function_parameters):
     This function gets all the available CAMELS API functions.
     """
     # Get all the available functions from the API
-    result = requests.get(f"{host}:{port}/openapi.json")
+    result = requests.get(
+        f"{host}:{port}/openapi.json",
+        timeout=1,
+    )
     # Parse the JSON response
     openapi_schema = result.json()
     paths = openapi_schema.get("paths", {})

@@ -94,13 +94,21 @@ def login_to_nomad(parent=None):
             return
     if dialog.token:
         local_auth = {"Authorization": f"Bearer {dialog.token}"}
-        response = requests.get(f"{nomad_url}/uploads", headers=local_auth)
+        response = requests.get(
+            f"{nomad_url}/uploads",
+            headers=local_auth,
+            timeout=1,
+        )
         check_response(response, "Login failed!")
         token = dialog.token
         auth = local_auth
     else:
         login = {"username": dialog.username, "password": dialog.password}
-        response = requests.get(f"{nomad_url}/auth/token", params=login)
+        response = requests.get(
+            f"{nomad_url}/auth/token",
+            params=login,
+            timeout=1,
+        )
         check_response(response, "Login failed!")
         token = response.json()["access_token"]
         auth = {"Authorization": f"Bearer {token}"}
@@ -237,7 +245,12 @@ def _iterate_pagination(url, params, error_message):
     params = params or {}
     full_response_data = []
     while True:
-        response = requests.get(url, headers=auth, params=params)
+        response = requests.get(
+            url,
+            headers=auth,
+            params=params,
+            timeout=1,
+        )
         check_response(response, error_message)
         try:
             response_json = response.json()
@@ -274,7 +287,11 @@ def get_entry_archive(parent=None, entry_id=""):
     the archive of the entry
     """
     ensure_login(parent)
-    response = requests.get(f"{nomad_url}/entries/{entry_id}/archive", headers=auth)
+    response = requests.get(
+        f"{nomad_url}/entries/{entry_id}/archive",
+        headers=auth,
+        timeout=1,
+    )
     check_response(response, "Could not get entry from NOMAD!")
     try:
         response_json = response.json()
@@ -354,6 +371,7 @@ def upload_file(
             data=f,
             headers=head,
             params=params,
+            timeout=1,
         )
     check_response(response, "Failed to upload to NOMAD!")
     return response
@@ -372,7 +390,11 @@ def get_user_information(parent=None):
     the response's data, i.e. the user information
     """
     ensure_login(parent)
-    response = requests.get(f"{nomad_url}/users/me", headers=auth)
+    response = requests.get(
+        f"{nomad_url}/users/me",
+        headers=auth,
+        timeout=1,
+    )
     check_response(response, "Could not get user information from NOMAD")
     return response.json()
 
@@ -392,6 +414,11 @@ def get_entries(parent=None, owner="user"):
     params = {"owner": owner, "page_size": 1000}
     head = {"accept": "application/json"}
     head.update(auth)
-    response = requests.get(f"{nomad_url}/entries/archive", headers=head, params=params)
+    response = requests.get(
+        f"{nomad_url}/entries/archive",
+        headers=head,
+        params=params,
+        timeout=1,
+    )
     check_response(response, "Could not retrieve entry-information from NOMAD")
     return response.json()

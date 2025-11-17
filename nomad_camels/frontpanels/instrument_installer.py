@@ -116,11 +116,17 @@ def getAllDevices():
         # repo_part = repo.split(".com/")[1].split(".git")[0]
         # repo_url = f"https://raw.githubusercontent.com/{repo_part}/{branch}/{directory}"
         url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/driver_list/driver_list.txt"
-        devices_str = requests.get(url).text
+        devices_str = requests.get(
+            url,
+            timeout=1,
+        ).text
     except:
         try:
             url = "https://raw.githubusercontent.com/FAU-LAP/CAMELS_drivers/main/driver_list.txt"
-            devices_str = requests.get(url).text
+            devices_str = requests.get(
+                url,
+                timeout=1,
+            ).text
         except:
             devices_str = ""
     warned = False
@@ -145,20 +151,32 @@ def getAllDevices():
 
 def get_instr_readme_text(instr_name):
     url = f"{repo_url}/{instr_name}/README.md"
-    response = requests.get(url)
+    response = requests.get(
+        url,
+        timeout=1,
+    )
     if response.status_code == 404:
         url = f"{repo_url.replace('main', 'development')}/{instr_name}/README.md"
-        response = requests.get(url)
+        response = requests.get(
+            url,
+            timeout=1,
+        )
     text = response.text
     return text
 
 
 def get_instr_license_text(instr_name):
     url = f"{repo_url}/{instr_name}/LICENSE.txt"
-    response = requests.get(url)
+    response = requests.get(
+        url,
+        timeout=1,
+    )
     if response.status_code == 404:
         url = f"{repo_url.replace('main', 'development')}/{instr_name}/LICENSE.txt"
-        response = requests.get(url)
+        response = requests.get(
+            url,
+            timeout=1,
+        )
     text = response.text
     return text
 
@@ -218,7 +236,7 @@ class Info_Widget(QSplitter):
                 text = ""
                 for dist in importlib_metadata.distributions():
                     if not dist.metadata["Name"].startswith(
-                        f'nomad-camels-driver-{instr.replace("_", "-")}'
+                        f"nomad-camels-driver-{instr.replace('_', '-')}"
                     ) and not dist.metadata["Name"].startswith(
                         f"nomad_camels_driver_{instr}"
                     ):
