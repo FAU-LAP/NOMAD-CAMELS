@@ -1261,15 +1261,15 @@ class HeatmapWindow(QWidget):
     Separate window to display the interpolated heatmap.
     Code to calculate the interpolation adapted from https://github.com/bec-project/bec_widgets/tree/main/bec_widgets/widgets/plots/heatmap @3c6aa8e138f3ae0d3c67934e10436a6f93d3a133
     """
-    def __init__(self, parent=None, title="Heatmap", cmap="viridis", zlabel="z"):
+    def __init__(self, parent=None, title="Heatmap", cmap="viridis", xlabel="x", ylabel="y", zlabel="z"):
         super().__init__(parent=parent)
         self.setWindowTitle(title)
         self.layout = QGridLayout()
         self.setLayout(self.layout)
         self.graphics = pg.GraphicsLayoutWidget()
         self.plot = self.graphics.addPlot(0, 0)
-        self.plot.setLabel("bottom", "x")
-        self.plot.setLabel("left", "y")
+        self.plot.setLabel("bottom", xlabel)
+        self.plot.setLabel("left", ylabel)
         self.image_item = pg.ImageItem()
         self.plot.addItem(self.image_item)
         self.cmap = pg.colormap.get(cmap)
@@ -1760,6 +1760,8 @@ class LivePlot_2D(QObject, CallbackBase):
             self.heatmap_window = HeatmapWindow(
                 title=f"Heatmap: {self.z}",
                 cmap="viridis",
+                xlabel=self.x,
+                ylabel=self.y,
                 zlabel=self.z,
             )
             # Connect the window's destroyed signal to our slot
