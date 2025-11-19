@@ -1080,6 +1080,8 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nomad_camels.main_classes.plot_pyqtgraph">nomad_camels.main_classes.plot_pyqtgraph module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.main_classes.plot_pyqtgraph.FactorLineEdit"><code class="docutils literal notranslate"><span class="pre">FactorLineEdit</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#nomad_camels.main_classes.plot_pyqtgraph.HeatmapWindow"><code class="docutils literal notranslate"><span class="pre">HeatmapWindow</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip"><code class="docutils literal notranslate"><span class="pre">ListDeque_skip</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.main_classes.plot_pyqtgraph.LiveFitPlot"><code class="docutils literal notranslate"><span class="pre">LiveFitPlot</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot"><code class="docutils literal notranslate"><span class="pre">LivePlot</span></code></a></li>
@@ -5691,6 +5693,42 @@ which interrupts the blocking device call.</p>
 <span id="nomad-camels-main-classes-plot-pyqtgraph-module"></span><h2>nomad_camels.main_classes.plot_pyqtgraph module<a class="headerlink" href="#module-nomad_camels.main_classes.plot_pyqtgraph" title="Link to this heading"></a></h2>
 <p>This module contains the classes for the plot widgets, based on pyqtgraph.</p>
 <dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.FactorLineEdit">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.main_classes.plot_pyqtgraph.</span></span><span class="sig-name descname"><span class="pre">FactorLineEdit</span></span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.FactorLineEdit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QLineEdit</span></code></p>
+<p>A QLineEdit that consumes the Enter/Return key press
+to prevent it from propagating to a parent QMenu.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.FactorLineEdit.keyPressEvent">
+<span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg__1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtGui.QKeyEvent</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.FactorLineEdit.keyPressEvent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.FactorLineEdit.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;FactorLineEdit&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QLineEdit&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.FactorLineEdit.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.HeatmapWindow">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.main_classes.plot_pyqtgraph.</span></span><span class="sig-name descname"><span class="pre">HeatmapWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Heatmap'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'y'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'z'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.HeatmapWindow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Separate window to display the interpolated heatmap.
+Code to calculate the interpolation adapted from <a class="reference external" href="https://github.com/bec-project/bec_widgets/tree/main/bec_widgets/widgets/plots/heatmap">https://github.com/bec-project/bec_widgets/tree/main/bec_widgets/widgets/plots/heatmap</a> &#64;3c6aa8e138f3ae0d3c67934e10436a6f93d3a133</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.HeatmapWindow.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;HeatmapWindow&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.HeatmapWindow.staticMetaObject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.HeatmapWindow.update_image">
+<span class="sig-name descname"><span class="pre">update_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QTransform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.HeatmapWindow.update_image" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.main_classes.plot_pyqtgraph.</span></span><span class="sig-name descname"><span class="pre">ListDeque_skip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxlen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_n_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.ListDeque_skip" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -5925,8 +5963,70 @@ which interrupts the blocking device call.</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.estimate_image_resolution">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">estimate_image_resolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.estimate_image_resolution" title="Link to this definition"></a></dt>
+<dd><p>Estimate the number of pixels needed for the image based on the coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coords</strong> (<em>np.ndarray</em>) – The coordinates of the points.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The estimated width and height of the image.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[int, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.event">
 <span class="sig-name descname"><span class="pre">event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide6.QtCore.QEvent</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.event" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.get_image_grid">
+<span class="sig-name descname"><span class="pre">get_image_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">positions</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QTransform</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.get_image_grid" title="Link to this definition"></a></dt>
+<dd><p>LRU-cached calculation of the grid for the image. The lru cache is indexed by the scan_id
+to avoid recalculating the grid for the same scan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>_scan_id</strong> (<em>str</em>) – The scan ID. Needed for caching but not used in the function.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The grid x and y coordinates and the QTransform.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[np.ndarray, np.ndarray, QTransform]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.get_step_scan_image">
+<span class="sig-name descname"><span class="pre">get_step_scan_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QTransform</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.get_step_scan_image" title="Link to this definition"></a></dt>
+<dd><p>Get the image data for an arbitrary step scan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_data</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – The x data.</p></li>
+<li><p><strong>y_data</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – The y data.</p></li>
+<li><p><strong>z_data</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – The z data.</p></li>
+<li><p><strong>msg</strong> (<em>messages.ScanStatusMessage</em>) – The scan status message.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The image data and the QTransform.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[np.ndarray, QTransform]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.heatmap_closed">
+<span class="sig-name descname"><span class="pre">heatmap_closed</span></span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.heatmap_closed" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -5940,19 +6040,51 @@ which interrupts the blocking device call.</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.on_heatmap_window_closed">
+<span class="sig-name descname"><span class="pre">on_heatmap_window_closed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.on_heatmap_window_closed" title="Link to this definition"></a></dt>
+<dd><p>Slot for when the heatmap window is closed (by user ‘X’ or .close()).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.set_heatmap_visible">
+<span class="sig-name descname"><span class="pre">set_heatmap_visible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visible</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.set_heatmap_visible" title="Link to this definition"></a></dt>
+<dd><p>Slot called by PlotWidget_2D’s checkbox. Sets the heatmap to visible or invisible.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.set_interpolation">
+<span class="sig-name descname"><span class="pre">set_interpolation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.set_interpolation" title="Link to this definition"></a></dt>
+<dd><p>Slot called by PlotWidget_2D’s radio buttons setting the interpolation type</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.set_interpolation_factor">
+<span class="sig-name descname"><span class="pre">set_interpolation_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.set_interpolation_factor" title="Link to this definition"></a></dt>
+<dd><p>Slot to update the interpolation oversampling factor
+from PlotWidget_2D.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.start">
 <span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.start" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.staticMetaObject">
-<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;LivePlot_2D&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QObject&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#4</span> <span class="pre">type=Signal,</span> <span class="pre">signature=new_data()</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.staticMetaObject" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;LivePlot_2D&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QObject&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#4</span> <span class="pre">type=Signal,</span> <span class="pre">signature=new_data()</span>&#160;&#160; <span class="pre">#5</span> <span class="pre">type=Signal,</span> <span class="pre">signature=heatmap_closed()</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.staticMetaObject" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.update">
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.update" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.update_heatmap_window">
+<span class="sig-name descname"><span class="pre">update_heatmap_window</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.update_heatmap_window" title="Link to this definition"></a></dt>
+<dd><p>Creates, updates, and shows the heatmap window
+if self.show_heatmap is True and data is sufficient.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.LivePlot_2D.update_scatter">
@@ -6132,6 +6264,20 @@ t=0 is 1 Jan 1970 (“the UNIX epoch”). Default is ‘run’.</p></li>
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D.make_toolbar">
 <span class="sig-name descname"><span class="pre">make_toolbar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D.make_toolbar" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D.on_heatmap_closed_by_user">
+<span class="sig-name descname"><span class="pre">on_heatmap_closed_by_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D.on_heatmap_closed_by_user" title="Link to this definition"></a></dt>
+<dd><p>This slot is called when the LivePlot_2D class emits ‘heatmap_closed’.
+It unchecks the action to keep the UI in sync with the closed heatmap.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D.on_interp_factor_changed">
+<span class="sig-name descname"><span class="pre">on_interp_factor_changed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D.on_interp_factor_changed" title="Link to this definition"></a></dt>
+<dd><p>Called when user presses Enter in the factor line edit.
+Validates the text and sends the integer to LivePlot_2D.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.main_classes.plot_pyqtgraph.PlotWidget_2D.reopened">
