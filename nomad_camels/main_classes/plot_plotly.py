@@ -453,6 +453,7 @@ class PlotlyLiveCallback(CallbackBase):
             response = requests.get(
                 f"http://127.0.0.1:{self.web_port}/add_data",
                 params={"x": new_x, "y": json.dumps(new_y)},
+                timeout=1,
             )
             if response.status_code == 200:
                 pass  # Data updated successfully.
@@ -817,6 +818,7 @@ class PlotlyLiveCallback_2d(CallbackBase):
             response = requests.get(
                 f"http://127.0.0.1:{self.web_port}/add_data_2d",
                 params={"x": x, "y": y, "z": z},
+                timeout=1,
             )
             if response.status_code == 200:
                 pass  # Data updated successfully.

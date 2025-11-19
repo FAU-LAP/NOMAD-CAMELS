@@ -441,10 +441,13 @@ class API_Call_Config(Loop_Step_Config):
             self.combobox_camels_api_functions.addItem("Please enter a port first.")
             return
         try:
-            json_response = requests.get(f"http://{host}:{port}/openapi.json")
+            json_response = requests.get(
+                f"http://{host}:{port}/openapi.json",
+                timeout=1,
+            )
         except requests.exceptions.ConnectionError as e:
             print(
-                "Could not connect to the server.\nMake sure the server is running and that the host and port are correct."
+                f"Could not connect to the server.\nMake sure the server is running and that the host and port are correct.\n{e}"
             )
             self.combobox_camels_api_functions.clear()
             self.combobox_camels_api_functions.addItem(
@@ -531,9 +534,10 @@ class API_Call_Config(Loop_Step_Config):
                             if parameter_name == parameter["name"]:
                                 line_edit_parameter.setText(value)
                     line_edit_parameter.textChanged.connect(
-                        lambda text, param_name=parameter[
-                            "name"
-                        ]: self.update_parameter_value(param_name, text)
+                        lambda text,
+                        param_name=parameter["name"]: self.update_parameter_value(
+                            param_name, text
+                        )
                     )
 
     def update_camels_function_parameters(self, index=None):
@@ -564,9 +568,10 @@ class API_Call_Config(Loop_Step_Config):
                 line_edit_parameter = QLineEdit()
                 self.CAMELS_functions_layout.addWidget(line_edit_parameter, i + 1, 1)
                 line_edit_parameter.textChanged.connect(
-                    lambda text, param_name=parameter[
-                        "name"
-                    ]: self.update_parameter_value(param_name, text)
+                    lambda text,
+                    param_name=parameter["name"]: self.update_parameter_value(
+                        param_name, text
+                    )
                 )
         else:
             # clear the layout

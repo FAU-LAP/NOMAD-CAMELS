@@ -18,6 +18,28 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.10.4
+Fixes:
+> [!IMPORTANT]
+> This version fixes a dangerous issue where the values of channels in a `Set Channels` step could switch with others unexpectedly when filtering and unchecking channels at the same time.
+
+
+- Added 1s timeouts to all `requests`operations to prevent crashes/infinite waits when no internet is available.
+- Correctly checks if the values in the Current Values plot can be displayed (when not using `Plot all available channels`).
+- If the evaluation of the plot expression fails, it is now logged.
+- Added check to make sure there is always at least one user defined. You can not delete the last user.
+
+Features:
+- Added the option to display an oversampled and interpolated heatmap to the 2D plots. The toolbar now has the option `Heatmap` where you can enable/disable the heatmap and also choose from three different interpolation methods: 
+    1. Linear
+    2. Nearest Neighbor
+    3. Clough-Tocher
+
+  You can also set the oversampling factor (default: 10) which defines how many interpolated points are created between the measured points in each direction. Higher values lead to smoother heatmaps but also increase computation time. Nearest Neighbor interpolation does NOT use the oversampling factor.
+  
+  ![CAMELS heatmap](./assets/CAMELS_heatmap.png)
+
+
 ### 1.10.3
 Fixes:
 - Fixed issue where the Current Value plot would not update correctly when reading multiple different times or running subprotocols. 
@@ -31,7 +53,8 @@ Fixes:
 - Updated dependency on suitcase-nomad-camels-hdf5 to version 1.3.0 (1.2.0 had a missing dependency of `numexpr`)
   
 ### 1.10.1
-> ⚠️ **Warning:** This version uses suitcase-nomad-camels-hdf5 v1.2.0 which is missing a dependency on `numexpr`. You can add it manually if you like with `pip install numexpr`. This was fixed in the next release.
+> [!WARNING] This version uses suitcase-nomad-camels-hdf5 v1.2.0 which is missing a dependency on `numexpr`. You can add it manually if you like with `pip install numexpr`. This was fixed in the next release.
+
 Fixes:
 - Fixed aliases not being correctly removed when unchecking a channel
 - Fixed login issue with new version of NOMAD Oasis
@@ -40,7 +63,7 @@ Fixes:
 
 #### Major Change:
 Now uses the v1.0.0 of the suitcase-nomad-camels-hdf5 package for saving data. Major restructuring of the way plots are added to the measurement data.
-Now adds a `plot_n` where `n` is the number of the plot to each (nested) data group it was created in. This means plots of subprotocols are now where the subprotocol data is saved. Each plot (NXdata) entry contains the required x, y (and z) data. If it simply a plot of a measured channel it is an HDF5 SoftLink. If it is an arithmetic operation of multiple channels or plots, the newly calculated data is saved as a new dataset in the plot entry. This now enables users to immideatly view every plot they defined in CAMELS in the HDF5 file.
+Now adds a `plot_n` where `n` is the number of the plot to each (nested) data group it was created in. This means plots of subprotocols are now where the subprotocol data is saved. Each plot (NXdata) entry contains the required x, y (and z) data. If it simply a plot of a measured channel it is an HDF5 SoftLink. If it is an arithmetic operation (can include multiple channels), the newly calculated data is saved as a new dataset in the plot entry. This now enables users to immediately view every plot they defined in CAMELS in the HDF5 file (when using `h5web`).
 
 Changes:
 - Now always saves the current state (so the existing protocols and instruments) when clicking `OK` in the protocol configuration.
@@ -191,6 +214,7 @@ Fixed:
 
 Features:
 - can now asynchronously read channels during a running protocol
+  ![CAMELS async reading](./assets/CAMELS_async_reading.png)
 
 Changes:
 - Plots now use a different backend. Should make the run engine faster and more stable. Plots now run in their own threads and should not interefere as much with the main protocol execution.

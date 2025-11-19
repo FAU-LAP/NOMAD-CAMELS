@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 
 from bluesky.callbacks.core import CallbackBase
@@ -226,7 +227,13 @@ class Live_List(QObject, CallbackBase):
                 except KeyError:
                     if not self.eva.is_to_date(doc["time"]):
                         self.eva.event(doc)
-                    new_val = self.eva.eval(val)
+                    try:
+                        new_val = self.eva.eval(val)
+                    except ValueError:
+                        new_val = np.nan
+                        logging.error(
+                            f'Could not evaluate value "{val}" in Current Values Plot.'
+                        )
             if isinstance(new_val, (int, float)):
                 self.val_items[i].setText(f"{new_val:7e}")
             else:

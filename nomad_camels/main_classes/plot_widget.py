@@ -528,6 +528,7 @@ class LiveFit_Eva(LiveFit):
                         "model_name": self.model.name,
                         "y_axis_name": self.y,
                     },
+                    timeout=1,
                 )
                 if request.status_code != 200:
                     logging.warning(f"Error: {request.status_code}")

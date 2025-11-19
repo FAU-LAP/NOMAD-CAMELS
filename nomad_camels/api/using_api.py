@@ -10,6 +10,7 @@ port = 5000 # Change this to the port you are acutally using
 result = requests.post(
     f"http://127.0.0.1:{port}/api/v1/actions/run/protocols/{protocol_name}",
     headers=headers,
-    json=data
+    json=data,
+    timeout=1,
 )
 print(result.json())

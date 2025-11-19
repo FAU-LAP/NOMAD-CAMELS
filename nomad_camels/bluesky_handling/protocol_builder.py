@@ -123,7 +123,7 @@ def wait_for_dash_ready_plan(web_ports, check_interval=0.1, timeout=60):
         all_ready = True
         for web_port in web_ports:
             try:
-                response = requests.get(f"http://127.0.0.1:{web_port}/status")
+                response = requests.get(f"http://127.0.0.1:{web_port}/status", timeout=1,)
                 if response.status_code != 200:
                     all_ready = False
                     break

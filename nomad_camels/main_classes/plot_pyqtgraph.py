@@ -8,7 +8,13 @@ import numpy as np
 import threading
 from collections import deque
 import logging
-
+from scipy.spatial import KDTree
+from scipy.interpolate import (
+    CloughTocher2DInterpolator,
+    LinearNDInterpolator,
+    NearestNDInterpolator,
+)
+from scipy.spatial.qhull import QhullError
 from PySide6.QtWidgets import (
     QWidget,
     QGridLayout,
@@ -21,9 +27,11 @@ from PySide6.QtWidgets import (
     QComboBox,
     QColorDialog,
     QApplication,
+    QWidgetAction,
+    QHBoxLayout,
 )
-from PySide6.QtCore import Signal, QObject, QEvent, Qt, QCoreApplication
-from PySide6.QtGui import QIcon, QColor
+from PySide6.QtCore import Signal, QObject, QEvent, Qt
+from PySide6.QtGui import QIcon, QColor, QTransform, QAction, QActionGroup
 import PySide6
 import pyqtgraph as pg
 from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
@@ -39,7 +47,9 @@ from nomad_camels.utility.fit_variable_renaming import replace_name
 from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 from nomad_camels.main_classes.plot_widget import LiveFit_Eva
 from nomad_camels.utility.plot_placement import place_widget
-from nomad_camels.bluesky_handling.evaluation_helper import base_namespace as evaluator_base_namespace
+from nomad_camels.bluesky_handling.evaluation_helper import (
+    base_namespace as evaluator_base_namespace,
+)
 
 # recognized by pyqtgraph: r, g, b, c, m, y, k, w
 dark_mode_colors = ["w", "r", (0, 100, 255), "g", "c", "m", "y", "k"]
@@ -988,31 +998,42 @@ class LivePlot(QObject, CallbackBase):
 
     def check_if_plot_data_in_descriptor_doc(self, doc):
         # This check becomes True if any y-signal is found in either of the two possible locations.
-        y_signal_found = any(
-            key in self.eva.exchange_aliases(s)
-            for key in doc["data_keys"]
-            for s in self.ys
-        ) or any(
-            key.endswith("_variable_signal")
-            and any(
-                subkey in self.eva.exchange_aliases(s)
-                for subkey in doc["data_keys"][key].get("variables", [])
+        y_signal_found = (
+            any(
+                key in self.eva.exchange_aliases(s)
+                for key in doc["data_keys"]
                 for s in self.ys
             )
-            for key in doc["data_keys"]
-        ) or any("ElapsedTime" in s for s in self.ys) or any("StartTime" in s for s in self.ys)
+            or any(
+                key.endswith("_variable_signal")
+                and any(
+                    subkey in self.eva.exchange_aliases(s)
+                    for subkey in doc["data_keys"][key].get("variables", [])
+                    for s in self.ys
+                )
+                for key in doc["data_keys"]
+            )
+            or any("ElapsedTime" in s for s in self.ys)
+            or any("StartTime" in s for s in self.ys)
+        )
 
         # This check becomes True if the x-signal is found.
         # Using .get('variables', []) prevents an error if 'variables' doesn't exist.
         x_signal_found = (
-            any(
-                var_key in self.eva.exchange_aliases(self.x)
-                for key in doc["data_keys"]
-                if key.endswith("_variable_signal")
-                for var_key in doc["data_keys"][key].get("variables", [])
+            (
+                any(
+                    var_key in self.eva.exchange_aliases(self.x)
+                    for key in doc["data_keys"]
+                    if key.endswith("_variable_signal")
+                    for var_key in doc["data_keys"][key].get("variables", [])
+                )
+                or any(
+                    key in self.eva.exchange_aliases(self.x) for key in doc["data_keys"]
+                )
             )
-            or any(key in self.eva.exchange_aliases(self.x) for key in doc["data_keys"])
-        ) or "ElapsedTime" in self.x or "StartTime" in self.x
+            or "ElapsedTime" in self.x
+            or "StartTime" in self.x
+        )
 
         return y_signal_found and x_signal_found
 
@@ -1235,6 +1256,37 @@ class Teleporter(QObject):
 def handle_teleport(name, doc, obj):
     obj(name, doc, escape=True)
 
+class HeatmapWindow(QWidget):
+    """
+    Separate window to display the interpolated heatmap.
+    Code to calculate the interpolation adapted from https://github.com/bec-project/bec_widgets/tree/main/bec_widgets/widgets/plots/heatmap @3c6aa8e138f3ae0d3c67934e10436a6f93d3a133
+    """
+    def __init__(self, parent=None, title="Heatmap", cmap="viridis", xlabel="x", ylabel="y", zlabel="z"):
+        super().__init__(parent=parent)
+        self.setWindowTitle(title)
+        self.layout = QGridLayout()
+        self.setLayout(self.layout)
+        self.graphics = pg.GraphicsLayoutWidget()
+        self.plot = self.graphics.addPlot(0, 0)
+        self.plot.setLabel("bottom", xlabel)
+        self.plot.setLabel("left", ylabel)
+        self.image_item = pg.ImageItem()
+        self.plot.addItem(self.image_item)
+        self.cmap = pg.colormap.get(cmap)
+        # color bar
+        self.color_bar = pg.ColorBarItem(label=zlabel, interactive=False)
+        self.color_bar.setImageItem(self.image_item)
+        self.color_bar.setColorMap(self.cmap)
+        self.graphics.addItem(self.color_bar, row=0, col=1)
+        self.layout.addWidget(self.graphics, 0, 0)
+        self.resize(500, 400)
+
+    def update_image(self, img: np.ndarray, transform: QTransform, zmin: float, zmax: float):
+        if img is None:
+            return
+        self.image_item.setImage(img, autoLevels=False)
+        self.image_item.setTransform(transform)
+        self.color_bar.setLevels((zmin, zmax))
 
 class PlotWidget_2D(QWidget):
     """ """
@@ -1292,6 +1344,8 @@ class PlotWidget_2D(QWidget):
             **kwargs,
         )
         self.livePlot.new_data.connect(self.show_again)
+        # Connect to the signal from LivePlot_2D. Emited when the user closes the main 2D plot window. Then also clsoes the heatmap.
+        self.livePlot.heatmap_closed.connect(self.on_heatmap_closed_by_user)
         label_n_data = QLabel("# data points:")
         self.lineEdit_n_data = QLineEdit(str(maxlen))
         self.lineEdit_n_data.returnPressed.connect(self.change_maxlen)
@@ -1342,12 +1396,138 @@ class PlotWidget_2D(QWidget):
         actions = menu.actions()
         for action in actions:
             self.toolbar.addAction(action)
+
+        # Create the "Heatmap" menu itself
+        heatmap_menu = self.toolbar.addMenu("Heatmap")
+
+        self.show_heatmap_action = QAction("Show interpolated heatmap", self)
+        self.show_heatmap_action.setCheckable(True)
+        self.show_heatmap_action.setChecked(False) # Default to off
+        heatmap_menu.addAction(self.show_heatmap_action) # Add to the menu
+
+        heatmap_menu.addSeparator()
+
+        # Radio Button Group (to make them exclusive)
+        self.interpolation_group = QActionGroup(self)
+        self.interpolation_group.setExclusive(True)
+
+        # Linear Interpolation Radio Action
+        self.linear_action = QAction("Linear Interpolation", self)
+        self.linear_action.setCheckable(True)
+        self.linear_action.setChecked(True) # Default to linear
+        self.interpolation_group.addAction(self.linear_action) # Add to group
+        heatmap_menu.addAction(self.linear_action)          # Add to menu
+
+        # Nearest Neighbour Interpolation Radio Action
+        self.nearest_action = QAction("Nearest Neighbour Interpolation", self)
+        self.nearest_action.setCheckable(True)
+        self.nearest_action.setChecked(False)
+        self.interpolation_group.addAction(self.nearest_action) # Add to group
+        heatmap_menu.addAction(self.nearest_action)          # Add to menu
+
+        # Clough-Toucher Interpolation Radio Action
+        self.clough_action = QAction("Clough Interpolation", self)
+        self.clough_action.setCheckable(True)
+        self.clough_action.setChecked(False)
+        self.interpolation_group.addAction(self.clough_action) # Add to group
+        heatmap_menu.addAction(self.clough_action)          # Add to menu
+
+        # Enable/disable radio buttons based on the checkbox
+        # Set initial state (disabled, since checkbox is off)
+        self.linear_action.setEnabled(False)
+        self.nearest_action.setEnabled(False)
+        self.clough_action.setEnabled(False)
+
+        # Connect the checkbox's 'toggled' signal to the 'setEnabled' slot
+        # of each radio button. Only if we check the checkbox to use heatmap, are the actions enabled.
+        self.show_heatmap_action.toggled.connect(self.linear_action.setEnabled)
+        self.show_heatmap_action.toggled.connect(self.nearest_action.setEnabled)
+        self.show_heatmap_action.toggled.connect(self.clough_action.setEnabled)
+        # Connect to LivePlot_2D (self.livePlot) to acutally show the heatmap
+        # 1. Connect the main checkbox to LivePlot_2D
+        self.show_heatmap_action.toggled.connect(self.livePlot.set_heatmap_visible)
+
+        # 2. Connect the radio buttons to LivePlot_2D
+        #    (Using lambda to pass the specific interpolation string)
+        self.linear_action.triggered.connect(
+            lambda: self.livePlot.set_interpolation("linear")
+        )
+        self.nearest_action.triggered.connect(
+            lambda: self.livePlot.set_interpolation("nearest")
+        )
+        self.clough_action.triggered.connect(
+            lambda: self.livePlot.set_interpolation("clough")
+        )
+
+        # Connect the checkbox's 'toggled' signal to the 'setEnabled' slot
+        self.show_heatmap_action.toggled.connect(self.linear_action.setEnabled)
+        self.show_heatmap_action.toggled.connect(self.nearest_action.setEnabled)
+        
+        # Add changeable interpolation oversampling factor
+        heatmap_menu.addSeparator()
+
+        # Create the QWidgetAction
+        self.factor_action = QWidgetAction(self)
+        
+        # Create the container widget and layout
+        factor_widget = QWidget()
+        factor_layout = QHBoxLayout(factor_widget)
+        factor_layout.setContentsMargins(4, 2, 4, 2) # Tweak spacing
+
+        # Create the label and line edit
+        factor_label = QLabel("Oversampling Factor:")
+        self.interp_factor_edit = FactorLineEdit("10") # Default value
+        self.interp_factor_edit.setFixedWidth(40) # Keep it small
+        
+        # Add widgets to layout
+        factor_layout.addWidget(factor_label)
+        factor_layout.addWidget(self.interp_factor_edit)
+        
+        # Set the widget for the QWidgetAction
+        self.factor_action.setDefaultWidget(factor_widget)
+        heatmap_menu.addAction(self.factor_action)
+
+        # Connect the QLineEdit's "Enter" signal
+        self.interp_factor_edit.returnPressed.connect(self.on_interp_factor_changed)
+        self.factor_action.setEnabled(False) # Disabled by default   
+        self.show_heatmap_action.toggled.connect(self.factor_action.setEnabled)  
+        
         self.layout().addWidget(self.toolbar, 1, 0, 1, 3)
 
+    def on_interp_factor_changed(self):
+        """
+        Called when user presses Enter in the factor line edit.
+        Validates the text and sends the integer to LivePlot_2D.
+        """
+        try:
+            # Try to convert text to a positive integer
+            factor = int(self.interp_factor_edit.text())
+            if factor > 0:
+                # If valid, send it to the live plot
+                self.livePlot.set_interpolation_factor(factor)
+            else:
+                # If 0 or negative, reset text to the current good value
+                current_factor = self.livePlot.interpolation_factor
+                self.interp_factor_edit.setText(str(current_factor))
+        except ValueError:
+            # If not an integer (e.g., "abc"), reset to current good value
+            current_factor = self.livePlot.interpolation_factor
+            self.interp_factor_edit.setText(str(current_factor))
+    
+    def on_heatmap_closed_by_user(self):
+        """
+        This slot is called when the LivePlot_2D class emits 'heatmap_closed'.
+        It unchecks the action to keep the UI in sync with the closed heatmap.
+        """
+        self.show_heatmap_action.setChecked(False)
+    
     def clear_plot(self):
         self.livePlot.clear_plot()
 
     def closeEvent(self, event):
+        # Close the heatmap window if it is open
+        if self.livePlot.heatmap_window is not None:
+            self.livePlot.heatmap_window.close()
         self.closing.emit()
         super().closeEvent(event)
 
@@ -1356,6 +1536,7 @@ class LivePlot_2D(QObject, CallbackBase):
     """ """
 
     new_data = Signal()
+    heatmap_closed = Signal()
 
     def __init__(
         self,
@@ -1394,6 +1575,10 @@ class LivePlot_2D(QObject, CallbackBase):
         self._minx = self._miny = np.inf
         self._maxx = self._maxy = -np.inf
         self.multi_stream = multi_stream
+        self.heatmap_window = None
+        self.show_heatmap = False # Flag to control heatmap visibility
+        self.interpolation_method = "linear" # Default interpolation for heatmap
+        self.interpolation_factor = 10 # Default interpolation factor is 10. Can be changed by the Heatmap menu
 
     def __call__(self, name, doc, *, escape=False):
         if not escape and self.__teleporter is not None:
@@ -1431,6 +1616,7 @@ class LivePlot_2D(QObject, CallbackBase):
         self.plotItem.addItem(self.image)
         self._epoch_offset = None
         self._epoch = "run"
+        self.heatmap_window = None
 
     def update_scatter(self):
         try:
@@ -1531,7 +1717,9 @@ class LivePlot_2D(QObject, CallbackBase):
         #     self.hist.show()
         # else:
         # Check for case that all z values are 0
-        if np.all(np.array(self.z_data) == 0):
+        if len(self.z_data) < 2:
+            self.z_normed = [0]
+        elif np.all(np.array(self.z_data) == 0):
             self.z_normed = np.zeros(len(self.z_data))
         else:
             self.z_normed = (self.z_data - np.min(self.z_data)) / (
@@ -1545,12 +1733,101 @@ class LivePlot_2D(QObject, CallbackBase):
         self.hist.hide()
         self.scatter_plot.show()
         self.color_bar.show()
+        self.update_heatmap_window()
 
+    def update_heatmap_window(self):
+        """
+        Creates, updates, and shows the heatmap window 
+        if self.show_heatmap is True and data is sufficient.
+        """
+        # Do nothing if the checkbox isn't checked
+        if not self.show_heatmap:
+            return
+        
+        # Do nothing if there isn't enough data to interpolate
+        if len(self.x_data) <= 4:
+            return
+
+        img, transform = self.get_step_scan_image(
+            x_data=self.x_data, y_data=self.y_data, z_data=self.z_data
+        )
+        
+        # get_step_scan_image can fail (e.g., QhullError)
+        if img is None:
+            return
+
+        if self.heatmap_window is None:
+            self.heatmap_window = HeatmapWindow(
+                title=f"Heatmap: {self.z}",
+                cmap="viridis",
+                xlabel=self.x,
+                ylabel=self.y,
+                zlabel=self.z,
+            )
+            # Connect the window's destroyed signal to our slot
+            self.heatmap_window.setAttribute(Qt.WA_DeleteOnClose)
+            self.heatmap_window.destroyed.connect(self.on_heatmap_window_closed)
+
+        # Show and update the window
+        self.heatmap_window.show()
+        self.heatmap_window.update_image(
+            img,
+            transform,
+            float(np.min(self.z_data)),
+            float(np.max(self.z_data)),
+        )
+
+    def set_interpolation_factor(self, factor: int):
+        """
+        Slot to update the interpolation oversampling factor
+        from PlotWidget_2D.
+        """
+        self.interpolation_factor = factor
+        # If heatmap is active, redraw it with the new factor
+        if self.show_heatmap:
+            self.update_heatmap_window()
+    
+    def set_interpolation(self, method):
+        """Slot called by PlotWidget_2D's radio buttons setting the interpolation type"""
+        self.interpolation_method = method
+        # Re-draw the heatmap if it's visible
+        if self.show_heatmap:
+            self.update_heatmap_window()
+    
+    def set_heatmap_visible(self, visible):
+        """Slot called by PlotWidget_2D's checkbox. Sets the heatmap to visible or invisible."""
+        self.show_heatmap = visible
+        if visible:
+            # Try to show it now
+            self.update_heatmap_window()
+        else:
+            # Close it
+            if self.heatmap_window:
+                # Disconnect the signal first to prevent
+                # on_heatmap_window_closed from firing and signaling back
+                try:
+                    self.heatmap_window.destroyed.disconnect(self.on_heatmap_window_closed)
+                except (TypeError, RuntimeError):
+                    pass # Already disconnected or object gone
+                
+                self.heatmap_window.close()
+                self.heatmap_window = None # We closed it, so we know it's gone
+
+    def on_heatmap_window_closed(self):
+        """Slot for when the heatmap window is closed (by user 'X' or .close())."""
+        # self.heatmap_window is now destroyed
+        self.heatmap_window = None
+        # Emit signal so PlotWidget_2D can uncheck the box
+        self.heatmap_closed.emit()
+    
     def clear_plot(self):
         self.x_data.clear()
         self.y_data.clear()
         self.z_data.clear()
         self.update(self.x_data, self.y_data, self.z_data)
+        if self.heatmap_window:
+            # Clear external window image
+            self.heatmap_window.image_item.clear()
 
     def change_maxlen(self, maxlen):
         self.maxlen = maxlen
@@ -1609,6 +1886,136 @@ class LivePlot_2D(QObject, CallbackBase):
 
         return x_signal_found and y_signal_found and z_signal_found
 
+    def get_step_scan_image(
+        self,
+        x_data: list[float],
+        y_data: list[float],
+        z_data: list[float],
+    ) -> tuple[np.ndarray, QTransform]:
+        """
+        Get the image data for an arbitrary step scan.
+
+        Args:
+            x_data (list[float]): The x data.
+            y_data (list[float]): The y data.
+            z_data (list[float]): The z data.
+            msg (messages.ScanStatusMessage): The scan status message.
+
+        Returns:
+            tuple[np.ndarray, QTransform]: The image data and the QTransform.
+        """
+        xy_data = np.column_stack((x_data, y_data))
+        grid_x, grid_y, transform = self.get_image_grid(xy_data)
+
+        # Interpolate the z data onto the grid
+        try:
+            if self.interpolation_method == "linear":
+                interp = LinearNDInterpolator(xy_data, z_data)
+            elif self.interpolation_method == "nearest":
+                interp = NearestNDInterpolator(xy_data, z_data)
+            elif self.interpolation_method == "clough":
+                interp = CloughTocher2DInterpolator(xy_data, z_data)
+            else:
+                raise ValueError(
+                    "Interpolation method must be either 'linear', 'nearest', or 'clough'."
+                )
+            grid_z = interp(grid_x, grid_y)
+        
+        except (QhullError, ValueError):
+            # This happens when points are collinear (e.g., first line of a scan)
+            # or there are not enough points.
+            # We'll return a grid full of NaNs to avoid crashing.
+            grid_z = np.full(grid_x.shape, np.nan)
+
+        return grid_z, transform
+
+    def get_image_grid(self, positions) -> tuple[np.ndarray, np.ndarray, QTransform]:
+        """
+        LRU-cached calculation of the grid for the image. The lru cache is indexed by the scan_id
+        to avoid recalculating the grid for the same scan.
+
+        Args:
+            _scan_id (str): The scan ID. Needed for caching but not used in the function.
+
+        Returns:
+            tuple[np.ndarray, np.ndarray, QTransform]: The grid x and y coordinates and the QTransform.
+        """
+        base_width, base_height = self.estimate_image_resolution(positions)
+
+        # Apply oversampling factor
+        factor = self.interpolation_factor  # TODO hard coded sampling factor. modify this.
+
+        # Apply oversampling
+        width = int(base_width * factor)
+        height = int(base_height * factor)
+
+        # Create grid
+        grid_x, grid_y = np.mgrid[
+            min(positions[:, 0]) : max(positions[:, 0]) : width * 1j,
+            min(positions[:, 1]) : max(positions[:, 1]) : height * 1j,
+        ]
+
+        # Calculate transform
+        x_min, x_max = min(positions[:, 0]), max(positions[:, 0])
+        y_min, y_max = min(positions[:, 1]), max(positions[:, 1])
+        x_range = x_max - x_min
+        y_range = y_max - y_min
+        x_scale = x_range / width
+        y_scale = y_range / height
+
+        transform = QTransform()
+        transform.scale(x_scale, y_scale)
+        transform.translate(x_min / x_scale - 0.5, y_min / y_scale - 0.5)
+
+        return grid_x, grid_y, transform
+
+    @staticmethod
+    def estimate_image_resolution(coords: np.ndarray) -> tuple[int, int]:
+        """
+        Estimate the number of pixels needed for the image based on the coordinates.
+
+        Args:
+            coords (np.ndarray): The coordinates of the points.
+
+        Returns:
+            tuple[int, int]: The estimated width and height of the image."""
+        if coords.ndim != 2 or coords.shape[1] != 2:
+            raise ValueError("Input must be an (m x 2) array of (x, y) coordinates.")
+
+        x_min, x_max = coords[:, 0].min(), coords[:, 0].max()
+        y_min, y_max = coords[:, 1].min(), coords[:, 1].max()
+
+        tree = KDTree(coords)
+        distances, _ = tree.query(coords, k=2)
+        distances = distances[:, 1]  # Get the second nearest neighbor distance
+        avg_distance = np.mean(distances)
+
+        width_extent = x_max - x_min
+        height_extent = y_max - y_min
+
+        # Calculate the number of pixels needed based on the average distance
+        width_pixels = int(np.ceil(width_extent / avg_distance))
+        height_pixels = int(np.ceil(height_extent / avg_distance))
+
+        return max(1, width_pixels), max(1, height_pixels)
+
+class FactorLineEdit(QLineEdit):
+    """
+    A QLineEdit that consumes the Enter/Return key press
+    to prevent it from propagating to a parent QMenu.
+    """
+    def keyPressEvent(self, event):
+        key = event.key()
+        
+        # Check if the pressed key is Enter or Return
+        if key == Qt.Key_Return or key == Qt.Key_Enter:
+            # We got the key, so emit the signal we care about
+            self.returnPressed.emit()
+            # CRITICAL: Accept the event to stop it from bubbling up
+            event.accept()
+        else:
+            # For all other keys, behave like a normal QLineEdit
+            super().keyPressEvent(event)
 
 class LivePlot_NoBluesky(QObject):
     new_data_signal = Signal()
