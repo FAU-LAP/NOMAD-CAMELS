@@ -319,7 +319,11 @@ class Channels_Check_Table(QWidget):
                 and self.tableWidget_channels.item(i, 0).checkState()
                 == Qt.CheckState.Unchecked
             ):
+                n = channel_list.index(name)
                 channel_list.remove(name)
+                for lab in self.headerLabels[2:]:
+                    if n < len(self.info_dict[lab]):
+                        self.info_dict[lab].pop(n)
             if name in channel_list:
                 n = channel_list.index(name)
                 for j, lab in enumerate(self.headerLabels[2:]):
