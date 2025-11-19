@@ -462,6 +462,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
+                <td>Artifexengineering (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Tza500</a></td>
+                <td>Logger</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
                 <td>Calliope (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Mini3</a></td>
                 <td>Logger</td>
