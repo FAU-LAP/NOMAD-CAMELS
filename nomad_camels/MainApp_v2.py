@@ -900,6 +900,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if dialog.exec():
             # Changing the returned dict to dataframe and back to ensure proper formatting. Dictionary is formatted as {name: {'Name': name,...}, ...}
             dat = dialog.get_data()
+            if len(dat["name"]) == 0:
+                raise ValueError("At least one user must be defined.")
             if re.search(r"[^\w\s]", str(dat["name"][0])):
                 raise ValueError(
                     "Name contains special characters.\nPlease use only letters, numbers and whitespace."
