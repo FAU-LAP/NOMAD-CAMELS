@@ -20,10 +20,14 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 ### 1.10.4
 Fixes:
+> [!IMPORTANT]
+> This version fixes a dangerous issue where the values of channels in a `Set Channels` step could switch with others unexpectedly when filtering and unchecking channels at the same time.
+
+
 - Added 1s timeouts to all `requests`operations to prevent crashes/infinite waits when no internet is available.
 - Correctly checks if the values in the Current Values plot can be displayed (when not using `Plot all available channels`).
 - If the evaluation of the plot expression fails, it is now logged.
-
+- Added check to make sure there is always at least one user defined. You can not delete the last user.
 
 Features:
 - Added the option to display an oversampled and interpolated heatmap to the 2D plots. The toolbar now has the option `Heatmap` where you can enable/disable the heatmap and also choose from three different interpolation methods: 
@@ -49,7 +53,7 @@ Fixes:
 - Updated dependency on suitcase-nomad-camels-hdf5 to version 1.3.0 (1.2.0 had a missing dependency of `numexpr`)
   
 ### 1.10.1
-> ⚠️ **Warning:** This version uses suitcase-nomad-camels-hdf5 v1.2.0 which is missing a dependency on `numexpr`. You can add it manually if you like with `pip install numexpr`. This was fixed in the next release.
+> [!WARNING] This version uses suitcase-nomad-camels-hdf5 v1.2.0 which is missing a dependency on `numexpr`. You can add it manually if you like with `pip install numexpr`. This was fixed in the next release.
 
 Fixes:
 - Fixed aliases not being correctly removed when unchecking a channel
