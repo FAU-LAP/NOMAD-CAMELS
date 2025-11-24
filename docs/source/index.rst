@@ -270,6 +270,7 @@ E-mail `nomad-camels@fau.de <mailto:nomad-camels@fau.de>`_
    :caption: Videos
    :hidden:
 
+   Explanation <doc/videos/explanation.md>
    User Feedback <doc/videos/user_feedback.md>
    Developer Statements <doc/videos/developer_statements.md>
 
