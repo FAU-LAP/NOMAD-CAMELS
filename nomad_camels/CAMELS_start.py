@@ -199,6 +199,8 @@ def start_camels(start_proxy_bool=True, actually_exec=True):
     main_window = MainApp_v2.MainWindow(start_proxy_bool=start_proxy_bool)
     loading_screen.hide()
     main_window.show()
+    main_window.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
+
     thread.quit()
     thread.wait()
     thread.deleteLater()

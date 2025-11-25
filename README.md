@@ -18,6 +18,11 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.10.5
+Fixes:
+
+- Fixed broken dependencies as `databroker` version >=2.0.0 does not include `xarray` anymore. Locked to `v1.2.5`.
+
 ### 1.10.4
 Fixes:
 > [!IMPORTANT]

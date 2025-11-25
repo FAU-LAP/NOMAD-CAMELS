@@ -214,7 +214,7 @@ QPushButton:disabled {
          <item row="1" column="0">
           <widget class="QTextEdit" name="textEdit_meas_description">
            <property name="placeholderText">
-            <string>Add a measurmeent description here.</string>
+            <string>Add a measurement description here.</string>
            </property>
           </widget>
          </item>
