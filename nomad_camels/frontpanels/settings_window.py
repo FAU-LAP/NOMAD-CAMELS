@@ -524,7 +524,8 @@ class Settings_Window(Ui_settings_window, QDialog):
                     "You can not use the API without the required modules!",
                 )
                 return False
-
+        else:
+            return True
 
 def hash_api_key(api_key):
     return hashlib.sha256(api_key.encode()).hexdigest()
