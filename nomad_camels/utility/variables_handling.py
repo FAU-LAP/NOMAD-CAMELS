@@ -364,7 +364,19 @@ def get_menus(connect_function, pretext="Insert", use_aliases=True):
         evaluation_functions_names, function_actions, connect_function
     )
     channel_menu.addActions(channel_actions)
-    variable_menu.addActions(actions)
+    seen_texts = set()
+    unique_actions = []
+    # 1. Iterate through the original list of actions
+    for action in actions:
+        # 2. Get the unique key (the text)
+        current_text = action.text()
+        # 3. Check if we've seen this text before.
+        if current_text not in seen_texts:
+            # 4. If new, add the action object to the final list
+            unique_actions.append(action)
+            # 5. Add the text string to the set so we don't process it again
+            seen_texts.add(current_text)
+    variable_menu.addActions(unique_actions)
     operator_menu.addActions(operator_actions)
     function_menu.addActions(function_actions)
     if pretext == "Insert":
