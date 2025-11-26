@@ -18,6 +18,12 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.10.6
+Fixes:
+
+- Fixed broken API enabling in the settings.
+- Now removes duplicate variables from the list when right clicking and selecting "Insert Variable".
+
 ### 1.10.5
 Fixes:
 
