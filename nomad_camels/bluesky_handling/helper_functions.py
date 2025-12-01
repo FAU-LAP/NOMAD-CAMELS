@@ -1161,26 +1161,26 @@ def evaluate_python_file_output(stdout, namespace):
         if match:
             json_str = match.group(1).strip()
 
-            # Load the JSON string into a Python dictionary
+            # Load the JSON string into a Python variable
             data = json.loads(json_str)
+
+            if isinstance(data, list):  # Step 1: Check if the stdout is a list or dictionary
+                for item in data:  # Step 2: Loop through the list
+                    key, value = map(
+                        str.strip, item.split("=", 1)
+                    )  # Step 3: Split each string
+                    namespace[key] = value
+                    print(f"Python File returned:\n{key} = {value}")
+
+            if isinstance(data, dict):
+                for key, value in data.items():
+                    namespace[key] = value
+                    print(f"Python File returned:\n{key} = {value}")
         else:
-            raise ValueError("No valid dictionary found in the output")
-        variables_dict = {}
-        if isinstance(data, list):  # Step 1: Check if the stdout is a dictionary
-            for item in data:  # Step 2: Loop through the list
-                key, value = map(
-                    str.strip, item.split("=", 1)
-                )  # Step 3: Split each string
-                variables_dict[key] = value
-
-            for key, value in variables_dict.items():
-                namespace[key] = value
-                print(f"Python File returned:\n{key} = {value}")
-
-        if isinstance(data, dict):
-            for key, value in data.items():
-                namespace[key] = value
-                print(f"Python File returned:\n{key} = {value}")
+            import logging
+            logging.warning(
+                "No valid dictionary found in the output when trying to parse the returned variables from the Python file."
+            )
 
 
 class Value_Setter(QWidget):
