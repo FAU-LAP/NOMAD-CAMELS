@@ -2007,6 +2007,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             file_ending = ".h5"
         savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.filename or 'data'}{file_ending}"
         savepath = os.path.normpath(savepath)
+        # Get all files in the folder and return the one with the latest modification date
+        if not os.path.isdir(os.path.dirname(savepath)):
+            os.makedirs(os.path.dirname(savepath))
+        files = [
+                entry.path  # scandir entries already have a .path attribute
+                for entry in os.scandir(os.path.dirname(savepath))
+                if entry.is_file()
+                and entry.name.startswith(protocol.filename or "data")
+            ]
+        if files:
+            savepath = max(files, key=os.path.getmtime)
         while not os.path.exists(savepath):
             savepath = os.path.dirname(savepath)
 
@@ -2053,7 +2064,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             api_uuid (Optional[str]): The API unique identifier, defaults to None.
         """
         # Add a 2 second wait time to ensure that the run engine has fully stopped. This makes long queues more stable.
-        import time    
+        import time
+
         while self.run_engine and self.run_engine.state != "idle":
             time.sleep(0.1)
         time.sleep(1)

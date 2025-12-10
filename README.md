@@ -18,6 +18,12 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.10.8
+
+Fixes:
+
+- Now "Open Data Path" (when right-clicking a protocol) always opens the the explorer to the latest measurement file of the protocol.
+
 ### 1.10.7
 
 Fixes:
