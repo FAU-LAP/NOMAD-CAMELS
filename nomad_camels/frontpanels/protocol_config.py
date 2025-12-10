@@ -849,7 +849,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             if step.step_type == "Read Channels":
                 all_read_channels.extend(step.channel_list)
         # get variables of the protocol
-        variables = self.protocol.variables
+        variables = deepcopy(self.protocol.variables)
         # Add the loop_step_variables
         variables.update(self.protocol.loop_step_variables)
         # parse the plot axes expression to extract the actual channels
