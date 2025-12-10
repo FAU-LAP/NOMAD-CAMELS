@@ -18,6 +18,13 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.10.7
+
+Fixes:
+
+- Removed the exception when a Python file that is executed in a protocol/sequence does not return a value that can be parsed (including not returning anything at all). Now this is logged as a warning instead.
+- Now Protocol Step variables (like `For Loop Value`) do not appear twice or in the `Variables` tab anymore.
+
 ### 1.10.6
 Fixes:
 

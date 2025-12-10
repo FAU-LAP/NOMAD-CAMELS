@@ -2264,9 +2264,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             # nomad_communication.upload_file(
             #     file, upload, f"CAMELS_data{name}", parent=self
             # )
-            self.nomad_upload_thread = file_uploading.UploadThread(file, upload, f"CAMELS_data{name}", parent_widget=self)
+            self.nomad_upload_thread = file_uploading.UploadThread(
+                file, upload, f"CAMELS_data{name}", parent_widget=self
+            )
             # ensure cleanup after thread finishes
-            self.nomad_upload_thread.finished.connect(lambda: setattr(self, "nomad_upload_thread", None))
+            self.nomad_upload_thread.finished.connect(
+                lambda: setattr(self, "nomad_upload_thread", None)
+            )
             self.nomad_upload_thread.start()
         elif self.comboBox_upload_type.currentText() == "ask after run":
             # IMPORT file_uploading only if needed
@@ -2651,9 +2655,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     pass
                 else:
                     raise e
-        protocol.variables = (
-            variables or protocol.variables or variables_handling.loop_step_variables
-        )
+        protocol.variables = variables or protocol.variables
         protocol.session_name = self.lineEdit_session.text()
         if re.search(r"[^\w\s]", protocol.session_name):
             raise ValueError(

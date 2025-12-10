@@ -1,6 +1,6 @@
 [project]
 name = "nomad_camels"
-version = "1.10.6"
+version = "1.10.7"
 description = "CAMELS is a configurable measurement software, targeted towards the requirements of experimental solid-state physics."
 authors = [
     {name = "FAIRmat - HU Berlin",email = "nomad-camels@fau.de"}
