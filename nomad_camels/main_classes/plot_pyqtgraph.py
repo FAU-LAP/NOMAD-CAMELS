@@ -14,7 +14,7 @@ from scipy.interpolate import (
     LinearNDInterpolator,
     NearestNDInterpolator,
 )
-from scipy.spatial.qhull import QhullError
+from scipy.spatial import QhullError
 from PySide6.QtWidgets import (
     QWidget,
     QGridLayout,
