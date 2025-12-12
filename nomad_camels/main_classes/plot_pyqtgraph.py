@@ -26,13 +26,11 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QComboBox,
     QColorDialog,
-    QApplication,
     QWidgetAction,
     QHBoxLayout,
 )
 from PySide6.QtCore import Signal, QObject, QEvent, Qt
 from PySide6.QtGui import QIcon, QColor, QTransform, QAction, QActionGroup
-import PySide6
 import pyqtgraph as pg
 from pyqtgraph.GraphicsScene.mouseEvents import MouseClickEvent
 
@@ -44,12 +42,9 @@ from bluesky.callbacks.core import get_obj_fields, CallbackBase
 
 from nomad_camels.gui.plot_options import Ui_Plot_Options
 from nomad_camels.utility.fit_variable_renaming import replace_name
-from nomad_camels.bluesky_handling.evaluation_helper import Evaluator
 from nomad_camels.main_classes.plot_widget import LiveFit_Eva
 from nomad_camels.utility.plot_placement import place_widget
-from nomad_camels.bluesky_handling.evaluation_helper import (
-    base_namespace as evaluator_base_namespace,
-)
+
 
 # recognized by pyqtgraph: r, g, b, c, m, y, k, w
 dark_mode_colors = ["w", "r", (0, 100, 255), "g", "c", "m", "y", "k"]
