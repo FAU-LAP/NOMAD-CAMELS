@@ -20,6 +20,10 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 ### 1.10.8
 
+Changes:
+
+- Now adds the session name (if specified) to the NOMAD upload path, mirroring to the local data path.
+
 Fixes:
 
 - Now "Open Data Path" (when right-clicking a protocol) always opens the the explorer to the latest measurement file of the protocol.
