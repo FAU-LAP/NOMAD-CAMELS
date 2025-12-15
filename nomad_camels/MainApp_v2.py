@@ -2268,6 +2268,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 name = ""
         else:
             name = f"/{self.active_sample}"
+        if self.lineEdit_session.text():
+            name += f"/{self.lineEdit_session.text()}"
         if self.comboBox_upload_type.currentText() == "auto upload":
             # IMPORT nomad_communication only if needed
             from nomad_camels.nomad_integration import file_uploading
