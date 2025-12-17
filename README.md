@@ -27,6 +27,7 @@ Changes:
 Fixes:
 
 - Now "Open Data Path" (when right-clicking a protocol) always opens the the explorer to the latest measurement file of the protocol.
+- Now correctly warns when trying to run a protocol without having a sample selected (often due to not having any samples for the current user). Gives the option to either cancel or run with a temporary "default_sample".
 
 ### 1.10.7
 

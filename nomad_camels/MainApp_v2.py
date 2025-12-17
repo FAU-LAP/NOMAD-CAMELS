@@ -2745,6 +2745,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         Returns:
             tuple: A tuple containing the sample name and sample data dictionary.
         """
+        sampledata = None
         if self.nomad_sample and self.checkBox_use_nomad_sample.isChecked():
             sampledata = self.nomad_sample
             if "name" in sampledata:
@@ -2766,13 +2767,27 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                     ):
                         sampledata = self.sampledata[s]
                         break
-            else:
-                sampledata = (
-                    {"name": "default_sample"}
-                    if sample == "default_sample"
-                    else self.sampledata[sample]
+            if not sampledata:
+                # Create a popup window to warn the user that no sample was found and that "default sample" will be used
+                from PySide6.QtWidgets import QMessageBox
+
+                reply = QMessageBox.question(
+                    self,
+                    "Sample Not Found",
+                    'No sample found. Make sure you actually added a sample.\nDo you want to run the measurement with a temporary "default_sample" instead?',
+                    QMessageBox.Yes | QMessageBox.No,
+                    QMessageBox.No,  # This sets "No" as the default selected button for safety
                 )
-            sample = sampledata["name"]
+                if reply == QMessageBox.Yes:
+                    sampledata = (
+                        {"name": "default_sample"}
+                        if sample == "default_sample"
+                        else self.sampledata[sample]
+                    )
+                else:
+                    raise Exception("No sample found. Add a sample to run protocols.")
+            if sampledata and isinstance(sampledata, dict) and "name" in sampledata:
+                sample = sampledata["name"]
         sample = clean_filename(sample)
         return sample, sampledata
 
