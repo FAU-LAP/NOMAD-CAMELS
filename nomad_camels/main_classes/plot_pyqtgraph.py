@@ -940,24 +940,6 @@ class LivePlot(QObject, CallbackBase):
             if doc["descriptor"] in self.descs_fit_readying:
                 self.descs_fit_readying[doc["descriptor"]].get_ready()
             return
-        # Check to see if doc["data"] contains keys matching any on the self.ys strings
-        # if not (
-        #     any(
-        #         key in self.eva.exchange_aliases(s)
-        #         for key in doc["data"]
-        #         for s in self.ys
-        #     )
-        #     or any(
-        #         key.endswith("_variable_signal")
-        #         and any(
-        #             subkey in self.eva.exchange_aliases(s)
-        #             for subkey in doc["data"][key]
-        #             for s in self.ys
-        #         )
-        #         for key in doc["data"]
-        #     )
-        # ):
-        #     return
         try:
             new_x = doc["data"][self.x]
         except KeyError:
