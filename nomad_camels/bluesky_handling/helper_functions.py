@@ -5,6 +5,7 @@ simpler to use these than writing them as a string into the protocol-file.
 """
 
 import numpy as np
+from datetime import datetime
 from bluesky import plan_stubs as bps
 from bluesky.preprocessors import contingency_wrapper, rewindable_wrapper
 from bluesky.utils import all_safe_rewind, short_uid
@@ -73,6 +74,8 @@ def get_newest_file(directory):
     """
     # If the given path is a file, use its directory
     if os.path.isfile(directory):
+        directory = os.path.dirname(directory)
+    elif directory.endswith('.h5') or directory.endswith('.nxs'):
         directory = os.path.dirname(directory)
 
     # Define the search patterns for '.nxs' and '.h5' files
@@ -170,6 +173,7 @@ def saving_function(
     plot_data=None,
     do_nexus_output=True,
     new_file_hours=0,
+    session_name="",
 ):
     """
     Create a Serializer and return it.
@@ -209,6 +213,16 @@ def saving_function(
     if os.path.splitext(path)[1] == ".nxs" or os.path.splitext(path)[1] == ".h5":
         fname = os.path.basename(path)
         path = os.path.dirname(path)
+
+    start_time = datetime.fromtimestamp(start_doc["time"])
+    timestamp = start_time.strftime("%Y-%m-%d_%H-%M-%S")
+    
+    base_name = os.path.splitext(fname)[0]
+    if session_name:
+        fname = f"{base_name}__S__{session_name}_{timestamp}{file_extension}"
+    else:
+        fname = f"{base_name}_{timestamp}{file_extension}"
+    
     return [
         Serializer(
             path,
