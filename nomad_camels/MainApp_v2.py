@@ -2213,6 +2213,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         plot_data=self.saving_plot_list,
                         do_nexus_output=self.running_protocol.use_nexus,
                         new_file_hours=self.protocol_module.new_file_hours,
+                        session_name=self.running_protocol.session_name,
                     )
                 ]
             )
