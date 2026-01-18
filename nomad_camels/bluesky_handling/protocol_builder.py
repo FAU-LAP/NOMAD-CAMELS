@@ -527,7 +527,7 @@ def build_protocol(
     protocol_string += "\tdevs = {}\n\tdevice_config = {}\n\ttry:\n"
     protocol_string += devices_string
     if protocol.h5_during_run:
-        protocol_string += "\t\trr = RunRouter([lambda x, y: helper_functions.saving_function(x, y, save_path, new_file_each_run, plots, do_nexus_output, new_file_hours)])\n"
+        protocol_string += "\t\trr = RunRouter([lambda x, y: helper_functions.saving_function(x, y, save_path, new_file_each_run, plots, do_nexus_output, new_file_hours, session_name)])\n"
         protocol_string += "\t\tsubscription_rr = RE.subscribe(rr)\n"
     protocol_string += standard_start_string2
     protocol_string += standard_final_string
