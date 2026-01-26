@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'general_protocol_settings.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.8.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -319,6 +319,23 @@ class Ui_Protocol_Settings(object):
 
         self.checkBox_live_comments.setText(QCoreApplication.translate("Protocol_Settings", u"allow live comments to protocol", None))
         self.label.setText(QCoreApplication.translate("Protocol_Settings", u"Filename:", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_filename.setToolTip(QCoreApplication.translate("Protocol_Settings", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Option to use dynamic variables in file names, evaluated each time the protocol runs:</p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">- {time}</span>: Protocol start time (similar to ISO 8601 format).</p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; "
+                        "margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">- {session}</span>: Current session name (if provided).</p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">- {protocol}</span>: Executed protocol name.</p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">- {user}</span>: User name.</p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">- {sample_id}</span>: Sample ID.</p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">- {sample}</span>: Sample name.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
         self.lineEdit_filename.setText(QCoreApplication.translate("Protocol_Settings", u"Datafile", None))
         self.lineEdit_filename.setPlaceholderText(QCoreApplication.translate("Protocol_Settings", u"Filename", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.general), QCoreApplication.translate("Protocol_Settings", u"General Settings", None))
