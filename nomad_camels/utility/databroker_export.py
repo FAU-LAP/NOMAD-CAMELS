@@ -424,13 +424,15 @@ def export_h5_to_csv_json(
         )
     else:
         fpath = export_path
+
+    source_base = os.path.basename(filename).split(".")[0]
     for entry_name in entries:
         with h5py.File(filename, "r") as file:
             entry = file[entry_name]
             entry_name_non_iso = clean_filename(entry_name)
             if export_metadata:
                 metadata = h5_group_to_dict(entry)
-                fname = os.path.join(fpath, f"{entry_name_non_iso}_metadata.json")
+                fname = os.path.join(fpath, f"{entry_name_non_iso}_metadata_{source_base}.json")
                 if not os.path.isdir(os.path.dirname(fname)):
                     os.makedirs(os.path.dirname(fname))
                 with open(fname, "w", encoding="utf-8") as json_file:
@@ -440,7 +442,7 @@ def export_h5_to_csv_json(
                     continue
                 data = entry["data"]
                 export_h5_group_to_csv(
-                    data, os.path.join(fpath, entry_name_non_iso, "primary.csv")
+                    data, os.path.join(fpath, entry_name_non_iso, f"{source_base}_primary.csv")
                 )
 
 
