@@ -193,3 +193,15 @@ data = h5_to_dict(r'C:\Users\file.h5')
 
 Then  access the relevant data by navigating through the dictionary.
 
+## Dynamic Variables for File Naming
+
+You can use the following dynamic variables in file names, which are evaluated each time the protocol runs:
+
+* `{time}`: Protocol start time (similar to ISO 8601 format).
+* `{session}`: Current session name (if provided).
+* `{protocol}`: Executed protocol name.
+* `{user}`: User name.
+* `{sample_id}`: Sample ID.
+* `{sample}`: Sample name.
+
+Example: `ODMR_{user}_{sample}_experiment_data` will be resolved to something like `ODMR_Alex_CoFe_experiment_data.h5`.
