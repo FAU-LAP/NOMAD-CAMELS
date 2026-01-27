@@ -2,6 +2,7 @@ import importlib.metadata
 import os.path
 import json
 import sys
+import re
 
 import databroker
 import h5py
@@ -744,4 +745,5 @@ def clean_filename(filename):
     filename = filename.replace(">", "_greater_")
     filename = filename.replace("|", "-")
     filename = filename.replace('"', "_quote_")
+    filename = re.sub(r"_+", "_", filename)
     return filename
