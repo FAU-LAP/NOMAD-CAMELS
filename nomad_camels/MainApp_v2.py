@@ -2000,16 +2000,27 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             protocol_name (str): The name of the protocol.
         """
         user = self.get_user_name_data()[0]
-        sample, sampledata = self.get_sample_name_data(prompt_on_missing=True)
+        sample, sampledata = self.get_sample_name_data(prompt_on_missing=False)
         protocol = self.protocols_dict[protocol_name]
-        session = self.lineEdit_session.text()
+        session = (getattr(protocol, "session_name", None) or self.lineEdit_session.text() or "").strip()
         if protocol.use_nexus:
             file_ending = ".nxs"
         else:
             file_ending = ".h5"
-        filename = protocol.filename.format(sample=sample, sample_id=sampledata["sample_id"], user=user, protocol=protocol_name, session=session, time=self.formatted_iso_time(self._protocol_start_time))
-        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{session}/{filename or 'data'}{file_ending}"
-        savepath = os.path.normpath(savepath)
+        filename = protocol.filename.format(
+            sample=sample,
+            sample_id=sampledata["sample_id"] or "",
+            user=user,
+            protocol=protocol_name,
+            session=session,
+            time=self.formatted_iso_time(self._protocol_start_time),
+        )
+        filename = clean_filename(filename)
+        parts = [self.preferences["meas_files_path"], user, sample]
+        if session:
+            parts.append(session)
+        filename_part = (filename or "data") + file_ending
+        savepath = os.path.normpath(os.path.join(*parts, filename_part))
         # Get all files in the folder and return the one with the latest modification date
         if not os.path.isdir(os.path.dirname(savepath)):
             os.makedirs(os.path.dirname(savepath))
@@ -2683,17 +2694,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 else:
                     raise e
         protocol.variables = variables or protocol.variables
-        from PySide6.QtWidgets import QMessageBox
         protocol.session_name = self.lineEdit_session.text()
-        if "{session" in protocol.filename and not protocol.session_name:
-            reply = QMessageBox.question(
-                self,
-                "Session not found",
-                "The filename includes {session} but the session field is empty.\nContinue without session in the filename?",
-                QMessageBox.Yes | QMessageBox.No,
-            )
-            if reply == QMessageBox.No:
-                raise Exception("Add a session name.")
         if re.search(r"[^\w\s]", protocol.session_name):
             raise ValueError(
                 "Session name contains special characters.\nPlease use only letters, numbers and whitespace."
@@ -2710,9 +2711,21 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol.measurement_description = self.textEdit_meas_description.toPlainText()
         protocol.tags = self.flow_layout.get_all_tags()
         user, userdata = self.get_user_name_data()
-        sample, sampledata = self.get_sample_name_data(prompt_on_missing=False)
-        filename = protocol.filename.format(sample=sample, sample_id=sampledata["sample_id"], user=user, protocol=protocol_name, session=protocol.session_name, time=self.formatted_iso_time(self._protocol_start_time))
-        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.session_name}/{filename}"
+        sample, sampledata = self.get_sample_name_data(prompt_on_missing=True)
+        filename = protocol.filename.format(
+            sample=sample,
+            sample_id=sampledata["sample_id"] or "",
+            user=user, protocol=protocol_name,
+            session=protocol.session_name,
+            time=self.formatted_iso_time(self._protocol_start_time)
+        )
+        session_name = (protocol.session_name or "").strip()
+        parts = [self.preferences["meas_files_path"], user, sample]
+        if session_name:
+            parts.append(session_name)
+        filename = (filename or "data")
+        filename = clean_filename(filename)
+        savepath = os.path.join(*parts, filename)
         self.protocol_savepath = savepath
         # IMPORT protocol_builder only if needed
         from nomad_camels.bluesky_handling import protocol_builder
@@ -2763,7 +2776,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         user = clean_filename(user)
         return user, userdata
 
-    def get_sample_name_data(self, prompt_on_missing=True):
+    def get_sample_name_data(self, prompt_on_missing=False):
         """
         Retrieve the current sample name and associated data.
 
@@ -2793,27 +2806,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         sampledata = self.sampledata[s]
                         break
             if not sampledata:
-                if not prompt_on_missing:
+                if  prompt_on_missing:
                     # Create a popup window to warn the user that no sample was found and that "default sample" will be used
                     from PySide6.QtWidgets import QMessageBox
 
                     reply = QMessageBox.question(
                         self,
                         "Sample Not Found",
-                        'No sample found. Make sure you actually added a sample.\nDo you want to run the measurement with a temporary "default_sample" with sample_id "123" instead?',
+                        'No sample found. Make sure you actually added a sample.\nDo you want to run the measurement with a temporary "default_sample" without sample_id  instead?',
                         QMessageBox.Yes | QMessageBox.No,
                         QMessageBox.No,  # This sets "No" as the default selected button for safety
                     )
                     if reply == QMessageBox.Yes:
-                        sampledata = (
-                            {"name": "default_sample", "sample_id": "123"}
-                            if sample == "default_sample"
-                            else self.sampledata[sample]
-                        )
-                    else:
-                        raise Exception("No sample found. Add sample information.")
+                        sample = "default_sample"
+                        sampledata = {"name": "default_sample"}
                 else:
-                    sampledata = {"name": sample, "sample_id": "123"}
+                    raise Exception("No sample found. Add sample information.")
             if sampledata and isinstance(sampledata, dict) and "name" in sampledata:
                 sample = sampledata["name"]
         sample = clean_filename(sample)
