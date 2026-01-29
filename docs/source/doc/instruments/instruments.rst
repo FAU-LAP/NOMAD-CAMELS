@@ -360,6 +360,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
+                <td>Lakeshore (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>M81</a></td>
+                <td>LCRmeter</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
                 <td>Metrohm (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Autolabpgstat</a></td>
                 <td>LCRmeter</td>
@@ -375,6 +381,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Zurichinstruments (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Mfia</a></td>
                 <td>LCRmeter</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Lakeshore (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>M81-cm-10</a></td>
+                <td>Logger</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
@@ -698,6 +710,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             <tr>
                 <td>Labjack (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>T-series-counter</a></td>
+                <td>Logger</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Lakeshore (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>M81-vm-10</a></td>
                 <td>Logger</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
@@ -1140,6 +1158,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
+                <td>Keithley (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>6430</a></td>
+                <td>SMU</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
                 <td>Keysight / Agilent (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>E3631a</a></td>
                 <td>SMU</td>
@@ -1155,6 +1179,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td>Keysight / Agilent (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>N6705</a></td>
                 <td>Signal</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Lakeshore (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>M81</a></td>
+                <td>SMU</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
@@ -1273,7 +1303,7 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             </tr>
             <tr>
                 <td>Siglent (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
-                <td>Sdg2000x</a></td>
+                <td>Sdgseries</a></td>
                 <td>Signal</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
@@ -1334,6 +1364,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             <tr>
                 <td>Acton (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>Fa-448</a></td>
+                <td>Switch</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Advancedmicrofluidics (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Lspone-series</a></td>
                 <td>Switch</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
@@ -1494,6 +1530,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
             <tr>
+                <td>Lakeshore (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>M81-vs-10</a></td>
+                <td>Switch</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
                 <td>Landgrafhll (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>La-1xx</a></td>
                 <td>Switch</td>
@@ -1604,6 +1646,12 @@ The table includes instruments from SweepMe! as well. These instruments are not 
             <tr>
                 <td>Thorlabs (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
                 <td>K10cr1</a></td>
+                <td>Switch</td>
+                <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
+            </tr>
+            <tr>
+                <td>Thorlabs (<a href='SweepMe_drivers'>SweepMe!</a>)</td>
+                <td>Lts</a></td>
                 <td>Switch</td>
                 <td><a href='https://pypi.org/project/nomad-camels-driver-SweepMe-device'>0.2.0</a></td>
             </tr>
