@@ -5,6 +5,7 @@ import os
 import platform, subprocess
 import re
 import time
+from datetime import datetime
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 sys.path.append(os.path.dirname(__file__))
@@ -1999,14 +2000,27 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             protocol_name (str): The name of the protocol.
         """
         user = self.get_user_name_data()[0]
-        sample = self.get_sample_name_data()[0]
+        sample, sampledata = self.get_sample_name_data(prompt_on_missing=False)
         protocol = self.protocols_dict[protocol_name]
+        session = (getattr(protocol, "session_name", None) or self.lineEdit_session.text() or "").strip()
         if protocol.use_nexus:
             file_ending = ".nxs"
         else:
             file_ending = ".h5"
-        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.filename or 'data'}{file_ending}"
-        savepath = os.path.normpath(savepath)
+        filename = protocol.filename.format(
+            sample=sample,
+            sample_id=sampledata.get("sample_id", ""),
+            user=user,
+            protocol=protocol_name,
+            session=session,
+            time=self.formatted_iso_time(self._protocol_start_time),
+        )
+        filename = clean_filename(filename)
+        parts = [self.preferences["meas_files_path"], user, sample]
+        if session:
+            parts.append(session)
+        filename_part = (filename or "data") + file_ending
+        savepath = os.path.normpath(os.path.join(*parts, filename_part))
         # Get all files in the folder and return the one with the latest modification date
         if not os.path.isdir(os.path.dirname(savepath)):
             os.makedirs(os.path.dirname(savepath))
@@ -2014,7 +2028,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 entry.path  # scandir entries already have a .path attribute
                 for entry in os.scandir(os.path.dirname(savepath))
                 if entry.is_file()
-                and entry.name.startswith(protocol.filename or "data")
+                and entry.name.startswith(filename or "data")
             ]
         if files:
             savepath = max(files, key=os.path.getmtime)
@@ -2106,7 +2120,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.pushButton_resume.setEnabled(False)
             self.pushButton_pause.setEnabled(False)
             self.pushButton_stop.setEnabled(True)
-            self.build_protocol(protocol_name, ask_file=False, variables=variables)
+            if not self.build_protocol(protocol_name, ask_file=False, variables=variables):
+                self.setCursor(Qt.ArrowCursor)
+                self.button_area_meas.enable_run_buttons()
+                return
             protocol = self.protocols_dict[protocol_name]
             self.running_protocol = protocol
             path = f"{self.preferences['py_files_path']}/{protocol.name}.py"
@@ -2645,6 +2662,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if for_close:
             device_handling.close_devices(for_close)
 
+    def formatted_iso_time(self, timestamp=None):
+        start_time = datetime.fromtimestamp(timestamp, tz=datetime.now().astimezone().tzinfo)
+        start_time_formatted = start_time.isoformat(timespec="seconds")
+        start_time_formatted = start_time_formatted.replace(":", "-")
+        return start_time_formatted
+        
     def build_protocol(self, protocol_name, ask_file=True, variables=None):
         """
         Build the protocol file for the specified protocol.
@@ -2687,8 +2710,21 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol.measurement_description = self.textEdit_meas_description.toPlainText()
         protocol.tags = self.flow_layout.get_all_tags()
         user, userdata = self.get_user_name_data()
-        sample, sampledata = self.get_sample_name_data()
-        savepath = f"{self.preferences['meas_files_path']}/{user}/{sample}/{protocol.session_name}/{protocol.filename or protocol.session_name or 'data'}"
+        sample, sampledata = self.get_sample_name_data(prompt_on_missing=True)
+        filename = protocol.filename.format(
+            sample=sample,
+            sample_id=sampledata.get("sample_id", ""),
+            user=user, protocol=protocol_name,
+            session=protocol.session_name,
+            time=self.formatted_iso_time(self._protocol_start_time)
+        )
+        session_name = (protocol.session_name or "").strip()
+        parts = [self.preferences["meas_files_path"], user, sample]
+        if session_name:
+            parts.append(session_name)
+        filename = (filename or "data")
+        filename = clean_filename(filename)
+        savepath = os.path.join(*parts, filename)
         self.protocol_savepath = savepath
         # IMPORT protocol_builder only if needed
         from nomad_camels.bluesky_handling import protocol_builder
@@ -2699,6 +2735,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.update_prot_data(protocol, protocol_name)
         print("\n\nBuild successful!\n")
         self.progressBar_protocols.setValue(100 if ask_file else 1)
+        return True
 
     def queue_protocol(self, protocol_name, api_uuid=None):
         """
@@ -2738,7 +2775,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         user = clean_filename(user)
         return user, userdata
 
-    def get_sample_name_data(self):
+    def get_sample_name_data(self, prompt_on_missing=False):
         """
         Retrieve the current sample name and associated data.
 
@@ -2768,24 +2805,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         sampledata = self.sampledata[s]
                         break
             if not sampledata:
-                # Create a popup window to warn the user that no sample was found and that "default sample" will be used
-                from PySide6.QtWidgets import QMessageBox
+                if  prompt_on_missing:
+                    # Create a popup window to warn the user that no sample was found and that "default sample" will be used
+                    from PySide6.QtWidgets import QMessageBox
 
-                reply = QMessageBox.question(
-                    self,
-                    "Sample Not Found",
-                    'No sample found. Make sure you actually added a sample.\nDo you want to run the measurement with a temporary "default_sample" instead?',
-                    QMessageBox.Yes | QMessageBox.No,
-                    QMessageBox.No,  # This sets "No" as the default selected button for safety
-                )
-                if reply == QMessageBox.Yes:
-                    sampledata = (
-                        {"name": "default_sample"}
-                        if sample == "default_sample"
-                        else self.sampledata[sample]
+                    reply = QMessageBox.question(
+                        self,
+                        "Sample Not Found",
+                        'No sample found. Make sure you actually added a sample.\nDo you want to run the measurement with a temporary "default_sample" without sample_id  instead?',
+                        QMessageBox.Yes | QMessageBox.No,
+                        QMessageBox.No,  # This sets "No" as the default selected button for safety
                     )
+                    if reply == QMessageBox.Yes:
+                        sample = "default_sample"
+                        sampledata = {"name": "default_sample"}
                 else:
-                    raise Exception("No sample found. Add a sample to run protocols.")
+                    raise Exception("No sample found. Add sample information.")
             if sampledata and isinstance(sampledata, dict) and "name" in sampledata:
                 sample = sampledata["name"]
         sample = clean_filename(sample)
