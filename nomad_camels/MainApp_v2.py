@@ -2009,7 +2009,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             file_ending = ".h5"
         filename = protocol.filename.format(
             sample=sample,
-            sample_id=sampledata["sample_id"] or "",
+            sample_id=sampledata.get("sample_id", ""),
             user=user,
             protocol=protocol_name,
             session=session,
@@ -2713,7 +2713,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         sample, sampledata = self.get_sample_name_data(prompt_on_missing=True)
         filename = protocol.filename.format(
             sample=sample,
-            sample_id=sampledata["sample_id"] or "",
+            sample_id=sampledata.get("sample_id", ""),
             user=user, protocol=protocol_name,
             session=protocol.session_name,
             time=self.formatted_iso_time(self._protocol_start_time)
