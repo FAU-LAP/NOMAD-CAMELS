@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>nomad_camels.gui package &mdash; NOMAD-CAMELS  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=3f02ca52" />
 
@@ -18,8 +18,8 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
       <script src="../_static/js/custom.js?v=b10435ba"></script>
@@ -276,6 +276,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../doc/handling_hdf5.html#convert-the-full-hdf5-file-to-python-dictionary">Convert the full HDF5 File to Python Dictionary</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../doc/handling_hdf5.html#dynamic-variables-for-file-naming">Dynamic Variables for File Naming</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/nomad_camels_toolbox.html">Data Evaluation</a><ul>
@@ -1556,6 +1557,7 @@
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.edit_sample_info"><code class="docutils literal notranslate"><span class="pre">MainWindow.edit_sample_info()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.edit_user_info"><code class="docutils literal notranslate"><span class="pre">MainWindow.edit_user_info()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.fake_signal"><code class="docutils literal notranslate"><span class="pre">MainWindow.fake_signal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.formatted_iso_time"><code class="docutils literal notranslate"><span class="pre">MainWindow.formatted_iso_time()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_sample_name_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_sample_name_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_user_name_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_user_name_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_user_samples"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_user_samples()</span></code></a></li>
@@ -2012,6 +2014,7 @@
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.edit_sample_info"><code class="docutils literal notranslate"><span class="pre">MainWindow.edit_sample_info()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.edit_user_info"><code class="docutils literal notranslate"><span class="pre">MainWindow.edit_user_info()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.fake_signal"><code class="docutils literal notranslate"><span class="pre">MainWindow.fake_signal</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.formatted_iso_time"><code class="docutils literal notranslate"><span class="pre">MainWindow.formatted_iso_time()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_sample_name_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_sample_name_data()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_user_name_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_user_name_data()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_user_samples"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_user_samples()</span></code></a></li>
@@ -4368,7 +4371,7 @@
 <span id="nomad-camels-gui-device-installer-module"></span><h2>nomad_camels.gui.device_installer module<a class="headerlink" href="#module-nomad_camels.gui.device_installer" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.device_installer.Ui_Form">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.device_installer.</span></span><span class="sig-name descname"><span class="pre">Ui_Form</span></span><a class="headerlink" href="#nomad_camels.gui.device_installer.Ui_Form" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.device_installer.</span></span><span class="sig-name descname"><span class="pre">Ui_Form</span></span><a class="headerlink" href="#nomad_camels.gui.device_installer.Ui_Form" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.device_installer.Ui_Form.retranslateUi">
@@ -4387,7 +4390,7 @@
 <span id="nomad-camels-gui-dynamicuploadcombobox-module"></span><h2>nomad_camels.gui.dynamicuploadcombobox module<a class="headerlink" href="#module-nomad_camels.gui.dynamicuploadcombobox" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.dynamicuploadcombobox.DynamicUploadComboBox">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.dynamicuploadcombobox.</span></span><span class="sig-name descname"><span class="pre">DynamicUploadComboBox</span></span><a class="headerlink" href="#nomad_camels.gui.dynamicuploadcombobox.DynamicUploadComboBox" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.dynamicuploadcombobox.</span></span><span class="sig-name descname"><span class="pre">DynamicUploadComboBox</span></span><a class="headerlink" href="#nomad_camels.gui.dynamicuploadcombobox.DynamicUploadComboBox" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QComboBox</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.dynamicuploadcombobox.DynamicUploadComboBox.getDynamicItems">
@@ -4408,7 +4411,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.gui.dynamicuploadcombobox.DynamicUploadComboBox.staticMetaObject">
-<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;DynamicUploadComboBox&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QComboBox&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.gui.dynamicuploadcombobox.DynamicUploadComboBox.staticMetaObject" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;DynamicUploadComboBox&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QComboBox&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#nomad_camels.gui.dynamicuploadcombobox.DynamicUploadComboBox.staticMetaObject" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -4418,7 +4421,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-entertextdialog-module"></span><h2>nomad_camels.gui.enterTextDialog module<a class="headerlink" href="#module-nomad_camels.gui.enterTextDialog" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.enterTextDialog.Ui_EnterTextDialog">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.enterTextDialog.</span></span><span class="sig-name descname"><span class="pre">Ui_EnterTextDialog</span></span><a class="headerlink" href="#nomad_camels.gui.enterTextDialog.Ui_EnterTextDialog" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.enterTextDialog.</span></span><span class="sig-name descname"><span class="pre">Ui_EnterTextDialog</span></span><a class="headerlink" href="#nomad_camels.gui.enterTextDialog.Ui_EnterTextDialog" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.enterTextDialog.Ui_EnterTextDialog.retranslateUi">
@@ -4447,7 +4450,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-extension-manager-module"></span><h2>nomad_camels.gui.extension_manager module<a class="headerlink" href="#module-nomad_camels.gui.extension_manager" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.extension_manager.Ui_Form">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.extension_manager.</span></span><span class="sig-name descname"><span class="pre">Ui_Form</span></span><a class="headerlink" href="#nomad_camels.gui.extension_manager.Ui_Form" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.extension_manager.</span></span><span class="sig-name descname"><span class="pre">Ui_Form</span></span><a class="headerlink" href="#nomad_camels.gui.extension_manager.Ui_Form" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.extension_manager.Ui_Form.retranslateUi">
@@ -4466,7 +4469,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-fit-definer-module"></span><h2>nomad_camels.gui.fit_definer module<a class="headerlink" href="#module-nomad_camels.gui.fit_definer" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.fit_definer.Ui_Fit_Definer">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.fit_definer.</span></span><span class="sig-name descname"><span class="pre">Ui_Fit_Definer</span></span><a class="headerlink" href="#nomad_camels.gui.fit_definer.Ui_Fit_Definer" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.fit_definer.</span></span><span class="sig-name descname"><span class="pre">Ui_Fit_Definer</span></span><a class="headerlink" href="#nomad_camels.gui.fit_definer.Ui_Fit_Definer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.fit_definer.Ui_Fit_Definer.retranslateUi">
@@ -4485,7 +4488,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-for-loop-module"></span><h2>nomad_camels.gui.for_loop module<a class="headerlink" href="#module-nomad_camels.gui.for_loop" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.for_loop.Ui_for_loop_config">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.for_loop.</span></span><span class="sig-name descname"><span class="pre">Ui_for_loop_config</span></span><a class="headerlink" href="#nomad_camels.gui.for_loop.Ui_for_loop_config" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.for_loop.</span></span><span class="sig-name descname"><span class="pre">Ui_for_loop_config</span></span><a class="headerlink" href="#nomad_camels.gui.for_loop.Ui_for_loop_config" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.for_loop.Ui_for_loop_config.retranslateUi">
@@ -4504,7 +4507,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-general-protocol-settings-module"></span><h2>nomad_camels.gui.general_protocol_settings module<a class="headerlink" href="#module-nomad_camels.gui.general_protocol_settings" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.general_protocol_settings.Ui_Protocol_Settings">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.general_protocol_settings.</span></span><span class="sig-name descname"><span class="pre">Ui_Protocol_Settings</span></span><a class="headerlink" href="#nomad_camels.gui.general_protocol_settings.Ui_Protocol_Settings" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.general_protocol_settings.</span></span><span class="sig-name descname"><span class="pre">Ui_Protocol_Settings</span></span><a class="headerlink" href="#nomad_camels.gui.general_protocol_settings.Ui_Protocol_Settings" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.general_protocol_settings.Ui_Protocol_Settings.retranslateUi">
@@ -4523,7 +4526,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-gradient-descent-step-module"></span><h2>nomad_camels.gui.gradient_descent_step module<a class="headerlink" href="#module-nomad_camels.gui.gradient_descent_step" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.gradient_descent_step.Ui_Grad_Desc">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.gradient_descent_step.</span></span><span class="sig-name descname"><span class="pre">Ui_Grad_Desc</span></span><a class="headerlink" href="#nomad_camels.gui.gradient_descent_step.Ui_Grad_Desc" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.gradient_descent_step.</span></span><span class="sig-name descname"><span class="pre">Ui_Grad_Desc</span></span><a class="headerlink" href="#nomad_camels.gui.gradient_descent_step.Ui_Grad_Desc" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.gradient_descent_step.Ui_Grad_Desc.retranslateUi">
@@ -4552,7 +4555,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-instrument-config-module"></span><h2>nomad_camels.gui.instrument_config module<a class="headerlink" href="#module-nomad_camels.gui.instrument_config" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.instrument_config.Ui_Form">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.instrument_config.</span></span><span class="sig-name descname"><span class="pre">Ui_Form</span></span><a class="headerlink" href="#nomad_camels.gui.instrument_config.Ui_Form" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.instrument_config.</span></span><span class="sig-name descname"><span class="pre">Ui_Form</span></span><a class="headerlink" href="#nomad_camels.gui.instrument_config.Ui_Form" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.instrument_config.Ui_Form.retranslateUi">
@@ -4571,7 +4574,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-mainwindow-v2-module"></span><h2>nomad_camels.gui.mainWindow_v2 module<a class="headerlink" href="#module-nomad_camels.gui.mainWindow_v2" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.mainWindow_v2.Ui_MainWindow">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.mainWindow_v2.</span></span><span class="sig-name descname"><span class="pre">Ui_MainWindow</span></span><a class="headerlink" href="#nomad_camels.gui.mainWindow_v2.Ui_MainWindow" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.mainWindow_v2.</span></span><span class="sig-name descname"><span class="pre">Ui_MainWindow</span></span><a class="headerlink" href="#nomad_camels.gui.mainWindow_v2.Ui_MainWindow" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.mainWindow_v2.Ui_MainWindow.retranslateUi">
@@ -4590,7 +4593,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-pass-ask-module"></span><h2>nomad_camels.gui.pass_ask module<a class="headerlink" href="#module-nomad_camels.gui.pass_ask" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.pass_ask.Ui_Pass_Ask">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.pass_ask.</span></span><span class="sig-name descname"><span class="pre">Ui_Pass_Ask</span></span><a class="headerlink" href="#nomad_camels.gui.pass_ask.Ui_Pass_Ask" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.pass_ask.</span></span><span class="sig-name descname"><span class="pre">Ui_Pass_Ask</span></span><a class="headerlink" href="#nomad_camels.gui.pass_ask.Ui_Pass_Ask" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.pass_ask.Ui_Pass_Ask.retranslateUi">
@@ -4619,7 +4622,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-plot-definer-module"></span><h2>nomad_camels.gui.plot_definer module<a class="headerlink" href="#module-nomad_camels.gui.plot_definer" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.plot_definer.Ui_Plot_Definer">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Ui_Plot_Definer</span></span><a class="headerlink" href="#nomad_camels.gui.plot_definer.Ui_Plot_Definer" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.plot_definer.</span></span><span class="sig-name descname"><span class="pre">Ui_Plot_Definer</span></span><a class="headerlink" href="#nomad_camels.gui.plot_definer.Ui_Plot_Definer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.plot_definer.Ui_Plot_Definer.retranslateUi">
@@ -4638,7 +4641,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-plot-definer-2d-module"></span><h2>nomad_camels.gui.plot_definer_2d module<a class="headerlink" href="#module-nomad_camels.gui.plot_definer_2d" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.plot_definer_2d.</span></span><span class="sig-name descname"><span class="pre">Ui_Plot_Definer_2D</span></span><a class="headerlink" href="#nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.plot_definer_2d.</span></span><span class="sig-name descname"><span class="pre">Ui_Plot_Definer_2D</span></span><a class="headerlink" href="#nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.plot_definer_2d.Ui_Plot_Definer_2D.retranslateUi">
@@ -4657,7 +4660,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-plot-options-module"></span><h2>nomad_camels.gui.plot_options module<a class="headerlink" href="#module-nomad_camels.gui.plot_options" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.plot_options.Ui_Plot_Options">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.plot_options.</span></span><span class="sig-name descname"><span class="pre">Ui_Plot_Options</span></span><a class="headerlink" href="#nomad_camels.gui.plot_options.Ui_Plot_Options" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.plot_options.</span></span><span class="sig-name descname"><span class="pre">Ui_Plot_Options</span></span><a class="headerlink" href="#nomad_camels.gui.plot_options.Ui_Plot_Options" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.plot_options.Ui_Plot_Options.retranslateUi">
@@ -4686,7 +4689,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-protocol-view-module"></span><h2>nomad_camels.gui.protocol_view module<a class="headerlink" href="#module-nomad_camels.gui.protocol_view" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.protocol_view.Ui_Protocol_View">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.protocol_view.</span></span><span class="sig-name descname"><span class="pre">Ui_Protocol_View</span></span><a class="headerlink" href="#nomad_camels.gui.protocol_view.Ui_Protocol_View" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.protocol_view.</span></span><span class="sig-name descname"><span class="pre">Ui_Protocol_View</span></span><a class="headerlink" href="#nomad_camels.gui.protocol_view.Ui_Protocol_View" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.protocol_view.Ui_Protocol_View.retranslateUi">
@@ -4705,7 +4708,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-read-channels-module"></span><h2>nomad_camels.gui.read_channels module<a class="headerlink" href="#module-nomad_camels.gui.read_channels" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.read_channels.Ui_read_channels_config">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.read_channels.</span></span><span class="sig-name descname"><span class="pre">Ui_read_channels_config</span></span><a class="headerlink" href="#nomad_camels.gui.read_channels.Ui_read_channels_config" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.read_channels.</span></span><span class="sig-name descname"><span class="pre">Ui_read_channels_config</span></span><a class="headerlink" href="#nomad_camels.gui.read_channels.Ui_read_channels_config" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.read_channels.Ui_read_channels_config.retranslateUi">
@@ -4724,7 +4727,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-set-channels-module"></span><h2>nomad_camels.gui.set_channels module<a class="headerlink" href="#module-nomad_camels.gui.set_channels" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.set_channels.Ui_Form">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.set_channels.</span></span><span class="sig-name descname"><span class="pre">Ui_Form</span></span><a class="headerlink" href="#nomad_camels.gui.set_channels.Ui_Form" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.set_channels.</span></span><span class="sig-name descname"><span class="pre">Ui_Form</span></span><a class="headerlink" href="#nomad_camels.gui.set_channels.Ui_Form" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.set_channels.Ui_Form.retranslateUi">
@@ -4753,7 +4756,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-settings-window-module"></span><h2>nomad_camels.gui.settings_window module<a class="headerlink" href="#module-nomad_camels.gui.settings_window" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.settings_window.Ui_settings_window">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.settings_window.</span></span><span class="sig-name descname"><span class="pre">Ui_settings_window</span></span><a class="headerlink" href="#nomad_camels.gui.settings_window.Ui_settings_window" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.settings_window.</span></span><span class="sig-name descname"><span class="pre">Ui_settings_window</span></span><a class="headerlink" href="#nomad_camels.gui.settings_window.Ui_settings_window" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.settings_window.Ui_settings_window.retranslateUi">
@@ -4785,7 +4788,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 <span id="nomad-camels-gui-tags-ui-module"></span><h2>nomad_camels.gui.tags_ui module<a class="headerlink" href="#module-nomad_camels.gui.tags_ui" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.tags_ui.</span></span><span class="sig-name descname"><span class="pre">FlowLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.tags_ui.</span></span><span class="sig-name descname"><span class="pre">FlowLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QLayout</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.addItem">
@@ -4854,7 +4857,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.FlowLayout.staticMetaObject">
-<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;FlowLayout&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QLayout&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.staticMetaObject" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;FlowLayout&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QLayout&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.FlowLayout.staticMetaObject" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -4866,7 +4869,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.TagWidget">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.tags_ui.</span></span><span class="sig-name descname"><span class="pre">TagWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.tags_ui.TagWidget" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.gui.tags_ui.</span></span><span class="sig-name descname"><span class="pre">TagWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.gui.tags_ui.TagWidget" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.TagWidget.remove_self">
@@ -4880,7 +4883,7 @@ Must return a iterable list of items to be displayed in the combo box.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.gui.tags_ui.TagWidget.staticMetaObject">
-<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;TagWidget&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=removing(QWidget*),</span> <span class="pre">parameters=QWidget*</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.gui.tags_ui.TagWidget.staticMetaObject" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;TagWidget&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=removing(QWidget*),</span> <span class="pre">parameters=QWidget*</span> <span class="pre">)</span></span><a class="headerlink" href="#nomad_camels.gui.tags_ui.TagWidget.staticMetaObject" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

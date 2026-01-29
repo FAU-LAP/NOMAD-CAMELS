@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>nomad_camels.tools package &mdash; NOMAD-CAMELS  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=3f02ca52" />
 
@@ -18,8 +18,8 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
       <script src="../_static/js/custom.js?v=b10435ba"></script>
@@ -276,6 +276,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../doc/handling_hdf5.html#convert-the-full-hdf5-file-to-python-dictionary">Convert the full HDF5 File to Python Dictionary</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../doc/handling_hdf5.html#dynamic-variables-for-file-naming">Dynamic Variables for File Naming</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../doc/nomad_camels_toolbox.html">Data Evaluation</a><ul>
@@ -1556,6 +1557,7 @@
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.edit_sample_info"><code class="docutils literal notranslate"><span class="pre">MainWindow.edit_sample_info()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.edit_user_info"><code class="docutils literal notranslate"><span class="pre">MainWindow.edit_user_info()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.fake_signal"><code class="docutils literal notranslate"><span class="pre">MainWindow.fake_signal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.formatted_iso_time"><code class="docutils literal notranslate"><span class="pre">MainWindow.formatted_iso_time()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_sample_name_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_sample_name_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_user_name_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_user_name_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_user_samples"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_user_samples()</span></code></a></li>
@@ -2012,6 +2014,7 @@
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.edit_sample_info"><code class="docutils literal notranslate"><span class="pre">MainWindow.edit_sample_info()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.edit_user_info"><code class="docutils literal notranslate"><span class="pre">MainWindow.edit_user_info()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.fake_signal"><code class="docutils literal notranslate"><span class="pre">MainWindow.fake_signal</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.formatted_iso_time"><code class="docutils literal notranslate"><span class="pre">MainWindow.formatted_iso_time()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_sample_name_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_sample_name_data()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_user_name_data"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_user_name_data()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="nomad_camels.html#nomad_camels.MainApp_v2.MainWindow.get_user_samples"><code class="docutils literal notranslate"><span class="pre">MainWindow.get_user_samples()</span></code></a></li>
@@ -4368,7 +4371,7 @@
 <span id="nomad-camels-tools-epics-driver-builder-module"></span><h2>nomad_camels.tools.EPICS_driver_builder module<a class="headerlink" href="#module-nomad_camels.tools.EPICS_driver_builder" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.tools.EPICS_driver_builder.EPICS_Driver_Builder">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.tools.EPICS_driver_builder.</span></span><span class="sig-name descname"><span class="pre">EPICS_Driver_Builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tools.EPICS_driver_builder.EPICS_Driver_Builder" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.tools.EPICS_driver_builder.</span></span><span class="sig-name descname"><span class="pre">EPICS_Driver_Builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tools.EPICS_driver_builder.EPICS_Driver_Builder" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.tools.EPICS_driver_builder.EPICS_Driver_Builder.build_device">
@@ -4382,7 +4385,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.tools.EPICS_driver_builder.EPICS_Driver_Builder.staticMetaObject">
-<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;EPICS_Driver_Builder&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.tools.EPICS_driver_builder.EPICS_Driver_Builder.staticMetaObject" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;EPICS_Driver_Builder&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#nomad_camels.tools.EPICS_driver_builder.EPICS_Driver_Builder.staticMetaObject" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -4392,7 +4395,7 @@
 <span id="nomad-camels-tools-databroker-exporter-module"></span><h2>nomad_camels.tools.databroker_exporter module<a class="headerlink" href="#module-nomad_camels.tools.databroker_exporter" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.tools.databroker_exporter.Datbroker_Exporter">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.tools.databroker_exporter.</span></span><span class="sig-name descname"><span class="pre">Datbroker_Exporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tools.databroker_exporter.Datbroker_Exporter" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.tools.databroker_exporter.</span></span><span class="sig-name descname"><span class="pre">Datbroker_Exporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tools.databroker_exporter.Datbroker_Exporter" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.tools.databroker_exporter.Datbroker_Exporter.change_catalog">
@@ -4416,7 +4419,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.tools.databroker_exporter.Datbroker_Exporter.staticMetaObject">
-<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Datbroker_Exporter&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.tools.databroker_exporter.Datbroker_Exporter.staticMetaObject" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Datbroker_Exporter&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#nomad_camels.tools.databroker_exporter.Datbroker_Exporter.staticMetaObject" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -4426,7 +4429,7 @@
 <span id="nomad-camels-tools-device-driver-builder-module"></span><h2>nomad_camels.tools.device_driver_builder module<a class="headerlink" href="#module-nomad_camels.tools.device_driver_builder" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.tools.device_driver_builder.Driver_Builder">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.tools.device_driver_builder.</span></span><span class="sig-name descname"><span class="pre">Driver_Builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tools.device_driver_builder.Driver_Builder" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.tools.device_driver_builder.</span></span><span class="sig-name descname"><span class="pre">Driver_Builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nomad_camels.tools.device_driver_builder.Driver_Builder" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#nomad_camels.tools.driver_builder.Ui_VISA_Device_Builder" title="nomad_camels.tools.driver_builder.Ui_VISA_Device_Builder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_VISA_Device_Builder</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.tools.device_driver_builder.Driver_Builder.build_driver">
@@ -4445,7 +4448,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="nomad_camels.tools.device_driver_builder.Driver_Builder.staticMetaObject">
-<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Driver_Builder&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></em><a class="headerlink" href="#nomad_camels.tools.device_driver_builder.Driver_Builder.staticMetaObject" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Driver_Builder&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#nomad_camels.tools.device_driver_builder.Driver_Builder.staticMetaObject" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -4470,7 +4473,7 @@
 <span id="nomad-camels-tools-driver-builder-module"></span><h2>nomad_camels.tools.driver_builder module<a class="headerlink" href="#module-nomad_camels.tools.driver_builder" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="nomad_camels.tools.driver_builder.Ui_VISA_Device_Builder">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nomad_camels.tools.driver_builder.</span></span><span class="sig-name descname"><span class="pre">Ui_VISA_Device_Builder</span></span><a class="headerlink" href="#nomad_camels.tools.driver_builder.Ui_VISA_Device_Builder" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nomad_camels.tools.driver_builder.</span></span><span class="sig-name descname"><span class="pre">Ui_VISA_Device_Builder</span></span><a class="headerlink" href="#nomad_camels.tools.driver_builder.Ui_VISA_Device_Builder" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nomad_camels.tools.driver_builder.Ui_VISA_Device_Builder.retranslateUi">
