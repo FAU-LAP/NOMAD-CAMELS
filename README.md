@@ -18,6 +18,25 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.10.8
+
+Changes:
+
+- Now adds the session name (if specified) to the NOMAD upload path, mirroring to the local data path.
+- Added dynamic variables for the filename that are evaluated at runtime. Possible variables are:
+    - {time}: Protocol start time (similar to ISO 8601 format). Example time format: 2007-08-31T16-47-33+01-00
+    - {session}: Current session name (if provided).
+    - {protocol}: Executed protocol name.
+    - {user}: User name.
+    - {sample_id}: Sample ID.
+    - {sample}: Sample name.
+
+Fixes:
+
+- Now "Open Data Path" (when right-clicking a protocol) always opens the the explorer to the latest measurement file of the protocol.
+- Now correctly warns when trying to run a protocol without having a sample selected (often due to not having any samples for the current user). Gives the option to either cancel or run with a temporary "default_sample".
+- Fixed the requirements.txt file
+
 ### 1.10.7
 
 Fixes:

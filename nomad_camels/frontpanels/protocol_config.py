@@ -131,9 +131,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.general_settings = General_Protocol_Settings(protocol=protocol)
 
         self.general_settings.lineEdit_filename.set_check_function(
-            check_no_invalid_characters,
-            tooltip="Filename may not contain special characters",
-        )
+            check_no_invalid_characters)
 
         self.meas_splitter.insertWidget(0, self.general_settings)
 

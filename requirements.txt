@@ -13,7 +13,7 @@ colorama>=0.4.4
 cycler>=0.11.0
 dash
 dask>=2023.4.0
-databroker>=1.2.5
+databroker==1.2.5
 decorator>=5.1.1
 doct>=1.0.5
 entrypoints>=0.4
@@ -92,3 +92,4 @@ wheel>=0.36.2
 xarray>=2022.3.0
 zarr>=2.11.3
 zict>=2.2.0
+pyzmq>=25.0.0
