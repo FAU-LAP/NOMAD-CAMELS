@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'general_protocol_settings.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.3
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -315,7 +315,7 @@ class Ui_Protocol_Settings(object):
         self.checkBox_NeXus.setText(QCoreApplication.translate("Protocol_Settings", u"also write NeXus entry to data", None))
         self.checkBox_json_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export metadata to json", None))
 #if QT_CONFIG(tooltip)
-        self.label.setToolTip(QCoreApplication.translate("Protocol_Settings", u"<html><head/><body><p>Option to use dynamic variables in file names, evaluated each time the protocol runs:</p><p><span style=\" font-family:'Courier New';\">{time}</span>: Protocol start time (similar to ISO 8601 format).</p><p>Example time format: 2007-08-31_16-47-33+01-00</p><p><span style=\" font-family:'Courier New';\">{session}</span>: Current session name (if provided).</p><p><span style=\" font-family:'Courier New';\">{protocol}</span>: Executed protocol name.</p><p><span style=\" font-family:'Courier New';\">{user}</span>: User name.</p><p><span style=\" font-family:'Courier New';\">{sample_id}</span>: Sample ID.</p><p><span style=\" font-family:'Courier New';\">{sample}</span>: Sample name.</p><p>Note: You can use spaces to seperate the variables.</p></body></html>", None))
+        self.label.setToolTip(QCoreApplication.translate("Protocol_Settings", u"<html><head/><body><p>Option to use dynamic variables in file names, evaluated each time the protocol runs:</p><p><span style=\" font-family:'Courier New';\">{time}</span>: Protocol start time (similar to ISO 8601 format).</p><p>Example time format: 2007-08-31T16-47-33+01-00</p><p><span style=\" font-family:'Courier New';\">{session}</span>: Current session name (if provided).</p><p><span style=\" font-family:'Courier New';\">{protocol}</span>: Executed protocol name.</p><p><span style=\" font-family:'Courier New';\">{user}</span>: User name.</p><p><span style=\" font-family:'Courier New';\">{sample_id}</span>: Sample ID.</p><p><span style=\" font-family:'Courier New';\">{sample}</span>: Sample name.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.label.setText(QCoreApplication.translate("Protocol_Settings", u"Filename:", None))
 #if QT_CONFIG(tooltip)
@@ -329,14 +329,13 @@ class Ui_Protocol_Settings(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Option to use dynamic variables in file names, evaluated each time the protocol runs:</p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{time}</span>: Protocol start time (similar to ISO 8601 format).</p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; marg"
-                        "in-right:0px; -qt-block-indent:0; text-indent:0px;\">Example time format: 2007-08-31_16-47-33+01-00</p>\n"
+                        "in-right:0px; -qt-block-indent:0; text-indent:0px;\">Example time format: 2007-08-31T16-47-33+01-00</p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{session}</span>: Current session name (if provided).</p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{protocol}</span>: Executed protocol name.</p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{user}</span>: User name.</p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{sample_id}</span>: Sample ID.</p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0p"
-                        "x; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{sample}</span>: Sample name.</p>\n"
-"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Note: You can use spaces to seperate the variables.</p></body></html>", None))
+                        "x; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{sample}</span>: Sample name.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_filename.setText(QCoreApplication.translate("Protocol_Settings", u"Datafile", None))
         self.lineEdit_filename.setPlaceholderText(QCoreApplication.translate("Protocol_Settings", u"Filename", None))
