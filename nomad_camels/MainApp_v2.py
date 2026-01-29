@@ -2665,7 +2665,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def formatted_iso_time(self, timestamp=None):
         start_time = datetime.fromtimestamp(timestamp, tz=datetime.now().astimezone().tzinfo)
         start_time_formatted = start_time.isoformat(timespec="seconds")
-        start_time_formatted = start_time_formatted.replace("T", "_").replace(":", "-")
+        start_time_formatted = start_time_formatted.replace(":", "-")
         return start_time_formatted
         
     def build_protocol(self, protocol_name, ask_file=True, variables=None):
