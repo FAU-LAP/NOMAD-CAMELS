@@ -75,7 +75,7 @@ def login_to_nomad(parent=None):
     """
     global token, auth, nomad_url
     dialog = LoginDialog(parent)
-    if dialog.exec() != QDialog.Accepted:
+    if dialog.exec() != QDialog.DialogCode.Accepted:
         return
     nomad_url = dialog.url
     if not nomad_url:

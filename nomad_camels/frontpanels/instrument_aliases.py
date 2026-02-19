@@ -31,8 +31,8 @@ class Instrument_Alias_Config(QDialog):
     ):
         super().__init__(parent=parent)
         self.buttonBox = QDialogButtonBox()
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.buttonBox.rejected.connect(self.reject)
         self.buttonBox.accepted.connect(self.accept)
@@ -161,7 +161,7 @@ class Instrument_Alias_Config(QDialog):
             self.update_undefined_channels()
         if item.column() == 0:
             # checkState() returns Qt.Checked or Qt.Unchecked for a QTableWidgetItem with a checkbox
-            if item.checkState() == Qt.Unchecked:
+            if item.checkState() == Qt.CheckState.Unchecked:
                 row = item.row()
                 alias_item = self.channel_alias_table.tableWidget_channels.item(row, 2)
                 if alias_item and alias_item.text():

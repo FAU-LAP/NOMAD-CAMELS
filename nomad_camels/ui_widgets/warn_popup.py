@@ -13,9 +13,9 @@ class WarnPopup(QMessageBox):
         print(text)
         self.clicked_by_user = False
         if info_icon:
-            self.setIcon(QMessageBox.Information)
+            self.setIcon(QMessageBox.Icon.Information)
         else:
-            self.setIcon(QMessageBox.Warning)
+            self.setIcon(QMessageBox.Icon.Warning)
         self.accepted.connect(self.ok_clicked)
         if do_not_pause:
             self.show()

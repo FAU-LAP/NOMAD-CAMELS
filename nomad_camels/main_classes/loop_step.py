@@ -88,10 +88,10 @@ class Loop_Step:
         item = QStandardItem(name)
         item.setData(name)
         if not active:
-            item.setForeground(Qt.gray)
+            item.setForeground(Qt.GlobalColor.gray)
         parent.appendRow(item)
         index = treeView_functions.getItemIndex(item_model, name)
-        item_model.setData(index, QSize(20, 20), Qt.SizeHintRole)
+        item_model.setData(index, QSize(20, 20), Qt.ItemDataRole.SizeHintRole)
         item.setDropEnabled(False)
         self.full_name = name
         return item
@@ -367,11 +367,11 @@ class Loop_Step_Config(QWidget):
         if document_height > max_height:
             new_height = max_height
             # Enable scrolling if the content exceeds max height
-            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         else:
             new_height = document_height
             # Hide scroll bar if not needed
-            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.textEdit_desc.setFixedHeight(new_height)
 
     def showEvent(self, event):

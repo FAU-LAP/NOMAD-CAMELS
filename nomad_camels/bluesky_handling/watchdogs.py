@@ -205,7 +205,7 @@ class Watchdog_Definer(QDialog):
 
         # OK / Cancel buttons
         self.dialog_button_box = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
         )
         self.dialog_button_box.accepted.connect(self.accept)
         self.dialog_button_box.rejected.connect(self.reject)

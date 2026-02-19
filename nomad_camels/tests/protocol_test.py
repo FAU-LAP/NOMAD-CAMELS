@@ -83,7 +83,7 @@ def mock_message_box(monkeypatch):
     protocol, pops up, it is automatically accepted"""
 
     def mock_question(*args, **kwargs):
-        return QMessageBox.Yes
+        return QMessageBox.StandardButton.Yes
 
     monkeypatch.setattr(QMessageBox, "question", mock_question)
 
@@ -1007,7 +1007,7 @@ def select_step_by_name(conf, name):
     conf.treeView_protocol_sequence.selectionModel().clearSelection()
     index = getItemIndex(model, name)
     conf.treeView_protocol_sequence.selectionModel().select(
-        index, QItemSelectionModel.Select
+        index, QItemSelectionModel.SelectionFlag.Select
     )
     conf.check_movability()
 

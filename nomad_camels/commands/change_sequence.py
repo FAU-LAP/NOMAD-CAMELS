@@ -84,7 +84,7 @@ class CommandMoveStep(QUndoCommand):
         self.treeView_protocol_sequence.clearSelection()
         new_ind = self.item_model_sequence.indexFromItem(self.item)
         self.treeView_protocol_sequence.selectionModel().select(
-            new_ind, QItemSelectionModel.Select
+            new_ind, QItemSelectionModel.SelectionFlag.Select
         )
         self.update_func()
 
@@ -130,6 +130,6 @@ class CommandMoveStep(QUndoCommand):
         self.treeView_protocol_sequence.clearSelection()
         new_ind = self.item_model_sequence.indexFromItem(self.item)
         self.treeView_protocol_sequence.selectionModel().select(
-            new_ind, QItemSelectionModel.Select
+            new_ind, QItemSelectionModel.SelectionFlag.Select
         )
         self.update_func()

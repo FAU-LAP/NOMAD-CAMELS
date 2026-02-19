@@ -46,7 +46,7 @@ class Variable_Box(QLineEdit):
         make_green=True,
     ):
         super().__init__(parent)
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         self.textChanged.connect(self.check_string)
         self.check_function = check_function
@@ -81,9 +81,9 @@ class Variable_Box(QLineEdit):
             self.setToolTip(tooltip)
         self.provide_context_menu = provide_context_menu
         if not provide_context_menu:
-            self.setContextMenuPolicy(Qt.DefaultContextMenu)
+            self.setContextMenuPolicy(Qt.ContextMenuPolicy.DefaultContextMenu)
         else:
-            self.setContextMenuPolicy(Qt.CustomContextMenu)
+            self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.check_string()
 
     def setEnabled(self, a0: bool) -> None:

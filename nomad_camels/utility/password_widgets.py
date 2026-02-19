@@ -33,11 +33,11 @@ class Password_Dialog(QDialog):
         #     self.label_text = QLabel('Enter password to save changes:')
         self.label_2 = QLabel("Confirm password:")
         self.lineEdit_password = QLineEdit()
-        self.lineEdit_password.setEchoMode(QLineEdit.Password)
+        self.lineEdit_password.setEchoMode(QLineEdit.EchoMode.Password)
         self.lineEdit_password_2 = QLineEdit()
-        self.lineEdit_password_2.setEchoMode(QLineEdit.Password)
+        self.lineEdit_password_2.setEchoMode(QLineEdit.EchoMode.Password)
 
-        self.buttonbox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttonbox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         self.buttonbox.accepted.connect(self.accept)
         self.buttonbox.rejected.connect(self.reject)
 

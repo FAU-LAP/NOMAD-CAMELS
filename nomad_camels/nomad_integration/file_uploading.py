@@ -36,7 +36,7 @@ class UploadDialog(QDialog):
             self.lineEdit_upload_path = QLineEdit("CAMELS_data")
 
         self.button_box = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
         )
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)

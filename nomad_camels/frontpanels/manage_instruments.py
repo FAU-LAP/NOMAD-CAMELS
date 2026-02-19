@@ -19,14 +19,14 @@ class ManageInstruments(QDialog):
     def __init__(self, active_instruments=None, parent=None):
         super().__init__(parent=parent)
         self.buttonBox = QDialogButtonBox()
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.buttonBox.rejected.connect(self.reject)
         self.buttonBox.accepted.connect(self.accept)
 
         self.setWindowTitle("Manage Instruments - NOMAD CAMELS")
-        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint)
 
         self.active_instruments = active_instruments or {}
 
@@ -69,9 +69,9 @@ class ManageInstruments(QDialog):
             self,
             "Discard Changes?",
             f"All changes to instrument configurations will be lost!",
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if discard_dialog == QMessageBox.Yes:
+        if discard_dialog == QMessageBox.StandardButton.Yes:
             self.config_widget.remove_temp_custom_names()
             return super().reject()
 
@@ -88,7 +88,7 @@ class ManageInstruments(QDialog):
         -------
 
         """
-        if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
+        if a0.key() == Qt.Key.Key_Enter or a0.key() == Qt.Key.Key_Return:
             return
         super().keyPressEvent(a0)
 

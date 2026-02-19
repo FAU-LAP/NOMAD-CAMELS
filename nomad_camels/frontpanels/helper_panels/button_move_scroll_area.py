@@ -38,12 +38,11 @@ class DragButton(QPushButton):
         -------
 
         """
-        if event.buttons() == Qt.LeftButton:
+        if event.buttons() == Qt.MouseButton.LeftButton:
             mimeData = QMimeData()
             drag = QDrag(self)
             drag.setMimeData(mimeData)
-            drag.exec_(Qt.MoveAction)
-
+            drag.exec_(Qt.DropAction.MoveAction)
 
 class BidirectionalDict:
     """ """
@@ -179,7 +178,7 @@ class DropArea(QWidget):
         -------
 
         """
-        event.setDropAction(Qt.MoveAction)
+        event.setDropAction(Qt.DropAction.MoveAction)
         event.accept()
 
         source_widget = event.source()
@@ -401,7 +400,7 @@ class RenameTabWidget(QTabWidget):
         self.plus_tab = QPushButton("+")
         self.plus_tab.setToolTip("Add new tab")
         self.plus_tab.setFlat(True)
-        self.plus_tab.setFocusPolicy(Qt.NoFocus)
+        self.plus_tab.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.plus_tab.setFixedSize(25, 25)
         self.plus_tab.clicked.connect(lambda x: self.create_new_tab())
 
@@ -413,7 +412,7 @@ class RenameTabWidget(QTabWidget):
         self.close_buttons = []
 
         # Add a context menu to the tab bar
-        self.tabBar().setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tabBar().setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tabBar().customContextMenuRequested.connect(self.context_menu)
 
     def showEvent(self, event):
@@ -422,7 +421,7 @@ class RenameTabWidget(QTabWidget):
 
     def addPlusTab(self):
         self.addTab(QWidget(), "")
-        self.tabBar().setTabButton(self.count() - 1, QTabBar.RightSide, self.plus_tab)
+        self.tabBar().setTabButton(self.count() - 1, QTabBar.ButtonPosition.RightSide, self.plus_tab)
         self.tabBar().setTabEnabled(self.count() - 1, False)
         self.plus_tab.setStyleSheet(
             """
@@ -464,9 +463,9 @@ class RenameTabWidget(QTabWidget):
             self,
             "Remove Tab",
             f"Are you sure you want to delete the tab '{self.tabText(index)}'?\nAll protocols inside the tab will be deleted as well!",
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if delete_question != QMessageBox.Yes:
+        if delete_question != QMessageBox.StandardButton.Yes:
             return
         tab_name = self.tabText(index)
         for i, protocol_ in enumerate(self.tab_button_dict[tab_name]):
@@ -496,7 +495,7 @@ class RenameTabWidget(QTabWidget):
         else:
             self.tabBar().setTabText(index, old_name)
             new_name = old_name
-        self.tabBar().setTabButton(index, QTabBar.RightSide, None)
+        self.tabBar().setTabButton(index, QTabBar.ButtonPosition.RightSide, None)
         self.tab_button_dict[new_name] = self.tab_button_dict.pop(old_name)
 
     def updateLayout(self):

@@ -53,11 +53,11 @@ def test_add_device(qtbot):
     assert item2 is not None
     index1 = conf.tableWidget_instruments.indexFromItem(item1)
     conf.tableWidget_instruments.selectionModel().select(
-        index1, QItemSelectionModel.Select
+        index1, QItemSelectionModel.SelectionFlag.Select
     )
     index2 = conf.tableWidget_instruments.indexFromItem(item2)
     conf.tableWidget_instruments.selectionModel().select(
-        index2, QItemSelectionModel.Select
+        index2, QItemSelectionModel.SelectionFlag.Select
     )
     # two items need to be selected, since with a real click, the selection also
     # returns a list

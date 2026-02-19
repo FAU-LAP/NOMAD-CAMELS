@@ -69,10 +69,10 @@ class Datbroker_Exporter(QDialog):
         self.textedit_overview = QTextEdit()
         self.textedit_description = QTextEdit()
         self.textedit_description.setTextInteractionFlags(
-            Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse
+            Qt.TextInteractionFlag.TextSelectableByKeyboard | Qt.TextInteractionFlag.TextSelectableByMouse
         )
         self.textedit_overview.setTextInteractionFlags(
-            Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse
+            Qt.TextInteractionFlag.TextSelectableByKeyboard | Qt.TextInteractionFlag.TextSelectableByMouse
         )
 
         self.button_export = QPushButton("Export")
@@ -163,7 +163,7 @@ class Datbroker_Exporter(QDialog):
         self.accept()
 
     def change_catalog(self):
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         catalog_name = self.catalog_box.currentText()
         if not catalog_name:
             return
@@ -178,7 +178,7 @@ class Datbroker_Exporter(QDialog):
         for run in sorted(run_time_names, reverse=True):
             run_time, run_name = run
             self.run_box.addItem(f"{run_time} - {run_name}", userData=run_name)
-        self.setCursor(Qt.ArrowCursor)
+        self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def change_run(self):
         run_name = self.run_box.currentData()
@@ -221,9 +221,9 @@ class Datbroker_Exporter(QDialog):
             self,
             "Discard Changes?",
             f"All changes will be lost!",
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if discard_dialog != QMessageBox.Yes:
+        if discard_dialog != QMessageBox.StandardButton.Yes:
             a0.ignore()
             return
         super().closeEvent(a0)

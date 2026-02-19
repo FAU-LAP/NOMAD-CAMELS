@@ -35,11 +35,11 @@ class LoadingScreen(QDialog):
         """
         super().__init__()
         self.setWindowTitle("NOMAD CAMELS - Loading...")
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         layout = QGridLayout()
         self.setLayout(layout)
         # Set custom window flags to disable some default decorations
-        self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        self.setWindowFlags(Qt.WindowType.CustomizeWindowHint | Qt.WindowType.WindowTitleHint)
         # Set the window icon using a resource from the graphics package
         self.setWindowIcon(QIcon(str(resources.files(graphics) / "CAMELS_Icon.png")))
 

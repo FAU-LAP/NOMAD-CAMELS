@@ -69,9 +69,9 @@ class EntrySelector(QDialog):
         self.entry_info.setReadOnly(True)
 
         self.button_box = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
         )
-        self.ok_button = self.button_box.button(QDialogButtonBox.Ok)
+        self.ok_button = self.button_box.button(QDialogButtonBox.StandardButton.Ok)
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
 
@@ -80,17 +80,17 @@ class EntrySelector(QDialog):
         layout.addWidget(label_scope, 0, 0)
         layout.addWidget(self.combo_scope, 1, 0)
         layout.addItem(
-            QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 2, 0
+            QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding), 2, 0
         )
         layout.addWidget(label_upload, 3, 0)
         layout.addWidget(self.upload_box, 4, 0)
         layout.addItem(
-            QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 5, 0
+            QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding), 5, 0
         )
         layout.addWidget(label_type, 6, 0)
         layout.addWidget(self.type_box, 7, 0)
         layout.addItem(
-            QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 8, 0
+            QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding), 8, 0
         )
         layout.addWidget(label_entry, 10, 0)
         layout.addWidget(self.entry_box, 11, 0)
@@ -98,7 +98,7 @@ class EntrySelector(QDialog):
         layout.addWidget(self.button_box, 20, 0, 1, 3)
 
         for w in (self.combo_scope, self.upload_box, self.type_box, self.entry_box):
-            w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+            w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
 
         # --- signals ---
         self.combo_scope.currentTextChanged.connect(self.update_uploads)
@@ -258,7 +258,7 @@ class EntrySelector(QDialog):
     def _block_ui(self, title=None):
         self.reloading = True
         self.setEnabled(False)
-        QApplication.setOverrideCursor(Qt.WaitCursor)
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         if title:
             self.setWindowTitle(title)
 

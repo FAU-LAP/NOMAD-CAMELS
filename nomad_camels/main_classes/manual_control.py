@@ -96,7 +96,7 @@ class Manual_Control(QWidget):
                 self.device_list
             )
             self.instantiate_devices_thread.successful.connect(self.device_ready)
-            self.setCursor(Qt.WaitCursor)
+            self.setCursor(Qt.CursorShape.WaitCursor)
             self.setEnabled(False)
             self.instantiate_devices_thread.exception_raised.connect(
                 self.propagate_exception
@@ -133,7 +133,7 @@ class Manual_Control(QWidget):
         self.instantiate_devices_thread = None
         if self.device:
             self.ophyd_device = self.device_list[self.device.custom_name]
-        self.setCursor(Qt.ArrowCursor)
+        self.setCursor(Qt.CursorShape.ArrowCursor)
         self.setEnabled(True)
 
 
@@ -148,7 +148,7 @@ class Manual_Control_Config(QDialog):
         control_type="",
     ):
         super().__init__(parent=parent)
-        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint)
         layout = QGridLayout()
         self.setLayout(layout)
         self.control_type = control_type or "Manual_Control"
@@ -156,8 +156,8 @@ class Manual_Control_Config(QDialog):
         self.setWindowTitle(f"{title} - NOMAD CAMELS")
 
         self.buttonBox = QDialogButtonBox()
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.buttonBox.rejected.connect(self.reject)
         self.buttonBox.accepted.connect(self.accept)
@@ -209,9 +209,9 @@ class Manual_Control_Config(QDialog):
             self,
             "Discard Changes?",
             f"All changes will be lost!",
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if discard_dialog != QMessageBox.Yes:
+        if discard_dialog != QMessageBox.StandardButton.Yes:
             a0.ignore()
             return
         super().closeEvent(a0)

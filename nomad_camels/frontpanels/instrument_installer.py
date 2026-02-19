@@ -193,18 +193,18 @@ class Info_Widget(QSplitter):
         self.info_text = QTextBrowser()
         self.info_text.setOpenExternalLinks(True)
         self.info_text.setTextInteractionFlags(
-            Qt.TextSelectableByKeyboard
-            | Qt.TextSelectableByMouse
-            | Qt.LinksAccessibleByMouse
+            Qt.ItemFlag.TextSelectableByKeyboard
+            | Qt.ItemFlag.TextSelectableByMouse
+            | Qt.ItemFlag.LinksAccessibleByMouse
         )
         self.addWidget(self.info_text)
 
         self.license_text = QTextBrowser()
         self.license_text.setOpenExternalLinks(True)
         self.license_text.setTextInteractionFlags(
-            Qt.TextSelectableByKeyboard
-            | Qt.TextSelectableByMouse
-            | Qt.LinksAccessibleByMouse
+            Qt.ItemFlag.TextSelectableByKeyboard
+            | Qt.ItemFlag.TextSelectableByMouse
+            | Qt.ItemFlag.LinksAccessibleByMouse
         )
         self.addWidget(self.license_text)
         self.info = False
@@ -414,9 +414,9 @@ class Instrument_Installer(Ui_Form, QWidget):
                     self,
                     "Uninstall instrument?",
                     f'You are trying to uninstall the instrument "{dev}", but it may still be in use.\nContinue?',
-                    QMessageBox.Yes | QMessageBox.No,
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 )
-                if remove_dialog != QMessageBox.Yes:
+                if remove_dialog != QMessageBox.StandardButton.Yes:
                     continue
                 devs.append(dev)
                 continue
@@ -468,14 +468,14 @@ class Instrument_Installer(Ui_Form, QWidget):
         self.install_thread.finished.connect(self.thread_done)
         for c in self.disables:
             c.setEnabled(False)
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         self.install_thread.start()
 
     def thread_done(self):
         """ """
         for c in self.disables:
             c.setEnabled(True)
-        self.setCursor(Qt.ArrowCursor)
+        self.setCursor(Qt.CursorShape.ArrowCursor)
         self.all_devs = getAllDevices()
         self.installed_devs = getInstalledDevices(True)
         self.build_table()
@@ -518,7 +518,7 @@ class Instrument_Installer(Ui_Form, QWidget):
 
             item_v = QTableWidgetItem(self.all_devs[dev])
             item_v.setFont(bold_font)
-            item_v.setFlags(item_v.flags() & ~Qt.ItemIsEditable)
+            item_v.setFlags(item_v.flags() & ~Qt.ItemFlag.ItemIsEditable)
             inst_v = self.installed_devs[dev] if dev in self.installed_devs else ""
             item_inst = QTableWidgetItem(inst_v)
             if inst_v:
@@ -530,7 +530,7 @@ class Instrument_Installer(Ui_Form, QWidget):
                     )
                 )
                 item_inst.setForeground(brush)
-            item_inst.setFlags(item_inst.flags() & ~Qt.ItemIsEditable)
+            item_inst.setFlags(item_inst.flags() & ~Qt.ItemFlag.ItemIsEditable)
             item_inst.setFont(bold_font)
             self.device_table.setItem(i, 0, item)
             self.device_table.setItem(i, 1, item_v)
@@ -539,13 +539,13 @@ class Instrument_Installer(Ui_Form, QWidget):
 
     def table_click(self):
         """ """
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         try:
             ind = self.device_table.selectedIndexes()[0]
             instr = self.device_table.item(ind.row(), 0).data(3)
             self.info_widge.update_texts(instr)
         finally:
-            self.setCursor(Qt.ArrowCursor)
+            self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def propagate_exception(self, e: BaseException):
         """ """
@@ -562,7 +562,7 @@ class CustomTextEdit_new_painter(QTextEdit):
         # Custom painting code
         if not self.toPlainText():
             painter = QPainter(self.viewport())
-            painter.setPen(QColor(Qt.gray))  # Set the color of the pen
+            painter.setPen(QColor(Qt.GlobalColor.gray))  # Set the color of the pen
 
             # Customize the font
             font = QFont()
@@ -571,7 +571,7 @@ class CustomTextEdit_new_painter(QTextEdit):
             painter.setFont(font)
 
             # Draw custom text in the center
-            painter.drawText(self.rect(), Qt.AlignCenter, "Installation Log")
+            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "Installation Log")
             painter.end()
 
 

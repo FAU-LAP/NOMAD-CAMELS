@@ -127,9 +127,9 @@ def question_message_box(parent=None):
         f"Your current version of NOMAD CAMELS is {installed_version}\n"
         f"The newest available version is {available_version}\n"
         f"Do you want to update now? (NOMAD CAMELS will have to restart)",
-        QMessageBox.Yes | QMessageBox.No,
+        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
     )
-    if update_dialog != QMessageBox.Yes:
+    if update_dialog != QMessageBox.StandardButton.Yes:
         return
     update_camels()
     restart_camels(parent)
@@ -153,9 +153,9 @@ def restart_camels(parent=None, ask_restart=True):
             parent,
             "Restart NOMAD CAMELS now?",
             "Do you want to restart NOMAD CAMELS now?",
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if restart_dialog != QMessageBox.Yes:
+        if restart_dialog != QMessageBox.StandardButton.Yes:
             return
     os.execl(sys.executable, sys.executable, *sys.argv)
 
@@ -200,7 +200,7 @@ def show_release_notes():
             text_edit.setReadOnly(True)
 
             # Add OK button
-            button_box = QDialogButtonBox(QDialogButtonBox.Ok, self)
+            button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok, self)
             button_box.accepted.connect(self.accept)
 
             layout.addWidget(text_edit, 0, 0)

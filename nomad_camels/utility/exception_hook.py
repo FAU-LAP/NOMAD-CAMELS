@@ -41,8 +41,8 @@ class ErrorMessage(QMessageBox):
         print(info_text)
         super().__init__(parent)
         self.setWindowTitle("ERROR")
-        self.setIcon(QMessageBox.Warning)
-        self.setStandardButtons(QMessageBox.Ok)
+        self.setIcon(QMessageBox.Icon.Warning)
+        self.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.setText(msg)
         if info_text:
             self.setInformativeText(info_text)
@@ -57,7 +57,7 @@ class ErrorMessage(QMessageBox):
 
         self.layout().addWidget(self.more_info_button, 3, 0, 1, 5)
         self.layout().addWidget(self.text_edit, 2, 0, 1, 5)
-        self.layout().addWidget(self.button(QMessageBox.Ok), 4, 0, 1, 5)
+        self.layout().addWidget(self.button(QMessageBox.StandardButton.Ok), 4, 0, 1, 5)
         self.showing_more_info = False
         self.adjustSize()
 

@@ -44,7 +44,7 @@ class Path_Button_Edit(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         self.button = QPushButton("...")
         self.button.setIcon(
-            QApplication.style().standardIcon(QStyle.SP_DialogOpenButton)
+            QApplication.style().standardIcon(QStyle.StandardPixmap.SP_DialogOpenButton)
         )
         self.button.setMaximumWidth(50)
 
@@ -129,8 +129,8 @@ class Path_Button_Dialog(QDialog):
             self.setWindowTitle(title)
 
         self.buttonBox = QDialogButtonBox(self)
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
 
         self.buttonBox.rejected.connect(self.reject)

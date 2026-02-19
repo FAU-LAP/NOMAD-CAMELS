@@ -265,9 +265,9 @@ class If_Step_Config_Sub(QWidget):
                 self,
                 "Remove Else case?",
                 "Removing the Else-case also deletes its children",
-                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             )
-            if dialog != QMessageBox.Yes:
+            if dialog != QMessageBox.StandardButton.Yes:
                 self.checkBox_use_else.setChecked(True)
                 return
         self.update_condition()

@@ -122,15 +122,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.label_logo.setPixmap(image)
 
         # Set the arrow image using the style standard icon
-        arrow = self.style().standardIcon(QStyle.SP_ArrowUp)
+        arrow = self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowUp)
         self.label_arrow.setPixmap(arrow.pixmap(130, 130))
 
         # Set icons for pause, resume, and stop buttons
-        icon = self.style().standardIcon(QStyle.SP_MediaPause)
+        icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause)
         self.pushButton_pause.setIcon(icon)
-        icon = self.style().standardIcon(QStyle.SP_MediaPlay)
+        icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
         self.pushButton_resume.setIcon(icon)
-        icon = self.style().standardIcon(QStyle.SP_MediaStop)
+        icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop)
         self.pushButton_stop.setIcon(icon)
 
         # Apply stylesheet to splitter handles
@@ -287,7 +287,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         # Start additional import thread
         self.importer_thread = qthreads.Additional_Imports_Thread(self)
-        self.importer_thread.start(priority=QThread.LowPriority)
+        self.importer_thread.start(priority=QThread.Priority.LowPriority)
 
         # Setup measurement tags UI and flow layout for tags
         self.container = self.scrollAreaWidgetContents
@@ -595,7 +595,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         """
         if not self.check_password_protection():
             return
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         from nomad_camels.extensions.extension_management import Extension_Manager
         from nomad_camels.utility.update_camels import restart_camels
 
@@ -610,7 +610,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 info_icon=True,
             )
             restart_camels(self, True)
-        self.setCursor(Qt.ArrowCursor)
+        self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def load_extensions(self):
         """
@@ -700,14 +700,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         Allows users to add or remove instruments. After the dialog, the active instruments are updated.
         """
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         # IMPORT ManageInstruments only if it is needed
         from nomad_camels.frontpanels.manage_instruments import ManageInstruments
 
         dialog = ManageInstruments(
             active_instruments=self.active_instruments, parent=self
         )
-        self.setCursor(Qt.ArrowCursor)
+        self.setCursor(Qt.CursorShape.ArrowCursor)
         if dialog.exec():
             self.active_instruments.clear()
             self.active_instruments.update(dialog.active_instruments)
@@ -1046,7 +1046,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         class WordWrapDelegate(QStyledItemDelegate):
             def paint(self, painter, option, index):
                 # Enable word wrapping for text display
-                option.displayAlignment = Qt.AlignTop | Qt.AlignLeft
+                option.displayAlignment = Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft
                 super().paint(painter, option, index)
 
             def sizeHint(self, option, index):
@@ -1064,7 +1064,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                             0,
                             column_width - 10,
                             0,  # -10 for padding
-                            Qt.TextWordWrap,
+                            Qt.TextFlag.TextWordWrap,
                             str(text),
                         )
                         size.setHeight(max(size.height(), text_rect.height() + 10))
@@ -1078,11 +1078,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         dialog.table.table.setWordWrap(True)
 
         # Set text elide mode to none so full text is shown when wrapped
-        dialog.table.table.setTextElideMode(Qt.ElideNone)
+        dialog.table.table.setTextElideMode(Qt.TextElideMode.ElideNone)
 
         # Enable automatic row height adjustment
         dialog.table.table.verticalHeader().setSectionResizeMode(
-            QHeaderView.ResizeToContents
+            QHeaderView.ResizeMode.ResizeToContents
         )
 
         if dialog.exec():
@@ -1403,8 +1403,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 "This version of NOMAD CAMELS is password protected.\nDo you want to save changes?"
             )
             msg_box.setWindowTitle("Save changes?")
-            msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-            if msg_box.exec() == QMessageBox.Cancel:
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+            if msg_box.exec() == QMessageBox.StandardButton.Cancel:
                 return
             from nomad_camels.utility.password_widgets import Password_Dialog
 
@@ -2102,7 +2102,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             api_uuid (Optional[str]): The API unique identifier, defaults to None.
             variables (Optional[dict]): Variables for the protocol, defaults to None.
         """
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         plot_placement.reset_variables()
         # IMPORT importlib, bluesky, ophyd and time only if needed
         import importlib
@@ -2121,7 +2121,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.pushButton_pause.setEnabled(False)
             self.pushButton_stop.setEnabled(True)
             if not self.build_protocol(protocol_name, ask_file=False, variables=variables):
-                self.setCursor(Qt.ArrowCursor)
+                self.setCursor(Qt.CursorShape.ArrowCursor)
                 self.button_area_meas.enable_run_buttons()
                 return
             protocol = self.protocols_dict[protocol_name]
@@ -2588,7 +2588,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pushButton_resume.setEnabled(False)
         self.button_area_meas.enable_run_buttons()
         self.protocol_stepper_signal.emit(100)
-        self.setCursor(Qt.ArrowCursor)
+        self.setCursor(Qt.CursorShape.ArrowCursor)
         if "number_databroker_files" in variables_handling.preferences:
             n_files = variables_handling.preferences["number_databroker_files"]
             if n_files > 0:
@@ -2813,10 +2813,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                         self,
                         "Sample Not Found",
                         'No sample found. Make sure you actually added a sample.\nDo you want to run the measurement with a temporary "default_sample" without sample_id  instead?',
-                        QMessageBox.Yes | QMessageBox.No,
-                        QMessageBox.No,  # This sets "No" as the default selected button for safety
+                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                        QMessageBox.StandardButton.No,  # This sets "No" as the default selected button for safety
                     )
-                    if reply == QMessageBox.Yes:
+                    if reply == QMessageBox.StandardButton.Yes:
                         sample = "default_sample"
                         sampledata = {"name": "default_sample"}
                 else:

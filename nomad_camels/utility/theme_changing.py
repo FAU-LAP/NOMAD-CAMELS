@@ -13,22 +13,22 @@ except ImportError:
 
 
 light_palette = QPalette(QColor(225, 225, 225), QColor(238, 238, 238))
-light_palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+light_palette.setColor(QPalette.ColorRole.Highlight, QColor(42, 130, 218))
 
 dark_palette = QPalette()
-dark_palette.setColor(QPalette.Window, QColor(53, 53, 53))
-dark_palette.setColor(QPalette.WindowText, QColorConstants.White)
-dark_palette.setColor(QPalette.Base, QColor(25, 25, 25))
-dark_palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
-dark_palette.setColor(QPalette.ToolTipBase, QColorConstants.White)
-dark_palette.setColor(QPalette.ToolTipText, QColorConstants.White)
-dark_palette.setColor(QPalette.Text, QColorConstants.White)
-dark_palette.setColor(QPalette.Button, QColor(53, 53, 53))
-dark_palette.setColor(QPalette.ButtonText, QColorConstants.White)
-dark_palette.setColor(QPalette.BrightText, QColorConstants.Red)
-dark_palette.setColor(QPalette.Link, QColor(42, 130, 218))
-dark_palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
-dark_palette.setColor(QPalette.HighlightedText, QColorConstants.Black)
+dark_palette.setColor(QPalette.ColorRole.Window, QColor(53, 53, 53))
+dark_palette.setColor(QPalette.ColorRole.WindowText, QColorConstants.White)
+dark_palette.setColor(QPalette.ColorRole.Base, QColor(25, 25, 25))
+dark_palette.setColor(QPalette.ColorRole.AlternateBase, QColor(53, 53, 53))
+dark_palette.setColor(QPalette.ColorRole.ToolTipBase, QColorConstants.White)
+dark_palette.setColor(QPalette.ColorRole.ToolTipText, QColorConstants.White)
+dark_palette.setColor(QPalette.ColorRole.Text, QColorConstants.White)
+dark_palette.setColor(QPalette.ColorRole.Button, QColor(53, 53, 53))
+dark_palette.setColor(QPalette.ColorRole.ButtonText, QColorConstants.White)
+dark_palette.setColor(QPalette.ColorRole.BrightText, QColorConstants.Red)
+dark_palette.setColor(QPalette.ColorRole.Link, QColor(42, 130, 218))
+dark_palette.setColor(QPalette.ColorRole.Highlight, QColor(42, 130, 218))
+dark_palette.setColor(QPalette.ColorRole.HighlightedText, QColorConstants.Black)
 
 
 tooltip_dark = """

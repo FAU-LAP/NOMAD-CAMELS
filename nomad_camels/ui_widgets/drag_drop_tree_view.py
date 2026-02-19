@@ -21,8 +21,8 @@ class Drag_Drop_TreeView(QTreeView):
     def __init__(self):
         super().__init__()
         self.setHeaderHidden(True)
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.setDragDropMode(QAbstractItemView.InternalMove)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
         self._dragged_item_data = None  # store data of the dragged item
 
     def startDrag(self, supportedActions):
@@ -45,7 +45,7 @@ class Drag_Drop_TreeView(QTreeView):
         if new_index.isValid():
             self.selectionModel().setCurrentIndex(
                 new_index,
-                QItemSelectionModel.ClearAndSelect | QItemSelectionModel.Rows,
+                QItemSelectionModel.SelectionFlag.ClearAndSelect | QItemSelectionModel.SelectionFlag.Rows,
             )
         # Clear stored data after selection update.
         self._dragged_item_data = None
@@ -62,7 +62,7 @@ class Drag_Drop_TreeView(QTreeView):
         return QModelIndex()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        if event.key() == Qt.Key_Delete:
+        if event.key() == Qt.Key.Key_Delete:
             self.del_clicked.emit()
 
     def paintEvent(self, event):
@@ -77,5 +77,5 @@ class Drag_Drop_TreeView(QTreeView):
             painter.setFont(font)
             rect = self.viewport().rect()
             painter.drawText(
-                rect, Qt.AlignCenter, "Right-click to add\nyour first step here"
+                rect, Qt.AlignmentFlag.AlignCenter, "Right-click to add\nyour first step here"
             )

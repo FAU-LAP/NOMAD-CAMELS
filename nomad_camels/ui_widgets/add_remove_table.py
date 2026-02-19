@@ -133,7 +133,7 @@ class AddRemoveTable(QWidget):
             If None, the check_eval function of CAMELS is used.
         """
         super().__init__(parent)
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         layout = QGridLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -463,7 +463,7 @@ class AddRemoveTable(QWidget):
         else:
             color = variables_handling.get_color("red")
         self.table_model.setData(
-            self.table_model.indexFromItem(item), QBrush(color), Qt.BackgroundRole
+            self.table_model.indexFromItem(item), QBrush(color), Qt.ItemDataRole.BackgroundRole
         )
 
     def check_for_duplicates(self):
@@ -501,7 +501,7 @@ class AddRemoveTable(QWidget):
                     self.table_model.setData(
                         self.table_model.indexFromItem(items[i]),
                         QBrush(color),
-                        Qt.BackgroundRole,
+                        Qt.ItemDataRole.BackgroundRole,
                     )
                 if duplicates:
                     duplicate_dict[self.headerLabels[column]] = list(duplicates)
@@ -752,10 +752,10 @@ class AddRemoveDialoge(QDialog):
         check_string_function=None,
     ):
         super().__init__(parent)
-        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint)
         self.buttonBox = QDialogButtonBox(self)
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
 
         self.buttonBox.rejected.connect(self.reject)
@@ -819,7 +819,7 @@ class AddRemoveDialoge(QDialog):
         -------
 
         """
-        if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
+        if a0.key() == Qt.Key.Key_Enter or a0.key() == Qt.Key.Key_Return:
             return
         super().keyPressEvent(a0)
 
@@ -834,10 +834,10 @@ class MultiTableDialog(QDialog):
         title="",
     ):
         super().__init__(parent)
-        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint)
         self.buttonBox = QDialogButtonBox(self)
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
 
         self.buttonBox.rejected.connect(self.reject)
@@ -881,7 +881,7 @@ class MultiTableDialog(QDialog):
         -------
 
         """
-        if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
+        if a0.key() == Qt.Key.Key_Enter or a0.key() == Qt.Key.Key_Return:
             return
         super().keyPressEvent(a0)
 

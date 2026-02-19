@@ -104,9 +104,9 @@ class Console_TextEdit(QTextEdit):
         if line_count > self.max_lines:
             cursor = QTextCursor(document)
             cursor.movePosition(
-                QTextCursor.Start
+                QTextCursor.MoveOperation.Start
             )  # Move cursor to the start of the document
             for _ in range(line_count - self.max_lines):
-                cursor.select(QTextCursor.BlockUnderCursor)  # Select the first block
+                cursor.select(QTextCursor.SelectionType.BlockUnderCursor)  # Select the first block
                 cursor.removeSelectedText()  # Remove the selected text
                 cursor.deleteChar()  # Remove the newline character

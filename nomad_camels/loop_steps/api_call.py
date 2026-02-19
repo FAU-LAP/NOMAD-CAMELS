@@ -191,17 +191,17 @@ class API_Call_Config(Loop_Step_Config):
         )
         # Add tooltips to the combobox items
         self.combobox_authentication_type.setItemData(
-            0, "No authentication required", Qt.ToolTipRole
+            0, "No authentication required", Qt.ItemDataRole.ToolTipRole
         )
         self.combobox_authentication_type.setItemData(
-            1, "Use format: username:password", Qt.ToolTipRole
+            1, "Use format: username:password", Qt.ItemDataRole.ToolTipRole
         )
         self.combobox_authentication_type.setItemData(
-            2, "Use format: Token", Qt.ToolTipRole
+            2, "Use format: Token", Qt.ItemDataRole.ToolTipRole
         )
         # Line edit authentication string
         self.line_edit_authentication_string = QLineEdit()
-        self.line_edit_authentication_string.setEchoMode(QLineEdit.Password)
+        self.line_edit_authentication_string.setEchoMode(QLineEdit.EchoMode.Password)
         self.line_edit_authentication_string.textChanged.connect(
             self.update_authentication_string
         )
@@ -487,7 +487,7 @@ class API_Call_Config(Loop_Step_Config):
             self.combobox_camels_api_functions.addItem(func["summary"])
             index = self.combobox_camels_api_functions.count() - 1
             self.combobox_camels_api_functions.setItemData(
-                index, func["description"], Qt.ToolTipRole
+                index, func["description"], Qt.ItemDataRole.ToolTipRole
             )
         # Reconnect the signal
         self.combobox_camels_api_functions.currentIndexChanged.connect(

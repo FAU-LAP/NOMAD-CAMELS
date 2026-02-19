@@ -396,9 +396,9 @@ class Driver_Builder(Ui_VISA_Device_Builder, QDialog):
             self,
             "Discard Changes?",
             f"All changes will be lost!",
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if discard_dialog != QMessageBox.Yes:
+        if discard_dialog != QMessageBox.StandardButton.Yes:
             a0.ignore()
             return
         super().closeEvent(a0)

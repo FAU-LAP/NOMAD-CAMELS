@@ -281,9 +281,9 @@ class Instrument_Config(Ui_Form, QWidget):
             self,
             "Remove instrument?",
             f"Are you sure you want to remove the instrument {name}?",
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if remove_dialog != QMessageBox.Yes:
+        if remove_dialog != QMessageBox.StandardButton.Yes:
             return
         self.config_tabs.removeTab(ind)
         instr_ind = self.tableWidget_instruments.selectedIndexes()[0]
@@ -315,12 +315,12 @@ class Instrument_Config(Ui_Form, QWidget):
                 continue
             self.tableWidget_instruments.setRowCount(i + 1)
             item = QTableWidgetItem(dev)
-            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
 
             if dev not in self.active_instruments:
                 self.active_instruments[dev] = []
             item_n = QTableWidgetItem(str(len(self.active_instruments[dev])))
-            item_n.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            item_n.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self.tableWidget_instruments.setItem(i, 0, item)
             self.tableWidget_instruments.setItem(i, 1, item_n)
             i += 1

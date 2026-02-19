@@ -48,7 +48,7 @@ class LoginDialog(QDialog):
         self.lineEdit_oasis_url = QLineEdit(oasis_url)
 
         self.label_logo = QLabel()
-        self.label_logo.setAlignment(Qt.AlignCenter)
+        self.label_logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.label_info_oasis = QLabel(
             "Hint: You can set the URL for the Oasis also in the settings of CAMELS."
@@ -63,17 +63,16 @@ class LoginDialog(QDialog):
         self.username_input = QLineEdit()
         self.password_label = QLabel("Password:")
         self.password_input = QLineEdit()
-        self.password_input.setEchoMode(QLineEdit.Password)
+        self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.label_token = QLabel("Authentication token:")
         self.lineEdit_token = QLineEdit()
-        self.lineEdit_token.setEchoMode(QLineEdit.Password)
-
+        self.lineEdit_token.setEchoMode(QLineEdit.EchoMode.Password)
         self.username = None
         self.password = None
 
         self.button_box = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
         )
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)

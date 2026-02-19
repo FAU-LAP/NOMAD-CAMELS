@@ -130,10 +130,10 @@ class EPICS_Driver_Builder(QDialog):
                 self,
                 "Instrument already exists!",
                 f"Instrument type with name {dev_name} already exists.\nDo you want to overwrite the existing instrument driver?",
-                buttons=QMessageBox.Yes | QMessageBox.Cancel,
-                defaultButton=QMessageBox.Cancel,
+                buttons=QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel,
+                defaultButton=QMessageBox.StandardButton.Cancel,
             )
-            if answer != QMessageBox.Yes:
+            if answer != QMessageBox.StandardButton.Yes:
                 return
         if not os.path.isdir(directory):
             os.mkdir(directory)
@@ -188,9 +188,9 @@ class EPICS_Driver_Builder(QDialog):
             self,
             "Discard Changes?",
             f"All changes will be lost!",
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if discard_dialog != QMessageBox.Yes:
+        if discard_dialog != QMessageBox.StandardButton.Yes:
             a0.ignore()
             return
         super().closeEvent(a0)

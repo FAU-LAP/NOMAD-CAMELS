@@ -1367,7 +1367,7 @@ class PlotWidget_2D(QWidget):
         menu = viewbox.menu
         scene = viewbox.scene()
         # dummy mouseclickevent
-        press_event = QGraphicsSceneMouseEvent(QEvent.GraphicsSceneMousePress)
+        press_event = QGraphicsSceneMouseEvent(QEvent.Type.GraphicsSceneMousePress)
         event = MouseClickEvent(press_event)
         scene.addParentContextMenus(viewbox, menu, event)
         actions = menu.actions()
@@ -1742,7 +1742,7 @@ class LivePlot_2D(QObject, CallbackBase):
                 zlabel=self.z,
             )
             # Connect the window's destroyed signal to our slot
-            self.heatmap_window.setAttribute(Qt.WA_DeleteOnClose)
+            self.heatmap_window.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
             self.heatmap_window.destroyed.connect(self.on_heatmap_window_closed)
 
         # Show and update the window
@@ -1985,7 +1985,7 @@ class FactorLineEdit(QLineEdit):
         key = event.key()
         
         # Check if the pressed key is Enter or Return
-        if key == Qt.Key_Return or key == Qt.Key_Enter:
+        if key == Qt.Key.Key_Return or key == Qt.Key.Key_Enter:
             # We got the key, so emit the signal we care about
             self.returnPressed.emit()
             # CRITICAL: Accept the event to stop it from bubbling up

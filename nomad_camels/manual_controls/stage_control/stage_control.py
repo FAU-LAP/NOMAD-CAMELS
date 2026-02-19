@@ -54,17 +54,16 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.setWindowTitle(f"{name} - NOMAD CAMELS")
         self.control_data = control_data
 
-        self.pushButton_up.setIcon(self.style().standardIcon(QStyle.SP_ArrowUp))
-        self.pushButton_down.setIcon(self.style().standardIcon(QStyle.SP_ArrowDown))
-        self.pushButton_left.setIcon(self.style().standardIcon(QStyle.SP_ArrowLeft))
-        self.pushButton_right.setIcon(self.style().standardIcon(QStyle.SP_ArrowRight))
-        self.pushButton_zUp.setIcon(self.style().standardIcon(QStyle.SP_ArrowUp))
-        self.pushButton_zDown.setIcon(self.style().standardIcon(QStyle.SP_ArrowDown))
+        self.pushButton_up.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowUp))
+        self.pushButton_down.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowDown))
+        self.pushButton_left.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowLeft))
+        self.pushButton_right.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowRight))
+        self.pushButton_zUp.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowUp))
+        self.pushButton_zDown.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowDown))
         self.pushButton_position.setIcon(
-            self.style().standardIcon(QStyle.SP_MediaSeekBackward)
+            self.style().standardIcon(QStyle.StandardPixmap.SP_MediaSeekBackward)
         )
-        self.pushButton_stop.setIcon(self.style().standardIcon(QStyle.SP_BrowserStop))
-
+        self.pushButton_stop.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_BrowserStop))
         use_x, use_y, use_z = control_data["use_axis"]
         self.pushButton_left.setEnabled(use_x)
         self.pushButton_right.setEnabled(use_x)
@@ -222,8 +221,8 @@ class Stage_Control(Manual_Control, Ui_Form):
         self.start_move_thread()
         for child in self.children():
             if isinstance(child, QWidget):
-                child.setFocusPolicy(Qt.ClickFocus)
-        self.setFocusPolicy(Qt.ClickFocus)
+                child.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
+        self.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         self.show()
         for i, auto in enumerate(self.control_data["auto_reference"]):
             self.checks[i].setChecked(auto)
@@ -298,9 +297,9 @@ class Stage_Control(Manual_Control, Ui_Form):
             f"An error occured in the {name} thread of {self.name}:\n{ex}\nDo you want to restart the read thread?"
         )
         msg.setWindowTitle(f"Error in {name} thread")
-        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        msg.setDefaultButton(QMessageBox.Yes)
-        if msg.exec() == QMessageBox.Yes:
+        msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        msg.setDefaultButton(QMessageBox.StandardButton.Yes)
+        if msg.exec() == QMessageBox.StandardButton.Yes:
             if name == "read":
                 self.start_read_thread()
             elif name == "move":
@@ -423,14 +422,14 @@ class Stage_Control(Manual_Control, Ui_Form):
 
     def reference_drive(self):
         """ """
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         try:
             checks = [self.checkBox_refX, self.checkBox_refY, self.checkBox_refZ]
             for i, func in enumerate(self.ref_funcs):
                 if checks[i].isChecked() and func:
                     func()
         finally:
-            self.setCursor(Qt.ArrowCursor)
+            self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def stop_moving(self):
         """ """
@@ -457,15 +456,15 @@ class Stage_Control(Manual_Control, Ui_Form):
     def eventFilter(self, obj, event):
         if (
             isinstance(event, QKeyEvent)
-            and event.modifiers() == Qt.ControlModifier
+            and event.modifiers() == Qt.KeyboardModifier.ControlModifier
             and event.key()
             in [
-                Qt.Key_Left,
-                Qt.Key_Right,
-                Qt.Key_Up,
-                Qt.Key_Down,
-                Qt.Key_PageUp,
-                Qt.Key_PageDown,
+                Qt.Key.Key_Left,
+                Qt.Key.Key_Right,
+                Qt.Key.Key_Up,
+                Qt.Key.Key_Down,
+                Qt.Key.Key_PageUp,
+                Qt.Key.Key_PageDown,
             ]
         ):
             self.keyPressEvent(event)
@@ -491,26 +490,26 @@ class Stage_Control(Manual_Control, Ui_Form):
             or a0.modifiers() != Qt.ControlModifier
         ):
             return super().keyPressEvent(a0)
-        if a0.key() == Qt.Key_Left and (self.set_channels[0] or self.manual_funcs[0]):
+        if a0.key() == Qt.Key.Key_Left and (self.set_channels[0] or self.manual_funcs[0]):
             self.move_thread.up_dir[0] = False
             self.move_thread.movers[0] = True
-        elif a0.key() == Qt.Key_Right and (
+        elif a0.key() == Qt.Key.Key_Right and (
             self.set_channels[0] or self.manual_funcs[0]
         ):
             self.move_thread.up_dir[0] = True
             self.move_thread.movers[0] = True
-        elif a0.key() == Qt.Key_Up and (self.set_channels[1] or self.manual_funcs[1]):
+        elif a0.key() == Qt.Key.Key_Up and (self.set_channels[1] or self.manual_funcs[1]):
             self.move_thread.up_dir[1] = True
             self.move_thread.movers[1] = True
-        elif a0.key() == Qt.Key_Down and (self.set_channels[1] or self.manual_funcs[1]):
+        elif a0.key() == Qt.Key.Key_Down and (self.set_channels[1] or self.manual_funcs[1]):
             self.move_thread.up_dir[1] = False
             self.move_thread.movers[1] = True
-        elif a0.key() == Qt.Key_PageDown and (
+        elif a0.key() == Qt.Key.Key_PageDown and (
             self.set_channels[2] or self.manual_funcs[2]
         ):
             self.move_thread.up_dir[2] = False
             self.move_thread.movers[2] = True
-        elif a0.key() == Qt.Key_PageUp and (
+        elif a0.key() == Qt.Key.Key_PageUp and (
             self.set_channels[2] or self.manual_funcs[2]
         ):
             self.move_thread.up_dir[2] = True
@@ -532,17 +531,17 @@ class Stage_Control(Manual_Control, Ui_Form):
         """
         if a0.isAutoRepeat():
             return super().keyPressEvent(a0)
-        if a0.key() == Qt.Key_Left:
+        if a0.key() == Qt.Key.Key_Left:
             self.move_thread.movers[0] = False
-        elif a0.key() == Qt.Key_Right:
+        elif a0.key() == Qt.Key.Key_Right:
             self.move_thread.movers[0] = False
-        elif a0.key() == Qt.Key_Up:
+        elif a0.key() == Qt.Key.Key_Up:
             self.move_thread.movers[1] = False
-        elif a0.key() == Qt.Key_Down:
+        elif a0.key() == Qt.Key.Key_Down:
             self.move_thread.movers[1] = False
-        elif a0.key() == Qt.Key_PageDown:
+        elif a0.key() == Qt.Key.Key_PageDown:
             self.move_thread.movers[2] = False
-        elif a0.key() == Qt.Key_PageUp:
+        elif a0.key() == Qt.Key.Key_PageUp:
             self.move_thread.movers[2] = False
         else:
             super().keyReleaseEvent(a0)

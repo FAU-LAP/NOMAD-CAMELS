@@ -210,8 +210,8 @@ class Execute_Python_File_Config(Loop_Step_Config):
 
         # Horizontal line setup
         h_line = QFrame()
-        h_line.setFrameShape(QFrame.HLine)
-        h_line.setFrameShadow(QFrame.Sunken)
+        h_line.setFrameShape(QFrame.Shape.HLine)
+        h_line.setFrameShadow(QFrame.Shadow.Sunken)
 
         # AddRemoveTable widget setup for python packages and their version when selecting the python packages explicitly
         self.add_remove_table_packages = AddRemoveTable(

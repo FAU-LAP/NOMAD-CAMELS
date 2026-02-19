@@ -260,8 +260,8 @@ class Settings_Window(Ui_settings_window, QDialog):
             msg_box = QMessageBox()
             msg_box.setWindowTitle("Change Password?")
             msg_box.setText("Do you want to change the password?")
-            msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-            if msg_box.exec() != QMessageBox.Yes:
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            if msg_box.exec() != QMessageBox.StandardButton.Yes:
                 super().accept()
         if self.checkBox_password.isChecked() and not self.password_hash:
             from nomad_camels.utility import password_widgets
@@ -356,7 +356,7 @@ class Settings_Window(Ui_settings_window, QDialog):
         -------
 
         """
-        if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
+        if a0.key() == Qt.Key.Key_Enter or a0.key() == Qt.Key.Key_Return:
             return
         super().keyPressEvent(a0)
 
@@ -395,11 +395,11 @@ class Settings_Window(Ui_settings_window, QDialog):
             self,
             "Confirm Action",
             "Are you sure you want to delete ALL API keys?\nYou can not reverse this action!\nIt will break all applications using API keys to communicate with CAMELS!",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
         )
 
-        if reply == QMessageBox.Yes:
+        if reply == QMessageBox.StandardButton.Yes:
             data_base_path = os.path.join(
                 load_save_functions.appdata_path, "CAMELS_API.db"
             )
@@ -465,11 +465,11 @@ class Settings_Window(Ui_settings_window, QDialog):
                 None,
                 "Install Required Modules",
                 msg,
-                QMessageBox.Yes | QMessageBox.No,
-                QMessageBox.No,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
             )
 
-            if reply_update_modules == QMessageBox.Yes:
+            if reply_update_modules == QMessageBox.StandardButton.Yes:
                 try:
                     import sys
                     import subprocess

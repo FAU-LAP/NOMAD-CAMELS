@@ -143,7 +143,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                 self.setToolTip("Add a step to the protocol")
 
             def mousePressEvent(self, event):
-                if event.button() == Qt.LeftButton:
+                if event.button() == Qt.MouseButton.LeftButton:
                     self.function(event.pos())
                 else:
                     super().mousePressEvent(event)
@@ -197,8 +197,8 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         self.general_settings.name_changed.connect(self.change_name)
 
         self.buttonBox = QDialogButtonBox()
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.buttonBox.rejected.connect(self.close)
         self.buttonBox.accepted.connect(self.accept)
@@ -213,16 +213,16 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         # QShortcut('Ctrl+y', self).activated.connect(self.redo)
 
         QShortcut(
-            "Ctrl+x", self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut
+            "Ctrl+x", self.sequence_main_widget, context=Qt.ShortcutContext.WidgetWithChildrenShortcut
         ).activated.connect(self.cut_shortcut)
         QShortcut(
-            "Ctrl+v", self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut
+            "Ctrl+v", self.sequence_main_widget, context=Qt.ShortcutContext.WidgetWithChildrenShortcut
         ).activated.connect(self.paste_shortcut)
         QShortcut(
-            "Ctrl+c", self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut
+            "Ctrl+c", self.sequence_main_widget, context=Qt.ShortcutContext.WidgetWithChildrenShortcut
         ).activated.connect(self.copy_shortcut)
         QShortcut(
-            "Ctrl+k", self.sequence_main_widget, context=Qt.WidgetWithChildrenShortcut
+            "Ctrl+k", self.sequence_main_widget, context=Qt.ShortcutContext.WidgetWithChildrenShortcut
         ).activated.connect(self.comment_shortcut)
 
         self.build_protocol_sequence()
@@ -326,7 +326,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             )
             if new_index:
                 self.treeView_protocol_sequence.selectionModel().select(
-                    new_index, QItemSelectionModel.Select
+                    new_index, QItemSelectionModel.SelectionFlag.Select
                 )
 
     def enable_step_move(self, enable):
@@ -757,7 +757,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
             self.item_model_sequence, step.full_name
         )
         self.treeView_protocol_sequence.selectionModel().select(
-            new_ind, QItemSelectionModel.Select
+            new_ind, QItemSelectionModel.SelectionFlag.Select
         )
         self.tree_click_sequence()
         return step
@@ -790,9 +790,9 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                     self,
                     "Delete Step?",
                     f"Are you sure you want to delete the step {name}?",
-                    QMessageBox.Yes | QMessageBox.No,
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 )
-            if not ask or remove_dialog == QMessageBox.Yes:
+            if not ask or remove_dialog == QMessageBox.StandardButton.Yes:
                 self.protocol.remove_loop_step(name)
                 self.build_protocol_sequence()
                 self.check_movability()
@@ -917,9 +917,9 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
                     self,
                     f"{name} - Discard Changes?",
                     f"All changes to {name} will be lost!",
-                    QMessageBox.Yes | QMessageBox.No,
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 )
-                if discard_dialog != QMessageBox.Yes:
+                if discard_dialog != QMessageBox.StandardButton.Yes:
                     a0.ignore()
                     return
         a0.accept()
@@ -945,7 +945,7 @@ class Protocol_Config(Ui_Protocol_View, QWidget):
         -------
 
         """
-        if a0.key() == Qt.Key_Enter or a0.key() == Qt.Key_Return:
+        if a0.key() == Qt.Key.Key_Enter or a0.key() == Qt.Key.Key_Return:
             return
         super().keyPressEvent(a0)
 

@@ -69,7 +69,7 @@ class Set_Panel(Manual_Control):
             label.setFont(bold_font)
             layout.addWidget(label, 0, 0)
             if self.horizontal:
-                spacer = QSpacerItem(0, 1, QSizePolicy.Expanding, QSizePolicy.Minimum)
+                spacer = QSpacerItem(0, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
                 for i, (button, set_vals) in enumerate(group_data.items()):
                     radio_button = QRadioButton(button)
                     radio_button.clicked.connect(self.button_pushed)
@@ -80,7 +80,7 @@ class Set_Panel(Manual_Control):
                 layout.addItem(spacer, 0, len(group_data) + 1)
                 self.layout().addWidget(group_widget, n, 0)
             else:
-                spacer = QSpacerItem(1, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+                spacer = QSpacerItem(1, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
                 for i, (button, set_vals) in enumerate(group_data.items()):
                     radio_button = QRadioButton(button)
                     radio_button.clicked.connect(self.button_pushed)
@@ -110,15 +110,15 @@ class Set_Panel(Manual_Control):
         from PySide6.QtWidgets import QMessageBox
 
         msg = QMessageBox()
-        msg.setIcon(QMessageBox.Critical)
+        msg.setIcon(QMessageBox.Icon.Critical)
         msg.setText("Error in read thread")
         msg.setInformativeText(
             f"An error occured in the read thread of {self.name}:\n{e}\nDo you want to restart the read thread?"
         )
         msg.setWindowTitle("Error in read thread")
-        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        msg.setDefaultButton(QMessageBox.Yes)
-        if msg.exec() == QMessageBox.Yes:
+        msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        msg.setDefaultButton(QMessageBox.StandardButton.Yes)
+        if msg.exec() == QMessageBox.StandardButton.Yes:
             self.start_read_thread()
 
     def start_read_thread(self):

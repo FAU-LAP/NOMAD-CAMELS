@@ -130,8 +130,8 @@ class ToastMessageBox(QMessageBox):
     def _setup_ui(self):
         """Setup the user interface components."""
         # Set window flags for toast-like behavior
-        self.setWindowFlags(self.windowFlags() | Qt.ToolTip | Qt.FramelessWindowHint)
-        self.setAttribute(Qt.WA_ShowWithoutActivating)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.ToolTip | Qt.WindowType.FramelessWindowHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating)
 
         # Set text and title
         self.setText(self.message)
@@ -145,7 +145,7 @@ class ToastMessageBox(QMessageBox):
             self._set_icon()
 
         # Remove standard buttons for toast-like appearance
-        self.setStandardButtons(QMessageBox.NoButton)
+        self.setStandardButtons(QMessageBox.StandardButton.NoButton)
 
         # Connect signals
         self.accepted.connect(self._on_clicked)
@@ -154,12 +154,12 @@ class ToastMessageBox(QMessageBox):
     def _set_icon(self):
         """Set the appropriate icon for the toast type."""
         icon_map = {
-            ToastType.INFO: QMessageBox.Information,
-            ToastType.SUCCESS: QMessageBox.Information,  # Use Information for success
-            ToastType.WARNING: QMessageBox.Warning,
-            ToastType.ERROR: QMessageBox.Critical,
+            ToastType.INFO: QMessageBox.Icon.Information,
+            ToastType.SUCCESS: QMessageBox.Icon.Information,  # Use Information for success
+            ToastType.WARNING: QMessageBox.Icon.Warning,
+            ToastType.ERROR: QMessageBox.Icon.Critical,
         }
-        self.setIcon(icon_map.get(self.toast_type, QMessageBox.Information))
+        self.setIcon(icon_map.get(self.toast_type, QMessageBox.Icon.Information))
 
     def _start_dismiss_timer(self):
         """Start the auto-dismiss timer."""
@@ -280,16 +280,16 @@ class ToastMessageBox(QMessageBox):
 
     def eventFilter(self, obj, event):
         """Filter events to handle window resize."""
-        if obj == self.main_window and event.type() == QEvent.Resize:
+        if obj == self.main_window and event.type() == QEvent.Type.Resize:
             # Reposition toast when main window is resized
             self._position_notification()
-        elif obj == self.main_window and event.type() == QEvent.Move:
+        elif obj == self.main_window and event.type() == QEvent.Type.Move:
             # Reposition toast when main window is moved
             self._position_notification()
-        elif obj == self.main_window and event.type() == QEvent.WindowStateChange:
+        elif obj == self.main_window and event.type() == QEvent.Type.WindowStateChange:
             # Handle window state changes (minimize/maximize/restore)
             self._handle_window_state_change()
-        elif event.type() == QEvent.ScreenChangeInternal:
+        elif event.type() == QEvent.Type.ScreenChangeInternal:
             # Handle screen geometry changes
             self._position_notification()
         return super().eventFilter(obj, event)
@@ -351,16 +351,16 @@ class ToastManager(QObject):
 
     def eventFilter(self, obj, event):
         """Filter events to handle window resize."""
-        if obj == self.main_window and event.type() == QEvent.Resize:
+        if obj == self.main_window and event.type() == QEvent.Type.Resize:
             # Reposition all active toasts when main window is resized
             self._reposition_all_toasts()
-        elif obj == self.main_window and event.type() == QEvent.Move:
+        elif obj == self.main_window and event.type() == QEvent.Type.Move:
             # Reposition all active toasts when main window is moved
             self._reposition_all_toasts()
-        elif obj == self.main_window and event.type() == QEvent.WindowStateChange:
+        elif obj == self.main_window and event.type() == QEvent.Type.WindowStateChange:
             # Handle window state changes (minimize/maximize/restore)
             self._handle_window_state_change()
-        elif event.type() == QEvent.ScreenChangeInternal:
+        elif event.type() == QEvent.Type.ScreenChangeInternal:
             # Handle screen geometry changes
             self._reposition_all_toasts()
         return super().eventFilter(obj, event)

@@ -17,14 +17,14 @@ from nomad_camels.utility import variables_handling
 
 
 class CheckableTableWidgetItem(QTableWidgetItem):
-    def __init__(self, checkState=Qt.Unchecked):
+    def __init__(self, checkState=Qt.CheckState.Unchecked):
         super().__init__()
         # Set the item to be checkable and enabled
-        self.setFlags(self.flags() ^ Qt.ItemIsEditable)
-        self.setFlags(self.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+        self.setFlags(self.flags() ^ Qt.ItemFlag.ItemIsEditable)
+        self.setFlags(self.flags() | Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
         if isinstance(checkState, bool):
             # Convert boolean to Qt.CheckState
-            checkState = Qt.Checked if checkState else Qt.Unchecked
+            checkState = Qt.CheckState.Checked if checkState else Qt.CheckState.Unchecked
         self.setCheckState(checkState)
 
     def __lt__(self, other):
@@ -32,14 +32,14 @@ class CheckableTableWidgetItem(QTableWidgetItem):
         # Here, we treat Qt.Checked (2) as greater than Qt.Unchecked (0)
         if isinstance(other, QTableWidgetItem):
             # Use the checkState value for comparison if both items are checkable
-            if self.checkState() == Qt.Checked and other.checkState() == Qt.Unchecked:
+            if self.checkState() == Qt.CheckState.Checked and other.checkState() == Qt.CheckState.Unchecked:
                 return True
-            elif self.checkState() == Qt.Unchecked and other.checkState() == Qt.Checked:
+            elif self.checkState() == Qt.CheckState.Unchecked and other.checkState() == Qt.CheckState.Checked:
                 return False
-            elif self.checkState() == Qt.Checked and other.checkState() == Qt.Checked:
+            elif self.checkState() == Qt.CheckState.Checked and other.checkState() == Qt.CheckState.Checked:
                 return self.text() < other.text()
             elif (
-                self.checkState() == Qt.Unchecked and other.checkState() == Qt.Unchecked
+                self.checkState() == Qt.CheckState.Unchecked and other.checkState() == Qt.CheckState.Unchecked
             ):
                 return self.text() < other.text()
             else:
@@ -69,7 +69,7 @@ class Channels_Check_Table(QWidget):
             self.channels = channels or variables_handling.config_channels
         else:
             self.channels = channels or variables_handling.get_channels(use_aliases)
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.context_menu)
         self.only_output = only_output
         self.headerLabels = headerLabels or []
@@ -110,7 +110,7 @@ class Channels_Check_Table(QWidget):
         self.tableWidget_channels.itemChanged.connect(self.check_string)
         self.tableWidget_channels.clicked.connect(self.check_change)
         self.tableWidget_channels.setSortingEnabled(True)
-        self.tableWidget_channels.sortByColumn(1, Qt.AscendingOrder)
+        self.tableWidget_channels.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         self._revertable_last_checks = {}
 
     def context_menu(self, pos):
@@ -358,7 +358,7 @@ class Channels_Check_Table(QWidget):
         header = self.tableWidget_channels.horizontalHeader()
         sort_column = header.sortIndicatorSection()
         sort_order = header.sortIndicatorOrder()
-        self.tableWidget_channels.sortByColumn(1, Qt.AscendingOrder)
+        self.tableWidget_channels.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         self.tableWidget_channels.setSortingEnabled(False)
         self.tableWidget_channels.clear()
         self.tableWidget_channels.setColumnCount(len(self.headerLabels))
@@ -392,7 +392,7 @@ class Channels_Check_Table(QWidget):
                 )
             self.tableWidget_channels.setItem(n, 0, item)
             item = QTableWidgetItem(channel)
-            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+            item.setFlags(item.flags() ^ Qt.ItemFlag.ItemIsEditable)
             if metadata:
                 item.setToolTip(metadata)
             self.tableWidget_channels.setItem(n, 1, item)
@@ -464,7 +464,7 @@ class Channels_Check_Table(QWidget):
         for row in range(self.tableWidget_channels.rowCount()):
             item = self.tableWidget_channels.item(row, column)
             if item:
-                item.setCheckState(Qt.Unchecked if uncheck else Qt.Checked)
+                item.setCheckState(Qt.CheckState.Unchecked if uncheck else Qt.CheckState.Checked)
                 self.check_change(self.tableWidget_channels.model().index(row, column))
 
 
@@ -571,14 +571,14 @@ class Call_Functions_Table(QWidget):
                 continue
             self.tableWidget_functions.setRowCount(n + 1)
             item = QTableWidgetItem()
-            item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+            item.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
             if func in func_list:
                 item.setCheckState(Qt.CheckState.Checked)
             else:
                 item.setCheckState(Qt.CheckState.Unchecked)
             self.tableWidget_functions.setItem(n, 0, item)
             item = QTableWidgetItem(func)
-            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+            item.setFlags(item.flags() ^ Qt.ItemFlag.ItemIsEditable)
             self.tableWidget_functions.setItem(n, 1, item)
             pos = self.tableWidget_functions.model().createIndex(n, 0)
             self.check_change(pos)

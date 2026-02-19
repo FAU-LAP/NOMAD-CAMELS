@@ -38,7 +38,7 @@ class VariableTable(QTableView):
             painter.setFont(font)
 
             rect = self.viewport().rect()
-            painter.drawText(rect, Qt.AlignCenter, "Define your variables here.")
+            painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, "Define your variables here.")
 
     def set_protocol(self, protocol):
         """ """
@@ -132,7 +132,7 @@ class VariableBox(QWidget):
         self.button.clicked.connect(self.update_values)
         self.layout.addWidget(self.button)
         # Disable the close button
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowCloseButtonHint)
 
     def update_values(self):
         variables = self.table.update_variables()

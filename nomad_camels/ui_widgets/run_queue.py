@@ -75,8 +75,8 @@ class RunQueue(QListWidget):
 
         # Create a QFrame
         frame = QFrame()
-        frame.setFrameShape(QFrame.StyledPanel)
-        frame.setFrameShadow(QFrame.Sunken)
+        frame.setFrameShape(QFrame.Shape.StyledPanel)
+        frame.setFrameShadow(QFrame.Shadow.Sunken)
 
         # Create the run widget and add it to the frame
         item_widget = RunWidget(text)
@@ -193,9 +193,9 @@ class RunQueue(QListWidget):
             dialog.setWindowTitle("Remove run")
             dialog.setText(f"Remove {name} from the queue?")
 
-            dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-            dialog.setDefaultButton(QMessageBox.No)
-            if dialog.exec() == QMessageBox.No:
+            dialog.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            dialog.setDefaultButton(QMessageBox.StandardButton.No)
+            if dialog.exec() == QMessageBox.StandardButton.No:
                 return
 
         # Remove the item from the order list
@@ -269,7 +269,7 @@ class RunQueue(QListWidget):
             font.setBold(True)
             painter.setFont(font)
 
-            painter.drawText(self.rect(), Qt.AlignCenter, "Measurement Queue")
+            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "Measurement Queue")
             painter.end()
 
 

@@ -75,7 +75,7 @@ class Ui_Form(object):
         self.gridLayout_2 = QGridLayout(Form)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.horizontalSpacer_4 = QSpacerItem(
-            0, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+            0, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
 
         self.gridLayout_2.addItem(self.horizontalSpacer_4, 3, 5, 1, 3)
@@ -112,8 +112,8 @@ class Ui_Form(object):
 
         self.label = QLabel(Form)
         self.label.setObjectName("label")
-        self.label.setLayoutDirection(Qt.LeftToRight)
-        self.label.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
+        self.label.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTrailing | Qt.AlignmentFlag.AlignVCenter)
 
         self.gridLayout_2.addWidget(self.label, 2, 8, 1, 1)
 
@@ -133,19 +133,19 @@ class Ui_Form(object):
         self.gridLayout_2.addWidget(self.pushButton_zUp, 2, 6, 1, 1)
 
         self.horizontalSpacer_2 = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+            40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
 
         self.gridLayout_2.addItem(self.horizontalSpacer_2, 3, 0, 1, 1)
 
         self.horizontalSpacer_3 = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+            40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
 
         self.gridLayout_2.addItem(self.horizontalSpacer_3, 2, 7, 1, 1)
 
         self.horizontalSpacer = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+            40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
 
         self.gridLayout_2.addItem(self.horizontalSpacer, 2, 0, 1, 3)
@@ -167,13 +167,13 @@ class Ui_Form(object):
 
         self.label_2 = QLabel(Form)
         self.label_2.setObjectName("label_2")
-        self.label_2.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
+        self.label_2.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTrailing | Qt.AlignmentFlag.AlignVCenter)
 
         self.gridLayout_2.addWidget(self.label_2, 3, 8, 1, 1)
 
         self.label_3 = QLabel(Form)
         self.label_3.setObjectName("label_3")
-        self.label_3.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
+        self.label_3.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTrailing | Qt.AlignmentFlag.AlignVCenter)
 
         self.gridLayout_2.addWidget(self.label_3, 4, 8, 1, 1)
 
@@ -183,15 +183,15 @@ class Ui_Form(object):
         self.gridLayout_2.addWidget(self.lineEdit_goY, 9, 8, 1, 3)
 
         self.verticalSpacer = QSpacerItem(
-            20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding
+            20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
         )
 
         self.gridLayout_2.addItem(self.verticalSpacer, 0, 10, 1, 1)
 
         self.line = QFrame(Form)
         self.line.setObjectName("line")
-        self.line.setFrameShape(QFrame.VLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+        self.line.setFrameShape(QFrame.Shape.VLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.gridLayout_2.addWidget(self.line, 1, 11, 4, 1)
 
@@ -232,7 +232,7 @@ class Ui_Form(object):
         self.gridLayout_2.addWidget(self.lineEdit_currentY, 9, 13, 1, 2)
 
         self.horizontalSpacer_7 = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+            40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
 
         self.gridLayout_2.addItem(self.horizontalSpacer_7, 4, 0, 1, 3)
@@ -254,7 +254,7 @@ class Ui_Form(object):
         self.gridLayout_2.addWidget(self.lineEdit_manualY, 9, 2, 1, 5)
 
         self.horizontalSpacer_6 = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+            40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
 
         self.gridLayout_2.addItem(self.horizontalSpacer_6, 3, 1, 1, 1)
@@ -266,13 +266,13 @@ class Ui_Form(object):
 
         self.line_3 = QFrame(Form)
         self.line_3.setObjectName("line_3")
-        self.line_3.setFrameShape(QFrame.VLine)
-        self.line_3.setFrameShadow(QFrame.Sunken)
+        self.line_3.setFrameShape(QFrame.Shape.VLine)
+        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.gridLayout_2.addWidget(self.line_3, 7, 7, 5, 1)
 
         self.horizontalSpacer_5 = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+            40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
 
         self.gridLayout_2.addItem(self.horizontalSpacer_5, 2, 4, 1, 2)
@@ -317,14 +317,14 @@ class Ui_Form(object):
 
         self.label_7 = QLabel(Form)
         self.label_7.setObjectName("label_7")
-        self.label_7.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
+        self.label_7.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTrailing | Qt.AlignmentFlag.AlignVCenter)
 
         self.gridLayout_2.addWidget(self.label_7, 11, 8, 1, 5)
 
         self.line_2 = QFrame(Form)
         self.line_2.setObjectName("line_2")
-        self.line_2.setFrameShape(QFrame.HLine)
-        self.line_2.setFrameShadow(QFrame.Sunken)
+        self.line_2.setFrameShape(QFrame.Shape.HLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.gridLayout_2.addWidget(self.line_2, 5, 0, 1, 15)
 

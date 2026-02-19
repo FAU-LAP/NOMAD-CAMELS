@@ -328,15 +328,15 @@ class Plot_Definer(QDialog):
         self.plot_data = plot_data or []
 
         self.setWindowTitle("Define plot - NOMAD CAMELS")
-        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint)
 
         self.definer_widget = Plot_Definer_Widget(self, self.plot_data)
 
         # Create OK/Cancel dialog buttons.
         self.dialog_buttons = QDialogButtonBox()
-        self.dialog_buttons.setOrientation(Qt.Horizontal)
+        self.dialog_buttons.setOrientation(Qt.Orientation.Horizontal)
         self.dialog_buttons.setStandardButtons(
-            QDialogButtonBox.Cancel | QDialogButtonBox.Ok
+            QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok
         )
         self.dialog_buttons.accepted.connect(self.accept)
         self.dialog_buttons.rejected.connect(self.reject)
@@ -363,9 +363,9 @@ class Plot_Definer(QDialog):
             self,
             "Discard Changes?",
             "All changes to the defined plots/fits will be lost!",
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if discard_dialog != QMessageBox.Yes:
+        if discard_dialog != QMessageBox.StandardButton.Yes:
             return
         super().reject()
 
@@ -1459,7 +1459,7 @@ class Plot_Button_Overview(QWidget):
         Parameters:
             event (QKeyEvent): The key press event.
         """
-        if event.key() in (Qt.Key_Enter, Qt.Key_Return):
+        if event.key() in (Qt.Key.Key_Enter, Qt.Key.Key_Return):
             return
         super().keyPressEvent(event)
 
@@ -1509,11 +1509,11 @@ def check_if_plotly_modules_are_available(self):
             None,
             "Install Required Modules",
             msg,
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
         )
 
-        if reply_update_modules == QMessageBox.Yes:
+        if reply_update_modules == QMessageBox.StandardButton.Yes:
             try:
                 # First attempt to install nomad-camels[dash] which should cover dependencies.
                 try:

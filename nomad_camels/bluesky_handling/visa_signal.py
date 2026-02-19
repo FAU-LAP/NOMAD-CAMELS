@@ -13,10 +13,10 @@ except ImportError:
 
     # Show a question message box.
     reply_update_modules = QMessageBox.question(
-        None, "Install PyVISA?", msg, QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+        None, "Install PyVISA?", msg, QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No
     )
 
-    if reply_update_modules == QMessageBox.Yes:
+    if reply_update_modules == QMessageBox.StandardButton.Yes:
         import sys
         import subprocess
 

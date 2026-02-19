@@ -737,11 +737,11 @@ class Prompt_Box(QMessageBox):
     def __init__(self, icon="", text="", title="", parent=None, abortable=False):
         super().__init__(parent=parent)
         if icon == "Error":
-            self.setIcon(QMessageBox.Critical)
+            self.setIcon(QMessageBox.Icon.Critical)
         elif icon == "Warning":
-            self.setIcon(QMessageBox.Warning)
+            self.setIcon(QMessageBox.Icon.Warning)
         else:
-            self.setIcon(QMessageBox.Information)
+            self.setIcon(QMessageBox.Icon.Information)
         self.setText(text)
         self.setWindowTitle(title)
         self.helper = BoxHelper()
@@ -818,11 +818,11 @@ class Value_Box(QDialog):
         comboboxes=None,
     ):
         super().__init__(parent)
-        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint)
         text_label = QLabel(text)
         self.buttonBox = QDialogButtonBox(self)
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.buttonBox.setToolTip(
             '"OK" will set the values, click "Cancel" to set no new values.'
@@ -966,11 +966,11 @@ class Value_Box(QDialog):
         rejecting the dialog.
         """
         msg = QMessageBox(
-            icon=QMessageBox.Warning,
+            icon=QMessageBox.Icon.Warning,
             text="If you cancel, no values will be set.\nDo you want to cancel?",
         )
-        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        if msg.exec() == QMessageBox.Yes:
+        msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if msg.exec() == QMessageBox.StandardButton.Yes:
             self.done_flag = True
             return super().reject()
 
@@ -1280,7 +1280,7 @@ class Waiting_Bar(QWidget):
             self.plot = plot
             layout.addWidget(self.plot, 1, 0, 1, 2)
         self.adjustSize()
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowCloseButtonHint)
 
     def setValue(self, value):
         """Set the value of the progress bar."""
@@ -1314,7 +1314,7 @@ class TimestampTextEdit(QTextEdit):
         Inserts the current timestamp followed by a space at the current cursor position.
         The timestamp is in ISO 8601 format (e.g. "2025-02-05T14:30:00").
         """
-        timestamp = QDateTime.currentDateTime().toString(Qt.ISODate)
+        timestamp = QDateTime.currentDateTime().toString(Qt.DateFormat.ISODate)
         self.insertPlainText(timestamp + " ")
 
     def keyPressEvent(self, event: QKeyEvent):
@@ -1329,7 +1329,7 @@ class TimestampTextEdit(QTextEdit):
 
         # If the key pressed is Return or Enter, then insert a new timestamp
         # on the new line.
-        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+        if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
             self.insertTimestamp()
 
 
@@ -1351,7 +1351,7 @@ class Commenting_Box(QWidget):
         self.adjustSize()
         self._is_finished = False
         self.finished_box.clicked.connect(self.finish_comment)
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowCloseButtonHint)
         self.show()
 
     def finish_comment(self):

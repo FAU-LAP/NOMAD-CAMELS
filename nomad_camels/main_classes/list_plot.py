@@ -135,10 +135,10 @@ class Live_List(QObject, CallbackBase):
         self.val_items = []
         for i, val in enumerate(value_list):
             item = QTableWidgetItem(val)
-            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self.table.setItem(i, 0, item)
             item = QTableWidgetItem(str(np.nan))
-            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self.table.setItem(i, 1, item)
             self.val_items.append(item)
         self.add_items = {}
@@ -151,10 +151,10 @@ class Live_List(QObject, CallbackBase):
         i = len(self.val_items) + len(self.add_items)
         self.table.setRowCount(i + 1)
         item = QTableWidgetItem(name)
-        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+        item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
         self.table.setItem(i, 0, item)
         item = QTableWidgetItem(str(np.nan))
-        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+        item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
         self.table.setItem(i, 1, item)
         self.add_items[name] = item
 

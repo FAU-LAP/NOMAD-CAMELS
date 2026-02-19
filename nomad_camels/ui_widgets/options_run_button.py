@@ -49,7 +49,7 @@ class Dots_Button(QPushButton):
         self.setFixedSize(size, size)
         self.setIconSize(self.size())
         self.setFlat(True)
-        self.setCursor(Qt.PointingHandCursor)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
         # self.setStyleSheet("QPushButton {text-align: left; font-weight: bold; font-size: 10pt; padding-bottom: -60px; font-family: Calibri; }")
 
     def paintEvent(self, event):
@@ -65,12 +65,12 @@ class Dots_Button(QPushButton):
 
         """
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         # Set the brush and pen for the painter
         brush = QBrush(QColor(get_color("black")))
         painter.setBrush(brush)
-        painter.setPen(Qt.NoPen)
+        painter.setPen(Qt.PenStyle.NoPen)
 
         # Draw three dots using the painter
         size = self.size().width()
@@ -102,7 +102,7 @@ class Options_Run_Button(QFrame):
         self.label.setStyleSheet(
             "QLabel {font-weight: bold; font-size: 11pt; font-family: Calibri;}"
         )
-        self.label.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
         self.button = Dots_Button(parent=self, size=size)
         self.button.setGeometry(0, 0, size, size)
         self.small_button = QPushButton(small_text, parent=self)
@@ -131,7 +131,7 @@ class Options_Run_Button(QFrame):
                 "open the settings of the manual control\nright-click for more options"
             )
             self.small_button.setToolTip("start the manual control")
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.options_menu)
         self.config_function = None
         self.run_function = None
@@ -224,9 +224,9 @@ class Options_Run_Button(QFrame):
             self,
             f"Delete {self.label.text()}?",
             f"{self.label.text()} will be removed completely",
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if del_dialog == QMessageBox.Yes:
+        if del_dialog == QMessageBox.StandardButton.Yes:
             self.del_asked.emit()
 
     def mouseMoveEvent(self, event):
@@ -241,12 +241,11 @@ class Options_Run_Button(QFrame):
         -------
 
         """
-        if event.buttons() == Qt.LeftButton:
+        if event.buttons() == Qt.MouseButton.LeftButton:
             mimeData = QMimeData()
             drag = QDrag(self)
             drag.setMimeData(mimeData)
-            drag.exec_(Qt.MoveAction)
-
+            drag.exec_(Qt.DropAction.MoveAction)
     def rename(self, new_name):
         """
 

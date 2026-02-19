@@ -409,8 +409,8 @@ class Device_Config(QWidget):
         self.lineEdit_custom_name = QLineEdit(data)
 
         self.line_2 = QFrame(self)
-        self.line_2.setFrameShape(QFrame.HLine)
-        self.line_2.setFrameShadow(QFrame.Sunken)
+        self.line_2.setFrameShape(QFrame.Shape.HLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
         self.line_2.setObjectName("line_2")
 
         self.textEdit_desc = QTextEdit(parent=self)
@@ -525,11 +525,11 @@ class Device_Config(QWidget):
         if document_height > max_height:
             new_height = max_height
             # Enable scrolling if the content exceeds max height
-            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         else:
             new_height = document_height
             # Hide scroll bar if not needed
-            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self.textEdit_desc.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.textEdit_desc.setFixedHeight(new_height)
 
     def connection_type_changed(self):
@@ -698,11 +698,11 @@ class Local_VISA(Connection_Config):
                 None,
                 "Install PyVISA?",
                 msg,
-                QMessageBox.Yes | QMessageBox.No,
-                QMessageBox.No,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
             )
 
-            if reply_update_modules == QMessageBox.Yes:
+            if reply_update_modules == QMessageBox.StandardButton.Yes:
                 import sys
                 import subprocess
 
@@ -893,11 +893,11 @@ class Simple_Config(Device_Config):
         )
 
         self.extra_line = QFrame()
-        self.extra_line.setFrameShape(QFrame.HLine)
-        self.extra_line.setFrameShadow(QFrame.Sunken)
+        self.extra_line.setFrameShape(QFrame.Shape.HLine)
+        self.extra_line.setFrameShadow(QFrame.Shadow.Sunken)
         self.layout().addWidget(self.extra_line, 10, 0, 1, 5)
         self.layout().addWidget(self.sub_widget, 11, 0, 1, 5)
-        self.spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.spacer = QSpacerItem(0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         self.layout().addItem(self.spacer, 12, 0, 1, 5)
         self.load_settings()
 

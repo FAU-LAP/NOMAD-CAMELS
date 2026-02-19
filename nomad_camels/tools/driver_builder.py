@@ -128,8 +128,8 @@ class Ui_VISA_Device_Builder(object):
 
         self.line = QFrame(VISA_Device_Builder)
         self.line.setObjectName("line")
-        self.line.setFrameShape(QFrame.VLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+        self.line.setFrameShape(QFrame.Shape.VLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.gridLayout.addWidget(self.line, 0, 3, 4, 1)
 

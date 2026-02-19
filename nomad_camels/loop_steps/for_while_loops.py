@@ -600,14 +600,14 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
             item = QTableWidgetItem(val if isinstance(val, str) else format_number(val))
             if i == 1000:
                 item = QTableWidgetItem("...")
-            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+            item.setFlags(item.flags() ^ Qt.ItemFlag.ItemIsEditable)
             self.tableWidget_points.setItem(i, 0, item)
             if i == 1000:
                 break
         if self.comboBox_loop_type.currentText() == "Value-List":
             for i in range(self.tableWidget_points.rowCount()):
                 item = self.tableWidget_points.item(i, 0)
-                item.setFlags(item.flags() | Qt.ItemIsEditable)
+                item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable)
 
     def add_point(self):
         """Used to add a point when using the "Value-List" loop-type."""
@@ -616,7 +616,7 @@ class For_Loop_Step_Config_Sub(Ui_for_loop_config, QWidget):
         self.loop_step.val_list.append(0)
         item = QTableWidgetItem("0")
         self.tableWidget_points.setItem(rows, 0, item)
-        item.setFlags(Qt.ItemIsEditable | Qt.ItemIsEnabled)
+        item.setFlags(Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled)
 
     def del_point(self):
         """Used to remove a point when using the "Value-List" loop-type."""

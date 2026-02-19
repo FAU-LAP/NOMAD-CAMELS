@@ -648,11 +648,11 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         else:
             if self.protocol.check_aliases_defined():
                 self.pushButton_instrument_aliases.setIcon(
-                    self.style().standardIcon(QStyle.SP_DialogApplyButton)
+                    self.style().standardIcon(QStyle.StandardPixmap.SP_DialogApplyButton)
                 )
             else:
                 self.pushButton_instrument_aliases.setIcon(
-                    self.style().standardIcon(QStyle.SP_MessageBoxWarning)
+                    self.style().standardIcon(QStyle.StandardPixmap.SP_MessageBoxWarning)
                 )
 
     def check_use_ending_steps(self):
@@ -687,7 +687,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         # else:
         new_height = document_height
         # Hide scroll bar if not needed
-        self.textEdit_desc_protocol.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.textEdit_desc_protocol.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.textEdit_desc_protocol.setFixedHeight(new_height)
 
     def enable_disable_config(self):
@@ -697,10 +697,10 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             msgBox.setText(
                 "Are you sure you want to disable configuration of the used instruments?\nThis may lead to unexpected behaviour of the instruments, if they are not configured correctly beforehand!"
             )
-            msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-            msgBox.setDefaultButton(QMessageBox.No)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            msgBox.setDefaultButton(QMessageBox.StandardButton.No)
             result = msgBox.exec()
-            if result != QMessageBox.Yes:
+            if result != QMessageBox.StandardButton.Yes:
                 self.checkBox_no_config.setChecked(False)
 
     def add_variable(self):

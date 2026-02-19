@@ -77,9 +77,9 @@ class FlyerWindow(QDialog):
 
         # Create OK/Cancel dialog buttons.
         self.dialog_buttons = QDialogButtonBox()
-        self.dialog_buttons.setOrientation(Qt.Horizontal)
+        self.dialog_buttons.setOrientation(Qt.Orientation.Horizontal)
         self.dialog_buttons.setStandardButtons(
-            QDialogButtonBox.Cancel | QDialogButtonBox.Ok
+            QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok
         )
         self.dialog_buttons.accepted.connect(self.accept)
         self.dialog_buttons.rejected.connect(self.reject)
@@ -112,9 +112,9 @@ class FlyerWindow(QDialog):
             self,
             "Discard Changes?",
             "All changes will be lost!",
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if discard_dialog != QMessageBox.Yes:
+        if discard_dialog != QMessageBox.StandardButton.Yes:
             return
         super().reject()
 

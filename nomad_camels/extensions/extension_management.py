@@ -170,7 +170,7 @@ class Extension_Manager(QDialog):
         self.config_widget = QWidget()
 
         self.dialog_buttons = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
         )
         self.dialog_buttons.accepted.connect(self.accept)
         self.dialog_buttons.rejected.connect(self.reject)
@@ -199,7 +199,7 @@ class Extension_Manager(QDialog):
 
     def install_selected(self, uninstall=False):
         self.setEnabled(False)
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         ind = self.extension_table.selectedIndexes()[0]
         ext = self.extension_table.item(ind.row(), 0).text()
         self.install_thread = Install_Thread(ext, uninstall=uninstall)
@@ -248,7 +248,7 @@ class Extension_Manager(QDialog):
         config_old.deleteLater()
 
     def table_click(self):
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         try:
             ind = self.extension_table.selectedIndexes()[0]
             ext = self.extension_table.item(ind.row(), 0).text()
@@ -279,11 +279,11 @@ class Extension_Manager(QDialog):
             print(e)
         finally:
             self.adjustSize()
-            self.setCursor(Qt.ArrowCursor)
+            self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def build_table(self):
         self.setEnabled(True)
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         search_text = self.lineEdit_search_name.text()
         self.extension_table.clear()
         self.extension_table.setRowCount(0)
@@ -292,18 +292,18 @@ class Extension_Manager(QDialog):
                 continue
             self.extension_table.insertRow(i)
             item = QTableWidgetItem(ext)
-            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self.extension_table.setItem(i, 0, item)
             item = QTableWidgetItem(self.online_extensions[ext])
-            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self.extension_table.setItem(i, 1, item)
             if ext in self.installed_extensions:
                 item = QTableWidgetItem(self.installed_extensions[ext])
-                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.extension_table.setItem(i, 2, item)
             elif ext in self.local_extensions:
                 item = QTableWidgetItem(self.local_extensions[ext])
-                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.extension_table.setItem(i, 2, item)
         for i, ext in enumerate(sorted(self.local_extensions.keys())):
             if search_text.lower() not in ext.lower():
@@ -312,17 +312,17 @@ class Extension_Manager(QDialog):
                 continue
             self.extension_table.insertRow(i)
             item = QTableWidgetItem(ext)
-            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self.extension_table.setItem(i, 0, item)
             item = QTableWidgetItem(self.local_extensions[ext])
-            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self.extension_table.setItem(i, 1, item)
             if ext in self.installed_extensions:
                 item = QTableWidgetItem(self.installed_extensions[ext])
-                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.extension_table.setItem(i, 2, item)
         self.extension_table.resizeColumnsToContents()
-        self.setCursor(Qt.ArrowCursor)
+        self.setCursor(Qt.CursorShape.ArrowCursor)
         if self.install_thread is not None:
             self.install_thread.quit()
             self.install_thread.wait()
@@ -343,18 +343,18 @@ class Info_Widget(QSplitter):
         self.info_text = QTextBrowser()
         self.info_text.setOpenExternalLinks(True)
         self.info_text.setTextInteractionFlags(
-            Qt.TextSelectableByKeyboard
-            | Qt.TextSelectableByMouse
-            | Qt.LinksAccessibleByMouse
+            Qt.TextInteractionFlag.TextSelectableByKeyboard
+            | Qt.TextInteractionFlag.TextSelectableByMouse
+            | Qt.TextInteractionFlag.LinksAccessibleByMouse
         )
         self.addWidget(self.info_text)
 
         self.license_text = QTextBrowser()
         self.license_text.setOpenExternalLinks(True)
         self.license_text.setTextInteractionFlags(
-            Qt.TextSelectableByKeyboard
-            | Qt.TextSelectableByMouse
-            | Qt.LinksAccessibleByMouse
+            Qt.TextInteractionFlag.TextSelectableByKeyboard
+            | Qt.TextInteractionFlag.TextSelectableByMouse
+            | Qt.TextInteractionFlag.LinksAccessibleByMouse
         )
         self.addWidget(self.license_text)
         self.info = False
