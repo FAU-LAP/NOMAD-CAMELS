@@ -1747,7 +1747,6 @@
 <li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.descriptor"><code class="docutils literal notranslate"><span class="pre">Serializer.descriptor()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.ensure_open"><code class="docutils literal notranslate"><span class="pre">Serializer.ensure_open()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.event_page"><code class="docutils literal notranslate"><span class="pre">Serializer.event_page()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.find_dataset_matches_in_group"><code class="docutils literal notranslate"><span class="pre">Serializer.find_dataset_matches_in_group()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.get_length_of_stream"><code class="docutils literal notranslate"><span class="pre">Serializer.get_length_of_stream()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.handle_event_page"><code class="docutils literal notranslate"><span class="pre">Serializer.handle_event_page()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#suitcase.nomad_camels_hdf5.Serializer.make_nexus_structure"><code class="docutils literal notranslate"><span class="pre">Serializer.make_nexus_structure()</span></code></a></li>
@@ -4514,38 +4513,6 @@ whatever resources are produced by the Manager)</p>
 <dt class="sig sig-object py" id="suitcase.nomad_camels_hdf5.Serializer.event_page">
 <span class="sig-name descname"><span class="pre">event_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#suitcase.nomad_camels_hdf5.Serializer.event_page" title="Link to this definition"></a></dt>
 <dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="suitcase.nomad_camels_hdf5.Serializer.find_dataset_matches_in_group">
-<span class="sig-name descname"><span class="pre">find_dataset_matches_in_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_strings_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_strings_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#suitcase.nomad_camels_hdf5.Serializer.find_dataset_matches_in_group" title="Link to this definition"></a></dt>
-<dd><p>Finds if a set of datasets exists that collectively contain all specified
-search strings from two lists. It then returns the results as two dictionaries.</p>
-<p>It first checks <cite>start_group</cite>. If no match for the combined list is found,
-it looks for a subgroup “primary” and checks each group inside it.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>start_group</strong> (<em>h5py.Group</em>) – The h5py Group object to search within.</p></li>
-<li><p><strong>search_strings_a</strong> (<em>list</em><em> of </em><em>str</em>) – The first list of substrings.</p></li>
-<li><p><strong>search_strings_b</strong> (<em>list</em><em> of </em><em>str</em>) – The second list of substrings.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><dl>
-<dt>A tuple of two dictionaries.</dt><dd><ul class="simple">
-<li><p>The first maps strings from list A to their found dataset paths.</p></li>
-<li><p>The second maps strings from list B to their found dataset paths.</p></li>
-</ul>
-<p>Returns ({}, {}) if no complete match is found.</p>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple[dict[str, str], dict[str, str]]</p>
-</dd>
-</dl>
-</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="suitcase.nomad_camels_hdf5.Serializer.get_length_of_stream">
