@@ -23,15 +23,16 @@ from PySide6.QtGui import QIcon
 
 
 def get_version():
-    """checks the installed version of nomad-camels and returns it."""
+    """Checks the installed version of nomad-camels and returns it."""
     try:
-        import pkg_resources
-
-        return pkg_resources.get_distribution("nomad-camels").version
-    except (AttributeError, pkg_resources.DistributionNotFound):
+        from importlib.metadata import version, PackageNotFoundError
+        return version("nomad-camels")
+    except PackageNotFoundError:
+        # Fallback for when the package is run locally without being 'installed'
         try:
+            import nomad_camels
             return nomad_camels.__version__
-        except Exception:
+        except (ImportError, AttributeError):
             return None
 
 
