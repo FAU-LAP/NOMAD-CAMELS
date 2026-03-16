@@ -328,7 +328,12 @@ def build_protocol(
             continue
         variable_string += f"{var} = {val}\n"
         variable_string += f'namespace["{var}"] = {var}\n'
-    for var, val in protocol.loop_step_variables.items():
+    if not variables_handling.loop_step_variables:
+        try:
+            protocol.update_variables()
+        except Exception as e:
+            print(f"Failed to update the variables. The protocol might not work as intended!\n{e}")
+    for var, val in variables_handling.loop_step_variables.items():
         if variables_handling.check_data_type(val) == "String":
             val = f'"{val}"'
         if "(" in var or ")" in var:
