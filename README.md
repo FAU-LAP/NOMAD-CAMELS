@@ -18,6 +18,11 @@ Please also see our publication in the Journal of Open Source Software (JOSS):
 
 # Changelog
 
+### 1.10.9
+Fixes:
+- Fixed variables of the protocol not always appearing and being saved. 
+- Updated the suitcase-nomad-camels dependency to 1.3.2: Fixes broken saving of plots to the final data file. Now correctly deals with `numpy` and `const` functions used.
+
 ### 1.10.8
 
 Changes:
