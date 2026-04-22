@@ -2007,14 +2007,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             file_ending = ".nxs"
         else:
             file_ending = ".h5"
-        filename = protocol.filename.format(
-            sample=sample,
-            sample_id=sampledata.get("sample_id", ""),
-            user=user,
-            protocol=protocol_name,
-            session=session,
-            time=self.formatted_iso_time(self._protocol_start_time),
-        )
+        class SafeDict(dict):
+            def __missing__(self, key):
+                return '{' + key + '}'
+        
+        format_dict = SafeDict()
+        format_dict.update(getattr(protocol, 'variables', {}))
+        format_dict.update(getattr(protocol, 'loop_step_variables', {}))
+        format_dict.update({
+            "sample": sample,
+            "sample_id": sampledata.get("sample_id", ""),
+            "user": user,
+            "protocol": protocol_name,
+            "session": session,
+            "time": self.formatted_iso_time(self._protocol_start_time)
+        })
+        filename = protocol.filename.format_map(format_dict)
         filename = clean_filename(filename)
         parts = [self.preferences["meas_files_path"], user, sample]
         if session:
@@ -2711,13 +2719,22 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         protocol.tags = self.flow_layout.get_all_tags()
         user, userdata = self.get_user_name_data()
         sample, sampledata = self.get_sample_name_data(prompt_on_missing=True)
-        filename = protocol.filename.format(
-            sample=sample,
-            sample_id=sampledata.get("sample_id", ""),
-            user=user, protocol=protocol_name,
-            session=protocol.session_name,
-            time=self.formatted_iso_time(self._protocol_start_time)
-        )
+        class SafeDict(dict):
+            def __missing__(self, key):
+                return '{' + key + '}'
+        
+        format_dict = SafeDict()
+        format_dict.update(getattr(protocol, 'variables', {}))
+        format_dict.update(getattr(protocol, 'loop_step_variables', {}))
+        format_dict.update({
+            "sample": sample,
+            "sample_id": sampledata.get("sample_id", ""),
+            "user": user,
+            "protocol": protocol_name,
+            "session": protocol.session_name, 
+            "time": self.formatted_iso_time(self._protocol_start_time)
+        })
+        filename = protocol.filename.format_map(format_dict)
         session_name = (protocol.session_name or "").strip()
         parts = [self.preferences["meas_files_path"], user, sample]
         if session_name:

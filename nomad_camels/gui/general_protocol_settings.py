@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'general_protocol_settings.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.8.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -330,12 +330,16 @@ class Ui_Protocol_Settings(object):
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{time}</span>: Protocol start time (similar to ISO 8601 format).</p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; marg"
                         "in-right:0px; -qt-block-indent:0; text-indent:0px;\">Example time format: 2007-08-31T16-47-33+01-00</p>\n"
-"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{session}</span>: Current session name (if provided).</p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{Variables}</span>: Protocol Variable_name, will <span style=\" font-family:'Mona Sans VF','-apple-system','BlinkMacSystemFont','Segoe UI','Noto Sans','Helvetica','Arial','sans-serif','Apple Color Emoji','Segoe UI Emoji'; color:#1f2328; background-color:#ffffff;\">evaluate to the actual value of the variable</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Example with Variable_name : laserpower; Variable_value : 10 </p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Filename : laserpower{laserpower}mW ---&gt; Realname : laserpower10mW</p>\n"
+"<p style=\" margin-top:12px; ma"
+                        "rgin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{session}</span>: Current session name (if provided).</p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{protocol}</span>: Executed protocol name.</p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{user}</span>: User name.</p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{sample_id}</span>: Sample ID.</p>\n"
-"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0p"
-                        "x; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{sample}</span>: Sample name.</p></body></html>", None))
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Courier New';\">{sample}</span>: Sample name.</p></"
+                        "body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_filename.setText(QCoreApplication.translate("Protocol_Settings", u"Datafile", None))
         self.lineEdit_filename.setPlaceholderText(QCoreApplication.translate("Protocol_Settings", u"Filename", None))
