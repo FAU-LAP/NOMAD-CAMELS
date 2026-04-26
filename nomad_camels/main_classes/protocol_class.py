@@ -1,14 +1,37 @@
-from PySide6.QtWidgets import QWidget, QMessageBox, QStyle
-from PySide6.QtCore import Signal, Qt
+from PySide6.QtWidgets import QWidget, QMessageBox, QStyle, QMenu, QLabel, QComboBox
+from PySide6.QtCore import Signal, Qt, QPoint
 from PySide6.QtGui import QIcon
 
 from nomad_camels.frontpanels.plot_definer import Plot_Definer_Widget
 from nomad_camels.loop_steps import make_step_of_type
 from nomad_camels.gui.general_protocol_settings import Ui_Protocol_Settings
+from nomad_camels.utility.ontology_helper import subclass_tree_as_list
 
-from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
 from nomad_camels.utility import variables_handling
-from nomad_camels.frontpanels.flyer_window import FlyerButton
+
+
+class ExperimentMenuComboBox(QComboBox):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._menu = None
+        self.addItem("LAPExperiment")
+
+    def set_menu(self, menu):
+        self._menu = menu
+
+    def set_display_text(self, text):
+        if self.count() == 0:
+            self.addItem(text)
+        else:
+            self.setItemText(0, text)
+        self.setCurrentIndex(0)
+
+    def showPopup(self):
+        if self._menu is not None and self.isEnabled():
+            popup_pos = self.mapToGlobal(QPoint(0, self.height()))
+            self._menu.popup(popup_pos)
+            return
+        super().showPopup()
 
 
 class Measurement_Protocol:
@@ -72,6 +95,11 @@ class Measurement_Protocol:
         self.skip_config = kwargs["skip_config"] if "skip_config" in kwargs else False
         self.h5_during_run = (
             kwargs["h5_during_run"] if "h5_during_run" in kwargs else True
+        )
+        self.experiment_ontology_class = (
+            kwargs["experiment_ontology_class"]
+            if "experiment_ontology_class" in kwargs
+            else ""
         )
         self.use_end_protocol = (
             kwargs["use_end_protocol"] if "use_end_protocol" in kwargs else False
@@ -556,6 +584,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         super(General_Protocol_Settings, self).__init__(parent)
         self.setupUi(self)
         self.protocol = protocol
+        self._selected_experiment_class = self.protocol.experiment_ontology_class
         self.lineEdit_filename.setText(self.protocol.filename)
         self.lineEdit_protocol_name.setText(self.protocol.name)
 
@@ -617,6 +646,16 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.checkBox_live_variables.setChecked(self.protocol.live_variable_update)
         self.checkBox_live_comments.setChecked(self.protocol.allow_live_comments)
 
+        experiment_selector = getattr(
+            self, "combo_exp_select", getattr(self, "ExperimentSelector", None)
+        )
+        if experiment_selector is not None:
+            self._setup_experiment_selector_menu(experiment_selector)
+        experiment_tab_index = self.tabWidget.indexOf(self.experiment)
+        if experiment_tab_index != -1:
+            self.tabWidget.removeTab(experiment_tab_index)
+            self.experiment.deleteLater()
+
         if self.protocol.h5_during_run:
             self.comboBox_h5.setCurrentIndex(0)
         else:
@@ -654,6 +693,64 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
                 self.pushButton_instrument_aliases.setIcon(
                     self.style().standardIcon(QStyle.SP_MessageBoxWarning)
                 )
+
+    def _setup_experiment_selector_menu(self, experiment_selector):
+        experiment_selector.setParent(None)
+
+        self.label_experiment_selector = QLabel("Select Experiment:", self.advanced)
+        label_font = self.label_experiment_selector.font()
+        label_font.setBold(True)
+        self.label_experiment_selector.setFont(label_font)
+        self.experiment_menu_button = ExperimentMenuComboBox(self.advanced)
+        self.experiment_menu_button.setSizePolicy(self.comboBox_h5.sizePolicy())
+        target_width = self.comboBox_h5.sizeHint().width()
+        self.experiment_menu_button.setMinimumWidth(target_width)
+        self.experiment_menu_button.setToolTip(
+            "Select an experiment class from the ontology hierarchy."
+        )
+        self._update_experiment_button_text()
+
+        ontology_tree = []
+        try:
+            ontology_tree = subclass_tree_as_list()
+        except Exception:
+            ontology_tree = []
+
+        experiment_menu = QMenu(self.experiment_menu_button)
+        root_nodes = ontology_tree[0].get("children", []) if ontology_tree else []
+        self._build_experiment_submenus(experiment_menu, root_nodes)
+        self.experiment_menu_button.set_menu(experiment_menu)
+        self.experiment_menu_button.setEnabled(not experiment_menu.isEmpty())
+
+        insert_index = max(self.verticalLayout.count() - 1, 0)
+        self.verticalLayout.insertWidget(insert_index, self.label_experiment_selector)
+        self.verticalLayout.insertWidget(insert_index + 1, self.experiment_menu_button)
+
+    def _build_experiment_submenus(self, menu, nodes):
+        for node in nodes:
+            name = node.get("name", "")
+            children = node.get("children", [])
+            if not name:
+                continue
+            if children:
+                submenu = menu.addMenu(name)
+                self._build_experiment_submenus(submenu, children)
+            else:
+                action = menu.addAction(name)
+                action.triggered.connect(
+                    lambda checked=False, selected_name=name: self._set_experiment_class(
+                        selected_name
+                    )
+                )
+
+    def _set_experiment_class(self, class_name):
+        self._selected_experiment_class = class_name
+        self._update_experiment_button_text()
+
+    def _update_experiment_button_text(self):
+        button_text = self._selected_experiment_class or "LAPExperiment"
+        if hasattr(self, "experiment_menu_button"):
+            self.experiment_menu_button.set_display_text(button_text)
 
     def check_use_ending_steps(self):
         """If the checkBox_perform_at_end is checked, the ending_protocol_selection
@@ -741,6 +838,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.update_variables()
         self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
         self.protocol.h5_during_run = self.comboBox_h5.currentIndex() == 0
+        self.protocol.experiment_ontology_class = self._selected_experiment_class
         self.protocol.use_end_protocol = self.checkBox_perform_at_end.isChecked()
         self.protocol.end_protocol = self.ending_protocol_selection.get_path()
         self.protocol.live_variable_update = self.checkBox_live_variables.isChecked()
