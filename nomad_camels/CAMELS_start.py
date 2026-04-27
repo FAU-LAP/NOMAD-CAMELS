@@ -6,8 +6,7 @@ from PySide6.QtGui import QPixmap, QIcon
 import os
 
 # Extend the system path to include the parent directory of the current file.
-#sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
 from importlib import resources, import_module
