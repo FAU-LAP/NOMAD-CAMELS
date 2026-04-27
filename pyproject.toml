@@ -23,7 +23,7 @@ databroker = ">=1.2.5, <2.0.0"
 matplotlib = ">=3.6.2"
 pyqtgraph = ">=0.13.3"
 requests = ">=2.26.0"
-
+owlready2 = ">=0.46"
 
 # == With Python-specific constraints ==
 pyyaml = [

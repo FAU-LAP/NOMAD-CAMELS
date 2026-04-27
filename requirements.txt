@@ -93,3 +93,4 @@ xarray>=2022.3.0
 zarr>=2.11.3
 zict>=2.2.0
 pyzmq>=25.0.0
+owlready2>=0.46
