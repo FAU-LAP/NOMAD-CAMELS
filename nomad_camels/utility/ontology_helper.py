@@ -2,7 +2,11 @@ from pathlib import Path
 from owlready2 import get_ontology
 
 
-DEFAULT_ONTOLOGY_PATH = Path(r"C:\LAP_ET\LAP-ET-ontology\LAP_ET.owl")
+
+DEFAULT_ONTOLOGY_PATH = (
+    Path(__file__).parent.parent.parent / "external/LAP-ET-ontology/LAP_ET.owl"
+)
+
 
 
 def load_local_ontology(ontology_path=None):
