@@ -17,7 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
     QGridLayout, QHBoxLayout, QHeaderView, QLabel,
-    QLineEdit, QPushButton, QSizePolicy, QSpacerItem,
+        QLineEdit, QListWidget, QPushButton, QSizePolicy, QSpacerItem,
     QTabWidget, QTextEdit, QVBoxLayout, QWidget)
 
 from nomad_camels.frontpanels.flyer_window import FlyerButton
@@ -35,20 +35,41 @@ class Ui_Protocol_Settings(object):
         self.gridLayout.setContentsMargins(0, 0, 9, 0)
         self.tabWidget = QTabWidget(Protocol_Settings)
         self.tabWidget.setObjectName(u"tabWidget")
-        self.experiment = QWidget()
-        self.experiment.setObjectName(u"experiment")
-        self.verticalLayout_2 = QVBoxLayout(self.experiment)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.ExperimentSelector = QComboBox(self.experiment)
+        self.ExperimentSelector = QWidget()
         self.ExperimentSelector.setObjectName(u"ExperimentSelector")
+        self.verticalLayout_2 = QVBoxLayout(self.ExperimentSelector)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.label_experiment_selector = QLabel(self.ExperimentSelector)
+        self.label_experiment_selector.setObjectName(u"label_experiment_selector")
+        font1 = QFont()
+        font1.setBold(True)
+        self.label_experiment_selector.setFont(font1)
 
-        self.verticalLayout_2.addWidget(self.ExperimentSelector)
+        self.verticalLayout_2.addWidget(self.label_experiment_selector)
+
+        self.combo_exp_select = QComboBox(self.ExperimentSelector)
+        self.combo_exp_select.setObjectName(u"combo_exp_select")
+
+        self.verticalLayout_2.addWidget(self.combo_exp_select)
+
+        self.label_quantities = QLabel(self.ExperimentSelector)
+        self.label_quantities.setObjectName(u"label_quantities")
+        font2 = QFont()
+        font2.setBold(True)
+        self.label_quantities.setFont(font2)
+
+        self.verticalLayout_2.addWidget(self.label_quantities)
+
+        self.physical_quantities_list = QListWidget(self.ExperimentSelector)
+        self.physical_quantities_list.setObjectName(u"physical_quantities_list")
+
+        self.verticalLayout_2.addWidget(self.physical_quantities_list)
 
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_2.addItem(self.verticalSpacer)
 
-        self.tabWidget.addTab(self.experiment, "")
+        self.tabWidget.addTab(self.ExperimentSelector, "")
         self.general = QWidget()
         self.general.setObjectName(u"general")
         self.gridLayout_3 = QGridLayout(self.general)
@@ -327,9 +348,14 @@ class Ui_Protocol_Settings(object):
         self.tabWidget.setToolTip("")
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
-        self.ExperimentSelector.setToolTip(QCoreApplication.translate("Protocol_Settings", u"Select an experiment that you want to perform in this protocol.", None))
+        self.combo_exp_select.setToolTip(QCoreApplication.translate("Protocol_Settings", u"Select an experiment that you want to perform in this protocol.", None))
 #endif // QT_CONFIG(tooltip)
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.experiment), QCoreApplication.translate("Protocol_Settings", u"Select Experiment", None))
+        self.label_experiment_selector.setText(QCoreApplication.translate("Protocol_Settings", u"Select Experiment:", None))
+        self.label_quantities.setText(QCoreApplication.translate("Protocol_Settings", u"Physical Quantities:", None))
+#if QT_CONFIG(tooltip)
+        self.physical_quantities_list.setToolTip(QCoreApplication.translate("Protocol_Settings", u"Physical quantities associated with the selected experiment.", None))
+#endif // QT_CONFIG(tooltip)
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.ExperimentSelector), QCoreApplication.translate("Protocol_Settings", u"Select Experiment", None))
         self.checkBox_csv_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export data to csv", None))
         self.label_3.setText(QCoreApplication.translate("Protocol_Settings", u"Saving:", None))
         self.checkBox_live_comments.setText(QCoreApplication.translate("Protocol_Settings", u"allow live comments to protocol", None))

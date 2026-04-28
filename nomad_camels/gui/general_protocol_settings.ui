@@ -39,6 +39,18 @@
        <string>Select Experiment</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_experiment_selector">
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Select Experiment:</string>
+          </property>
+         </widget>
+        </item>
        <item>
         <widget class="QComboBox" name="combo_exp_select">
          <property name="toolTip">
@@ -46,6 +58,25 @@
          </property>
         </widget>
        </item>
+        <item>
+         <widget class="QLabel" name="label_quantities">
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Physical Quantities:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="physical_quantities_list">
+          <property name="toolTip">
+           <string>Physical quantities associated with the selected experiment.</string>
+          </property>
+         </widget>
+        </item>
        <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
