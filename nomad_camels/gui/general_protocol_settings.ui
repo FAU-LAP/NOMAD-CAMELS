@@ -36,7 +36,7 @@
      </property>
      <widget class="QWidget" name="ExperimentSelector">
       <attribute name="title">
-       <string>Select Experiment</string>
+       <string>Select Experiment Semantics</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -47,7 +47,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Select Experiment:</string>
+           <string>Choose Experiment Type:</string>
           </property>
          </widget>
         </item>
