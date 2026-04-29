@@ -1,5 +1,6 @@
 from pathlib import Path
-from owlready2 import get_ontology
+
+from owlready2 import get_ontology, sync_reasoner
 
 
 
@@ -9,7 +10,7 @@ DEFAULT_ONTOLOGY_PATH = (
 
 
 
-def load_local_ontology(ontology_path=None):
+def load_local_ontology(ontology_path=None, run_reasoner=False):
     """
     Load and return the ontology object.
     """
@@ -20,11 +21,27 @@ def load_local_ontology(ontology_path=None):
     if not path.exists():
         raise FileNotFoundError(f"Ontology file not found: {path}")
 
-    return get_ontology(str(path)).load()
+    ontology = get_ontology(str(path)).load()
+
+    if run_reasoner:
+        try:
+            sync_reasoner([ontology], infer_property_values=True)
+        except Exception:
+            # Java-based reasoners are not always available in every environment.
+            # Fall back to the asserted ontology if reasoning cannot run.
+            pass
+
+    return ontology
+
+
+def nice_name(obj):
+    if hasattr(obj, "name"):
+        return obj.name
+    return str(obj)
 
 
 def subclass_tree_as_list(ontology_path=None):
-    ontology = load_local_ontology(ontology_path)
+    ontology = load_local_ontology(ontology_path, run_reasoner=True)
     parent_class = ontology["LAPExperiment"]
 
     return _class_tree_as_list(parent_class, visited=set())
@@ -51,3 +68,56 @@ def _class_tree_as_list(parent_class, visited=None):
             ]
         }
     ]
+
+
+def get_physical_quantities(ontology_path=None, class_name=None):
+    """
+    Get the physical quantities associated with a class.
+
+    The ontology is reasoned first when possible so inferred restrictions are
+    visible in the class expressions we inspect.
+    """
+    ontology = load_local_ontology(ontology_path, run_reasoner=True)
+    if not class_name:
+        return []
+    experiment_class = ontology[class_name]
+    if not experiment_class:
+        return []
+
+    quantities = _get_class_physical_quantities(experiment_class)
+    return sorted({nice_name(quantity) for quantity in quantities})
+
+
+def _get_class_physical_quantities(cls):
+    quantities = set()
+    _collect_quantity_targets_from_expression(cls, "relatesToQuantity", quantities, set())
+    return quantities
+
+
+def _collect_quantity_targets_from_expression(expr, property_name, results, visited):
+    if expr is None:
+        return
+
+    marker = id(expr)
+    if marker in visited:
+        return
+    visited.add(marker)
+
+    property_obj = getattr(expr, "property", None)
+    if getattr(property_obj, "name", None) == property_name:
+        value = getattr(expr, "value", None)
+        if value is not None:
+            results.add(value)
+
+    for subexpr in getattr(expr, "Classes", []):
+        _collect_quantity_targets_from_expression(subexpr, property_name, results, visited)
+
+    nested_class = getattr(expr, "Class", None)
+    if nested_class is not None:
+        _collect_quantity_targets_from_expression(nested_class, property_name, results, visited)
+
+    if hasattr(expr, "is_a") and hasattr(expr, "equivalent_to") and not hasattr(expr, "property"):
+        for parent in expr.is_a:
+            _collect_quantity_targets_from_expression(parent, property_name, results, visited)
+        for parent in expr.equivalent_to:
+            _collect_quantity_targets_from_expression(parent, property_name, results, visited)
