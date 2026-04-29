@@ -1,11 +1,11 @@
-from PySide6.QtWidgets import QWidget, QMessageBox, QStyle, QMenu, QLabel, QComboBox
+from PySide6.QtWidgets import QWidget, QMessageBox, QStyle, QMenu, QComboBox, QListWidgetItem
 from PySide6.QtCore import Signal, Qt, QPoint
 from PySide6.QtGui import QIcon
 
 from nomad_camels.frontpanels.plot_definer import Plot_Definer_Widget
 from nomad_camels.loop_steps import make_step_of_type
 from nomad_camels.gui.general_protocol_settings import Ui_Protocol_Settings
-from nomad_camels.utility.ontology_helper import subclass_tree_as_list
+from nomad_camels.utility.ontology_helper import subclass_tree_as_list, get_physical_quantities
 
 from nomad_camels.utility import variables_handling
 
@@ -651,10 +651,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         )
         if experiment_selector is not None:
             self._setup_experiment_selector_menu(experiment_selector)
-        experiment_tab_index = self.tabWidget.indexOf(self.experiment)
-        if experiment_tab_index != -1:
-            self.tabWidget.removeTab(experiment_tab_index)
-            self.experiment.deleteLater()
 
         if self.protocol.h5_during_run:
             self.comboBox_h5.setCurrentIndex(0)
@@ -676,6 +672,9 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.selectionModel().selectionChanged.connect(
             self.update_variable_select
         )
+        # Display physical quantities for the initially loaded experiment
+        if hasattr(self, "physical_quantities_list"):
+            self._display_physical_quantities()
         self.check_aliases_defined()
 
     def check_aliases_defined(self):
@@ -695,19 +694,17 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
                 )
 
     def _setup_experiment_selector_menu(self, experiment_selector):
-        experiment_selector.setParent(None)
+        combo_index = self.verticalLayout_2.indexOf(experiment_selector)
+        if combo_index < 0:
+            return
 
-        self.label_experiment_selector = QLabel("Select Experiment:", self.advanced)
-        label_font = self.label_experiment_selector.font()
-        label_font.setBold(True)
-        self.label_experiment_selector.setFont(label_font)
-        self.experiment_menu_button = ExperimentMenuComboBox(self.advanced)
-        self.experiment_menu_button.setSizePolicy(self.comboBox_h5.sizePolicy())
-        target_width = self.comboBox_h5.sizeHint().width()
-        self.experiment_menu_button.setMinimumWidth(target_width)
+        self.experiment_menu_button = ExperimentMenuComboBox(self.ExperimentSelector)
         self.experiment_menu_button.setToolTip(
             "Select an experiment class from the ontology hierarchy."
         )
+        self.verticalLayout_2.replaceWidget(experiment_selector, self.experiment_menu_button)
+        experiment_selector.deleteLater()
+        self.combo_exp_select = self.experiment_menu_button
         self._update_experiment_button_text()
 
         ontology_tree = []
@@ -722,9 +719,8 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.experiment_menu_button.set_menu(experiment_menu)
         self.experiment_menu_button.setEnabled(not experiment_menu.isEmpty())
 
-        insert_index = max(self.verticalLayout.count() - 1, 0)
-        self.verticalLayout.insertWidget(insert_index, self.label_experiment_selector)
-        self.verticalLayout.insertWidget(insert_index + 1, self.experiment_menu_button)
+        # Connect selection to display physical quantities
+        self.experiment_menu_button.currentTextChanged.connect(self._display_physical_quantities)
 
     def _build_experiment_submenus(self, menu, nodes):
         for node in nodes:
@@ -745,12 +741,28 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
 
     def _set_experiment_class(self, class_name):
         self._selected_experiment_class = class_name
+        self.protocol.experiment_ontology_class = class_name
         self._update_experiment_button_text()
+        self._display_physical_quantities()
 
     def _update_experiment_button_text(self):
         button_text = self._selected_experiment_class or "LAPExperiment"
         if hasattr(self, "experiment_menu_button"):
             self.experiment_menu_button.set_display_text(button_text)
+
+    def _display_physical_quantities(self):
+        """Fetch and display physical quantities for the selected experiment."""
+        self.physical_quantities_list.clear()
+        if not self._selected_experiment_class:
+            return
+        try:
+            quantities = get_physical_quantities(class_name=self._selected_experiment_class)
+            for quantity in quantities:
+                item = QListWidgetItem(quantity, self.physical_quantities_list)
+                self.physical_quantities_list.addItem(item)
+        except Exception as e:
+            error_item = QListWidgetItem(f"Error loading quantities: {str(e)}", self.physical_quantities_list)
+            self.physical_quantities_list.addItem(error_item)
 
     def check_use_ending_steps(self):
         """If the checkBox_perform_at_end is checked, the ending_protocol_selection
