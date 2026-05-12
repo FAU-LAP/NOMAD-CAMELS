@@ -1,4 +1,5 @@
 import threading
+import zmq
 from bluesky.callbacks.zmq import Proxy
 
 
@@ -14,8 +15,8 @@ class StoppableProxy(Proxy):
         self._stopped = False
 
         # Set LINGER to 0 to avoid blocking on socket close.
-        self._frontend.setsockopt(self.zmq.LINGER, 0)
-        self._backend.setsockopt(self.zmq.LINGER, 0)
+        self._frontend.setsockopt(zmq.LINGER, 0)
+        self._backend.setsockopt(zmq.LINGER, 0)
 
     def start(self):
         if self.closed:
