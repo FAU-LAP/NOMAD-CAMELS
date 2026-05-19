@@ -102,8 +102,8 @@ def zmq_setup():
     yield publisher, dispatcher
 
     # Teardown: stop the proxy once all tests have finished.
-    dispatcher.stop()
-    dispatcher_thread.join(timeout=1.0)
+    dispatcher.loop.call_soon_threadsafe(dispatcher.loop.stop)
+    dispatcher_thread.join(timeout=2.0)
     proxy_proc.terminate()
     proxy_proc.join(timeout=1.0)
 
