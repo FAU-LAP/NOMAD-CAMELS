@@ -143,7 +143,6 @@ standard_start_string += "\tbec = BestEffortCallback()\n"
 standard_start_string += "\tRE.subscribe(bec)\n"
 standard_start_string += """
     if not (dispatcher and publisher):
-        temp_dispatcher = True
         from nomad_camels.main_classes.plot_proxy import run_zmq_proxy
         import multiprocessing
         import threading
