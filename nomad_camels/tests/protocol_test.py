@@ -42,36 +42,6 @@ def zmq_setup():
     Yields a tuple (publisher, dispatcher) for use in tests.
     Stops the proxy at the end of the session.
     """
-    # try:
-    #     proxy = Proxy(5577, 5578)
-    #     proxy_created = True
-    # except ZMQError:
-    #     proxy = None  # Use already running proxy.
-    #     proxy_created = False
-
-    # def start_proxy():
-    #     if proxy_created and proxy is not None:
-    #         proxy.start()
-
-    # # Setup dispatcher and its thread.
-    # dispatcher = RemoteDispatcher("localhost:5578")
-
-    # def start_dispatcher():
-    #     try:
-    #         dispatcher.start()
-    #     except asyncio.exceptions.CancelledError:
-    #         pass  # Ignore cancellation errors on shutdown.
-
-    # # Setup publisher.
-    # publisher = Publisher("localhost:5577")
-
-    # # Start proxy and dispatcher in daemon threads.
-    # proxy_thread = Thread(target=start_proxy, daemon=True)
-    # dispatcher_thread = Thread(target=start_dispatcher, daemon=True)
-    # proxy_thread.start()
-    # dispatcher_thread.start()
-
-    ### NEW
     port_queue = multiprocessing.Queue()
     # Start the Proxy Process
     # We store it as proxy_proc so we can terminate it later
