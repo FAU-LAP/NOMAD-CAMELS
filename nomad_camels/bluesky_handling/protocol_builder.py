@@ -143,45 +143,40 @@ standard_start_string += "\tbec = BestEffortCallback()\n"
 standard_start_string += "\tRE.subscribe(bec)\n"
 standard_start_string += """
     if not (dispatcher and publisher):
-        from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
-        from nomad_camels.main_classes.plot_proxy import StoppableProxy as Proxy
-        from threading import Thread
-        from zmq.error import ZMQError
+        from nomad_camels.main_classes.plot_proxy import run_zmq_proxy
+        import multiprocessing
+        import threading
         import asyncio
+        from bluesky.callbacks.zmq import RemoteDispatcher, Publisher
+
+        # Apply Windows asyncio fix (prevents the ProactorEventLoop warning)
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-        def setup_threads():
-            try:
-                proxy = Proxy(5577, 5578)
-                proxy_created = True
-            except ZMQError as e:
-                # If the proxy is already running, a ZMQError will be raised.
-                proxy = None  # We will use the already running proxy.
-                proxy_created = False
-            dispatcher = RemoteDispatcher("localhost:5578")
+        # Setup queue to receive dynamic ports
+        port_queue = multiprocessing.Queue()
+        # Start the Proxy Process
+        proxy_proc = multiprocessing.Process(
+            target=run_zmq_proxy,
+            args=(port_queue,),
+            daemon=True,
+        )
+        proxy_proc.start()
+        # Give the proxy 200ms to bind to the ports
+        time.sleep(0.2)
+        # Retrieve the dynamically assigned ports
+        in_port, out_port = port_queue.get()
+        print(f"Proxy started on ports: Publisher={in_port}, Dispatcher={out_port}")
+        # Setup Publisher and Dispatcher using the dynamic ports once for all plots and measurements run from the main app.
+        # Measurements only create their own if the Python script is run 'standalone', so without the main app.
+        publisher = Publisher(f"localhost:{in_port}")
+        dispatcher = RemoteDispatcher(f"localhost:{out_port}")
 
-            def start_proxy():
-                if proxy_created and proxy is not None:
-                    proxy.start()
-            
-            def start_dispatcher(plots, plots_plotly):
-                for plot in plots:
-                    dispatcher.subscribe(plot.livePlot)
-                for plotly_plot in plots_plotly:
-                    dispatcher.subscribe(plotly_plot)
-                try:
-                    dispatcher.start()
-                except asyncio.exceptions.CancelledError:
-                    # This error is raised when the dispatcher is stopped. It can therefore be ignored
-                    pass
-
-            return proxy, dispatcher, start_proxy, start_dispatcher
-        publisher = Publisher('localhost:5577')
-        publisher_subscription = RE.subscribe(publisher)
-        proxy, dispatcher, start_proxy, start_dispatcher = setup_threads()
-        proxy_thread = Thread(target=start_proxy, daemon=True)
-        dispatcher_thread = Thread(target=start_dispatcher, args=(plots, plots_plotly,), daemon=True)#
-        proxy_thread.start()
+        # 4. Start Dispatcher in a Thread
+        # We store the thread as dispatcher_thread to join it later
+        dispatcher_thread = threading.Thread(
+            target=dispatcher.start,
+            daemon=True,
+        )
         dispatcher_thread.start()
         time.sleep(0.5)
 """
@@ -303,14 +298,14 @@ def build_protocol(
     variable_string += f"export_to_csv = {protocol.export_csv}\n"
     variable_string += f"export_to_json = {protocol.export_json}\n"
     if "new_file_each_run" in variables_handling.preferences:
-        variable_string += f'new_file_each_run = {variables_handling.preferences["new_file_each_run"]}\n'
+        variable_string += f"new_file_each_run = {variables_handling.preferences['new_file_each_run']}\n"
     else:
         variable_string += f"new_file_each_run = False\n"
     if (
         "new_file_every_x_hours" in variables_handling.preferences
         and variables_handling.preferences["new_file_every_x_hours"]
     ):
-        variable_string += f'new_file_hours = {variables_handling.preferences["new_file_every_x_hours_value"]}\n'
+        variable_string += f"new_file_hours = {variables_handling.preferences['new_file_every_x_hours_value']}\n"
     else:
         variable_string += f"new_file_hours = 0\n"
     variable_string += f"do_nexus_output = {protocol.use_nexus}\n"
@@ -332,7 +327,9 @@ def build_protocol(
         try:
             protocol.update_variables()
         except Exception as e:
-            print(f"Failed to update the variables. The protocol might not work as intended!\n{e}")
+            print(
+                f"Failed to update the variables. The protocol might not work as intended!\n{e}"
+            )
     for var, val in variables_handling.loop_step_variables.items():
         if variables_handling.check_data_type(val) == "String":
             val = f'"{val}"'
@@ -619,7 +616,7 @@ def sub_protocol_string(
     for i, var in enumerate(variables_out["Variable"]):
         protocol_string += f'{tabs}namespace["{variables_out["Write to name"][i]}"] = {prot_name}_mod.namespace["{var}"]\n'
     protocol_string += f"{tabs}runEngine.unsubscribe(sub_eva_{prot_name})\n"
-    protocol_string += f'{tabs}yield from helper_functions.get_fit_results({prot_name}_mod.all_fits, namespace, True, {stream_str})\n'
+    protocol_string += f"{tabs}yield from helper_functions.get_fit_results({prot_name}_mod.all_fits, namespace, True, {stream_str})\n"
     return protocol_string
 
 
