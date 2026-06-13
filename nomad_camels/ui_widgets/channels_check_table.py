@@ -442,6 +442,22 @@ class Channels_Check_Table(QWidget):
                     item.setToolTip("Hint: right-click to (un-)check complete column")
                 elif lab in self.combo_boxes:
                     combo = QComboBox(self.tableWidget_channels)
+                    combo.setStyleSheet(
+                        """
+                        QComboBox {
+                            background-color: white;
+                        }
+
+                        QComboBox:disabled {
+                            background-color: white;
+                            color: gray;
+                        }
+
+                        QComboBox QAbstractItemView {
+                            background-color: white;
+                        }
+                        """
+                    )
                     options = list(self.combo_boxes[lab])
                     combo.addItems(options)
                     if value in options:
