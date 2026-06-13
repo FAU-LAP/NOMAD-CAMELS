@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QCheckBox
 from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
+from nomad_camels.utility.ontology_helper import get_physical_quantities
 from nomad_camels.utility import variables_handling
 
 
@@ -32,6 +33,22 @@ class Set_Channels(Loop_Step):
             if "channels_values" in step_info
             else {"Channels": [], "Values": []}
         )
+        if "Semantics" not in self.channels_values:
+            self.channels_values["Semantics"] = [""] * len(
+            self.channels_values.get("Channels", [])
+        )
+        # Backward compatibility to update existing protocols that do not have the channel_semantics field
+        while len(self.channels_values["Semantics"]) < len(
+            self.channels_values["Channels"]
+        ):
+            self.channels_values["Semantics"].append("")
+
+        if len(self.channels_values["Semantics"]) > len(
+            self.channels_values["Channels"]
+        ):
+            self.channels_values["Semantics"] = self.channels_values["Semantics"][
+                : len(self.channels_values["Channels"])
+            ]
         self.wait_for_set = (
             step_info["wait_for_set"] if "wait_for_set" in step_info else True
         )
@@ -105,10 +122,24 @@ class Set_Channels_Config(Loop_Step_Config):
                 box.append(channel)
         info_dict = {
             "channel": self.loop_step.channels_values["Channels"],
+            "semantics": self.loop_step.channels_values["Semantics"],
             "value": self.loop_step.channels_values["Values"],
         }
+        protocol = getattr(self.loop_step, "protocol", None)
+        experiment_class = getattr(protocol, "experiment_ontology_class", "")
+        semantic_options = []
+        if experiment_class:
+            quantities = get_physical_quantities(class_name=experiment_class) or []
+            semantic_options = list(quantities)
         self.sub_widget = Channels_Check_Table(
-            self, ["set", "channel", "value"], True, info_dict, [2]
+            self,
+            ["set", "channel", "semantics", "value"],
+            True,
+            info_dict,
+            [3],
+            combo_boxes={
+                "semantics": semantic_options,
+            },
         )
         self.checkBox_wait_for_set = QCheckBox("Wait for set")
         self.checkBox_wait_for_set.setChecked(True)
@@ -126,6 +157,7 @@ class Set_Channels_Config(Loop_Step_Config):
         info = self.sub_widget.get_info()
         self.loop_step.channels_values = {
             "Channels": info["channel"],
+            "Semantics": info["semantics"],
             "Values": info["value"],
         }
         # self.sub_widget.update_table_data()

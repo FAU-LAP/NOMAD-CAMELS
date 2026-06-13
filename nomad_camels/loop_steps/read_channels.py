@@ -5,6 +5,7 @@ from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from nomad_camels.gui.read_channels import Ui_read_channels_config
 
 from nomad_camels.utility import variables_handling, fit_variable_renaming
+from nomad_camels.utility.ontology_helper import get_physical_quantities
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
 
@@ -38,15 +39,28 @@ class Read_Channels(Loop_Step):
             self.channel_list = step_info["channel_list"]
         else:
             self.channel_list = []
+
         if "skip_failed" in step_info:
             self.skip_failed = step_info["skip_failed"]
         else:
             self.skip_failed = [False] * len(self.channel_list)
+
+        if "channel_semantics" in step_info:
+            self.channel_semantics = step_info["channel_semantics"]
+        else:
+            self.channel_semantics = [""] * len(self.channel_list)
+
+        # Backward compatibility to update existing protocols that do not have the channel_semantics field
+        while len(self.channel_semantics) < len(self.channel_list):
+            self.channel_semantics.append("")
+
+        if len(self.channel_semantics) > len(self.channel_list):
+            self.channel_semantics = self.channel_semantics[: len(self.channel_list)]
+
         if "read_variables" in step_info:
             self.read_variables = step_info["read_variables"]
         else:
             self.read_variables = True
-        self.update_used_devices()
 
     def update_used_devices(self):
         """All devices that should be read are added to the used_devices."""
@@ -215,15 +229,28 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         self.loop_step = loop_step
         self.checkBox_read_all.stateChanged.connect(self.read_type_changed)
         self.checkBox_split_trigger.stateChanged.connect(self.use_trigger)
-
         self.load_data()
-        labels = ["read?", "channel", "ignore failed"]
+        labels = ["read?", "channel", "semantics", "ignore failed"]
         info_dict = {
             "channel": self.loop_step.channel_list,
+            "semantics": self.loop_step.channel_semantics,
             "ignore failed": self.loop_step.skip_failed,
         }
+        protocol = getattr(self.loop_step, "protocol", None)
+        experiment_class = getattr(protocol, "experiment_ontology_class", "")
+        semantic_options = []
+        if experiment_class:
+            quantities = get_physical_quantities(class_name=experiment_class) or []
+            semantic_options = list(quantities)
         self.read_table = Channels_Check_Table(
-            self, labels, info_dict=info_dict, title="Read-Channels", checkables=[2]
+            self,
+            labels,
+            info_dict=info_dict,
+            title="Read-Channels",
+            checkables=[3],
+            combo_boxes={
+                "semantics": semantic_options,
+            },
         )
         self.read_type_changed()
         self.layout().addWidget(self.read_table, 5, 0, 1, 3)
@@ -258,8 +285,12 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
     def update_step_config(self):
         """ """
         info = self.read_table.get_info()
+
         self.loop_step.channel_list = info["channel"]
+        self.loop_step.channel_semantics = info["semantics"]
+
         read_variables = self.checkBox_read_variables.isChecked()
+
         self.loop_step.skip_failed = info["ignore failed"]
         self.loop_step.read_variables = read_variables
 
