@@ -106,6 +106,17 @@ class Measurement_Protocol:
             if "experiment_ontology_class_iri" in kwargs
             else ""
         )
+        self.variable_semantics = (
+            kwargs["variable_semantics"]
+            if "variable_semantics" in kwargs
+            else {}
+        )
+
+        self.variable_semantic_iris = (
+            kwargs["variable_semantic_iris"]
+            if "variable_semantic_iris" in kwargs
+            else {}
+        )
         self.use_end_protocol = (
             kwargs["use_end_protocol"] if "use_end_protocol" in kwargs else False
         )
@@ -756,6 +767,8 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.experiment_ontology_class_iri = class_iri
         self._update_experiment_button_text()
         self._display_physical_quantities()
+        if hasattr(self.variable_table, "refresh_semantic_options"):
+            self.variable_table.refresh_semantic_options()
 
     def _update_experiment_button_text(self):
         button_text = self._selected_experiment_class or "LAPExperiment"
