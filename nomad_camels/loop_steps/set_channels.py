@@ -35,18 +35,33 @@ class Set_Channels(Loop_Step):
         )
         if "Semantics" not in self.channels_values:
             self.channels_values["Semantics"] = [""] * len(
-            self.channels_values.get("Channels", [])
-        )
-        # Backward compatibility to update existing protocols that do not have the channel_semantics field
+                self.channels_values.get("Channels", [])
+            )
+        if "SemanticIRIs" not in self.channels_values:
+            self.channels_values["SemanticIRIs"] = [""] * len(
+                self.channels_values.get("Channels", [])
+            )
+        # Backward compatibility for existing protocols:
+        # Channels, Semantics, SemanticIRIs and Values should have matching lengths.
         while len(self.channels_values["Semantics"]) < len(
             self.channels_values["Channels"]
         ):
             self.channels_values["Semantics"].append("")
-
         if len(self.channels_values["Semantics"]) > len(
             self.channels_values["Channels"]
         ):
             self.channels_values["Semantics"] = self.channels_values["Semantics"][
+                : len(self.channels_values["Channels"])
+            ]
+        while len(self.channels_values["SemanticIRIs"]) < len(
+            self.channels_values["Channels"]
+        ):
+            self.channels_values["SemanticIRIs"].append("")
+
+        if len(self.channels_values["SemanticIRIs"]) > len(
+            self.channels_values["Channels"]
+        ):
+            self.channels_values["SemanticIRIs"] = self.channels_values["SemanticIRIs"][
                 : len(self.channels_values["Channels"])
             ]
         self.wait_for_set = (
@@ -123,14 +138,14 @@ class Set_Channels_Config(Loop_Step_Config):
         info_dict = {
             "channel": self.loop_step.channels_values["Channels"],
             "semantics": self.loop_step.channels_values["Semantics"],
+            "semantic_iris": self.loop_step.channels_values["SemanticIRIs"],
             "value": self.loop_step.channels_values["Values"],
         }
         protocol = getattr(self.loop_step, "protocol", None)
         experiment_class = getattr(protocol, "experiment_ontology_class", "")
         semantic_options = []
         if experiment_class:
-            quantities = get_physical_quantities(class_name=experiment_class) or []
-            semantic_options = list(quantities)
+            semantic_options = get_physical_quantities(class_name=experiment_class)
         self.sub_widget = Channels_Check_Table(
             self,
             ["set", "channel", "semantics", "value"],
@@ -139,6 +154,9 @@ class Set_Channels_Config(Loop_Step_Config):
             [3],
             combo_boxes={
                 "semantics": semantic_options,
+            },
+            combo_data_keys={
+                "semantics": "semantic_iris",
             },
         )
         self.checkBox_wait_for_set = QCheckBox("Wait for set")
@@ -158,6 +176,7 @@ class Set_Channels_Config(Loop_Step_Config):
         self.loop_step.channels_values = {
             "Channels": info["channel"],
             "Semantics": info["semantics"],
+            "SemanticIRIs": info["semantic_iris"],
             "Values": info["value"],
         }
         # self.sub_widget.update_table_data()

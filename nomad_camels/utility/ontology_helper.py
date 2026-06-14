@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from owlready2 import get_ontology, sync_reasoner
 
 
@@ -39,6 +38,10 @@ def nice_name(obj):
         return obj.name
     return str(obj)
 
+def ontology_object_to_label_iri(obj):
+    """Return a human-readable label and stable IRI for an ontology object."""
+    return nice_name(obj), getattr(obj, "iri", "")
+
 
 def subclass_tree_as_list(ontology_path=None):
     ontology = load_local_ontology(ontology_path, run_reasoner=True)
@@ -53,7 +56,9 @@ def _class_tree_as_list(parent_class, visited=None):
 
     if parent_class in visited:
         return [
-            {"name": parent_class.name, "children": []}
+            {"name": parent_class.name,
+             "iri": getattr(parent_class, "iri", ""),
+             "children": []}
         ]
 
     visited.add(parent_class)
@@ -61,6 +66,7 @@ def _class_tree_as_list(parent_class, visited=None):
     return [
         {
             "name": parent_class.name,
+            "iri": getattr(parent_class, "iri", ""),
             "children": [
                 child
                 for subcls in parent_class.subclasses()
@@ -85,7 +91,10 @@ def get_physical_quantities(ontology_path=None, class_name=None):
         return []
 
     quantities = _get_class_physical_quantities(experiment_class)
-    return sorted({nice_name(quantity) for quantity in quantities})
+    return sorted(
+        {ontology_object_to_label_iri(quantity) for quantity in quantities},
+        key=lambda option: option[0],
+    )
 
 
 def _get_class_physical_quantities(cls):

@@ -65,6 +65,7 @@ class Channels_Check_Table(QWidget):
         checkables=None,
         use_aliases=True,
         combo_boxes=None,
+        combo_data_keys=None,
     ):
         super().__init__(parent)
         if use_configs:
@@ -78,6 +79,7 @@ class Channels_Check_Table(QWidget):
         self.checkstrings = checkstrings or []
         self.checkables = checkables or []
         self.combo_boxes = combo_boxes or {}
+        self.combo_data_keys = combo_data_keys or {}
         self.info_dict = info_dict or {}
         if "channel" not in self.info_dict:
             self.info_dict["channel"] = []
@@ -332,6 +334,10 @@ class Channels_Check_Table(QWidget):
                 for lab in self.headerLabels[2:]:
                     if n < len(self.info_dict[lab]):
                         self.info_dict[lab].pop(n)
+                    data_key = self.combo_data_keys.get(lab, "")
+                    if data_key and data_key in self.info_dict:
+                        if n < len(self.info_dict[data_key]):
+                            self.info_dict[data_key].pop(n)
             if name in channel_list:
                 n = channel_list.index(name)
                 for j, lab in enumerate(self.headerLabels[2:]):
@@ -348,10 +354,23 @@ class Channels_Check_Table(QWidget):
                         )
                     elif lab in self.combo_boxes:
                         combo = self.tableWidget_channels.cellWidget(i, column)
-                        if combo is not None:
+                        data_key = self.combo_data_keys.get(lab, "")
+                        if combo is not None and combo.currentIndex() >= 0:
                             self.info_dict[lab][n] = combo.currentText()
+                            if data_key:
+                                if data_key not in self.info_dict:
+                                    self.info_dict[data_key] = []
+                                while len(self.info_dict[data_key]) < n + 1:
+                                    self.info_dict[data_key].append("")
+                                self.info_dict[data_key][n] = combo.currentData() or ""
                         else:
                             self.info_dict[lab][n] = ""
+                            if data_key:
+                                if data_key not in self.info_dict:
+                                    self.info_dict[data_key] = []
+                                while len(self.info_dict[data_key]) < n + 1:
+                                    self.info_dict[data_key].append("")
+                                self.info_dict[data_key][n] = ""
                     else:
                         item = self.tableWidget_channels.item(i, column)
                         t = item.text()
@@ -439,13 +458,14 @@ class Channels_Check_Table(QWidget):
                     )
                     item = CheckableTableWidgetItem(checkState=state)
                     self.tableWidget_channels.setItem(n, column, item)
-                    item.setToolTip("Hint: right-click to (un-)check complete column")
+                    item.setToolTip("Hint: right-click to (un-)check complete column")        
                 elif lab in self.combo_boxes:
                     combo = QComboBox(self.tableWidget_channels)
                     combo.setStyleSheet(
                         """
                         QComboBox {
                             background-color: white;
+                            color: black;
                         }
 
                         QComboBox:disabled {
@@ -455,17 +475,37 @@ class Channels_Check_Table(QWidget):
 
                         QComboBox QAbstractItemView {
                             background-color: white;
+                            color: black;
+                            selection-background-color: #d6eaff;
+                            selection-color: black;
                         }
                         """
                     )
                     options = list(self.combo_boxes[lab])
-                    combo.addItems(options)
-                    if value in options:
-                        combo.setCurrentText(value)
-                    else:
-                        combo.setCurrentIndex(-1)
-                    combo.setEnabled(bool(options))
-                    self.tableWidget_channels.setCellWidget(n, column, combo)
+                    normalized_options = []
+                    for option in options:
+                        if isinstance(option, tuple):
+                            label, iri = option
+                        else:
+                            label, iri = option, ""
+                        if label:
+                            normalized_options.append((label, iri))
+                    data_key = self.combo_data_keys.get(lab, "")
+                    data_value = ""
+                    if data_key and data_key in self.info_dict:
+                        if n < len(self.info_dict[data_key]):
+                            data_value = self.info_dict[data_key][n]
+                    for label, iri in normalized_options:
+                        combo.addItem(label, iri)
+                    selected_index = -1
+                    if data_value:
+                        for index, (_label, iri) in enumerate(normalized_options):
+                            if iri == data_value:
+                                selected_index = index
+                                break
+                    combo.setCurrentIndex(selected_index)
+                    combo.setEnabled(bool(normalized_options))
+                    self.tableWidget_channels.setCellWidget(n, column, combo)    
                 else:
                     item = QTableWidgetItem(value)
                     self.tableWidget_channels.setItem(n, column, item)

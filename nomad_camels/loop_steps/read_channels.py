@@ -49,6 +49,15 @@ class Read_Channels(Loop_Step):
             self.channel_semantics = step_info["channel_semantics"]
         else:
             self.channel_semantics = [""] * len(self.channel_list)
+        if "channel_semantic_iris" in step_info:
+            self.channel_semantic_iris = step_info["channel_semantic_iris"]
+        else:
+            self.channel_semantic_iris = [""] * len(self.channel_list)
+        # make sure that the channel semantics, iri, lists have same length
+        while len(self.channel_semantic_iris) < len(self.channel_list):
+            self.channel_semantic_iris.append("")
+        if len(self.channel_semantic_iris) > len(self.channel_list):
+            self.channel_semantic_iris = self.channel_semantic_iris[: len(self.channel_list)]
 
         # Backward compatibility to update existing protocols that do not have the channel_semantics field
         while len(self.channel_semantics) < len(self.channel_list):
@@ -234,14 +243,14 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         info_dict = {
             "channel": self.loop_step.channel_list,
             "semantics": self.loop_step.channel_semantics,
+            "semantic_iris": self.loop_step.channel_semantic_iris,
             "ignore failed": self.loop_step.skip_failed,
         }
         protocol = getattr(self.loop_step, "protocol", None)
         experiment_class = getattr(protocol, "experiment_ontology_class", "")
         semantic_options = []
         if experiment_class:
-            quantities = get_physical_quantities(class_name=experiment_class) or []
-            semantic_options = list(quantities)
+            semantic_options = get_physical_quantities(class_name=experiment_class)
         self.read_table = Channels_Check_Table(
             self,
             labels,
@@ -250,6 +259,9 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
             checkables=[3],
             combo_boxes={
                 "semantics": semantic_options,
+            },
+            combo_data_keys={
+                "semantics": "semantic_iris",
             },
         )
         self.read_type_changed()
@@ -285,12 +297,10 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
     def update_step_config(self):
         """ """
         info = self.read_table.get_info()
-
         self.loop_step.channel_list = info["channel"]
         self.loop_step.channel_semantics = info["semantics"]
-
+        self.loop_step.channel_semantic_iris = info["semantic_iris"]
         read_variables = self.checkBox_read_variables.isChecked()
-
         self.loop_step.skip_failed = info["ignore failed"]
         self.loop_step.read_variables = read_variables
 

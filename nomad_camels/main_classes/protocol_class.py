@@ -101,6 +101,11 @@ class Measurement_Protocol:
             if "experiment_ontology_class" in kwargs
             else ""
         )
+        self.experiment_ontology_class_iri = (
+            kwargs["experiment_ontology_class_iri"]
+            if "experiment_ontology_class_iri" in kwargs
+            else ""
+        )
         self.use_end_protocol = (
             kwargs["use_end_protocol"] if "use_end_protocol" in kwargs else False
         )
@@ -585,6 +590,11 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.setupUi(self)
         self.protocol = protocol
         self._selected_experiment_class = self.protocol.experiment_ontology_class
+        self._selected_experiment_class_iri = getattr(
+            self.protocol,
+            "experiment_ontology_class_iri",
+            "",
+        )
         self.lineEdit_filename.setText(self.protocol.filename)
         self.lineEdit_protocol_name.setText(self.protocol.name)
 
@@ -725,6 +735,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
     def _build_experiment_submenus(self, menu, nodes):
         for node in nodes:
             name = node.get("name", "")
+            iri = node.get("iri", "")
             children = node.get("children", [])
             if not name:
                 continue
@@ -734,14 +745,15 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             else:
                 action = menu.addAction(name)
                 action.triggered.connect(
-                    lambda checked=False, selected_name=name: self._set_experiment_class(
-                        selected_name
-                    )
+                    lambda checked=False, selected_name=name, selected_iri=iri: 
+                        self._set_experiment_class( selected_name, selected_iri)
                 )
 
-    def _set_experiment_class(self, class_name):
+    def _set_experiment_class(self, class_name, class_iri=""):
         self._selected_experiment_class = class_name
+        self._selected_experiment_class_iri = class_iri
         self.protocol.experiment_ontology_class = class_name
+        self.protocol.experiment_ontology_class_iri = class_iri
         self._update_experiment_button_text()
         self._display_physical_quantities()
 
@@ -756,10 +768,11 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         if not self._selected_experiment_class:
             return
         try:
-            quantities = get_physical_quantities(class_name=self._selected_experiment_class)
-            for quantity in quantities:
-                item = QListWidgetItem(quantity, self.physical_quantities_list)
-                self.physical_quantities_list.addItem(item)
+            quantities = get_physical_quantities(
+                class_name=self._selected_experiment_class
+            )
+            for label, _iri in quantities:
+                self.physical_quantities_list.addItem(label)
         except Exception as e:
             error_item = QListWidgetItem(f"Error loading quantities: {str(e)}", self.physical_quantities_list)
             self.physical_quantities_list.addItem(error_item)
@@ -851,6 +864,7 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
         self.protocol.h5_during_run = self.comboBox_h5.currentIndex() == 0
         self.protocol.experiment_ontology_class = self._selected_experiment_class
+        self.protocol.experiment_ontology_class_iri = self._selected_experiment_class_iri
         self.protocol.use_end_protocol = self.checkBox_perform_at_end.isChecked()
         self.protocol.end_protocol = self.ending_protocol_selection.get_path()
         self.protocol.live_variable_update = self.checkBox_live_variables.isChecked()
