@@ -141,9 +141,8 @@ def test_for_loop(qtbot, tmp_path, zmq_setup):
 
     def wait_for_move_in():
         """ """
-        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
         assert len(prot.loop_steps) == 1
-
+    qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
     qtbot.waitUntil(wait_for_move_in)
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
@@ -615,18 +614,20 @@ def test_for_loop_set_var_with_plot_and_linear_fit(qtbot, tmp_path, zmq_setup):
 
     def wait_for_move_in():
         """ """
-        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
         print(len(prot.loop_steps))
 
     select_step_by_name(conf, "Set Variables (Set_Variables)")
+    qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
     qtbot.waitUntil(wait_for_move_in)
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
     select_step_by_name(conf, "Read Channels (Read_Channels)")
+    qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
     qtbot.waitUntil(wait_for_move_in)
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
     select_step_by_name(conf, "Wait (Wait)")
+    qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
     qtbot.waitUntil(wait_for_move_in)
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
@@ -707,9 +708,8 @@ def test_trigger_and_read_channels(qtbot, tmp_path, zmq_setup):
 
     def wait_for_move():
         """ """
-        qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
         assert isinstance(prot.loop_steps[0], read_channels.Trigger_Channels_Step)
-
+    qtbot.mouseClick(conf.pushButton_move_step_up, Qt.MouseButton.LeftButton)
     qtbot.waitUntil(wait_for_move)
 
     with qtbot.waitSignal(conf.accepted) as blocker:
@@ -748,9 +748,8 @@ def test_while_loop(qtbot, tmp_path, zmq_setup):
 
     def wait_for_move_in():
         """ """
-        qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
         assert len(prot.loop_steps) == 1
-
+    qtbot.mouseClick(conf.pushButton_move_step_in, Qt.MouseButton.LeftButton)
     qtbot.waitUntil(wait_for_move_in)
     with qtbot.waitSignal(conf.accepted) as blocker:
         conf.accept()
