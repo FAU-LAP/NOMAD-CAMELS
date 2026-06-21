@@ -51,6 +51,7 @@ from nomad_camels.bluesky_handling.builder_helper_functions import (
     flyer_creator,
 )
 from nomad_camels.utility import device_handling
+from nomad_camels.utility.semantic_mapping import semantic_mapping_to_json
 
 
 # The default string in the beginning of the protocol including imports etc.
@@ -264,6 +265,7 @@ def build_protocol(
     """
     # the protocol is converted to a dictionary and saved as a json
     protocol_dict = load_save_functions.get_save_str(protocol)
+    semantic_mapping_json = semantic_mapping_to_json(protocol, enabled=True)
     if not isinstance(file_path, pathlib.Path):
         file_path = pathlib.Path(file_path)
     cprot_path = file_path.with_suffix(".cprot").as_posix()
@@ -466,7 +468,10 @@ def build_protocol(
     protocol_string += '\t\t\tmd["protocol_json"] = f.read()\n'
     protocol_string += "\texcept FileNotFoundError:\n"
     protocol_string += "\t\tprint('Could not find protocol configuration file, information will be missing in data.')\n"
-
+    if semantic_mapping_json is not None:
+        protocol_string += (
+            f'\tmd["semantic_mapping"] = {semantic_mapping_json!r}\n'
+    )
     # reading the file itself and adding it to the metadata
     protocol_string += '\twith open(__file__, "r", encoding="utf-8") as f:\n'
     protocol_string += '\t\tmd["python_script"] = f.read()\n'
