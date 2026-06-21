@@ -610,6 +610,12 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.h5_during_run = prot_data["h5_during_run"]
         if "experiment_ontology_class" in prot_data:
             prot.experiment_ontology_class = prot_data["experiment_ontology_class"]
+        if "experiment_ontology_class_iri" in prot_data:
+            prot.experiment_ontology_class_iri = prot_data["experiment_ontology_class_iri"]
+        if "variable_semantics" in prot_data:
+            prot.variable_semantics = prot_data["variable_semantics"]
+        if "variable_semantic_iris" in prot_data:
+            prot.variable_semantic_iris = prot_data["variable_semantic_iris"]
         if "use_end_protocol" in prot_data:
             prot.use_end_protocol = prot_data["use_end_protocol"]
         if "end_protocol" in prot_data:
