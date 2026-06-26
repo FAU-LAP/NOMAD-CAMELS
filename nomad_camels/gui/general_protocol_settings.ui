@@ -34,64 +34,6 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="ExperimentSelector">
-      <attribute name="title">
-       <string>Select Experiment Semantics</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_experiment_selector">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Choose Experiment Type:</string>
-          </property>
-         </widget>
-        </item>
-       <item>
-        <widget class="QComboBox" name="combo_exp_select">
-         <property name="toolTip">
-          <string>Select an experiment that you want to perform in this protocol.</string>
-         </property>
-        </widget>
-       </item>
-        <item>
-         <widget class="QLabel" name="label_quantities">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Physical Quantities:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QListWidget" name="physical_quantities_list">
-          <property name="toolTip">
-           <string>Physical quantities associated with the selected experiment.</string>
-          </property>
-         </widget>
-        </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="general">
       <attribute name="title">
        <string>General Settings</string>
@@ -339,6 +281,56 @@ QPushButton:disabled {
            <string>write hdf5 after run</string>
           </property>
          </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_h5_semantic_mapping">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_semantic_mapping">
+         <property name="font">
+          <font>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Semantic Mapping:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_semantic_mapping">
+         <property name="toolTip">
+          <string>Enable optional ontology-based semantic annotations for this protocol.</string>
+         </property>
+         <property name="text">
+          <string>Write semantic mapping to hdf5</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_experiment_selector">
+         <property name="text">
+          <string>Experiment Type:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="combo_exp_select">
+         <property name="toolTip">
+          <string>Select an experiment that you want to perform in this protocol.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_semantic_mapping_protocol_sharing">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
         </widget>
        </item>
        <item>

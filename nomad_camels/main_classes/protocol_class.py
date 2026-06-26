@@ -1,11 +1,11 @@
-from PySide6.QtWidgets import QWidget, QMessageBox, QStyle, QMenu, QComboBox, QListWidgetItem
+from PySide6.QtWidgets import QWidget, QMessageBox, QStyle, QMenu, QComboBox
 from PySide6.QtCore import Signal, Qt, QPoint
 from PySide6.QtGui import QIcon
 
 from nomad_camels.frontpanels.plot_definer import Plot_Definer_Widget
 from nomad_camels.loop_steps import make_step_of_type
 from nomad_camels.gui.general_protocol_settings import Ui_Protocol_Settings
-from nomad_camels.utility.ontology_helper import subclass_tree_as_list, get_physical_quantities
+from nomad_camels.utility.ontology_helper import subclass_tree_as_list
 
 from nomad_camels.utility import variables_handling
 
@@ -116,6 +116,11 @@ class Measurement_Protocol:
             kwargs["variable_semantic_iris"]
             if "variable_semantic_iris" in kwargs
             else {}
+        )
+        self.semantic_mapping_enabled = (
+            kwargs["semantic_mapping_enabled"]
+            if "semantic_mapping_enabled" in kwargs
+            else False
         )
         self.use_end_protocol = (
             kwargs["use_end_protocol"] if "use_end_protocol" in kwargs else False
@@ -606,6 +611,13 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             "experiment_ontology_class_iri",
             "",
         )
+        if hasattr(self, "checkBox_semantic_mapping"):
+            self.checkBox_semantic_mapping.setChecked(
+                getattr(self.protocol, "semantic_mapping_enabled", False)
+            )
+            self.checkBox_semantic_mapping.toggled.connect(
+                self._set_semantic_mapping_enabled
+            )
         self.lineEdit_filename.setText(self.protocol.filename)
         self.lineEdit_protocol_name.setText(self.protocol.name)
 
@@ -672,7 +684,10 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         )
         if experiment_selector is not None:
             self._setup_experiment_selector_menu(experiment_selector)
-
+        if hasattr(self, "checkBox_semantic_mapping"):
+            self._set_semantic_mapping_enabled(
+                self.checkBox_semantic_mapping.isChecked()
+    )
         if self.protocol.h5_during_run:
             self.comboBox_h5.setCurrentIndex(0)
         else:
@@ -693,10 +708,11 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.selectionModel().selectionChanged.connect(
             self.update_variable_select
         )
-        # Display physical quantities for the initially loaded experiment
-        if hasattr(self, "physical_quantities_list"):
-            self._display_physical_quantities()
         self.check_aliases_defined()
+        if hasattr(self, "checkBox_semantic_mapping"):
+            self._set_semantic_mapping_enabled(
+                self.checkBox_semantic_mapping.isChecked()
+        )
 
     def check_aliases_defined(self):
         if (
@@ -715,33 +731,49 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
                 )
 
     def _setup_experiment_selector_menu(self, experiment_selector):
-        combo_index = self.verticalLayout_2.indexOf(experiment_selector)
+        parent = experiment_selector.parentWidget()
+        layout = parent.layout() if parent is not None else None
+        if layout is None:
+            return
+        combo_index = layout.indexOf(experiment_selector)
         if combo_index < 0:
             return
-
-        self.experiment_menu_button = ExperimentMenuComboBox(self.ExperimentSelector)
+        self.experiment_menu_button = ExperimentMenuComboBox(parent)
         self.experiment_menu_button.setToolTip(
             "Select an experiment class from the ontology hierarchy."
         )
-        self.verticalLayout_2.replaceWidget(experiment_selector, self.experiment_menu_button)
+        layout.replaceWidget(experiment_selector, self.experiment_menu_button)
         experiment_selector.deleteLater()
         self.combo_exp_select = self.experiment_menu_button
         self._update_experiment_button_text()
-
         ontology_tree = []
         try:
             ontology_tree = subclass_tree_as_list()
         except Exception:
             ontology_tree = []
-
         experiment_menu = QMenu(self.experiment_menu_button)
         root_nodes = ontology_tree[0].get("children", []) if ontology_tree else []
         self._build_experiment_submenus(experiment_menu, root_nodes)
         self.experiment_menu_button.set_menu(experiment_menu)
-        self.experiment_menu_button.setEnabled(not experiment_menu.isEmpty())
-
-        # Connect selection to display physical quantities
-        self.experiment_menu_button.currentTextChanged.connect(self._display_physical_quantities)
+        self.experiment_menu_button.setEnabled(
+            bool(getattr(self.protocol, "semantic_mapping_enabled", False))
+            and not experiment_menu.isEmpty()
+        )
+    
+    def _set_semantic_mapping_enabled(self, enabled):
+        enabled = bool(enabled)
+        self.protocol.semantic_mapping_enabled = enabled
+        widgets = [
+            getattr(self, "label_experiment_selector", None),
+            getattr(self, "combo_exp_select", None),
+        ]
+        for widget in widgets:
+            if widget is not None:
+                widget.setEnabled(enabled)
+        if enabled:
+            self._update_experiment_button_text()
+        if hasattr(self.variable_table, "refresh_semantic_options"):
+            self.variable_table.refresh_semantic_options()
 
     def _build_experiment_submenus(self, menu, nodes):
         for node in nodes:
@@ -766,7 +798,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.experiment_ontology_class = class_name
         self.protocol.experiment_ontology_class_iri = class_iri
         self._update_experiment_button_text()
-        self._display_physical_quantities()
         if hasattr(self.variable_table, "refresh_semantic_options"):
             self.variable_table.refresh_semantic_options()
 
@@ -774,21 +805,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         button_text = self._selected_experiment_class or "LAPExperiment"
         if hasattr(self, "experiment_menu_button"):
             self.experiment_menu_button.set_display_text(button_text)
-
-    def _display_physical_quantities(self):
-        """Fetch and display physical quantities for the selected experiment."""
-        self.physical_quantities_list.clear()
-        if not self._selected_experiment_class:
-            return
-        try:
-            quantities = get_physical_quantities(
-                class_name=self._selected_experiment_class
-            )
-            for label, _iri in quantities:
-                self.physical_quantities_list.addItem(label)
-        except Exception as e:
-            error_item = QListWidgetItem(f"Error loading quantities: {str(e)}", self.physical_quantities_list)
-            self.physical_quantities_list.addItem(error_item)
 
     def check_use_ending_steps(self):
         """If the checkBox_perform_at_end is checked, the ending_protocol_selection
@@ -803,6 +819,25 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         )
         variables_handling.instrument_aliases = self.protocol.instrument_aliases
         variables_handling.channel_aliases = self.protocol.channel_aliases
+
+    def _set_semantic_mapping_enabled(self, enabled):
+        enabled = bool(enabled)
+        self.protocol.semantic_mapping_enabled = enabled
+        widgets = [
+            getattr(self, "label_experiment_selector", None),
+            getattr(self, "combo_exp_select", None),
+        ]
+        for widget in widgets:
+            if widget is not None:
+                widget.setEnabled(enabled)
+        if hasattr(self, "experiment_menu_button"):
+            menu = getattr(self.experiment_menu_button, "_menu", None)
+            has_menu = menu is not None and not menu.isEmpty()
+            self.experiment_menu_button.setEnabled(enabled and has_menu)
+        if enabled:
+            self._update_experiment_button_text()
+        if hasattr(self.variable_table, "refresh_semantic_options"):
+            self.variable_table.refresh_semantic_options()
 
     def showEvent(self, event):
         """Called when the widget is shown."""
@@ -876,6 +911,10 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.variable_table.update_variables()
         self.protocol.use_nexus = self.checkBox_NeXus.isChecked()
         self.protocol.h5_during_run = self.comboBox_h5.currentIndex() == 0
+        if hasattr(self, "checkBox_semantic_mapping"):
+            self.protocol.semantic_mapping_enabled = (
+                self.checkBox_semantic_mapping.isChecked()
+            )
         self.protocol.experiment_ontology_class = self._selected_experiment_class
         self.protocol.experiment_ontology_class_iri = self._selected_experiment_class_iri
         self.protocol.use_end_protocol = self.checkBox_perform_at_end.isChecked()

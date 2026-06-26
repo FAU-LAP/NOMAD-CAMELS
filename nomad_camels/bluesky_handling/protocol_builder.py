@@ -265,7 +265,10 @@ def build_protocol(
     """
     # the protocol is converted to a dictionary and saved as a json
     protocol_dict = load_save_functions.get_save_str(protocol)
-    semantic_mapping_json = semantic_mapping_to_json(protocol, enabled=True)
+    semantic_mapping_json = semantic_mapping_to_json(
+        protocol,
+        enabled=getattr(protocol, "semantic_mapping_enabled", False),
+    )
     if not isinstance(file_path, pathlib.Path):
         file_path = pathlib.Path(file_path)
     cprot_path = file_path.with_suffix(".cprot").as_posix()

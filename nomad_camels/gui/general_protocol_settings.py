@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'general_protocol_settings.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.3
+## Created by: Qt User Interface Compiler version 6.10.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,9 +17,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
     QGridLayout, QHBoxLayout, QHeaderView, QLabel,
-    QLineEdit, QListWidget, QListWidgetItem, QPushButton,
-    QSizePolicy, QSpacerItem, QTabWidget, QTextEdit,
-    QVBoxLayout, QWidget)
+    QLineEdit, QPushButton, QSizePolicy, QSpacerItem,
+    QTabWidget, QTextEdit, QVBoxLayout, QWidget)
 
 from nomad_camels.frontpanels.flyer_window import FlyerButton
 from nomad_camels.ui_widgets.path_button_edit import Path_Button_Edit
@@ -36,39 +35,6 @@ class Ui_Protocol_Settings(object):
         self.gridLayout.setContentsMargins(0, 0, 9, 0)
         self.tabWidget = QTabWidget(Protocol_Settings)
         self.tabWidget.setObjectName(u"tabWidget")
-        self.ExperimentSelector = QWidget()
-        self.ExperimentSelector.setObjectName(u"ExperimentSelector")
-        self.verticalLayout_2 = QVBoxLayout(self.ExperimentSelector)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.label_experiment_selector = QLabel(self.ExperimentSelector)
-        self.label_experiment_selector.setObjectName(u"label_experiment_selector")
-        font = QFont()
-        font.setBold(True)
-        self.label_experiment_selector.setFont(font)
-
-        self.verticalLayout_2.addWidget(self.label_experiment_selector)
-
-        self.combo_exp_select = QComboBox(self.ExperimentSelector)
-        self.combo_exp_select.setObjectName(u"combo_exp_select")
-
-        self.verticalLayout_2.addWidget(self.combo_exp_select)
-
-        self.label_quantities = QLabel(self.ExperimentSelector)
-        self.label_quantities.setObjectName(u"label_quantities")
-        self.label_quantities.setFont(font)
-
-        self.verticalLayout_2.addWidget(self.label_quantities)
-
-        self.physical_quantities_list = QListWidget(self.ExperimentSelector)
-        self.physical_quantities_list.setObjectName(u"physical_quantities_list")
-
-        self.verticalLayout_2.addWidget(self.physical_quantities_list)
-
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.verticalLayout_2.addItem(self.verticalSpacer)
-
-        self.tabWidget.addTab(self.ExperimentSelector, "")
         self.general = QWidget()
         self.general.setObjectName(u"general")
         self.gridLayout_3 = QGridLayout(self.general)
@@ -80,6 +46,8 @@ class Ui_Protocol_Settings(object):
 
         self.label_3 = QLabel(self.general)
         self.label_3.setObjectName(u"label_3")
+        font = QFont()
+        font.setBold(True)
         self.label_3.setFont(font)
 
         self.gridLayout_3.addWidget(self.label_3, 1, 0, 1, 2)
@@ -226,6 +194,41 @@ class Ui_Protocol_Settings(object):
 
         self.verticalLayout.addWidget(self.comboBox_h5)
 
+        self.line_h5_semantic_mapping = QFrame(self.advanced)
+        self.line_h5_semantic_mapping.setObjectName(u"line_h5_semantic_mapping")
+        self.line_h5_semantic_mapping.setFrameShape(QFrame.Shape.HLine)
+        self.line_h5_semantic_mapping.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.verticalLayout.addWidget(self.line_h5_semantic_mapping)
+
+        self.label_semantic_mapping = QLabel(self.advanced)
+        self.label_semantic_mapping.setObjectName(u"label_semantic_mapping")
+        self.label_semantic_mapping.setFont(font)
+
+        self.verticalLayout.addWidget(self.label_semantic_mapping)
+
+        self.checkBox_semantic_mapping = QCheckBox(self.advanced)
+        self.checkBox_semantic_mapping.setObjectName(u"checkBox_semantic_mapping")
+
+        self.verticalLayout.addWidget(self.checkBox_semantic_mapping)
+
+        self.label_experiment_selector = QLabel(self.advanced)
+        self.label_experiment_selector.setObjectName(u"label_experiment_selector")
+
+        self.verticalLayout.addWidget(self.label_experiment_selector)
+
+        self.combo_exp_select = QComboBox(self.advanced)
+        self.combo_exp_select.setObjectName(u"combo_exp_select")
+
+        self.verticalLayout.addWidget(self.combo_exp_select)
+
+        self.line_semantic_mapping_protocol_sharing = QFrame(self.advanced)
+        self.line_semantic_mapping_protocol_sharing.setObjectName(u"line_semantic_mapping_protocol_sharing")
+        self.line_semantic_mapping_protocol_sharing.setFrameShape(QFrame.Shape.HLine)
+        self.line_semantic_mapping_protocol_sharing.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.verticalLayout.addWidget(self.line_semantic_mapping_protocol_sharing)
+
         self.label_6 = QLabel(self.advanced)
         self.label_6.setObjectName(u"label_6")
         self.label_6.setFont(font)
@@ -344,15 +347,6 @@ class Ui_Protocol_Settings(object):
 #if QT_CONFIG(tooltip)
         self.tabWidget.setToolTip("")
 #endif // QT_CONFIG(tooltip)
-        self.label_experiment_selector.setText(QCoreApplication.translate("Protocol_Settings", u"Choose Experiment Type:", None))
-#if QT_CONFIG(tooltip)
-        self.combo_exp_select.setToolTip(QCoreApplication.translate("Protocol_Settings", u"Select an experiment that you want to perform in this protocol.", None))
-#endif // QT_CONFIG(tooltip)
-        self.label_quantities.setText(QCoreApplication.translate("Protocol_Settings", u"Physical Quantities:", None))
-#if QT_CONFIG(tooltip)
-        self.physical_quantities_list.setToolTip(QCoreApplication.translate("Protocol_Settings", u"Physical quantities associated with the selected experiment.", None))
-#endif // QT_CONFIG(tooltip)
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.ExperimentSelector), QCoreApplication.translate("Protocol_Settings", u"Select Experiment Semantics", None))
         self.checkBox_csv_exp.setText(QCoreApplication.translate("Protocol_Settings", u"Export data to csv", None))
         self.label_3.setText(QCoreApplication.translate("Protocol_Settings", u"Saving:", None))
         self.checkBox_live_comments.setText(QCoreApplication.translate("Protocol_Settings", u"allow live comments to protocol", None))
@@ -394,6 +388,15 @@ class Ui_Protocol_Settings(object):
         self.comboBox_h5.setItemText(0, QCoreApplication.translate("Protocol_Settings", u"write hdf5 during run", None))
         self.comboBox_h5.setItemText(1, QCoreApplication.translate("Protocol_Settings", u"write hdf5 after run", None))
 
+        self.label_semantic_mapping.setText(QCoreApplication.translate("Protocol_Settings", u"Semantic Mapping:", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_semantic_mapping.setToolTip(QCoreApplication.translate("Protocol_Settings", u"Enable optional ontology-based semantic annotations for this protocol.", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_semantic_mapping.setText(QCoreApplication.translate("Protocol_Settings", u"Write semantic mapping to hdf5", None))
+        self.label_experiment_selector.setText(QCoreApplication.translate("Protocol_Settings", u"Experiment Type:", None))
+#if QT_CONFIG(tooltip)
+        self.combo_exp_select.setToolTip(QCoreApplication.translate("Protocol_Settings", u"Select an experiment that you want to perform in this protocol.", None))
+#endif // QT_CONFIG(tooltip)
         self.label_6.setText(QCoreApplication.translate("Protocol_Settings", u"Protocol Sharing:", None))
         self.pushButton_instrument_aliases.setText(QCoreApplication.translate("Protocol_Settings", u"Instrument Aliases", None))
         self.label_7.setText(QCoreApplication.translate("Protocol_Settings", u"Instrument Configuration:", None))
