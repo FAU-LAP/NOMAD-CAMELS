@@ -1,0 +1,17 @@
+[33mcommit e13263373d4c4e208f3c2a31343078531d351bed[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32m185-semantic-integration-in-camels[m[33m, [m[1;31morigin/185-semantic-integration-in-camels[m[33m)[m
+Author: Jäger <yd27ovas@fauad.fau.de>
+Date:   Sat Jun 27 22:18:09 2026 +0200
+
+    Add configurable experimental techniques ontology path
+
+ nomad_camels/bluesky_handling/protocol_builder.py |   6 [32m+[m[31m-[m
+ nomad_camels/frontpanels/settings_window.py       |  15 [32m++[m[31m-[m
+ nomad_camels/gui/settings_window.py               |  21 [32m+++[m[31m-[m
+ nomad_camels/gui/settings_window.ui               |  24 [32m+++++[m
+ nomad_camels/loop_steps/read_channels.py          |  62 [32m+++++++[m[31m----[m
+ nomad_camels/loop_steps/set_channels.py           |  73 [32m+++++++++[m[31m----[m
+ nomad_camels/main_classes/protocol_class.py       |  50 [32m+++++++[m[31m--[m
+ nomad_camels/ui_widgets/variable_table.py         | 125 [32m+++++++++++++++++[m[31m-----[m
+ nomad_camels/utility/load_save_functions.py       |   1 [32m+[m
+ nomad_camels/utility/ontology_helper.py           | 119 [32m++++++++++++++++[m[31m----[m
+ 10 files changed, 403 insertions(+), 93 deletions(-)
