@@ -3,6 +3,11 @@ from PySide6.QtGui import QStandardItemModel, QStandardItem, QPainter, QColor, Q
 from PySide6.QtCore import Qt, Signal
 from nomad_camels.utility import variables_handling
 from nomad_camels.utility.ontology_helper import get_physical_quantities
+from nomad_camels.ui_widgets.combo_box_helpers import (
+    apply_semantic_combobox_style,
+    SEMANTIC_NONE_LABEL,
+    SEMANTIC_NONE_IRI,
+)
 
 from importlib import resources
 from nomad_camels import graphics
@@ -97,9 +102,9 @@ class VariableTable(QTableView):
             variables[name] = value
             combo = self.indexWidget(self.model.index(row, 2))
             if combo is not None and combo.currentIndex() >= 0:
-                label = combo.currentText()
                 iri = combo.currentData() or ""
-                if label:
+                if iri:
+                    label = combo.currentText()
                     variable_semantics[name] = label
                     variable_semantic_iris[name] = iri
         if self.editable_names:
@@ -140,25 +145,16 @@ class VariableTable(QTableView):
     def make_semantics_combo(self, variable_name):
         """Create the semantics dropdown for one variable row."""
         combo = QComboBox(self)
-        combo.setStyleSheet(
-            """
-            QComboBox {
-                background-color: white;
-                color: black;
-            }
-            QComboBox:disabled {
-                background-color: white;
-                color: gray;
-            }
-            QComboBox QAbstractItemView {
-                background-color: white;
-                color: black;
-                selection-background-color: #d6eaff;
-                selection-color: black;
-            }
-            """
-        )
-        options = self.get_semantic_options()
+        apply_semantic_combobox_style(combo)
+        # Always add an empty option first so users can clear a semantic selection.
+        options = [(SEMANTIC_NONE_LABEL, SEMANTIC_NONE_IRI)]
+        for option in self.get_semantic_options():
+            if isinstance(option, tuple):
+                label, iri = option
+            else:
+                label, iri = option, ""
+            if label:
+                options.append((label, iri))
         for label, iri in options:
             combo.addItem(label, iri)
         semantic_iri = ""
@@ -168,14 +164,15 @@ class VariableTable(QTableView):
                 "variable_semantic_iris",
                 {},
             ).get(variable_name, "")
-        selected_index = -1
+        selected_index = 0
         if semantic_iri:
             for index, (_label, iri) in enumerate(options):
                 if iri == semantic_iri:
                     selected_index = index
                     break
         combo.setCurrentIndex(selected_index)
-        combo.setEnabled(bool(options))
+        # Disable the combo only if no real semantic options are available.
+        combo.setEnabled(len(options) > 1)
         combo.currentTextChanged.connect(self.update_variables)
         return combo
     

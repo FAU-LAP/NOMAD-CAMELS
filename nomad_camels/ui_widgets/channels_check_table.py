@@ -15,6 +15,11 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QFont, QStandardItem
 
 from nomad_camels.utility import variables_handling
+from nomad_camels.ui_widgets.combo_box_helpers import (
+    apply_semantic_combobox_style,
+    SEMANTIC_NONE_LABEL,
+    SEMANTIC_NONE_IRI,
+)
 
 
 class CheckableTableWidgetItem(QTableWidgetItem):
@@ -347,7 +352,7 @@ class Channels_Check_Table(QWidget):
                     if column in self.checkables:
                         item = self.tableWidget_channels.item(i, column)
                         t = item.text()
-                        if t == "None":
+                        if t == SEMANTIC_NONE_LABEL:
                             t = self.value_dict[lab][n]
                         self.info_dict[lab][n] = (
                             item.checkState() == Qt.CheckState.Checked
@@ -356,13 +361,18 @@ class Channels_Check_Table(QWidget):
                         combo = self.tableWidget_channels.cellWidget(i, column)
                         data_key = self.combo_data_keys.get(lab, "")
                         if combo is not None and combo.currentIndex() >= 0:
-                            self.info_dict[lab][n] = combo.currentText()
+                            iri = combo.currentData() or ""
+                            if iri:
+                                label = combo.currentText()
+                            else:
+                                label = ""
+                            self.info_dict[lab][n] = label
                             if data_key:
                                 if data_key not in self.info_dict:
                                     self.info_dict[data_key] = []
                                 while len(self.info_dict[data_key]) < n + 1:
                                     self.info_dict[data_key].append("")
-                                self.info_dict[data_key][n] = combo.currentData() or ""
+                                self.info_dict[data_key][n] = iri
                         else:
                             self.info_dict[lab][n] = ""
                             if data_key:
@@ -461,28 +471,9 @@ class Channels_Check_Table(QWidget):
                     item.setToolTip("Hint: right-click to (un-)check complete column")        
                 elif lab in self.combo_boxes:
                     combo = QComboBox(self.tableWidget_channels)
-                    combo.setStyleSheet(
-                        """
-                        QComboBox {
-                            background-color: white;
-                            color: black;
-                        }
-
-                        QComboBox:disabled {
-                            background-color: white;
-                            color: gray;
-                        }
-
-                        QComboBox QAbstractItemView {
-                            background-color: white;
-                            color: black;
-                            selection-background-color: #d6eaff;
-                            selection-color: black;
-                        }
-                        """
-                    )
+                    apply_semantic_combobox_style(combo)
                     options = list(self.combo_boxes[lab])
-                    normalized_options = []
+                    normalized_options = [(SEMANTIC_NONE_LABEL, SEMANTIC_NONE_IRI)]
                     for option in options:
                         if isinstance(option, tuple):
                             label, iri = option
@@ -497,14 +488,14 @@ class Channels_Check_Table(QWidget):
                             data_value = self.info_dict[data_key][n]
                     for label, iri in normalized_options:
                         combo.addItem(label, iri)
-                    selected_index = -1
+                    selected_index = 0
                     if data_value:
                         for index, (_label, iri) in enumerate(normalized_options):
                             if iri == data_value:
                                 selected_index = index
                                 break
                     combo.setCurrentIndex(selected_index)
-                    combo.setEnabled(bool(normalized_options))
+                    combo.setEnabled(len(normalized_options) > 1)
                     self.tableWidget_channels.setCellWidget(n, column, combo)    
                 else:
                     item = QTableWidgetItem(value)

@@ -70,6 +70,7 @@ class Read_Channels(Loop_Step):
             self.read_variables = step_info["read_variables"]
         else:
             self.read_variables = True
+        self.update_used_devices()
 
     def update_used_devices(self):
         """All devices that should be read are added to the used_devices."""

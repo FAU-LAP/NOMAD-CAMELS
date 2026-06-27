@@ -608,8 +608,6 @@ def load_protocols_dict(string_dict, prot_dict):
             prot.export_csv = prot_data["export_csv"]
         if "h5_during_run" in prot_data:
             prot.h5_during_run = prot_data["h5_during_run"]
-        if "semantic_mapping_enabled" in prot_data:
-            prot.semantic_mapping_enabled = prot_data["semantic_mapping_enabled"]
         if "experiment_ontology_class" in prot_data:
             prot.experiment_ontology_class = prot_data["experiment_ontology_class"]
         if "experiment_ontology_class_iri" in prot_data:

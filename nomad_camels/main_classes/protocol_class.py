@@ -759,21 +759,6 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             bool(getattr(self.protocol, "semantic_mapping_enabled", False))
             and not experiment_menu.isEmpty()
         )
-    
-    def _set_semantic_mapping_enabled(self, enabled):
-        enabled = bool(enabled)
-        self.protocol.semantic_mapping_enabled = enabled
-        widgets = [
-            getattr(self, "label_experiment_selector", None),
-            getattr(self, "combo_exp_select", None),
-        ]
-        for widget in widgets:
-            if widget is not None:
-                widget.setEnabled(enabled)
-        if enabled:
-            self._update_experiment_button_text()
-        if hasattr(self.variable_table, "refresh_semantic_options"):
-            self.variable_table.refresh_semantic_options()
 
     def _build_experiment_submenus(self, menu, nodes):
         for node in nodes:

@@ -1,5 +1,6 @@
 from pathlib import Path
 from owlready2 import get_ontology, sync_reasoner
+from functools import lru_cache
 
 
 
@@ -12,16 +13,19 @@ DEFAULT_ONTOLOGY_PATH = (
 def load_local_ontology(ontology_path=None, run_reasoner=False):
     """
     Load and return the ontology object.
+    The ontology is cached because GUI widgets may request the same ontology
+    repeatedly while rebuilding semantic dropdowns.
     """
-
     path = Path(ontology_path) if ontology_path else DEFAULT_ONTOLOGY_PATH
     path = path.expanduser().resolve()
-
     if not path.exists():
         raise FileNotFoundError(f"Ontology file not found: {path}")
+    return _load_local_ontology_cached(str(path), bool(run_reasoner))
 
-    ontology = get_ontology(str(path)).load()
 
+@lru_cache(maxsize=4)
+def _load_local_ontology_cached(path, run_reasoner):
+    ontology = get_ontology(path).load()
     if run_reasoner:
         try:
             sync_reasoner([ontology], infer_property_values=True)
@@ -29,7 +33,6 @@ def load_local_ontology(ontology_path=None, run_reasoner=False):
             # Java-based reasoners are not always available in every environment.
             # Fall back to the asserted ontology if reasoning cannot run.
             pass
-
     return ontology
 
 
@@ -79,23 +82,30 @@ def _class_tree_as_list(parent_class, visited=None):
 def get_physical_quantities(ontology_path=None, class_name=None):
     """
     Get the physical quantities associated with a class.
-
     The ontology is reasoned first when possible so inferred restrictions are
     visible in the class expressions we inspect.
     """
-    ontology = load_local_ontology(ontology_path, run_reasoner=True)
     if not class_name:
         return []
+    path = Path(ontology_path) if ontology_path else DEFAULT_ONTOLOGY_PATH
+    path = path.expanduser().resolve()
+    if not path.exists():
+        raise FileNotFoundError(f"Ontology file not found: {path}")
+    return list(_get_physical_quantities_cached(str(path), class_name))
+
+@lru_cache(maxsize=128)
+def _get_physical_quantities_cached(ontology_path, class_name):
+    ontology = load_local_ontology(ontology_path, run_reasoner=True)
     experiment_class = ontology[class_name]
     if not experiment_class:
-        return []
-
+        return tuple()
     quantities = _get_class_physical_quantities(experiment_class)
-    return sorted(
-        {ontology_object_to_label_iri(quantity) for quantity in quantities},
-        key=lambda option: option[0],
+    return tuple(
+        sorted(
+            {ontology_object_to_label_iri(quantity) for quantity in quantities},
+            key=lambda option: option[0],
+        )
     )
-
 
 def _get_class_physical_quantities(cls):
     quantities = set()
