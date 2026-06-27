@@ -5,7 +5,7 @@ from PySide6.QtGui import QIcon
 from nomad_camels.frontpanels.plot_definer import Plot_Definer_Widget
 from nomad_camels.loop_steps import make_step_of_type
 from nomad_camels.gui.general_protocol_settings import Ui_Protocol_Settings
-from nomad_camels.utility.ontology_helper import subclass_tree_as_list
+from nomad_camels.utility.ontology_helper import (subclass_tree_as_list,semantic_mapping_available,)
 
 from nomad_camels.utility import variables_handling
 
@@ -612,9 +612,23 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             "",
         )
         if hasattr(self, "checkBox_semantic_mapping"):
+            ontology_available = semantic_mapping_available()
+            if not ontology_available:
+                self.protocol.semantic_mapping_enabled = False
             self.checkBox_semantic_mapping.setChecked(
-                getattr(self.protocol, "semantic_mapping_enabled", False)
+                ontology_available
+                and getattr(self.protocol, "semantic_mapping_enabled", False)
             )
+            self.checkBox_semantic_mapping.setEnabled(ontology_available)
+            if ontology_available:
+                self.checkBox_semantic_mapping.setToolTip(
+                    "Write semantic mapping metadata to the HDF5 file."
+                )
+            else:
+                self.checkBox_semantic_mapping.setToolTip(
+                    "Set a valid Experimental Techniques Ontology path in the "
+                    "CAMELS settings to enable semantic mapping."
+                )
             self.checkBox_semantic_mapping.toggled.connect(
                 self._set_semantic_mapping_enabled
             )
@@ -731,6 +745,13 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
                 )
 
     def _setup_experiment_selector_menu(self, experiment_selector):
+        if not semantic_mapping_available():
+            self.experiment_menu_button.setEnabled(False)
+            self.experiment_menu_button.setToolTip(
+                "Set a valid Experimental Techniques Ontology path in the "
+                "CAMELS settings first."
+            )
+            return
         parent = experiment_selector.parentWidget()
         layout = parent.layout() if parent is not None else None
         if layout is None:
@@ -806,8 +827,24 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         variables_handling.channel_aliases = self.protocol.channel_aliases
 
     def _set_semantic_mapping_enabled(self, enabled):
-        enabled = bool(enabled)
+        ontology_available = semantic_mapping_available()
+        enabled = bool(enabled) and ontology_available
         self.protocol.semantic_mapping_enabled = enabled
+        if hasattr(self, "checkBox_semantic_mapping"):
+            self.checkBox_semantic_mapping.setEnabled(ontology_available)
+            if self.checkBox_semantic_mapping.isChecked() != enabled:
+                self.checkBox_semantic_mapping.blockSignals(True)
+                self.checkBox_semantic_mapping.setChecked(enabled)
+                self.checkBox_semantic_mapping.blockSignals(False)
+            if ontology_available:
+                self.checkBox_semantic_mapping.setToolTip(
+                    "Write semantic mapping metadata to the HDF5 file."
+                )
+            else:
+                self.checkBox_semantic_mapping.setToolTip(
+                    "Set a valid Experimental Techniques Ontology path in the "
+                    "CAMELS settings to enable semantic mapping."
+                )
         widgets = [
             getattr(self, "label_experiment_selector", None),
             getattr(self, "combo_exp_select", None),
@@ -821,8 +858,8 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
             self.experiment_menu_button.setEnabled(enabled and has_menu)
         if enabled:
             self._update_experiment_button_text()
-        if hasattr(self.variable_table, "refresh_semantic_options"):
-            self.variable_table.refresh_semantic_options()
+        if hasattr(self.variable_table, "set_protocol"):
+            self.variable_table.set_protocol(self.protocol)
 
     def showEvent(self, event):
         """Called when the widget is shown."""
@@ -898,7 +935,8 @@ class General_Protocol_Settings(Ui_Protocol_Settings, QWidget):
         self.protocol.h5_during_run = self.comboBox_h5.currentIndex() == 0
         if hasattr(self, "checkBox_semantic_mapping"):
             self.protocol.semantic_mapping_enabled = (
-                self.checkBox_semantic_mapping.isChecked()
+                semantic_mapping_available()
+                and self.checkBox_semantic_mapping.isChecked()
             )
         self.protocol.experiment_ontology_class = self._selected_experiment_class
         self.protocol.experiment_ontology_class_iri = self._selected_experiment_class_iri

@@ -127,6 +127,7 @@ standard_pref = {
     "device_driver_path": os.path.join(
         os.getcwd(), "devices", "devices_drivers"
     ).replace("\\", "/"),
+    "experimental_techniques_ontology_path": "",
     "databroker_catalog_name": "CAMELS_CATALOG",
     "driver_repository": "https://github.com/FAU-LAP/CAMELS_drivers",
     "repo_branch": "main",

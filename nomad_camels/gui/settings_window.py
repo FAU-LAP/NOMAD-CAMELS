@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'settings_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.3
+## Created by: Qt User Interface Compiler version 6.10.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -449,6 +449,17 @@ class Ui_settings_window(object):
 
         self.gridLayout_10.addWidget(self.pathButton_device_path, 1, 1, 1, 2)
 
+        self.label_experimental_techniques_ontology = QLabel(self.drivers)
+        self.label_experimental_techniques_ontology.setObjectName(u"label_experimental_techniques_ontology")
+        self.label_experimental_techniques_ontology.setMaximumSize(QSize(16777215, 17))
+
+        self.gridLayout_10.addWidget(self.label_experimental_techniques_ontology, 2, 0, 1, 1)
+
+        self.pathButton_experimental_techniques_ontology = Path_Button_Edit(self.drivers)
+        self.pathButton_experimental_techniques_ontology.setObjectName(u"pathButton_experimental_techniques_ontology")
+
+        self.gridLayout_10.addWidget(self.pathButton_experimental_techniques_ontology, 2, 1, 1, 2)
+
 
         self.verticalLayout_3.addWidget(self.drivers)
 
@@ -761,6 +772,14 @@ class Ui_settings_window(object):
 #if QT_CONFIG(tooltip)
         self.pathButton_device_path.setToolTip(QCoreApplication.translate("settings_window", u"path to local instrument drivers,\n"
 "e.g. self-written or adjusted ones", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.label_experimental_techniques_ontology.setToolTip(QCoreApplication.translate("settings_window", u"Path to the ontology file used for semantic mapping.", None))
+#endif // QT_CONFIG(tooltip)
+        self.label_experimental_techniques_ontology.setText(QCoreApplication.translate("settings_window", u"Experimental Techniques Ontology", None))
+#if QT_CONFIG(tooltip)
+        self.pathButton_experimental_techniques_ontology.setToolTip(QCoreApplication.translate("settings_window", u"path to the Experimental Techniques ontology file used for semantic mapping,\n"
+"e.g. LAP_ET.owl", None))
 #endif // QT_CONFIG(tooltip)
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), QCoreApplication.translate("settings_window", u"Files/Paths", None))
         self.label_18.setText(QCoreApplication.translate("settings_window", u"ELN integration", None))

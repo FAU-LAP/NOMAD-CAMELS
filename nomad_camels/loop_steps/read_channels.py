@@ -5,7 +5,10 @@ from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from nomad_camels.gui.read_channels import Ui_read_channels_config
 
 from nomad_camels.utility import variables_handling, fit_variable_renaming
-from nomad_camels.utility.ontology_helper import get_physical_quantities
+from nomad_camels.utility.ontology_helper import (
+    get_physical_quantities,
+    semantic_mapping_available,
+)
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
 
@@ -240,30 +243,52 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         self.checkBox_read_all.stateChanged.connect(self.read_type_changed)
         self.checkBox_split_trigger.stateChanged.connect(self.use_trigger)
         self.load_data()
-        labels = ["read?", "channel", "semantics", "ignore failed"]
+        protocol = getattr(self.loop_step, "protocol", None)
+        if protocol is None:
+            protocol = getattr(variables_handling, "current_protocol", None)
+
+        show_semantics = (
+            semantic_mapping_available()
+            and protocol is not None
+            and getattr(protocol, "semantic_mapping_enabled", False)
+        )
+
+        semantic_options = []
+        if show_semantics:
+            experiment_class = getattr(protocol, "experiment_ontology_class", "")
+            if experiment_class:
+                try:
+                    semantic_options = get_physical_quantities(
+                        class_name=experiment_class
+                    )
+                except Exception:
+                    semantic_options = []
+
+        labels = ["read?", "channel"]
         info_dict = {
             "channel": self.loop_step.channel_list,
-            "semantics": self.loop_step.channel_semantics,
-            "semantic_iris": self.loop_step.channel_semantic_iris,
             "ignore failed": self.loop_step.skip_failed,
         }
-        protocol = getattr(self.loop_step, "protocol", None)
-        experiment_class = getattr(protocol, "experiment_ontology_class", "")
-        semantic_options = []
-        if experiment_class:
-            semantic_options = get_physical_quantities(class_name=experiment_class)
+        combo_boxes = {}
+        combo_data_keys = {}
+
+        if show_semantics:
+            labels.append("semantics")
+            info_dict["semantics"] = self.loop_step.channel_semantics
+            info_dict["semantic_iris"] = self.loop_step.channel_semantic_iris
+            combo_boxes["semantics"] = semantic_options
+            combo_data_keys["semantics"] = "semantic_iris"
+
+        labels.append("ignore failed")
+
         self.read_table = Channels_Check_Table(
             self,
             labels,
             info_dict=info_dict,
             title="Read-Channels",
-            checkables=[3],
-            combo_boxes={
-                "semantics": semantic_options,
-            },
-            combo_data_keys={
-                "semantics": "semantic_iris",
-            },
+            checkables=[labels.index("ignore failed")],
+            combo_boxes=combo_boxes,
+            combo_data_keys=combo_data_keys,
         )
         self.read_type_changed()
         self.layout().addWidget(self.read_table, 5, 0, 1, 3)
@@ -299,8 +324,9 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         """ """
         info = self.read_table.get_info()
         self.loop_step.channel_list = info["channel"]
-        self.loop_step.channel_semantics = info["semantics"]
-        self.loop_step.channel_semantic_iris = info["semantic_iris"]
+        if "semantics" in info:
+            self.loop_step.channel_semantics = info["semantics"]
+            self.loop_step.channel_semantic_iris = info.get("semantic_iris", [])
         read_variables = self.checkBox_read_variables.isChecked()
         self.loop_step.skip_failed = info["ignore failed"]
         self.loop_step.read_variables = read_variables

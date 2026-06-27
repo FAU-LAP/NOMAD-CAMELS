@@ -52,6 +52,7 @@ from nomad_camels.bluesky_handling.builder_helper_functions import (
 )
 from nomad_camels.utility import device_handling
 from nomad_camels.utility.semantic_mapping import semantic_mapping_to_json
+from nomad_camels.utility.ontology_helper import semantic_mapping_available
 
 
 # The default string in the beginning of the protocol including imports etc.
@@ -267,7 +268,10 @@ def build_protocol(
     protocol_dict = load_save_functions.get_save_str(protocol)
     semantic_mapping_json = semantic_mapping_to_json(
         protocol,
-        enabled=getattr(protocol, "semantic_mapping_enabled", False),
+        enabled=(
+            getattr(protocol, "semantic_mapping_enabled", False)
+            and semantic_mapping_available()
+        ),
     )
     if not isinstance(file_path, pathlib.Path):
         file_path = pathlib.Path(file_path)

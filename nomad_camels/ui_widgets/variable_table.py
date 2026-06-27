@@ -2,7 +2,10 @@ from PySide6.QtWidgets import QTableView, QWidget, QVBoxLayout, QPushButton, QCo
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QPainter, QColor, QIcon
 from PySide6.QtCore import Qt, Signal
 from nomad_camels.utility import variables_handling
-from nomad_camels.utility.ontology_helper import get_physical_quantities
+from nomad_camels.utility.ontology_helper import (
+    get_physical_quantities,
+    semantic_mapping_available,
+)
 from nomad_camels.ui_widgets.combo_box_helpers import (
     apply_semantic_combobox_style,
     SEMANTIC_NONE_LABEL,
@@ -20,16 +23,47 @@ class VariableTable(QTableView):
         super().__init__(parent)
         self.model = QStandardItemModel()
         self.setModel(self.model)
-        self.model.setHorizontalHeaderLabels(["Name", "Value", "Semantics", "Data-Type"])
-        self.model.itemChanged.connect(self.check_variable)
         self.editable_names = editable_names
         self.protocol = protocol
         self.variables = variables
+        self.set_table_headers()
+        self.model.itemChanged.connect(self.check_variable)
         if protocol:
             self.set_protocol(protocol)
         elif variables:
             for var in sorted(variables):
                 self.append_variable(var, str(variables[var]), unique=False)
+
+    def semantic_mapping_enabled(self):
+        """Return whether semantic mapping should be shown for variables."""
+        return (
+            semantic_mapping_available()
+            and self.protocol is not None
+            and getattr(self.protocol, "semantic_mapping_enabled", False)
+        )
+
+    def get_table_headers(self):
+        headers = ["Name", "Value"]
+        if self.semantic_mapping_enabled():
+            headers.append("Semantics")
+        headers.append("Data-Type")
+        return headers
+
+    def set_table_headers(self):
+        self.model.setHorizontalHeaderLabels(self.get_table_headers())
+
+    def get_column_index(self, header_name):
+        for column in range(self.model.columnCount()):
+            header_item = self.model.horizontalHeaderItem(column)
+            if header_item is not None and header_item.text() == header_name:
+                return column
+        return None
+
+    def get_semantic_column(self):
+        return self.get_column_index("Semantics")
+
+    def get_data_type_column(self):
+        return self.get_column_index("Data-Type")
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -49,8 +83,13 @@ class VariableTable(QTableView):
     def set_protocol(self, protocol):
         """ """
         self.protocol = protocol
+        self.model.blockSignals(True)
+        self.model.clear()
+        self.set_table_headers()
         for var in sorted(self.protocol.variables):
             self.append_variable(var, str(self.protocol.variables[var]), unique=False)
+        self.model.blockSignals(False)
+        self.update_variables()
 
     def append_variable(self, name="name", value="value", unique=True):
         """ """
@@ -58,15 +97,22 @@ class VariableTable(QTableView):
             name = self.get_unique_name(name)
         name_item = QStandardItem(name)
         value_item = QStandardItem(value)
-        semantic_item = QStandardItem("")
         type_item = QStandardItem(variables_handling.check_data_type(value))
         name_item.setEditable(self.editable_names)
-        semantic_item.setEditable(False)
         type_item.setEditable(False)
-        self.model.appendRow([name_item, value_item, semantic_item, type_item])
+
+        semantic_column = self.get_semantic_column()
+        if semantic_column is not None:
+            semantic_item = QStandardItem("")
+            semantic_item.setEditable(False)
+            self.model.appendRow([name_item, value_item, semantic_item, type_item])
+        else:
+            self.model.appendRow([name_item, value_item, type_item])
+
         row = self.model.rowCount() - 1
-        combo = self.make_semantics_combo(name)
-        self.setIndexWidget(self.model.index(row, 2), combo)
+        if semantic_column is not None:
+            combo = self.make_semantics_combo(name)
+            self.setIndexWidget(self.model.index(row, semantic_column), combo)
 
     def check_variable(self):
         """ """
@@ -84,7 +130,9 @@ class VariableTable(QTableView):
             raise Exception("Variable names must be unique!")
         if ind.column() == 1:
             d_type = variables_handling.check_data_type(item.text())
-            self.model.item(ind.row(), 3).setText(d_type)
+            data_type_column = self.get_data_type_column()
+            if data_type_column is not None:
+                self.model.item(ind.row(), data_type_column).setText(d_type)
         self.update_variables()
 
     def update_variables(self):
@@ -92,6 +140,8 @@ class VariableTable(QTableView):
         variables = {}
         variable_semantics = {}
         variable_semantic_iris = {}
+        semantic_column = self.get_semantic_column()
+
         for row in range(self.model.rowCount()):
             name_item = self.model.item(row, 0)
             value_item = self.model.item(row, 1)
@@ -100,17 +150,21 @@ class VariableTable(QTableView):
             name = name_item.text()
             value = variables_handling.get_data(value_item.text())
             variables[name] = value
-            combo = self.indexWidget(self.model.index(row, 2))
-            if combo is not None and combo.currentIndex() >= 0:
-                iri = combo.currentData() or ""
-                if iri:
-                    label = combo.currentText()
-                    variable_semantics[name] = label
-                    variable_semantic_iris[name] = iri
+
+            if semantic_column is not None:
+                combo = self.indexWidget(self.model.index(row, semantic_column))
+                if combo is not None and combo.currentIndex() >= 0:
+                    iri = combo.currentData() or ""
+                    if iri:
+                        label = combo.currentText()
+                        variable_semantics[name] = label
+                        variable_semantic_iris[name] = iri
+
         if self.editable_names:
             self.protocol.variables = variables
-            self.protocol.variable_semantics = variable_semantics
-            self.protocol.variable_semantic_iris = variable_semantic_iris
+            if semantic_column is not None:
+                self.protocol.variable_semantics = variable_semantics
+                self.protocol.variable_semantic_iris = variable_semantic_iris
             variables_handling.protocol_variables = self.protocol.variables
         else:
             return variables
@@ -125,13 +179,14 @@ class VariableTable(QTableView):
                 name = f'{name.split("_")[0]}_{i}'
             i += 1
         return name
-    
+
     def get_semantic_options(self):
         """Return physical quantity options for the selected experiment.
+
         Returns a list of (label, iri) tuples.
-        If no experiment is selected, an empty list is returned.
+        If semantic mapping is disabled, no options are returned.
         """
-        if self.protocol is None:
+        if not self.semantic_mapping_enabled():
             return []
         experiment_class = getattr(
             self.protocol,
@@ -140,8 +195,11 @@ class VariableTable(QTableView):
         )
         if not experiment_class:
             return []
-        return get_physical_quantities(class_name=experiment_class) or []
-    
+        try:
+            return get_physical_quantities(class_name=experiment_class) or []
+        except Exception:
+            return []
+
     def make_semantics_combo(self, variable_name):
         """Create the semantics dropdown for one variable row."""
         combo = QComboBox(self)
@@ -175,23 +233,34 @@ class VariableTable(QTableView):
         combo.setEnabled(len(options) > 1)
         combo.currentTextChanged.connect(self.update_variables)
         return combo
-    
+
     def refresh_semantic_options(self):
-        """Refresh all semantics dropdowns after the selected experiment changed."""
+        """Refresh all semantics dropdowns after semantic settings changed."""
+        semantic_column = self.get_semantic_column()
+
+        if not self.semantic_mapping_enabled():
+            if semantic_column is not None and self.protocol is not None:
+                self.set_protocol(self.protocol)
+            return
+
+        if semantic_column is None:
+            if self.protocol is not None:
+                self.set_protocol(self.protocol)
+            return
+
         for row in range(self.model.rowCount()):
             name_item = self.model.item(row, 0)
             if name_item is None:
                 continue
             variable_name = name_item.text()
             new_combo = self.make_semantics_combo(variable_name)
-            self.setIndexWidget(self.model.index(row, 2), new_combo)
+            self.setIndexWidget(self.model.index(row, semantic_column), new_combo)
         self.update_variables()
 
     def clear(self):
         """ """
         self.model.clear()
-        self.model.setHorizontalHeaderLabels(["Name", "Value", "Semantics", "Data-Type"])
-        self.model.itemChanged.connect(self.check_variable)
+        self.set_table_headers()
         self.update_variables()
 
 

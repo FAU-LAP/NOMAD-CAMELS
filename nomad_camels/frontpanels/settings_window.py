@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QDialog, QStyleFactory, QMessageBox, QApplication
+from PySide6.QtWidgets import (QDialog,QStyleFactory,QMessageBox,QApplication)
 from PySide6.QtCore import Qt, QCoreApplication
 from PySide6.QtGui import QKeyEvent
 
@@ -114,10 +114,22 @@ class Settings_Window(Ui_settings_window, QDialog):
             self.pathButton_device_path.set_path(settings["device_driver_path"])
         else:
             self.pathButton_device_path.set_path(standard_pref["device_driver_path"])
+        if "experimental_techniques_ontology_path" in settings:
+            self.pathButton_experimental_techniques_ontology.set_path(
+                settings["experimental_techniques_ontology_path"]
+            )
+        else:
+            self.pathButton_experimental_techniques_ontology.set_path(
+                standard_pref["experimental_techniques_ontology_path"]
+            )
         self.pathButton_py_files.select_directory = True
         self.pathButton_meas_files.select_directory = True
         self.pathButton_device_path.select_directory = True
         self.pathButton_extension_path.select_directory = True
+        self.pathButton_experimental_techniques_ontology.select_directory = False
+        self.pathButton_experimental_techniques_ontology.file_extension = (
+            "Ontology files (*.owl *.rdf *.ttl *.xml);;All files (*.*)"
+        )
         if "databroker_catalog_name" in settings:
             self.lineEdit_catalog_name.setText(settings["databroker_catalog_name"])
         else:
@@ -322,6 +334,7 @@ class Settings_Window(Ui_settings_window, QDialog):
             "py_files_path": self.pathButton_py_files.get_path(),
             "meas_files_path": self.pathButton_meas_files.get_path(),
             "device_driver_path": self.pathButton_device_path.get_path(),
+            "experimental_techniques_ontology_path": self.pathButton_experimental_techniques_ontology.get_path(),
             "databroker_catalog_name": self.lineEdit_catalog_name.text(),
             "number_databroker_files": self.spinBox_n_databroker_files.value(),
             "play_camel_on_error": self.checkBox_play_camel_on_error.isChecked(),
