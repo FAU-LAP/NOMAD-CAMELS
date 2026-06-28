@@ -5,9 +5,7 @@ from nomad_camels.utility import variables_handling
 from nomad_camels.utility.ontology_helper import get_protocol_physical_quantity_options, semantic_mapping_enabled_for_protocol
 from importlib import resources
 from nomad_camels import graphics
-
-SEMANTIC_NONE_LABEL = "None"
-SEMANTIC_NONE_IRI = ""
+from nomad_camels.ui_widgets.combo_box_helpers import (SEMANTIC_NONE_LABEL,SEMANTIC_NONE_IRI,apply_table_cell_combobox_style,)
 
 
 class VariableTable(QTableView):
@@ -32,15 +30,21 @@ class VariableTable(QTableView):
         """Return whether semantic mapping should be shown for variables."""
         return semantic_mapping_enabled_for_protocol(self.protocol)
 
+    def semantic_column_enabled(self):
+        """Return whether the semantics column should be shown."""
+        return bool(self.get_semantic_options())
+
     def get_table_headers(self):
         headers = ["Name", "Value"]
-        if self.semantic_mapping_enabled():
+        if self.semantic_column_enabled():
             headers.append("Semantics")
         headers.append("Data-Type")
         return headers
 
     def set_table_headers(self):
-        self.model.setHorizontalHeaderLabels(self.get_table_headers())
+        headers = self.get_table_headers()
+        self.model.setColumnCount(len(headers))
+        self.model.setHorizontalHeaderLabels(headers)
 
     def get_column_index(self, header_name):
         for column in range(self.model.columnCount()):
@@ -177,6 +181,7 @@ class VariableTable(QTableView):
     def make_semantics_combo(self, variable_name):
         """Create the semantics dropdown for one variable row."""
         combo = QComboBox(self)
+        apply_table_cell_combobox_style(combo)
         # Always add an empty option first so users can clear a semantic selection.
         options = [(SEMANTIC_NONE_LABEL, SEMANTIC_NONE_IRI)]
         for option in self.get_semantic_options():
@@ -202,8 +207,6 @@ class VariableTable(QTableView):
                     selected_index = index
                     break
         combo.setCurrentIndex(selected_index)
-        # Disable the combo only if no real semantic options are available.
-        combo.setEnabled(len(options) > 1)
         combo.currentIndexChanged.connect(lambda _index: self.update_variables())
         return combo
 
@@ -211,8 +214,8 @@ class VariableTable(QTableView):
         """Refresh all semantics dropdowns after semantic settings changed."""
         semantic_column = self.get_semantic_column()
 
-        if not self.semantic_mapping_enabled():
-            if semantic_column is not None and self.protocol is not None:
+        if not self.get_semantic_options():
+            if self.protocol is not None:
                 self.set_protocol(self.protocol)
             return
 

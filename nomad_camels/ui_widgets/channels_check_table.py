@@ -13,11 +13,10 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QFont, QStandardItem
+from nomad_camels.ui_widgets.combo_box_helpers import (SEMANTIC_NONE_LABEL,SEMANTIC_NONE_IRI,apply_table_cell_combobox_style,)
 
 from nomad_camels.utility import variables_handling
 
-SEMANTIC_NONE_LABEL = "None"
-SEMANTIC_NONE_IRI = ""
 
 class CheckableTableWidgetItem(QTableWidgetItem):
     def __init__(self, checkState=Qt.Unchecked):
@@ -465,9 +464,9 @@ class Channels_Check_Table(QWidget):
                     item.setToolTip("Hint: right-click to (un-)check complete column")        
                 elif lab in self.combo_boxes:
                     combo = QComboBox(self.tableWidget_channels)
-                    options = list(self.combo_boxes[lab])
+                    apply_table_cell_combobox_style(combo)
                     normalized_options = [(SEMANTIC_NONE_LABEL, SEMANTIC_NONE_IRI)]
-                    for option in options:
+                    for option in self.combo_boxes[lab]:
                         if isinstance(option, tuple):
                             label, iri = option
                         else:
@@ -476,9 +475,14 @@ class Channels_Check_Table(QWidget):
                             normalized_options.append((label, iri))
                     data_key = self.combo_data_keys.get(lab, "")
                     data_value = ""
-                    if data_key and data_key in self.info_dict:
-                        if n < len(self.info_dict[data_key]):
-                            data_value = self.info_dict[data_key][n]
+                    if (
+                        channel in self.info_dict["channel"]
+                        and data_key
+                        and data_key in self.info_dict
+                    ):
+                        n_chan = self.info_dict["channel"].index(channel)
+                        if n_chan < len(self.info_dict[data_key]):
+                            data_value = self.info_dict[data_key][n_chan]
                     for label, iri in normalized_options:
                         combo.addItem(label, iri)
                     selected_index = 0
@@ -488,8 +492,7 @@ class Channels_Check_Table(QWidget):
                                 selected_index = index
                                 break
                     combo.setCurrentIndex(selected_index)
-                    combo.setEnabled(len(normalized_options) > 1)
-                    self.tableWidget_channels.setCellWidget(n, column, combo)    
+                    self.tableWidget_channels.setCellWidget(n, column, combo)  
                 else:
                     item = QTableWidgetItem(value)
                     self.tableWidget_channels.setItem(n, column, item)
