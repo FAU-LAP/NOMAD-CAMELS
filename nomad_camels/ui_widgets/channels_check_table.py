@@ -351,9 +351,6 @@ class Channels_Check_Table(QWidget):
                     column = 2 + j
                     if column in self.checkables:
                         item = self.tableWidget_channels.item(i, column)
-                        t = item.text()
-                        if t == SEMANTIC_NONE_LABEL:
-                            t = self.value_dict[lab][n]
                         self.info_dict[lab][n] = (
                             item.checkState() == Qt.CheckState.Checked
                         )
