@@ -128,11 +128,9 @@ def build_semantic_mapping(protocol, enabled=True):
     """
     Build the semantic mapping written to HDF5.
 
-    For the current implementation step, enabled=True is assumed.
-    Later, enabled should be connected to a GUI checkbox.
-
-    This function does not load or validate an ontology.
-    It only serializes labels and IRIs already stored in the CAMELS protocol.
+    The caller decides whether semantic mapping is enabled. This function only
+    serializes labels and IRIs already stored in the CAMELS protocol; it does
+    not load or validate an ontology.
     """
     if not enabled:
         return None

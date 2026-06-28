@@ -118,7 +118,6 @@ def _class_tree_as_list(parent_class, visited=None):
                 "children": [],
             }
         ]
-
     visited.add(parent_class)
     return [
         {
@@ -160,11 +159,9 @@ def get_protocol_physical_quantity_options(protocol):
     """Return physical quantity options for the protocol's selected experiment."""
     if not semantic_mapping_enabled_for_protocol(protocol):
         return []
-
     experiment_class = getattr(protocol, "experiment_ontology_class", "")
     if not experiment_class:
         return []
-
     try:
         return get_physical_quantities(class_name=experiment_class)
     except Exception:
@@ -200,22 +197,17 @@ def _collect_quantity_targets_from_expression(expr, property_name, results, visi
     marker = id(expr)
     if marker in visited:
         return
-
     visited.add(marker)
-
     property_obj = getattr(expr, "property", None)
     if getattr(property_obj, "name", None) == property_name:
         value = getattr(expr, "value", None)
         if value is not None:
             results.add(value)
-
     for subexpr in getattr(expr, "Classes", []):
         _collect_quantity_targets_from_expression(subexpr, property_name, results, visited)
-
     nested_class = getattr(expr, "Class", None)
     if nested_class is not None:
         _collect_quantity_targets_from_expression(nested_class, property_name, results, visited)
-
     if hasattr(expr, "is_a") and hasattr(expr, "equivalent_to") and not hasattr(expr, "property"):
         for parent in expr.is_a:
             _collect_quantity_targets_from_expression(parent, property_name, results, visited)

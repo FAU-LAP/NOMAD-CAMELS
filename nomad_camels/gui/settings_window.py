@@ -449,16 +449,30 @@ class Ui_settings_window(object):
 
         self.gridLayout_10.addWidget(self.pathButton_device_path, 1, 1, 1, 2)
 
+        self.line_ontology = QFrame(self.drivers)
+        self.line_ontology.setObjectName(u"line_ontology")
+        self.line_ontology.setFrameShadow(QFrame.Shadow.Raised)
+        self.line_ontology.setLineWidth(5)
+        self.line_ontology.setFrameShape(QFrame.Shape.HLine)
+
+        self.gridLayout_10.addWidget(self.line_ontology, 2, 0, 1, 3)
+
+        self.label_ontology = QLabel(self.drivers)
+        self.label_ontology.setObjectName(u"label_ontology")
+        self.label_ontology.setFont(font2)
+
+        self.gridLayout_10.addWidget(self.label_ontology, 3, 0, 1, 1)
+
         self.label_experimental_techniques_ontology = QLabel(self.drivers)
         self.label_experimental_techniques_ontology.setObjectName(u"label_experimental_techniques_ontology")
         self.label_experimental_techniques_ontology.setMaximumSize(QSize(16777215, 17))
 
-        self.gridLayout_10.addWidget(self.label_experimental_techniques_ontology, 2, 0, 1, 1)
+        self.gridLayout_10.addWidget(self.label_experimental_techniques_ontology, 4, 0, 1, 1)
 
         self.pathButton_experimental_techniques_ontology = Path_Button_Edit(self.drivers)
         self.pathButton_experimental_techniques_ontology.setObjectName(u"pathButton_experimental_techniques_ontology")
 
-        self.gridLayout_10.addWidget(self.pathButton_experimental_techniques_ontology, 2, 1, 1, 2)
+        self.gridLayout_10.addWidget(self.pathButton_experimental_techniques_ontology, 4, 1, 1, 2)
 
 
         self.verticalLayout_3.addWidget(self.drivers)
@@ -773,6 +787,7 @@ class Ui_settings_window(object):
         self.pathButton_device_path.setToolTip(QCoreApplication.translate("settings_window", u"path to local instrument drivers,\n"
 "e.g. self-written or adjusted ones", None))
 #endif // QT_CONFIG(tooltip)
+        self.label_ontology.setText(QCoreApplication.translate("settings_window", u"Ontology", None))
 #if QT_CONFIG(tooltip)
         self.label_experimental_techniques_ontology.setToolTip(QCoreApplication.translate("settings_window", u"Path to the ontology file used for semantic mapping.", None))
 #endif // QT_CONFIG(tooltip)
