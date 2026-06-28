@@ -6,14 +6,12 @@ from nomad_camels.utility.ontology_helper import (
     get_physical_quantities,
     semantic_mapping_available,
 )
-from nomad_camels.ui_widgets.combo_box_helpers import (
-    apply_semantic_combobox_style,
-    SEMANTIC_NONE_LABEL,
-    SEMANTIC_NONE_IRI,
-)
 
 from importlib import resources
 from nomad_camels import graphics
+
+SEMANTIC_NONE_LABEL = "None"
+SEMANTIC_NONE_IRI = ""
 
 
 class VariableTable(QTableView):
@@ -203,7 +201,6 @@ class VariableTable(QTableView):
     def make_semantics_combo(self, variable_name):
         """Create the semantics dropdown for one variable row."""
         combo = QComboBox(self)
-        apply_semantic_combobox_style(combo)
         # Always add an empty option first so users can clear a semantic selection.
         options = [(SEMANTIC_NONE_LABEL, SEMANTIC_NONE_IRI)]
         for option in self.get_semantic_options():

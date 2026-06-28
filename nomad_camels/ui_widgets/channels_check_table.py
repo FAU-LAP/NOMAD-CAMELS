@@ -15,12 +15,9 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QFont, QStandardItem
 
 from nomad_camels.utility import variables_handling
-from nomad_camels.ui_widgets.combo_box_helpers import (
-    apply_semantic_combobox_style,
-    SEMANTIC_NONE_LABEL,
-    SEMANTIC_NONE_IRI,
-)
 
+SEMANTIC_NONE_LABEL = "None"
+SEMANTIC_NONE_IRI = ""
 
 class CheckableTableWidgetItem(QTableWidgetItem):
     def __init__(self, checkState=Qt.Unchecked):
@@ -468,7 +465,6 @@ class Channels_Check_Table(QWidget):
                     item.setToolTip("Hint: right-click to (un-)check complete column")        
                 elif lab in self.combo_boxes:
                     combo = QComboBox(self.tableWidget_channels)
-                    apply_semantic_combobox_style(combo)
                     options = list(self.combo_boxes[lab])
                     normalized_options = [(SEMANTIC_NONE_LABEL, SEMANTIC_NONE_IRI)]
                     for option in options:
