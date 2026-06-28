@@ -2,10 +2,7 @@ from PySide6.QtWidgets import QTableView, QWidget, QVBoxLayout, QPushButton, QCo
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QPainter, QColor, QIcon
 from PySide6.QtCore import Qt, Signal
 from nomad_camels.utility import variables_handling
-from nomad_camels.utility.ontology_helper import (
-    get_protocol_physical_quantity_options,
-    semantic_mapping_enabled_for_protocol,
-)
+from nomad_camels.utility.ontology_helper import get_protocol_physical_quantity_options, semantic_mapping_enabled_for_protocol
 from importlib import resources
 from nomad_camels import graphics
 
@@ -34,7 +31,6 @@ class VariableTable(QTableView):
     def semantic_mapping_enabled(self):
         """Return whether semantic mapping should be shown for variables."""
         return semantic_mapping_enabled_for_protocol(self.protocol)
-        )
 
     def get_table_headers(self):
         headers = ["Name", "Value"]
