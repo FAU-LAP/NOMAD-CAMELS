@@ -3,10 +3,9 @@ from PySide6.QtGui import QStandardItemModel, QStandardItem, QPainter, QColor, Q
 from PySide6.QtCore import Qt, Signal
 from nomad_camels.utility import variables_handling
 from nomad_camels.utility.ontology_helper import (
-    get_physical_quantities,
-    semantic_mapping_available,
+    get_protocol_physical_quantity_options,
+    semantic_mapping_enabled_for_protocol,
 )
-
 from importlib import resources
 from nomad_camels import graphics
 
@@ -34,10 +33,7 @@ class VariableTable(QTableView):
 
     def semantic_mapping_enabled(self):
         """Return whether semantic mapping should be shown for variables."""
-        return (
-            semantic_mapping_available()
-            and self.protocol is not None
-            and getattr(self.protocol, "semantic_mapping_enabled", False)
+        return semantic_mapping_enabled_for_protocol(self.protocol)
         )
 
     def get_table_headers(self):
@@ -179,24 +175,8 @@ class VariableTable(QTableView):
         return name
 
     def get_semantic_options(self):
-        """Return physical quantity options for the selected experiment.
-
-        Returns a list of (label, iri) tuples.
-        If semantic mapping is disabled, no options are returned.
-        """
-        if not self.semantic_mapping_enabled():
-            return []
-        experiment_class = getattr(
-            self.protocol,
-            "experiment_ontology_class",
-            "",
-        )
-        if not experiment_class:
-            return []
-        try:
-            return get_physical_quantities(class_name=experiment_class) or []
-        except Exception:
-            return []
+        """Return physical quantity options for the selected experiment."""
+        return get_protocol_physical_quantity_options(self.protocol)
 
     def make_semantics_combo(self, variable_name):
         """Create the semantics dropdown for one variable row."""
@@ -228,7 +208,7 @@ class VariableTable(QTableView):
         combo.setCurrentIndex(selected_index)
         # Disable the combo only if no real semantic options are available.
         combo.setEnabled(len(options) > 1)
-        combo.currentTextChanged.connect(self.update_variables)
+        combo.currentIndexChanged.connect(lambda _index: self.update_variables())
         return combo
 
     def refresh_semantic_options(self):
