@@ -3,10 +3,7 @@ from PySide6.QtWidgets import QCheckBox
 from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
-from nomad_camels.utility.ontology_helper import (
-    get_physical_quantities,
-    semantic_mapping_available,
-)
+from nomad_camels.utility.ontology_helper import get_protocol_physical_quantity_options
 from nomad_camels.utility import variables_handling
 
 
@@ -141,13 +138,8 @@ class Set_Channels_Config(Loop_Step_Config):
         protocol = getattr(self.loop_step, "protocol", None)
         if protocol is None:
             protocol = getattr(variables_handling, "current_protocol", None)
-
-        show_semantics = (
-            semantic_mapping_available()
-            and protocol is not None
-            and getattr(protocol, "semantic_mapping_enabled", False)
-        )
-
+        semantic_options = get_protocol_physical_quantity_options(protocol)
+        show_semantics = bool(semantic_options)
         labels = ["set", "channel"]
         info_dict = {
             "channel": self.loop_step.channels_values["Channels"],
@@ -155,15 +147,7 @@ class Set_Channels_Config(Loop_Step_Config):
         }
         combo_boxes = {}
         combo_data_keys = {}
-
         if show_semantics:
-            semantic_options = []
-            experiment_class = getattr(protocol, "experiment_ontology_class", "")
-            if experiment_class:
-                semantic_options = get_physical_quantities(
-                    class_name=experiment_class
-                )
-
             labels.append("semantics")
             info_dict["semantics"] = self.loop_step.channels_values["Semantics"]
             info_dict["semantic_iris"] = self.loop_step.channels_values[
@@ -171,9 +155,7 @@ class Set_Channels_Config(Loop_Step_Config):
             ]
             combo_boxes["semantics"] = semantic_options
             combo_data_keys["semantics"] = "semantic_iris"
-
         labels.append("value")
-
         self.sub_widget = Channels_Check_Table(
             self,
             labels,
@@ -194,25 +176,13 @@ class Set_Channels_Config(Loop_Step_Config):
         self.loop_step.wait_for_set = self.checkBox_wait_for_set.isChecked()
 
     def update_step_config(self):
-        """ """
-        super().update_step_config()
         info = self.sub_widget.get_info()
-        channels_values = {
-            "Channels": info["channel"],
-            "Values": info["value"],
-        }
+
+        self.loop_step.channels_values["Channels"] = info["channel"]
+        self.loop_step.channels_values["Values"] = info["value"]
+
         if "semantics" in info:
-            channels_values["Semantics"] = info["semantics"]
-            channels_values["SemanticIRIs"] = info["semantic_iris"]
-        else:
-            if "Semantics" in self.loop_step.channels_values:
-                channels_values["Semantics"] = self.loop_step.channels_values[
-                    "Semantics"
-                ]
-            if "SemanticIRIs" in self.loop_step.channels_values:
-                channels_values["SemanticIRIs"] = self.loop_step.channels_values[
-                    "SemanticIRIs"
-                ]
-        self.loop_step.channels_values = channels_values
-        # self.sub_widget.update_table_data()
-        # self.loop_step.channels_values = self.sub_widget.tableData
+            self.loop_step.channels_values["Semantics"] = info["semantics"]
+            self.loop_step.channels_values["SemanticIRIs"] = info.get(
+                "semantic_iris", []
+            )

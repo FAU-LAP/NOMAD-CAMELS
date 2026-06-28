@@ -5,10 +5,7 @@ from nomad_camels.main_classes.loop_step import Loop_Step, Loop_Step_Config
 from nomad_camels.gui.read_channels import Ui_read_channels_config
 
 from nomad_camels.utility import variables_handling, fit_variable_renaming
-from nomad_camels.utility.ontology_helper import (
-    get_physical_quantities,
-    semantic_mapping_available,
-)
+from nomad_camels.utility.ontology_helper import get_protocol_physical_quantity_options
 from nomad_camels.ui_widgets.channels_check_table import Channels_Check_Table
 
 
@@ -246,24 +243,8 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         protocol = getattr(self.loop_step, "protocol", None)
         if protocol is None:
             protocol = getattr(variables_handling, "current_protocol", None)
-
-        show_semantics = (
-            semantic_mapping_available()
-            and protocol is not None
-            and getattr(protocol, "semantic_mapping_enabled", False)
-        )
-
-        semantic_options = []
-        if show_semantics:
-            experiment_class = getattr(protocol, "experiment_ontology_class", "")
-            if experiment_class:
-                try:
-                    semantic_options = get_physical_quantities(
-                        class_name=experiment_class
-                    )
-                except Exception:
-                    semantic_options = []
-
+        semantic_options = get_protocol_physical_quantity_options(protocol)
+        show_semantics = bool(semantic_options)
         labels = ["read?", "channel"]
         info_dict = {
             "channel": self.loop_step.channel_list,
@@ -271,16 +252,13 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         }
         combo_boxes = {}
         combo_data_keys = {}
-
         if show_semantics:
             labels.append("semantics")
             info_dict["semantics"] = self.loop_step.channel_semantics
             info_dict["semantic_iris"] = self.loop_step.channel_semantic_iris
             combo_boxes["semantics"] = semantic_options
             combo_data_keys["semantics"] = "semantic_iris"
-
         labels.append("ignore failed")
-
         self.read_table = Channels_Check_Table(
             self,
             labels,
@@ -321,15 +299,13 @@ class Read_Channels_Config_Sub(Ui_read_channels_config, QWidget):
         self.checkBox_split_trigger.setChecked(self.loop_step.split_trigger)
 
     def update_step_config(self):
-        """ """
         info = self.read_table.get_info()
         self.loop_step.channel_list = info["channel"]
         if "semantics" in info:
             self.loop_step.channel_semantics = info["semantics"]
             self.loop_step.channel_semantic_iris = info.get("semantic_iris", [])
-        read_variables = self.checkBox_read_variables.isChecked()
         self.loop_step.skip_failed = info["ignore failed"]
-        self.loop_step.read_variables = read_variables
+        self.loop_step.read_variables = self.checkBox_read_variables.isChecked()
 
 
 class Trigger_Channels_Step(Loop_Step):

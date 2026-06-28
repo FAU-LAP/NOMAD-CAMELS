@@ -147,6 +147,30 @@ def get_physical_quantities(ontology_path=None, class_name=None):
     return list(_get_physical_quantities_cached(str(path), class_name))
 
 
+def semantic_mapping_enabled_for_protocol(protocol):
+    """Return True if semantic mapping should be shown for this protocol."""
+    return bool(
+        protocol is not None
+        and getattr(protocol, "semantic_mapping_enabled", False)
+        and semantic_mapping_available()
+    )
+
+
+def get_protocol_physical_quantity_options(protocol):
+    """Return physical quantity options for the protocol's selected experiment."""
+    if not semantic_mapping_enabled_for_protocol(protocol):
+        return []
+
+    experiment_class = getattr(protocol, "experiment_ontology_class", "")
+    if not experiment_class:
+        return []
+
+    try:
+        return get_physical_quantities(class_name=experiment_class)
+    except Exception:
+        return []
+
+
 @lru_cache(maxsize=128)
 def _get_physical_quantities_cached(ontology_path, class_name):
     ontology = load_local_ontology(ontology_path, run_reasoner=True)
